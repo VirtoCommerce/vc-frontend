@@ -8,7 +8,7 @@ import {
 import { useGetCurrentOrganizationAddressesQuery } from "@/core/api/graphql/organization";
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
-import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRef, MaybeRefOrGetter } from "vue";
 
@@ -38,23 +38,23 @@ export function useCurrentOrganizationAddresses(
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables, queryEnabled);
+  const { result, loading } = useGetCurrentOrganizationAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
   const termFacets = computed(() => result.value?.currentOrganizationAddresses?.term_facets ?? []);
 
-  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<MemberAddressType[]> {
     if (!items.length || !toValue(organizationId)) {
-      return;
+      return [];
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(toValue(organizationId), inputAddresses);
-      void refetch();
+      const updatedAddresses = await updateMemberAddresses(toValue(organizationId), inputAddresses);
+      return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCurrentOrganizationAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
@@ -70,7 +70,6 @@ export function useCurrentOrganizationAddresses(
 
     try {
       await deleteMemberAddresses(inputAddresses, toValue(organizationId));
-      void refetch();
     } catch (e) {
       Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddresses.name}`, e);
       throw e;
@@ -84,8 +83,6 @@ export function useCurrentOrganizationAddresses(
       Logger.error(`${useCurrentOrganizationAddresses.name}.${addAddressToFavorite.name}`, e);
       throw e;
     }
-
-    void refetch();
   }
 
   async function removeAddressFromFavorite(addressId: string): Promise<void> {
@@ -95,8 +92,6 @@ export function useCurrentOrganizationAddresses(
       Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddressFromFavorite.name}`, e);
       throw e;
     }
-
-    void refetch();
   }
 
   return {

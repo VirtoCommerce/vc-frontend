@@ -1,4 +1,5 @@
 import { graphqlClient } from "../../../client";
+import { refetchAddressBooks } from "../refetchAddressBooks";
 import mutationDocument from "./deleteMemberAddressesMutation.graphql";
 import type {
   DeleteMemberAddressesMutation,
@@ -20,6 +21,8 @@ export async function deleteMemberAddresses(
       },
     },
   });
+
+  refetchAddressBooks();
 
   return data?.deleteMemberAddresses?.addresses?.items ?? [];
 }
