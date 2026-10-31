@@ -1,5 +1,6 @@
 {
   "icon": "text_fields",
+  "description": "Renders the current product's properties / specifications table from the catalog — no editable content of its own. Used as a nested block inside the `product-info` section. Use when: a spec table belongs in the product detail body (typical for B2B and detail-heavy products). Skip when: not on a product page, or the product has no significant properties worth showing. `title` is an optional heading above the table (typical: 'Specifications').",
   "settings": [
     {
       "id": "title",

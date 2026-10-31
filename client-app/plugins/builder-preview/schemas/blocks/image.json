@@ -1,5 +1,6 @@
 {
   "icon": "image",
+  "description": "Embeds an additional image inside a product detail page body — separate from the product's main gallery (for spec sheets, certifications, lifestyle shots, etc.). Used as a nested block inside the `product-info` section. Use when: a static image needs to appear alongside textual blocks in the product body. Skip when: the catalog's main gallery is enough (rendered automatically by `product-info`), or a section-level image is wanted (use `sections/image` instead). `image` is the image URL — leave empty if the user did not supply one.",
   "settings": [
     {
       "id": "image",
