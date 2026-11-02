@@ -364,6 +364,8 @@ describe("app-runner boot order", () => {
     settle();
     await run;
 
+    const design = await import("@/core/utilities/design");
+    expect(design.loadPresetStyles).toHaveBeenCalledWith("a");
     expect(order.indexOf("preset styles settled")).toBeGreaterThan(-1);
     expect(order.indexOf("preset styles settled")).toBeLessThan(order.indexOf("mount"));
   });
