@@ -31,7 +31,7 @@
   &--size--xs,
   &--size--sm,
   &--collapsed,
-  &:not(:has(> :nth-child(2))):not(:has(> #{$slot-container})) {
+  &:where(:not(:has(> :nth-child(2))):not(:has(> #{$slot-container}))) {
     --vc-widget-radius: var(--vc-radius);
   }
 
