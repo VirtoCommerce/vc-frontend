@@ -3,7 +3,7 @@
 // (styles.md §1.4, §18; ui-kit.md §9). Exit code 2 blocks the edit and shows stderr to the agent.
 import { readFileSync, realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { isImportantUtility, matchImportant } from "../../scripts/important-patterns.ts";
+import { isImportantUtility, matchImportant } from "../../scripts/important-patterns.mjs";
 
 const STYLE_FILE = /\.(vue|scss|css)$/;
 const KIT_OR_GLOBAL_STYLES = /(^|\/)client-app\/(ui-kit|assets\/styles)\//;

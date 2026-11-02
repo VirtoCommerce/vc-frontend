@@ -2,10 +2,11 @@ import { readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { globSync } from "glob";
+import { CssSyntaxError } from "postcss";
 import postcssScss from "postcss-scss";
 import ts from "typescript";
 import { parse as parseSfc } from "vue/compiler-sfc";
-import { isImportantUtility, matchImportant } from "./important-patterns.ts";
+import { isImportantUtility, matchImportant, matchImportantValue } from "./important-patterns.mjs";
 import type { AtRule, Declaration } from "postcss";
 import type { SFCTemplateBlock } from "vue/compiler-sfc";
 
@@ -23,6 +24,9 @@ const SOURCES = ["client-app/**/*.{vue,scss,css,html,ts,tsx,js,mjs,cjs,mts,cts}"
 const IGNORE = ["client-app/assets/styles/_custom.scss"];
 
 const TOKEN = /\S+/g;
+const NEWLINE = /\n/g;
+/** An HTML tag in a string: a story's or test's template, a `render` helper's markup. */
+const MARKUP = /<[a-z][\w-]*[\s/>]/i;
 const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
   ".ts": ts.ScriptKind.TS,
   ".mts": ts.ScriptKind.TS,
@@ -34,23 +38,24 @@ const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
 };
 
 type ReportType = (line: number, text: string) => void;
+type MatchType = (text: string) => RegExpExecArray[];
 type TemplateChildNodeType = NonNullable<SFCTemplateBlock["ast"]>["children"][number];
 type ElementNodeType = Extract<TemplateChildNodeType, { tag: string }>;
 type PropNodeType = ElementNodeType["props"][number];
 
 function lineAt(text: string, index: number, startLine: number): number {
-  return startLine + (text.slice(0, index).match(/\n/g)?.length ?? 0);
+  return startLine + (text.slice(0, index).match(NEWLINE)?.length ?? 0);
 }
 
-function checkImportant(text: string, startLine: number, report: ReportType): void {
-  for (const match of matchImportant(text)) {
-    report(lineAt(text, match.index, startLine), match[0]);
+function checkImportant(text: string, startLine: number, report: ReportType, match: MatchType = matchImportant): void {
+  for (const { 0: found, index } of match(text)) {
+    report(lineAt(text, index, startLine), found);
   }
 }
 
 /** `!important` and important utilities in a class list, an inline style or a string literal. */
-function checkText(text: string, startLine: number, report: ReportType): void {
-  checkImportant(text, startLine, report);
+function checkText(text: string, startLine: number, report: ReportType, match: MatchType = matchImportant): void {
+  checkImportant(text, startLine, report, match);
 
   for (const { 0: token, index } of text.matchAll(TOKEN)) {
     if (isImportantUtility(token)) {
@@ -64,16 +69,20 @@ function checkStyles(css: string, startLine: number, report: ReportType): void {
   const root = postcssScss.parse(css);
   const lineOf = (node: Declaration | AtRule) => startLine + (node.source?.start?.line ?? 1) - 1;
 
+  // Rebuilt from the clean value, so a comment is never read and a line break before the match still counts.
   root.walkDecls((decl) => {
-    if (decl.important) {
-      report(lineOf(decl), decl.raws.important?.trim() || "!important");
-    }
+    const text = `${decl.prop}${decl.raws.between ?? ""}${decl.value}`;
+    checkImportant(text, lineOf(decl), report);
 
-    checkImportant(decl.value, lineOf(decl), report);
+    if (decl.important) {
+      const flag = decl.raws.important ?? " !important";
+      report(lineAt(text + flag, text.length + flag.search(/\S/), lineOf(decl)), flag.trim());
+    }
   });
 
   root.walkAtRules((rule) => {
-    (rule.name === "apply" ? checkText : checkImportant)(rule.params, lineOf(rule), report);
+    const text = `@${rule.name}${rule.raws.afterName ?? ""}${rule.params}`;
+    (rule.name === "apply" ? checkText : checkImportant)(text, lineOf(rule), report);
   });
 }
 
@@ -89,15 +98,68 @@ function stringLiteralText(node: ts.Node, sourceFile: ts.SourceFile): string | u
   return undefined;
 }
 
+/** A whole string or template literal as written, each `${…}` replaced by a placeholder on as many lines. */
+function literalMarkup(node: ts.Node, sourceFile: ts.SourceFile): string | undefined {
+  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+    return node.getText(sourceFile).slice(1, -1);
+  }
+
+  if (ts.isTemplateExpression(node)) {
+    return node.templateSpans.reduce(
+      (text, span) =>
+        text +
+        "_" +
+        "\n".repeat(span.expression.getText(sourceFile).match(NEWLINE)?.length ?? 0) +
+        (span.literal.rawText ?? span.literal.text),
+      node.head.rawText ?? node.head.text,
+    );
+  }
+
+  return undefined;
+}
+
+/**
+ * Markup in a string is read as a template: its class and style attributes, bindings and inline styles.
+ * A `<style>` that is no CSS (docs naming the tag) falls back to reading the string as text.
+ */
+function checkMarkup(markup: string, startLine: number, report: ReportType): void {
+  const { descriptor } = parseSfc(`${"\n".repeat(startLine - 1)}<template>${markup}</template>`);
+  const found: [number, string][] = [];
+
+  try {
+    checkTemplate(descriptor.template?.ast?.children ?? [], (line, text) => found.push([line, text]));
+  } catch (error) {
+    if (!(error instanceof CssSyntaxError)) {
+      throw error;
+    }
+
+    checkText(markup, startLine, report, matchImportantValue);
+    return;
+  }
+
+  found.forEach(([line, text]) => report(line, text));
+}
+
 function checkScript(code: string, kind: ts.ScriptKind, startLine: number, report: ReportType): void {
   const sourceFile = ts.createSourceFile("source", code, ts.ScriptTarget.Latest, true, kind);
+  const lineOf = (node: ts.Node) =>
+    startLine + sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line;
 
   const visit = (node: ts.Node): void => {
+    const markup = literalMarkup(node, sourceFile);
+
+    if (markup !== undefined && MARKUP.test(markup)) {
+      checkMarkup(markup, lineOf(node), report);
+      // Only the expressions in `${…}`: the literal parts were read as markup.
+      ts.forEachChild(node, (child) => (ts.isTemplateSpan(child) ? visit(child.expression) : undefined));
+      return;
+    }
+
     const text = stringLiteralText(node, sourceFile);
 
     if (text !== undefined) {
-      const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
-      checkText(text, startLine + line, report);
+      // In a string, `!important` counts only where it ends a CSS value, so prose that names it passes.
+      checkText(text, lineOf(node), report, matchImportantValue);
     }
 
     // `style.setProperty(name, value, "important")`
@@ -109,8 +171,7 @@ function checkScript(code: string, kind: ts.ScriptKind, startLine: number, repor
       ts.isStringLiteralLike(node.arguments[2]) &&
       node.arguments[2].text === "important"
     ) {
-      const { line } = sourceFile.getLineAndCharacterOfPosition(node.arguments[2].getStart(sourceFile));
-      report(startLine + line, 'setProperty(…, "important")');
+      report(lineOf(node.arguments[2]), 'setProperty(…, "important")');
     }
 
     ts.forEachChild(node, visit);

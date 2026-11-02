@@ -45,6 +45,39 @@ describe("check-css-important", () => {
 
       expect(found("a.scss", scss)).toEqual([]);
     });
+
+    it("reports a match on a later line of a declaration or @apply at that line", () => {
+      const scss = [
+        ".a {",
+        "  box-shadow:",
+        "    0 0 1px red",
+        "    !important;",
+        "  @apply flex",
+        "    !mt-4;",
+        "}",
+      ].join("\n");
+
+      expect(found("a.scss", scss)).toEqual([
+        [4, "!important"],
+        [6, "!mt-4"],
+      ]);
+    });
+
+    it("reports variants and arbitrary values with = and quotes", () => {
+      const scss = [
+        ".a {",
+        "  @apply data-[state=open]:!block aria-[expanded=true]:!rotate-180;",
+        "  @apply [&[data-x='y']]:!p-0 before:!content-[''];",
+        "}",
+      ].join("\n");
+
+      expect(found("a.scss", scss)).toEqual([
+        [2, "data-[state=open]:!block"],
+        [2, "aria-[expanded=true]:!rotate-180"],
+        [3, "[&[data-x='y']]:!p-0"],
+        [3, "before:!content-['']"],
+      ]);
+    });
   });
 
   describe("vue", () => {
@@ -139,6 +172,41 @@ describe("check-css-important", () => {
       expect(found("a.ts", code)).toEqual([
         [2, "lg:!hidden"],
         [5, "!important"],
+      ]);
+    });
+
+    it("reads markup in strings as a template", () => {
+      const code = [
+        "const a = 1;",
+        "const story = `",
+        "  <VcButton",
+        "    :class=\"{ 'lg:!hidden': open }\"",
+        '    style="color: red !important"',
+        "  >${label}",
+        '    <span class="flex !p-0">x</span>',
+        "  </VcButton>`;",
+        "const html = '<b class=\"!mt-4\">x</b>';",
+      ].join("\n");
+
+      expect(found("a.stories.ts", code)).toEqual([
+        [4, "lg:!hidden"],
+        [5, "!important"],
+        [7, "!p-0"],
+        [9, "!mt-4"],
+      ]);
+    });
+
+    it("reports !important that ends a CSS value, not prose that names it", () => {
+      const code = [
+        'const docs = "Use cascade layers instead of !important.";',
+        'const tag = "Put styles in a <style> block, never !important.";',
+        'const style = { color: "red !important" };',
+        'el.style.cssText = "color: red !important; margin: 0";',
+      ].join("\n");
+
+      expect(found("a.ts", code)).toEqual([
+        [3, "!important"],
+        [4, "!important"],
       ]);
     });
   });

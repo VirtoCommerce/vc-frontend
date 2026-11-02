@@ -265,12 +265,14 @@ elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 declared layer, and its names follow the declared order per parent.
 
 `scripts/check-css-important.ts` fails on any `!important` and any Tailwind important modifier
-(`!mt-4`, `lg:!hidden`, `[&>*]:!p-0`) in `client-app/` and `index.html`, and names the file and
-line. It reads style declarations and `@apply`, inline `<style>`, class and style attributes, Vue
-bindings and interpolations, string literals in scripts and `style.setProperty(…, "important")`.
-Comments, Markdown, locale files, page text and code negation (`v-if="!open"`) never fail it, nor do
-the Sass flags `!default`, `!global` and `!optional`. The pre-commit hook runs it on the staged files
-only. Its patterns live in `scripts/important-patterns.ts`, shared with the agents' edit hook
+(`!mt-4`, `lg:!hidden`, `data-[state=open]:!block`) in `client-app/` and `index.html`, and names the
+file and line. It reads style declarations and `@apply`, inline `<style>`, class and style
+attributes, Vue bindings and interpolations, string literals in scripts (markup in a string, such as
+a story's template, is read as a template) and `style.setProperty(…, "important")`. Comments,
+Markdown, locale files, page text and code negation (`v-if="!open"`) never fail it, nor do the Sass
+flags `!default`, `!global` and `!optional`; in a string, `!important` counts only where it ends a
+CSS value (`"red !important"`), so prose that names it passes. The pre-commit hook runs it on the staged files
+only. Its patterns live in `scripts/important-patterns.mjs`, shared with the agents' edit hook
 (`.claude/hooks/guard-styles.mjs`). The tests are in `scripts/check-css-important.test.ts`.
 
 **In a fork**, put an override in `_custom.scss`: it is unlayered, so a plain declaration there

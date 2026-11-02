@@ -31,6 +31,7 @@ test("blocks !important in every form, kit included", () => {
   assert.ok(edit("client-app/shared/a.vue", "<div :class=\"['!mt-4']\">"));
   assert.ok(edit("client-app/shared/a.vue", '<div class="[&>*]:!p-0 !w-[calc(100%-1rem)]">'));
   assert.ok(edit("client-app/shared/a.scss", "  color: red ! IMPORTANT;"));
+  assert.ok(edit("client-app/shared/a.vue", "<div class=\"data-[state=open]:!block before:!content-['']\">"));
 });
 
 test("passes JS negation in :class", () => {
@@ -114,8 +115,8 @@ test("runs as a hook from a path with a space", () => {
   mkdirSync(join(root, "scripts"));
   copyFileSync(new URL("./guard-styles.mjs", import.meta.url), hook);
   copyFileSync(
-    new URL("../../scripts/important-patterns.ts", import.meta.url),
-    join(root, "scripts", "important-patterns.ts"),
+    new URL("../../scripts/important-patterns.mjs", import.meta.url),
+    join(root, "scripts", "important-patterns.mjs"),
   );
   const file = join(hookDir, "x.scss");
   writeFileSync(file, "");
