@@ -18,7 +18,8 @@ Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--wit
    ([S3](./s3-extend-the-facade.md)) or a small copy inside the plugin. This list is the real size of the port.
 
 2. **Extend and release the facade** for what is missing (S3). Meanwhile, work against it with yalc
-   ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
+   ([S2.3](./s2-develop-locally.md#23-the-facade-is-extended-but-not-released)), and against an alpha pre-release of
+   the facade branch where CI or QA needs it (S3 step 6).
 3. **Move the code** into `StorefrontApp/src/`: components, composables, pages, locales, GraphQL documents. Change
    each `@/…` import to `@vc-frontend/core`. Test helpers come from `@vc-frontend/core/testing`. A spec that mocks
    several host paths needs one `vi.mock("@vc-frontend/core", …)` holding them all: two mocks of the same path
@@ -37,10 +38,12 @@ Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--wit
    `scripts/graphql-codegen/generator.ts`; the plugin generates its own types (`yarn generate:graphql-types` in
    `StorefrontApp`, from `/graphql/<plugin-name>`; if the module's scope has another name, change `schema` in
    `codegen.ts`).
-7. **Switch over in one storefront release:** stop calling the module's `init` from the host. Running both registers
-   the feature twice. Keep the in-repo module behind a temporary theme setting until QA signs the plugin off
-   (sales-rep: `sales_rep_builtin_enabled`), then delete it. Every environment the release reaches needs the module
-   version that ships the plugin ([S6](./s6-enable-on-an-environment.md)), or the feature disappears.
+7. **Switch over in one storefront release:** stop calling the module's `init` from the host. Running both lets the
+   in-repo copy win: it registers first, so the plugin's routes, account sections and extension-registry entries with
+   the same names are refused or ignored, and only menu links merged through `mergeMenuSchema` appear twice. Keep the
+   in-repo module behind a temporary theme setting until QA signs the plugin off,
+   then delete it. Every environment the release reaches needs the module version that ships the plugin
+   ([S6](./s6-enable-on-an-environment.md)), or the feature disappears.
 
 ## ✅ Done when
 

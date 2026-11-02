@@ -1,0 +1,9 @@
+mutation DeleteSignInKey($command: InputDeleteSignInKeyType!) {
+  deleteSignInKey(command: $command) {
+    succeeded
+    errors {
+      code
+      description
+    }
+  }
+}

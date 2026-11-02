@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Cet article ne peut pas être acheté",
       "item_is_out_of_stock": "Cet article est en rupture de stock",
       "invalid_value": "Valeur invalide",
+      "invalid_characters": "Contient des caractères non valides",
+      "html_tags_not_allowed": "Les balises HTML ne sont pas autorisées",
+      "unsafe_content": "Contient un contenu non autorisé",
+      "invalid_addresses": "Certaines adresses ne sont pas valides",
+      "invalid_data": "Certaines données saisies ne sont pas valides",
       "invalid_user_id_or_token": "L'identifiant utilisateur ou le jeton est invalide.",
       "product_no_longer_available": "Plus disponible",
       "item_quantity_required_field": "La valeur de la quantité d'article ne peut pas être vide",
@@ -285,7 +290,8 @@
       "company_members": "Membres de l'entreprise",
       "contact_administrator": "contacter l'administrateur du site",
       "skip_to_main_content": "Aller au contenu principal",
-      "skip_to_footer": "Aller au pied de page"
+      "skip_to_footer": "Aller au pied de page",
+      "security": "Sécurité"
     },
     "titles": {
       "all_actions": "Toutes les actions",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Enregistré pour plus tard",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1486,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Tous les coupons et promotions",
         "no_lists": "Vous n'avez aucun coupon ni promotion"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Aucune clé",
+        "unnamed_key": "Clé sans nom",
+        "created": "Créée le {date}",
+        "changed": "Modifiée le {date}",
+        "rename_modal": {
+          "title": "Renommer la clé",
+          "name_label": "Nom"
+        },
+        "delete_modal": {
+          "title": "Supprimer la clé",
+          "message": "Vous ne pourrez plus vous connecter avec cette clé."
+        }
       }
     },
     "company": {
@@ -1825,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Les mots de passe doivent contenir au moins un caractère non alphanumérique",
     "PasswordRequiresUpper": "Les mots de passe doivent contenir au moins une lettre majuscule ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Les mots de passe doivent utiliser des caractères différents",
-    "RecentPasswordUsed": "Vous avez utilisé ce mot de passe dans le passé. Veuillez en créer un autre."
+    "RecentPasswordUsed": "Vous avez utilisé ce mot de passe dans le passé. Veuillez en créer un autre.",
+    "user_not_editable": "Cet utilisateur ne peut pas être modifié",
+    "sign_in_key_not_found": "La clé de connexion est introuvable",
+    "last_sign_in_key": "La dernière clé de connexion ne peut pas être supprimée",
+    "operation_not_supported": "Cette opération n'est pas prise en charge"
   },
   "password_tips": {
     "title": "Conseils pour créer un mot de passe fort :",

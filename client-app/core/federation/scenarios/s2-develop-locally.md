@@ -79,7 +79,9 @@ Your plugin needs a facade export that only exists in your `vc-frontend` checkou
 3. 📁 `vc-frontend`, after every facade change: `yarn core:yalc-push`
 4. If the plugin uses the new export, set `requiredHostVersion` to the facade version `build:core-types` produced.
 5. **Before committing the plugin**, 📁 `StorefrontApp`: `yalc remove @vc-frontend/core`, then pin the released
-   facade (S3).
+   facade (S3). If the plugin's CI or a QA environment needs it before the facade is released, pin an alpha
+   pre-release of the facade branch instead ([facade README §5](../../../core-api/README.md#5-releasing)), and move to
+   the stable release before the plugin merges.
 
 ✅ `yarn check:plugin-module` passes. It fails while a yalc link is still in `package.json`.
 

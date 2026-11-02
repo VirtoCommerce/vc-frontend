@@ -214,7 +214,7 @@ onMounted(() => {
     }
 
     &--nowrap {
-      @apply whitespace-nowrap #{!important};
+      @apply whitespace-nowrap;
     }
 
     &--max-lines {

@@ -52,15 +52,6 @@ A plugin can:
 1. The stock theme ships `"module_federation_enabled": true` in `client-app/config/settings_data.json`.
 2. To build a storefront without it, set it to `false` and rebuild. That build has no federation code, so no plugin
    loads.
-3. `sales_rep_builtin_enabled` (same file, ships `false`, temporary) runs the Sales Rep Hub built into the theme
-   instead of its plugin. It is read at build time too, so one build decides for every environment it goes to:
-
-   | Installed SalesRep | `false` (default)                                                       | `true`                  |
-   | ------------------ | ----------------------------------------------------------------------- | ----------------------- |
-   | ships the plugin   | the plugin's hub                                                        | the hub registers twice |
-   | ships no plugin    | **no hub, and buyers lose the Sales reps page**, with no error anywhere | the built-in hub        |
-
-   **Planned:** no released SalesRep ships the plugin yet ([TODO](./TODO.md)).
 
 > ⚠️ Only a literal `true` turns it on. A missing key, `"true"` or `1` all mean **off**.
 >
@@ -234,8 +225,11 @@ What the host does **not** do:
 1. **Permissions are not a security boundary.** A plugin's `permission` only decides whether a browser loads it.
    Its files are public by URL. **The backend must authorize every query.**
 2. **The manifest's contents are not checked.** A same-origin manifest may point its chunks anywhere.
-3. **No CSS fence yet** (**Planned**, VCST-5760). A plugin's stylesheet applies to the whole page. Prefer
-   `<style scoped>`.
+3. **No CSS fence yet** (**Planned**, VCST-5760). A plugin's stylesheet applies to the whole page, unlayered,
+   so it beats every layered host rule it matches except a layered `!important`
+   ([`assets/styles/README.md`](../../assets/styles/README.md)). The host reserves a `plugins` layer
+   (before its utilities) and a `plugins-vendor` layer (after its preflight) for plugin and bundled
+   third-party CSS; VCST-5760 moves plugin sheets into them. Prefer `<style scoped>`.
 4. **No integrity check** of plugin files. Deferred while plugins come from our own backend.
 
 What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything
@@ -275,7 +269,6 @@ Step by step, with every console message: [scenario S7](./scenarios/s7-missing-o
 | Setting                          | Where                                  | Read at    |
 | -------------------------------- | -------------------------------------- | ---------- |
 | `module_federation_enabled`      | `client-app/config/settings_data.json` | build time |
-| `sales_rep_builtin_enabled`      | `client-app/config/settings_data.json` | build time |
 | `APP_MODULES_FEDERATION_REMOTES` | environment                            | build time |
 
 **Files:**
