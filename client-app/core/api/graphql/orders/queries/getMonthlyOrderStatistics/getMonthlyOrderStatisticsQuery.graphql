@@ -1,0 +1,242 @@
+# The account dashboard's Sales report (VCST-6258): the signed-in user's OWN orders, as the stat cards count them
+# (GetOrderStatistics), so the two agree. One bucket per month of the selected period (up to 12) with the same month
+# last year, the month before the period for the first month's "vs previous month", and the user's whole history,
+# which tells "never ordered" (the empty state) from a quiet period. The statistics already leave Cancelled orders
+# out. `use<N>` switches off the slots a shorter period does not fill and the months that have not started.
+query GetMonthlyOrderStatistics(
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $prevFrom: DateTime
+  $prevTo: DateTime
+  $use0: Boolean!
+  $from0: DateTime
+  $to0: DateTime
+  $lyFrom0: DateTime
+  $lyTo0: DateTime
+  $use1: Boolean!
+  $from1: DateTime
+  $to1: DateTime
+  $lyFrom1: DateTime
+  $lyTo1: DateTime
+  $use2: Boolean!
+  $from2: DateTime
+  $to2: DateTime
+  $lyFrom2: DateTime
+  $lyTo2: DateTime
+  $use3: Boolean!
+  $from3: DateTime
+  $to3: DateTime
+  $lyFrom3: DateTime
+  $lyTo3: DateTime
+  $use4: Boolean!
+  $from4: DateTime
+  $to4: DateTime
+  $lyFrom4: DateTime
+  $lyTo4: DateTime
+  $use5: Boolean!
+  $from5: DateTime
+  $to5: DateTime
+  $lyFrom5: DateTime
+  $lyTo5: DateTime
+  $use6: Boolean!
+  $from6: DateTime
+  $to6: DateTime
+  $lyFrom6: DateTime
+  $lyTo6: DateTime
+  $use7: Boolean!
+  $from7: DateTime
+  $to7: DateTime
+  $lyFrom7: DateTime
+  $lyTo7: DateTime
+  $use8: Boolean!
+  $from8: DateTime
+  $to8: DateTime
+  $lyFrom8: DateTime
+  $lyTo8: DateTime
+  $use9: Boolean!
+  $from9: DateTime
+  $to9: DateTime
+  $lyFrom9: DateTime
+  $lyTo9: DateTime
+  $use10: Boolean!
+  $from10: DateTime
+  $to10: DateTime
+  $lyFrom10: DateTime
+  $lyTo10: DateTime
+  $use11: Boolean!
+  $from11: DateTime
+  $to11: DateTime
+  $lyFrom11: DateTime
+  $lyTo11: DateTime
+) {
+  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    currencyCode
+    all: period {
+      count
+      excludedCount
+    }
+    prev: period(from: $prevFrom, to: $prevTo) {
+      count
+      total {
+        amount
+      }
+    }
+    m0: period(from: $from0, to: $to0) @include(if: $use0) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly0: period(from: $lyFrom0, to: $lyTo0) @include(if: $use0) {
+      count
+      total {
+        amount
+      }
+    }
+    m1: period(from: $from1, to: $to1) @include(if: $use1) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly1: period(from: $lyFrom1, to: $lyTo1) @include(if: $use1) {
+      count
+      total {
+        amount
+      }
+    }
+    m2: period(from: $from2, to: $to2) @include(if: $use2) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly2: period(from: $lyFrom2, to: $lyTo2) @include(if: $use2) {
+      count
+      total {
+        amount
+      }
+    }
+    m3: period(from: $from3, to: $to3) @include(if: $use3) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly3: period(from: $lyFrom3, to: $lyTo3) @include(if: $use3) {
+      count
+      total {
+        amount
+      }
+    }
+    m4: period(from: $from4, to: $to4) @include(if: $use4) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly4: period(from: $lyFrom4, to: $lyTo4) @include(if: $use4) {
+      count
+      total {
+        amount
+      }
+    }
+    m5: period(from: $from5, to: $to5) @include(if: $use5) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly5: period(from: $lyFrom5, to: $lyTo5) @include(if: $use5) {
+      count
+      total {
+        amount
+      }
+    }
+    m6: period(from: $from6, to: $to6) @include(if: $use6) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly6: period(from: $lyFrom6, to: $lyTo6) @include(if: $use6) {
+      count
+      total {
+        amount
+      }
+    }
+    m7: period(from: $from7, to: $to7) @include(if: $use7) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly7: period(from: $lyFrom7, to: $lyTo7) @include(if: $use7) {
+      count
+      total {
+        amount
+      }
+    }
+    m8: period(from: $from8, to: $to8) @include(if: $use8) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly8: period(from: $lyFrom8, to: $lyTo8) @include(if: $use8) {
+      count
+      total {
+        amount
+      }
+    }
+    m9: period(from: $from9, to: $to9) @include(if: $use9) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly9: period(from: $lyFrom9, to: $lyTo9) @include(if: $use9) {
+      count
+      total {
+        amount
+      }
+    }
+    m10: period(from: $from10, to: $to10) @include(if: $use10) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly10: period(from: $lyFrom10, to: $lyTo10) @include(if: $use10) {
+      count
+      total {
+        amount
+      }
+    }
+    m11: period(from: $from11, to: $to11) @include(if: $use11) {
+      count
+      total {
+        amount
+      }
+      excludedCount
+    }
+    ly11: period(from: $lyFrom11, to: $lyTo11) @include(if: $use11) {
+      count
+      total {
+        amount
+      }
+    }
+  }
+}

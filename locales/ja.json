@@ -652,6 +652,9 @@
         "vs_last_year": "前年比 {delta}",
         "excluded_orders": "他の通貨の注文 {count} 件は含まれていません",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "売上レポート"
+        },
         "recent_orders": {
           "title": "自分の最近の注文",
           "view_all": "すべての注文",

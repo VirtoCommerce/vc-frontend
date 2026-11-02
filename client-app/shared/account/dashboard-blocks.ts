@@ -1,4 +1,5 @@
-// The account dashboard's blocks (VCST-6078): the buyer's own order figures as stat cards, and their recent orders.
+// The account dashboard's blocks (VCST-6078): the buyer's own order figures as stat cards, their sales report
+// (VCST-6258) and their recent orders.
 // app-runner registers them into the core layout engine before the app mounts, as a module registers its own in
 // `init()`. Only these tables load with the app; the queries behind them come with the dashboard page
 // (composables/useAccountDashboard.ts, components/dashboard/recent-orders-widget.vue).
@@ -48,14 +49,25 @@ export const ACCOUNT_DASHBOARD_CARDS = [
 
 // Load-bearing like the card keys.
 export const RECENT_ORDERS_BLOCK_ID = "recent_orders";
+export const SALES_REPORT_BLOCK_ID = "sales_report";
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
 const RecentOrdersWidget = markRaw(
   defineAsyncComponent(() => import("./components/dashboard/recent-orders-widget.vue")),
 );
 
+// The charts need the page's width: in a column they would squeeze a year of months into half of it.
+const SalesReportWidget = markRaw(defineAsyncComponent(() => import("./components/dashboard/sales-report-widget.vue")));
+
 const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
   ...statBlocks(ACCOUNT_DASHBOARD_CARDS),
+  {
+    id: SALES_REPORT_BLOCK_ID,
+    region: "fullWidth",
+    titleKey: "shared.account.dashboard.sales_report.title",
+    order: 10,
+    component: SalesReportWidget,
+  },
   {
     id: RECENT_ORDERS_BLOCK_ID,
     region: "mainLeft",

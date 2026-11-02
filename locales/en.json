@@ -652,6 +652,9 @@
         "vs_last_year": "{delta} vs last year",
         "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Sales report"
+        },
         "recent_orders": {
           "title": "My recent orders",
           "view_all": "All orders",
