@@ -29,8 +29,6 @@ const backendUrl = normalizeBackendUrl(process.env.APP_BACKEND_URL);
 const core = {
   apiPath: "client-app/core/api/graphql",
   commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
-  fragmentsPath: "client-app/core/api/graphql/fragments",
-  catalogFragmentsPath: "client-app/core/api/graphql/catalog/fragments",
   schemaPath: `${backendUrl}/graphql`,
   clientDirectivesPath: "client-app/core/api/graphql/_clientDirectives.graphql",
 } as const;
@@ -87,22 +85,6 @@ const independentModules: ModuleType[] = [
     schemaPath: `${backendUrl}/graphql/loyalty`,
     // Include specific core fragments that loyalty module uses
     requiredCommonFragments: [`${core.apiPath}/catalog/fragments/availabilityData.graphql`],
-  },
-  {
-    name: "SalesRep",
-    apiPath: "client-app/modules/sales-rep/api/graphql",
-    schemaPath: `${backendUrl}/graphql/sales-rep`,
-    // Codegen does not follow #import outside a module's own apiPath, so the storefront fragments the
-    // read-only order page reuses have to be listed here.
-    requiredCommonFragments: [
-      `${core.commonFragmentsPath}/money.graphql`,
-      `${core.commonFragmentsPath}/currency.graphql`,
-      `${core.catalogFragmentsPath}/property.graphql`,
-      `${core.fragmentsPath}/fullOrderFields.graphql`,
-      `${core.fragmentsPath}/shortOrderFields.graphql`,
-      `${core.fragmentsPath}/orderAddressFields.graphql`,
-      `${core.fragmentsPath}/orderLineItemFields.graphql`,
-    ],
   },
   {
     name: "Returns",
