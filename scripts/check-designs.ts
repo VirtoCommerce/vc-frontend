@@ -1122,9 +1122,19 @@ export async function checkPresets({
   const semantics = colorSemantics(colorsFile);
   const errors: string[] = [];
 
-  for (const name of files) {
+  const compiled = await Promise.all(
+    files.map(async (name) => {
+      const compileErrors: string[] = [];
+      const css = await compileOrReport(path.join(presetsDir, name), presetsDir, compileErrors);
+
+      return { css, compileErrors };
+    }),
+  );
+
+  for (const [position, name] of files.entries()) {
     const file = path.join(presetsDir, name);
     const preset = path.basename(name, ".scss");
+    const { css, compileErrors } = compiled[position];
 
     if (preset.endsWith(".dark")) {
       errors.push(`${file}  dark rules go in ${preset.slice(0, -".dark".length)}.scss under html.dark[data-preset]`);
@@ -1136,7 +1146,7 @@ export async function checkPresets({
       errors.push(`${file}  is a preset's stylesheet only next to its preset: ${preset}.json is missing`);
     }
 
-    const css = await compileOrReport(file, presetsDir, errors);
+    errors.push(...compileErrors);
 
     if (css) {
       errors.push(...checkPresetFile(css, file, preset, blocks, semantics));
