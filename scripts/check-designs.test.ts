@@ -156,14 +156,24 @@ describe("check-designs", () => {
       expect(checkPresetSelector(selector, "mercury", blocks)).toBeNull();
     });
 
-    it.each([".vc-button", 'html[data-preset="red"] .vc-button', MERCURY, `${MERCURY}:hover .vc-button`])(
-      "rejects %s, which is not below the preset's html",
+    it.each([MERCURY, 'html.dark[data-preset="mercury"]', "html[data-preset=mercury].dark"])(
+      "allows the preset's html alone, %s, which takes tokens",
       (selector) => {
-        expect(checkPresetSelector(selector, "mercury", blocks)).toContain(
-          `a preset stylesheet styles blocks below ${MERCURY} or html.dark[data-preset="mercury"]`,
-        );
+        expect(checkPresetSelector(selector, "mercury", blocks)).toBeNull();
       },
     );
+
+    it.each([
+      ".vc-button",
+      'html[data-preset="red"] .vc-button',
+      'html[data-preset="red"]',
+      `${MERCURY}:hover`,
+      `${MERCURY}:hover .vc-button`,
+    ])("rejects %s, which is neither the preset's html nor below it", (selector) => {
+      expect(checkPresetSelector(selector, "mercury", blocks)).toContain(
+        `a preset stylesheet sets tokens on ${MERCURY} or html.dark[data-preset="mercury"], or styles blocks below them`,
+      );
+    });
 
     it.each([`${MERCURY} .dark .vc-button`, `${MERCURY} [data-design="soft"] .vc-button`])(
       "rejects %s, which names the prefix again",
@@ -919,6 +929,27 @@ ${loads("dark")}  }
       expect(await check({ "mercury.scss": css })).toEqual([]);
     });
 
+    it("passes colour tokens on the preset's html in light and dark", async () => {
+      const css = `@layer vc.preset {
+        ${MERCURY} { --vc-widget-bg-color: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50)); }
+        ${DARK_MERCURY} { --vc-widget-divide-color: var(--color-neutral-300); }
+      }`;
+
+      expect(await check({ "mercury.scss": css })).toEqual([]);
+    });
+
+    it("checks two preset stylesheets in one run and reports in file order", async () => {
+      expect(
+        await check({
+          "red.scss": '@layer vc.preset { html[data-preset="red"] { --vc-widget-bg-color: #fff; } }',
+          "mercury.scss": `@layer vc.preset { ${MERCURY} .vc-button { margin: 0; } }`,
+        }),
+      ).toEqual([
+        expect.stringMatching(/mercury\.scss:1 .*margin: a preset stylesheet sets colours only/),
+        expect.stringMatching(/red\.scss:1 .*--vc-widget-bg-color: #fff is a literal colour/),
+      ]);
+    });
+
     it("checks nothing when there is no preset stylesheet", async () => {
       root = mkdtempSync(path.join(tmpdir(), "presets-"));
 
@@ -955,7 +986,27 @@ ${loads("dark")}  }
       [
         "a rule below another preset",
         '@layer vc.preset { html[data-preset="red"] .vc-button { color: inherit; } }',
-        "a preset stylesheet styles blocks below",
+        "a preset stylesheet sets tokens on",
+      ],
+      [
+        "a token on another preset's html",
+        '@layer vc.preset { html[data-preset="red"] { --vc-widget-bg-color: var(--color-additional-50); } }',
+        "a preset stylesheet sets tokens on",
+      ],
+      [
+        "a property that is not a token on the preset's html",
+        `@layer vc.preset { ${MERCURY} { color: var(--color-primary-500); } }`,
+        "color: the preset's html takes public --vc-* tokens only",
+      ],
+      [
+        "a preset key on the preset's html",
+        `@layer vc.preset { ${DARK_MERCURY} { --color-primary-500: var(--color-danger-500); } }`,
+        "--color-primary-500: the preset's html takes public --vc-* tokens only",
+      ],
+      [
+        "a public token that is not a colour on the preset's html",
+        `@layer vc.preset { ${MERCURY} { --vc-widget-radius: 0; } }`,
+        "--vc-widget-radius: a preset stylesheet sets colours only",
       ],
       [
         "a selector that styles no block",

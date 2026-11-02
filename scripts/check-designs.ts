@@ -116,6 +116,7 @@ steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow
 const PRESET_VARIABLE = /^--(?:color|vc|tw)-/;
 /** A component's public token or Tailwind's own; any other custom property is a component's private one. */
 const PUBLIC_VARIABLE = /^--(?:vc|tw)-/;
+const VC_TOKEN = /^--vc-/;
 const COLOR_RULE = "colours come only from preset variables";
 const QUOTED_OR_URL = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
 const VAR_REFERENCE = /var\(\s*(--[^\s,)]+)/gi;
@@ -301,10 +302,15 @@ export function checkForeignBlocks(selector: string, own: string, blocks: Set<st
   return problem;
 }
 
-export function checkTokensSelector(selector: string, design: string): string | null {
+/** The html element alone, `html[data-design="<name>"]` or `html.dark[data-design="<name>"]`: tokens go there. */
+function isRootSelector(selector: string, name: string, attribute = "data-design"): boolean {
   const compounds = splitCompounds(selector);
 
-  return compounds.length === 1 && prefixKind(compounds[0], design)
+  return compounds.length === 1 && prefixKind(compounds[0], name, attribute) !== undefined;
+}
+
+export function checkTokensSelector(selector: string, design: string): string | null {
+  return isRootSelector(selector, design)
     ? null
     : `"${selector}": _tokens.scss sets tokens only on html[data-design="${design}"] or html.dark[data-design="${design}"]`;
 }
@@ -357,12 +363,16 @@ function isWiring(node: selectorParser.Node): boolean {
   );
 }
 
-/** `null` when a preset stylesheet's selector is allowed, otherwise why it is not. */
+/** `null` when a preset stylesheet's selector is allowed, otherwise why it is not. The preset's html alone takes tokens. */
 export function checkPresetSelector(selector: string, preset: string, blocks: Set<string>): string | null {
   const [prefix, ...below] = splitCompounds(selector);
 
-  if (!prefixKind(prefix, preset, "data-preset") || !below.length) {
-    return `"${selector}": a preset stylesheet styles blocks below html[data-preset="${preset}"] or html.dark[data-preset="${preset}"]`;
+  if (!prefixKind(prefix, preset, "data-preset")) {
+    return `"${selector}": a preset stylesheet sets tokens on html[data-preset="${preset}"] or html.dark[data-preset="${preset}"], or styles blocks below them`;
+  }
+
+  if (!below.length) {
+    return null;
   }
 
   if (below.flat().some(isWiring)) {
@@ -1073,6 +1083,13 @@ function presetRuleProblems(rule: Rule, preset: string, blocks: Set<string>): st
   return problems.filter((problem): problem is string => problem !== null);
 }
 
+/** A declaration on the preset's html alone, where a token is inherited, so a block's own setting wins. */
+function isOnPresetRoot(node: Declaration, preset: string): boolean {
+  const rule = node.parent;
+
+  return rule?.type === "rule" && rule.selectors.some((selector) => isRootSelector(selector, preset, "data-preset"));
+}
+
 function checkPresetFile(
   css: Root,
   file: string,
@@ -1091,7 +1108,10 @@ function checkPresetFile(
         report(node, problem);
       }
     } else if (node.type === "decl") {
-      const problem = colorProblem(node, semantics, true);
+      const problem =
+        isOnPresetRoot(node, preset) && !VC_TOKEN.test(unescapeIdent(node.prop))
+          ? "the preset's html takes public --vc-* tokens only"
+          : colorProblem(node, semantics, true);
 
       if (problem) {
         reportColor(node, problem);
