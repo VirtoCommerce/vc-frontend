@@ -1233,6 +1233,7 @@
         "reorder": "Reorder {title}",
         "hide": "Hide {title}",
         "show": "Show {title}",
+        "editing": "Editing layout. Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
         "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
         "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
         "moved": "{title} moved to position {position} of {total}.",

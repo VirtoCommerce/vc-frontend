@@ -54,7 +54,7 @@
             :scope="layout.scope"
             :entries="visibleIn('mainLeft')"
             orientation="vertical"
-            :group="`layout-${layout.scope}-main-left`"
+            :group="`${componentId}-main-left`"
             :editing="editing"
             @reorder="reorderVisible('mainLeft', $event)"
             @set-hidden="toggleHidden"
@@ -81,7 +81,7 @@
           :scope="layout.scope"
           :entries="visibleIn('mainRight')"
           orientation="vertical"
-          :group="`layout-${layout.scope}-main-right`"
+          :group="`${componentId}-main-right`"
           :editing="editing"
           @reorder="reorderVisible('mainRight', $event)"
           @set-hidden="toggleHidden"
@@ -116,6 +116,7 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
 import { useLayoutPage } from "../composables/_internal/useLayoutPage";
 import { provideLayoutSettings } from "../composables/_internal/useLayoutSettings";
 import { getBlock } from "../registry";
@@ -148,6 +149,8 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
+// Drag groups per instance, not per scope: two surfaces of one dashboard on a page must not trade blocks.
+const componentId = useComponentId("layout-surface");
 
 // A surface's controller is structural — one page, one layout, for its whole life.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design

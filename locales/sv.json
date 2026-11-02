@@ -1233,6 +1233,7 @@
         "reorder": "Ändra ordning på {title}",
         "hide": "Dölj {title}",
         "show": "Visa {title}",
+        "editing": "Redigerar layout. Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
         "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
         "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
         "moved": "{title} flyttad till position {position} av {total}.",

@@ -100,9 +100,9 @@ const { t } = useI18n();
 // Per instance, not per scope: two surfaces of one dashboard on a page would otherwise label each other's zones.
 const componentId = useComponentId("layout-stats");
 
-// One group name per surface, shared by both zones — that shared name is what makes a card
-// draggable from visible to hidden and back.
-const group = computed(() => `layout-stats-${props.scope}`);
+// One group per stat row, shared by both of its zones: the shared name is what makes a card draggable from
+// visible to hidden and back, and the instance id keeps it within this row.
+const group = `${componentId}-cards`;
 
 // Keyed by id and built once per cards change, not per lookup: the row re-renders on every drag step. The
 // template's `v-if` skips an id with no card.

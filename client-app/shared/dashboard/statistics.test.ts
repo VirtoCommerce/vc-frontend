@@ -44,6 +44,14 @@ describe("buildStatisticsWindows", () => {
     expect(w.lastYearTo).toBe(localIso(2027, 1, 28, 23, 59, 59, 999));
   });
 
+  // 22:30 in New York is already the next day in UTC: today's date, month, year and weekday come from the user's clock.
+  it("takes today from the user's clock when UTC is already on the next day", () => {
+    const w = buildStatisticsWindows(new Date(2024, 11, 31, 22, 30));
+
+    expect(w.mtdTo).toBe(localIso(2024, 11, 31, 23, 59, 59, 999));
+    expect(w.weekFrom).toBe(localIso(2024, 11, 30));
+  });
+
   it("matches the previous-month window to the same day of that month (no clamp) mid-month", () => {
     // Mar 15 → the baseline runs Feb 1 through the end of Feb 15: equal spans, no overflow to clamp.
     const now = new Date(2025, 2, 15, 12, 0, 0);

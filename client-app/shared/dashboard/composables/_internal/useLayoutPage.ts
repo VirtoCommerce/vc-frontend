@@ -11,7 +11,7 @@ export function useLayoutPage(layout: LayoutControllerType) {
   const { t } = useI18n();
   const { scope } = layout;
   const { message, announce, say } = useLayoutAnnouncer(scope);
-  const { setHidden, visibleIn, hiddenIn, editing, saveFailed } = layout;
+  const { setHidden, visibleIn, hiddenIn, editing, saveFailed, canEdit } = layout;
 
   // Widgets from both columns share one tray; the stat row has its own paired zone instead.
   const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
@@ -59,7 +59,7 @@ export function useLayoutPage(layout: LayoutControllerType) {
   // discoverable by grabbing something. Exit unmounts the edit bar that held focus.
   watch(editing, (now, was) => {
     if (now && !was) {
-      say(`${t("shared.dashboard.editing")}. ${t("shared.dashboard.hint_keyboard")}`);
+      say(t("shared.dashboard.a11y.editing"));
     } else if (was && !now) {
       focusEditToggle();
     }
@@ -70,6 +70,17 @@ export function useLayoutPage(layout: LayoutControllerType) {
   watch(saveFailed, (failed) => {
     if (failed) {
       say(t("shared.dashboard.save_failed"));
+      if (canEdit.value) {
+        focusSaveButton();
+      }
+    }
+  });
+
+  // After a save the backend echoed back differently, Save stays disabled while the stored document is read
+  // again, so the failure above leaves focus alone. Once the read lands, Save takes it — unless the user has
+  // moved it meanwhile.
+  watch(canEdit, (editable) => {
+    if (editable && editing.value && saveFailed.value && document.activeElement === document.body) {
       focusSaveButton();
     }
   });
