@@ -39,7 +39,8 @@ How to verify:
   `&globals=design:<design>;themePreset:<preset>;darkMode:dark` appended to a story or Docs URL.
 - `yarn check:designs`: every design folder and preset stylesheet ([Checks](#checks)).
 - `yarn test:unit run scripts/design-token-table.test.ts`: the [token table](#token-table) lists every token read.
-- Classic must compute exactly as before: compare computed styles (`getComputedStyle`), not screenshots.
+- A change for one design or one preset leaves classic computing exactly as before: compare computed styles
+  (`getComputedStyle`), not screenshots.
 - One story set per component: the toolbars show it in every design and preset; no per-design story, none pins a design.
 - `yarn build && yarn check:css-layers` after a change to the layer order or an entry stylesheet.
 
