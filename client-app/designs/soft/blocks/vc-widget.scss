@@ -1,6 +1,7 @@
 .vc-widget {
   $self: &;
   $lg: "";
+  $slot-container: "";
 
   // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
   &--size--xs,
@@ -12,10 +13,16 @@
     $lg: &;
   }
 
-  // Short plates take the smaller radius, so they never turn into pills.
+  &__slot-container {
+    $slot-container: &;
+  }
+
+  // Short plates take the smaller radius: small and collapsed widgets, and a widget with only a header or
+  // only a footer. A widget with only a one-line body has nothing to key on and still draws a pill.
   &--size--xs,
   &--size--sm,
-  &--collapsed {
+  &--collapsed,
+  &:not(:has(> :nth-child(2))):not(:has(> #{$slot-container})) {
     --vc-widget-radius: var(--vc-radius);
   }
 
