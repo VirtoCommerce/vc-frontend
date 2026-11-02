@@ -10,7 +10,7 @@
 
     <!-- Charts of zeros would read as a quiet period; a user who never ordered gets the way to the catalog instead. -->
     <VcEmptyView
-      v-if="hasOrders === false && !loading"
+      v-if="hasOrders === false && !failed"
       :text="$t('shared.account.dashboard.recent_orders.empty')"
       icon="outline-order"
       data-test-id="sales-report-empty-section"
@@ -28,13 +28,7 @@
 
     <template v-else>
       <!-- The KPI tiles as on the Sales Rep Hub Reporting page; the table stays behind "All orders". -->
-      <ReportingPanel
-        v-model:period="period"
-        :data="data"
-        :loading="loading"
-        :error="failed"
-        :with-table="false"
-      />
+      <ReportingPanel v-model:period="period" :data="data" :loading="loading" :error="failed" :with-table="false" />
 
       <p
         v-if="excludedCount && !failed"

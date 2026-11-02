@@ -13,16 +13,19 @@ import type { Ref } from "vue";
 
 type StatisticsType = NonNullable<GetMonthlyOrderStatisticsQuery["orderStatistics"]>;
 
+type QueryStateType = { result: Ref<unknown>; loading: Ref<boolean>; error: Ref<unknown> };
+
 // Reset per test in beforeEach; refs are created there, after `vue` is importable.
-const query = vi.hoisted(() => ({}) as { result: Ref<unknown>; loading: Ref<boolean>; error: Ref<unknown> });
+const queries = vi.hoisted(
+  () => ({}) as { monthly: QueryStateType; history: QueryStateType; historyVariables: unknown[] },
+);
 
 vi.mock("@/core/api/graphql/orders", () => ({
-  useGetMonthlyOrderStatisticsQuery: () => ({
-    result: query.result,
-    loading: query.loading,
-    error: query.error,
-    onError: vi.fn(),
-  }),
+  useGetMonthlyOrderStatisticsQuery: () => ({ ...queries.monthly, onError: vi.fn() }),
+  useGetOrderStatisticsHistoryQuery: (variables: Ref<unknown>) => {
+    queries.historyVariables.push(variables.value);
+    return { ...queries.history, onError: vi.fn() };
+  },
 }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn() } }));
@@ -35,16 +38,17 @@ const slot = (amount: number, count: number, excludedCount = 0) => ({ count, tot
 function statistics(overrides: Partial<StatisticsType> = {}): StatisticsType {
   return {
     currencyCode: "USD",
-    all: { count: 7, excludedCount: 0 },
     prev: slot(100, 1),
     ...overrides,
   };
 }
 
+const history = (count: number, excludedCount = 0) => ({ orderStatistics: { all: { count, excludedCount } } });
+
 beforeEach(() => {
-  query.result = ref(undefined);
-  query.loading = ref(false);
-  query.error = ref(null);
+  queries.monthly = { result: ref(undefined), loading: ref(false), error: ref(null) };
+  queries.history = { result: ref(undefined), loading: ref(false), error: ref(null) };
+  queries.historyVariables = [];
 });
 
 describe("monthlyOrderStatisticsVariables", () => {
@@ -89,7 +93,10 @@ describe("excludedOrdersCount", () => {
 describe("useAccountSalesReport", () => {
   function run() {
     const scope = effectScope();
-    const report = scope.run(() => useAccountSalesReport("year"))!;
+    const report = scope.run(() => useAccountSalesReport("year"));
+    if (!report) {
+      throw new Error("the scope did not run");
+    }
     return report;
   }
 
@@ -104,23 +111,35 @@ describe("useAccountSalesReport", () => {
   it("tells a user who never ordered from a quiet period, counting orders in other currencies as orders", async () => {
     const report = run();
 
-    query.result.value = {
-      orderStatistics: statistics({ all: { count: 0, excludedCount: 0 } }),
-    };
+    queries.history.result.value = history(0);
     await flushPromises();
     expect(report.hasOrders.value).toBe(false);
 
-    query.result.value = {
-      orderStatistics: statistics({ all: { count: 0, excludedCount: 1 } }),
-    };
+    queries.history.result.value = history(0, 1);
     await flushPromises();
     expect(report.hasOrders.value).toBe(true);
+  });
+
+  // The history has no date window, so it stays one request for the page's life whatever period is picked.
+  it("asks for the history with the store context only", () => {
+    run();
+
+    expect(queries.historyVariables).toEqual([{ storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US" }]);
+  });
+
+  it("keeps the report on when the history cannot be read", () => {
+    queries.history.error.value = new Error("down");
+
+    const report = run();
+
+    expect(report.hasOrders.value).toBeUndefined();
+    expect(report.failed.value).toBe(false);
   });
 
   it("hands the report the figures with the plan they were asked for", async () => {
     const report = run();
 
-    query.result.value = { orderStatistics: statistics({ m0: slot(500, 2) }) };
+    queries.monthly.result.value = { orderStatistics: statistics({ m0: slot(500, 2) }) };
     await flushPromises();
 
     expect(report.data.value?.plan.period).toBe("year");
@@ -128,7 +147,7 @@ describe("useAccountSalesReport", () => {
   });
 
   it("reports a failed read", () => {
-    query.error.value = new Error("down");
+    queries.monthly.error.value = new Error("down");
 
     expect(run().failed.value).toBe(true);
   });

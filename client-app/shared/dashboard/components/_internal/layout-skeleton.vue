@@ -7,7 +7,7 @@
 
     <div v-if="fullIds.length" class="layout-skeleton__full">
       <VcWidgetSkeleton v-for="id in fullIds" :key="id" head size="md">
-        <div v-for="row in BLOCK_ROWS" :key="row"></div>
+        <div v-for="row in rowsOf(id)" :key="row"></div>
       </VcWidgetSkeleton>
     </div>
 
@@ -16,7 +16,7 @@
            layout-surface, and `md` is the size every registered widget renders at. -->
       <div v-for="column in columns" :key="column.name" :class="`layout-skeleton__${column.name}`">
         <VcWidgetSkeleton v-for="id in column.blocks" :key="id" head size="md">
-          <div v-for="row in BLOCK_ROWS" :key="row"></div>
+          <div v-for="row in rowsOf(id)" :key="row"></div>
         </VcWidgetSkeleton>
       </div>
     </div>
@@ -35,7 +35,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// One count for all: the real widget renders as many rows as its list has entries.
+// A short list's height, for a block that names none of its own (`skeletonRows`).
 const BLOCK_ROWS = 5;
 
 // A never-saved layout's arrangement: the saved one is exactly what is not known yet.
@@ -49,6 +49,11 @@ const titleOf = (id: string): string => {
   const titleKey = getBlock(props.scope, id)?.titleKey;
   return titleKey ? t(titleKey) : "";
 };
+
+function rowsOf(id: string): number {
+  const block = getBlock(props.scope, id);
+  return (block && "skeletonRows" in block ? block.skeletonRows : undefined) ?? BLOCK_ROWS;
+}
 
 const columns = computed(() =>
   [

@@ -86,6 +86,23 @@ describe("SalesReportWidget", () => {
     expect(wrapper.findComponent(ReportingPanelStub).exists()).toBe(false);
   });
 
+  // A revisit reads "never ordered" from the cache while the network refreshes it: no zeros in between.
+  it("keeps the empty state while a refresh is loading", () => {
+    report.state.hasOrders.value = false;
+    report.state.loading.value = true;
+
+    expect(mountWidget().find('[data-test-id="sales-report-empty-section"]').exists()).toBe(true);
+  });
+
+  it("shows a failed read rather than the empty state", () => {
+    report.state.hasOrders.value = false;
+    report.state.failed.value = true;
+    const wrapper = mountWidget();
+
+    expect(wrapper.find('[data-test-id="sales-report-empty-section"]').exists()).toBe(false);
+    expect(wrapper.findComponent(ReportingPanelStub).props("error")).toBe(true);
+  });
+
   it("keeps the report while the history is still unknown", () => {
     report.state.hasOrders.value = undefined;
 

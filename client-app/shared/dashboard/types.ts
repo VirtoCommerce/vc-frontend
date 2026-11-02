@@ -50,6 +50,11 @@ export interface IWidgetBlock extends IBlockBase {
   props?: Record<string, unknown>;
   /** What the user can configure in edit mode. Absent = nothing, which is most blocks. */
   settings?: readonly BlockSettingType[];
+  /**
+   * Placeholder lines (1.5rem each) the loading skeleton draws for this block, so the page does not jump when the
+   * block replaces it. Default 5, a short list; a block much taller than that sets its own.
+   */
+  skeletonRows?: number;
 }
 
 export type BlockType = IStatBlock | IWidgetBlock;

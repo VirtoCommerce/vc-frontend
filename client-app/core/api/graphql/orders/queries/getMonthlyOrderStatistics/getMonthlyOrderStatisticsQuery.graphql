@@ -1,8 +1,8 @@
-# The account dashboard's Sales report (VCST-6258): the signed-in user's OWN orders, as the stat cards count them
+# The account dashboard's Sales Statistics (VCST-6258): the signed-in user's OWN orders, as the stat cards count them
 # (GetOrderStatistics), so the two agree. One bucket per month of the selected period (up to 12) with the same month
-# last year, the month before the period for the first month's "vs previous month", and the user's whole history,
-# which tells "never ordered" (the empty state) from a quiet period. The statistics already leave Cancelled orders
-# out. `use<N>` switches off the slots a shorter period does not fill and the months that have not started.
+# last year, and the month before the period for the first month's "vs previous month". The statistics already leave
+# Cancelled orders out. `use<N>` switches off the slots a shorter period does not fill and the months that have not
+# started.
 query GetMonthlyOrderStatistics(
   $storeId: String
   $currencyCode: String
@@ -72,10 +72,6 @@ query GetMonthlyOrderStatistics(
 ) {
   orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
     currencyCode
-    all: period {
-      count
-      excludedCount
-    }
     prev: period(from: $prevFrom, to: $prevTo) {
       count
       total {

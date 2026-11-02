@@ -1,0 +1,11 @@
+# Whether the signed-in user ever ordered: the account dashboard's Sales Statistics shows its empty state instead of
+# tiles and charts of zeros when not. Its own operation, with variables that never change on the page, so switching
+# the report's period does not make the backend count the user's whole history again.
+query GetOrderStatisticsHistory($storeId: String, $currencyCode: String, $cultureName: String) {
+  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    all: period {
+      count
+      excludedCount
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { computed, shallowRef, watch } from "vue";
-import { useGetMonthlyOrderStatisticsQuery } from "@/core/api/graphql/orders";
+import { useGetMonthlyOrderStatisticsQuery, useGetOrderStatisticsHistoryQuery } from "@/core/api/graphql/orders";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { REPORTING_MONTH_SLOTS, useReportingPlan } from "@/shared/reporting";
@@ -13,7 +13,12 @@ import type {
 import type { MaybeRefOrGetter } from "vue";
 
 type MonthlyStatisticsType = NonNullable<GetMonthlyOrderStatisticsQuery["orderStatistics"]>;
-type SlotKeyType = Exclude<keyof MonthlyStatisticsType, "currencyCode" | "all">;
+type SlotKeyType = Exclude<keyof MonthlyStatisticsType, "currencyCode">;
+
+// The stat cards' store, currency and culture, so the report's figures agree with theirs.
+function storeContext() {
+  return { storeId: globals.storeId, currencyCode: globals.currencyCode, cultureName: globals.cultureName };
+}
 
 /** The query's month windows for one plan: a slot a shorter period leaves empty, or a month to come, is not asked for. */
 export function monthlyOrderStatisticsVariables(plan: ReportingPlanType): GetMonthlyOrderStatisticsQueryVariables {
@@ -27,10 +32,7 @@ export function monthlyOrderStatisticsVariables(plan: ReportingPlanType): GetMon
     slots[`lyTo${i}`] = month?.lyTo;
   }
   return {
-    storeId: globals.storeId,
-    // The stat cards' currency and culture, so the report's figures agree with theirs.
-    currencyCode: globals.currencyCode,
-    cultureName: globals.cultureName,
+    ...storeContext(),
     prevFrom: plan.previous.from,
     prevTo: plan.previous.to,
     ...slots,
@@ -62,7 +64,7 @@ export function excludedOrdersCount(plan: ReportingPlanType, statistics: Monthly
 }
 
 /**
- * The account dashboard's Sales report: the signed-in user's own orders month by month, with last year beside them,
+ * The account dashboard's Sales Statistics: the signed-in user's own orders month by month, with last year beside them,
  * from the same `orderStatistics` the stat cards read, so the two agree. Cancelled orders are already left out.
  */
 export function useAccountSalesReport(period: MaybeRefOrGetter<ReportingPeriodType>) {
@@ -74,6 +76,14 @@ export function useAccountSalesReport(period: MaybeRefOrGetter<ReportingPeriodTy
   onError((queryError) => {
     // No toast: the report names the failure itself.
     Logger.error("[account dashboard] monthly orderStatistics failed:", queryError);
+  });
+
+  // Apart from the months, so a period switch does not count the whole history again. A failure only leaves
+  // "ever ordered" unknown, and the report shows as for a buyer with orders.
+  const history = useGetOrderStatisticsHistoryQuery(computed(storeContext));
+
+  history.onError((queryError) => {
+    Logger.error("[account dashboard] orderStatistics history failed:", queryError);
   });
 
   // `result` keeps the previous response until the next one lands, and its month aliases are positional (m0…m11),
@@ -96,7 +106,7 @@ export function useAccountSalesReport(period: MaybeRefOrGetter<ReportingPeriodTy
     ),
     /** False only once the user's whole history is known to hold no order at all; undefined until then. */
     hasOrders: computed(() => {
-      const all = settled.value?.statistics.all;
+      const all = history.result.value?.orderStatistics?.all;
       return all ? all.count + all.excludedCount > 0 : undefined;
     }),
     loading,

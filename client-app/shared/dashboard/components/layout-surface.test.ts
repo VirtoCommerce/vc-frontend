@@ -376,7 +376,15 @@ describe("LayoutSurface full-width region", () => {
   const Wide = defineComponent({ setup: () => () => h("div", { "data-test-id": "wide-block" }) });
 
   registerTestDashboard(FULL_SCOPE);
-  registerBlock(FULL_SCOPE, { id: WIDE_ID, region: "fullWidth", titleKey: "wide.title", order: 1, component: Wide });
+  const WIDE_SKELETON_ROWS = 12;
+  registerBlock(FULL_SCOPE, {
+    id: WIDE_ID,
+    region: "fullWidth",
+    titleKey: "wide.title",
+    order: 1,
+    component: Wide,
+    skeletonRows: WIDE_SKELETON_ROWS,
+  });
 
   function regionWithGroup(wrapper: ReturnType<typeof mountSurface>, group: string) {
     return wrapper.findAllComponents(LayoutRegion).find((region) => region.props("group") === group);
@@ -390,9 +398,20 @@ describe("LayoutSurface full-width region", () => {
     const stats = wrapper.getComponent(LayoutStats).element;
     const firstColumn = wrapper.get('[data-block-id="list"]').element;
 
-    expect(full?.find('[data-test-id="wide-block"]').exists()).toBe(true);
-    expect(stats.compareDocumentPosition(full!.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(full!.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    if (!full) {
+      throw new Error("the full-width region did not render");
+    }
+    expect(full.find('[data-test-id="wide-block"]').exists()).toBe(true);
+    expect(stats.compareDocumentPosition(full.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(full.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  // A tall block's placeholder is as tall as the block, so the columns below do not jump when it lands.
+  it("draws a block's own number of placeholder lines while the layout is read", () => {
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { read: "pending" }));
+    const lines = wrapper.findAll(".layout-skeleton__full .vc-widget-skeleton__slot > div");
+
+    expect(lines).toHaveLength(WIDE_SKELETON_ROWS);
   });
 
   it("does not mount the region on a dashboard with no full-width block", async () => {

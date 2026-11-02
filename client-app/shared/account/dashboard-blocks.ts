@@ -50,6 +50,7 @@ export const ACCOUNT_DASHBOARD_CARDS = [
 // Load-bearing like the card keys.
 export const RECENT_ORDERS_BLOCK_ID = "recent_orders";
 export const SALES_REPORT_BLOCK_ID = "sales_report";
+const SALES_REPORT_SKELETON_ROWS = 36;
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
 const RecentOrdersWidget = markRaw(
@@ -67,6 +68,8 @@ const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
     titleKey: "shared.account.dashboard.sales_report.title",
     order: 10,
     component: SalesReportWidget,
+    // The period row, the KPI tiles and two charts: about 900px at desktop width.
+    skeletonRows: SALES_REPORT_SKELETON_ROWS,
   },
   {
     id: RECENT_ORDERS_BLOCK_ID,
