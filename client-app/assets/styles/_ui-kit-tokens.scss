@@ -11,7 +11,7 @@
   // Focus ring — shared by every component
   // ============================================================
   // Mid-luminance accent clears 3:1 on page surfaces in every preset, light and dark
-  // (dark raises it to accent-600, _dark.scss). Known gap: coffee light, where the
+  // (dark raises it to accent-600, _dark-kit.scss). Known gap: coffee light, where the
   // header, footer top and mobile menu all share #3d2b24 and measure 2.97.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-500));
 
