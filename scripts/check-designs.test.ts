@@ -937,6 +937,14 @@ ${loads("dark")}  }
       ).toEqual([expect.stringContaining("ghost.json is missing")]);
     });
 
+    it("rejects a separate dark preset stylesheet", async () => {
+      expect(
+        await check({
+          "mercury.dark.scss": `@layer vc.preset { ${DARK_MERCURY} .vc-button { color: inherit; } }`,
+        }),
+      ).toEqual([expect.stringContaining("dark rules go in mercury.scss under html.dark[data-preset]")]);
+    });
+
     it.each([
       ["a rule outside the layer", `${MERCURY} .vc-button { color: inherit; }`, "ships outside @layer vc.preset"],
       [

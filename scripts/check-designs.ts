@@ -1126,6 +1126,12 @@ export async function checkPresets({
     const file = path.join(presetsDir, name);
     const preset = path.basename(name, ".scss");
 
+    if (preset.endsWith(".dark")) {
+      errors.push(`${file}  dark rules go in ${preset.slice(0, -".dark".length)}.scss under html.dark[data-preset]`);
+
+      continue;
+    }
+
     if (!existsSync(path.join(presetsDir, `${preset}.json`))) {
       errors.push(`${file}  is a preset's stylesheet only next to its preset: ${preset}.json is missing`);
     }
