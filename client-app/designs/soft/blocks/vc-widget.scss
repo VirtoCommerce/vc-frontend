@@ -1,6 +1,7 @@
 .vc-widget {
-  $self: &;
   $lg: "";
+  $header-container: "";
+  $header: "";
   $slot-container: "";
 
   // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
@@ -11,6 +12,14 @@
 
   &--size--lg {
     $lg: &;
+  }
+
+  &__header-container {
+    $header-container: &;
+  }
+
+  &__header {
+    $header: &;
   }
 
   &__slot-container {
@@ -33,7 +42,7 @@
 
   &__title {
     // The lg widget's own title only: a widget nested in its body keeps its title size.
-    #{$lg} > #{$self}__header-container > #{$self}__header > & {
+    #{$lg} > #{$header-container} > #{$header} > & {
       font-size: theme("fontSize.base");
     }
   }

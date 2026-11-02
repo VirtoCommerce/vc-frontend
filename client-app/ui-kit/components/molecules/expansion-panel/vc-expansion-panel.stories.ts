@@ -7,7 +7,7 @@ const meta: Meta<typeof VcExpansionPanel> = {
   tags: ["deprecated"],
   parameters: {
     deprecated:
-      "Use <VcWidget collapsible> instead: expanded becomes collapsed (inverted), #icon becomes #prepend, #header-content becomes #title, and the default slot becomes #default-container.",
+      'Use <VcWidget collapsible> instead. The panel starts closed and the widget starts open: <VcExpansionPanel title="Details"> becomes <VcWidget title="Details" collapsible collapsed>, and <VcExpansionPanel title="Details" expanded> becomes <VcWidget title="Details" collapsible>. #icon becomes #prepend, #header-content becomes #title, and the default slot becomes #default-container.',
   },
   argTypes: {
     title: {
