@@ -1,0 +1,19 @@
+// Paprika's widget colours, from the paprika design: plates sit on a warm cream, not white.
+@layer vc.preset {
+  html[data-preset="paprika"] {
+    .vc-widget {
+      --vc-widget-bg-color: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+      --vc-widget-divide-color: var(--color-neutral-200);
+      --vc-menu-item-bg: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+    }
+  }
+
+  html.dark[data-preset="paprika"] {
+    .vc-widget {
+      --vc-widget-bg-color: var(--color-additional-50);
+      --vc-widget-border-color: var(--color-neutral-200);
+      --vc-widget-divide-color: var(--color-neutral-300);
+      --vc-menu-item-bg: var(--color-additional-50);
+    }
+  }
+}
