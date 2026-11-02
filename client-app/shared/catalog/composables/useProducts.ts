@@ -499,6 +499,9 @@ export function useProducts(
       );
 
       addPageHistory(page);
+
+      // Only the page this call added; `products` holds every page loaded so far.
+      return { items, totalCount };
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;

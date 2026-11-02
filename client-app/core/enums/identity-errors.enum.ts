@@ -10,4 +10,6 @@ export enum IdentityErrors {
   SIGN_IN_NOT_ALLOWED = "sign_in_not_allowed",
   OTP_DISABLED = "otp_disabled",
   INVALID_CODE = "invalid_code",
+  TWO_FACTOR_REQUIRED = "two_factor_required",
+  RESEND_TOO_SOON = "resend_too_soon",
 }

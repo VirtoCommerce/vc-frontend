@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
   paginationMode: "infinite_scroll",
   // What the next products request resolves with.
   response: { items: [] as Product[], totalCount: 0 },
+  // What the next "load more" request resolves with.
+  moreResponse: { items: [] as Product[], totalCount: 0 },
   // The next request never settles (a rejection cannot stand in: the page's watcher lets it escape unhandled).
   stallNextRequest: false,
   // The requests of the page mounted last (a page left by an earlier test may still have a debounced one due).
@@ -167,7 +169,14 @@ vi.mock("@/shared/catalog/composables", async () => {
 
           return Promise.resolve({ items, totalCount });
         }),
-        fetchMoreProducts: vi.fn(),
+        fetchMoreProducts: vi.fn(() => {
+          const { items, totalCount } = mocks.moreResponse;
+
+          products.value = products.value.concat(items);
+          totalProductsCount.value = totalCount;
+
+          return Promise.resolve({ items, totalCount });
+        }),
         applyFilters: vi.fn(),
         applyFiltersOnly: vi.fn(),
         hideFiltersSidebar: vi.fn(),
@@ -379,6 +388,7 @@ beforeEach(() => {
   mocks.analytics.mockClear();
   mocks.paginationMode = "infinite_scroll";
   mocks.response = { items: [PRODUCT, OTHER_PRODUCT], totalCount: 2 };
+  mocks.moreResponse = { items: [], totalCount: 0 };
   mocks.stallNextRequest = false;
   mocks.requests = [];
 });
@@ -601,5 +611,48 @@ describe("category page in a barcode lookup", () => {
       expect(reportedEvents()).not.toContain("viewSearchResults");
       expect(reportedEvents()).not.toContain("viewItemList");
     });
+  });
+});
+
+describe("category page with infinite scroll", () => {
+  const THIRD_PRODUCT = { id: "product-3", code: "150702", slug: "scarf-150702", name: "Scarf" } as Product;
+
+  function viewItemListCalls(): unknown[][] {
+    return mocks.analytics.mock.calls.filter(([event]) => event === "viewItemList");
+  }
+
+  it("reports only the products a loaded page added in its view_item_list", async () => {
+    mocks.moreResponse = { items: [THIRD_PRODUCT], totalCount: 3 };
+
+    await mountAt("/catalog");
+
+    wrapper!.findComponent({ name: "CategoryProducts" }).vm.$emit("changePage", 2);
+    await flushPromises();
+
+    const calls = viewItemListCalls();
+
+    expect(calls).toHaveLength(2);
+    expect(calls[0][1]).toEqual([PRODUCT, OTHER_PRODUCT]);
+    expect(calls[1][1]).toEqual([THIRD_PRODUCT]);
+    expect(calls[1][2]).toEqual(expect.objectContaining({ item_list_id: "category_undefined_page_2" }));
+  });
+
+  it("reports a selected product with the page list and the position it was reported at", async () => {
+    mocks.moreResponse = { items: [THIRD_PRODUCT], totalCount: 3 };
+
+    await mountAt("/catalog");
+
+    const products = wrapper!.findComponent({ name: "CategoryProducts" });
+    products.vm.$emit("changePage", 2);
+    await flushPromises();
+    mocks.analytics.mockClear();
+
+    products.vm.$emit("selectProduct", OTHER_PRODUCT);
+    products.vm.$emit("selectProduct", THIRD_PRODUCT);
+
+    expect(mocks.analytics.mock.calls).toEqual([
+      ["selectItem", OTHER_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_1", index: 1 })],
+      ["selectItem", THIRD_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_2", index: 0 })],
+    ]);
   });
 });

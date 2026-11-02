@@ -1,5 +1,6 @@
 import { merge } from "lodash-es";
 import { initialExtensionRegistry } from "./initialExtensionRegistry";
+import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 const INITIAL_EXTENSION_NAMES = Object.fromEntries(
   Object.entries(initialExtensionRegistry).map(([key, entries]) => [
@@ -39,6 +40,9 @@ const CUSTOM_EXTENSION_NAMES = {
   sharedList: {
     provenanceNote: "provenance-note",
   },
+  checkout: {
+    placeOrder: "place-order",
+  },
 } as const;
 
 export const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES = merge(
@@ -46,3 +50,21 @@ export const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES = merge(
   INITIAL_EXTENSION_NAMES,
   CUSTOM_EXTENSION_NAMES,
 );
+
+export const EXTENSION_CATEGORIES = {
+  headerMenu: "headerMenu",
+  mobileMenu: "mobileMenu",
+  accountMenu: "accountMenu",
+  mobileHeader: "mobileHeader",
+  topHeaderStatus: "topHeaderStatus",
+  productCard: "productCard",
+  productPage: "productPage",
+  paymentPage: "paymentPage",
+  orderPaymentPage: "orderPaymentPage",
+  cartPayment: "cartPayment",
+  orderDetails: "orderDetails",
+  sharedList: "sharedList",
+  checkout: "checkout",
+  identityProviders: "identityProviders",
+  signInMethods: "signInMethods",
+} as const satisfies { [C in ExtensionCategoryType]: C };

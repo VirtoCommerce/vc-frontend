@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout モード"
+    "mode_label": "Punchout モード",
+    "create_requisition": "購買依頼を作成",
+    "errors": {
+      "create_requisition_failed": "購買依頼を作成できませんでした。もう一度お試しください。",
+      "session_not_found": "Punchout セッションが見つかりません。調達システムに戻り、新しいセッションを開始してください。",
+      "session_expired": "Punchout セッションの有効期限が切れました。調達システムに戻り、新しいセッションを開始してください。",
+      "store_not_configured": "このストアでは Punchout が設定されていません。ストア管理者にお問い合わせください。",
+      "configuration_error": "Punchout 接続が正しく構成されていません。ストア管理者にお問い合わせください。",
+      "message_error": "調達システム向けの購買依頼を準備できませんでした。ストア管理者にお問い合わせください。",
+      "cart_not_found": "カートが見つかりません。ページを再読み込みしてカートを確認してください。",
+      "cart_is_empty": "購買依頼を作成するには、カート内の商品を 1 つ以上選択してください。",
+      "session_returned": "購買依頼は送信済みです。"
+    }
   }
 }

@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Modalità punchout"
+    "mode_label": "Modalità punchout",
+    "create_requisition": "Crea richiesta di acquisto",
+    "errors": {
+      "create_requisition_failed": "Impossibile creare la richiesta di acquisto. Riprova.",
+      "session_not_found": "La sessione punchout non è stata trovata. Torna al sistema di approvvigionamento e avvia una nuova sessione.",
+      "session_expired": "La sessione punchout è scaduta. Torna al sistema di approvvigionamento e avvia una nuova sessione.",
+      "store_not_configured": "Il punchout non è configurato per questo negozio. Contatta l’amministratore del negozio.",
+      "configuration_error": "La connessione punchout non è configurata correttamente. Contatta l’amministratore del negozio.",
+      "message_error": "Non è stato possibile preparare la richiesta d’acquisto per il sistema di approvvigionamento. Contatta l’amministratore del negozio.",
+      "cart_not_found": "Il carrello non è stato trovato. Ricarica la pagina e controlla il carrello.",
+      "cart_is_empty": "Seleziona almeno un articolo nel carrello per creare una richiesta d’acquisto.",
+      "session_returned": "Richiesta d’acquisto già inviata."
+    }
   }
 }

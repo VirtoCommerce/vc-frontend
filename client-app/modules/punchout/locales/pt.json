@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Modo punchout"
+    "mode_label": "Modo punchout",
+    "create_requisition": "Criar requisição",
+    "errors": {
+      "create_requisition_failed": "Não foi possível criar a requisição. Tente novamente.",
+      "session_not_found": "A sua sessão de punchout não foi encontrada. Volte ao seu sistema de compras e inicie uma nova sessão.",
+      "session_expired": "A sua sessão de punchout expirou. Volte ao seu sistema de compras e inicie uma nova sessão.",
+      "store_not_configured": "O punchout não está configurado para esta loja. Contacte o administrador da loja.",
+      "configuration_error": "A ligação de punchout não está configurada corretamente. Contacte o administrador da loja.",
+      "message_error": "Não foi possível preparar a requisição para o seu sistema de compras. Contacte o administrador da loja.",
+      "cart_not_found": "O seu carrinho não foi encontrado. Recarregue a página e verifique o carrinho.",
+      "cart_is_empty": "Selecione pelo menos um artigo no carrinho para criar uma requisição.",
+      "session_returned": "Requisição já enviada."
+    }
   }
 }

@@ -1,11 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/core/composables", async () => {
-  const { ref } = await import("vue");
+  const { computed, ref } = await import("vue");
 
   const authorize = vi.fn<(username: string, password: string) => Promise<void>>();
   const authErrors = ref<Array<{ code?: string; description?: string }> | undefined>(undefined);
   const isAuthorizing = ref(false);
+  const resetErrors = vi.fn(() => {
+    authErrors.value = undefined;
+  });
+  const twoFactorToken = ref<string | undefined>(undefined);
+  const twoFactorProviders = ref<Array<{ name: string; destination?: string }> | undefined>(undefined);
+  const twoFactorChallenge = computed(() =>
+    authErrors.value?.some((error) => error.code === "two_factor_required") && twoFactorToken.value
+      ? { twoFactorToken: twoFactorToken.value, providers: twoFactorProviders.value }
+      : undefined,
+  );
 
   const setAccessToken = vi.fn<(token: string) => void>();
   const setExpiresAt = vi.fn<(seconds: number) => void>();
@@ -16,7 +26,10 @@ vi.mock("@/core/composables", async () => {
     __mockAuthState: {
       authorize,
       authErrors,
+      resetErrors,
       isAuthorizing,
+      twoFactorToken,
+      twoFactorProviders,
       setAccessToken,
       setExpiresAt,
       setTokenType,
@@ -25,7 +38,9 @@ vi.mock("@/core/composables", async () => {
     useAuth: () => ({
       authorize,
       errors: authErrors,
+      resetErrors,
       isAuthorizing,
+      twoFactorChallenge,
       setAccessToken,
       setExpiresAt,
       setTokenType,
@@ -111,7 +126,10 @@ vi.mock("./useUser", () => ({
 type AuthMockStateType = {
   authorize: ReturnType<typeof vi.fn>;
   authErrors: { value: Array<{ code?: string; description?: string }> | undefined };
+  resetErrors: ReturnType<typeof vi.fn>;
   isAuthorizing: { value: boolean };
+  twoFactorToken: { value: string | undefined };
+  twoFactorProviders: { value: Array<{ name: string; destination?: string }> | undefined };
   setAccessToken: ReturnType<typeof vi.fn>;
   setExpiresAt: ReturnType<typeof vi.fn>;
   setTokenType: ReturnType<typeof vi.fn>;
@@ -173,6 +191,8 @@ describe("useImpersonate", () => {
     auth.authorize.mockReset();
     auth.authErrors.value = undefined;
     auth.isAuthorizing.value = false;
+    auth.twoFactorToken.value = undefined;
+    auth.twoFactorProviders.value = undefined;
     auth.setAccessToken.mockReset();
     auth.setExpiresAt.mockReset();
     auth.setTokenType.mockReset();
@@ -276,6 +296,109 @@ describe("useImpersonate", () => {
     expect(errors.value).toEqual([{ code: "generic" }]);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
+  });
+
+  it("asks for the code when the store requires a second factor, without impersonating yet", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    auth.authorize.mockImplementation(() => {
+      auth.authErrors.value = [{ code: "two_factor_required" }];
+      auth.twoFactorToken.value = "token-1";
+      auth.twoFactorProviders.value = [{ name: "Email", destination: "s•••t@acme.com" }];
+      return Promise.reject(new Error("400"));
+    });
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, step, errors, twoFactorChallenge, loading } = useImpersonate();
+
+    await impersonate("support@acme.com", "secret", "target-user");
+
+    expect(step.value).toBe("idle");
+    expect(loading.value).toBe(false);
+    expect(errors.value).toEqual([]);
+    expect(twoFactorChallenge.value).toEqual({
+      twoFactorToken: "token-1",
+      providers: [{ name: "Email", destination: "s•••t@acme.com" }],
+    });
+    expect(fetchState.useFetch).not.toHaveBeenCalled();
+    expect(auth.authErrors.value).toBeUndefined();
+  });
+
+  it("failTwoFactor returns to the password step with the error", async () => {
+    const auth = await getAuthState();
+
+    auth.authorize.mockImplementation(() => {
+      auth.authErrors.value = [{ code: "two_factor_required" }];
+      auth.twoFactorToken.value = "token-1";
+      return Promise.reject(new Error("400"));
+    });
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, failTwoFactor, step, errors, twoFactorChallenge } = useImpersonate();
+
+    await impersonate("support@acme.com", "secret", "target-user");
+    failTwoFactor({ code: "invalid_two_factor_token" });
+
+    expect(step.value).toBe("idle");
+    expect(twoFactorChallenge.value).toBeUndefined();
+    expect(errors.value).toEqual([{ code: "invalid_two_factor_token" }]);
+  });
+
+  it("stays on the code step while the impersonation completes, and ends idle once that fails", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    auth.authorize.mockImplementation(() => {
+      auth.authErrors.value = [{ code: "two_factor_required" }];
+      auth.twoFactorToken.value = "token-1";
+      return Promise.reject(new Error("400"));
+    });
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, impersonateAuthenticated, step, errors, twoFactorChallenge } = useImpersonate();
+
+    await impersonate("support@acme.com", "secret", "target-user");
+
+    let twoFactorChallengeWhileImpersonating: unknown;
+    fetchState.useFetch.mockImplementation(() => ({
+      post: () => ({
+        json: () => {
+          twoFactorChallengeWhileImpersonating = twoFactorChallenge.value;
+          return Promise.resolve(fetchState.fetchResult);
+        },
+      }),
+    }));
+    setFailedImpersonateResponse(fetchState);
+
+    await expect(impersonateAuthenticated("target-user")).resolves.toBeUndefined();
+
+    expect(twoFactorChallengeWhileImpersonating).toBeDefined();
+    expect(step.value).toBe("idle");
+    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
+  });
+
+  it("failTwoFactor keeps the impersonation error when the impersonation failed after the code", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    auth.authorize.mockImplementation(() => {
+      auth.authErrors.value = [{ code: "two_factor_required" }];
+      auth.twoFactorToken.value = "token-1";
+      return Promise.reject(new Error("400"));
+    });
+    setFailedImpersonateResponse(fetchState);
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, impersonateAuthenticated, failTwoFactor, step, errors, twoFactorChallenge } = useImpersonate();
+
+    await impersonate("support@acme.com", "secret", "target-user");
+    await expect(impersonateAuthenticated("target-user")).resolves.toBeUndefined();
+    failTwoFactor({ description: "common.messages.something_went_wrong" });
+
+    expect(step.value).toBe("idle");
+    expect(twoFactorChallenge.value).toBeUndefined();
+    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
   });
 
   it("impersonate fails after verify succeeded", async () => {

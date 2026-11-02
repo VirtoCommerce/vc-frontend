@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "購入できません",
       "item_is_out_of_stock": "在庫切れです",
       "invalid_value": "無効な値",
+      "invalid_characters": "無効な文字が含まれています",
+      "html_tags_not_allowed": "HTMLタグは使用できません",
+      "unsafe_content": "許可されていない内容が含まれています",
+      "invalid_addresses": "一部の住所が無効です",
+      "invalid_data": "入力されたデータの一部が無効です",
       "invalid_user_id_or_token": "無効なIDまたはトークン",
       "product_no_longer_available": "取扱終了",
       "item_quantity_required_field": "数量を入力してください",
@@ -285,7 +290,8 @@
       "company_members": "メンバー",
       "contact_administrator": "管理者に連絡",
       "skip_to_main_content": "メインコンテンツへスキップ",
-      "skip_to_footer": "フッターへスキップ"
+      "skip_to_footer": "フッターへスキップ",
+      "security": "セキュリティ"
     },
     "titles": {
       "all_actions": "全ての操作",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "後で保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "このメールアドレスは複数のアカウントで使用されています。",
           "lockout_disabled": "このアカウントはコードでサインインできません。",
           "invalid_code": "このコードは使用できませんでした。",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "サインインのセッションが期限切れになりました。もう一度サインインしてください。",
+          "code_attempts_exceeded": "誤ったコードの入力が多すぎます。数分待ってから、もう一度サインインしてください。",
+          "mfa_provider_not_available": "このアカウントにはサインインコードを送信できません。管理者にお問い合わせください。",
+          "two_factor_unavailable": "このアカウントには 2 段階目のサインインが必要ですが、利用できません。管理者にお問い合わせください。",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "確認は成功しましたが、顧客アカウントへの切り替えに失敗しました。もう一度お試しください。",
-          "generic": "問題が発生しました。もう一度お試しください。"
+          "generic": "問題が発生しました。もう一度お試しください。",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "メールをご確認ください",
           "subtitle": "{email} 宛てにコードを送信しました。",
-          "code_label": "コード",
-          "paste_hint": "コードを入力するか貼り付けてください。モバイルでは、キーボードの上に表示されるコードをタップしてください。",
-          "submit_button": "サインイン",
-          "resend_button": "コードを再送信",
-          "use_different_email_link": "別のメールアドレスを使う",
-          "live_resent": "新しいコードを送信しました。"
+          "use_different_email_link": "別のメールアドレスを使う"
         },
         "locked": {
           "title": "失敗した試行が多すぎます",
@@ -653,6 +670,19 @@
           "password_button": "パスワードでサインイン",
           "back_link": "サインインに戻る"
         }
+      },
+      "mfa_verify_form": {
+        "header": "サインインコードを入力",
+        "subtitle": "{destination} にコードを送信しました。",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "コード",
+        "paste_hint": "コードを入力するか貼り付けてください。モバイルでは、キーボードの上に表示されるコードをタップしてください。",
+        "submit_button": "サインイン",
+        "resend_button": "コードを再送信",
+        "resend_countdown": "{seconds} 秒後にコードを再送信できます",
+        "live_resent": "新しいコードを送信しました。"
       }
     },
     "company": {
@@ -1464,6 +1494,21 @@
       "promotion_coupons": {
         "title": "すべてのクーポンとプロモーション",
         "no_lists": "クーポンやプロモーションはありません"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "キーがありません",
+        "unnamed_key": "名前のないキー",
+        "created": "{date} に作成",
+        "changed": "{date} に変更",
+        "rename_modal": {
+          "title": "キーの名前を変更",
+          "name_label": "名前"
+        },
+        "delete_modal": {
+          "title": "キーを削除",
+          "message": "このキーではサインインできなくなります。"
+        }
       }
     },
     "company": {
@@ -1803,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "パスワードには英数字以外の文字を1文字以上含める必要があります",
     "PasswordRequiresUpper": "パスワードには大文字（'A'～'Z'）を1文字以上含める必要があります",
     "PasswordRequiresUniqueChars": "パスワードには異なる文字を使用する必要があります",
-    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください"
+    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください",
+    "user_not_editable": "このユーザーは編集できません",
+    "sign_in_key_not_found": "サインインキーが見つかりませんでした",
+    "last_sign_in_key": "最後のサインインキーは削除できません",
+    "operation_not_supported": "この操作はサポートされていません"
   },
   "password_tips": {
     "title": "強力なパスワードを作成するためのヒント：",

@@ -31,8 +31,6 @@ export const errorHandlerLink = onError(({ operation, networkError, graphQLError
   } else if (passwordExpired) {
     void broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
   } else if (graphQLErrors?.length && !suppressErrorNotifications) {
-    graphQLErrors.forEach((error) => {
-      void broadcast.emit(graphqlErrorEvent, error, TabsType.ALL);
-    });
+    void broadcast.emit(graphqlErrorEvent, graphQLErrors, TabsType.ALL);
   }
 });

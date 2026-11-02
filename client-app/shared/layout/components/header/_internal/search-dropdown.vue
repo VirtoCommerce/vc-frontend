@@ -170,6 +170,7 @@ import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { QueryParamName } from "@/core/enums";
+import { getProductListIndex } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { highlightSearchText } from "@/shared/layout/utils";
@@ -239,13 +240,13 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
     return {
       path: router.currentRoute.value.path,
       query,
-    } as RouteLocationRaw;
+    };
   }
 
   return {
     name: ROUTES.SEARCH.NAME,
     query,
-  } as RouteLocationRaw;
+  };
 }
 
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
@@ -353,7 +354,10 @@ async function handleSearch() {
 }
 
 function selectItemEvent(product: Product) {
-  analytics("selectItem", product, searchBarListProperties.value);
+  analytics("selectItem", product, {
+    ...searchBarListProperties.value,
+    index: getProductListIndex(products.value, product.id),
+  });
   emit("productSelect", product);
   emit("hide");
 }
@@ -385,7 +389,7 @@ function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
 }
 
 function handleFocusOut(event: FocusEvent) {
-  if (!dropdownElement.value?.contains(event.relatedTarget as Node)) {
+  if (!(event.relatedTarget instanceof Node && dropdownElement.value?.contains(event.relatedTarget))) {
     emit("hide");
   }
 }

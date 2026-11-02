@@ -3,6 +3,19 @@ import { globals } from "../../globals";
 import { getCategoryRoute } from "../categories";
 import type { ExtendedMenuLinkType } from "../../types";
 import type { Category, MenuLinkType } from "@/core/api/graphql/types";
+import type { RouteLocationNormalizedLoaded } from "vue-router";
+
+/**
+ * Whether a menu link is the current page's. A link that owns pages beyond its route record declares the rule
+ * itself (`activeWhen`); every other link keeps vue-router's record match.
+ */
+export function isMenuLinkActive(
+  link: ExtendedMenuLinkType,
+  route: RouteLocationNormalizedLoaded,
+  isRecordActive: boolean,
+): boolean {
+  return link.activeWhen?.(route) ?? isRecordActive;
+}
 
 export function convertToExtendedMenuLink(item: MenuLinkType, isCatalogItem?: boolean): ExtendedMenuLinkType {
   return {
