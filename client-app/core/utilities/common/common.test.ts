@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { replaceXFromBeginning, extractHostname, getLinkAttr } from "./index";
+import { replaceXFromBeginning, extractHostname, getLinkAttr, isSafeLinkUrl } from "./index";
 
 describe("getLinkAttr", () => {
   it("should return an empty object if no link is provided", () => {
@@ -25,6 +25,42 @@ describe("getLinkAttr", () => {
   it('should return an object with "externalLink" property for a full URL with https', () => {
     const link = "https://external-link.com";
     expect(getLinkAttr(link)).toEqual({ externalLink: link });
+  });
+
+  it.each(["mailto:sales@example.com", "tel:+15550100", "contact-us", "#section"])(
+    'returns "externalLink" for the allowed link %s',
+    (link) => {
+      expect(getLinkAttr(link)).toEqual({ externalLink: link });
+    },
+  );
+
+  it.each([
+    "javascript:alert(1)",
+    " JavaScript:alert(1)",
+    "java\tscript:alert(1)",
+    "vbscript:msgbox(1)",
+    "data:text/html,<p>x</p>",
+  ])("returns an empty object for the link %j", (link) => {
+    expect(getLinkAttr(link)).toEqual({});
+  });
+});
+
+describe("isSafeLinkUrl", () => {
+  it.each(["/catalog", "https://example.com", "http://example.com", "mailto:a@b.c", "tel:123", "page"])(
+    "accepts %s",
+    (url) => {
+      expect(isSafeLinkUrl(url)).toBe(true);
+    },
+  );
+
+  it.each([
+    "javascript:void(0)",
+    "JAVASCRIPT:void(0)",
+    "\njavascript:void(0)",
+    "data:image/svg+xml,<svg/>",
+    "file:///etc/passwd",
+  ])("rejects %j", (url) => {
+    expect(isSafeLinkUrl(url)).toBe(false);
   });
 });
 

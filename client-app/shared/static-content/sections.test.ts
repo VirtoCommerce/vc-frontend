@@ -1,0 +1,96 @@
+import { describe, expect, it } from "vitest";
+import { defineAsyncComponent, defineComponent } from "vue";
+import {
+  getLoadedSectionComponent,
+  loadSectionComponent,
+  pickDeclaredProps,
+  sanitizeSectionHtml,
+  toHeadingTag,
+} from "./sections";
+
+const Section = defineComponent({
+  props: { title: String, slides: Array, isTransparent: Boolean },
+  template: "<div />",
+});
+
+describe("toHeadingTag", () => {
+  it.each(["h1", "h2", "h3", "h4", "h5", "h6"])("keeps %s", (tag) => {
+    expect(toHeadingTag(tag)).toBe(tag);
+  });
+
+  it.each(["script", "iframe", "a", "H2", "", undefined, 2])("falls back to h2 for %j", (value) => {
+    expect(toHeadingTag(value)).toBe("h2");
+  });
+});
+
+describe("sanitizeSectionHtml", () => {
+  it("keeps formatting and safe links", () => {
+    const html = '<p><b>Bold</b> <a href="https://example.com" class="link">link</a></p><ul><li>item</li></ul>';
+
+    expect(sanitizeSectionHtml(html)).toBe(html);
+  });
+
+  it("removes scripts, event handlers, frames and javascript: links", () => {
+    const html =
+      '<script>alert(1)</script><img src="x.png" onerror="alert(1)"><iframe src="https://example.com"></iframe>' +
+      '<a href="javascript:alert(1)">x</a>';
+
+    expect(sanitizeSectionHtml(html)).toBe('<img src="x.png"><a>x</a>');
+  });
+
+  it("keeps target and adds rel to links that open a new window", () => {
+    expect(sanitizeSectionHtml('<a href="https://example.com" target="_blank">x</a>')).toBe(
+      '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>',
+    );
+  });
+
+  it("returns an empty string for no content", () => {
+    expect(sanitizeSectionHtml(undefined)).toBe("");
+  });
+});
+
+describe("pickDeclaredProps", () => {
+  it("keeps only the declared props", () => {
+    const item = {
+      id: "1",
+      type: "slider",
+      title: "Title",
+      slides: [],
+      onerror: "alert(1)",
+      onClick: "alert(1)",
+      style: "color: red",
+      class: "x",
+      href: "javascript:alert(1)",
+    };
+
+    expect(pickDeclaredProps(Section, item)).toEqual({ title: "Title", slides: [] });
+  });
+
+  it("matches kebab-case keys to camelCase props", () => {
+    expect(pickDeclaredProps(Section, { "is-transparent": true })).toEqual({ isTransparent: true });
+  });
+
+  it("supports props declared as an array", () => {
+    const ArraySection = defineComponent({ props: ["title"], template: "<div />" });
+
+    expect(pickDeclaredProps(ArraySection, { title: "Title", src: "x" })).toEqual({ title: "Title" });
+  });
+
+  it("passes nothing to a component without props", () => {
+    expect(pickDeclaredProps(defineComponent({ template: "<div />" }), { title: "Title" })).toEqual({});
+  });
+});
+
+describe("section components", () => {
+  it("returns a regular component as loaded", () => {
+    expect(getLoadedSectionComponent(Section)).toBe(Section);
+  });
+
+  it("loads the inner component of an async one", async () => {
+    const LazySection = defineAsyncComponent(() => Promise.resolve(Section));
+
+    expect(getLoadedSectionComponent(LazySection)).toBeUndefined();
+    await expect(loadSectionComponent(LazySection)).resolves.toBe(Section);
+    expect(getLoadedSectionComponent(LazySection)).toBe(Section);
+  });
+});

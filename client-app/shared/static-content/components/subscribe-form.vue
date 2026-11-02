@@ -10,7 +10,8 @@
       <div class="text-center">
         <div class="checkbox-text mt-4">
           <VcCheckbox class="inline-flex">
-            <span v-html-safe="checkboxText" class="checkbox-label"></span>
+            <!-- eslint-disable-next-line vue/no-v-html -- sanitized by sanitizeSectionHtml -->
+            <span v-html="checkboxHtml" class="checkbox-label"></span>
           </VcCheckbox>
         </div>
 
@@ -23,6 +24,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { sanitizeSectionHtml } from "../sections";
+
 export interface IProps {
   background?: string;
   title?: string;
@@ -32,7 +36,9 @@ export interface IProps {
   buttonText?: string;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const checkboxHtml = computed(() => sanitizeSectionHtml(props.checkboxText));
 </script>
 
 <style lang="scss">

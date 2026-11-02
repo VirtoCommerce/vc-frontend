@@ -2,10 +2,11 @@ import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 
 let cachedBuilderOrigin: string | undefined;
 
+/** Origin of the designer that frames this preview; `undefined` outside a frame, so nobody else can drive it. */
 export function getBuilderOrigin() {
   if (cachedBuilderOrigin === undefined) {
     const urlParams = new URLSearchParams(globalThis.location.search);
-    const ep = urlParams.get("ep");
+    const ep = globalThis.parent === globalThis.window ? null : urlParams.get("ep");
     try {
       const endpoint = ep ? new URL(ep) : null;
       cachedBuilderOrigin =
