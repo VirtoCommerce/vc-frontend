@@ -169,6 +169,11 @@ overridden on that element's block, not on `html`: in the design's `blocks/<bloc
 (`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
 dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
 and `--vc-dropdown-menu-radius` instead, on `html` as usual.
+Soft's widget block sets three tokens on `.vc-widget` the same way: `--vc-widget-radius` on small,
+collapsed, header-only and footer-only widgets, `--vc-widget-border-width` on `:shadow="false"`
+widgets and `--vc-widget-padding-x` on xs and sm widgets. Override them on
+`html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
+short ones too.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -193,8 +198,10 @@ never restates print. Token values apply in print too.
 ### Make your own design
 
 1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
-   and replace `soft` with your name in the copy's `_tokens.scss`. In the copy, delete the
-   `blocks/` and `dark/` files and the `@layer vc.design` block that loads them in `index.scss`.
+   and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy,
+   delete the `blocks/` and `dark/` files and the lines that load them in `index.scss`, but keep
+   `blocks/vc-widget.scss` while you keep soft's `--vc-widget-*` tokens: it keeps small widgets at
+   classic's inset and gives short widgets the smaller radius and shadowless ones an edge.
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
 3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
    values with yours and set only the tokens that differ from classic: those from the
