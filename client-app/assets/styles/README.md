@@ -18,10 +18,10 @@ Find your change, then read its section below. Paths are under `client-app/`.
 | Change | For | File | Layer | Token / selector | Check |
 | --- | --- | --- | --- | --- | --- |
 | Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
-| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: utilities | a new token, today's value as its fallback, its name agreed first | token-table test; `build:core-types` after `tailwind.config.ts` |
+| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: utilities | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
 | One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
 | Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
-| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | `html[data-preset="<preset>"]`; the public colour token first | `check:designs` |
+| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; the public colour token first | `check:designs` |
 | Colour, one block | one design | `designs/<design>/_tokens.scss` or `blocks/` | `theme` / `vc.design` | the public colour token first; preset variables only | `check:designs` |
 | Colour, one block | every preset and design | the component; dark: `assets/styles/dark/**` | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
 | An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
@@ -30,15 +30,17 @@ Find your change, then read its section below. Paths are under `client-app/`.
 
 A colour that belongs to one preset goes in that preset, not in a design: `vc.preset` beats `vc.design`.
 Sections: [Designs](#designs), [Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet),
-[Modules and remote plugins](#modules-and-remote-plugins), [Shape and typography tokens](#shape-and-typography-tokens),
-forks: [Customise a design](#customise-a-design).
+[Modules and remote plugins](#modules-and-remote-plugins), [Shape and typography tokens](#shape-and-typography-tokens).
+A fork never edits our components or our designs' folders: [Customise a design](#customise-a-design),
+[Make your own design](#make-your-own-design).
 
 How to verify:
 
 - Storybook (`yarn storybook:dev`): the Design, Theme preset and dark (sun/moon) toolbar switches, or
   `&globals=design:<design>;themePreset:<preset>;darkMode:dark` appended to a story or Docs URL.
 - `yarn check:designs`: every design folder and preset stylesheet ([Checks](#checks)).
-- `yarn test:unit run scripts/design-token-table.test.ts`: the [token table](#token-table) lists every token read.
+- `yarn test:unit run scripts/design-token-table.test.ts`: the [token table](#token-table) lists every shape and type
+  token the styles read.
 - A change for one design or one preset leaves classic computing exactly as before: compare computed styles
   (`getComputedStyle`), not screenshots.
 - One story set per component: the toolbars show it in every design and preset; no per-design story, none pins a design.

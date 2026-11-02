@@ -23,11 +23,12 @@ what follows; the rest is review-only.
    wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
    `blocks/vc-widget.scss`).
-6. **A kit component's look changes for a design only through a token** whose fallback is today's value, so classic
-   computes exactly as before. A new token is public API: agree its name with the developer first.
+6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so
+   classic computes exactly as before. A new token is public API: agree its name with the developer first.
 7. **Preset stylesheet** (`assets/presets/<preset>.scss`): every rule inside `@layer vc.preset`, under
    `html[data-preset="<preset>"]` or `html.dark[data-preset="<preset>"]`; colours only. Only a preset bundled here
-   with its `<preset>.json` can have one; a preset fetched from the platform cannot.
+   with its `<preset>.json` can have one; a preset fetched from the platform cannot. A bundled preset is listed in
+   `presets/index.ts`: its JSON in `presets`, its `.dark.json` in `darkPresets`.
 8. **Dark lives in the same file:** a design's dark token values on `html.dark[data-design="<design>"]` in
    `_tokens.scss`, a preset's dark rules in `<preset>.scss` (never a `<preset>.dark.scss`). The one exception: a
    design block's dark values go in `dark/<block>.scss`.
