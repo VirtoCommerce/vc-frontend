@@ -13,7 +13,7 @@
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
       <div v-if="view.isCompleted" class="mission-card__done" aria-hidden="true">
-        <span class="mission-card__check">
+        <span class="mission-card__check" data-test-id="mission-card-check">
           <VcIcon name="circle-check" :size="56" />
         </span>
       </div>
