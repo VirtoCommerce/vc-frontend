@@ -254,6 +254,13 @@ A preset's JSON recolours the whole palette. When one preset needs a block in an
 gets a stylesheet next to its JSON: `client-app/assets/presets/<name>.scss` (no underscore: it is an
 entry, not a partial). The app downloads it only while that preset is on and mounts after it;
 Storybook loads it on the Theme preset switch. A preset without one loads nothing.
+Only a preset bundled in `client-app/assets/presets/` (with its `<name>.json`) can have a stylesheet;
+a preset fetched at runtime from the platform cannot.
+
+The dark JSON already flips the `--color-*` values (neutral included), so the same `var(--color-*)`
+in the light block is right in dark too. Add an `html.dark[data-preset]` rule only for a
+deliberately different choice, like the title colour below. Dark rules live in the same
+`<name>.scss`, never in a `<name>.dark.scss`.
 
 ```scss
 @layer vc.preset {
@@ -264,8 +271,8 @@ Storybook loads it on the Theme preset switch. A preset without one loads nothin
   }
 
   html.dark[data-preset="mercury"] {
-    .vc-widget {
-      --vc-widget-bg-color: var(--color-neutral-900);
+    .vc-widget__title {
+      color: var(--color-primary-200);
     }
   }
 }
