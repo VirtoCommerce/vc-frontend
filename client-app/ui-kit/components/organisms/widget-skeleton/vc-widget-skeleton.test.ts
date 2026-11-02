@@ -91,6 +91,14 @@ describe("VcWidgetSkeleton", () => {
     expect(full.find(".vc-widget__footer .vc-widget-skeleton__footer").exists()).toBe(true);
   });
 
+  it("draws one placeholder bar in the header with head", () => {
+    expect(mountSkeleton({ head: true }).findAll(".vc-widget-skeleton__header > div")).toHaveLength(1);
+  });
+
+  it("draws one placeholder bar in the footer with foot", () => {
+    expect(mountSkeleton({ foot: true }).findAll(".vc-widget-skeleton__footer > div")).toHaveLength(1);
+  });
+
   it("draws five body placeholders by default", () => {
     expect(mountSkeleton().findAll(".vc-widget__slot .vc-widget-skeleton__slot > div")).toHaveLength(5);
   });
