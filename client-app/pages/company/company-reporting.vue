@@ -73,7 +73,7 @@ import { useAccountSalesReport } from "@/shared/account/composables/useAccountSa
 import {
   COMPANY_REPORTING_ALL_MEMBERS,
   useCompanyReportingParams,
-  useOrganizationMemberOptions,
+  useOrganizationBuyerOptions,
 } from "@/shared/company";
 import { formatStatCount } from "@/shared/dashboard";
 import { ReportingPanel } from "@/shared/reporting";
@@ -84,7 +84,8 @@ const { t, n } = useI18n();
 // The route lets only members allowed to see all of the organization's orders in (router/routes/company.ts).
 const { organization } = useUser();
 
-const memberOptions = useOrganizationMemberOptions(() => organization.value?.id);
+// Only members who have ordered: a member without orders would only ever show zeros.
+const memberOptions = useOrganizationBuyerOptions(() => organization.value?.id);
 const { options: members, totalCount: membersCount, loading: membersLoading, failed: membersFailed } = memberOptions;
 
 const { period, memberId } = useCompanyReportingParams(memberOptions);

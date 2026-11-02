@@ -34,7 +34,7 @@ function run() {
 beforeEach(() => {
   params.period = ref("year");
   params.member = ref(COMPANY_REPORTING_ALL_MEMBERS);
-  members.options.value = [{ id: "c-1", name: "Alice" }];
+  members.options.value = [{ id: "c-1", name: "Alice", accountIds: ["u-1"] }];
   members.totalCount.value = 1;
   members.loading.value = false;
   members.failed.value = false;

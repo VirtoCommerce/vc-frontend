@@ -30,7 +30,7 @@ vi.mock("@/shared/account/composables/useAccountSalesReport", () => ({
 }));
 vi.mock("@/shared/company", () => ({
   COMPANY_REPORTING_ALL_MEMBERS: "",
-  useOrganizationMemberOptions: () => h.members,
+  useOrganizationBuyerOptions: () => h.members,
   useCompanyReportingParams: () => ({ period: h.period, memberId: h.memberId }),
 }));
 vi.mock("@/shared/account", () => ({ useUser: () => ({ organization: ref({ id: "org-1" }) }) }));

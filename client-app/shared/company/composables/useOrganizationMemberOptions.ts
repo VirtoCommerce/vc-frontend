@@ -8,16 +8,20 @@ import type { MaybeRefOrGetter } from "vue";
 // (warned below); listing them all waits on server-side search in `VcSelect`.
 export const ORGANIZATION_MEMBER_OPTIONS_LIMIT = 200;
 
-/** A member the picker offers: the contact id the reports take, and the name it shows. */
-export type OrganizationMemberOptionType = { id: string; name: string };
+/**
+ * A member the picker offers: the contact id the reports take, the name it shows, and the member's accounts, which
+ * place the member's orders.
+ */
+export type OrganizationMemberOptionType = { id: string; name: string; accountIds: string[] };
 
+// The generated contact fields, any of which may come back blank.
 type MemberContactType = {
   id: string;
-  name?: string | null;
-  fullName?: string | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  emails?: readonly string[] | null;
+  name?: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  emails?: readonly string[];
 };
 
 /**
@@ -57,6 +61,7 @@ export function useOrganizationMemberOptions(organizationId: MaybeRefOrGetter<st
     (result.value?.organization?.contacts?.items ?? []).map((contact) => ({
       id: contact.id,
       name: memberName(contact),
+      accountIds: (contact.securityAccounts ?? []).map((account) => account.id),
     })),
   );
 

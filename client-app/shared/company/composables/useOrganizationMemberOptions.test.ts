@@ -45,13 +45,13 @@ describe("useOrganizationMemberOptions", () => {
     ]);
   });
 
-  it("offers each member by contact id and full name, falling back to the name", () => {
+  it("offers each member by contact id and name, with the accounts that place their orders", () => {
     query.result.value = {
       organization: {
         contacts: {
           totalCount: 2,
           items: [
-            { id: "c-1", name: "alice", fullName: "Alice Adams" },
+            { id: "c-1", name: "alice", fullName: "Alice Adams", securityAccounts: [{ id: "u-1" }, { id: "u-2" }] },
             { id: "c-2", name: "bob", fullName: "" },
           ],
         },
@@ -61,8 +61,8 @@ describe("useOrganizationMemberOptions", () => {
     const { options, totalCount } = run();
 
     expect(options.value).toEqual([
-      { id: "c-1", name: "Alice Adams" },
-      { id: "c-2", name: "bob" },
+      { id: "c-1", name: "Alice Adams", accountIds: ["u-1", "u-2"] },
+      { id: "c-2", name: "bob", accountIds: [] },
     ]);
     expect(totalCount.value).toBe(2);
   });
@@ -86,7 +86,7 @@ describe("memberName", () => {
       { id: "c-4", fullName: " ", name: " ", firstName: "", lastName: "", emails: ["dan@example.com"] },
       "dan@example.com",
     ],
-    [{ id: "c-5", fullName: "", name: null, emails: [] }, "c-5"],
+    [{ id: "c-5", fullName: "", name: undefined, emails: [] }, "c-5"],
   ])("names %o as %s", (contact, expected) => {
     expect(memberName(contact)).toBe(expected);
   });
