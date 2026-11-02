@@ -17,6 +17,8 @@ export interface IImportantFinding {
   file: string;
   line: number;
   text: string;
+  /** The file could not be parsed, so it was not fully checked; `text` is the parser's message. */
+  unparsed?: boolean;
 }
 
 const SOURCES = ["client-app/**/*.{vue,scss,css,html,ts,tsx,js,mjs,cjs,mts,cts}", "index.html"];
@@ -37,7 +39,7 @@ const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
   ".cjs": ts.ScriptKind.JS,
 };
 
-type ReportType = (line: number, text: string) => void;
+type ReportType = (line: number, text: string, unparsed?: boolean) => void;
 type MatchType = (text: string) => RegExpExecArray[];
 type TemplateChildNodeType = NonNullable<SFCTemplateBlock["ast"]>["children"][number];
 type ElementNodeType = Extract<TemplateChildNodeType, { tag: string }>;
@@ -234,7 +236,7 @@ function checkVue(source: string, report: ReportType): void {
   const { descriptor, errors } = parseSfc(source);
 
   for (const error of errors) {
-    report("loc" in error && error.loc ? error.loc.start.line : 1, `cannot parse: ${error.message}`);
+    report("loc" in error && error.loc ? error.loc.start.line : 1, error.message, true);
   }
 
   for (const script of [descriptor.script, descriptor.scriptSetup]) {
@@ -263,7 +265,8 @@ function checkHtml(source: string, report: ReportType): void {
 
 export function findImportant(file: string, source: string): IImportantFinding[] {
   const findings: IImportantFinding[] = [];
-  const report: ReportType = (line, text) => findings.push({ file, line, text });
+  const report: ReportType = (line, text, unparsed) =>
+    findings.push({ file, line, text, ...(unparsed && { unparsed }) });
   const extension = path.extname(file);
 
   if (extension === ".vue") {
@@ -292,17 +295,44 @@ export function importantSources(cwd: string, only?: string[]): string[] {
   return files.filter((file) => wanted.has(file));
 }
 
+const HOW_TO_FIX = `
+Why: the storefront's styles live in CSS cascade layers, and a layered !important
+cannot be overridden by a client theme. Tailwind's \`!\` modifier (\`!mt-4\`,
+\`lg:!hidden\`) compiles to !important too.
+
+How to fix: remove it and solve the conflict it was beating:
+  - a UI-kit component: use its props or its --vc-<component>-… tokens;
+  - your own styles: change the selector order or structure.
+A client theme puts its overrides in client-app/assets/styles/_custom.scss, which is not checked.
+
+More: client-app/assets/styles/README.md, section "Checks".`;
+
+function listFindings(findings: IImportantFinding[]): string {
+  return findings.map(({ file, line, text }) => `  ${file}:${line}  ${text}`).join("\n");
+}
+
 function main(): void {
   const args = process.argv.slice(2);
   const files = importantSources(process.cwd(), args.length ? args : undefined);
   const findings = files.flatMap((file) => findImportant(file, readFileSync(file, "utf-8")));
+  const important = findings.filter(({ unparsed }) => !unparsed);
+  const unparsed = findings.filter(({ unparsed: isUnparsed }) => isUnparsed);
+
+  if (important.length) {
+    console.error(`Found !important that would ship in the storefront styles (${important.length}):\n`);
+    console.error(listFindings(important));
+    console.error(HOW_TO_FIX);
+  }
+
+  if (unparsed.length) {
+    console.error(
+      `\nCould not parse these files, so they were not fully checked for !important (${unparsed.length}):\n`,
+    );
+    console.error(listFindings(unparsed));
+    console.error("\nFix the syntax error and run `yarn check:css-important` again.");
+  }
 
   if (findings.length) {
-    console.error(
-      `!important check failed (${findings.length}):\n  ` +
-        findings.map(({ file, line, text }) => `${file}:${line}: ${text}`).join("\n  ") +
-        "\nFix the conflict at its cause (kit props, --vc-* tokens, selector order); see client-app/assets/styles/README.md.",
-    );
     process.exit(1);
   }
 
