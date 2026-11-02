@@ -52,7 +52,7 @@
     "check:icon-parity": "yarn precheck && vite-node scripts/check-icon-parity.ts",
     "check:designs": "yarn precheck && vite-node scripts/check-designs.ts",
     "check:css-layers": "yarn precheck && vite-node scripts/check-css-layers.ts",
-    "check:important": "yarn precheck && node scripts/check-important.ts"
+    "check:css-important": "yarn precheck && node scripts/check-css-important.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.14.1",
@@ -189,10 +189,10 @@
   "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix",
-      "node scripts/check-important.ts"
+      "node scripts/check-css-important.ts"
     ],
     "*.{scss,css,html,tsx,mjs,cjs,mts,cts}": [
-      "node scripts/check-important.ts"
+      "node scripts/check-css-important.ts"
     ],
     "*.{graphql,json}": [
       "prettier --write"

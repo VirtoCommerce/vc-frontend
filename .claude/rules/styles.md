@@ -125,7 +125,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     in a template class, inline style) and everywhere, UI kit, `dark/` and `print/` included. Fix the conflict at its
     cause: a UI-kit component → its props or `--vc-<component>-…` tokens (see `ui-kit.md`); your own rules →
     selector order or structure. If that isn't possible, raise it — don't ship the `!important`.
-    `yarn check:important` enforces this in pre-commit (staged files) and CI.
+    `yarn check:css-important` enforces this in pre-commit (staged files) and CI.
 
 ## 4. Responsive
 

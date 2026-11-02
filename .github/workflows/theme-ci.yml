@@ -189,7 +189,7 @@ jobs:
 
       - name: Check Styles for !important
         run: |
-          yarn check:important
+          yarn check:css-important
 
       - name: Build
         run: |

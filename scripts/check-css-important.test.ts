@@ -3,13 +3,13 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { findImportant, importantSources } from "./check-important.js";
+import { findImportant, importantSources } from "./check-css-important.js";
 
 function found(file: string, source: string): [number, string][] {
   return findImportant(file, source).map(({ line, text }) => [line, text]);
 }
 
-describe("check-important", () => {
+describe("check-css-important", () => {
   describe("styles", () => {
     it("reports !important in every form, at its line", () => {
       const scss = [

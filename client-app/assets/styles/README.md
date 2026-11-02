@@ -71,8 +71,8 @@ fork CSS keeps working against utilities as before; plugin stylesheets beat our 
 
 `!important` inverts across layers: a layered `!important` beats an unlayered one, so a fork's
 unlayered `!important` (`_custom.scss`) cannot override one inside a layer (swiper's and
-nouislider's in `vc.vendor`). Never add `!important` to our styles; `yarn check:important` fails on
-one ([Checks](#checks)).
+nouislider's in `vc.vendor`). Never add `!important` to our styles; `yarn check:css-important`
+fails on one ([Checks](#checks)).
 
 ### Component styles are layered for you
 
@@ -228,7 +228,7 @@ component (in that component's task) over a block file when several designs will
 ```bash
 yarn check:designs                    # every folder in client-app/designs/, a fork's too (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
-yarn check:important                  # no !important in client-app/ and index.html (no build needed)
+yarn check:css-important              # no !important in client-app/ and index.html (no build needed)
 ```
 
 `scripts/check-designs.ts` compiles every `.scss` file of each design with Sass and Tailwind, as the
@@ -264,18 +264,18 @@ elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 `_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
 declared layer, and its names follow the declared order per parent.
 
-`scripts/check-important.ts` fails on any `!important` and any Tailwind important modifier
+`scripts/check-css-important.ts` fails on any `!important` and any Tailwind important modifier
 (`!mt-4`, `lg:!hidden`, `[&>*]:!p-0`) in `client-app/` and `index.html`, and names the file and
 line. It reads style declarations and `@apply`, inline `<style>`, class and style attributes, Vue
 bindings and interpolations, string literals in scripts and `style.setProperty(…, "important")`.
 Comments, Markdown, locale files, page text and code negation (`v-if="!open"`) never fail it, nor do
 the Sass flags `!default`, `!global` and `!optional`. The pre-commit hook runs it on the staged files
 only. Its patterns live in `scripts/important-patterns.ts`, shared with the agents' edit hook
-(`.claude/hooks/guard-styles.mjs`). The tests are in `scripts/check-important.test.ts`.
+(`.claude/hooks/guard-styles.mjs`). The tests are in `scripts/check-css-important.test.ts`.
 
 **In a fork**, put an override in `_custom.scss`: it is unlayered, so a plain declaration there
 beats every layered rule, and the check skips the file. A fork that keeps `!important` elsewhere on
-purpose adds that file to `IGNORE` in `scripts/check-important.ts`.
+purpose adds that file to `IGNORE` in `scripts/check-css-important.ts`.
 
 All three run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 

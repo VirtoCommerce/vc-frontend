@@ -1,4 +1,4 @@
-// One definition for `yarn check:important` (CI, pre-commit) and the agents' edit hook (.claude/hooks/guard-styles.mjs).
+// One definition for `yarn check:css-important` (CI, pre-commit) and the agents' edit hook (.claude/hooks/guard-styles.mjs).
 // No dependencies, so the hook loads it on every edit at no cost.
 
 const IMPORTANT = /!\s*important/gi;
