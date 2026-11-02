@@ -11,6 +11,38 @@ setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` wri
 `<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
 and the design never changes the preset.
 
+## Where does my change go?
+
+Find your change, then read its section below. Paths are under `client-app/`.
+
+| Change | For | File | Layer | Token / selector | Check |
+| --- | --- | --- | --- | --- | --- |
+| Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
+| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: utilities | a new token, today's value as its fallback, its name agreed first | token-table test; `build:core-types` after `tailwind.config.ts` |
+| One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
+| Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
+| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | `html[data-preset="<preset>"]`; the public colour token first | `check:designs` |
+| Colour, one block | one design | `designs/<design>/_tokens.scss` or `blocks/` | `theme` / `vc.design` | the public colour token first; preset variables only | `check:designs` |
+| Colour, one block | every preset and design | the component; dark: `assets/styles/dark/**` | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
+| An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
+| A Module Federation remote | anything | the remote's own repository | — | host kit components and tokens only | the remote's docs |
+| Anything | a fork | `assets/styles/_custom.scss` | unlayered | `:root`, `html[data-design]`, `html[data-preset]`, `html.dark` | — |
+
+A colour that belongs to one preset goes in that preset, not in a design: `vc.preset` beats `vc.design`.
+Sections: [Designs](#designs), [Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet),
+[Modules and remote plugins](#modules-and-remote-plugins), [Shape and typography tokens](#shape-and-typography-tokens),
+forks: [Customise a design](#customise-a-design).
+
+How to verify:
+
+- Storybook (`yarn storybook:dev`): the Design, Theme preset and dark (sun/moon) toolbar switches, or
+  `&globals=design:<design>;themePreset:<preset>;darkMode:dark` appended to a story or Docs URL.
+- `yarn check:designs`: every design folder and preset stylesheet ([Checks](#checks)).
+- `yarn test:unit run scripts/design-token-table.test.ts`: the [token table](#token-table) lists every token read.
+- Classic must compute exactly as before: compare computed styles (`getComputedStyle`), not screenshots.
+- One story set per component: the toolbars show it in every design and preset; no per-design story, none pins a design.
+- `yarn build && yarn check:css-layers` after a change to the layer order or an entry stylesheet.
+
 ---
 
 ## The order
@@ -292,6 +324,22 @@ deliberately different choice, like the title colour below. Dark rules live in t
   are allowed. No hex, no numeric `rgb()` / `hsl()`, no named colours.
 
 `yarn check:designs` checks every preset stylesheet ([Checks](#checks)).
+
+---
+
+## Modules and remote plugins
+
+- **An in-tree module or app block** (`modules/`, `shared/`, `pages/`) is restyled like any block: in a design's
+  `blocks/<block>.scss` or a preset's `<preset>.scss`. The cost: that file names a block that leaves with the
+  module, so delete it with the module; `yarn check:designs` fails on a block no component defines.
+- **A Module Federation remote** (a plugin such as sales-rep) styles itself only with host kit components, host
+  `--vc-*` tokens and preset variables (`--color-*`), and it styles only its own blocks. The kit components and the
+  utilities of `@vc-frontend/core/tailwind-preset` read those tokens, so every design and preset reaches the remote.
+  Its CSS belongs in the `plugins` layer; until VCST-5760 moves it there, it is unlayered and beats every layered host
+  rule it matches.
+- Host designs and presets never target a remote's blocks: the remote ships on its own schedule, and
+  `check:designs` rejects a block no host component defines. The remote's design documentation lives in its own
+  repository.
 
 ---
 
