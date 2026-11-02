@@ -47,7 +47,9 @@ review-only. Severity guide: breaks the build or renders visibly wrong
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
-   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`; `check:designs` checks it.
+   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
+     token on the preset root `html[data-preset]` (inherited, so a block's own setting wins), a block or BEM part
+     only for a part with no token; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - Variant colour tokens (the `--vc-<comp>-<variant>-<color>-<part>` matrix, `ui-kit-internals.md` §5) go to `:root`
      in `assets/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
@@ -194,7 +196,7 @@ review-only. Severity guide: breaks the build or renders visibly wrong
 33. Classic's font is Lato only, loaded with weights **400, 700, 900** (+ italic 400). Components render in classic
     too, so their styles use `font-normal`, `font-bold`, `font-black`.
     `font-thin|extralight|light|medium|semibold|extrabold` fall back to a synthesized or neighbouring weight → finding
-    (the 12 existing `font-medium` are legacy). This weight set is classic's only: a design's own files
+    (the existing `font-medium` uses are legacy). This weight set is classic's only: a design's own files
     (`_tokens.scss`, `blocks/`) may use any weight its `design.ts` fonts load (soft loads 400–900 and sets
     `--vc-widget-title-font-weight: 600`). Never name a family in a component (print styles may use `font-lato`, as
     the styles README allows): the page font comes from the `base` role, headings from `heading` (`font-heading`).

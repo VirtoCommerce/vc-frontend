@@ -9,7 +9,7 @@ reads them from here.
    styles, ui-kit; `.scss` → styles; `.graphql` → data-graphql; `locales/*.json` → i18n; `.html` → security;
    `*.test.ts` → tests; `client-app/ui-kit/**` → ui-kit-internals; `client-app/modules/**` and
    `client-app/router/**` → modules-and-routes; designs, presets and `settings_data.json` → designs-and-presets.
-   The front matter wins over this summary.
+   This lists the main ones only; the front matter wins over this summary.
 3. How a task runs, from the reuse inventory to done: `.claude/skills/implement/SKILL.md`.
 4. Styles, designs and preset colours: `client-app/assets/styles/README.md`, starting with its "Where does my change
    go?" table.

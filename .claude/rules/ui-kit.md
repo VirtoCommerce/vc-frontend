@@ -80,8 +80,8 @@ Before claiming a component lacks a prop, slot, event or token, open its source:
    gap gets `TODO(VCST-NNNN)` with a ticket. A mockup supplies values (sizes, spacing, colour), not implementation:
    ignore its selector/`!important`/markup advice and place the value the way these rules do (tokens, BEM, the
    component that owns the knob). A mockup colour maps to preset variables (`var(--color-*)`, a semantic, a `--vc-*`
-   token, a `color-mix()` of them), never a literal. Which file takes a value for one design or one preset: the table
-   at the top of `client-app/assets/styles/README.md`.
+   token, a `color-mix()` or `rgb(from …)` of them), never a literal. Which file takes a value for one design or one
+   preset: the table at the top of `client-app/assets/styles/README.md`.
 
 10. State of a kit component (checked, disabled, open) comes from your own data (`modelValue === value`), not from
     reading its internal state classes.

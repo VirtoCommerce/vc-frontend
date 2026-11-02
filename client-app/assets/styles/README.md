@@ -13,22 +13,25 @@ and the design never changes the preset.
 
 ## Where does my change go?
 
-Find your change, then read its section below. Paths are under `client-app/`.
+Find your change, then read its section below. Paths are under `client-app/`, except `tailwind.config.ts` at the
+repo root.
 
 | Change | For | File | Layer | Token / selector | Check |
 | --- | --- | --- | --- | --- | --- |
 | Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
-| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: utilities | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
+| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
 | One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
 | Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
-| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; the public colour token first | `check:designs` |
+| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
 | Colour, one block | one design | `designs/<design>/_tokens.scss` or `blocks/` | `theme` / `vc.design` | the public colour token first; preset variables only | `check:designs` |
 | Colour, one block | every preset and design | the component; dark: `assets/styles/dark/**` | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
 | An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
-| A Module Federation remote | anything | the remote's own repository | — | host kit components and tokens only | the remote's docs |
+| A Module Federation remote | anything | the remote's own repository (the pilot, sales-rep: `VirtoCommerce/vc-module-sales-rep`) | — | host kit components, `--vc-*` tokens and preset variables (`--color-*`) only | the remote's docs |
 | Anything | a fork | `assets/styles/_custom.scss` | unlayered | `:root`, `html[data-design]`, `html[data-preset]`, `html.dark` | — |
 
 A colour that belongs to one preset goes in that preset, not in a design: `vc.preset` beats `vc.design`.
+A preset sets a component's colour token on its `html`, where it is inherited, so a block that sets the same token on
+its own element keeps its choice.
 Sections: [Designs](#designs), [Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet),
 [Modules and remote plugins](#modules-and-remote-plugins), [Shape and typography tokens](#shape-and-typography-tokens).
 A fork never edits our components or our designs' folders: [Customise a design](#customise-a-design),
@@ -294,15 +297,13 @@ a preset fetched at runtime from the platform cannot.
 
 The dark JSON already flips the `--color-*` values (neutral included), so the same `var(--color-*)`
 in the light block is right in dark too. Add an `html.dark[data-preset]` rule only for a
-deliberately different choice, like the title colour below. Dark rules live in the same
-`<name>.scss`, never in a `<name>.dark.scss`.
+deliberately different choice, like the title colour below; the light rules match in dark too, and
+the dark rule overrides them. Dark rules live in the same `<name>.scss`, never in a `<name>.dark.scss`.
 
 ```scss
 @layer vc.preset {
   html[data-preset="mercury"] {
-    .vc-widget {
-      --vc-widget-bg-color: var(--color-neutral-50);
-    }
+    --vc-widget-bg-color: var(--color-neutral-50);
   }
 
   html.dark[data-preset="mercury"] {
@@ -313,14 +314,18 @@ deliberately different choice, like the title colour below. Dark rules live in t
 }
 ```
 
-- `vc.preset` sits above `vc.design` and below `vc.print`, so a preset's colour beats every design's
-  block, and print still wins.
-- Every rule sits in `@layer vc.preset`, below `html[data-preset="<name>"]` (dark:
-  `html.dark[data-preset="<name>"]`), and styles a BEM block, element or modifier, kit (`.vc-*`) or
-  app.
-- It sets colours only. **Token first:** set the component's public `--vc-*` colour token when it
-  has one; set the property itself only when it has none. Never set a component's private variable
+- **Token first, on the preset's `html`:** set the component's public `--vc-*` colour token on
+  `html[data-preset="<name>"]` (dark: `html.dark[data-preset="<name>"]`). It is inherited as the
+  preset's default, so a block that sets the same token on its own element (an app block, a design's
+  block) wins: the footer keeps its transparent `VcWidget` plate. Never set a component's private variable
   (`--bg-color`, `--text-color`, …).
+- Target a block or BEM part only for a part with no token, and set the property itself there: the
+  rule sits below the preset's `html` and styles a BEM block, element or modifier, kit (`.vc-*`) or
+  app, like `.vc-widget__title` above.
+- `vc.preset` sits above `vc.design` and below `vc.print`: a preset's token on `html` beats a
+  design's token there (`_tokens.scss`), a preset's block rule beats every design's block, and print
+  still wins.
+- Every rule sits in `@layer vc.preset` and sets colours only.
 - **The value rule**, for a preset stylesheet and a design alike: a colour comes only from preset
   variables: `var(--color-*)`, a `_colors.scss` semantic (`--link-color`, …), a public `--vc-*`
   token, and `color-mix()` or `rgb(from …)` of these; `transparent`, `currentColor` and `inherit`
@@ -342,7 +347,7 @@ deliberately different choice, like the title colour below. Dark rules live in t
   rule it matches.
 - Host designs and presets never target a remote's blocks: the remote ships on its own schedule, and
   `check:designs` rejects a block no host component defines. The remote's design documentation lives in its own
-  repository.
+  repository; for the pilot remote, sales-rep, that is `VirtoCommerce/vc-module-sales-rep`.
 
 ---
 
@@ -539,7 +544,9 @@ Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same 
 | --- | --- |
 | It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
 | Every rule is inside `@layer vc.preset`; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, `@keyframes` |
-| Every selector starts with `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"] .vc-button` in `mercury.scss`, `… .dark .vc-button`, `… .vc-button svg` |
+| No separate dark stylesheet: dark rules go in `<name>.scss` under `html.dark[data-preset="<name>"]` | `mercury.dark.scss` |
+| Every selector is the preset's `html`, `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, alone or followed by a block: then it names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"]` and `html[data-preset="red"] .vc-button` in `mercury.scss`, `html[data-preset="mercury"]:hover`, `… .dark .vc-button`, `… .vc-button svg` |
+| On the preset's `html` alone, only public `--vc-*` tokens | `color: var(--color-primary-500)`, `--color-primary-500: …` on `html[data-preset="mercury"]` |
 | Colours only, by the value rule above | `margin: 0`, `--vc-button-radius: 0`, `color: #fff` |
 | No private variable | `--bg-color: var(--color-primary-500)` |
 
