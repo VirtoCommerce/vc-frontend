@@ -26,8 +26,8 @@ us; renaming or removing a BEM class or token is a breaking change (alias the to
 list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
 (`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
 
-`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders and layer
-names (`client-app/assets/styles/README.md`, "Checks"). Beyond them, only the Sass/Tailwind compile in `yarn build`
+`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders, preset
+stylesheets (`assets/presets/<name>.scss`) and layer names (`client-app/assets/styles/README.md`, "Checks"). Beyond them, only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
 (in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
 
@@ -43,6 +43,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
+   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - New colour tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss`; shape and typography tokens follow the
      styles README ("Shape and typography tokens"), where classic sets none but `--vc-radius`.
