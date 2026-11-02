@@ -12,9 +12,6 @@ function money(amount: number): MoneyType {
 const LIST_PRICE = money(100);
 const ACTUAL_PRICE = money(90);
 
-const PROPERTY_PRICE_SELECTOR = ".vc-line-item__property-price .vc-property__value";
-const WIDE_PRICE_SELECTOR = ".vc-line-item__price .vc-product-price__actual";
-
 const createWrapper = createWrapperFactory(mount, VcLineItem, {
   global: {
     components: {
@@ -43,22 +40,34 @@ function mountLineItem(showPlacedPrice: boolean) {
   });
 }
 
-describe("VcLineItem — price per item (VCST-6375)", () => {
-  it("narrow 'Price per item' shows the list price when showPlacedPrice is false", () => {
+function getNarrowPrice(wrapper: ReturnType<typeof mountLineItem>) {
+  return wrapper.findComponent({ name: "VcProperty" }).findComponent({ name: "VcProductPrice" });
+}
+
+function getWidePrice(wrapper: ReturnType<typeof mountLineItem>) {
+  const property = wrapper.findComponent({ name: "VcProperty" }).element;
+  return wrapper.findAllComponents({ name: "VcProductPrice" }).filter((price) => !property.contains(price.element))[0];
+}
+
+describe("VcLineItem price per item", () => {
+  it("shows the list price in the narrow slot when showPlacedPrice is false", () => {
     const wrapper = mountLineItem(false);
 
-    expect(wrapper.find(PROPERTY_PRICE_SELECTOR).text()).toBe(LIST_PRICE.formattedAmount);
+    expect(getNarrowPrice(wrapper).props("listPrice")).toEqual(LIST_PRICE);
   });
 
-  it("narrow 'Price per item' shows the actual price when showPlacedPrice is true", () => {
+  it("shows the actual price in the narrow slot when showPlacedPrice is true", () => {
     const wrapper = mountLineItem(true);
 
-    expect(wrapper.find(PROPERTY_PRICE_SELECTOR).text()).toBe(ACTUAL_PRICE.formattedAmount);
+    expect(getNarrowPrice(wrapper).props("listPrice")).toEqual(ACTUAL_PRICE);
   });
 
-  it.each([false, true])("narrow and wide price slots agree when showPlacedPrice is %s", (showPlacedPrice) => {
-    const wrapper = mountLineItem(showPlacedPrice);
+  it.each([false, true])(
+    "shows the same price in the narrow and wide slots when showPlacedPrice is %s",
+    (showPlacedPrice) => {
+      const wrapper = mountLineItem(showPlacedPrice);
 
-    expect(wrapper.find(PROPERTY_PRICE_SELECTOR).text()).toBe(wrapper.find(WIDE_PRICE_SELECTOR).text());
-  });
+      expect(getNarrowPrice(wrapper).props("listPrice")).toEqual(getWidePrice(wrapper).props("actualPrice"));
+    },
+  );
 });
