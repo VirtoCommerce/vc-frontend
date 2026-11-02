@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, ref } from "vue";
 import MissionCard from "./mission-card.vue";
 import OrderMissionModal from "./order-mission-modal.vue";
+import type { VueWrapper } from "@vue/test-utils";
 
 vi.mock("@/core/composables", async (importOriginal) => ({
   ...(await importOriginal<object>()),
@@ -60,51 +61,69 @@ vi.mock("vue-i18n", async (importOriginal) => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));
 
-function expectProgress(root: HTMLElement) {
-  const progress = root.querySelector<HTMLProgressElement>("progress");
-
-  expect(progress).not.toBeNull();
-  expect(progress!.value).toBe(30);
-  expect(progress!.max).toBe(100);
-  expect(root.querySelector('[class$="__track"]')?.getAttribute("aria-hidden")).toBe("true");
-
-  return progress!;
+function mountMissionCard() {
+  return mount(MissionCard, {
+    props: { mission: { missionId: "1", missionType: "OrderCount" } as never },
+    global,
+  });
 }
 
-describe("VCST-6143: mission progress bars expose a native progress element", () => {
-  it("mission card progress is a native progress named by the mission title", () => {
-    const wrapper = mount(MissionCard, {
-      props: { mission: { missionId: "1", missionType: "OrderCount" } as never },
-      global,
-      attachTo: document.body,
-    });
+function mountOrderMissionModal() {
+  return mount(OrderMissionModal, {
+    props: { mission: { missionId: "1", missionType: "OrderCount", targetValue: 10 } as never },
+    global,
+  });
+}
 
-    const progress = expectProgress(wrapper.element as HTMLElement);
-    const labelledBy = progress.getAttribute("aria-labelledby");
+function mountMissionList() {
+  const MissionList = defineComponent({
+    components: { MissionCard },
+    template: `<div><MissionCard :mission="{ missionId: '1' }" /><MissionCard :mission="{ missionId: '2' }" /></div>`,
+  });
+
+  return mount(MissionList, { global });
+}
+
+function expectProgress(wrapper: VueWrapper, trackTestId: string) {
+  const progress = wrapper.find<HTMLProgressElement>("progress");
+
+  expect(progress.exists()).toBe(true);
+  expect(progress.element.value).toBe(30);
+  expect(progress.element.max).toBe(100);
+  expect(wrapper.find(`[data-test-id="${trackTestId}"]`).attributes("aria-hidden")).toBe("true");
+
+  return progress;
+}
+
+describe("mission progress bar", () => {
+  it("mission card progress is a native progress named by the mission title", () => {
+    const wrapper = mountMissionCard();
+
+    const progress = expectProgress(wrapper, "mission-card-progress-track");
+    const labelledBy = progress.attributes("aria-labelledby");
 
     expect(labelledBy).toBeTruthy();
-    expect(document.getElementById(labelledBy!)?.textContent?.trim()).toBe("Spring mission");
-
-    wrapper.unmount();
+    expect(wrapper.find(`#${labelledBy}`).text()).toBe("Spring mission");
   });
 
   it("order mission modal progress is a native progress named by the mission title", () => {
-    const wrapper = mount(OrderMissionModal, {
-      props: { mission: { missionId: "1", missionType: "OrderCount", targetValue: 10 } as never },
-      global,
-    });
+    const wrapper = mountOrderMissionModal();
 
-    const progress = expectProgress(wrapper.element as HTMLElement);
+    const progress = expectProgress(wrapper, "order-mission-modal-progress-track");
 
-    expect(progress.getAttribute("aria-label")).toBe("Spring mission");
+    expect(progress.attributes("aria-label")).toBe("Spring mission");
+  });
+
+  it("hides the visible percent text from assistive tech", () => {
+    for (const wrapper of [mountMissionCard(), mountOrderMissionModal()]) {
+      const percent = wrapper.findAll("span").find((span) => span.text() === "30%");
+
+      expect(percent?.attributes("aria-hidden")).toBe("true");
+    }
   });
 
   it("gives each mission card on one page its own title id", () => {
-    const MissionList = defineComponent({
-      components: { MissionCard },
-      template: `<div><MissionCard :mission="{ missionId: '1' }" /><MissionCard :mission="{ missionId: '2' }" /></div>`,
-    });
-    const wrapper = mount(MissionList, { global });
+    const wrapper = mountMissionList();
 
     const ids = wrapper.findAll("progress").map((progress) => progress.attributes("aria-labelledby"));
 
