@@ -6,7 +6,6 @@
     is-mobile-fullscreen
     dividers
   >
-    <!-- TODO(VCST-6634): move these deprecated panels onto <VcWidget collapsible>; lint warns until then. -->
     <VcExpansionPanels class="add-bulk-items-to-cart-results-modal__panels">
       <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
         <template #icon>
