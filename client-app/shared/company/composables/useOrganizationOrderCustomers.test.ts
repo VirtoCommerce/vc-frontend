@@ -37,10 +37,12 @@ beforeEach(() => {
 });
 
 describe("useOrganizationOrderCustomers", () => {
-  it("asks for the organization's orders in the current store", () => {
+  it("asks for the organization's orders in the current store, as the statistics count them", () => {
     run();
 
-    expect(query.variables).toEqual([{ organizationId: "org-1", filter: 'storeid:"B2B-store"' }]);
+    expect(query.variables).toEqual([
+      { organizationId: "org-1", filter: 'storeid:"B2B-store" iscancelled:false isprototype:false' },
+    ]);
   });
 
   it("reads the accounts from the customer facet, lower-cased", () => {

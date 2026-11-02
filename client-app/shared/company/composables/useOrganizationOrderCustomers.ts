@@ -7,13 +7,15 @@ import type { MaybeRefOrGetter } from "vue";
 const CUSTOMER_FACET = "customerid";
 
 /**
- * The accounts that have placed orders for the organization in the current store, from the order index: one request,
- * no order rows. `undefined` until known, and after a failure.
+ * The accounts that have placed orders for the organization in the current store, cancelled ones left out, from the
+ * order index: one request, no order rows. `undefined` until known, and after a failure.
  */
 export function useOrganizationOrderCustomers(organizationId: MaybeRefOrGetter<string | undefined>) {
   const variables = computed(() => ({
     organizationId: toValue(organizationId),
-    filter: `storeid:"${escapeFilterSyntaxValue(globals.storeId)}"`,
+    // The orders the statistics count: neither cancelled nor a recurring-order template. A member whose only orders
+    // were cancelled would otherwise be listed over a report of zeros.
+    filter: `storeid:"${escapeFilterSyntaxValue(globals.storeId)}" iscancelled:false isprototype:false`,
   }));
 
   const { result, loading, error, onError } = useGetOrganizationOrderCustomersQuery(variables);
