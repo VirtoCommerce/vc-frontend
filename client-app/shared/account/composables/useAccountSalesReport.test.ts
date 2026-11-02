@@ -146,6 +146,36 @@ describe("useAccountSalesReport", () => {
     expect(report.data.value?.months[0]).toEqual({ totals: { amount: 500, count: 2 }, lastYear: undefined });
   });
 
+  // Separate requests: months that land first must not show a buyer who never ordered charts of zeros.
+  it("keeps loading while the history is on its way, even once the months are in", () => {
+    queries.monthly.result.value = { orderStatistics: statistics() };
+    queries.history.loading.value = true;
+    const report = run();
+
+    expect(report.loading.value).toBe(true);
+
+    queries.history.loading.value = false;
+    queries.history.result.value = history(0);
+
+    expect(report.loading.value).toBe(false);
+    expect(report.hasOrders.value).toBe(false);
+  });
+
+  it("stops waiting for the history once it has failed", () => {
+    queries.history.loading.value = false;
+    queries.history.error.value = new Error("down");
+
+    expect(run().loading.value).toBe(false);
+  });
+
+  // A known answer is enough: a background refresh of it does not hold back months already in.
+  it("does not wait for a refresh of a history it already knows", () => {
+    queries.history.result.value = history(4);
+    queries.history.loading.value = true;
+
+    expect(run().loading.value).toBe(false);
+  });
+
   it("reports a failed read", () => {
     queries.monthly.error.value = new Error("down");
 

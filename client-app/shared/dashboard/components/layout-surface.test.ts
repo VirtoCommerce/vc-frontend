@@ -8,6 +8,7 @@ import LayoutEditBar from "./_internal/layout-edit-bar.vue";
 import LayoutEditButton from "./_internal/layout-edit-button.vue";
 import LayoutEmptyState from "./_internal/layout-empty-state.vue";
 import LayoutRegion from "./_internal/layout-region.vue";
+import LayoutSkeleton from "./_internal/layout-skeleton.vue";
 import LayoutStats from "./_internal/layout-stats.vue";
 import LayoutSurface from "./layout-surface.vue";
 import type { LayoutControllerOptionsType, LayoutControllerType, LayoutInputType, SavedLayoutType } from "../types";
@@ -409,9 +410,14 @@ describe("LayoutSurface full-width region", () => {
   // A tall block's placeholder is as tall as the block, so the columns below do not jump when it lands.
   it("draws a block's own number of placeholder lines while the layout is read", () => {
     const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { read: "pending" }));
-    const lines = wrapper.findAll(".layout-skeleton__full .vc-widget-skeleton__slot > div");
+    // Every placeholder line is an empty div, as is the head's one. In page order: the full-width block, then the
+    // test dashboard's four column widgets at the default five lines.
+    const lines = wrapper
+      .getComponent(LayoutSkeleton)
+      .findAllComponents(VcWidgetSkeleton)
+      .map((skeleton) => skeleton.findAll("div:empty").length - 1);
 
-    expect(lines).toHaveLength(WIDE_SKELETON_ROWS);
+    expect(lines).toEqual([WIDE_SKELETON_ROWS, 5, 5, 5, 5]);
   });
 
   it("does not mount the region on a dashboard with no full-width block", async () => {

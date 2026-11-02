@@ -69,6 +69,16 @@ export const hostTypePolicies: TypePolicies = {
   OrderStatistics: {
     merge: true,
   },
+  // Also id-less, and two queries can read one window (the stat cards' month to date and the Sales Statistics' current
+  // month) with different fields of `total`. Merging, down to the money, keeps both instead of the last write's. The
+  // field policies beat `MoneyType`'s `merge: false`, which stays for every other money field.
+  OrderStatisticsPeriod: {
+    merge: true,
+    fields: {
+      total: { merge: true },
+      average: { merge: true },
+    },
+  },
   PaymentMethodType: {
     keyFields: ["code"],
   },

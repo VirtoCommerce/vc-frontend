@@ -85,7 +85,7 @@ const { data, excludedCount, hasOrders, loading, failed } = useAccountSalesRepor
 <style lang="scss">
 .sales-report-widget {
   &__all-link {
-    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
+    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-normal text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__excluded {

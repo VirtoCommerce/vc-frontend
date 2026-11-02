@@ -78,8 +78,8 @@ export function useAccountSalesReport(period: MaybeRefOrGetter<ReportingPeriodTy
     Logger.error("[account dashboard] monthly orderStatistics failed:", queryError);
   });
 
-  // Apart from the months, so a period switch does not count the whole history again. A failure only leaves
-  // "ever ordered" unknown, and the report shows as for a buyer with orders.
+  // Apart from the months, so a period switch does not count the whole history again. A failure is silent on purpose
+  // (see the query): it only leaves "ever ordered" unknown, and the report shows as for a buyer with orders.
   const history = useGetOrderStatisticsHistoryQuery(computed(storeContext));
 
   history.onError((queryError) => {
@@ -99,17 +99,23 @@ export function useAccountSalesReport(period: MaybeRefOrGetter<ReportingPeriodTy
     { immediate: true },
   );
 
+  /** False only once the user's whole history is known to hold no order at all; undefined until then. */
+  const hasOrders = computed(() => {
+    const all = history.result.value?.orderStatistics?.all;
+    return all ? all.count + all.excludedCount > 0 : undefined;
+  });
+
   return {
     data: computed(() => settled.value && toSalesReportData(settled.value.plan, settled.value.statistics)),
     excludedCount: computed(() =>
       settled.value ? excludedOrdersCount(settled.value.plan, settled.value.statistics) : 0,
     ),
-    /** False only once the user's whole history is known to hold no order at all; undefined until then. */
-    hasOrders: computed(() => {
-      const all = history.result.value?.orderStatistics?.all;
-      return all ? all.count + all.excludedCount > 0 : undefined;
-    }),
-    loading,
+    hasOrders,
+    /**
+     * Also while the history is still on its way: the two are separate requests, and months that land first would
+     * otherwise show a buyer who never ordered tiles and charts of zeros before the empty state takes their place.
+     */
+    loading: computed(() => loading.value || (hasOrders.value === undefined && history.loading.value)),
     failed: computed(() => Boolean(error.value)),
   };
 }
