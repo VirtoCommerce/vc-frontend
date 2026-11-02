@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "设置",
           "currency": "货币",
@@ -1700,6 +1701,17 @@
           "invite_revoked": "邀请已撤销",
           "invite_resent": "邀请已重新发送"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "报表",
+        "subtitle": "贵组织的销售额、订单数和平均订单金额，与去年对比",
+        "member_label": "成员",
+        "all_members": "所有成员（{count}）",
+        "all_members_plain": "所有成员",
+        "members_failed": "无法加载成员"
       }
     },
     "cart": {

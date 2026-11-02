@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Settings",
           "currency": "Currency",
@@ -1700,6 +1701,17 @@
           "invite_revoked": "Invite revoked",
           "invite_resent": "Invite resent"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Reporting",
+        "subtitle": "Sales, orders and average order value of your organization, compared with last year",
+        "member_label": "Member",
+        "all_members": "All members ({count})",
+        "all_members_plain": "All members",
+        "members_failed": "Couldn't load the members"
       }
     },
     "cart": {

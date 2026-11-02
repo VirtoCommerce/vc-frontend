@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Innstillinger",
           "currency": "Valuta",
@@ -1700,6 +1701,17 @@
           "invite_revoked": "Invitasjonen er trukket tilbake",
           "invite_resent": "Invitasjonen er sendt på nytt"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Rapporter",
+        "subtitle": "Salg, bestillinger og gjennomsnittlig ordreverdi for organisasjonen din, sammenlignet med i fjor",
+        "member_label": "Medlem",
+        "all_members": "Alle medlemmer ({count})",
+        "all_members_plain": "Alle medlemmer",
+        "members_failed": "Kunne ikke laste inn medlemmene"
       }
     },
     "cart": {

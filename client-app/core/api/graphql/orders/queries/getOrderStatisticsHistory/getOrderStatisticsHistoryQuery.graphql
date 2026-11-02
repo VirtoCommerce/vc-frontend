@@ -1,8 +1,21 @@
-# Whether the signed-in user ever ordered: the account dashboard's Sales Statistics shows its empty state instead of
-# tiles and charts of zeros when not. Its own operation, with variables that never change on the page, so switching
-# the report's period does not make the backend count the user's whole history again.
-query GetOrderStatisticsHistory($storeId: String, $currencyCode: String, $cultureName: String) {
-  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+# Whether the signed-in user ever ordered (or, with `organizationScope`, the organization or one member): the Sales
+# Statistics show their empty state instead of tiles and charts of zeros when not. Its own operation, with variables
+# a period switch never changes, so switching the report's period does not make the backend count the whole history
+# again.
+query GetOrderStatisticsHistory(
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $organizationScope: Boolean
+  $memberId: String
+) {
+  orderStatistics(
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    organizationScope: $organizationScope
+    memberId: $memberId
+  ) {
     all: period {
       count
       excludedCount

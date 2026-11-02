@@ -62,6 +62,24 @@ describe("monthlyOrderStatisticsVariables", () => {
     expect(variables.from0).toBe(plan.months[0].from);
     expect(variables.lyTo1).toBe(plan.months[1].lyTo);
     expect(variables.from3).toBeUndefined();
+    // The dashboard counts the user's own orders: no scope is sent.
+    expect(variables.organizationScope).toBeUndefined();
+    expect(variables.memberId).toBeUndefined();
+  });
+});
+
+describe("monthlyOrderStatisticsVariables with a scope", () => {
+  it("asks for the organization's orders, or one member's", () => {
+    const plan = buildReportingPlan("q2", NOW);
+
+    expect(monthlyOrderStatisticsVariables(plan, { organization: true })).toMatchObject({
+      organizationScope: true,
+      memberId: undefined,
+    });
+    expect(monthlyOrderStatisticsVariables(plan, { organization: true, memberId: "contact-1" })).toMatchObject({
+      organizationScope: true,
+      memberId: "contact-1",
+    });
   });
 });
 
@@ -125,6 +143,16 @@ describe("useAccountSalesReport", () => {
     run();
 
     expect(queries.historyVariables).toEqual([{ storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US" }]);
+  });
+
+  // A member who never ordered gets zeros: the empty state would also take away the picker that leads back.
+  it("asks for the organization's history, never one member's", () => {
+    const scope = effectScope();
+    scope.run(() => useAccountSalesReport("year", { organization: true, memberId: "contact-1" }));
+
+    expect(queries.historyVariables).toEqual([
+      { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", organizationScope: true, memberId: undefined },
+    ]);
   });
 
   it("keeps the report on when the history cannot be read", () => {

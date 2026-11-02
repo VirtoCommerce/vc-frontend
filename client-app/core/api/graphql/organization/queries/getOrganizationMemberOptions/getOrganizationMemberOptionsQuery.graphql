@@ -1,0 +1,14 @@
+# The organization's members for a picker: an id and a name each. Its own narrow operation, not the Members page's
+# (roles, accounts, e-mails, statuses), which costs far more than a dropdown needs.
+query GetOrganizationMemberOptions($id: String!, $userId: String!, $first: Int, $sort: String) {
+  organization(id: $id, userId: $userId) {
+    contacts(first: $first, sort: $sort) {
+      items {
+        id
+        name
+        fullName
+      }
+      totalCount
+    }
+  }
+}
