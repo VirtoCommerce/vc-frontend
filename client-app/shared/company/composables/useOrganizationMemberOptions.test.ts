@@ -1,6 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { effectScope, ref } from "vue";
-import { ORGANIZATION_MEMBER_OPTIONS_LIMIT, useOrganizationMemberOptions } from "./useOrganizationMemberOptions";
+import {
+  memberName,
+  ORGANIZATION_MEMBER_OPTIONS_LIMIT,
+  useOrganizationMemberOptions,
+} from "./useOrganizationMemberOptions";
 import type { Ref } from "vue";
 
 const query = vi.hoisted(
@@ -70,5 +74,20 @@ describe("useOrganizationMemberOptions", () => {
 
     expect(failed.value).toBe(true);
     expect(options.value).toEqual([]);
+  });
+});
+
+describe("memberName", () => {
+  it.each([
+    [{ id: "c-1", fullName: "Alice Adams", name: "alice" }, "Alice Adams"],
+    [{ id: "c-2", fullName: "   ", name: "bob" }, "bob"],
+    [{ id: "c-3", fullName: "", name: "", firstName: "Carol", lastName: "Clark" }, "Carol Clark"],
+    [
+      { id: "c-4", fullName: " ", name: " ", firstName: "", lastName: "", emails: ["dan@example.com"] },
+      "dan@example.com",
+    ],
+    [{ id: "c-5", fullName: "", name: null, emails: [] }, "c-5"],
+  ])("names %o as %s", (contact, expected) => {
+    expect(memberName(contact)).toBe(expected);
   });
 });
