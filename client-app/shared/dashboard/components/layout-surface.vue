@@ -45,6 +45,25 @@
         @announce="announce"
       />
 
+      <!-- Spans both columns, between the stat row and them. Its own Sortable group: a full-width block is built for
+           the width and never lands in a column, nor a column block here. Absent while nothing in it is visible. -->
+      <LayoutRegion
+        v-if="!allHidden && visibleIn('fullWidth').length"
+        class="layout-surface__full"
+        :scope="layout.scope"
+        :entries="visibleIn('fullWidth')"
+        orientation="vertical"
+        :group="`layout-${layout.scope}-full-width`"
+        :editing="editing"
+        @reorder="reorderVisible('fullWidth', $event)"
+        @set-hidden="toggleHidden"
+        @announce="announce"
+      >
+        <template #default="{ id, title }">
+          <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="bindingsOf(id)" :title="title" />
+        </template>
+      </LayoutRegion>
+
       <!-- The rail exists only while something is visible in `mainRight`; until then the content runs
            full width, matching the skeleton. -->
       <div v-if="!allHidden" class="layout-surface__row">
@@ -217,6 +236,10 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), ...props.blockProps });
   // Left column plus the desktop edit button; LayoutRegion supplies its own stacking.
   &__main-col {
     @apply flex min-w-0 flex-1 flex-col gap-5;
+  }
+
+  &__full {
+    @apply min-w-0;
   }
 
   &__main {

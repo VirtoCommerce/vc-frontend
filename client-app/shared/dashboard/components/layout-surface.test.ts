@@ -366,3 +366,50 @@ describe("LayoutSurface with every block hidden", () => {
     expect(wrapper.findComponent(Probe).exists()).toBe(true);
   });
 });
+
+// A block that needs the whole width of the page sits in its own region, between the stat row and the two
+// columns, and keeps its own drag group so it cannot be dropped into a column built for narrower boxes.
+describe("LayoutSurface full-width region", () => {
+  const FULL_SCOPE = "surfaceFullWidthSpec";
+  const WIDE_ID = "wide";
+
+  const Wide = defineComponent({ setup: () => () => h("div", { "data-test-id": "wide-block" }) });
+
+  registerTestDashboard(FULL_SCOPE);
+  registerBlock(FULL_SCOPE, { id: WIDE_ID, region: "fullWidth", titleKey: "wide.title", order: 1, component: Wide });
+
+  function regionWithGroup(wrapper: ReturnType<typeof mountSurface>, group: string) {
+    return wrapper.findAllComponents(LayoutRegion).find((region) => region.props("group") === group);
+  }
+
+  it("renders its block after the stat row and before the columns, in a drag group of its own", async () => {
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE));
+    await flushPromises();
+
+    const full = regionWithGroup(wrapper, `layout-${FULL_SCOPE}-full-width`);
+    const stats = wrapper.getComponent(LayoutStats).element;
+    const firstColumn = wrapper.get('[data-block-id="list"]').element;
+
+    expect(full?.find('[data-test-id="wide-block"]').exists()).toBe(true);
+    expect(stats.compareDocumentPosition(full!.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(full!.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("does not mount the region on a dashboard with no full-width block", async () => {
+    const wrapper = mountSurface(createFakeLayout(SCOPE));
+    await flushPromises();
+
+    expect(regionWithGroup(wrapper, `layout-${SCOPE}-full-width`)).toBeUndefined();
+  });
+
+  it("offers a hidden full-width block back through the tray", async () => {
+    const saved: SavedLayoutType = { regions: [{ blocks: [{ type: WIDE_ID, hidden: true }] }] };
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { saved }));
+    await flushPromises();
+    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="wide-block"]').exists()).toBe(false);
+    expect(wrapper.find(`[data-restore-id="${WIDE_ID}"]`).exists()).toBe(true);
+  });
+});

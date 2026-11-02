@@ -3,8 +3,9 @@
 import type { Component, DeepReadonly, Ref } from "vue";
 
 /** Fixed regions. Owned by the registry, never read back from the document — widgets are built for
- * their column's width, so region is code, not user data. */
-export type LayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
+ * their column's width, so region is code, not user data. `fullWidth` spans both columns, between the stat row
+ * and them (VCST-6258). */
+export type LayoutRegionIdType = "statistics" | "fullWidth" | "mainLeft" | "mainRight";
 
 /** A setting a block exposes in layout-edit mode (VCST-5649). */
 export type BlockSettingType =
@@ -40,10 +41,10 @@ export interface IStatBlock extends IBlockBase {
   region: "statistics";
 }
 
-/** A widget in one of the two content columns. Renders through layout-widget.vue, which puts the drag
- * controls in the widget's own header slots. */
+/** A widget in the full-width region or one of the two content columns. Renders through layout-widget.vue, which
+ * puts the drag controls in the widget's own header slots. */
 export interface IWidgetBlock extends IBlockBase {
-  region: "mainLeft" | "mainRight";
+  region: "fullWidth" | "mainLeft" | "mainRight";
   component: Component;
   /** Extra props for `component`. `title` comes from `titleKey` and is passed by the surface. */
   props?: Record<string, unknown>;

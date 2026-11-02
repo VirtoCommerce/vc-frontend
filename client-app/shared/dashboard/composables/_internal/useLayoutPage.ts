@@ -13,8 +13,8 @@ export function useLayoutPage(layout: LayoutControllerType) {
   const { message, announce, say } = useLayoutAnnouncer(scope);
   const { setHidden, visibleIn, hiddenIn, editing, saveFailed } = layout;
 
-  // Widgets from both columns share one tray; the stat row has its own paired zone instead.
-  const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
+  // Widgets from the full-width region and both columns share one tray; the stat row has its own paired zone.
+  const hiddenWidgets = computed(() => [...hiddenIn("fullWidth"), ...hiddenIn("mainLeft"), ...hiddenIn("mainRight")]);
 
   const allHidden = computed(
     () => !editing.value && LAYOUT_REGION_IDS.every((regionId) => visibleIn(regionId).length === 0),

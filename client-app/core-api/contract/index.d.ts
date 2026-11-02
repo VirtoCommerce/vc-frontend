@@ -5678,8 +5678,9 @@ type GlobalVariablesType = {
 declare const globals: Readonly<Required<GlobalVariablesType>>;
 
 /** Fixed regions. Owned by the registry, never read back from the document — widgets are built for
- * their column's width, so region is code, not user data. */
-type LayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
+ * their column's width, so region is code, not user data. `fullWidth` spans both columns, between the stat row
+ * and them (VCST-6258). */
+type LayoutRegionIdType = "statistics" | "fullWidth" | "mainLeft" | "mainRight";
 /** A setting a block exposes in layout-edit mode (VCST-5649). */
 type BlockSettingType = 
 /** Row cap for a list widget. `min`/`max` are per block: an API may cap its page size. */
@@ -5718,10 +5719,10 @@ interface IBlockBase {
 interface IStatBlock extends IBlockBase {
     region: "statistics";
 }
-/** A widget in one of the two content columns. Renders through layout-widget.vue, which puts the drag
- * controls in the widget's own header slots. */
+/** A widget in the full-width region or one of the two content columns. Renders through layout-widget.vue, which
+ * puts the drag controls in the widget's own header slots. */
 interface IWidgetBlock extends IBlockBase {
-    region: "mainLeft" | "mainRight";
+    region: "fullWidth" | "mainLeft" | "mainRight";
     component: Component;
     /** Extra props for `component`. `title` comes from `titleKey` and is passed by the surface. */
     props?: Record<string, unknown>;

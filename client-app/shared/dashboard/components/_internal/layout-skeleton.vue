@@ -5,6 +5,12 @@
       <VcStatWidget v-for="id in statIds" :key="id" :label="titleOf(id)" loading class="layout-skeleton__card" />
     </div>
 
+    <div v-if="fullIds.length" class="layout-skeleton__full">
+      <VcWidgetSkeleton v-for="id in fullIds" :key="id" head size="md">
+        <div v-for="row in BLOCK_ROWS" :key="row"></div>
+      </VcWidgetSkeleton>
+    </div>
+
     <div class="layout-skeleton__row">
       <!-- Empty divs are the kit's contract for a placeholder line. An empty column is skipped, as in
            layout-surface, and `md` is the size every registered widget renders at. -->
@@ -36,6 +42,7 @@ const BLOCK_ROWS = 5;
 const defaults = computed(() => reconcileLayout(null, getBlockRegistry(props.scope)).regions);
 
 const statIds = computed(() => defaults.value.statistics.visible);
+const fullIds = computed(() => defaults.value.fullWidth.visible);
 
 const { t } = useI18n();
 const titleOf = (id: string): string => {
@@ -59,6 +66,11 @@ const columns = computed(() =>
 
   &__stats {
     @apply flex flex-wrap gap-4;
+  }
+
+  // Above the columns, as on the surface.
+  &__full {
+    @apply flex flex-col gap-5;
   }
 
   &__row {
