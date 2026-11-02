@@ -6,6 +6,8 @@ Virto Commerce Frontend: a Vue 3 + TypeScript SPA (Vite, Apollo GraphQL, Tailwin
 
 Detailed, path-scoped conventions live in [.claude/rules/](.claude/rules/) (architecture, modules-and-routes, data-graphql, styles, designs-and-presets, markup, ui-kit, ui-kit-internals, vue-typescript, i18n, tests, security). They load automatically for matching files, so they are not repeated here.
 
+Any code change (feature, component, style, bugfix) starts with the `implement` skill ([.claude/skills/implement/SKILL.md](.claude/skills/implement/SKILL.md)): it lists the reuse step and the checks to run before the task is done.
+
 ## Commands
 
 Node 22 (`.nvmrc`), Yarn 4 via corepack. Every script runs `scripts/check-yarn-version.js` first.
