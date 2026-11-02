@@ -7,8 +7,9 @@ writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
 setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` writes it to
-`<html data-design="…">` before the app mounts. The design switches styles only: markup and `Vc*`
-props never change, and the design never changes the preset.
+`<html data-design="…">` before the app mounts, and the active colour preset's file name to
+`<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
+and the design never changes the preset.
 
 ---
 
@@ -19,7 +20,7 @@ props never change, and the design never changes the preset.
 ```css
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
-@layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;
+@layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
 ```
 
 - The first declaration a page sees fixes the order; an identical re-declaration is a no-op. So
@@ -42,13 +43,14 @@ props never change, and the design never changes the preset.
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). No colour tokens in a design |
+| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). A design's colour tokens take colour only from preset variables |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
 | `vc.design` | a design's block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
+| `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
 | `vc.print` | `_print.scss`; every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
@@ -189,7 +191,8 @@ The rules for block files:
 - Dark values go in `dark/<block>.scss`; they win over the component's dark styles.
 - An element a design restyles must be styled with BEM in the template, not utilities: a utility in
   the template always wins.
-- No colours: colours come from the preset.
+- Colour only from preset variables (the [value rule](#recolour-with-a-preset-stylesheet)); a
+  recolour that belongs to one preset goes in that preset's stylesheet.
 - Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
@@ -242,6 +245,46 @@ never restates print. Token values apply in print too.
 
 For the core team, customising our own design = editing its folder; prefer adding a token to the
 component (in that component's task) over a block file when several designs will need the same knob.
+
+---
+
+## Recolour with a preset stylesheet
+
+A preset's JSON recolours the whole palette. When one preset needs a block in another colour, it
+gets a stylesheet next to its JSON: `client-app/assets/presets/<name>.scss` (no underscore: it is an
+entry, not a partial). The app downloads it only while that preset is on and mounts after it;
+Storybook loads it on the Theme preset switch. A preset without one loads nothing.
+
+```scss
+@layer vc.preset {
+  html[data-preset="mercury"] {
+    .vc-widget {
+      --vc-widget-bg-color: var(--color-neutral-50);
+    }
+  }
+
+  html.dark[data-preset="mercury"] {
+    .vc-widget {
+      --vc-widget-bg-color: var(--color-neutral-900);
+    }
+  }
+}
+```
+
+- `vc.preset` sits above `vc.design` and below `vc.print`, so a preset's colour beats every design's
+  block, and print still wins.
+- Every rule sits in `@layer vc.preset`, below `html[data-preset="<name>"]` (dark:
+  `html.dark[data-preset="<name>"]`), and styles a BEM block, element or modifier, kit (`.vc-*`) or
+  app.
+- It sets colours only. **Token first:** set the component's public `--vc-*` colour token when it
+  has one; set the property itself only when it has none. Never set a component's private variable
+  (`--bg-color`, `--text-color`, …).
+- **The value rule**, for a preset stylesheet and a design alike: a colour comes only from preset
+  variables: `var(--color-*)`, a `_colors.scss` semantic (`--link-color`, …), a public `--vc-*`
+  token, and `color-mix()` or `rgb(from …)` of these; `transparent`, `currentColor` and `inherit`
+  are allowed. No hex, no numeric `rgb()` / `hsl()`, no named colours.
+
+`yarn check:designs` checks every preset stylesheet ([Checks](#checks)).
 
 ---
 
@@ -375,7 +418,7 @@ this table does not list, or the table lists one the code does not read.
   the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
   Tailwind's defaultTheme), `rgb(from var(--color-additional-950) …)` for the others. A design
-  changes geometry and alpha, never colour.
+  changes geometry and alpha; a colour it sets comes only from preset variables.
 - **Fonts:** a design lists its font stylesheet URLs in its `client-app/designs/<name>/design.ts`;
   they load only while that design is on. The link is not awaited, so fonts never hold back the
   mount. Classic's Lato is linked in `index.html`.
@@ -403,7 +446,7 @@ this table does not list, or the table lists one the code does not read.
 ## Checks
 
 ```bash
-yarn check:designs                    # every folder in client-app/designs/, a fork's too (no build needed)
+yarn check:designs                    # every folder in client-app/designs/, a fork's too, and every preset stylesheet (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
 ```
 
@@ -420,8 +463,8 @@ are in `scripts/check-designs.test.ts`.
 | `blocks/` and `dark/` hold `.scss` files directly, each named after a block of a component | `blocks/layout/footer-links.scss`, `blocks/notes.md`, `blocks/nothing.scss` |
 | `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
 | `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
-| No colour tokens: no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon` (Tailwind's `--tw-shadow-colored` excepted) | `--vc-x-bg`, `--vc-button-solid-primary-text`, `@apply ring-primary-500` |
-| Block and dark files set no colour. In `color`, `fill`, `stroke` and every `…-color` property the only values are `transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, `revert-layer`, `none`, `auto` and `#0000`. The shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` hold no named, hex (except `#0000`) or functional colour (`rgb()`, `oklch()`, `color-mix()`, …) and no `var()` of a colour token. No property but a custom one holds a gradient with a colour in it (a direction-only `@apply bg-gradient-to-r` is not one). Tailwind's gradient stops and colour opacities (`--tw-gradient-from`, `--tw-gradient-to`, `--tw-{bg,text,border,divide,placeholder,ring}-opacity`) count as colours; its shadow and ring geometry (`@apply shadow-md`, `@apply ring-2`) does not | `color: red`, `border-top-color: red`, `background: red`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `background: var(--color-primary-500)`, `background-image: linear-gradient(red, blue)`, `@apply text-primary-500`, `@apply bg-opacity-50`, `@apply from-primary-500` |
+| A colour comes only from preset variables, in every design file. A colour is `color`, `fill`, `stroke` and every `…-color` property; the shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` when they hold one; a gradient with a colour in it; Tailwind's gradient stops and colour opacities; and a custom property named as a colour token (its name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`; Tailwind's `--tw-shadow-colored` excepted). Its value reads only `--color-*`, the `_colors.scss` semantics and `--vc-*` (Tailwind's `--tw-*` too), mixed by `color-mix()` or `rgb(from …)`, besides the keywords and `#0000`. A custom property named as a colour token whose value holds no colour (`--title-text: 1rem`) is not one | `color: red`, `border-top-color: red`, `background: #fff`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `text-shadow: 0 0 2px rgb(0 0 0)`, `fill: var(--x)`, `color: color-mix(in srgb, var(--color-primary-500), white)`, `--vc-x-bg: red` |
+| No private variable carries a colour: a custom property other than `--vc-*` and `--tw-*` | `--text-color: var(--color-primary-500)` |
 | A block or dark file names no `html` and no `[data-design]` | `html .footer-links` |
 | A block or dark file names no `.dark`: it is on `<html>`, so below the design's `html` it never matches; dark rules go in `dark/<block>.scss`, where `index.scss` adds `.dark` | `.dark .footer-links`, `.dark &` |
 | No `@apply` variant that styles an ancestor or sibling (`group-*`, `peer-*`): it puts a selector before `html[data-design]` and never matches; write the rule out | `@apply group-hover:underline`, `@apply peer-checked:underline` |
@@ -431,6 +474,16 @@ are in `scripts/check-designs.test.ts`.
 | A design file loads only `.scss` files of its own folder and `sass:` modules | `@use "@/ui-kit/styles/focus-ring"`, `@use "../../x"`, a path that matches several files |
 | Its CSS holds no at-rule but `@media`, `@supports`, `@container` and `@starting-style` (and, in `index.scss`, the top-level `@layer` blocks) | `@keyframes`, `@layer`, `@import`, `@scope`, `@property` |
 | `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix |
+
+Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same way:
+
+| Rule | Rejected |
+| --- | --- |
+| It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
+| Every rule is inside `@layer vc.preset`; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, `@keyframes` |
+| Every selector starts with `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"] .vc-button` in `mercury.scss`, `… .dark .vc-button`, `… .vc-button svg` |
+| Colours only, by the value rule above | `margin: 0`, `--vc-button-radius: 0`, `color: #fff` |
+| No private variable | `--bg-color: var(--color-primary-500)` |
 
 Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`, and
 `*-move`) and state classes (`is-*`, `has-*`) are not blocks, so a block file may use them on its own
