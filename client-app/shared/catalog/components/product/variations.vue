@@ -8,7 +8,7 @@
       },
     ]"
     size="lg"
-    :title="model.title || $t('shared.catalog.product_details.variations.title')"
+    :title="model.title ?? $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
     v-track-item="variations"
     data-vc-track="product-list"

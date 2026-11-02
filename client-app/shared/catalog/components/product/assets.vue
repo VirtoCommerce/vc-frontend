@@ -3,7 +3,7 @@
     v-if="product.assets?.length"
     class="assets"
     icon="document-text"
-    :title="model.title || $t('shared.catalog.product_details.assets_block_title')"
+    :title="model.title ?? $t('shared.catalog.product_details.assets_block_title')"
   >
     <ul class="assets__list">
       <li v-for="(file, index) in files" :key="index" class="assets__item">
@@ -20,7 +20,7 @@ import type { Asset, Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  model: { title: string };
+  model: { title?: string };
 }
 
 const props = defineProps<IProps>();

@@ -1,7 +1,7 @@
 <template>
   <ProductTitledBlock
     v-if="!model.hidden && description && isCollapsible"
-    :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+    :title="model.title ?? $t('shared.catalog.product_details.description_block_title')"
     icon="document-text"
   >
     <VcCollapsibleContent max-height="18.75rem" class="text-base text-neutral-600">
@@ -12,7 +12,7 @@
   <VcWidget
     v-else-if="!model.hidden && description"
     size="lg"
-    :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+    :title="model.title ?? $t('shared.catalog.product_details.description_block_title')"
     prepend-icon="document-text"
   >
     <div class="text-base text-neutral-600">
