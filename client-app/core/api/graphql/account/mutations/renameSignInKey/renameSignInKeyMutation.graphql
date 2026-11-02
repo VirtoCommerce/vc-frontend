@@ -1,0 +1,9 @@
+mutation RenameSignInKey($command: InputRenameSignInKeyType!) {
+  renameSignInKey(command: $command) {
+    succeeded
+    errors {
+      code
+      description
+    }
+  }
+}

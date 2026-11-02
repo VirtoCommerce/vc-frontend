@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout mode"
+    "mode_label": "Punchout mode",
+    "create_requisition": "Create requisition",
+    "errors": {
+      "create_requisition_failed": "Could not create the requisition. Please try again.",
+      "session_not_found": "Your punchout session was not found. Return to your procurement system and start a new session.",
+      "session_expired": "Your punchout session has expired. Return to your procurement system and start a new session.",
+      "store_not_configured": "Punchout is not set up for this store. Please contact the store administrator.",
+      "configuration_error": "The punchout connection is not configured correctly. Please contact the store administrator.",
+      "message_error": "The requisition could not be prepared for your procurement system. Please contact the store administrator.",
+      "cart_not_found": "Your cart could not be found. Reload the page and check your cart.",
+      "cart_is_empty": "Select at least one item in your cart to create a requisition.",
+      "session_returned": "Requisition already sent."
+    }
   }
 }

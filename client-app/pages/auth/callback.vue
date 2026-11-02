@@ -9,11 +9,14 @@ const { externalSignInCallback, errors: authErrors } = useAuth();
 const { analytics } = useAnalytics();
 
 async function externalSignIn(): Promise<void> {
+  let signInError: Error | undefined;
+
   try {
     await externalSignInCallback();
     await signIn();
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e));
+    signInError = error;
     Logger.error(externalSignIn.name, e);
     analytics("login", "external", {
       success: false,
@@ -26,9 +29,9 @@ async function externalSignIn(): Promise<void> {
       success: false,
       errors: errors.value.map((error) => `${error.code}: ${error.description}`).join(", "),
     });
+  } else if (!signInError) {
+    analytics("login", "external", { success: true });
   }
-
-  analytics("login", "external", { success: true });
 
   const isSignInNotAllowed = authErrors.value?.some((err) => err.code === IdentityErrors.SIGN_IN_NOT_ALLOWED);
   if (isSignInNotAllowed) {

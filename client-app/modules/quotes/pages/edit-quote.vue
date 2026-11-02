@@ -1,5 +1,5 @@
 <template>
-  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
+  <div v-if="quote" class="gap-y-4 lg:gap-y-6">
     <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
@@ -196,7 +196,7 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("quote_details.title", [quote.value?.number]),
+  title: computed(() => t("quote_details.title", [quote.value?.number])),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [

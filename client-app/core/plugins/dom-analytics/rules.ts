@@ -13,6 +13,11 @@ const LIST_PROPERTIES: ObjectSourceType = {
   },
 };
 
+const SELECTED_ITEM_LIST_PROPERTIES: ObjectSourceType = {
+  ...LIST_PROPERTIES,
+  fields: { ...LIST_PROPERTIES.fields, index: { position: "product-card" } },
+};
+
 // Markup without a `v-track-item` object behind it (Builder.io HTML, custom themes)
 const PRODUCT_FROM_ATTRS: ObjectSourceType = {
   source: "object",
@@ -30,7 +35,7 @@ export const rules: RuleType[] = [
     event: "selectItem",
     trigger: "click",
     target: "product-link",
-    args: [{ source: "item", from: "product-card", fallback: PRODUCT_FROM_ATTRS }, LIST_PROPERTIES],
+    args: [{ source: "item", from: "product-card", fallback: PRODUCT_FROM_ATTRS }, SELECTED_ITEM_LIST_PROPERTIES],
   },
   {
     event: "viewItemList",

@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Denna artikel kan inte köpas",
       "item_is_out_of_stock": "Denna artikel är slut i lager",
       "invalid_value": "Ogiltigt värde",
+      "invalid_characters": "Innehåller ogiltiga tecken",
+      "html_tags_not_allowed": "HTML-taggar är inte tillåtna",
+      "unsafe_content": "Innehåller otillåtet innehåll",
+      "invalid_addresses": "Några av adresserna är ogiltiga",
+      "invalid_data": "Några av de angivna uppgifterna är ogiltiga",
       "invalid_user_id_or_token": "Användar-ID eller token är ogiltig.",
       "product_no_longer_available": "Inte längre tillgänglig",
       "item_quantity_required_field": "Artikelantalet får inte vara tomt",
@@ -285,7 +290,8 @@
       "company_members": "Företagsmedlemmar",
       "contact_administrator": "kontakta webbplatsadministratören",
       "skip_to_main_content": "Hoppa till huvudinnehåll",
-      "skip_to_footer": "Hoppa till sidfot"
+      "skip_to_footer": "Hoppa till sidfot",
+      "security": "Säkerhet"
     },
     "titles": {
       "all_actions": "Alla åtgärder",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Sparat till senare",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "Flera konton använder den här e-postadressen.",
           "lockout_disabled": "Det här kontot kan inte logga in med en kod.",
           "invalid_code": "Den här koden fungerade inte.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Din inloggningssession har gått ut. Logga in igen.",
+          "code_attempts_exceeded": "För många felaktiga koder. Vänta några minuter och logga in igen.",
+          "mfa_provider_not_available": "Vi kan inte skicka en inloggningskod till det här kontot. Kontakta din administratör.",
+          "two_factor_unavailable": "Det här kontot kräver ett andra inloggningssteg, men det är inte tillgängligt. Kontakta administratören.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
-          "generic": "Något gick fel. Försök igen."
+          "generic": "Något gick fel. Försök igen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "Kolla din e-post",
           "subtitle": "Vi skickade en kod till {email}.",
-          "code_label": "Kod",
-          "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
-          "submit_button": "Logga in",
-          "resend_button": "Skicka koden igen",
-          "use_different_email_link": "Använd en annan e-postadress",
-          "live_resent": "Ny kod skickad."
+          "use_different_email_link": "Använd en annan e-postadress"
         },
         "locked": {
           "title": "För många misslyckade försök",
@@ -653,6 +670,19 @@
           "password_button": "Logga in med lösenord",
           "back_link": "Tillbaka till inloggningen"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Ange inloggningskoden",
+        "subtitle": "Vi har skickat en kod till {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Kod",
+        "paste_hint": "Ange eller klistra in koden. På mobilen trycker du på den ovanför tangentbordet.",
+        "submit_button": "Logga in",
+        "resend_button": "Skicka koden igen",
+        "resend_countdown": "Skicka koden igen om {seconds} s",
+        "live_resent": "Ny kod skickad."
       }
     },
     "company": {
@@ -1464,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Alla kuponger & kampanjer",
         "no_lists": "Du har inga kuponger eller kampanjer"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Inga nycklar",
+        "unnamed_key": "Namnlös nyckel",
+        "created": "Skapad {date}",
+        "changed": "Ändrad {date}",
+        "rename_modal": {
+          "title": "Byt namn på nyckel",
+          "name_label": "Namn"
+        },
+        "delete_modal": {
+          "title": "Ta bort nyckel",
+          "message": "Du kommer inte längre att kunna logga in med den här nyckeln."
+        }
       }
     },
     "company": {
@@ -1803,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Lösenordet måste innehålla minst ett icke-alfanumeriskt tecken",
     "PasswordRequiresUpper": "Lösenordet måste innehålla minst en stor bokstav ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Lösenordet måste använda olika tecken",
-    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat."
+    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat.",
+    "user_not_editable": "Den här användaren kan inte redigeras",
+    "sign_in_key_not_found": "Inloggningsnyckeln hittades inte",
+    "last_sign_in_key": "Den sista inloggningsnyckeln kan inte tas bort",
+    "operation_not_supported": "Den här åtgärden stöds inte"
   },
   "password_tips": {
     "title": "Tips för att skapa ett starkt lösenord:",

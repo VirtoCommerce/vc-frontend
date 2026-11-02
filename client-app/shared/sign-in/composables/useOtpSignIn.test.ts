@@ -5,12 +5,13 @@ vi.mock("@/core/composables", () => {
   const otpSignIn = vi.fn<(params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const lockoutSecondsRemaining = ref<number>();
+  const revokeTokens = vi.fn();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { otpSignIn, authErrors, lockoutSecondsRemaining },
+    __mockAuthState: { otpSignIn, authErrors, lockoutSecondsRemaining, revokeTokens },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ otpSignIn, errors: authErrors, lockoutSecondsRemaining }),
+    useAuth: () => ({ otpSignIn, errors: authErrors, lockoutSecondsRemaining, revokeTokens }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -76,6 +77,7 @@ type AuthMockStateType = {
   otpSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
   lockoutSecondsRemaining: { value: number | undefined };
+  revokeTokens: ReturnType<typeof vi.fn>;
 };
 
 type AnalyticsMockStateType = {
@@ -133,6 +135,7 @@ describe("useOtpSignIn", () => {
 
     const auth = await getAuthState();
     auth.otpSignIn.mockReset();
+    auth.revokeTokens.mockReset();
     auth.otpSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
     auth.lockoutSecondsRemaining.value = undefined;
@@ -263,6 +266,24 @@ describe("useOtpSignIn", () => {
     expect(signMeIn.signIn).toHaveBeenCalledTimes(1);
     expect(result).toEqual({ succeeded: true });
     expect(analytics).toHaveBeenCalledWith("login", "otp", { success: true });
+  });
+
+  it("verifyCode discards the tokens when the sign-in can't be completed after the code is accepted", async () => {
+    const auth = await getAuthState();
+    const signMeIn = await getSignMeInState();
+    signMeIn.signIn.mockRejectedValue(new Error("me query failed"));
+
+    const { useOtpSignIn } = await importComposable();
+    const { verifyCode } = useOtpSignIn();
+
+    const result = await verifyCode("buyer@acme.com", "123456");
+
+    expect(auth.revokeTokens).toHaveBeenCalledOnce();
+    expect(result).toEqual({
+      succeeded: false,
+      error: { description: "common.messages.something_went_wrong" },
+      tokensDiscarded: true,
+    });
   });
 
   it("verifyCode returns the error with the seconds remaining when the token exchange reports a lockout", async () => {

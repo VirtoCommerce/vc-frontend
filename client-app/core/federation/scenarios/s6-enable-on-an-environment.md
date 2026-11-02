@@ -76,7 +76,7 @@ The same steps, with nothing to deploy:
    of the storefront's release: the footer shows the release (`Ver. x.y.z`), and its facade is
    `client-app/core-api/package.json` at that tag.
 3. **An automated update can swap the module package** for a build without the plugin, and the feature is gone with no
-   error. SalesRep does exactly that until a SalesRep release ships the plugin. Run `--env` again after an update.
+   error. Run `--env` again after an update.
 
 ---
 

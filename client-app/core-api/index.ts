@@ -53,6 +53,7 @@ export {
   VcLabel,
   VcLink,
   VcMarkdownRender,
+  VcTooltip,
 } from "@/ui-kit/components/atoms";
 export {
   VcDatePicker,
@@ -82,7 +83,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
-export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -138,9 +139,20 @@ export type {
   WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+export { useThemeContext } from "@/core/composables/useThemeContext";
+export { useAnalytics } from "@/core/composables/useAnalytics";
+export { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
+export { useAuth } from "@/core/composables/useAuth";
+export { useSignMeIn } from "@/shared/account/composables/useSignMeIn";
+export { default as IdentityProvider } from "@/shared/sign-in/components/identity-provider.vue";
+export type { SignInMethodContributionType } from "@/shared/account/types";
+export type { IdentityErrorType, SignInKeyType } from "@/core/api/graphql/types";
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
+// Whether a menu link is the current page's: the link's own `activeWhen` rule, else vue-router's record match. A
+// plugin that draws its own account-menu link (an `accountMenu` replacement) highlights it the way the host's rail does.
+export { isMenuLinkActive } from "@/core/utilities/menu";
 // A date-only bound ("YYYY-MM-DD") to the instant a filter needs: local midnight, or the last
 // millisecond of that day. A plugin filtering by date has to land on the host's boundaries, not its own.
 export { toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue } from "@/core/utilities/date";
@@ -157,6 +169,9 @@ export type { LocaleLoaderType } from "@/core/locale-loaders";
 // Exporting the whole map is deliberate — it puts every route name a plugin could reach for under
 // the contract, so a rename shows up as a contract diff (a minor on 0.x) instead of a silent break.
 export { ROUTES } from "@/router/routes/constants";
+// The query-string names host pages read (`q` is the search phrase), for a plugin linking to a host page with a query.
+// Contract for the same reason as `ROUTES`: a rename shows up as a contract diff instead of a link that stops working.
+export { QueryParamName } from "@/core/enums/query-param-name.enum";
 
 // Order rendering, so a plugin's order page shows an order the way the host's own does.
 // `useOrderView` is the host's order view-model (gift vs regular items, per-currency groups,

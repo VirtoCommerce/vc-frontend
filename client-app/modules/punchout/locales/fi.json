@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout-tila"
+    "mode_label": "Punchout-tila",
+    "create_requisition": "Luo ostoehdotus",
+    "errors": {
+      "create_requisition_failed": "Ostoehdotuksen luominen epäonnistui. Yritä uudelleen.",
+      "session_not_found": "Punchout-istuntoa ei löytynyt. Palaa hankintajärjestelmään ja aloita uusi istunto.",
+      "session_expired": "Punchout-istunto on vanhentunut. Palaa hankintajärjestelmään ja aloita uusi istunto.",
+      "store_not_configured": "Punchoutia ei ole määritetty tälle kaupalle. Ota yhteyttä kaupan ylläpitäjään.",
+      "configuration_error": "Punchout-yhteyttä ei ole määritetty oikein. Ota yhteyttä kaupan ylläpitäjään.",
+      "message_error": "Ostoehdotusta ei voitu valmistella hankintajärjestelmääsi varten. Ota yhteyttä kaupan ylläpitäjään.",
+      "cart_not_found": "Ostoskoria ei löytynyt. Lataa sivu uudelleen ja tarkista ostoskori.",
+      "cart_is_empty": "Valitse ostoskorista vähintään yksi tuote luodaksesi ostoehdotuksen.",
+      "session_returned": "Ostoehdotus on jo lähetetty."
+    }
   }
 }

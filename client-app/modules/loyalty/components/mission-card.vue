@@ -117,11 +117,15 @@ function openMission(): void {
   }
 
   &__backdrop {
-    @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
+    --vc-image-object-fit: cover;
+
+    @apply absolute inset-0 size-full scale-110 opacity-60 blur-lg;
   }
 
   &__image {
-    @apply relative size-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply relative size-full;
   }
 
   &__done {

@@ -190,11 +190,11 @@ module.exports = {
     // type-only import is exactly the coupling that breaks when a module moves to its own repo.
     // Turning it on is not a drop-in: `true` takes the repo from 0 errors to 19 (+195 warnings) and
     // `"specify"` to 15 (+200), because the existing rules' `dependencyTypesNot: ["type-only"]`
-    // clauses are no-ops today and start mattering all at once. The type-only half is covered by
-    // NO_HOST_INTERNAL_IMPORT / NO_DEEP_SALES_REP_IMPORT in eslint.config.js instead - which sees
-    // `import type`, but which CI does not currently run, so it holds in the IDE and in
-    // `yarn lint`, not in the pipeline. Closing that properly means either scoping the
-    // tsPreCompilationDeps work or adding lint to the validate chain.
+    // clauses are no-ops today and start mattering all at once. The type-only half of the first rule
+    // is covered by NO_HOST_INTERNAL_IMPORT in eslint.config.js instead - which sees `import type`,
+    // but which CI does not currently run, so it holds in the IDE and in `yarn lint`, not in the
+    // pipeline. Closing that properly means either scoping the tsPreCompilationDeps work or adding
+    // lint to the validate chain.
     {
       name: "no-module-to-host-internal",
       comment:
@@ -213,21 +213,6 @@ module.exports = {
       },
       to: {
         path: "/_internal/",
-      },
-    },
-    {
-      name: "no-host-to-sales-rep-internals",
-      comment:
-        "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into " +
-        "its own repository, so its entry point is the only surface the host may depend on. Widen " +
-        "this rule to the next module as it is prepared for extraction.",
-      severity: "error",
-      from: {
-        pathNot: "^client-app/modules/sales-rep/",
-      },
-      to: {
-        path: "^client-app/modules/sales-rep/",
-        pathNot: "^client-app/modules/sales-rep/index[.]ts$",
       },
     },
     {

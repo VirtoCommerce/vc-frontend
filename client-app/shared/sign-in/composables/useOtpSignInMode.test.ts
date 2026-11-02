@@ -1,11 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref } from "vue";
+import { OtpStep, PasswordStep } from "@/shared/sign-in/enums";
 import { useOtpSignInMode } from "./useOtpSignInMode";
 
 const resetErrors = vi.fn();
 
 vi.mock("@/core/composables/useAuth", () => ({
   useAuth: () => ({ resetErrors }),
+}));
+
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({ t: (key: string) => key }),
 }));
 
 describe("useOtpSignInMode", () => {
@@ -41,5 +46,38 @@ describe("useOtpSignInMode", () => {
     switchToOtp();
 
     expect(showOtpEmailForm.value).toBe(true);
+  });
+
+  it("hides the switch to OTP while the password sign-in asks for the second factor", () => {
+    const { showSwitchToOtpLink, passwordStep, switchToPassword } = useOtpSignInMode(ref(true));
+
+    switchToPassword();
+    expect(showSwitchToOtpLink.value).toBe(true);
+
+    passwordStep.value = PasswordStep.TwoFactor;
+    expect(showSwitchToOtpLink.value).toBe(false);
+
+    passwordStep.value = PasswordStep.Password;
+    expect(showSwitchToOtpLink.value).toBe(true);
+  });
+
+  it("titles the code steps of both sign-in modes", () => {
+    const { stepHeader, otpStep, passwordStep, switchToPassword } = useOtpSignInMode(ref(true));
+    expect(stepHeader.value).toBeUndefined();
+
+    otpStep.value = OtpStep.Verify;
+    expect(stepHeader.value).toBe("shared.sign_in.otp_email_sign_in_form.verify.header");
+
+    switchToPassword();
+    expect(stepHeader.value).toBeUndefined();
+
+    passwordStep.value = PasswordStep.TwoFactor;
+    expect(stepHeader.value).toBe("shared.sign_in.mfa_verify_form.header");
+  });
+
+  it("never shows the switch to OTP when OTP is disabled", () => {
+    const { showSwitchToOtpLink } = useOtpSignInMode(ref(false));
+
+    expect(showSwitchToOtpLink.value).toBe(false);
   });
 });

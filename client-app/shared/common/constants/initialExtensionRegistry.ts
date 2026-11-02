@@ -47,4 +47,7 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   orderDetails: {},
   cartPayment: {},
   sharedList: {},
+  checkout: {},
+  identityProviders: {},
+  signInMethods: {},
 };

@@ -1,0 +1,22 @@
+.vc-tile-button {
+  // A copy of VcButton's dark solid shades (dark/molecules/vc-button.scss): keep both in sync,
+  // so a solid tile next to a solid button matches.
+  $solid-bg: (
+    primary: 200,
+    secondary: 300,
+    accent: 300,
+    neutral: 300,
+    success: 400,
+    danger: 400,
+    info: 400,
+    warning: 400,
+  );
+
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color} {
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
+  }
+}
