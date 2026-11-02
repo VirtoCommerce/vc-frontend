@@ -8,23 +8,42 @@ export type HeadingTagType = (typeof HEADING_TAGS)[number];
 
 const DEFAULT_HEADING_TAG: HeadingTagType = "h2";
 
-type DeclaredPropsType = string[] | Record<string, unknown> | undefined;
+type DeclaredPropsType = string[] | Record<string, unknown>;
+
+/** Targets that keep the link in the current browsing context, so the opened page gets no `window.opener`. */
+const SAME_CONTEXT_TARGETS = new Set(["", "_self", "_parent", "_top"]);
+
+const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
 
 /**
  * `defineAsyncComponent` keeps the declared props on the inner component, so they are known only after
- * `__asyncLoader` resolves. Vue reads the same field for hydration and KeepAlive.
+ * `__asyncLoader` resolves; `__asyncResolved` holds it from then on. Vue reads the same fields for hydration
+ * and KeepAlive.
  */
-type AsyncComponentWrapperType = { __asyncLoader?: () => Promise<Component> };
-
-const loadedComponents = new WeakMap<object, Component>();
+type AsyncComponentWrapperType = {
+  __asyncLoader?: () => Promise<Component>;
+  __asyncResolved?: Component;
+};
 
 const htmlPurifier = DOMPurify();
 
 htmlPurifier.addHook("afterSanitizeAttributes", (node) => {
-  if (node instanceof Element && node.getAttribute("target") === "_blank") {
-    node.setAttribute("rel", "noopener noreferrer");
+  if (!(node instanceof Element) || !opensNewWindow(node.getAttribute("target"))) {
+    return;
   }
+
+  const rel = new Set(node.getAttribute("rel")?.split(/\s+/).filter(Boolean));
+  NEW_WINDOW_REL_TOKENS.forEach((token) => rel.add(token));
+  node.setAttribute("rel", [...rel].join(" "));
 });
+
+/** Own-key lookup, so a type such as `toString` does not resolve to an `Object.prototype` member. */
+export function getRegisteredSection(
+  registry: Record<string, Component>,
+  type: string | undefined,
+): Component | undefined {
+  return type !== undefined && Object.hasOwn(registry, type) ? registry[type] : undefined;
+}
 
 export function toHeadingTag(value: unknown): HeadingTagType {
   return HEADING_TAGS.find((tag) => tag === value) ?? DEFAULT_HEADING_TAG;
@@ -35,9 +54,9 @@ export function sanitizeSectionHtml(html: string | undefined): string {
   return html ? htmlPurifier.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ["target"] }) : "";
 }
 
-/** Returns the section component ready to render, or `undefined` while a lazy one is not loaded yet. */
+/** Returns the component that declares the section props, or `undefined` while a lazy one is not loaded yet. */
 export function getLoadedSectionComponent(component: Component): Component | undefined {
-  return isAsyncWrapper(component) ? loadedComponents.get(component) : component;
+  return isAsyncWrapper(component) ? component.__asyncResolved : component;
 }
 
 export async function loadSectionComponent(component: Component): Promise<Component> {
@@ -45,9 +64,7 @@ export async function loadSectionComponent(component: Component): Promise<Compon
     return component;
   }
 
-  const loaded = await component.__asyncLoader();
-  loadedComponents.set(component, loaded);
-  return loaded;
+  return await component.__asyncLoader();
 }
 
 /** Keeps only the entries of a Page Builder item that the section component declares as props. */
@@ -67,6 +84,13 @@ function getDeclaredPropNames(component: Component): Set<string> {
   return new Set(names.map((name) => camelize(name)));
 }
 
-function isAsyncWrapper(component: Component): component is Component & Required<AsyncComponentWrapperType> {
+function opensNewWindow(target: string | null): boolean {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `target` is checked for null first
+  return target !== null && !SAME_CONTEXT_TARGETS.has(target.toLowerCase());
+}
+
+function isAsyncWrapper(
+  component: Component,
+): component is Component & AsyncComponentWrapperType & Pick<Required<AsyncComponentWrapperType>, "__asyncLoader"> {
   return typeof (component as AsyncComponentWrapperType).__asyncLoader === "function";
 }

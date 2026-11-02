@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { defineAsyncComponent, defineComponent } from "vue";
 import {
   getLoadedSectionComponent,
+  getRegisteredSection,
   loadSectionComponent,
   pickDeclaredProps,
   sanitizeSectionHtml,
@@ -33,7 +34,7 @@ describe("sanitizeSectionHtml", () => {
   it("removes scripts, event handlers, frames and javascript: links", () => {
     const html =
       '<script>alert(1)</script><img src="x.png" onerror="alert(1)"><iframe src="https://example.com"></iframe>' +
-      '<a href="javascript:alert(1)">x</a>';
+      '<a href="javascript:alert(1)">x</a>'; // nosemgrep: vc-javascript-uri -- sanitizer input fixture, never rendered
 
     expect(sanitizeSectionHtml(html)).toBe('<img src="x.png"><a>x</a>');
   });
@@ -42,6 +43,24 @@ describe("sanitizeSectionHtml", () => {
     expect(sanitizeSectionHtml('<a href="https://example.com" target="_blank">x</a>')).toBe(
       '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>',
     );
+  });
+
+  it.each(["promo", "_BLANK"])("adds rel to links with the %s target", (target) => {
+    expect(sanitizeSectionHtml(`<a href="https://example.com" target="${target}">x</a>`)).toBe(
+      `<a href="https://example.com" target="${target}" rel="noopener noreferrer">x</a>`,
+    );
+  });
+
+  it("keeps the author's rel tokens", () => {
+    expect(sanitizeSectionHtml('<a href="https://example.com" target="_blank" rel="nofollow noopener">x</a>')).toBe(
+      '<a href="https://example.com" target="_blank" rel="nofollow noopener noreferrer">x</a>',
+    );
+  });
+
+  it.each(["_self", "_top"])("does not add rel to links with the %s target", (target) => {
+    const html = `<a href="https://example.com" target="${target}">x</a>`;
+
+    expect(sanitizeSectionHtml(html)).toBe(html);
   });
 
   it("returns an empty string for no content", () => {
@@ -78,6 +97,16 @@ describe("pickDeclaredProps", () => {
 
   it("passes nothing to a component without props", () => {
     expect(pickDeclaredProps(defineComponent({ template: "<div />" }), { title: "Title" })).toEqual({});
+  });
+});
+
+describe("getRegisteredSection", () => {
+  it("returns a registered section", () => {
+    expect(getRegisteredSection({ slider: Section }, "slider")).toBe(Section);
+  });
+
+  it.each(["toString", "constructor", "__proto__", "unknown", undefined])("returns nothing for %j", (type) => {
+    expect(getRegisteredSection({ slider: Section }, type)).toBeUndefined();
   });
 });
 

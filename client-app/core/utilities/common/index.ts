@@ -114,12 +114,13 @@ export function replaceXFromBeginning(input: string, by: string = "•••• 
 
 type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
 
-const SAFE_LINK_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
+/** Schemes that run script or render a document when the link is activated. */
+const UNSAFE_LINK_PROTOCOLS = new Set(["javascript:", "vbscript:", "data:"]);
 
-/** `true` for a relative URL or an absolute one with an http, https, mailto or tel scheme. */
+/** `false` for a link with a script or document scheme, or one that does not parse; app schemes such as `sms:` pass. */
 export function isSafeLinkUrl(url: string): boolean {
   const parsed = parseUrl(url, location.origin);
-  return parsed !== null && SAFE_LINK_PROTOCOLS.has(parsed.protocol);
+  return parsed !== null && !UNSAFE_LINK_PROTOCOLS.has(parsed.protocol);
 }
 
 export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {

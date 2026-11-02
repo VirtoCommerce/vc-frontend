@@ -27,7 +27,7 @@ describe("getLinkAttr", () => {
     expect(getLinkAttr(link)).toEqual({ externalLink: link });
   });
 
-  it.each(["mailto:sales@example.com", "tel:+15550100", "contact-us", "#section"])(
+  it.each(["mailto:sales@example.com", "tel:+15550100", "whatsapp://send?phone=15550100", "contact-us", "#section"])(
     'returns "externalLink" for the allowed link %s',
     (link) => {
       expect(getLinkAttr(link)).toEqual({ externalLink: link });
@@ -46,19 +46,25 @@ describe("getLinkAttr", () => {
 });
 
 describe("isSafeLinkUrl", () => {
-  it.each(["/catalog", "https://example.com", "http://example.com", "mailto:a@b.c", "tel:123", "page"])(
-    "accepts %s",
-    (url) => {
-      expect(isSafeLinkUrl(url)).toBe(true);
-    },
-  );
+  it.each([
+    "/catalog",
+    "https://example.com",
+    "http://example.com",
+    "mailto:a@b.c",
+    "tel:123",
+    "sms:+15550100",
+    "skype:user?call",
+    "page",
+  ])("accepts %s", (url) => {
+    expect(isSafeLinkUrl(url)).toBe(true);
+  });
 
   it.each([
     "javascript:void(0)",
     "JAVASCRIPT:void(0)",
     "\njavascript:void(0)",
+    "vbscript:msgbox(1)",
     "data:image/svg+xml,<svg/>",
-    "file:///etc/passwd",
   ])("rejects %j", (url) => {
     expect(isSafeLinkUrl(url)).toBe(false);
   });

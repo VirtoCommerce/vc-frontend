@@ -1,5 +1,5 @@
 <template>
-  <component :is="definition" v-if="definition" v-bind="{ ...declaredProps, ...$attrs }" />
+  <component :is="component" v-if="component" v-bind="{ ...declaredProps, ...$attrs }" />
 </template>
 
 <script setup lang="ts">
@@ -19,16 +19,20 @@ defineOptions({ inheritAttrs: false });
 
 const props = defineProps<IProps>();
 
-const definition = shallowRef<Component>();
+/**
+ * The component whose declared props filter the item. A lazy section still renders through its async
+ * wrapper, which resets a failed load so the next mount retries; until it loads, no item keys pass.
+ */
+const propsSource = shallowRef<Component>();
 
-const declaredProps = computed(() => (definition.value ? pickDeclaredProps(definition.value, props.item) : {}));
+const declaredProps = computed(() => (propsSource.value ? pickDeclaredProps(propsSource.value, props.item) : {}));
 
 watch(
   () => props.component,
   async (component) => {
-    definition.value = component ? getLoadedSectionComponent(component) : undefined;
+    propsSource.value = component ? getLoadedSectionComponent(component) : undefined;
 
-    if (!component || definition.value) {
+    if (!component || propsSource.value) {
       return;
     }
 
@@ -36,7 +40,7 @@ watch(
       const loaded = await loadSectionComponent(component);
 
       if (props.component === component) {
-        definition.value = loaded;
+        propsSource.value = loaded;
       }
     } catch (error) {
       Logger.error("[page-builder-section] Failed to load a section", error);

@@ -26,7 +26,7 @@
               v-if="shouldShowBlock(block)"
               :id="getAnchorId(block)"
               :key="block.id || index"
-              :component="ProductBlocks[block.type ?? '']"
+              :component="getRegisteredSection(ProductBlocks, block.type)"
               :item="block"
               :model="block"
               :product="product"
@@ -45,6 +45,7 @@ import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { getAnchorId } from "@/shared/static-content/anchors";
+import { getRegisteredSection } from "../sections";
 import PageBuilderSection from "./page-builder-section.vue";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";

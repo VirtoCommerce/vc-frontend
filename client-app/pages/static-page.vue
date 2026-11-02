@@ -16,7 +16,7 @@
       <PageBuilderSection
         v-if="!item.hidden"
         :key="item.id"
-        :component="templateBlocks[getBlockType(item.type)]"
+        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
         :item="item"
         :id="getAnchorId(item)"
         :model="item"
@@ -37,6 +37,7 @@ import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 import {
   getAnchorId,
+  getRegisteredSection,
   PageBuilderSection,
   templateBlocks,
   useAnchorScroll,

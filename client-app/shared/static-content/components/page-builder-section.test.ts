@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { defineAsyncComponent, defineComponent, h } from "vue";
 import PageBuilderSection from "./page-builder-section.vue";
 import type { Component } from "vue";
@@ -38,7 +38,7 @@ describe("PageBuilderSection", () => {
   it("does not render undeclared item keys as attributes", () => {
     const section = mountSection(Section).find('[data-test-id="page-builder-test-section"]');
 
-    expect(Object.keys(section.attributes()).sort((a, b) => a.localeCompare(b))).toEqual(["data-test-id", "id"]);
+    expect(section.attributes()).toEqual({ "data-test-id": "page-builder-test-section", id: "anchor-1" });
   });
 
   it("renders nothing without a registered component", () => {
@@ -52,6 +52,31 @@ describe("PageBuilderSection", () => {
 
     const section = wrapper.find('[data-test-id="page-builder-test-section"]');
     expect(section.text()).toBe("Hello");
-    expect(Object.keys(section.attributes()).sort((a, b) => a.localeCompare(b))).toEqual(["data-test-id", "id"]);
+    expect(section.attributes()).toEqual({ "data-test-id": "page-builder-test-section", id: "anchor-1" });
+  });
+
+  it("loads a lazy section again after a failed load", async () => {
+    const loader = vi
+      .fn<() => Promise<Component>>()
+      .mockRejectedValueOnce(new Error("chunk failed"))
+      .mockResolvedValue(Section);
+    const LazySection = defineAsyncComponent(loader);
+    const errorHandler = vi.fn();
+    const mountLazySection = () =>
+      mount(PageBuilderSection, {
+        props: { component: LazySection, item: MALICIOUS_ITEM },
+        global: { config: { errorHandler } },
+      });
+
+    const failed = mountLazySection();
+    await flushPromises();
+    failed.unmount();
+
+    const wrapper = mountLazySection();
+    await flushPromises();
+
+    expect(errorHandler).toHaveBeenCalledOnce();
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(wrapper.find('[data-test-id="page-builder-test-section"]').text()).toBe("Hello");
   });
 });

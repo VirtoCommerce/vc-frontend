@@ -16,7 +16,7 @@
       <PageBuilderSection
         v-if="!item.hidden"
         :key="item.id"
-        :component="templateBlocks[getBlockType(item.type)]"
+        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
         :item="item"
         :id="getAnchorId(item)"
         :model="item"
@@ -32,7 +32,13 @@ import { useBreadcrumbs } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { getAnchorId, PageBuilderSection, templateBlocks, useAnchorScroll } from "@/shared/static-content";
+import {
+  getAnchorId,
+  getRegisteredSection,
+  PageBuilderSection,
+  templateBlocks,
+  useAnchorScroll,
+} from "@/shared/static-content";
 
 interface IProps {
   content?: string;

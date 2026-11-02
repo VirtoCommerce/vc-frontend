@@ -39,10 +39,11 @@ vi.mock("@/shared/static-content", async () => {
   const anchors = await import("@/shared/static-content/anchors");
   const { useAnchorScroll } = await import("@/shared/static-content/composables/useAnchorScroll");
   const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
+  const { getRegisteredSection } = await import("@/shared/static-content/sections");
   const { defineComponent, h } = await import("vue");
   const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
 
-  return { ...anchors, useAnchorScroll, PageBuilderSection, templateBlocks: { section } };
+  return { ...anchors, useAnchorScroll, getRegisteredSection, PageBuilderSection, templateBlocks: { section } };
 });
 
 const mountedWrappers: Array<{ unmount: () => void }> = [];
