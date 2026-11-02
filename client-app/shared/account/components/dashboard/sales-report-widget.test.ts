@@ -59,10 +59,12 @@ beforeEach(() => {
 });
 
 describe("SalesReportWidget", () => {
-  it("shows the report without KPI tiles or a table, the stat cards above carrying those figures", () => {
+  // The panel shows its KPI tiles unless told otherwise, so the widget leaves `withTiles` unset.
+  it("shows the report with its KPI tiles and without the table", () => {
     const panel = mountWidget().findComponent(ReportingPanelStub);
 
-    expect(panel.props()).toMatchObject({ withTiles: false, withTable: false, period: "year" });
+    expect(panel.props()).toMatchObject({ withTable: false, period: "year" });
+    expect(panel.props("withTiles")).toBeUndefined();
   });
 
   it("links to the orders list", () => {

@@ -27,13 +27,12 @@
     </VcEmptyView>
 
     <template v-else>
-      <!-- The four stat cards right above already show the orders and the average with "vs last year". -->
+      <!-- The KPI tiles as on the Sales Rep Hub Reporting page; the table stays behind "All orders". -->
       <ReportingPanel
         v-model:period="period"
         :data="data"
         :loading="loading"
         :error="failed"
-        :with-tiles="false"
         :with-table="false"
       />
 
