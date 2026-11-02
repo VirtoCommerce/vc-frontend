@@ -390,7 +390,9 @@ onActivated(async () => {
   }
 
   &__photo-img {
-    @apply size-full object-cover;
+    --vc-image-object-fit: cover;
+
+    @apply size-full;
   }
 
   &__photo-overlay {

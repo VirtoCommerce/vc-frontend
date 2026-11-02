@@ -124,9 +124,10 @@
 - Usage: `<VcIcon name="shopping-cart" :size="24" />`
 
 **VcImage** (`client-app/ui-kit/components/atoms/image/vc-image.vue`)
-- Props: src, alt, lazy, aspectRatio, objectFit
-- Features: lazy loading, placeholder, error state, WebP support
-- Events: load, error
+- Props: src, alt, lazy, fallbackSrc, sizeSuffix (sm/md/lg)
+- CSS vars: --vc-image-object-fit (default fill), --vc-image-object-position (default 50% 50%, the fallback image too), --vc-image-fallback-object-fit (fallback image; else --vc-image-object-fit, else scale-down)
+- Features: lazy loading, fallback image on load error, thumbnail size suffixes
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/image/vc-image.stories.ts)
 
 **VcLoader** (`client-app/ui-kit/components/atoms/loader/vc-loader.vue`)
 - Props: size (sm/md/lg), centered
@@ -829,7 +830,7 @@ Base container component for displaying product cards with three adaptive layout
      - disabled?: boolean - disabled state
      - withFromLabel?: boolean - show "from" prefix for variations
    - Features: VcPriceDisplay for formatting, strikethrough for list price, responsive sizing
-   - CSS variable: --vc-product-price-font-size
+   - CSS variables: --vc-product-price-font-size, --vc-product-price-line-height (default 1.335)
 
 7. **VcProductButton** (`client-app/ui-kit/components/molecules/product-button/vc-product-button.vue`)
    - Props:

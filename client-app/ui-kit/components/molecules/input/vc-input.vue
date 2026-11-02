@@ -439,6 +439,11 @@ provide<VcInputContextType>("inputContext", {
       clip-path: inset(0 2rem 0 0);
     }
 
+    // Restates preflight's Firefox number reset, which `appearance-none` above outranks.
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
+
     &:focus {
       @apply outline-none;
     }

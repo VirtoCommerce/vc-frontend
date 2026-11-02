@@ -9,10 +9,10 @@ paths:
 Import boundaries and extension points are in `architecture.md`.
 
 ## Module structure
-Reference modules: `modules/returns`, `modules/sales-rep`.
+Reference module: `modules/returns`.
 
-1. Layout: `index.ts` (init only), `constants.ts`, `router.ts`/`routes.ts`, `menu.ts`, `api/graphql/{queries,mutations,fragments}/<name>/` (wrapper `index.ts` per operation except in sales-rep, see `data-graphql.md` §2) + generated `types.ts`, `composables/`, `components/`, `pages/`, `locales/`.
-2. `export function init(router, i18n)` is gated by `useModuleSettings(MODULE_ID).isEnabled(ENABLED_KEY)` (or a module helper like `isSalesRepsEnabled()`). Nothing — routes, menu, locales, extensions, cache policies — is registered outside the gate. `MODULE_ID` / `*_ENABLED_KEY` live in `constants.ts`, not inline strings.
+1. Layout: `index.ts` (init only), `constants.ts`, `router.ts`/`routes.ts`, `menu.ts`, `api/graphql/{queries,mutations,fragments}/<name>/` (wrapper `index.ts` per operation) + generated `types.ts`, `composables/`, `components/`, `pages/`, `locales/`.
+2. `export function init(router, i18n)` is gated by `useModuleSettings(MODULE_ID).isEnabled(ENABLED_KEY)` (or a module helper). Nothing — routes, menu, locales, extensions, cache policies — is registered outside the gate. `MODULE_ID` / `*_ENABLED_KEY` live in `constants.ts`, not inline strings.
 3. A new module is wired in `app-runner.ts` with `void initX(router, i18n)` before `app.use(router)` (routes added later miss the initial navigation).
 4. Module-specific ids, settings keys and constants live in the module (`modules/<m>/constants.ts`), not in
    `core/constants` or `core/types/theme-config.ts` — a removable module must not leave pieces in core.

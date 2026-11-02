@@ -290,7 +290,8 @@
       "company_members": "Company members",
       "contact_administrator": "contact the site administrator",
       "skip_to_main_content": "Skip to main content",
-      "skip_to_footer": "Skip to footer"
+      "skip_to_footer": "Skip to footer",
+      "security": "Security"
     },
     "titles": {
       "all_actions": "All actions",
@@ -383,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Saved for later",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1243,6 +1246,80 @@
       "stats": {
         "load_failed": "Couldn't load"
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "AOV {aov} over the period",
+        "title": "Average order value"
+      },
+      "axis": {
+        "aov": "AOV, {currency}"
+      },
+      "cancelled_excluded": "Cancelled orders excluded",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "last 6 months",
+        "twelve_months": "last 12 months",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, current month to {today}. Sales are net, by order date; cancelled orders are excluded.",
+      "footnote_closed": "{from} – {to}. Sales are net, by order date; cancelled orders are excluded.",
+      "footnote_upcoming": "This period hasn't started yet.",
+      "kpi": {
+        "aov": "Average order value · {period}",
+        "month_to_date": "{month} to date · day {day} of {days}",
+        "orders": "Orders · {period}",
+        "projected": "{share} of the month · projected {value}",
+        "sales": "Sales · {period}",
+        "vs_last_year": "{change} vs last year"
+      },
+      "last_year": "Last year",
+      "last_year_toggle": "Show last year on {chart}",
+      "legend": {
+        "aov_closed": "AOV, closed months",
+        "current": "This month, to date",
+        "down": "down",
+        "last_year": "Last year",
+        "projection": "Projected month end",
+        "sales_closed": "Sales, closed months",
+        "up": "up",
+        "vs_last_year": "vs same month last year"
+      },
+      "load_failed": "Couldn't load the report. Try again later.",
+      "period_label": "Period",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6 months",
+        "twelve_months": "12 months",
+        "year": "Current year"
+      },
+      "sales_chart": {
+        "subtitle": "Average {value} / closed month",
+        "title": "Monthly sales · {period}"
+      },
+      "table": {
+        "aov": "AOV",
+        "change": "vs last year",
+        "description": "Monthly sales, orders and average order value",
+        "last_year": "Same month last year",
+        "month": "Month",
+        "orders": "Orders",
+        "sales": "Sales",
+        "toggle": "Show as table"
+      },
+      "tooltip": {
+        "aov": "AOV",
+        "last_year_aov": "AOV, {month}",
+        "last_year_revenue": "Revenue, {month}",
+        "projection": "Projected month end",
+        "revenue": "Revenue",
+        "revenue_to_date": "Revenue to date",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Upcoming"
     }
   },
   "pages": {
@@ -1528,6 +1605,21 @@
       "promotion_coupons": {
         "title": "All coupons & promotions",
         "no_lists": "You don't have any coupons or promotions"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "No keys",
+        "unnamed_key": "Unnamed key",
+        "created": "Created {date}",
+        "changed": "Changed {date}",
+        "rename_modal": {
+          "title": "Rename key",
+          "name_label": "Name"
+        },
+        "delete_modal": {
+          "title": "Delete key",
+          "message": "You will no longer be able to sign in with this key."
+        }
       }
     },
     "company": {
@@ -1867,7 +1959,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one.",
+    "user_not_editable": "This user cannot be edited",
+    "sign_in_key_not_found": "The sign-in key was not found",
+    "last_sign_in_key": "The last sign-in key cannot be removed",
+    "operation_not_supported": "This operation is not supported"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",

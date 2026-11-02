@@ -48,4 +48,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   cartPayment: {},
   sharedList: {},
   checkout: {},
+  identityProviders: {},
+  signInMethods: {},
 };

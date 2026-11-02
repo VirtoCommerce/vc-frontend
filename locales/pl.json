@@ -290,7 +290,8 @@
       "company_members": "Członkowie firmy",
       "contact_administrator": "skontaktuj się z administratorem strony",
       "skip_to_main_content": "Przejdź do treści głównej",
-      "skip_to_footer": "Przejdź do stopki"
+      "skip_to_footer": "Przejdź do stopki",
+      "security": "Bezpieczeństwo"
     },
     "titles": {
       "all_actions": "Wszystkie akcje",
@@ -383,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Zapisane na później",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1243,6 +1246,80 @@
       "stats": {
         "load_failed": "Nie udało się wczytać"
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Śr. wartość zamówienia w okresie: {aov}",
+        "title": "Średnia wartość zamówienia"
+      },
+      "axis": {
+        "aov": "Śr. wartość zamówienia, {currency}"
+      },
+      "cancelled_excluded": "Bez anulowanych zamówień",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "ostatnie 6 miesięcy",
+        "twelve_months": "ostatnie 12 miesięcy",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, bieżący miesiąc do {today}. Sprzedaż netto, według daty zamówienia; anulowane zamówienia nie są uwzględniane.",
+      "footnote_closed": "{from} – {to}. Sprzedaż netto, według daty zamówienia; anulowane zamówienia nie są uwzględniane.",
+      "footnote_upcoming": "Ten okres jeszcze się nie rozpoczął.",
+      "kpi": {
+        "aov": "Średnia wartość zamówienia · {period}",
+        "month_to_date": "{month} do dziś · dzień {day} z {days}",
+        "orders": "Zamówienia · {period}",
+        "projected": "{share} miesiąca · prognoza {value}",
+        "sales": "Sprzedaż · {period}",
+        "vs_last_year": "{change} vs poprzedni rok"
+      },
+      "last_year": "Poprzedni rok",
+      "last_year_toggle": "Pokaż poprzedni rok na wykresie „{chart}”",
+      "legend": {
+        "aov_closed": "Śr. wartość zamówienia, zamknięte miesiące",
+        "current": "Ten miesiąc, do dziś",
+        "down": "spadek",
+        "last_year": "Poprzedni rok",
+        "projection": "Prognoza na koniec miesiąca",
+        "sales_closed": "Sprzedaż, zamknięte miesiące",
+        "up": "wzrost",
+        "vs_last_year": "vs ten sam miesiąc poprzedniego roku"
+      },
+      "load_failed": "Nie udało się wczytać raportu. Spróbuj ponownie później.",
+      "period_label": "Okres",
+      "periods": {
+        "q1": "I kw.",
+        "q2": "II kw.",
+        "q3": "III kw.",
+        "q4": "IV kw.",
+        "six_months": "6 miesięcy",
+        "twelve_months": "12 miesięcy",
+        "year": "Bieżący rok"
+      },
+      "sales_chart": {
+        "subtitle": "Średnio {value} na zamknięty miesiąc",
+        "title": "Sprzedaż miesięczna · {period}"
+      },
+      "table": {
+        "aov": "Śr. wartość zamówienia",
+        "change": "vs poprzedni rok",
+        "description": "Sprzedaż, zamówienia i średnia wartość zamówienia w podziale na miesiące",
+        "last_year": "Ten sam miesiąc poprzedniego roku",
+        "month": "Miesiąc",
+        "orders": "Zamówienia",
+        "sales": "Sprzedaż",
+        "toggle": "Pokaż jako tabelę"
+      },
+      "tooltip": {
+        "aov": "Śr. wartość zamówienia",
+        "last_year_aov": "Śr. wartość zamówienia, {month}",
+        "last_year_revenue": "Przychody, {month}",
+        "projection": "Prognoza na koniec miesiąca",
+        "revenue": "Przychody",
+        "revenue_to_date": "Przychody do dziś",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Nadchodzący"
     }
   },
   "pages": {
@@ -1528,6 +1605,21 @@
       "promotion_coupons": {
         "title": "Wszystkie kupony i promocje",
         "no_lists": "Nie masz żadnych kuponów ani promocji"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Brak kluczy",
+        "unnamed_key": "Klucz bez nazwy",
+        "created": "Utworzono {date}",
+        "changed": "Zmieniono {date}",
+        "rename_modal": {
+          "title": "Zmień nazwę klucza",
+          "name_label": "Nazwa"
+        },
+        "delete_modal": {
+          "title": "Usuń klucz",
+          "message": "Nie będzie już można zalogować się za pomocą tego klucza."
+        }
       }
     },
     "company": {
@@ -1867,7 +1959,11 @@
     "PasswordRequiresNonAlphanumeric": "Hasła muszą zawierać co najmniej jeden znak niealfanumeryczny",
     "PasswordRequiresUpper": "Hasła muszą zawierać co najmniej jedną dużą literę ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Hasła muszą używać różnych znaków",
-    "RecentPasswordUsed": "Użyłeś tego hasła w przeszłości. Proszę utwórz inne."
+    "RecentPasswordUsed": "Użyłeś tego hasła w przeszłości. Proszę utwórz inne.",
+    "user_not_editable": "Tego użytkownika nie można edytować",
+    "sign_in_key_not_found": "Nie znaleziono klucza logowania",
+    "last_sign_in_key": "Nie można usunąć ostatniego klucza logowania",
+    "operation_not_supported": "Ta operacja nie jest obsługiwana"
   },
   "password_tips": {
     "title": "Wskazówki dotyczące tworzenia silnego hasła:",

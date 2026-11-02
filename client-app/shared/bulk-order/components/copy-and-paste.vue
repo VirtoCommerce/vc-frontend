@@ -42,31 +42,32 @@ interface IProps {
   loading: boolean;
 }
 
+const ITEM_PATTERN = /^[A-Za-z0-9_-]+,\d{1,9}$/;
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 const text = ref("");
 
 function addToCart(): void {
-  const pattern = /^(\s*[A-Za-z0-9_-]+\s*,\s*\d{1,9}\s*)+$/;
+  const items = text.value
+    .split(",")
+    .map((part) => part.trim())
+    .join(",")
+    .split(/\s+/);
 
-  if (!pattern.test(text.value)) {
+  if (!items.every((item) => ITEM_PATTERN.test(item))) {
     emit("error");
     return;
   }
 
-  const validItems: InputNewBulkItemType[] = text.value
-    .trim()
-    .replace(/\s*,\s*/g, ",")
-    .replace(/\s+/g, " ")
-    .split(" ")
-    .map<InputNewBulkItemType>((item) => {
-      const [productSku, quantity] = item.split(",");
-      return {
-        productSku,
-        quantity: validateQuantity(+quantity),
-      };
-    });
+  const validItems: InputNewBulkItemType[] = items.map<InputNewBulkItemType>((item) => {
+    const [productSku, quantity] = item.split(",");
+    return {
+      productSku,
+      quantity: validateQuantity(+quantity),
+    };
+  });
 
   if (validItems.length) {
     emit("addToCart", validItems);

@@ -290,7 +290,8 @@
       "company_members": "メンバー",
       "contact_administrator": "管理者に連絡",
       "skip_to_main_content": "メインコンテンツへスキップ",
-      "skip_to_footer": "フッターへスキップ"
+      "skip_to_footer": "フッターへスキップ",
+      "security": "セキュリティ"
     },
     "titles": {
       "all_actions": "全ての操作",
@@ -383,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "後で保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1243,6 +1246,80 @@
       "stats": {
         "load_failed": "読み込みに失敗しました"
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "期間全体の平均注文額 {aov}",
+        "title": "平均注文額"
+      },
+      "axis": {
+        "aov": "平均注文額（{currency}）"
+      },
+      "cancelled_excluded": "キャンセル済みの注文を除く",
+      "chart_periods": {
+        "quarter": "{year}年 {period}",
+        "six_months": "過去6か月",
+        "twelve_months": "過去12か月",
+        "year": "{year}年"
+      },
+      "footnote": "{from} – {to}（当月は {today} まで）。売上は注文日基準の純額で、キャンセル済みの注文は除外しています。",
+      "footnote_closed": "{from} – {to}。売上は注文日基準の純額で、キャンセル済みの注文は除外しています。",
+      "footnote_upcoming": "この期間はまだ始まっていません。",
+      "kpi": {
+        "aov": "平均注文額 · {period}",
+        "month_to_date": "{month}（本日まで） · {days} 日中 {day} 日目",
+        "orders": "注文数 · {period}",
+        "projected": "月の {share} が経過 · 見込み {value}",
+        "sales": "売上 · {period}",
+        "vs_last_year": "前年比 {change}"
+      },
+      "last_year": "昨年",
+      "last_year_toggle": "「{chart}」に昨年のデータを表示",
+      "legend": {
+        "aov_closed": "平均注文額（確定月）",
+        "current": "今月（本日まで）",
+        "down": "減少",
+        "last_year": "昨年",
+        "projection": "月末見込み",
+        "sales_closed": "売上（確定月）",
+        "up": "増加",
+        "vs_last_year": "前年同月比"
+      },
+      "load_failed": "レポートを読み込めませんでした。しばらくしてからもう一度お試しください。",
+      "period_label": "期間",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6か月",
+        "twelve_months": "12か月",
+        "year": "今年"
+      },
+      "sales_chart": {
+        "subtitle": "確定月あたりの平均 {value}",
+        "title": "月別売上 · {period}"
+      },
+      "table": {
+        "aov": "平均注文額",
+        "change": "前年比",
+        "description": "月別の売上、注文数、平均注文額",
+        "last_year": "前年同月",
+        "month": "月",
+        "orders": "注文数",
+        "sales": "売上",
+        "toggle": "表で表示"
+      },
+      "tooltip": {
+        "aov": "平均注文額",
+        "last_year_aov": "平均注文額（{month}）",
+        "last_year_revenue": "収益（{month}）",
+        "projection": "月末見込み",
+        "revenue": "収益",
+        "revenue_to_date": "本日までの収益",
+        "vs_month": "{month}比"
+      },
+      "upcoming": "今後"
     }
   },
   "pages": {
@@ -1528,6 +1605,21 @@
       "promotion_coupons": {
         "title": "すべてのクーポンとプロモーション",
         "no_lists": "クーポンやプロモーションはありません"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "キーがありません",
+        "unnamed_key": "名前のないキー",
+        "created": "{date} に作成",
+        "changed": "{date} に変更",
+        "rename_modal": {
+          "title": "キーの名前を変更",
+          "name_label": "名前"
+        },
+        "delete_modal": {
+          "title": "キーを削除",
+          "message": "このキーではサインインできなくなります。"
+        }
       }
     },
     "company": {
@@ -1867,7 +1959,11 @@
     "PasswordRequiresNonAlphanumeric": "パスワードには英数字以外の文字を1文字以上含める必要があります",
     "PasswordRequiresUpper": "パスワードには大文字（'A'～'Z'）を1文字以上含める必要があります",
     "PasswordRequiresUniqueChars": "パスワードには異なる文字を使用する必要があります",
-    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください"
+    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください",
+    "user_not_editable": "このユーザーは編集できません",
+    "sign_in_key_not_found": "サインインキーが見つかりませんでした",
+    "last_sign_in_key": "最後のサインインキーは削除できません",
+    "operation_not_supported": "この操作はサポートされていません"
   },
   "password_tips": {
     "title": "強力なパスワードを作成するためのヒント：",

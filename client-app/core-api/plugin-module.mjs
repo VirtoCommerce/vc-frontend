@@ -51,9 +51,10 @@ export const STOREFRONT_PLUGIN_TARGETS = String.raw`<Project>
     <RemoveDir Directories="$(StorefrontAppDir)node_modules" Condition="!Exists('$(StorefrontAppDir)node_modules\vite\bin\vite.js')" />
     <!-- Through corepack, for the yarn that package.json pins: a runner's global yarn is 1.x, and corepack enable
          needs write access to Node's own folder. -->
-    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" />
-    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" />
+    <!-- yarn writes UTF-8; without StdOutEncoding MSBuild reads it in the console's OEM code page and garbles the log. -->
+    <Exec Command="corepack yarn install --immutable" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
+    <Exec Command="corepack yarn type-check" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
+    <Exec Command="corepack yarn build" WorkingDirectory="$(StorefrontAppDir)" StdOutEncoding="utf-8" />
   </Target>
   <Target Name="PublishStorefrontPlugin" AfterTargets="Publish" DependsOnTargets="BuildStorefrontPlugin" Condition="'$(SkipStorefrontPlugin)' != 'true'">
     <ItemGroup>
