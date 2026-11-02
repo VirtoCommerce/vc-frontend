@@ -653,7 +653,7 @@
         "excluded_orders": "{count} pedido em outra moeda não incluído | {count} pedidos em outras moedas não incluídos",
         "sub_with_excluded": "{sub} · {note}",
         "sales_report": {
-          "title": "Relatório de vendas"
+          "title": "Estatísticas de vendas"
         },
         "recent_orders": {
           "title": "Meus pedidos recentes",
