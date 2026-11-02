@@ -187,7 +187,7 @@ jobs:
         run: |
           yarn check:designs
 
-      - name: Check !important
+      - name: Check Styles for !important
         run: |
           yarn check:important
 
