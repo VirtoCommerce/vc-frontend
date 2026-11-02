@@ -74,7 +74,7 @@ export type MfaSettings = {
   /** None, Global, Store, Organization or User. */
   requiredBy: Scalars['String']['output'];
   storeId: Scalars['String']['output'];
-  /** UseGlobalSetting, Enabled, Disabled, AdminManaged or CustomerChoice. */
+  /** "Use global setting", Enabled, Disabled, AdminManaged or CustomerChoice: the values of the store setting MultiFactorAuthentication.StoreMode. */
   storeMode: Scalars['String']['output'];
   /** Off, Enabled (by the user) or Required (by the administrator). */
   userMode: Scalars['String']['output'];

@@ -6,7 +6,8 @@ export const MFA_PERMISSIONS = {
 } as const;
 
 export const MFA_STORE_MODES = {
-  useGlobalSetting: "UseGlobalSetting",
+  // the value of the store setting, with spaces
+  useGlobalSetting: "Use global setting",
   enabled: "Enabled",
   disabled: "Disabled",
   adminManaged: "AdminManaged",
