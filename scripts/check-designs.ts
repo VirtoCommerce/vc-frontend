@@ -116,7 +116,6 @@ steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow
 const PRESET_VARIABLE = /^--(?:color|vc|tw)-/;
 /** A component's public token or Tailwind's own; any other custom property is a component's private one. */
 const PUBLIC_VARIABLE = /^--(?:vc|tw)-/;
-const VC_TOKEN = /^--vc-/;
 const COLOR_RULE = "colours come only from preset variables";
 const QUOTED_OR_URL = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
 const VAR_REFERENCE = /var\(\s*(--[^\s,)]+)/gi;
@@ -1109,7 +1108,7 @@ function checkPresetFile(
       }
     } else if (node.type === "decl") {
       const problem =
-        isOnPresetRoot(node, preset) && !VC_TOKEN.test(unescapeIdent(node.prop))
+        isOnPresetRoot(node, preset) && !unescapeIdent(node.prop).startsWith("--vc-")
           ? "the preset's html takes public --vc-* tokens only"
           : colorProblem(node, semantics, true);
 
