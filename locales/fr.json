@@ -1236,6 +1236,7 @@
         "reorder": "Réorganiser {title}",
         "hide": "Masquer {title}",
         "show": "Afficher {title}",
+        "editing": "Modification de la disposition. Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
         "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
         "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
         "moved": "{title} déplacé en position {position} sur {total}.",

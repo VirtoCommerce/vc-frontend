@@ -500,6 +500,9 @@ describe("createLayoutController: the save", () => {
 
     expect(saveFailed.value).toBe(true);
     expect(editing.value).toBe(true);
+    // The stored document is still unknown, so another save is refused rather than sent.
+    await expect(saveLayout()).resolves.toBe(false);
+    expect(save).toHaveBeenCalledTimes(1);
   });
 
   // `save` snapshots the payload synchronously and clears the draft when it resolves, so an edit made mid-flight

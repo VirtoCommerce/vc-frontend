@@ -212,6 +212,67 @@ describe("LayoutSurface while saving", () => {
   });
 });
 
+// A save whose echo disagrees with what was sent ends with the stored document read again (useLayout.ts).
+describe("LayoutSurface while the stored document is read again", () => {
+  async function saveIntoARereadThatWaits() {
+    let reads = 0;
+    let landReread: (saved: SavedLayoutType | null) => void = () => {};
+    const layout = controllerOver(
+      () =>
+        reads++ === 0
+          ? Promise.resolve(null)
+          : new Promise((resolve) => {
+              landReread = resolve;
+            }),
+      () => Promise.resolve({ regions: [] }),
+    );
+    const wrapper = mountSurface(layout);
+    await flushPromises();
+    layout.startEdit();
+    await flushPromises();
+    await layout.save();
+    await flushPromises();
+
+    return { wrapper, landReread: (saved: SavedLayoutType | null) => landReread(saved) };
+  }
+
+  // A save meanwhile would replace a document nobody has seen.
+  it("disables Save until the read lands", async () => {
+    const { wrapper, landReread } = await saveIntoARereadThatWaits();
+    expect(wrapper.get("[data-layout-save]").attributes("disabled")).toBeDefined();
+
+    landReread(null);
+    await flushPromises();
+
+    expect(wrapper.get("[data-layout-save]").attributes("disabled")).toBeUndefined();
+  });
+
+  // The failure could not focus a disabled Save, so focus would otherwise stay on <body>.
+  it("hands focus to Save once the read lands", async () => {
+    const { wrapper, landReread } = await saveIntoARereadThatWaits();
+    expect(document.activeElement).toBe(document.body);
+
+    landReread(null);
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.get("[data-layout-save]").element);
+  });
+});
+
+describe("LayoutSurface drag groups", () => {
+  // Two surfaces of one dashboard on a page must not trade blocks through a shared group name.
+  it("gives each surface groups of its own", async () => {
+    const first = mountSurface(createFakeLayout(SCOPE));
+    const second = mountSurface(createFakeLayout(SCOPE));
+    await flushPromises();
+    const groupsOf = (wrapper: ReturnType<typeof mountSurface>) =>
+      wrapper.findAllComponents(LayoutRegion).map((region) => String(region.props("group")));
+
+    expect(groupsOf(first).length).toBeGreaterThan(0);
+    expect(groupsOf(second).filter((group) => groupsOf(first).includes(group))).toEqual([]);
+  });
+});
+
 // Hiding the last rail widget unmounts the whole column, which is intended — an empty `aside` would
 // otherwise hold its desktop width open — but it must not lose the blocks or the way back.
 describe("LayoutSurface with an emptied rail", () => {

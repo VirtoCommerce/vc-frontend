@@ -310,7 +310,6 @@ describe("stat row drag and drop", () => {
     const [visible] = zones;
 
     expect(visible.options.draggable).toBe(".layout-block");
-    expect(visible.options.group).toBe(`layout-stats-${SCOPE}`);
     // Whole-card drag for stats, so no handle selector narrows it.
     expect(visible.options.handle).toBeUndefined();
     // Disabled until edit mode, and enabled by the watch rather than a rebuild.
@@ -318,14 +317,48 @@ describe("stat row drag and drop", () => {
     // Without a touch hold, a swipe starting on a card drags instead of scrolling the page.
     expect(visible.options.delay).toBe(200);
     expect(visible.options.delayOnTouchOnly).toBe(true);
+    // A touch drag's copy goes to <body>: under the hidden-stats tray's filter it was placed against the zone.
+    expect(visible.options.fallbackOnBody).toBe(true);
+    expect(visible.options.animation).toBe(150);
 
     layout.startEdit();
     await nextTick();
     expect(visible.option).toHaveBeenCalledWith("disabled", false);
+    // The parked zone joins the visible one's group: the shared name is what lets a card cross between them.
+    expect(zones[1].options.group).toBe(visible.options.group);
 
     layout.cancel();
     await nextTick();
     expect(visible.option).toHaveBeenCalledWith("disabled", true);
+  });
+
+  // Two stat rows of one dashboard on a page must not trade cards through a shared group name.
+  it("keeps each stat row's cards in a group of its own", async () => {
+    await setup();
+    await setup();
+
+    expect(zones).toHaveLength(2);
+    expect(zones[0].options.group).not.toBe(zones[1].options.group);
+  });
+
+  // jsdom has no `matchMedia`, so every other spec runs with motion allowed.
+  it("drops the slide animation when the system asks for reduced motion", async () => {
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: (query: string) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
+    });
+
+    try {
+      await setup();
+      expect(zones[0].options.animation).toBe(0);
+    } finally {
+      Reflect.deleteProperty(window, "matchMedia");
+    }
   });
 
   // A pointer drag and a keyboard grab reordering the same array at once drops the wrong block.

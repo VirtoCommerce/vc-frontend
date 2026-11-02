@@ -1236,6 +1236,7 @@
         "reorder": "Reordenar {title}",
         "hide": "Ocultar {title}",
         "show": "Mostrar {title}",
+        "editing": "A editar a disposição. Teclado: a barra de espaço pega um bloco, as setas movem-no, espaço solta, Esc cancela.",
         "grabbed": "{title} agarrado. Posição {position} de {total}. Use as setas para mover, espaço para largar, escape para cancelar.",
         "grabbed_parkable": "{title} agarrado. Posição {position} de {total}. Use as setas esquerda e direita para mover, cima e baixo para ocultar ou mostrar, espaço para largar, escape para cancelar.",
         "moved": "{title} movido para a posição {position} de {total}.",

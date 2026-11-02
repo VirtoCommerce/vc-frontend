@@ -81,8 +81,8 @@ describe("useLayoutPage", () => {
     page.startEdit();
     await nextTick();
 
-    expect(page.message.value).toContain("shared.dashboard.editing");
-    expect(page.message.value).toContain("shared.dashboard.hint_keyboard");
+    // One message, so a language orders the two parts and joins them its own way.
+    expect(page.message.value).toBe("shared.dashboard.a11y.editing");
   });
 
   // VcAlert carries no live-region semantics, so without this a failed save is visual only.
