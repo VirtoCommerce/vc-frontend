@@ -1,7 +1,7 @@
 // Run: yarn test:hooks
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdtempSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -29,10 +29,13 @@ test("blocks !important in every form, kit included", () => {
   assert.ok(edit("client-app/shared/a.vue", '<div class="!-mt-4">'));
   assert.ok(edit("client-app/shared/a.vue", '<div class="lg:!hidden">'));
   assert.ok(edit("client-app/shared/a.vue", "<div :class=\"['!mt-4']\">"));
+  assert.ok(edit("client-app/shared/a.vue", '<div class="[&>*]:!p-0 !w-[calc(100%-1rem)]">'));
+  assert.ok(edit("client-app/shared/a.scss", "  color: red ! IMPORTANT;"));
 });
 
 test("passes JS negation in :class", () => {
   assert.equal(edit("client-app/shared/a.vue", "<div :class=\"{ 'text-neutral-400': !item.isReturnable }\">"), null);
+  assert.equal(edit("client-app/shared/a.vue", "<div :class=\"['![alt]', !items[i] && 'x']\">"), null);
 });
 
 test("blocks a partial-line edit that adds an important utility", () => {
@@ -104,9 +107,16 @@ test("passes non-style files and tokens", () => {
 });
 
 test("runs as a hook from a path with a space", () => {
-  const hookDir = mkdtempSync(join(tmpdir(), "a b "));
+  const root = mkdtempSync(join(tmpdir(), "a b "));
+  const hookDir = join(root, ".claude", "hooks");
   const hook = join(hookDir, "guard-styles.mjs");
+  mkdirSync(hookDir, { recursive: true });
+  mkdirSync(join(root, "scripts"));
   copyFileSync(new URL("./guard-styles.mjs", import.meta.url), hook);
+  copyFileSync(
+    new URL("../../scripts/important-patterns.ts", import.meta.url),
+    join(root, "scripts", "important-patterns.ts"),
+  );
   const file = join(hookDir, "x.scss");
   writeFileSync(file, "");
 
