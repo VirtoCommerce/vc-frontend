@@ -172,7 +172,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --mode=skip-build
 
       - name: Check Locales
         run: |
@@ -183,9 +183,17 @@ jobs:
             exit 1
           fi
 
+      - name: Check Designs
+        run: |
+          yarn check:designs
+
       - name: Build
         run: |
           yarn build
+
+      - name: Check CSS Layers
+        run: |
+          yarn check:css-layers
 
       - name: Unit and Typing Tests with Coverage
         run: |

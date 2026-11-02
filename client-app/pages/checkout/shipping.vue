@@ -8,6 +8,7 @@
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <ProceedTo
+            class="mt-4"
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
             test-id="billing-button"
