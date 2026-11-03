@@ -6,6 +6,7 @@
     {
       "id": "section1",
       "type": "product-info",
+      "variationsLayout": "b2c",
       "blocks": [
         {
           "id": "product-options",

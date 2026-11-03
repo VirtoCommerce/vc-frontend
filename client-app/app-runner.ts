@@ -43,8 +43,9 @@ import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/bu
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
-import { templateBlocks } from "@/shared/static-content";
+import { registerPageBuilderSections, templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -244,6 +245,7 @@ export default async () => {
   });
 
   await themeSnapshotBoot?.settle({ storeId: themeContext.value.storeId, cultureName: currentCultureName });
+  usePageLayout().installPageLayoutRouting(router);
   installThemeSnapshotNavigation(router, () => ({
     storeId: themeContext.value.storeId,
     cultureName: currentLanguage.value.cultureName,
@@ -334,6 +336,9 @@ export default async () => {
 
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
+
+  // The section renderer finds a stored section type through the extension registry, where modules add theirs.
+  registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks });
 
   await router.isReady();
 

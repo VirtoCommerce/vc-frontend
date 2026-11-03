@@ -8,14 +8,15 @@ import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
 import ProductInfo from "./product-info.vue";
 import PromoText from "./promo-text.vue";
-import RecommendedProducts from "./recommended-products.vue";
-import RelatedProducts from "./related-products.vue";
+import RecommendedProductsSection from "./recommended-products-section.vue";
+import RelatedProductsSection from "./related-products-section.vue";
 import SubscribeForm from "./subscribe-form.vue";
 import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
 export { default as PageBuilderSection } from "./page-builder-section.vue";
+export { default as PageTemplate } from "./page-template.vue";
 
 const Slider = defineAsyncComponent(() => import("./slider.vue"));
 const ImageCarousel = defineAsyncComponent(() => import("./image-carousel.vue"));
@@ -37,8 +38,8 @@ export const templateBlocks: { [key: string]: Component } = {
   "products-carousel": ProductsCarousel,
   "promo-text": PromoText,
   slider: Slider,
-  "recommended-products": RecommendedProducts,
-  "related-products": RelatedProducts,
+  "recommended-products": RecommendedProductsSection,
+  "related-products": RelatedProductsSection,
   "subscribe-form": SubscribeForm,
   "text-block": TextBlock,
   "title-block": TitleBlock,

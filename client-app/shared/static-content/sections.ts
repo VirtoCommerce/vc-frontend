@@ -1,5 +1,6 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
 const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
@@ -36,6 +37,30 @@ htmlPurifier.addHook("afterSanitizeAttributes", (node) => {
   NEW_WINDOW_REL_TOKENS.forEach((token) => rel.add(token));
   node.setAttribute("rel", [...rel].join(" "));
 });
+
+/** Types stored in page content under a name other than the section component's. */
+const SECTION_TYPE_ALIASES: Readonly<Record<string, string>> = {
+  text: "text-block",
+  image: "image-block",
+  title: "title-block",
+};
+
+/** Registers sections by the type page and template content store them under, aliases included. */
+export function registerPageBuilderSections(sections: Record<string, Component>): void {
+  const { register } = useExtensionRegistry();
+
+  Object.entries(sections).forEach(([type, component]) => register("pageBuilderSection", type, { component }));
+  Object.entries(SECTION_TYPE_ALIASES)
+    .filter(([, type]) => Object.hasOwn(sections, type))
+    .forEach(([alias, type]) => register("pageBuilderSection", alias, { component: sections[type] }));
+}
+
+/** The section registered for a stored type; reactive, so a section registered later renders where it is used. */
+export function getPageBuilderSection(type: unknown): Component | undefined {
+  const entries = useExtensionRegistry().getEntries("pageBuilderSection");
+
+  return typeof type === "string" && Object.hasOwn(entries, type) ? (entries[type]?.component ?? undefined) : undefined;
+}
 
 /** Own-key lookup, so a type such as `toString` does not resolve to an `Object.prototype` member. */
 export function getRegisteredSection(

@@ -1,48 +1,58 @@
 <template>
-  <div v-if="template" ref="staticPageAnchor">
-    <div
-      v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
-      class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
-    >
-      <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+  <PageTemplate
+    v-if="template"
+    :page-settings="template.settings"
+    :permalink="permalink ?? route.path"
+    :object-type="objectType"
+  >
+    <div ref="staticPageAnchor">
+      <div
+        v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
+        class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+      >
+        <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
 
-      <VcTypography v-if="template.settings?.header" tag="h1">
-        {{ template.settings.header }}
-      </VcTypography>
+        <VcTypography v-if="template.settings?.header" tag="h1">
+          {{ template.settings.header }}
+        </VcTypography>
+      </div>
+
+      <template v-for="item in template.content">
+        <!-- @deprecated. TODO Keep only the item props. Remove settings and model from all components -->
+        <PageBuilderSection
+          v-if="!item.hidden"
+          :key="item.id"
+          :item="item"
+          :id="getAnchorId(item)"
+          :model="item"
+          :settings="template.settings"
+        />
+      </template>
     </div>
-
-    <template v-for="item in template.content">
-      <!-- @deprecated. TODO Keep only the item props. Remove settings and model from all components -->
-      <PageBuilderSection
-        v-if="!item.hidden"
-        :key="item.id"
-        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
-        :item="item"
-        :id="getAnchorId(item)"
-        :model="item"
-        :settings="template.settings"
-      />
-    </template>
-  </div>
+  </PageTemplate>
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
+import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { humanizeName } from "@/core/utilities/common";
-import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import {
-  getAnchorId,
-  getRegisteredSection,
-  PageBuilderSection,
-  templateBlocks,
-  useAnchorScroll,
-  useStaticPage,
-} from "@/shared/static-content";
+import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll, useStaticPage } from "@/shared/static-content";
+
+interface IProps {
+  /** What the page's template rules see; the route's path when absent. */
+  permalink?: string;
+  /** `ContentFile` for a file page, `Pages` for a page from the database. */
+  objectType?: string;
+}
+
+withDefaults(defineProps<IProps>(), { objectType: "ContentFile" });
+
+const route = useRoute();
 
 const { staticPage: template } = useStaticPage();
 

@@ -1,5 +1,10 @@
 <template>
-  <div v-if="pageBuilderContent">
+  <PageTemplate
+    v-if="pageBuilderContent"
+    :page-settings="pageBuilderContent.settings"
+    :permalink="permalink"
+    object-type="Pages"
+  >
     <div
       v-if="!pageBuilderContent.settings?.hideBreadcrumbs || pageBuilderContent.settings?.header"
       class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
@@ -16,14 +21,13 @@
       <PageBuilderSection
         v-if="!item.hidden"
         :key="item.id"
-        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
         :item="item"
         :id="getAnchorId(item)"
         :model="item"
         :settings="pageBuilderContent.settings"
       />
     </template>
-  </div>
+  </PageTemplate>
 </template>
 
 <script setup lang="ts">
@@ -31,18 +35,12 @@ import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
-import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import {
-  getAnchorId,
-  getRegisteredSection,
-  PageBuilderSection,
-  templateBlocks,
-  useAnchorScroll,
-} from "@/shared/static-content";
+import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
   name?: string;
+  permalink?: string;
 }
 
 type BlockType = {
