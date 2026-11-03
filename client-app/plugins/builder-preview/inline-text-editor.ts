@@ -115,6 +115,7 @@ export class InlineTextEditor {
     element.style.outline = OUTLINE;
     this.blocker.style.pointerEvents = "none";
     element.focus({ preventScroll: true });
+    placeCaret(clientX, clientY);
     element.addEventListener("input", this.handleInput);
     element.addEventListener("keydown", this.handleKeydown);
     document.addEventListener("mousedown", this.handleOutsidePress, true);
@@ -165,4 +166,19 @@ export class InlineTextEditor {
       this.end();
     }
   };
+}
+
+/** Puts the caret where the pointer is; without browser support it stays where focus put it. */
+function placeCaret(clientX: number, clientY: number): void {
+  const position =
+    typeof document.caretPositionFromPoint === "function" ? document.caretPositionFromPoint(clientX, clientY) : null;
+  const selection = globalThis.getSelection();
+
+  if (position && selection) {
+    const range = document.createRange();
+    range.setStart(position.offsetNode, position.offset);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
 }
