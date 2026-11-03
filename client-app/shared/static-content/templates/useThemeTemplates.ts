@@ -1,11 +1,10 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, shallowRef, toValue, watch } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { resolveTranslatableValues, useThemeSnapshot } from "@/core/theme-snapshot";
 import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
 import { useTemplateConditions } from "./conditions";
 import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "./rules";
-import { resolveTranslatableValues } from "./translatable";
 import type { ITemplateSubject } from "./conditions";
 import type { ITemplateResolution } from "./rules";
 import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";

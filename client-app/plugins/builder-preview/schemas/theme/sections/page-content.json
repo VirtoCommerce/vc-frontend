@@ -1,0 +1,7 @@
+{
+  "name": "Page content",
+  "icon": "article",
+  "targetTemplates": ["page-template"],
+  "info": "Where each page's own sections show. A page template always has it.",
+  "settings": []
+}

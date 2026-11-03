@@ -1,0 +1,26 @@
+{
+  "name": "Footer",
+  "icon": "lucide-panel-bottom",
+  "groups": ["footer"],
+  "blocks": ["footer-menu"],
+  "info": "The logo is the theme's logo for dark backgrounds, or white-labeling's when it sets one.",
+  "settings": [
+    {
+      "id": "copyright",
+      "label": "Copyright text",
+      "type": "string",
+      "translatable": true,
+      "info": "Empty: the version line"
+    },
+    {
+      "id": "show_credit",
+      "label": "Show the Virto Commerce credit",
+      "type": "checkbox",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "label": "Add Menu blocks for the link columns. Without any, the footer shows the store's footer links. White-labeling's footer links replace them."
+    }
+  ]
+}

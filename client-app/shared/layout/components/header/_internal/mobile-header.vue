@@ -1,5 +1,7 @@
 <template>
   <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+    <AnnouncementBar />
+
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
@@ -28,8 +30,13 @@
               <VcIcon class="text-primary" name="menu" :size="24" />
             </button>
 
-            <router-link :to="$context.settings.default_return_url ?? '/'">
-              <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
+            <router-link :to="$context.settings.default_return_url ?? '/'" :style="logoStyle">
+              <VcImage
+                :src="headerLogoUrl"
+                :alt="$context.storeName"
+                :class="logoWidth ? 'h-auto w-[--header-logo-width]' : 'h-8'"
+                lazy
+              />
             </router-link>
           </div>
           <!-- endregion Left slot -->
@@ -121,14 +128,16 @@
 <script setup lang="ts">
 import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
-import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
+import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import AnnouncementBar from "../../announcement-bar/announcement-bar.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
@@ -144,7 +153,12 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
-const { logoUrl } = useWhiteLabeling();
+const { headerLogoUrl } = useHeaderLogo();
+const { logoWidth } = useThemeChrome();
+
+const logoStyle = computed<StyleValue | undefined>(() =>
+  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
+);
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

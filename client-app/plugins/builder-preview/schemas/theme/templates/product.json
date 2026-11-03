@@ -1,0 +1,13 @@
+{
+  "name": "Product template",
+  "path": "default/templates/product.json",
+  "type": "themes",
+  "sections": ["image", "text", "product-info", "product-reviews", "related-products", "recommended-products"],
+  "previewMessage": {
+    "templateKey": "product"
+  },
+  "default": true,
+  "templates": {
+    "default": {}
+  }
+}

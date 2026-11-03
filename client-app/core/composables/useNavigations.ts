@@ -9,6 +9,7 @@ import { useModules } from "@/core/composables/useModules";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_MARKETING_EXPERIENCE_API, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { useThemeGroups } from "@/core/theme-snapshot/groups";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -392,6 +393,16 @@ export function _useNavigations() {
     }
   }
 
+  const { getGroupSection, getMenuLinks } = useThemeGroups();
+  const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
+
+  /** The Page Builder theme header's category menu, unless white-labeling has a main menu of its own. */
+  const themeCatalogMenuItems = computed(() =>
+    whiteLabelingMainMenuLinks.value?.length
+      ? undefined
+      : getMenuLinks(getGroupSection("header", "site-header")?.catalog_menu, true),
+  );
+
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
@@ -419,7 +430,7 @@ export function _useNavigations() {
     matchingRouteName: readonly(matchingRouteName),
 
     fetchCatalogMenu,
-    catalogMenuItems: computed(() => catalogMenuItems.value),
+    catalogMenuItems: computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value),
 
     fetchFooterLinks,
     footerLinks: computed(() => footerLinks.value),

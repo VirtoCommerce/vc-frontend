@@ -4,10 +4,12 @@
 
   <!-- Desktop header -->
   <template v-else>
+    <AnnouncementBar />
+
     <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
 
     <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
-      <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
+      <BottomHeader :is-menu-shown="isCatalogMenuShown && desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
       <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />
     </div>
@@ -26,7 +28,9 @@ import { computed, ref, watch } from "vue";
 import { useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
+import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { BREAKPOINTS } from "@/ui-kit/constants";
+import AnnouncementBar from "../announcement-bar/announcement-bar.vue";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
@@ -65,9 +69,11 @@ watch([headerHeight, isMobile], ([value, mobile]) => {
 });
 
 const { isAuthenticated } = useUser();
+const { isCatalogMenuShown } = useThemeChrome();
 
 const isMegamenuShown = computed(() => {
   return (
+    isCatalogMenuShown.value &&
     desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
     (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
   );

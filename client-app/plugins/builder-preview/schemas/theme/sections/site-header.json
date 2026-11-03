@@ -1,0 +1,40 @@
+{
+  "name": "Header",
+  "icon": "lucide-panel-top",
+  "groups": ["header"],
+  "info": "The logos come from the theme's brand, or from white-labeling when it sets them.",
+  "settings": [
+    {
+      "id": "logo_width",
+      "label": "Logo width (px)",
+      "type": "number",
+      "info": "Empty: the header's height"
+    },
+    {
+      "type": "header",
+      "label": "Category menu"
+    },
+    {
+      "id": "show_catalog_menu",
+      "label": "Show the category menu",
+      "type": "checkbox",
+      "default": true
+    },
+    {
+      "id": "catalog_menu",
+      "label": "Menu",
+      "type": "menu",
+      "info": "A store link list. Empty: as the store settings say. White-labeling's main menu replaces it."
+    },
+    {
+      "type": "header",
+      "label": "Icons"
+    },
+    {
+      "id": "icons_menu",
+      "label": "Menu",
+      "type": "menu",
+      "info": "A store link list. Links to Bulk order, Compare, Lists, Orders or Cart keep their icon and count. Empty: those five."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Product",
+  "targetTemplates": ["product"],
+  "icon": "smartphone",
+  "displayField": "name",
+  "info": "The product itself. A product template always has it.",
+  "blocks": [
+    "image",
+    "text",
+    "product-properties",
+    "product-description",
+    "product-variations",
+    "product-assets",
+    "product-options"
+  ],
+  "settings": [
+    {
+      "id": "variationsLayout",
+      "label": "Variations",
+      "type": "select",
+      "default": "b2b",
+      "info": "B2C: more per page, unsorted, in stock only, picked with the product options.",
+      "options": [
+        {
+          "label": "B2B: a sortable table with filters",
+          "value": "b2b"
+        },
+        {
+          "label": "B2C: options",
+          "value": "b2c"
+        }
+      ]
+    }
+  ]
+}
