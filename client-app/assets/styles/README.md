@@ -341,16 +341,17 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
 
 - **An in-tree module or app block** (`modules/`, `shared/`, `pages/`) is restyled like any block: in a design's
   `blocks/<block>.scss` or a preset's `<preset>.scss`. The cost: that file names a block that leaves with the
-  module, so delete it with the module; `yarn check:designs` fails on a block no component defines.
+  module, so delete it with the module and search both places for the module's block names
+  ([what `check:designs` catches](#checks)).
 - **A Module Federation remote** (a plugin such as sales-rep) styles itself only with host kit components, host
   `--vc-*` tokens and preset variables (`--color-*`), and it styles only its own blocks. The kit components and the
   utilities of `@vc-frontend/core/tailwind-preset` read those tokens, so every design and preset reaches the remote.
   Its CSS belongs in the `plugins` layer; until VCST-5760 moves it there, it is unlayered and beats every layered host
   rule it matches.
-- Host designs and presets never target a remote's blocks: the remote ships on its own schedule, and
-  `check:designs` fails on a block file, or a selector's last compound, naming a block no host component
-  defines. The remote's design documentation lives in its own repository; for the pilot remote, sales-rep,
-  that is `VirtoCommerce/vc-module-sales-rep`.
+- Host designs and presets never target a remote's blocks: the remote ships on its own schedule. This is a
+  review rule: `check:designs` knows host blocks only, so a remote's block next to or above a host class passes.
+  The remote's design documentation lives in its own repository; for the pilot remote, sales-rep, that is
+  `VirtoCommerce/vc-module-sales-rep`.
 
 ---
 
@@ -553,6 +554,10 @@ Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same 
 | On the preset's `html` alone, only public `--vc-*` tokens | `color: var(--color-primary-500)`, `--color-primary-500: …` on `html[data-preset="mercury"]` |
 | Colours only, by the value rule above; a shadow token sets geometry too, so a preset sets none | `margin: 0`, `--vc-button-radius: 0`, `--vc-widget-shadow: …`, `color: #fff` |
 | No private variable | `--bg-color: var(--color-primary-500)` |
+
+`check:designs` knows only host components' blocks, in designs and presets alike. A removed, renamed or
+remote block fails as a block file's name, and when a selector's last compound is left with no class of a
+host block (in a design, of the file's own block); next to or above such a class it passes.
 
 Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`, and
 `*-move`) and state classes (`is-*`, `has-*`) are not blocks, so a block file may use them on its own

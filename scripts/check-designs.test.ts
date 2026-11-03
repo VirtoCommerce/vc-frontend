@@ -540,6 +540,15 @@ ${loads("dark")}  }
       ]);
     });
 
+    it.each([
+      ["0 2px 4px 0 red", "red is a named colour"],
+      ["0 2px 4px 0 rgb(255 0 0 / 0.1)", 'rgb() without "from" is a literal colour'],
+    ])("reports a colour other than black in a default-step shadow token: %s", async (shadow, message) => {
+      expect(await check({ "soft/_tokens.scss": `${SOFT} { --vc-shadow-default-1: ${shadow}; }` })).toEqual([
+        expect.stringContaining(`--vc-shadow-default-1: ${message}; ${COLOR}`),
+      ]);
+    });
+
     it("passes shadow tokens from preset variables, and the default step's black", async () => {
       expect(
         await check({

@@ -145,9 +145,9 @@ A block class is public API too: forks target it in `_custom.scss`, and nothing 
 matching. Our own styles name blocks outside the component as well: a design's
 `designs/<name>/blocks/<block>.scss` and `dark/<block>.scss` (the file name is the block, loaded by
 the design's `index.scss`) and the preset stylesheets `assets/presets/<name>.scss`. Rename them in the
-same change (`yarn check:designs` fails on a block file, or a selector's last compound, naming a block no
-component defines; any other mention of the old name is yours to find), and list the rename under
-Breaking changes in the PR.
+same change and list the rename under Breaking changes in the PR. `yarn check:designs` fails on a block
+file named after no block, and on a selector whose last compound has no class of a block (in a design, of
+the file's own block); the old name next to or above such a class passes, so search for it.
 
 ## Deprecating a Prop Value
 

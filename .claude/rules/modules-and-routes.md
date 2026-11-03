@@ -18,7 +18,8 @@ Reference module: `modules/returns`.
    `core/constants` or `core/types/theme-config.ts` — a removable module must not leave pieces in core.
    (Exception: the shared `MODULE_ID_*` registry in `core/constants/modules.ts` used by host code.) Removing a
    module also deletes its blocks' restyles: `designs/*/{blocks,dark}/<block>.scss` and their rules in
-   `assets/presets/*.scss` (`yarn check:designs` fails on a leftover).
+   `assets/presets/*.scss`. `yarn check:designs` catches a leftover block file, not a rule that names the
+   module's block next to or above a live one: search for its block names.
 5. Module locales are loaded only with `loadModuleLocale(i18n, "<folder>")` — a hand-rolled `import("./locales/...")` breaks runtime locale switching.
 
 ## Routes, menus, permissions
