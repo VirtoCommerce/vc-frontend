@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "O administrador da loja gerencia a autenticação de dois fatores.",
       "locked": "Definida pelo administrador: você não pode desativá-la.",
-      "organization": "Sua empresa a ativou para todos os membros, então você não pode alterá-la aqui."
+      "organization": "Sua empresa a ativou para todos os membros, então você não pode alterá-la aqui.",
+      "operator": "Não pode alterar isto enquanto age em nome do cliente."
     },
     "messages": {
       "confirm_email": "Confirme seu e-mail para ativar a autenticação de dois fatores.",
       "turned_on": "A autenticação de dois fatores está ativada.",
       "turned_off": "A autenticação de dois fatores está desativada."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "O administrador gere a autenticação de dois fatores desta conta.",
+      "mfa_self_service_not_allowed": "A loja não permite que os clientes alterem a autenticação de dois fatores.",
+      "mfa_organization_not_allowed": "Não pode gerir a autenticação de dois fatores desta empresa.",
+      "resend_too_soon": "Aguarde um momento antes de pedir um novo código."
     }
   }
 }

@@ -1,4 +1,5 @@
 import { graphqlClient } from "@/core/api/graphql/client";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { GetMfaSettingsDocument } from "../../types";
 import type { GetMfaSettingsQuery, GetMfaSettingsQueryVariables } from "../../types";
@@ -10,6 +11,8 @@ export async function getMfaSettings(organizationId?: string): Promise<GetMfaSet
     query: GetMfaSettingsDocument,
     variables: { storeId, organizationId },
     fetchPolicy: "no-cache",
+    // The widget reports a failure itself, or hides when the settings do not load
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   return data.mfaSettings;

@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "Kaupan ylläpitäjä hallitsee kaksivaiheista tunnistautumista.",
       "locked": "Järjestelmänvalvojan asettama: et voi poistaa sitä käytöstä.",
-      "organization": "Yrityksesi on ottanut sen käyttöön kaikille jäsenilleen, joten et voi muuttaa sitä täällä."
+      "organization": "Yrityksesi on ottanut sen käyttöön kaikille jäsenilleen, joten et voi muuttaa sitä täällä.",
+      "operator": "Et voi muuttaa tätä, kun toimit asiakkaan puolesta."
     },
     "messages": {
       "confirm_email": "Vahvista sähköpostiosoitteesi, jotta voit ottaa kaksivaiheisen tunnistautumisen käyttöön.",
       "turned_on": "Kaksivaiheinen tunnistautuminen on käytössä.",
       "turned_off": "Kaksivaiheinen tunnistautuminen on pois käytöstä."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "Ylläpitäjä hallitsee tämän tilin kaksivaiheista tunnistautumista.",
+      "mfa_self_service_not_allowed": "Kauppa ei salli asiakkaiden muuttaa kaksivaiheista tunnistautumista.",
+      "mfa_organization_not_allowed": "Et voi hallita tämän yrityksen kaksivaiheista tunnistautumista.",
+      "resend_too_soon": "Odota hetki ennen kuin pyydät uuden koodin."
     }
   }
 }

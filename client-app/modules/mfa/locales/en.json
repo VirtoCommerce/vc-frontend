@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "The store administrator manages two-factor authentication.",
       "locked": "Set by the administrator: you can't turn it off.",
-      "organization": "Your company turned it on for all its members, so you can't change it here."
+      "organization": "Your company turned it on for all its members, so you can't change it here.",
+      "operator": "You can't change it while you act on behalf of the customer."
     },
     "messages": {
       "confirm_email": "Confirm your email to turn on two-factor authentication.",
       "turned_on": "Two-factor authentication is on.",
       "turned_off": "Two-factor authentication is off."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "The administrator manages two-factor authentication for this account.",
+      "mfa_self_service_not_allowed": "The store doesn't let customers change two-factor authentication.",
+      "mfa_organization_not_allowed": "You can't manage two-factor authentication for this company.",
+      "resend_too_soon": "Wait a moment before requesting a new code."
     }
   }
 }

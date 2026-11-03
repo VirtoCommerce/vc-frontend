@@ -1,22 +1,12 @@
+#import "../../fragments/mfaSettings.graphql"
+
 mutation UpdateMfaOrganizationMode($command: InputUpdateMfaOrganizationModeType!) {
   updateMfaOrganizationMode(command: $command) {
     succeeded
     errorCode
     errorDescription
-    lockoutSecondsRemaining
     settings {
-      storeId
-      storeMode
-      isRequired
-      requiredBy
-      userMode
-      canChangeUserMode
-      organizationId
-      organizationMode
-      canChangeOrganizationMode
-      isProviderAvailable
-      provider
-      destination
+      ...mfaSettings
     }
   }
 }

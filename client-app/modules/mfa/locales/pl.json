@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "Uwierzytelnianiem dwuskładnikowym zarządza administrator sklepu.",
       "locked": "Ustawione przez administratora: nie możesz go wyłączyć.",
-      "organization": "Twoja firma włączyła je dla wszystkich swoich członków, więc nie możesz go tutaj zmienić."
+      "organization": "Twoja firma włączyła je dla wszystkich swoich członków, więc nie możesz go tutaj zmienić.",
+      "operator": "Nie możesz tego zmienić, działając w imieniu klienta."
     },
     "messages": {
       "confirm_email": "Potwierdź swój adres e-mail, aby włączyć uwierzytelnianie dwuskładnikowe.",
       "turned_on": "Uwierzytelnianie dwuskładnikowe jest włączone.",
       "turned_off": "Uwierzytelnianie dwuskładnikowe jest wyłączone."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "Uwierzytelnianiem dwuskładnikowym tego konta zarządza administrator.",
+      "mfa_self_service_not_allowed": "Sklep nie pozwala klientom zmieniać uwierzytelniania dwuskładnikowego.",
+      "mfa_organization_not_allowed": "Nie możesz zarządzać uwierzytelnianiem dwuskładnikowym tej firmy.",
+      "resend_too_soon": "Poczekaj chwilę, zanim poprosisz o nowy kod."
     }
   }
 }

@@ -1,16 +1,7 @@
+#import "../../fragments/mfaSettings.graphql"
+
 query GetMfaSettings($storeId: String!, $organizationId: String) {
   mfaSettings(storeId: $storeId, organizationId: $organizationId) {
-    storeId
-    storeMode
-    isRequired
-    requiredBy
-    userMode
-    canChangeUserMode
-    organizationId
-    organizationMode
-    canChangeOrganizationMode
-    isProviderAvailable
-    provider
-    destination
+    ...mfaSettings
   }
 }

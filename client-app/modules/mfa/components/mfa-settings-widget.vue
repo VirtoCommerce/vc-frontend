@@ -35,11 +35,12 @@
       </VcAlert>
 
       <VcAlert v-if="errors.length && !challenge" color="danger" variant="soft" size="sm" icon>
-        {{ errors[0].description || $t("common.messages.something_went_wrong") }}
+        {{ errors[0].description }}
       </VcAlert>
 
       <div v-if="challenge" class="mfa-settings__code">
         <SignInCodeForm
+          ref="codeFormRef"
           :id-prefix="`mfa-${scope}`"
           :subtitle="
             $t(targetEnabled ? 'mfa.code.subtitle_turn_on' : 'mfa.code.subtitle_turn_off', {
@@ -48,12 +49,12 @@
           "
           :back-label="$t('mfa.buttons.cancel')"
           :submit-label="$t('mfa.buttons.confirm')"
-          :loading="submitting"
+          :loading="sending || submitting"
           :errors="errors"
           :resend-available-at="challenge.resendAvailableAt"
           @submit="onSubmit"
-          @resend="requestCode"
-          @clear-errors="errors = []"
+          @resend="onResend"
+          @clear-errors="clearErrors"
           @back="cancel"
         />
       </div>
@@ -62,12 +63,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
 import { useMfaSettings } from "../composables/useMfaSettings";
-import { MFA_MODES, MFA_STORE_MODES } from "../constants";
+import { MFA_MODES, MFA_REQUIRED_BY, MFA_STORE_MODES } from "../constants";
 import type { MfaScopeType } from "../composables/useMfaSettings";
 import SignInCodeForm from "@/shared/sign-in/components/sign-in-code-form.vue";
 
@@ -79,7 +80,9 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const notifications = useNotifications();
-const { user } = useUser();
+const { user, operator } = useUser();
+
+const codeFormRef = useTemplateRef<InstanceType<typeof SignInCodeForm>>("codeFormRef");
 
 const organizationId = computed(() =>
   props.scope === "organization" ? (user.value?.contact?.organizationId ?? undefined) : undefined,
@@ -100,6 +103,7 @@ const {
   requestCode,
   confirm,
   cancel,
+  clearErrors,
 } = useMfaSettings(() => props.scope, organizationId);
 
 const isSelfServiceStore = computed(
@@ -120,10 +124,18 @@ const isVisible = computed(() => {
 
 // While the company requires MFA the personal setting changes nothing, so the user gets no switch
 const isRequiredByOrganization = computed(
-  () => props.scope === "user" && !!settings.value?.isRequired && settings.value.requiredBy === "Organization",
+  () =>
+    props.scope === "user" &&
+    !!settings.value?.isRequired &&
+    settings.value.requiredBy === MFA_REQUIRED_BY.organization,
 );
 
-const showSwitch = computed(() => canChange.value && !challenge.value && !isRequiredByOrganization.value);
+// The server refuses a change made on behalf of the customer, so the operator gets no switch
+const isOperator = computed(() => !!operator.value);
+
+const showSwitch = computed(
+  () => canChange.value && !isOperator.value && !challenge.value && !isRequiredByOrganization.value,
+);
 
 // The user widget shows whether the sign-in needs the code, the organization widget what the organization chose
 const statusOn = computed(() => (props.scope === "organization" ? isOn.value : !!settings.value?.isRequired));
@@ -138,7 +150,7 @@ const statusText = computed(() => {
   }
 
   const requiredBy =
-    settings.value.requiredBy === "User" && mode.value === MFA_MODES.required
+    settings.value.requiredBy === MFA_REQUIRED_BY.user && mode.value === MFA_MODES.required
       ? "Administrator"
       : settings.value.requiredBy;
 
@@ -158,6 +170,10 @@ const hint = computed(() => {
     return t("mfa.hints.organization");
   }
 
+  if (isOperator.value && canChange.value) {
+    return t("mfa.hints.operator");
+  }
+
   return undefined;
 });
 
@@ -170,6 +186,15 @@ async function onSubmit(code: string): Promise<void> {
       duration: 5000,
       single: true,
     });
+    return;
+  }
+
+  await codeFormRef.value?.reset();
+}
+
+async function onResend(): Promise<void> {
+  if (await requestCode()) {
+    await codeFormRef.value?.reset(t("shared.sign_in.sign_in_code_form.live_resent"));
   }
 }
 

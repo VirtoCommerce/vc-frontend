@@ -2,10 +2,8 @@ mutation RequestMfaChangeCode($command: InputRequestMfaChangeCodeType!) {
   requestMfaChangeCode(command: $command) {
     succeeded
     twoFactorToken
-    provider
     destination
     resendSecondsRemaining
-    lockoutSecondsRemaining
     errorCode
     errorDescription
   }

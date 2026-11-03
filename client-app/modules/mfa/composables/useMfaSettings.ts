@@ -1,14 +1,15 @@
-import { computed, ref, toValue } from "vue";
+import { computed, readonly, ref, toValue } from "vue";
+import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 import { getMfaSettings, requestMfaChangeCode, updateMfaOrganizationMode, updateMfaUserMode } from "../api/graphql";
 import { MFA_MODES } from "../constants";
-import type { GetMfaSettingsQuery } from "../api/graphql/types";
+import type { MfaSettingsFragment } from "../api/graphql/types";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export type MfaScopeType = "user" | "organization";
 
-export type MfaSettingsType = NonNullable<GetMfaSettingsQuery["mfaSettings"]>;
+export type MfaSettingsType = MfaSettingsFragment;
 
 type ChallengeType = {
   twoFactorToken: string;
@@ -30,10 +31,11 @@ export function useMfaSettings(
   scope: MaybeRefOrGetter<MfaScopeType>,
   organizationId?: MaybeRefOrGetter<string | undefined>,
 ) {
+  const { t, te } = useI18n();
+
   const isOrganization = computed(() => toValue(scope) === "organization");
 
   const settings = ref<MfaSettingsType>();
-  const loading = ref(false);
   const sending = ref(false);
   const submitting = ref(false);
   const challenge = ref<ChallengeType>();
@@ -42,35 +44,34 @@ export function useMfaSettings(
 
   const mode = computed(() => (isOrganization.value ? settings.value?.organizationMode : settings.value?.userMode));
   const isOn = computed(() => !!mode.value && mode.value !== MFA_MODES.off);
-  const isLockedByAdministrator = computed(() => mode.value === MFA_MODES.required);
   const canChange = computed(() =>
     isOrganization.value ? !!settings.value?.canChangeOrganizationMode : !!settings.value?.canChangeUserMode,
   );
 
+  // The module's own codes first, then the sign-in codes it shares with the sign-in form, so the English text of the
+  // server never reaches the page
   function setErrors(result?: ErrorResultType | null): void {
-    errors.value = [
-      {
-        code: result?.errorCode ?? "unknown",
-        description: result?.errorDescription ?? undefined,
-      },
-    ];
+    const code = result?.errorCode ?? "unknown";
+    const key = [`mfa.errors.${code}`, `shared.account.sign_in_form.errors.${code}`].find((item) => te(item));
+
+    errors.value = [{ code, description: t(key ?? "common.messages.something_went_wrong") }];
+  }
+
+  function clearErrors(): void {
+    errors.value = [];
   }
 
   async function fetchSettings(): Promise<void> {
-    loading.value = true;
-
     try {
       settings.value = (await getMfaSettings(toValue(organizationId))) ?? undefined;
     } catch (e) {
       Logger.error(`${useMfaSettings.name}.${fetchSettings.name}`, e);
-    } finally {
-      loading.value = false;
     }
   }
 
   async function requestCode(): Promise<boolean> {
     sending.value = true;
-    errors.value = [];
+    clearErrors();
 
     try {
       const result = await requestMfaChangeCode();
@@ -108,7 +109,7 @@ export function useMfaSettings(
     }
 
     submitting.value = true;
-    errors.value = [];
+    clearErrors();
 
     try {
       const { twoFactorToken } = challenge.value;
@@ -137,25 +138,25 @@ export function useMfaSettings(
   function cancel(): void {
     challenge.value = undefined;
     targetEnabled.value = undefined;
-    errors.value = [];
+    clearErrors();
   }
 
   return {
-    settings,
-    loading,
-    sending,
-    submitting,
-    challenge,
-    targetEnabled,
-    errors,
+    settings: readonly(settings),
+    sending: readonly(sending),
+    submitting: readonly(submitting),
+    challenge: readonly(challenge),
+    targetEnabled: readonly(targetEnabled),
+    // Read-only for the caller, but still the mutable list the shared code form takes
+    errors: computed(() => errors.value),
     mode,
     isOn,
-    isLockedByAdministrator,
     canChange,
     fetchSettings,
     startChange,
     requestCode,
     confirm,
     cancel,
+    clearErrors,
   };
 }

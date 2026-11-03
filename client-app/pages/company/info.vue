@@ -98,7 +98,7 @@
         </VcWidget>
       </div>
 
-      <MfaSettingsWidget v-if="canManageOrganizationMfa" scope="organization" />
+      <ExtensionPointList :category="EXTENSION_CATEGORIES.companyInfo" />
 
       <!-- Content block -->
       <VcWidget size="lg">
@@ -302,8 +302,8 @@ import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
-import { MfaSettingsWidget, MFA_PERMISSIONS } from "@/modules/mfa";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 import {
   AddOrUpdateCompanyAddressModal,
   useCurrentOrganizationAddresses,
@@ -371,7 +371,6 @@ const {
 
 const organizationId = computed<string>(() => organization.value!.id);
 const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
-const canManageOrganizationMfa = computed<boolean>(() => checkPermissions(MFA_PERMISSIONS.manageOrganizationMfa));
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [

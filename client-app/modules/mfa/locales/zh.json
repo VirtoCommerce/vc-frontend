@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "双重身份验证由商店管理员管理。",
       "locked": "由管理员设置：您无法将其关闭。",
-      "organization": "您的公司已为所有成员开启，因此您无法在此更改。"
+      "organization": "您的公司已为所有成员开启，因此您无法在此更改。",
+      "operator": "代表客户操作时无法更改此设置。"
     },
     "messages": {
       "confirm_email": "请确认您的电子邮件以开启双重身份验证。",
       "turned_on": "双重身份验证已开启。",
       "turned_off": "双重身份验证已关闭。"
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "此账户的双重身份验证由管理员管理。",
+      "mfa_self_service_not_allowed": "该商店不允许客户更改双重身份验证。",
+      "mfa_organization_not_allowed": "您无法管理此公司的双重身份验证。",
+      "resend_too_soon": "请稍候再请求新的验证码。"
     }
   }
 }

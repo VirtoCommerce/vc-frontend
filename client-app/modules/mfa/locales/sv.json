@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "Butiksadministratören hanterar tvåfaktorsautentiseringen.",
       "locked": "Inställd av administratören: du kan inte inaktivera den.",
-      "organization": "Ditt företag har aktiverat den för alla sina medlemmar, så du kan inte ändra den här."
+      "organization": "Ditt företag har aktiverat den för alla sina medlemmar, så du kan inte ändra den här.",
+      "operator": "Du kan inte ändra detta medan du agerar för kundens räkning."
     },
     "messages": {
       "confirm_email": "Bekräfta din e-post för att aktivera tvåfaktorsautentisering.",
       "turned_on": "Tvåfaktorsautentisering är aktiverad.",
       "turned_off": "Tvåfaktorsautentisering är inaktiverad."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "Administratören hanterar tvåfaktorsautentisering för det här kontot.",
+      "mfa_self_service_not_allowed": "Butiken tillåter inte kunder att ändra tvåfaktorsautentisering.",
+      "mfa_organization_not_allowed": "Du kan inte hantera tvåfaktorsautentisering för det här företaget.",
+      "resend_too_soon": "Vänta en stund innan du begär en ny kod."
     }
   }
 }

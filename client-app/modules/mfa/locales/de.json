@@ -36,12 +36,19 @@
     "hints": {
       "admin_managed": "Die Zwei-Faktor-Authentifizierung wird vom Shop-Administrator verwaltet.",
       "locked": "Vom Administrator festgelegt: Sie können sie nicht deaktivieren.",
-      "organization": "Ihr Unternehmen hat sie für alle Mitglieder aktiviert, daher können Sie dies hier nicht ändern."
+      "organization": "Ihr Unternehmen hat sie für alle Mitglieder aktiviert, daher können Sie dies hier nicht ändern.",
+      "operator": "Sie können dies nicht ändern, während Sie im Namen des Kunden handeln."
     },
     "messages": {
       "confirm_email": "Bestätigen Sie Ihre E-Mail-Adresse, um die Zwei-Faktor-Authentifizierung zu aktivieren.",
       "turned_on": "Die Zwei-Faktor-Authentifizierung ist aktiviert.",
       "turned_off": "Die Zwei-Faktor-Authentifizierung ist deaktiviert."
+    },
+    "errors": {
+      "mfa_locked_by_administrator": "Die Zwei-Faktor-Authentifizierung für dieses Konto wird vom Administrator verwaltet.",
+      "mfa_self_service_not_allowed": "Der Shop erlaubt Kunden nicht, die Zwei-Faktor-Authentifizierung zu ändern.",
+      "mfa_organization_not_allowed": "Sie können die Zwei-Faktor-Authentifizierung für dieses Unternehmen nicht verwalten.",
+      "resend_too_soon": "Bitte warten Sie einen Moment, bevor Sie einen neuen Code anfordern."
     }
   }
 }
