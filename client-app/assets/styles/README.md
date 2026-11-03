@@ -516,8 +516,9 @@ yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/,
 `scripts/check-designs.ts` compiles every `.scss` file of each design with Sass and Tailwind, as the
 build does, and checks the CSS it emits, so nesting, `$x: &` captures and `@apply` are read as they
 ship. A problem is reported at the source line that wrote it, except a file `index.scss` loads out
-of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. The tests
-are in `scripts/check-designs.test.ts`.
+of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. A missing
+`client-app/designs/` or `client-app/assets/presets/` folder fails the check. The tests are in
+`scripts/check-designs.test.ts`.
 
 | Rule | Rejected |
 | --- | --- |
@@ -526,8 +527,8 @@ are in `scripts/check-designs.test.ts`.
 | `blocks/` and `dark/` hold `.scss` files directly, each named after a block of a component | `blocks/layout/footer-links.scss`, `blocks/notes.md`, `blocks/nothing.scss` |
 | `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
 | `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
-| A colour comes only from preset variables, in every design file. A colour is `color`, `fill`, `stroke` and every `…-color` property; the shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` when they hold one; a gradient with a colour in it; Tailwind's gradient stops and colour opacities; and a custom property named as a colour token (its name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`; Tailwind's `--tw-shadow-colored` excepted). Its value reads only `--color-*`, the `_colors.scss` semantics and `--vc-*` (Tailwind's `--tw-*` too), mixed by `color-mix()` or `rgb(from …)`, besides the keywords and `#0000`. A custom property named as a colour token whose value holds no colour (`--title-text: 1rem`) is not one | `color: red`, `border-top-color: red`, `background: #fff`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `text-shadow: 0 0 2px rgb(0 0 0)`, `fill: var(--x)`, `color: color-mix(in srgb, var(--color-primary-500), white)`, `--vc-x-bg: red` |
-| No private variable carries a colour: a custom property other than `--vc-*` and `--tw-*` | `--text-color: var(--color-primary-500)` |
+| A colour comes only from preset variables, in every design file. A colour is `color`, `fill`, `stroke` and every `…-color` property; the shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` when they hold one; a gradient with a colour in it; Tailwind's gradient stops and colour opacities; a custom property named as a colour token (its name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`; Tailwind's `--tw-shadow-colored` excepted); and a shadow token (`--vc-widget-shadow`, `--vc-shadow-<key>-<n>`), where the default step's parts may keep Tailwind's black `rgb(0 0 0 / …)`. Its value reads only `--color-*`, the `_colors.scss` semantics and `--vc-*` (Tailwind's `--tw-*` too), mixed by `color-mix()` or `rgb(from …)`, besides the keywords and `#0000`. A custom property named as a colour token whose value holds no colour (`--title-text: 1rem`) is not one | `color: red`, `border-top-color: red`, `background: #fff`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `text-shadow: 0 0 2px rgb(0 0 0)`, `fill: var(--x)`, `color: color-mix(in srgb, var(--color-primary-500), white)`, `--vc-x-bg: red`, `--vc-widget-shadow: 0 6px 20px red` |
+| No private variable carries a colour, whatever its name: a custom property other than `--vc-*` and `--tw-*` | `--text-color: var(--color-primary-500)`, `--shadow: 0 0 4px #f00` |
 | A block or dark file names no `html` and no `[data-design]` | `html .footer-links` |
 | A block or dark file names no `.dark`: it is on `<html>`, so below the design's `html` it never matches; dark rules go in `dark/<block>.scss`, where `index.scss` adds `.dark` | `.dark .footer-links`, `.dark &` |
 | No `@apply` variant that styles an ancestor or sibling (`group-*`, `peer-*`): it puts a selector before `html[data-design]` and never matches; write the rule out | `@apply group-hover:underline`, `@apply peer-checked:underline` |
@@ -543,11 +544,11 @@ Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same 
 | Rule | Rejected |
 | --- | --- |
 | It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
-| Every rule is inside `@layer vc.preset`; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, `@keyframes` |
+| Every rule is inside a top-level `@layer vc.preset { … }` block; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, the layer inside `@media`, a bare `@layer vc.preset;`, `@keyframes` |
 | No separate dark stylesheet: dark rules go in `<name>.scss` under `html.dark[data-preset="<name>"]` | `mercury.dark.scss` |
 | Every selector is the preset's `html`, `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, alone or followed by a block: then it names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"]` and `html[data-preset="red"] .vc-button` in `mercury.scss`, `html[data-preset="mercury"]:hover`, `… .dark .vc-button`, `… .vc-button svg` |
 | On the preset's `html` alone, only public `--vc-*` tokens | `color: var(--color-primary-500)`, `--color-primary-500: …` on `html[data-preset="mercury"]` |
-| Colours only, by the value rule above | `margin: 0`, `--vc-button-radius: 0`, `color: #fff` |
+| Colours only, by the value rule above; a shadow token sets geometry too, so a preset sets none | `margin: 0`, `--vc-button-radius: 0`, `--vc-widget-shadow: …`, `color: #fff` |
 | No private variable | `--bg-color: var(--color-primary-500)` |
 
 Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`, and

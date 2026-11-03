@@ -76,6 +76,11 @@ const LOAD_CSS = /load-css\(\s*(?:\$url\s*:\s*)?["']([^"']+)["']/g;
 
 /** The kit names its public colour tokens `…color…`, `…bg…`, `…-text`, `…-border` or `…-icon`. */
 const COLOR_TOKEN = /(?:color|bg)|(?:-(?:text|border|icon)$)/i;
+/** A shadow token holds its shadow's colour: `--vc-widget-shadow`, `--vc-shadow-md-1`. */
+const SHADOW_TOKEN = /^--vc-(?:[a-z\d]+-)*shadow(?:-[a-z\d]+)*$/i;
+/** The default `shadow` step keeps Tailwind's black when a design reshapes it; the other steps read the preset. */
+const DEFAULT_SHADOW_TOKEN = /^--vc-shadow-default-\d+$/;
+const DEFAULT_SHADOW_BLACK = /(?<![\w-])rgb\(\s*0\s+0\s+0\s*\/\s*[\d.]+%?\s*\)/gi;
 /** Tailwind's shadow geometry, which reads the colour from `--tw-shadow-color`. */
 const SHADOW_GEOMETRY = "--tw-shadow-colored";
 const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/;
@@ -114,7 +119,7 @@ steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow
 );
 /** What a colour may read besides the `_colors.scss` semantics: the preset's keys, public tokens, Tailwind's own. */
 const PRESET_VARIABLE = /^--(?:color|vc|tw)-/;
-/** A component's public token or Tailwind's own; any other custom property is a component's private one. */
+/** A component's public token or Tailwind's own; any other custom property is private, a preset key included. */
 const PUBLIC_VARIABLE = /^--(?:vc|tw)-/;
 const COLOR_RULE = "colours come only from preset variables";
 const QUOTED_OR_URL = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
@@ -301,7 +306,7 @@ export function checkForeignBlocks(selector: string, own: string, blocks: Set<st
   return problem;
 }
 
-/** The html element alone, `html[data-design="<name>"]` or `html.dark[data-design="<name>"]`: tokens go there. */
+/** The design's or the preset's html alone (`html[data-design="<name>"]`, `html.dark[data-preset="<name>"]`). */
 function isRootSelector(selector: string, name: string, attribute = "data-design"): boolean {
   const compounds = splitCompounds(selector);
 
@@ -362,7 +367,7 @@ function isWiring(node: selectorParser.Node): boolean {
   );
 }
 
-/** `null` when a preset stylesheet's selector is allowed, otherwise why it is not. The preset's html alone takes tokens. */
+/** `null` when a preset stylesheet's selector is allowed, otherwise why it is not. */
 export function checkPresetSelector(selector: string, preset: string, blocks: Set<string>): string | null {
   const [prefix, ...below] = splitCompounds(selector);
 
@@ -378,9 +383,9 @@ export function checkPresetSelector(selector: string, preset: string, blocks: Se
     return `"${selector}": html, .dark, [data-preset] and [data-design] belong to the prefix only`;
   }
 
-  const styled = below.at(-1)!.some((node) => node.type === "class" && blocks.has(blockOf(node.value) ?? ""));
+  const isStyled = below.at(-1)!.some((node) => node.type === "class" && blocks.has(blockOf(node.value) ?? ""));
 
-  return styled ? null : `"${selector}" styles no block: its last compound has no class of a component's block`;
+  return isStyled ? null : `"${selector}" styles no block: its last compound has no class of a component's block`;
 }
 
 /** The selector below the prefix; `keepCombinator` keeps a child or sibling combinator the file wrote first. */
@@ -586,8 +591,8 @@ function colorSemantics(file: string): Set<string> {
 
 /**
  * `null` when every colour in a value comes from preset variables: `var()` of a preset key (`--color-*`),
- * a `_colors.scss` semantic or a public `--vc-*` token, `color-mix()` or a relative colour of these, and
- * the keywords; otherwise the first literal it holds.
+ * a `_colors.scss` semantic, a public `--vc-*` token or Tailwind's `--tw-*`, `color-mix()` or a relative colour
+ * of these, and the keywords; otherwise why not: the first foreign variable or literal colour it holds.
  */
 export function checkColorValue(value: string, semantics: ReadonlySet<string>): string | null {
   const text = value.replaceAll(QUOTED_OR_URL, " ");
@@ -720,27 +725,33 @@ interface IColorLine {
 }
 
 /**
- * Why a declaration breaks the colour rules, or `undefined`. A colour (a colour property, or a custom
- * property named as a colour token) comes only from preset variables, and no private variable carries one.
- * A preset stylesheet sets colours only, and no private variable at all.
+ * Why a declaration breaks the colour rules, or `undefined`. A colour (a colour property, a custom property
+ * named as a colour token, or a design's shadow token) comes only from preset variables, and no private
+ * variable carries one, whatever its name. A preset stylesheet sets colours only, and no private variable at all.
  */
 function colorProblem(
   { prop, value }: Declaration,
   semantics: ReadonlySet<string>,
   isPreset = false,
 ): string | undefined {
-  const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(unescapeIdent(prop));
+  const name = unescapeIdent(prop);
+  const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(name);
+  const isShadowToken = !isPreset && SHADOW_TOKEN.test(name);
   const isColor =
-    COLOR_PROPERTY.test(unescapeIdent(prop).toLowerCase()) || setsColor(prop, value) || isColorToken(prop);
-  const valueProblem = isColor ? checkColorValue(value, semantics) : null;
+    isShadowToken ||
+    COLOR_PROPERTY.test(unescapeIdent(prop).toLowerCase()) ||
+    setsColor(prop, value) ||
+    isColorToken(prop);
+  const colors = DEFAULT_SHADOW_TOKEN.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value;
+  const valueProblem = isColor ? checkColorValue(colors, semantics) : null;
   const privateProblem = "a private variable; set the component's public --vc-* token, or the property itself";
 
   if (isPrivate && isPreset) {
     return privateProblem;
   }
 
-  if (!isColor) {
-    return isPreset ? "a preset stylesheet sets colours only" : undefined;
+  if (!isColor && isPreset) {
+    return "a preset stylesheet sets colours only";
   }
 
   if (valueProblem) {
@@ -1127,11 +1138,14 @@ export async function checkPresets({
   sources,
   colorsFile = COLORS_FILE,
 }: IPresetCheckOptions): Promise<IPresetCheckResult> {
-  const files = existsSync(presetsDir)
-    ? entriesOf(presetsDir)
-        .filter((entry) => entry.isFile() && entry.name.endsWith(".scss"))
-        .map((entry) => entry.name)
-    : [];
+  // A moved folder fails the check, as in checkDesigns, instead of passing with nothing checked.
+  if (!existsSync(presetsDir)) {
+    return { errors: [`${presetsDir} is missing; the presets are not where this check looks`], fileCount: 0 };
+  }
+
+  const files = entriesOf(presetsDir)
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".scss"))
+    .map((entry) => entry.name);
 
   if (!files.length) {
     return { errors: [], fileCount: 0 };

@@ -518,10 +518,38 @@ ${loads("dark")}  }
       ).toEqual([]);
     });
 
-    it("reports a private variable that carries a colour", async () => {
+    it.each([
+      ["--text-color: var(--color-primary-500)", "--text-color"],
+      ["--shadow: 0 0 4px #f00", "--shadow"],
+      ["--x: var(--color-primary-500)", "--x"],
+    ])("reports a private variable that carries a colour, whatever its name: %s", async (declaration, prop) => {
+      expect(await check({ "soft/blocks/vc-button.scss": `.vc-button { ${declaration}; }` })).toEqual([
+        expect.stringContaining(`${prop}: a private variable; set the component's public --vc-* token`),
+      ]);
+    });
+
+    it("reports a literal colour in a shadow token", async () => {
+      const errors = await check({
+        "soft/_tokens.scss": `${SOFT} { --vc-widget-shadow: 0 6px 20px 0 red; }`,
+        "soft/blocks/vc-card.scss": ".vc-card { --vc-shadow-md-1: 0 4px 6px 0 rgb(0 0 0 / 0.1); }",
+      });
+
+      expect(errors).toEqual([
+        expect.stringContaining(`--vc-widget-shadow: red is a named colour; ${COLOR}`),
+        expect.stringContaining(`--vc-shadow-md-1: rgb() without "from" is a literal colour; ${COLOR}`),
+      ]);
+    });
+
+    it("passes shadow tokens from preset variables, and the default step's black", async () => {
       expect(
-        await check({ "soft/blocks/vc-button.scss": ".vc-button { --text-color: var(--color-primary-500); }" }),
-      ).toEqual([expect.stringContaining("--text-color: a private variable; set the component's public --vc-* token")]);
+        await check({
+          "soft/_tokens.scss": `${SOFT} {
+            --vc-widget-shadow: 0 6px 20px 0 rgb(from var(--color-additional-950) r g b / 0.06), 0 0 #0000;
+            --vc-shadow-default-1: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+            --vc-shadow-md-2: var(--vc-shadow-md-1);
+          }`,
+        }),
+      ).toEqual([]);
     });
 
     it.each([
@@ -952,9 +980,16 @@ ${loads("dark")}  }
 
     it("checks nothing when there is no preset stylesheet", async () => {
       root = mkdtempSync(path.join(tmpdir(), "presets-"));
+      writeFileSync(path.join(root, "mercury.json"), "{}");
+
+      expect(await checkPresets({ presetsDir: root, sources: [] })).toEqual({ errors: [], fileCount: 0 });
+    });
+
+    it("reports a missing presets folder", async () => {
+      root = mkdtempSync(path.join(tmpdir(), "presets-"));
 
       expect(await checkPresets({ presetsDir: path.join(root, "missing"), sources: [] })).toEqual({
-        errors: [],
+        errors: [expect.stringContaining("missing is missing; the presets are not where this check looks")],
         fileCount: 0,
       });
     });
@@ -976,12 +1011,31 @@ ${loads("dark")}  }
       ).toEqual([expect.stringContaining("dark rules go in mercury.scss under html.dark[data-preset]")]);
     });
 
+    it("passes a rule under @media inside the layer", async () => {
+      const css = `@layer vc.preset {
+        ${MERCURY} .vc-button { @media (min-width: 1px) { color: var(--color-primary-500); } }
+      }`;
+
+      expect(await check({ "mercury.scss": css })).toEqual([]);
+    });
+
     it.each([
       ["a rule outside the layer", `${MERCURY} .vc-button { color: inherit; }`, "ships outside @layer vc.preset"],
       [
         "another layer",
         `@layer vc.design { ${MERCURY} .vc-button { color: inherit; } }`,
         "@layer is not allowed in a preset stylesheet",
+      ],
+      [
+        "the layer inside @media",
+        `@media (min-width: 1px) { @layer vc.preset { ${MERCURY} .vc-button { color: inherit; } } }`,
+        "@layer is not allowed in a preset stylesheet",
+      ],
+      ["the layer as a bare statement", "@layer vc.preset;", "@layer is not allowed in a preset stylesheet"],
+      [
+        "@keyframes inside the layer",
+        "@layer vc.preset { @keyframes pulse { from { opacity: 0; } } }",
+        "@keyframes is not allowed in a preset stylesheet",
       ],
       [
         "a rule below another preset",
@@ -1022,6 +1076,11 @@ ${loads("dark")}  }
         "a public token that is not a colour",
         `@layer vc.preset { ${MERCURY} .vc-button { --vc-button-radius: 0; } }`,
         "--vc-button-radius: a preset stylesheet sets colours only",
+      ],
+      [
+        "a shadow token, which sets geometry too",
+        `@layer vc.preset { ${MERCURY} { --vc-widget-shadow: 0 0 4px var(--color-primary-500); } }`,
+        "--vc-widget-shadow: a preset stylesheet sets colours only",
       ],
       [
         "a private variable",
