@@ -410,7 +410,6 @@ onMounted(measureTickLabels);
 </script>
 
 <style lang="scss">
-// @apply: module is self-contained as an MF remote (no global utility layer).
 .reporting-svg-chart {
   --grid-color: var(--reporting-svg-chart-grid-color, var(--color-neutral-200));
   --tick-color: var(--reporting-svg-chart-tick-color, var(--color-neutral-600));

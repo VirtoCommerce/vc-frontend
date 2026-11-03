@@ -6,7 +6,7 @@
           v-for="option in REPORTING_PERIODS"
           :key="option"
           :model-value="period"
-          name="reporting-period"
+          :name="periodGroupName"
           :value="option"
           :label="t(PERIOD_LABELS[option])"
           size="sm"
@@ -94,6 +94,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
+import { useComponentId } from "@/ui-kit/composables";
 import { useReportingFormatters } from "../composables/useReportingFormatters";
 import { useReportingPlan } from "../composables/useReportingPlan";
 import { useToday } from "../composables/useToday";
@@ -151,6 +152,8 @@ const CHART_PERIOD_TITLES: Record<ReportingPeriodType, string> = {
 };
 
 const { t, n, d } = useI18n();
+// Two panels on one page must not share a radio group: picking a period in one would uncheck the other's tab.
+const periodGroupName = useComponentId("reporting-period");
 const formatters = useReportingFormatters();
 const today = useToday();
 
@@ -242,7 +245,6 @@ const footnote = computed(() => {
 </script>
 
 <style lang="scss">
-// @apply: module is self-contained as an MF remote (no global utility layer).
 .reporting-panel {
   @apply flex flex-col gap-4;
 
@@ -267,7 +269,7 @@ const footnote = computed(() => {
   }
 
   &__tiles {
-    // Keeps the loader overlay's z-index inside the tiles, under the customer dropdown that opens over them.
+    // Keeps the loader overlay's z-index inside the tiles, under a dropdown from the actions slot that opens over them.
     @apply relative isolate grid grid-cols-2 gap-3;
 
     @media (width >= theme("screens.lg")) {

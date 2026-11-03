@@ -177,6 +177,14 @@ describe("ReportingPanel", () => {
     expect(mountPanel({ withTable: false }).findComponent({ name: "ReportingTable" }).exists()).toBe(false);
   });
 
+  it("gives each panel its own period radio group", () => {
+    const first = mountPanel().find("[data-test-id='period-tab-button']").attributes("name");
+    const second = mountPanel().find("[data-test-id='period-tab-button']").attributes("name");
+
+    expect(first).toMatch(/^reporting-period-/);
+    expect(first).not.toBe(second);
+  });
+
   it("marks itself compact for a narrow column", () => {
     expect(mountPanel({ compact: true }).classes()).toContain("reporting-panel--compact");
     expect(mountPanel().classes()).not.toContain("reporting-panel--compact");

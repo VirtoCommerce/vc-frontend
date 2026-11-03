@@ -105,7 +105,6 @@ const rows = computed<RowType[]>(() =>
 </script>
 
 <style lang="scss">
-// @apply: module is self-contained as an MF remote (no global utility layer).
 .reporting-table {
   @apply flex flex-col gap-3;
 

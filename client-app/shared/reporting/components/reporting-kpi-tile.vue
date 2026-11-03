@@ -48,7 +48,6 @@ const clampedProgress = computed(() => Math.min(1, Math.max(0, props.progress ??
 </script>
 
 <style lang="scss">
-// @apply: module is self-contained as an MF remote (no global utility layer).
 .reporting-kpi-tile {
   @apply flex min-w-0 flex-col items-start gap-1 rounded-[--vc-radius] border border-neutral-200 p-3;
 
