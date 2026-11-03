@@ -327,3 +327,51 @@ export function toReportingMonths(data: Pick<ReportingDataType, "plan" | "months
     data.previous,
   );
 }
+
+/**
+ * A statistics query's month windows for one plan, under the variable names every reporting query uses:
+ * `use{i}` / `from{i}` / `to{i}` / `lyFrom{i}` / `lyTo{i}` per slot and `prevFrom` / `prevTo`. A slot the period leaves
+ * empty, or a month to come, is not asked for.
+ */
+export type ReportingVariablesType = { prevFrom: string; prevTo: string } & Record<`use${number}`, boolean> &
+  Record<`${"from" | "to" | "lyFrom" | "lyTo"}${number}`, string | undefined>;
+
+export function buildReportingVariables(plan: ReportingPlanType): ReportingVariablesType {
+  const variables: Record<string, string | boolean | undefined> = {
+    prevFrom: plan.previous.from,
+    prevTo: plan.previous.to,
+  };
+  for (let i = 0; i < REPORTING_MONTH_SLOTS; i++) {
+    const month = plan.months.at(i);
+    variables[`use${i}`] = month !== undefined && month.state !== "upcoming";
+    variables[`from${i}`] = month?.from;
+    variables[`to${i}`] = month?.to;
+    variables[`lyFrom${i}`] = month?.lyFrom;
+    variables[`lyTo${i}`] = month?.lyTo;
+  }
+  return variables as ReportingVariablesType;
+}
+
+type ReportingStatisticsSlotType = { total: { amount: number }; count: number } | null | undefined;
+
+/** A statistics response under the aliases every reporting query uses: `m{i}`, `ly{i}` per slot and `prev`. */
+export type ReportingStatisticsType = { currencyCode: string; prev?: ReportingStatisticsSlotType } & {
+  [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType;
+};
+
+function toTotals(slot: ReportingStatisticsSlotType): ReportingPeriodTotalsType | undefined {
+  return slot ? { amount: slot.total.amount, count: slot.count } : undefined;
+}
+
+/** One response as the report reads it. `plan` must be the plan the response was fetched for. */
+export function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType {
+  return {
+    plan,
+    months: plan.months.map((_month, i) => ({
+      totals: toTotals(statistics[`m${i}`]),
+      lastYear: toTotals(statistics[`ly${i}`]),
+    })),
+    previous: toTotals(statistics.prev),
+    currencyCode: statistics.currencyCode,
+  };
+}

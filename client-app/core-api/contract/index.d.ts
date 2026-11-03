@@ -4,7 +4,7 @@
 
 import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
 import * as vue from 'vue';
-import { Plugin, ComputedRef, MaybeRef, MaybeRefOrGetter, Component, WritableComputedRef, ComponentObjectPropsOptions } from 'vue';
+import { Plugin, ComputedRef, MaybeRef, MaybeRefOrGetter, Component, WritableComputedRef, ComponentObjectPropsOptions, Ref } from 'vue';
 import * as vue_router from 'vue-router';
 import { RouteLocationRaw, RouteLocationNormalizedLoaded, LocationQueryValue, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
@@ -6120,11 +6120,37 @@ type ReportingDataType = {
     currencyCode: string;
 };
 declare function buildReportingPlan(period: ReportingPeriodType, now?: Date): ReportingPlanType;
+/**
+ * A statistics query's month windows for one plan, under the variable names every reporting query uses:
+ * `use{i}` / `from{i}` / `to{i}` / `lyFrom{i}` / `lyTo{i}` per slot and `prevFrom` / `prevTo`. A slot the period leaves
+ * empty, or a month to come, is not asked for.
+ */
+type ReportingVariablesType = {
+    prevFrom: string;
+    prevTo: string;
+} & Record<`use${number}`, boolean> & Record<`${"from" | "to" | "lyFrom" | "lyTo"}${number}`, string | undefined>;
+declare function buildReportingVariables(plan: ReportingPlanType): ReportingVariablesType;
+type ReportingStatisticsSlotType = {
+    total: {
+        amount: number;
+    };
+    count: number;
+} | null | undefined;
+/** A statistics response under the aliases every reporting query uses: `m{i}`, `ly{i}` per slot and `prev`. */
+type ReportingStatisticsType = {
+    currencyCode: string;
+    prev?: ReportingStatisticsSlotType;
+} & {
+    [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType;
+};
+/** One response as the report reads it. `plan` must be the plan the response was fetched for. */
+declare function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType;
 
 interface IProps {
     /**
-     * The figures to show, with the plan they were fetched for (build the query from `useReportingPlan`). Until the
-     * first figures arrive the panel shows the current period's months with no orders.
+     * The figures to show, with the plan they were fetched for: build the query from `useReportingPlan` and
+     * `buildReportingVariables`, and take `data` from `useReportingData`. Until the first figures arrive the panel shows
+     * the current period's months with no orders.
      */
     data?: ReportingDataType;
     loading?: boolean;
@@ -6162,6 +6188,21 @@ type __VLS_WithSlots<T, S> = T & {
     new (): {
         $slots: S;
     };
+};
+
+type ReportingSettledType<TStatistics> = {
+    plan: ReportingPlanType;
+    statistics: TStatistics;
+};
+/**
+ * The report's figures, each response kept with the plan it was fetched for. A query result keeps the previous
+ * response until the next one lands, and its month slots are positional, so it is never read against a plan picked
+ * after it. Pass the plan the query variables were built from (`useReportingPlan`).
+ */
+declare function useReportingData<TStatistics extends ReportingStatisticsType>(plan: Readonly<Ref<ReportingPlanType>>, statistics: MaybeRefOrGetter<TStatistics | null | undefined>): {
+    data: vue.ComputedRef<ReportingDataType | undefined>;
+    /** The response with its plan, for figures of the caller's own that the report does not show. */
+    settled: vue.ComputedRef<ReportingSettledType<TStatistics> | undefined>;
 };
 
 /**
@@ -6215,8 +6256,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$5 as AcceptedGifts, _default$2 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$7 as IdentityProvider, Logger, _default$4 as OrderCommentSection, _default$6 as OrderLineItems, _default$8 as OrderStatus, _default$3 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$z as VcAlert, _default$K as VcBadge, _default$J as VcBreadcrumbs, _default$y as VcButton, _default$x as VcCalendar, _default$I as VcCheckbox, _default$H as VcCheckboxGroup, _default$w as VcChip, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$v as VcDialog, _default$u as VcDialogContent, _default$t as VcDialogFooter, _default$s as VcDialogHeader, _default$r as VcEmptyView, _default$G as VcIcon, _default$F as VcImage, _default$q as VcInput, _default$E as VcInputDetails, _default$D as VcLabel, _default$9 as VcLayout, _default$C as VcLink, _default$p as VcLoaderOverlay, _default$B as VcMarkdownRender, _default$o as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$n as VcPopover, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$A as VcTooltip, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default$1 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingPlan, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
-export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$5 as AcceptedGifts, _default$2 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$7 as IdentityProvider, Logger, _default$4 as OrderCommentSection, _default$6 as OrderLineItems, _default$8 as OrderStatus, _default$3 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$z as VcAlert, _default$K as VcBadge, _default$J as VcBreadcrumbs, _default$y as VcButton, _default$x as VcCalendar, _default$I as VcCheckbox, _default$H as VcCheckboxGroup, _default$w as VcChip, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$v as VcDialog, _default$u as VcDialogContent, _default$t as VcDialogFooter, _default$s as VcDialogHeader, _default$r as VcEmptyView, _default$G as VcIcon, _default$F as VcImage, _default$q as VcInput, _default$E as VcInputDetails, _default$D as VcLabel, _default$9 as VcLayout, _default$C as VcLink, _default$p as VcLoaderOverlay, _default$B as VcMarkdownRender, _default$o as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$n as VcPopover, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$A as VcTooltip, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default$1 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
+export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

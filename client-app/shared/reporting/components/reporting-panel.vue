@@ -106,8 +106,9 @@ import type { ReportingDataType, ReportingPeriodType } from "../reporting";
 
 interface IProps {
   /**
-   * The figures to show, with the plan they were fetched for (build the query from `useReportingPlan`). Until the
-   * first figures arrive the panel shows the current period's months with no orders.
+   * The figures to show, with the plan they were fetched for: build the query from `useReportingPlan` and
+   * `buildReportingVariables`, and take `data` from `useReportingData`. Until the first figures arrive the panel shows
+   * the current period's months with no orders.
    */
   data?: ReportingDataType;
   loading?: boolean;
