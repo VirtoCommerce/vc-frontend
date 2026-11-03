@@ -542,6 +542,7 @@ describe("useThemeContext - preset loading functions", () => {
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#default");
       expect(themeContext.value.activePresetName).toBe("default");
+      expect(document.documentElement.getAttribute("data-preset")).toBe("default");
       expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
     });
 
