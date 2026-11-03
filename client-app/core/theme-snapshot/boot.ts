@@ -65,14 +65,20 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
   }
 
   const { promoteLate, hasFailed } = useThemeSnapshot();
+  let isRetrying = false;
 
   router.beforeEach(() => {
-    if (promoteLate() || !hasFailed.value) {
+    if (promoteLate() || !hasFailed.value || isRetrying) {
       return;
     }
 
     const context = getContext();
-    void readOutcome(requestThemeSnapshot(context)).then((value) => acceptLate(value, context));
+    isRetrying = true;
+    void readOutcome(requestThemeSnapshot(context))
+      .then((value) => acceptLate(value, context))
+      .finally(() => {
+        isRetrying = false;
+      });
   });
 }
 

@@ -18,7 +18,7 @@
       </div>
 
       <template v-for="item in template.content">
-        <!-- @deprecated. TODO Keep only the item props. Remove settings and model from all components -->
+        <!-- @deprecated: settings and model go once every section takes only its item's props -->
         <PageBuilderSection
           v-if="!item.hidden"
           :key="item.id"

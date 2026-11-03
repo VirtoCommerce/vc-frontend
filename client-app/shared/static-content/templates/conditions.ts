@@ -158,7 +158,19 @@ export function matchesPath(permalink: string | undefined, glob: string): boolea
 }
 
 function trimSlashes(value: string): string {
-  return value.trim().replaceAll(/^\/+|\/+$/g, "");
+  const text = value.trim();
+  let start = 0;
+  let end = text.length;
+
+  while (start < end && text[start] === "/") {
+    start++;
+  }
+
+  while (end > start && text[end - 1] === "/") {
+    end--;
+  }
+
+  return text.slice(start, end);
 }
 
 function toList(value: unknown): string[] {
