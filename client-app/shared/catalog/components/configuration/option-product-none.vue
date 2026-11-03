@@ -1,7 +1,13 @@
 <template>
   <VcProductCard view-mode="item" class="option-product-none" data-test-id="none-option">
     <template #media>
-      <VcRadioButton value="none" :name="name" :model-value="selected ? 'none' : ''" @input="$emit('input')" />
+      <VcRadioButton
+        value="none"
+        :name="name"
+        :model-value="selected ? 'none' : ''"
+        :aria-label="$t('shared.catalog.product_details.product_configuration.none')"
+        @input="$emit('input')"
+      />
 
       <VcProductImage />
     </template>

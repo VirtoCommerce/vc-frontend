@@ -636,4 +636,23 @@ describe("category page with infinite scroll", () => {
     expect(calls[1][1]).toEqual([THIRD_PRODUCT]);
     expect(calls[1][2]).toEqual(expect.objectContaining({ item_list_id: "category_undefined_page_2" }));
   });
+
+  it("reports a selected product with the page list and the position it was reported at", async () => {
+    mocks.moreResponse = { items: [THIRD_PRODUCT], totalCount: 3 };
+
+    await mountAt("/catalog");
+
+    const products = wrapper!.findComponent({ name: "CategoryProducts" });
+    products.vm.$emit("changePage", 2);
+    await flushPromises();
+    mocks.analytics.mockClear();
+
+    products.vm.$emit("selectProduct", OTHER_PRODUCT);
+    products.vm.$emit("selectProduct", THIRD_PRODUCT);
+
+    expect(mocks.analytics.mock.calls).toEqual([
+      ["selectItem", OTHER_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_1", index: 1 })],
+      ["selectItem", THIRD_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_2", index: 0 })],
+    ]);
+  });
 });

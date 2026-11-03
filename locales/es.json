@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Este artículo no se puede comprar",
       "item_is_out_of_stock": "Este artículo está agotado",
       "invalid_value": "Valor inválido",
+      "invalid_characters": "Contiene caracteres no válidos",
+      "html_tags_not_allowed": "No se permiten etiquetas HTML",
+      "unsafe_content": "Contiene contenido no permitido",
+      "invalid_addresses": "Algunas de las direcciones no son válidas",
+      "invalid_data": "Algunos de los datos introducidos no son válidos",
       "invalid_user_id_or_token": "ID de usuario o token inválido.",
       "product_no_longer_available": "Ya no está disponible",
       "item_quantity_required_field": "El valor de la cantidad del artículo no puede estar vacío",
@@ -285,7 +290,8 @@
       "company_members": "Miembros de la empresa",
       "contact_administrator": "contacta al administrador del sitio",
       "skip_to_main_content": "Ir al contenido principal",
-      "skip_to_footer": "Ir al pie de página"
+      "skip_to_footer": "Ir al pie de página",
+      "security": "Seguridad"
     },
     "titles": {
       "all_actions": "Todas las acciones",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardado para más tarde",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "Varias cuentas usan este correo electrónico.",
           "lockout_disabled": "Esta cuenta no puede iniciar sesión con un código.",
           "invalid_code": "Este código no ha funcionado.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Su sesión de inicio de sesión ha caducado. Inicie sesión de nuevo.",
+          "code_attempts_exceeded": "Demasiados códigos incorrectos. Espere unos minutos y vuelva a iniciar sesión.",
+          "mfa_provider_not_available": "No podemos enviar un código de inicio de sesión a esta cuenta. Póngase en contacto con su administrador.",
+          "two_factor_unavailable": "Esta cuenta requiere un segundo paso de inicio de sesión, pero no está disponible. Póngase en contacto con su administrador.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "La verificación fue exitosa, pero el cambio a la cuenta del cliente falló. Inténtelo de nuevo.",
-          "generic": "Algo salió mal. Inténtelo de nuevo."
+          "generic": "Algo salió mal. Inténtelo de nuevo.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "Revisa tu correo electrónico",
           "subtitle": "Enviamos un código a {email}.",
-          "code_label": "Código",
-          "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
-          "submit_button": "Iniciar sesión",
-          "resend_button": "Reenviar código",
-          "use_different_email_link": "Usar otro correo electrónico",
-          "live_resent": "Nuevo código enviado."
+          "use_different_email_link": "Usar otro correo electrónico"
         },
         "locked": {
           "title": "Demasiados intentos fallidos",
@@ -653,6 +670,19 @@
           "password_button": "Iniciar sesión con contraseña",
           "back_link": "Volver al inicio de sesión"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Introduce el código de inicio de sesión",
+        "subtitle": "Enviamos un código a {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Código",
+        "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
+        "submit_button": "Iniciar sesión",
+        "resend_button": "Reenviar código",
+        "resend_countdown": "Reenviar código en {seconds} s",
+        "live_resent": "Nuevo código enviado."
       }
     },
     "company": {
@@ -1464,6 +1494,21 @@
       "promotion_coupons": {
         "title": "Todos los cupones y promociones",
         "no_lists": "No tienes cupones ni promociones"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "No hay claves",
+        "unnamed_key": "Clave sin nombre",
+        "created": "Creada el {date}",
+        "changed": "Modificada el {date}",
+        "rename_modal": {
+          "title": "Cambiar el nombre de la clave",
+          "name_label": "Nombre"
+        },
+        "delete_modal": {
+          "title": "Eliminar clave",
+          "message": "Ya no podrá iniciar sesión con esta clave."
+        }
       }
     },
     "company": {
@@ -1803,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one.",
+    "user_not_editable": "Este usuario no se puede editar",
+    "sign_in_key_not_found": "No se encontró la clave de inicio de sesión",
+    "last_sign_in_key": "No se puede eliminar la última clave de inicio de sesión",
+    "operation_not_supported": "Esta operación no es compatible"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",

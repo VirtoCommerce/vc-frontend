@@ -328,3 +328,23 @@ describe("CompareTable — table semantics", () => {
     wrapper.unmount();
   });
 });
+
+describe("CompareTable — selectItem", () => {
+  function configuration(localId: string): ICompareDisplayProduct {
+    const item = product("p1");
+    return { ...item, entry: { ...item.entry, localId } };
+  }
+
+  it.each([false, true])("emits the clicked column's position, compact: %s", async (compact) => {
+    await setCompact(compact);
+    const products = [configuration("config-a"), configuration("config-b")];
+    const wrapper = mountTable({ products });
+    await nextTick();
+
+    wrapper.findAllComponents({ name: "VcProductTitle" })[1].vm.$emit("click");
+
+    expect(wrapper.emitted("selectItem")).toEqual([[products[1].product, 1]]);
+
+    wrapper.unmount();
+  });
+});

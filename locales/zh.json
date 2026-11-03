@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "此商品无法购买",
       "item_is_out_of_stock": "此商品缺货",
       "invalid_value": "无效的值",
+      "invalid_characters": "包含无效字符",
+      "html_tags_not_allowed": "不允许使用 HTML 标签",
+      "unsafe_content": "包含不允许的内容",
+      "invalid_addresses": "部分地址无效",
+      "invalid_data": "部分输入的数据无效",
       "invalid_user_id_or_token": "用户ID或令牌无效。",
       "product_no_longer_available": "不再可用",
       "item_quantity_required_field": "商品数量不能为空",
@@ -285,7 +290,8 @@
       "company_members": "公司成员",
       "contact_administrator": "联系网站管理员",
       "skip_to_main_content": "跳至主要内容",
-      "skip_to_footer": "跳至页脚"
+      "skip_to_footer": "跳至页脚",
+      "security": "安全"
     },
     "titles": {
       "all_actions": "所有操作",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "稍后保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "多个账户使用此电子邮件。",
           "lockout_disabled": "此账户无法使用验证码登录。",
           "invalid_code": "该验证码无法使用。",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "您的登录会话已过期，请重新登录。",
+          "code_attempts_exceeded": "错误的验证码过多，请等待几分钟后重新登录。",
+          "mfa_provider_not_available": "无法向此账户发送登录验证码，请联系您的管理员。",
+          "two_factor_unavailable": "此账户需要第二步登录验证，但该功能不可用。请联系管理员。",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
-          "generic": "出错了。请重试。"
+          "generic": "出错了。请重试。",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "查看您的邮箱",
           "subtitle": "我们已向 {email} 发送了验证码。",
-          "code_label": "验证码",
-          "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
-          "submit_button": "登录",
-          "resend_button": "重新发送验证码",
-          "use_different_email_link": "使用其他邮箱",
-          "live_resent": "已发送新验证码。"
+          "use_different_email_link": "使用其他邮箱"
         },
         "locked": {
           "title": "失败尝试次数过多",
@@ -653,6 +670,19 @@
           "password_button": "使用密码登录",
           "back_link": "返回登录"
         }
+      },
+      "mfa_verify_form": {
+        "header": "输入登录验证码",
+        "subtitle": "我们已将验证码发送至 {destination}。",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "验证码",
+        "paste_hint": "输入或粘贴验证码。在手机上，点按键盘上方的验证码。",
+        "submit_button": "登录",
+        "resend_button": "重新发送验证码",
+        "resend_countdown": "{seconds} 秒后可重新发送验证码",
+        "live_resent": "已发送新验证码。"
       }
     },
     "company": {
@@ -1464,6 +1494,21 @@
       "promotion_coupons": {
         "title": "所有优惠券与促销",
         "no_lists": "您目前没有任何优惠券或促销活动"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "没有密钥",
+        "unnamed_key": "未命名的密钥",
+        "created": "创建于 {date}",
+        "changed": "更改于 {date}",
+        "rename_modal": {
+          "title": "重命名密钥",
+          "name_label": "名称"
+        },
+        "delete_modal": {
+          "title": "删除密钥",
+          "message": "您将无法再使用此密钥登录。"
+        }
       }
     },
     "company": {
@@ -1803,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "密码必须至少包含一个非字母数字字符",
     "PasswordRequiresUpper": "密码必须至少包含一个大写字母（'A'-'Z'）",
     "PasswordRequiresUniqueChars": "密码必须使用不同的字符",
-    "RecentPasswordUsed": "您已使用过此密码。请创建另一个。"
+    "RecentPasswordUsed": "您已使用过此密码。请创建另一个。",
+    "user_not_editable": "无法编辑此用户",
+    "sign_in_key_not_found": "未找到登录密钥",
+    "last_sign_in_key": "无法删除最后一个登录密钥",
+    "operation_not_supported": "不支持此操作"
   },
   "password_tips": {
     "title": "创建强密码的提示：",

@@ -3,7 +3,8 @@
 **Your case:** a new facade version is out (or a storefront release moved one), and the plugin should move onto it.
 
 **Before you start:** know which version the plugin is on (`requiredHostVersion` in `StorefrontApp/vite.config.ts`)
-and which one is new (`core-v*` releases of `vc-frontend`).
+and which one is new (stable `core-v*` releases of `vc-frontend`; `-alpha` pre-releases are temporary, never a
+target).
 
 ## Do you have to?
 

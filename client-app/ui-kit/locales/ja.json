@@ -167,6 +167,10 @@
       "rating_label": "評価：{value}/{maxValue}",
       "read_only_button_aria_label": "評価：{value}/{maxValue}、選択はできません",
       "set_rating_aria_label": "評価を{value}/{maxValue}に設定"
+    },
+    "stat_widget": {
+      "loading": "{label}：読み込み中",
+      "error": "{label}：{error}"
     }
   }
 }

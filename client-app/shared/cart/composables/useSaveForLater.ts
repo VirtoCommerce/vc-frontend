@@ -89,10 +89,12 @@ function _useSavedForLater() {
     }
   }
 
-  const hasAvailableItems = computed(() => !!savedForLaterList.value?.items.some((item) => item.product));
+  const availableItems = computed(() => savedForLaterList.value?.items.filter((item) => item.product) ?? []);
+  const hasAvailableItems = computed(() => availableItems.value.length > 0);
 
   return {
     savedForLaterList,
+    availableItems,
     hasAvailableItems,
 
     moveToSavedForLater,
