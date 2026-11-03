@@ -106,6 +106,7 @@ const hoisted = vi.hoisted(() => {
 });
 
 vi.mock("@/assets/presets", () => ({
+  darkPresets: {},
   presets: {
     default: {
       color_primary_50: "#default",
@@ -583,6 +584,28 @@ describe("useThemeContext - preset loading functions", () => {
       const { addPresetToThemeContext } = useThemeContext();
 
       await expect(addPresetToThemeContext("coffee")).rejects.toThrow("The global state should be defined");
+    });
+  });
+
+  describe("setThemePalette", () => {
+    it("puts the theme's palette in place of the preset, and the preset back without one", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext, setThemePalette, themeContext } = useThemeContext();
+      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
+      await addPresetToThemeContext("coffee");
+
+      setThemePalette({ light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } });
+
+      expect(themeContext.value.preset?.color_primary_50).toBe("#theme");
+      expect(themeContext.value.darkPreset?.color_primary_50).toBe("#theme-dark");
+
+      setThemePalette({ light: { color_primary_50: "#light-only" } });
+
+      expect(themeContext.value.darkPreset).toBeUndefined();
+
+      setThemePalette(undefined);
+
+      expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
     });
   });
 

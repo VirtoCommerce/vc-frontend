@@ -3,14 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import {
-  useCurrency,
-  useDarkMode,
-  useModules,
-  useThemeContext,
-  useNavigations,
-  useWhiteLabeling,
-} from "@/core/composables";
+import { useCurrency, useModules, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -28,6 +21,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
+import { installThemeSnapshotNavigation, setupThemePalette, startThemeSnapshot } from "@/core/theme-snapshot";
 import { extractHostname, Logger } from "@/core/utilities";
 import { getDesign, loadDesignStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
@@ -124,7 +118,6 @@ export default async () => {
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
-  const { setActivePreset } = useDarkMode();
   const { setModules, outdatedModules } = useModules();
   const notifications = useNotifications();
 
@@ -146,6 +139,9 @@ export default async () => {
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
   const userId = savedUserId.value;
+
+  // Picks up the request index.html sent before this script loaded; nothing without new_page_builder_enabled.
+  const themeSnapshotBoot = startThemeSnapshot({ domain, cultureName: possibleCultureName });
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -247,13 +243,19 @@ export default async () => {
     resolvedCultureName: currentCultureName,
   });
 
+  await themeSnapshotBoot?.settle({ storeId: themeContext.value.storeId, cultureName: currentCultureName });
+  installThemeSnapshotNavigation(router, () => ({
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+  }));
+
   /**
    * Other settings
    */
 
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
-  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  setupThemePalette(() => !!themePresetName.value);
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");

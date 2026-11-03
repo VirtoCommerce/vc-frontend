@@ -21,10 +21,9 @@ function _useDarkMode() {
 
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const activePresetName = ref<string>();
+  const hasDarkPreset = ref(false);
 
-  const isDarkModeAvailable = computed(() => {
-    return !!activePresetName.value && activePresetName.value in darkPresets;
-  });
+  const isDarkModeAvailable = computed(() => activePresetName.value !== undefined && hasDarkPreset.value);
 
   const isDark = computed(() => {
     if (!isDarkModeAvailable.value) {
@@ -48,8 +47,10 @@ function _useDarkMode() {
     { immediate: true },
   );
 
-  function setActivePreset(presetName: string) {
+  /** `withDarkPreset`: whether the palette has a dark variant; a built-in preset has one when it is in `darkPresets`. */
+  function setActivePreset(presetName: string, withDarkPreset = presetName in darkPresets) {
     activePresetName.value = presetName;
+    hasDarkPreset.value = withDarkPreset;
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);
     // Persist availability flag so the FOUC script in index.html can check it

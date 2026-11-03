@@ -8,6 +8,7 @@ import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
 import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
+import { themeSnapshotPlugin } from "./vite.page-builder.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
@@ -71,6 +72,14 @@ function getBackendProxy(): Record<string, ProxyOptions> {
   };
 }
 
+function getBackendHostname(): string | undefined {
+  try {
+    return process.env.APP_BACKEND_URL ? new URL(process.env.APP_BACKEND_URL).hostname : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
   const isServe = command == "serve" && mode !== "test";
@@ -96,6 +105,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
       vue(),
       // Module Federation host — empty when the theme's module_federation_enabled is false (see vite.federation.ts).
       ...federatedHostPlugin(),
+      // Theme snapshot request in index.html — empty when the theme's new_page_builder_enabled is false (see vite.page-builder.ts).
+      ...themeSnapshotPlugin({ devDomain: mode === "development" ? getBackendHostname() : undefined }),
       graphql() as PluginOption,
       isServe
         ? checker({
