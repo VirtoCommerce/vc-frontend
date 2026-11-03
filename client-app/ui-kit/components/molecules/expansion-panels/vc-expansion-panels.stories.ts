@@ -7,7 +7,7 @@ const meta: Meta<typeof VcExpansionPanels> = {
   tags: ["deprecated"],
   parameters: {
     deprecated:
-      "Use VcWidget with `collapsible` instead. The group keeps one panel open at a time unless `multiple` is set; with VcWidget, control each `collapsed` state yourself.",
+      'Use one <VcWidget collapsible> per panel instead: <VcExpansionPanel title="Details"> becomes <VcWidget title="Details" collapsible collapsed>. VcWidget has no group: VcExpansionPanels without multiple closes the other panels when a header is clicked, so do that yourself from @toggle-collapse.',
   },
   argTypes: {
     multiple: {

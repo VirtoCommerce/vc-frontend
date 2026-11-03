@@ -16,7 +16,10 @@ Reference module: `modules/returns`.
 3. A new module is wired in `app-runner.ts` with `void initX(router, i18n)` before `app.use(router)` (routes added later miss the initial navigation).
 4. Module-specific ids, settings keys and constants live in the module (`modules/<m>/constants.ts`), not in
    `core/constants` or `core/types/theme-config.ts` — a removable module must not leave pieces in core.
-   (Exception: the shared `MODULE_ID_*` registry in `core/constants/modules.ts` used by host code.)
+   (Exception: the shared `MODULE_ID_*` registry in `core/constants/modules.ts` used by host code.) Removing a
+   module also deletes its blocks' restyles: `designs/*/{blocks,dark}/<block>.scss` and their rules in
+   `assets/presets/*.scss`. `yarn check:designs` catches a leftover block file, not a rule that names the
+   module's block next to or above a live one: search for its block names.
 5. Module locales are loaded only with `loadModuleLocale(i18n, "<folder>")` — a hand-rolled `import("./locales/...")` breaks runtime locale switching.
 
 ## Routes, menus, permissions

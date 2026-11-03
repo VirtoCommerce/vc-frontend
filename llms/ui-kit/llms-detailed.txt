@@ -4,6 +4,7 @@
 > Tech: Vue 3 Composition API + TypeScript + TailwindCSS + Headless UI
 > Architecture: Atomic Design Pattern (Atoms → Molecules → Organisms)
 > Global registration via plugin, all components prefixed with `Vc`
+> A summary that may be outdated: the component source (`vc-<name>.vue`) and `client-app/assets/styles/README.md` win.
 
 **Important:** After installation, all UI Kit components are globally registered:
 

@@ -18,12 +18,27 @@ export interface IDesignCheckOptions {
   designsDir: string;
   /** Stylesheets and components that define the blocks. */
   sources: string[];
+  /** Where the semantic colours (`--link-color` …) are declared; a colour may read them. */
+  colorsFile?: string;
+}
+
+export interface IPresetCheckOptions {
+  presetsDir: string;
+  /** Stylesheets and components that define the blocks. */
+  sources: string[];
+  colorsFile?: string;
 }
 
 export interface IDesignCheckResult {
   errors: string[];
   designCount: number;
   /** The `.scss` files checked. */
+  fileCount: number;
+}
+
+export interface IPresetCheckResult {
+  errors: string[];
+  /** The preset stylesheets checked. */
   fileCount: number;
 }
 
@@ -55,10 +70,17 @@ const LAYOUT = new Map([
   ["dark", "folder"],
 ]);
 const DESIGN_ATTRIBUTE = /data-design\s*=\s*["']?([\w-]+)/g;
+const COLORS_FILE = "client-app/assets/styles/_colors.scss";
+const PRESET_LAYER = "@layer vc.preset";
 const LOAD_CSS = /load-css\(\s*(?:\$url\s*:\s*)?["']([^"']+)["']/g;
 
 /** The kit names its public colour tokens `…color…`, `…bg…`, `…-text`, `…-border` or `…-icon`. */
 const COLOR_TOKEN = /(?:color|bg)|(?:-(?:text|border|icon)$)/i;
+/** A shadow token holds its shadow's colour: `--vc-widget-shadow`, `--vc-shadow-md-1`. */
+const SHADOW_TOKEN = /^--vc-(?:[a-z\d]+-)*shadow(?:-[a-z\d]+)*$/i;
+/** The default `shadow` step keeps Tailwind's black when a design reshapes it; the other steps read the preset. */
+const DEFAULT_SHADOW_TOKEN = /^--vc-shadow-default-\d+$/;
+const DEFAULT_SHADOW_BLACK = /(?<![\w-])rgb\(\s*0\s+0\s+0\s*\/\s*[\d.]+%?\s*\)/gi;
 /** Tailwind's shadow geometry, which reads the colour from `--tw-shadow-color`. */
 const SHADOW_GEOMETRY = "--tw-shadow-colored";
 const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/;
@@ -95,9 +117,17 @@ paleturquoise palevioletred papayawhip peachpuff peru pink plum powderblue purpl
 saddlebrown salmon sandybrown seagreen seashell sienna silver skyblue slateblue slategray slategrey snow springgreen
 steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`.split(/\s+/),
 );
+/** What a colour may read besides the `_colors.scss` semantics: the preset's keys, public tokens, Tailwind's own. */
+const PRESET_VARIABLE = /^--(?:color|vc|tw)-/;
+/** A component's public token or Tailwind's own; any other custom property is private, a preset key included. */
+const PUBLIC_VARIABLE = /^--(?:vc|tw)-/;
+const COLOR_RULE = "colours come only from preset variables";
 const QUOTED_OR_URL = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
 const VAR_REFERENCE = /var\(\s*(--[^\s,)]+)/gi;
 const COLOR_FUNCTION = /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|light-dark)\(/i;
+const COLOR_FUNCTION_CALL = /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|light-dark)\(/gi;
+/** Relative colour syntax, `rgb(from var(--color-x) r g b / 0.5)`: the colour is its origin's. */
+const RELATIVE_COLOR = /^\s*from\s/i;
 const HEX = /#[\da-f]+/gi;
 const IDENTIFIER = /(?<![\w-])[a-z][\w-]*/gi;
 
@@ -172,11 +202,15 @@ function hasBlockClass(compound: selectorParser.Node[], block: string): boolean 
   return compound.some((node) => node.type === "class" && belongsToBlock(node.value, block));
 }
 
-function prefixKind(compound: selectorParser.Node[], design: string): FileKindType | undefined {
+function prefixKind(
+  compound: selectorParser.Node[],
+  design: string,
+  attribute = "data-design",
+): FileKindType | undefined {
   const isHtml = (node: selectorParser.Node) => node.type === "tag" && node.value.toLowerCase() === "html";
   const isDesign = (node: selectorParser.Node) =>
     node.type === "attribute" &&
-    node.attribute.toLowerCase() === "data-design" &&
+    node.attribute.toLowerCase() === attribute &&
     node.operator === "=" &&
     node.value === design;
   const isDark = (node: selectorParser.Node) => node.type === "class" && node.value === "dark";
@@ -272,10 +306,15 @@ export function checkForeignBlocks(selector: string, own: string, blocks: Set<st
   return problem;
 }
 
-export function checkTokensSelector(selector: string, design: string): string | null {
+/** The design's or the preset's html alone (`html[data-design="<name>"]`, `html.dark[data-preset="<name>"]`). */
+function isRootSelector(selector: string, name: string, attribute = "data-design"): boolean {
   const compounds = splitCompounds(selector);
 
-  return compounds.length === 1 && prefixKind(compounds[0], design)
+  return compounds.length === 1 && prefixKind(compounds[0], name, attribute) !== undefined;
+}
+
+export function checkTokensSelector(selector: string, design: string): string | null {
+  return isRootSelector(selector, design)
     ? null
     : `"${selector}": _tokens.scss sets tokens only on html[data-design="${design}"] or html.dark[data-design="${design}"]`;
 }
@@ -318,6 +357,35 @@ export function checkBlockSelector(
   return hasBlockClass(splitCompounds(selector).at(-1)!, block)
     ? null
     : `"${selector}" does not style .${block}: its last compound has no .${block}, .${block}__* or .${block}--* class`;
+}
+
+function isWiring(node: selectorParser.Node): boolean {
+  return (
+    (node.type === "tag" && node.value.toLowerCase() === "html") ||
+    (node.type === "class" && node.value === "dark") ||
+    (node.type === "attribute" && ["data-design", "data-preset"].includes(node.attribute.toLowerCase()))
+  );
+}
+
+/** `null` when a preset stylesheet's selector is allowed, otherwise why it is not. */
+export function checkPresetSelector(selector: string, preset: string, blocks: Set<string>): string | null {
+  const [prefix, ...below] = splitCompounds(selector);
+
+  if (!prefixKind(prefix, preset, "data-preset")) {
+    return `"${selector}": a preset stylesheet sets tokens on html[data-preset="${preset}"] or html.dark[data-preset="${preset}"], or styles blocks below them`;
+  }
+
+  if (!below.length) {
+    return null;
+  }
+
+  if (below.flat().some(isWiring)) {
+    return `"${selector}": html, .dark, [data-preset] and [data-design] belong to the prefix only`;
+  }
+
+  const isStyled = below.at(-1)!.some((node) => node.type === "class" && blocks.has(blockOf(node.value) ?? ""));
+
+  return isStyled ? null : `"${selector}" styles no block: its last compound has no class of a component's block`;
 }
 
 /** The selector below the prefix; `keepCombinator` keeps a child or sibling combinator the file wrote first. */
@@ -506,6 +574,56 @@ function setsColor(prop: string, value: string): boolean {
   return (/gradient\(/i.test(text) || COLOR_SHORTHAND.test(name) || BORDER_SHORTHAND.test(name)) && hasColor(text);
 }
 
+/** The semantic colours `_colors.scss` derives from the preset's keys, `--link-color` and the like. */
+function colorSemantics(file: string): Set<string> {
+  const names = new Set<string>();
+
+  if (existsSync(file)) {
+    postcssScss.parse(readFileSync(file, "utf-8")).walkDecls((node) => {
+      if (isCustomProperty(node.prop)) {
+        names.add(unescapeIdent(node.prop));
+      }
+    });
+  }
+
+  return names;
+}
+
+/**
+ * `null` when every colour in a value comes from preset variables: `var()` of a preset key (`--color-*`),
+ * a `_colors.scss` semantic, a public `--vc-*` token or Tailwind's `--tw-*`, `color-mix()` or a relative colour
+ * of these, and the keywords; otherwise why not: the first foreign variable or literal colour it holds.
+ */
+export function checkColorValue(value: string, semantics: ReadonlySet<string>): string | null {
+  const text = value.replaceAll(QUOTED_OR_URL, " ");
+  const foreign = [...text.matchAll(VAR_REFERENCE)]
+    .map((match) => unescapeIdent(match[1]))
+    .find((name) => !PRESET_VARIABLE.test(name) && !semantics.has(name));
+
+  if (foreign) {
+    return `var(${foreign}) is no preset variable`;
+  }
+
+  const rest = text.replaceAll(VAR_REFERENCE, " ").toLowerCase();
+  const hex = (rest.match(HEX) ?? []).find((item) => !NO_COLOR.has(item));
+
+  if (hex) {
+    return `${hex} is a literal colour`;
+  }
+
+  const literal = [...rest.matchAll(COLOR_FUNCTION_CALL)].find(
+    (match) => match[1] !== "color-mix" && !RELATIVE_COLOR.test(rest.slice(match.index + match[0].length)),
+  );
+
+  if (literal) {
+    return `${literal[1]}() without "from" is a literal colour`;
+  }
+
+  const named = (rest.match(IDENTIFIER) ?? []).find((word) => NAMED_COLORS.has(word));
+
+  return named ? `${named} is a named colour` : null;
+}
+
 /** The at-rules around a rule, outermost first: `@layer vc.design > @media (width >= 1px)`. */
 function wrappers(rule: Rule): string {
   const list: string[] = [];
@@ -541,19 +659,24 @@ function declarationsByFile(rule: Rule): Map<string | undefined, Declaration[]> 
 }
 
 /** An at-rule a file may not hold is reported once, and what is inside it is not read. */
-function shippedNodes(container: Container, isAllowed: (atRule: AtRule) => boolean, report: ReportType): ChildNode[] {
+function shippedNodes(
+  container: Container,
+  isAllowed: (atRule: AtRule) => boolean,
+  report: ReportType,
+  owner = "a design file",
+): ChildNode[] {
   const nodes: ChildNode[] = [];
 
   container.each((node) => {
     if (node.type === "atrule" && !isAllowed(node)) {
-      report(node, `@${node.name} is not allowed in a design file`);
+      report(node, `@${node.name} is not allowed in ${owner}`);
       return;
     }
 
     nodes.push(node);
 
     if ((node.type === "atrule" || node.type === "rule") && node.nodes) {
-      nodes.push(...shippedNodes(node, isAllowed, report));
+      nodes.push(...shippedNodes(node, isAllowed, report, owner));
     }
   });
 
@@ -594,28 +717,69 @@ function shippedKey(
     : undefined;
 }
 
-type ColorProblemType = "value" | "token";
-
-/** The colour declarations of one source line: one `@apply` writes several. */
+/** The reported declarations of one source line: one `@apply` writes several. */
 interface IColorLine {
   index: number;
   props: Set<string>;
-  isToken: boolean;
+  problem: string;
 }
 
-function colorProblem({ prop, value }: Declaration): ColorProblemType | undefined {
-  if (setsColor(prop, value)) {
-    return "value";
+/**
+ * Why a declaration breaks the colour rules, or `undefined`. A colour (a colour property, a custom property
+ * named as a colour token, or a design's shadow token) comes only from preset variables, and no private
+ * variable carries one, whatever its name. A preset stylesheet sets colours only, and no private variable at all.
+ */
+function colorProblem(
+  { prop, value }: Declaration,
+  semantics: ReadonlySet<string>,
+  isPreset = false,
+): string | undefined {
+  const name = unescapeIdent(prop);
+  const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(name);
+  const isShadowToken = !isPreset && SHADOW_TOKEN.test(name);
+  const isColor =
+    isShadowToken ||
+    COLOR_PROPERTY.test(unescapeIdent(prop).toLowerCase()) ||
+    setsColor(prop, value) ||
+    isColorToken(prop);
+  const colors = DEFAULT_SHADOW_TOKEN.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value;
+  const valueProblem = isColor ? checkColorValue(colors, semantics) : null;
+  const privateProblem = "a private variable; set the component's public --vc-* token, or the property itself";
+
+  if (isPrivate && isPreset) {
+    return privateProblem;
   }
 
-  return isColorToken(prop) ? "token" : undefined;
+  if (!isColor && isPreset) {
+    return "a preset stylesheet sets colours only";
+  }
+
+  if (valueProblem) {
+    return `${valueProblem}; ${COLOR_RULE}`;
+  }
+
+  return isPrivate && hasColor(value.replaceAll(QUOTED_OR_URL, " ")) ? privateProblem : undefined;
 }
 
 /** A declared property comes before Tailwind's `--tw-*` companions: `background-color, --tw-bg-opacity`. */
-function colorMessage({ props, isToken }: IColorLine): string {
+function colorMessage({ props, problem }: IColorLine): string {
   const names = [...props].sort((a, b) => Number(isCustomProperty(a)) - Number(isCustomProperty(b)));
 
-  return `${names.join(", ")}: ${isToken ? "colour tokens belong to presets, not to a design" : "colours come from the preset"}`;
+  return `${names.join(", ")}: ${problem}`;
+}
+
+/** Reports a line's declarations once, under the first problem found on it. */
+function colorReporter(errors: string[], file: string): (node: Declaration, problem: string) => void {
+  const colorLines = new Map<string, IColorLine>();
+
+  return (node, problem) => {
+    const at = where(node, file);
+    const line = colorLines.get(at) ?? { index: errors.push("") - 1, props: new Set<string>(), problem };
+
+    line.props.add(node.prop);
+    colorLines.set(at, line);
+    errors[line.index] = `${at}  ${colorMessage(line)}`;
+  };
 }
 
 function checkCompiledFile(
@@ -624,6 +788,7 @@ function checkCompiledFile(
   kind: FileKindType,
   design: string,
   blocks: Set<string>,
+  semantics: ReadonlySet<string>,
 ): { errors: string[]; keys: Set<string> } {
   const errors: string[] = [];
   const keys = new Set<string>();
@@ -641,16 +806,7 @@ function checkCompiledFile(
       }
     }
   };
-  const colorLines = new Map<string, IColorLine>();
-  const reportColor = (node: Declaration, problem: ColorProblemType) => {
-    const at = where(node, file);
-    const line = colorLines.get(at) ?? { index: errors.push("") - 1, props: new Set<string>(), isToken: true };
-
-    line.props.add(node.prop);
-    line.isToken &&= problem === "token";
-    colorLines.set(at, line);
-    errors[line.index] = `${at}  ${colorMessage(line)}`;
-  };
+  const reportColor = colorReporter(errors, file);
 
   for (const node of shippedNodes(css, (atRule) => ALLOWED_AT_RULES.has(atRule.name), report)) {
     if (node.type === "rule") {
@@ -664,7 +820,7 @@ function checkCompiledFile(
     } else if (node.type === "decl" && kind === "tokens" && !isCustomProperty(node.prop)) {
       report(node, `${node.prop}: _tokens.scss sets custom properties only`);
     } else if (node.type === "decl") {
-      const problem = colorProblem(node);
+      const problem = colorProblem(node, semantics);
 
       if (problem) {
         reportColor(node, problem);
@@ -806,7 +962,12 @@ function checkDesignName(file: string, design: string): string[] {
     });
 }
 
-async function checkFolder(dir: string, blocks: Set<string>, errors: string[]): Promise<number> {
+async function checkFolder(
+  dir: string,
+  blocks: Set<string>,
+  semantics: ReadonlySet<string>,
+  errors: string[],
+): Promise<number> {
   const design = path.basename(dir);
 
   if (!DESIGN_NAME.test(design) || design === CLASSIC) {
@@ -850,7 +1011,7 @@ async function checkFolder(dir: string, blocks: Set<string>, errors: string[]): 
     errors.push(...compileErrors);
 
     if (css) {
-      const result = checkCompiledFile(css, source.file, source.kind, design, blocks);
+      const result = checkCompiledFile(css, source.file, source.kind, design, blocks, semantics);
 
       errors.push(...result.errors);
       checked.push({ ...source, keys: result.keys });
@@ -879,7 +1040,11 @@ function designFolders(designsDir: string): string[] {
     .sort((a, b) => a.localeCompare(b));
 }
 
-export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions): Promise<IDesignCheckResult> {
+export async function checkDesigns({
+  designsDir,
+  sources,
+  colorsFile = COLORS_FILE,
+}: IDesignCheckOptions): Promise<IDesignCheckResult> {
   // A moved folder is reported as a check failure, not as readdirSync's ENOENT stack trace.
   if (!existsSync(designsDir)) {
     return {
@@ -890,6 +1055,7 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
   }
 
   const blocks = sourceBlocks(sources);
+  const semantics = colorSemantics(colorsFile);
   const folders = designFolders(designsDir);
   const errors: string[] = [];
   let fileCount = 0;
@@ -897,7 +1063,7 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
   const results = await Promise.all(
     folders.map(async (folder) => {
       const folderErrors: string[] = [];
-      const count = await checkFolder(path.join(designsDir, folder), blocks, folderErrors);
+      const count = await checkFolder(path.join(designsDir, folder), blocks, semantics, folderErrors);
 
       return { count, folderErrors };
     }),
@@ -912,24 +1078,138 @@ export async function checkDesigns({ designsDir, sources }: IDesignCheckOptions)
   return { errors: [...new Set(errors)], designCount: folders.length, fileCount };
 }
 
-async function main(): Promise<void> {
-  const { errors, designCount, fileCount } = await checkDesigns({
-    designsDir: "client-app/designs",
-    sources: globSync("client-app/**/*.{vue,scss}", {
-      ignore: [
-        "client-app/designs/**",
-        "client-app/assets/styles/{dark,print}/**",
-        "client-app/assets/styles/_custom.scss",
-      ],
+function isPresetLayer(atRule: AtRule): boolean {
+  return atRule.parent?.type === "root" && `@${atRule.name} ${atRule.params.trim()}` === PRESET_LAYER && !!atRule.nodes;
+}
+
+function presetRuleProblems(rule: Rule, preset: string, blocks: Set<string>): string[] {
+  const place = wrappers(rule);
+  const problems = rule.selectors.map((selector) => checkPresetSelector(selector, preset, blocks));
+
+  if (place !== PRESET_LAYER && !place.startsWith(`${PRESET_LAYER} > `)) {
+    problems.unshift(`"${rule.selector}" ships outside ${PRESET_LAYER}`);
+  }
+
+  return problems.filter((problem): problem is string => problem !== null);
+}
+
+/** A declaration on the preset's html alone, where a token is inherited, so a block's own setting wins. */
+function isOnPresetRoot(node: Declaration, preset: string): boolean {
+  const rule = node.parent;
+
+  return rule?.type === "rule" && rule.selectors.some((selector) => isRootSelector(selector, preset, "data-preset"));
+}
+
+function checkPresetFile(
+  css: Root,
+  file: string,
+  preset: string,
+  blocks: Set<string>,
+  semantics: ReadonlySet<string>,
+): string[] {
+  const errors: string[] = [];
+  const report: ReportType = (node, message) => errors.push(`${where(node, file)}  ${message}`);
+  const reportColor = colorReporter(errors, file);
+  const isAllowed = (atRule: AtRule) => ALLOWED_AT_RULES.has(atRule.name) || isPresetLayer(atRule);
+
+  for (const node of shippedNodes(css, isAllowed, report, "a preset stylesheet")) {
+    if (node.type === "rule") {
+      for (const problem of presetRuleProblems(node, preset, blocks)) {
+        report(node, problem);
+      }
+    } else if (node.type === "decl") {
+      const problem =
+        isOnPresetRoot(node, preset) && !unescapeIdent(node.prop).startsWith("--vc-")
+          ? "the preset's html takes public --vc-* tokens only"
+          : colorProblem(node, semantics, true);
+
+      if (problem) {
+        reportColor(node, problem);
+      }
+    }
+  }
+
+  return errors;
+}
+
+/** Every `<name>.scss` next to the preset JSON files: a preset's optional stylesheet. */
+export async function checkPresets({
+  presetsDir,
+  sources,
+  colorsFile = COLORS_FILE,
+}: IPresetCheckOptions): Promise<IPresetCheckResult> {
+  // A moved folder fails the check, as in checkDesigns, instead of passing with nothing checked.
+  if (!existsSync(presetsDir)) {
+    return { errors: [`${presetsDir} is missing; the presets are not where this check looks`], fileCount: 0 };
+  }
+
+  const files = entriesOf(presetsDir)
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".scss"))
+    .map((entry) => entry.name);
+
+  if (!files.length) {
+    return { errors: [], fileCount: 0 };
+  }
+
+  const blocks = sourceBlocks(sources);
+  const semantics = colorSemantics(colorsFile);
+  const errors: string[] = [];
+
+  const compiled = await Promise.all(
+    files.map(async (name) => {
+      const compileErrors: string[] = [];
+      const css = await compileOrReport(path.join(presetsDir, name), presetsDir, compileErrors);
+
+      return { css, compileErrors };
     }),
+  );
+
+  for (const [position, name] of files.entries()) {
+    const file = path.join(presetsDir, name);
+    const preset = path.basename(name, ".scss");
+    const { css, compileErrors } = compiled[position];
+
+    if (preset.endsWith(".dark")) {
+      errors.push(`${file}  dark rules go in ${preset.slice(0, -".dark".length)}.scss under html.dark[data-preset]`);
+
+      continue;
+    }
+
+    if (!existsSync(path.join(presetsDir, `${preset}.json`))) {
+      errors.push(`${file}  is a preset's stylesheet only next to its preset: ${preset}.json is missing`);
+    }
+
+    errors.push(...compileErrors);
+
+    if (css) {
+      errors.push(...checkPresetFile(css, file, preset, blocks, semantics));
+    }
+  }
+
+  return { errors: [...new Set(errors)], fileCount: files.length };
+}
+
+async function main(): Promise<void> {
+  const sources = globSync("client-app/**/*.{vue,scss}", {
+    ignore: [
+      "client-app/designs/**",
+      "client-app/assets/presets/**",
+      "client-app/assets/styles/{dark,print}/**",
+      "client-app/assets/styles/_custom.scss",
+    ],
   });
+  const designs = await checkDesigns({ designsDir: "client-app/designs", sources });
+  const presets = await checkPresets({ presetsDir: "client-app/assets/presets", sources });
+  const errors = [...designs.errors, ...presets.errors];
 
   if (errors.length) {
     console.error(`Design check failed (${errors.length}):\n  ${errors.join("\n  ")}`);
     process.exit(1);
   }
 
-  console.log(`Design check passed: ${designCount} designs, ${fileCount} files.`);
+  console.log(
+    `Design check passed: ${designs.designCount} designs, ${designs.fileCount} files, ${presets.fileCount} preset stylesheets.`,
+  );
 }
 
 // vite-node leaves the script out of process.argv, so a test import is told apart by vitest's flag.

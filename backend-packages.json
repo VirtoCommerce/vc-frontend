@@ -2,7 +2,7 @@
   "ManifestVersion": "2.0",
   "PlatformVersion": "3.1091.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1091.0-pr-3144-9e58-vcst-6121-passkeys-9e581768",
+  "PlatformImageTag": "3.1091.0",
   "PlatformAssetUrl": "",
   "Sources": [
     {
@@ -10,18 +10,6 @@
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
       "Modules": [
-        {
-          "BlobName": "VirtoCommerce.Passkeys_3.1000.0-pr-1-a25f.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.XFrontend_3.1008.0-alpha.64-vcst-6121-passkeys.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.Store_3.1012.0-pr-190-ded5.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.Customer_3.1032.0-pr-324-b30b.zip"
-        },
         {
           "BlobName": "VirtoCommerce.AdminShell_3.1003.0-pr-4-4aa6.zip"
         }
@@ -31,6 +19,22 @@
       "Name": "GithubReleases",
       "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
+        {
+          "Id": "VirtoCommerce.Customer",
+          "Version": "3.1032.0"
+        },
+        {
+          "Id": "VirtoCommerce.Passkeys",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.Store",
+          "Version": "3.1013.0"
+        },
+        {
+          "Id": "VirtoCommerce.XFrontend",
+          "Version": "3.1009.0"
+        },
         {
           "Id": "VirtoCommerce.Loyalty",
           "Version": "3.1010.0"

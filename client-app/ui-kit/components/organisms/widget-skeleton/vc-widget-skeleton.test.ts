@@ -6,10 +6,12 @@ import VcWidgetSkeleton from "./vc-widget-skeleton.vue";
 function mountSkeleton(
   props: InstanceType<typeof VcWidgetSkeleton>["$props"] = {},
   attrs: Record<string, unknown> = {},
+  slots: Record<string, string> = {},
 ) {
   return mount(VcWidgetSkeleton, {
     props,
     attrs,
+    slots,
     global: { components: { VcWidget }, stubs: { VcIcon: true, VcShape: true } },
   });
 }
@@ -20,6 +22,11 @@ describe("VcWidgetSkeleton", () => {
 
     expect(wrapper.findComponent(VcWidget).element).toBe(wrapper.element);
     expect(wrapper.classes()).toEqual(expect.arrayContaining(["vc-widget-skeleton", "vc-widget--size--lg"]));
+  });
+
+  it("marks its size with its own modifier", () => {
+    expect(mountSkeleton({ size: "lg" }).classes()).toContain("vc-widget-skeleton--size--lg");
+    expect(mountSkeleton().classes()).toContain("vc-widget-skeleton--size--md");
   });
 
   it("drops the widget's shadow with noShadow", () => {
@@ -84,7 +91,57 @@ describe("VcWidgetSkeleton", () => {
     expect(full.find(".vc-widget__footer .vc-widget-skeleton__footer").exists()).toBe(true);
   });
 
+  it("draws one placeholder bar in the header with head", () => {
+    expect(mountSkeleton({ head: true }).findAll(".vc-widget-skeleton__header > div")).toHaveLength(1);
+  });
+
+  it("draws one placeholder bar in the footer with foot", () => {
+    expect(mountSkeleton({ foot: true }).findAll(".vc-widget-skeleton__footer > div")).toHaveLength(1);
+  });
+
   it("draws five body placeholders by default", () => {
     expect(mountSkeleton().findAll(".vc-widget__slot .vc-widget-skeleton__slot > div")).toHaveLength(5);
+  });
+
+  it("puts header-container content into the widget's header container", () => {
+    const wrapper = mountSkeleton({}, {}, { "header-container": '<i class="bar" />' });
+
+    expect(wrapper.find(".vc-widget__header-container > .vc-widget-skeleton__header-container > .bar").exists()).toBe(
+      true,
+    );
+  });
+
+  it("draws the header from a header slot without head", () => {
+    const wrapper = mountSkeleton({}, {}, { header: '<i class="bar" />' });
+
+    expect(wrapper.find(".vc-widget__header > .vc-widget-skeleton__header > .bar").exists()).toBe(true);
+  });
+
+  it("puts default-container content into the widget's slot container", () => {
+    const wrapper = mountSkeleton({}, {}, { "default-container": '<i class="bar" />' });
+
+    expect(wrapper.find(".vc-widget__slot-container > .vc-widget-skeleton__slot-container > .bar").exists()).toBe(true);
+    expect(wrapper.find(".vc-widget__slot").exists()).toBe(false);
+  });
+
+  it("replaces the five body placeholders with default content", () => {
+    const wrapper = mountSkeleton({}, {}, { default: '<i class="bar" />' });
+
+    expect(wrapper.findAll(".vc-widget__slot .vc-widget-skeleton__slot > *")).toHaveLength(1);
+    expect(wrapper.find(".vc-widget-skeleton__slot > .bar").exists()).toBe(true);
+  });
+
+  it("puts footer-container content into the widget's footer container", () => {
+    const wrapper = mountSkeleton({}, {}, { "footer-container": '<i class="bar" />' });
+
+    expect(wrapper.find(".vc-widget__footer-container > .vc-widget-skeleton__footer-container > .bar").exists()).toBe(
+      true,
+    );
+  });
+
+  it("draws the footer from a footer slot without foot", () => {
+    const wrapper = mountSkeleton({}, {}, { footer: '<i class="bar" />' });
+
+    expect(wrapper.find(".vc-widget__footer > .vc-widget-skeleton__footer > .bar").exists()).toBe(true);
   });
 });

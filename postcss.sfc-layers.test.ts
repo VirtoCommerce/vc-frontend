@@ -73,7 +73,7 @@ describe("postcss.sfc-layers", () => {
 
   it("restates the declared layer order right before its layer, so a chunk loaded first cannot reorder it", () => {
     expect(ORDER).toContain("@layertheme,base,plugins-vendor,vc,components,plugins,utilities;");
-    expect(ORDER).toContain("@layervc.vendor,vc.kit,vc.app,vc.design,vc.print;");
+    expect(ORDER).toContain("@layervc.vendor,vc.kit,vc.app,vc.design,vc.preset,vc.print;");
     expect(run(`${ROOT}/pages/c.vue?vue&type=style&index=0&lang.scss`)).toContain(`${ORDER}@layervc.app{`);
   });
 
