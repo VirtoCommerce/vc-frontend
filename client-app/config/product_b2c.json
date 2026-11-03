@@ -10,13 +10,11 @@
         {
           "id": "product-options",
           "type": "product-options",
-          "title": "",
           "hidden": false
         },
         {
           "id": "block1",
           "type": "product-properties",
-          "title": "",
           "hidden": false
         },
         {
@@ -26,8 +24,7 @@
         {
           "name": null,
           "type": "product-assets",
-          "id": "productassetsgi5C",
-          "title": ""
+          "id": "productassetsgi5C"
         }
       ]
     },
