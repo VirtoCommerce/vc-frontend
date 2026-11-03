@@ -7,7 +7,8 @@ writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
 setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` writes it to
-`<html data-design="…">` before the app mounts, and the active colour preset's file name to
+`<html data-design="…">` before the app mounts, and `addPresetToThemeContext`
+(`core/composables/useThemeContext.ts`) writes the active colour preset's file name to
 `<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
 and the design never changes the preset.
 
@@ -71,7 +72,8 @@ How to verify:
   Federation plugin CSS: above every host component layer, below the host utilities.
   `plugins-vendor` is reserved for third-party CSS a plugin bundles: above host preflight, below
   every host component layer and below the plugin's own `plugins` rules.
-- **The order is public API for forks: layers are only ever appended**, never reordered or renamed.
+- **The order is public API for forks: a layer is never reordered or renamed**, and a new one keeps the
+  order of every existing pair (`vc.preset` went in between `vc.design` and `vc.print`).
 
 > **Tailwind 3 trap.** A block named exactly `@layer base`, `components` or `utilities` is a
 > Tailwind 3 directive, not a native layer: Tailwind moves its contents to the matching
@@ -346,8 +348,9 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
   Its CSS belongs in the `plugins` layer; until VCST-5760 moves it there, it is unlayered and beats every layered host
   rule it matches.
 - Host designs and presets never target a remote's blocks: the remote ships on its own schedule, and
-  `check:designs` rejects a block no host component defines. The remote's design documentation lives in its own
-  repository; for the pilot remote, sales-rep, that is `VirtoCommerce/vc-module-sales-rep`.
+  `check:designs` fails on a block file, or a selector's last compound, naming a block no host component
+  defines. The remote's design documentation lives in its own repository; for the pilot remote, sales-rep,
+  that is `VirtoCommerce/vc-module-sales-rep`.
 
 ---
 
