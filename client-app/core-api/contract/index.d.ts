@@ -2019,15 +2019,15 @@ type RegistrationErrorType = {
     parameter?: Maybe<Scalars['String']['output']>;
 };
 type SeoInfo = {
-    id: Scalars['String']['output'];
+    id?: Maybe<Scalars['String']['output']>;
     imageAltDescription?: Maybe<Scalars['String']['output']>;
     isActive: Scalars['Boolean']['output'];
     languageCode?: Maybe<Scalars['String']['output']>;
     metaDescription?: Maybe<Scalars['String']['output']>;
     metaKeywords?: Maybe<Scalars['String']['output']>;
     name?: Maybe<Scalars['String']['output']>;
-    objectId: Scalars['String']['output'];
-    objectType: Scalars['String']['output'];
+    objectId?: Maybe<Scalars['String']['output']>;
+    objectType?: Maybe<Scalars['String']['output']>;
     outline?: Maybe<Scalars['String']['output']>;
     pageTitle?: Maybe<Scalars['String']['output']>;
     semanticUrl: Scalars['String']['output'];
@@ -3631,6 +3631,8 @@ interface IThemeConfigSettings {
     files_enabled?: boolean;
     /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
     module_federation_enabled?: boolean;
+    /** Reads the store's Page Builder theme: templates, rules, header, footer, brand and palette. Only `true` enables it. */
+    new_page_builder_enabled?: boolean;
     bulk_order_enabled?: boolean;
     product_compare_enabled?: boolean;
     product_compare_limit?: number;
@@ -3730,6 +3732,8 @@ interface IThemeContext {
     availableCurrencies: ICurrency[];
     settings: IThemeConfigSettings;
     preset?: IThemeConfigPreset;
+    /** The dark variant of `preset`; without one the storefront has no dark theme. */
+    darkPreset?: IThemeConfigPreset;
     defaultPresetName: string;
     activePresetName?: string;
     storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
@@ -4830,6 +4834,11 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
+    /**
+     * Page Builder sections and blocks, keyed by the type stored in page and template content. A late registration
+     * re-renders the pages that show the type.
+     */
+    pageBuilderSection: ExtensionEntryType;
 };
 /** The parameter a category's `condition` accepts. */
 type ConditionParamType<C extends keyof ExtensionCategoryMapType> = NonNullable<ExtensionCategoryMapType[C]["condition"]> extends (parameter: infer P) => boolean ? P : unknown;
@@ -4930,6 +4939,7 @@ declare const EXTENSION_CATEGORIES: {
     readonly checkout: "checkout";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
+    readonly pageBuilderSection: "pageBuilderSection";
 };
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
@@ -5706,9 +5716,16 @@ declare function _useWishlistSharingScopes(): {
 };
 declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
 
+interface IThemePalette {
+    light: Record<string, string>;
+    /** Without it, the storefront has no dark theme. */
+    dark?: Record<string, string>;
+}
+
 declare function _useThemeContext(): {
     setThemeContext: (store: StoreResponseType) => void;
     addPresetToThemeContext: (presetName: string) => Promise<void>;
+    setThemePalette: (palette: IThemePalette | undefined) => void;
     themeContext: vue.WritableComputedRef<IThemeContext, IThemeContext>;
     modulesSettings: vue.ComputedRef<{
         moduleId: string;
