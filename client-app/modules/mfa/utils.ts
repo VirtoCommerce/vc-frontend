@@ -3,8 +3,8 @@ import { SCHEMA_RELEASES } from "./constants";
 
 /** Whether a release of the MFA module serves the `mfa` xAPI schema; see SCHEMA_RELEASES. */
 export function hasMfaSchema(version: string): boolean {
-  const latest = SCHEMA_RELEASES[SCHEMA_RELEASES.length - 1];
-  if (compareVersions(version, latest) >= 0) {
+  const latest = SCHEMA_RELEASES.at(-1);
+  if (latest && compareVersions(version, latest) >= 0) {
     return true;
   }
 
