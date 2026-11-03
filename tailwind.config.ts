@@ -1,5 +1,39 @@
+import defaultTheme from "tailwindcss/defaultTheme.js";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
 import type { Config } from "tailwindcss";
+
+// Scale tokens: `--vc-<property>-<tailwind key>` with today's value as the fallback. Classic sets none.
+const vcToken = (name: string, value: string) => `var(--vc-${name}, ${value})`;
+
+const tokenKey = (key: string) => (key === "DEFAULT" ? "default" : key);
+
+// `defaultTheme` types each scale as `Config["theme"]` (value or function) & its record.
+const tokenizeScale = (property: string, scale: object, skip: string[] = []) =>
+  Object.fromEntries(
+    Object.entries(scale as Record<string, string>)
+      .filter(([key]) => !skip.includes(key))
+      .map(([key, value]) => [key, vcToken(`${property}-${tokenKey(key)}`, value)]),
+  );
+
+type FontSizeType = [size: string, { lineHeight: string }];
+
+const tokenizeFontSizes = (scale: Record<string, FontSizeType>) =>
+  Object.fromEntries(
+    Object.entries(scale).map(([key, [size, { lineHeight }]]): [string, FontSizeType] => [
+      key,
+      [vcToken(`font-size-${key}`, size), { lineHeight: vcToken(`line-height-${key}`, lineHeight) }],
+    ]),
+  );
+
+// One token per part: Tailwind derives `--tw-shadow-colored` from each part's fallback, so
+// `shadow-<colour>` keeps classic geometry.
+const tokenizeShadows = (scale: Record<string, string[]>) =>
+  Object.fromEntries(
+    Object.entries(scale).map(([key, parts]) => [
+      key,
+      parts.map((part, index) => vcToken(`shadow-${tokenKey(key)}-${index + 1}`, part)).join(", "),
+    ]),
+  );
 
 const primaryColors = {
   DEFAULT: "rgb(from var(--color-primary-500) r g b / <alpha-value>)",
@@ -188,9 +222,11 @@ module.exports = {
     screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
+      base: vcToken("base-font-family", "Lato, sans-serif"),
+      heading: vcToken("heading-font-family", "inherit"),
     },
 
-    fontSize: {
+    fontSize: tokenizeFontSizes({
       xxs: [
         "0.625rem", //10px
         {
@@ -269,10 +305,18 @@ module.exports = {
           lineHeight: "6rem", //96px
         },
       ],
-    },
+    }),
 
     extend: {
       ...colorSet,
+
+      borderRadius: tokenizeScale("radius", defaultTheme.borderRadius, ["none", "full"]),
+
+      lineHeight: tokenizeScale("line-height", defaultTheme.lineHeight),
+
+      fontWeight: tokenizeScale("font-weight", defaultTheme.fontWeight),
+
+      letterSpacing: tokenizeScale("letter-spacing", defaultTheme.letterSpacing),
 
       containers: {
         xxs: "14rem", //224px
@@ -285,15 +329,28 @@ module.exports = {
         19: "4.75rem", //76px
       },
 
-      boxShadow: {
-        0: "0 1px 3px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 1px 2px -1px rgb(from var(--color-additional-950) r g b / 0.1)",
-        sm: "0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
-        md: "0 4px 6px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 2px 4px -2px rgb(from var(--color-additional-950) r g b / 0.1)",
-        lg: "0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1)",
-        xl: "0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1)",
-        "2xl": "0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25)",
-        inner: "inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
-      },
+      boxShadow: tokenizeShadows({
+        DEFAULT: defaultTheme.boxShadow.DEFAULT.split(", "),
+        0: [
+          "0 1px 3px 0 rgb(from var(--color-additional-950) r g b / 0.1)",
+          "0 1px 2px -1px rgb(from var(--color-additional-950) r g b / 0.1)",
+        ],
+        sm: ["0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05)"],
+        md: [
+          "0 4px 6px 0 rgb(from var(--color-additional-950) r g b / 0.1)",
+          "0 2px 4px -2px rgb(from var(--color-additional-950) r g b / 0.1)",
+        ],
+        lg: [
+          "0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1)",
+          "0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1)",
+        ],
+        xl: [
+          "0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1)",
+          "0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1)",
+        ],
+        "2xl": ["0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25)"],
+        inner: ["inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)"],
+      }),
 
       maxHeight: {
         "screen-60": "60vh",
