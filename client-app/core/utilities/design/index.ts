@@ -2,7 +2,8 @@ import settingsData from "@/config/settings_data.json";
 import { IS_DEVELOPMENT } from "@/core/constants/environment";
 import { Logger } from "@/core/utilities/logger";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
-import type { IThemeConfig } from "@/core/types";
+import { customFonts } from "@/designs/custom-fonts";
+import type { IDesignConfig, IThemeConfig } from "@/core/types";
 
 export const CLASSIC_DESIGN = "classic";
 
@@ -24,6 +25,10 @@ export function byDesignName<T>(modules: Record<string, T>): Record<string, T> {
 }
 
 const DESIGN_STYLES: DesignStylesType = byDesignName(import.meta.glob("@/designs/*/index.scss"));
+
+const DESIGN_CONFIGS: Record<string, IDesignConfig> = byDesignName(
+  import.meta.glob<IDesignConfig>("@/designs/*/design.ts", { eager: true, import: "design" }),
+);
 
 /** Every folder in `client-app/designs/` with an `index.scss`. Classic has none. */
 export const DESIGN_NAMES: readonly string[] = Object.keys(DESIGN_STYLES);
@@ -50,6 +55,33 @@ export function setDesignAttribute(design: string): void {
   document.documentElement.dataset.design = design;
 }
 
+function ownValue<T>(record: Record<string, T>, key: string): T | undefined {
+  return Object.hasOwn(record, key) ? record[key] : undefined;
+}
+
+/** A fork's list in `client-app/designs/custom-fonts.ts` replaces the design's own `design.ts` list. */
+export function getDesignFonts(
+  design: string,
+  configs: Record<string, IDesignConfig> = DESIGN_CONFIGS,
+  custom: Record<string, string[]> = customFonts,
+): string[] {
+  return ownValue(custom, design) ?? ownValue(configs, design)?.fonts ?? [];
+}
+
+/** Fire and forget: the mount never waits for a design's fonts. Replaces the previous design's links. */
+export function loadDesignFonts(design: string, fonts: string[] = getDesignFonts(design)): void {
+  document.head.querySelectorAll("link[data-design-fonts]").forEach((link) => link.remove());
+
+  for (const href of fonts) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.dataset.designFonts = "";
+    link.addEventListener("error", () => Logger.warn("Failed to load the design fonts.", href), { once: true });
+    document.head.append(link);
+  }
+}
+
 function reportStylesFailure(error: unknown): void {
   ignoreChunkLoadFailure(error);
   Logger.error("Failed to load the design styles.", error);
@@ -60,6 +92,8 @@ function reportStylesFailure(error: unknown): void {
  * Never rejects: if the chunk fails to load, the app boots without the design's styles.
  */
 export async function loadDesignStyles(design: string, styles: DesignStylesType = DESIGN_STYLES): Promise<void> {
+  loadDesignFonts(design);
+
   if (design === CLASSIC_DESIGN || !Object.hasOwn(styles, design)) {
     return;
   }
