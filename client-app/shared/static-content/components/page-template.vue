@@ -23,8 +23,10 @@
 <script setup lang="ts">
 import { computed, watchEffect } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { isPageLayout, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { getAnchorId } from "../anchors";
+import { usePermalinkSeo } from "../composables/usePermalinkSeo";
 import { MAIN_SECTION_TYPES, splitTemplate, useTemplateResolution } from "../templates";
 import PageBuilderSection from "./page-builder-section.vue";
 
@@ -66,4 +68,7 @@ watchEffect(() => {
   const { layout } = settings.value;
   setPageLayout(isPageLayout(layout) ? layout : DEFAULT_LAYOUT);
 });
+
+// With the new Page Builder the page's address for search engines comes from its permalink, never the visited URL.
+usePermalinkSeo(() => props.permalink, isNewPageBuilderEnabled);
 </script>

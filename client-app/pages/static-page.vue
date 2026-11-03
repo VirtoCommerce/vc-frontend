@@ -2,8 +2,8 @@
   <PageTemplate
     v-if="template"
     :page-settings="template.settings"
-    :permalink="permalink ?? route.path"
-    :object-type="objectType"
+    :permalink="permalink ?? previewSubject?.permalink ?? route.path"
+    :object-type="previewSubject?.objectType ?? objectType"
   >
     <div ref="staticPageAnchor">
       <div
@@ -40,6 +40,7 @@ import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
 import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll, useStaticPage } from "@/shared/static-content";
 
@@ -54,7 +55,7 @@ withDefaults(defineProps<IProps>(), { objectType: "ContentFile" });
 
 const route = useRoute();
 
-const { staticPage: template } = useStaticPage();
+const { staticPage: template, staticPagePreviewSubject: previewSubject } = useStaticPage();
 
 // VCST-5274: the live page name is injected into `settings.name` upstream (useSlugInfo), so the
 // breadcrumb follows renames. Humanize here as well to keep the leaf friendly for the fallback
@@ -77,7 +78,8 @@ const { title: pageTitle } = usePageTitle(
 useSeoMeta({
   title: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
   description: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
-  ogUrl: () => (staticPageAnchorVisible.value ? window.location.toString() : undefined),
+  // With the new Page Builder the page template sets it from the permalink, without the visited URL's query.
+  ogUrl: () => (staticPageAnchorVisible.value && !isNewPageBuilderEnabled() ? window.location.toString() : undefined),
   ogTitle: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
   ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
   ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),

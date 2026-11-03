@@ -17,7 +17,7 @@
     />
 
     <Category
-      v-bind="listingSettings"
+      v-bind="{ ...listingSettings, ...getPreviewSectionAttrs(listing?.id) }"
       :category-id="categoryId"
       :currency-code-override="loyaltyCurrencyOverride"
       allow-set-meta
@@ -41,12 +41,13 @@ import { computed, nextTick, onBeforeUnmount, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
-import { isPreviewMode } from "@/plugins/builder-preview/utils";
+import { isDesignerPreview } from "@/plugins/builder-preview/utils";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import {
   getAnchorId,
+  getPreviewSectionAttrs,
   MAIN_SECTION_TYPES,
   PageBuilderSection,
   splitTemplate,
@@ -90,7 +91,7 @@ const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?
 const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
 /** With the new Page Builder, sections below the listing mount as they come near the viewport. */
-const lazySections = isNewPageBuilderEnabled() && !isPreviewMode();
+const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
 
 const templateResolution = useTemplateResolution("category", () => {
   const outline = props.outline ?? currentCategory.value?.outline;

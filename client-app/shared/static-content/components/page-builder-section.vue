@@ -1,5 +1,9 @@
 <template>
-  <component :is="component" v-if="component && isMounted" v-bind="{ ...declaredProps, ...$attrs }" />
+  <component
+    :is="component"
+    v-if="component && isMounted"
+    v-bind="{ ...declaredProps, ...$attrs, ...getPreviewSectionAttrs(item.id) }"
+  />
 
   <!-- keeps the section's anchor id, so a link to a section below the fold still scrolls to it -->
   <div v-else-if="component" :id="$attrs.id as string | undefined" ref="placeholder" :class="$attrs.class" />
@@ -9,7 +13,13 @@
 import { useIntersectionObserver } from "@vueuse/core";
 import { computed, ref, shallowRef, useTemplateRef, watch } from "vue";
 import { Logger } from "@/core/utilities";
-import { getLoadedSectionComponent, getPageBuilderSection, loadSectionComponent, pickDeclaredProps } from "../sections";
+import {
+  getLoadedSectionComponent,
+  getPageBuilderSection,
+  getPreviewSectionAttrs,
+  loadSectionComponent,
+  pickDeclaredProps,
+} from "../sections";
 import type { Component } from "vue";
 
 interface IProps {

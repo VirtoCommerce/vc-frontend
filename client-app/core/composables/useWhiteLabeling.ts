@@ -97,6 +97,19 @@ function _useWhiteLabeling() {
     setWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
     isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
+    /** The Page Builder theme's fields white-labeling sets for this visitor, which the theme therefore does not change. */
+    themeFieldsSetByWhiteLabeling: computed(() => {
+      const settings = whiteLabelingSettings.value;
+      const fields: [string, unknown][] = [
+        ["brand.logoUrl", settings?.logoUrl],
+        ["brand.secondaryLogoUrl", settings?.secondaryLogoUrl],
+        ["brand.faviconUrl", settings?.favicons?.length],
+        ["palette", settings?.themePresetName],
+        ["menus.header", settings?.mainMenuLinks?.length],
+        ["menus.footer", settings?.footerLinks?.length],
+      ];
+      return fields.filter(([, value]) => !!value).map(([field]) => field);
+    }),
   };
 }
 

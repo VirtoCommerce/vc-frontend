@@ -1,5 +1,10 @@
 <template>
-  <div v-if="announcements.length" class="announcement-bar" :style="colors" :data-pb-section="previewSectionId">
+  <div
+    v-if="announcements.length"
+    class="announcement-bar"
+    :style="colors"
+    v-bind="getPreviewSectionAttrs(announcementBar?.id)"
+  >
     <template v-for="announcement in announcements" :key="announcement.id">
       <VcLink v-if="announcement.link" :to="announcement.link" class="announcement-bar__text announcement-bar__link">
         {{ announcement.text }}
@@ -13,8 +18,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { isPreviewMode } from "@/plugins/builder-preview/utils";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import type { StyleValue } from "vue";
 
 /** A palette token name, as a `color-token` setting holds it: `color_primary_500`. */
@@ -44,9 +49,6 @@ const colors = computed<StyleValue>(() => ({
   "--bg-color": toTokenVariable(announcementBar.value?.background),
   "--text-color": toTokenVariable(announcementBar.value?.color),
 }));
-
-/** The preview outlines the bar and edits its texts; elsewhere the markup stays as it is. */
-const previewSectionId = computed(() => (isPreviewMode() ? announcementBar.value?.id : undefined));
 
 function toTokenVariable(token: unknown): string | undefined {
   return typeof token === "string" && TOKEN_REGEX.test(token) ? `var(--${token.replaceAll("_", "-")})` : undefined;

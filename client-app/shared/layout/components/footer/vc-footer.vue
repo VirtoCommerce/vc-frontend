@@ -1,5 +1,5 @@
 <template>
-  <footer id="footer" aria-label="Footer">
+  <footer id="footer" aria-label="Footer" v-bind="getPreviewSectionAttrs(siteFooter?.id)">
     <!-- Top footer -->
     <div
       v-if="!compact"
@@ -56,6 +56,7 @@
 import { onMounted } from "vue";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import pkg from "../../../../../package.json";
 import FooterLinks from "./_internal/footer-links.vue";
 
@@ -67,7 +68,7 @@ const props = defineProps<IProps>();
 
 const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 const { footerLinks, fetchFooterLinks } = useNavigations();
-const { footerColumns: themeFooterColumns, copyright, isCreditShown } = useThemeChrome();
+const { footerColumns: themeFooterColumns, copyright, isCreditShown, siteFooter } = useThemeChrome();
 
 const { version } = pkg;
 

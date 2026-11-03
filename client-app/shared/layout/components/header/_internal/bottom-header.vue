@@ -1,5 +1,8 @@
 <template>
-  <div class="relative bg-[--header-bottom-bg-color] text-[--header-bottom-text-color]">
+  <div
+    class="relative bg-[--header-bottom-bg-color] text-[--header-bottom-text-color]"
+    v-bind="getPreviewSectionAttrs(siteHeader?.id)"
+  >
     <nav
       ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
@@ -87,6 +90,7 @@ import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import CatalogMenu from "./catalog-menu.vue";
 import SearchBar from "./search-bar/search-bar.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -102,7 +106,7 @@ defineProps<IProps>();
 const router = useRouter();
 const { organization } = useUser();
 const { headerLogoUrl } = useHeaderLogo();
-const { logoWidth, iconsMenuLinks } = useThemeChrome();
+const { logoWidth, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
 const logoStyle = computed<StyleValue | undefined>(() =>

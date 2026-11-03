@@ -60,6 +60,7 @@
             :variations="variations"
             :model="productInfoSection"
             :fetching-variations="fetchingVariations"
+            v-bind="getPreviewSectionAttrs(productInfoSection.id)"
           />
 
           <ProductConfiguration
@@ -170,7 +171,7 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
-import { isPreviewMode } from "@/plugins/builder-preview/utils";
+import { isDesignerPreview } from "@/plugins/builder-preview/utils";
 import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
@@ -186,7 +187,13 @@ import {
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
 import { FloatingBar } from "@/shared/common";
-import { getAnchorId, PageBuilderSection, useAnchorScroll, useProductTemplate } from "@/shared/static-content";
+import {
+  getAnchorId,
+  getPreviewSectionAttrs,
+  PageBuilderSection,
+  useAnchorScroll,
+  useProductTemplate,
+} from "@/shared/static-content";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ISortInfo } from "@/core/types";
@@ -283,7 +290,7 @@ const selectedVariationName = computed(() => {
  * With the new Page Builder, sections below the product mount as they come near the viewport; the designer preview
  * shows them all at once. Without it the page sends the same requests as before.
  */
-const lazySections = isNewPageBuilderEnabled() && !isPreviewMode();
+const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
 
 const {
   template: productTemplate,

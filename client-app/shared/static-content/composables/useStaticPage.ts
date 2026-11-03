@@ -4,6 +4,8 @@ import type { IPageTemplate } from "../types";
 
 function _useStaticPage() {
   const staticPagePreview = ref<IPageTemplate>();
+  /** What the previewed page's template rules see, when the designer previews it away from its own address. */
+  const staticPagePreviewSubject = ref<{ permalink?: string; objectType?: string }>();
 
   const _staticPage = ref<IPageTemplate | undefined>();
   const staticPage = computed({
@@ -14,6 +16,7 @@ function _useStaticPage() {
   return {
     staticPage,
     staticPagePreview,
+    staticPagePreviewSubject,
   };
 }
 

@@ -7,6 +7,7 @@ import { registerPageBuilderSections } from "../sections";
 import PageTemplate from "./page-template.vue";
 import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
+vi.mock("../composables/usePermalinkSeo", () => ({ usePermalinkSeo: vi.fn() }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
 }));

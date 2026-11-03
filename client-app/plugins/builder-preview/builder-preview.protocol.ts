@@ -1,5 +1,6 @@
 import { Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { IThemeDraft, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
 
@@ -21,9 +22,60 @@ export type TransferDataType = {
   token?: { access_token?: string } | null;
   cultureName?: string;
   sharedComponentBoundaries?: unknown;
+  /** The preview protocol the designer speaks, on `connect`; the Angular designer sends none. */
+  protocol?: number;
 } & Partial<NullableBuilderMessageFieldsType>;
 
 const PREVIEW_UPDATE_TYPES = new Set(["changed", "update", "remove", "add", "reload", "page", "swap", "preview"]);
+
+/** Protocol 2: one message renders the page or template on the page at `url`. */
+export interface IRenderMessage {
+  type: "render";
+  document: IThemePageDocument;
+  templateKey?: string;
+  url?: string;
+  page?: { permalink: string; objectType: "Pages" | "ContentFile" };
+  cultureName: string;
+  selection?: { sectionId: string; blockId?: string; scroll: boolean };
+  model?: PreviewModelType;
+  sectionLabels?: Record<string, string>;
+  sharedComponentBoundaries?: unknown;
+}
+
+export type PreviewV2MessageType =
+  | IRenderMessage
+  | { type: "draft"; theme: IThemeDraft }
+  | { type: "inspector"; enabled: boolean }
+  | { type: "colorScheme"; scheme: "light" | "dark" };
+
+const PREVIEW_V2_TYPES = new Set(["render", "draft", "inspector", "colorScheme"]);
+
+export function isPreviewV2Message(value: unknown): value is PreviewV2MessageType & { source: "builder" } {
+  if (!isRecord(value) || value.source !== "builder" || !PREVIEW_V2_TYPES.has(value.type as string)) {
+    return false;
+  }
+
+  switch (value.type) {
+    case "render":
+      return (
+        isPageTemplate(value.document) &&
+        typeof value.cultureName === "string" &&
+        isOptionalString(value.templateKey) &&
+        isOptionalString(value.url) &&
+        (value.url === undefined || (typeof value.url === "string" && value.url.startsWith("/"))) &&
+        (value.page === undefined || (isRecord(value.page) && typeof value.page.permalink === "string")) &&
+        (value.selection === undefined || (isRecord(value.selection) && isNonEmptyString(value.selection.sectionId))) &&
+        (value.model === undefined || isPreviewModel(value.model)) &&
+        (value.sectionLabels === undefined || isRecord(value.sectionLabels))
+      );
+    case "draft":
+      return isRecord(value.theme);
+    case "inspector":
+      return typeof value.enabled === "boolean";
+    default:
+      return value.scheme === "light" || value.scheme === "dark";
+  }
+}
 
 export function isBuilderMessage(value: unknown): value is TransferDataType {
   if (!isRecord(value) || value.source !== "builder" || typeof value.type !== "string") {
@@ -63,7 +115,7 @@ export function addBuilderMessageListener(
   targetWindow: Window,
   builderOrigin: string,
   parentWindow: Window,
-  onMessage: (message: TransferDataType) => void,
+  onMessage: (message: TransferDataType | PreviewV2MessageType) => void,
 ): () => void {
   const listener = (event: MessageEvent<unknown>) => {
     if (event.origin !== builderOrigin || event.source !== parentWindow) {
@@ -71,7 +123,7 @@ export function addBuilderMessageListener(
       return;
     }
 
-    if (!isBuilderMessage(event.data)) {
+    if (!isBuilderMessage(event.data) && !isPreviewV2Message(event.data)) {
       // The designer is the only sender that reaches this point, so a rejected payload means the two
       // sides disagree about the protocol. Without this line "the preview does not update" leaves no trace.
       Logger.warn("[builder-preview] Rejected a designer message that does not match the preview protocol", {
@@ -88,7 +140,7 @@ export function addBuilderMessageListener(
 }
 
 export function createPreviewLoadedNotifier(targetWindow: Window, targetOrigin: string) {
-  let data: PageBuilderSchemaType | undefined;
+  let data: PageBuilderSchemaType | Record<string, unknown> | undefined;
 
   const announce = () => {
     if (data) {
@@ -98,7 +150,7 @@ export function createPreviewLoadedNotifier(targetWindow: Window, targetOrigin: 
 
   return {
     announce,
-    setData(value: PageBuilderSchemaType) {
+    setData(value: PageBuilderSchemaType | Record<string, unknown>) {
       data = value;
       announce();
     },

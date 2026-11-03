@@ -39,6 +39,14 @@ export function isPreviewMode(): boolean {
   return globalThis.location.pathname === "/designer-preview";
 }
 
+/**
+ * Whether this document is the designer's preview: on the preview route, or framed by the designer, which also
+ * renders templates on storefront pages away from that route.
+ */
+export function isDesignerPreview(): boolean {
+  return isPreviewMode() || !!getBuilderOrigin();
+}
+
 export type PreviewBootOptionsType = {
   /** Whether this document is the Page Builder designer / standalone preview. */
   isActive: boolean;

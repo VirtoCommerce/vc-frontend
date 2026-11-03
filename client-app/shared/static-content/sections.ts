@@ -1,5 +1,6 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
+import { isDesignerPreview } from "@/plugins/builder-preview/utils";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
@@ -60,6 +61,14 @@ export function getPageBuilderSection(type: unknown): Component | undefined {
   const entries = useExtensionRegistry().getEntries("pageBuilderSection");
 
   return typeof type === "string" && Object.hasOwn(entries, type) ? (entries[type]?.component ?? undefined) : undefined;
+}
+
+/**
+ * The attribute the designer preview finds a section's element by, to outline it and edit its texts. Outside the
+ * preview the storefront's markup does not change.
+ */
+export function getPreviewSectionAttrs(id: unknown): Record<string, string> {
+  return isDesignerPreview() && typeof id === "string" ? { "data-pb-section": id } : {};
 }
 
 /** Own-key lookup, so a type such as `toString` does not resolve to an `Object.prototype` member. */
