@@ -412,10 +412,10 @@ ${loads("dark")}  }
       expect(errors).toEqual([
         expect.stringContaining(String.raw`--vc-x-bg, --x-c\6f lor: colour tokens belong to presets`),
         expect.stringContaining("--vc-button-bg-color: colour tokens belong to presets"),
-        expect.stringContaining("--vc-button-bg: colour tokens belong to presets"),
+        expect.stringContaining(String.raw`--vc-button-b\67: colour tokens belong to presets`),
         expect.stringContaining(String.raw`--vc-button-b\g: colour tokens belong to presets`),
         expect.stringContaining(String.raw`-\-vc-button-bg-color: colour tokens belong to presets`),
-        expect.stringContaining(String.raw`\--vc-button-bg-color: colour tokens belong to presets`),
+        expect.stringContaining(String.raw`\2d\2d vc-button-bg-color: colour tokens belong to presets`),
         expect.stringContaining("--vc-button-solid-primary-text: colour tokens belong to presets"),
         expect.stringContaining("--vc-button-solid-primary-border: colour tokens belong to presets"),
         expect.stringContaining("--vc-button-solid-primary-icon: colour tokens belong to presets"),

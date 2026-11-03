@@ -53,7 +53,7 @@ export default defineConfigWithVueTs(
       "artifacts/",
       "storybook-static/",
       "storybook-styles/dist/",
-      "client-app/public/fcm-service-worker-v1.10.js",
+      "client-app/public/fcm-service-worker-*.js",
       ".deployment/",
       ".github/",
       ".husky/",

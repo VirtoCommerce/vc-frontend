@@ -107,9 +107,8 @@ import type {
   KeyValueType,
 } from "@/core/api/graphql/types";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "@/shared/payment/components/types";
-import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
-import type ComposableElement from "skyflow-js/types/core/external/collect/compose-collect-element";
-import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
+import type { ComposableContainer, ComposableElement, InsertRequest as IInsertRecordInput } from "skyflow-js";
+import type { IInsertResponse } from "skyflow-js/types/core/types";
 import PaymentPolicies from "@/shared/payment/components/payment-policies.vue";
 
 const emit = defineEmits<IPaymentMethodEmits>();
