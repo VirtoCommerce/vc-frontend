@@ -42,7 +42,8 @@ component never talks to PostHog directly: it calls `analytics("<event>", …)` 
    Fire only in the branch that is the event (a quantity change is not an add); mirror a copied handler's tracking.
 5. Tests: one case per handler in `events.test.ts` of each module (mock `./client` / `./utils`), and the
    "handles every event the bus dispatches" list in `modules/posthog/events.test.ts` gets the new name.
-6. A page view needs nothing: `page-views.ts` sends `$pageview` with `route_name` on every navigation.
+6. A page view needs nothing: `page-views.ts` sends `$pageview` with `route_name` and `page_type` on every navigation
+   (`page-type.ts`: route name in snake_case, `home`, or what a slug URL resolves to — `product`, `category`, …).
 
 ## Verifying
 

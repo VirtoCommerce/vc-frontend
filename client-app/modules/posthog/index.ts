@@ -66,6 +66,16 @@ export async function init(router: Router, { extendEvents }: InitOptionsType = {
     // Anonymous visitors cost no person profile; one is created by `identify` on sign-in.
     person_profiles: "identified_only",
     disable_session_recording: isSessionRecordingEnabled !== true,
+    // Off here rather than left to the PostHog project settings, which the SDK would follow: these collect without a
+    // consent gate, spend the event quota or put PostHog UI on the storefront, and a project switch must not enable them.
+    capture_heatmaps: false,
+    capture_dead_clicks: false,
+    capture_performance: false,
+    capture_exceptions: false,
+    logs: { captureConsoleLogs: false },
+    disable_surveys: true,
+    disable_product_tours: true,
+    disable_conversations: true,
   });
   setClient(posthog);
 

@@ -101,7 +101,7 @@ function buildRouter(): Router {
   return {
     afterEach: vi.fn(),
     isReady: () => Promise.resolve(),
-    currentRoute: { value: { name: "Home", path: "/" } },
+    currentRoute: { value: { name: "Home", path: "/", params: {} } },
   } as unknown as Router;
 }
 
@@ -157,6 +157,21 @@ describe("posthog init", () => {
     });
   });
 
+  it("keeps off what the PostHog project settings could otherwise switch on", async () => {
+    await initInScope();
+
+    expect(initOptions()).toMatchObject({
+      capture_heatmaps: false,
+      capture_dead_clicks: false,
+      capture_performance: false,
+      capture_exceptions: false,
+      logs: { captureConsoleLogs: false },
+      disable_surveys: true,
+      disable_product_tours: true,
+      disable_conversations: true,
+    });
+  });
+
   it("applies the host, autocapture and recording settings", async () => {
     hoisted.settings = enabledSettings({
       apiHost: "https://eu.i.posthog.com",
@@ -196,7 +211,7 @@ describe("posthog init", () => {
     expect(hoisted.posthog.identify.mock.invocationCallOrder[0]).toBeLessThan(
       hoisted.posthog.capture.mock.invocationCallOrder[0],
     );
-    expect(hoisted.posthog.capture).toHaveBeenCalledWith("$pageview", { route_name: "Home" });
+    expect(hoisted.posthog.capture).toHaveBeenCalledWith("$pageview", { route_name: "Home", page_type: "home" });
   });
 
   it("re-identifies when another tab signs in as someone else", async () => {

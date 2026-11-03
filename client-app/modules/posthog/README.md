@@ -22,6 +22,11 @@ Store-level settings of the `VirtoCommerce.PostHog` module (public, read from `s
 | `PostHog.Autocapture`      | `false` (default): the commerce events come from the analytics bus, not from DOM clicks |
 | `PostHog.SessionRecording` | `false` (default)                                                                       |
 
+The SDK follows the PostHog project settings for anything `init` leaves unset, so [`index.ts`](./index.ts) pins off
+what a switch in the project must not turn on: heatmaps, dead clicks, web vitals, exception and console-log capture
+(collection without a consent gate, or a cost in events) and surveys, product tours and conversations (PostHog UI on
+the storefront). Turning one of them on is a code change.
+
 Nothing runs in development mode (`IS_DEVELOPMENT`), the same rule as the analytics bus itself. To see events
 locally: `yarn build-only && yarn preview` against a backend where the module is configured, then
 `?__posthog_debug=true` in the URL and PostHog → Activity → Live events.
@@ -34,8 +39,15 @@ in PostHog reads like the GA4 one. Items use the shared [`AnalyticsItemType`](..
 
 On top of the bus events:
 
-- `$pageview` after every router navigation, with `route_name` ([`page-views.ts`](./page-views.ts)). The SDK's own
-  page-view capture is off: it fires on `pushState`, before the route is resolved.
+- `$pageview` after every router navigation, with `route_name` and `page_type` ([`page-views.ts`](./page-views.ts)).
+  The SDK's own page-view capture is off: it fires on `pushState`, before the route is resolved.
+  `page_type` ([`page-type.ts`](./page-type.ts)) is the route name in snake_case for a named route (`sign_in`, `cart`,
+  `product` for `/product/:id`), `home` for the root, and for any other URL served by the slug matcher what its slug
+  resolves to: `product`, `category`, `catalog`, `brand`, `brands`, `news_article`, `virto_page`, `content_page`,
+  `redirect` or `not_found`. That view waits for the slug lookup, which reuses the matcher's own cached query, so
+  no extra request goes out; a page left before the answer comes is sent without `page_type`. The type is the slug's,
+  not what the matcher finally renders: a Builder.io page or an internal page other than the root reads as
+  `not_found`.
 - `form_open` / `form_submit` with `form_name` (`quote_request`, `sign_up`) — the `formOpen` / `formSubmit` events
   of [`analytics-custom.ts`](../../core/types/analytics-custom.ts).
 
