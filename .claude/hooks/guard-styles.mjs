@@ -15,6 +15,8 @@ const APPLY = /@apply\s([^;]+)/g;
 // `class="…"` (static value) or `:class="…"` / `v-bind:class="…"` (JS expression).
 const CLASS_ATTR = /(?<=\s)(:|v-bind:)?class="([^"]*)"/g;
 const JS_STRING = /'([^']*)'|`([^`]*)`/g;
+// `${…}` in a template literal: `!p-${size}` is checked as `!p-`.
+const INTERPOLATION = /\$\{[^}]*\}/g;
 
 export function check(toolInput, readCurrent) {
   const file = (toolInput.file_path ?? "").replaceAll("\\", "/");
@@ -56,7 +58,9 @@ function findViolations(file, text) {
   const styles = file.endsWith(".vue") ? [...text.matchAll(STYLE_BLOCK)].map((match) => match[1]).join("\n") : text;
   const classLists = [
     ...[...text.matchAll(CLASS_ATTR)].flatMap(([, bound, value]) =>
-      bound ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2]) : [value],
+      bound
+        ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2].replaceAll(INTERPOLATION, " "))
+        : [value],
     ),
     ...[...styles.matchAll(APPLY)].map((match) => match[1]),
   ];

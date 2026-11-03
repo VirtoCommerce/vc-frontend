@@ -266,18 +266,23 @@ declared layer, and its names follow the declared order per parent.
 
 `scripts/check-css-important.ts` fails on any `!important` and any Tailwind important modifier
 (`!mt-4`, `lg:!hidden`, `data-[state=open]:!block`) in `client-app/` and `index.html`, and names the
-file and line. It reads style declarations and `@apply`, inline `<style>`, class and style
-attributes, Vue bindings and interpolations, string literals in scripts (markup in a string, such as
-a story's template, is read as a template) and `style.setProperty(…, "important")`. Comments,
-Markdown, locale files, page text and code negation (`v-if="!open"`) never fail it, nor do the Sass
-flags `!default`, `!global` and `!optional`; in a string, `!important` counts only where it ends a
-CSS value (`"red !important"`), so prose that names it passes. The pre-commit hook runs it on the staged files
-only. Its patterns live in `scripts/important-patterns.mjs`, shared with the agents' edit hook
-(`.claude/hooks/guard-styles.mjs`). The tests are in `scripts/check-css-important.test.ts`.
+file and line. It reads style declarations and `@apply`, inline `<style>`, static attribute values,
+Vue bindings and interpolations, string literals in scripts (markup in a string, such as a story's
+template, is read as a template) and `style.setProperty(…, "important")`. It skips Markdown, locale
+files, text between tags, comments in style blocks, templates and scripts, code negation
+(`v-if="!open"`) and the Sass flags `!default`, `!global` and `!optional`. A static attribute value is
+read whole, so `title="!open"` and a comment in `style="…"` fail it. In a string, `!important` counts
+only where a CSS value can end: before `;`, `}`, a quote or an escape, or at the end of the string.
+So `"red !important"` fails it, as does prose that ends on `!important` or quotes it; prose that
+names it mid-sentence passes. A file it cannot parse fails it too and is listed apart. The pre-commit
+hook runs it on the staged files only. Its patterns live in `scripts/important-patterns.mjs`, shared
+with the agents' edit hook (`.claude/hooks/guard-styles.mjs`). The tests are in
+`scripts/check-css-important.test.ts`.
 
 **In a fork**, put an override in `_custom.scss`: it is unlayered, so a plain declaration there
-beats every layered rule, and the check skips the file. A fork that keeps `!important` elsewhere on
-purpose adds that file to `IGNORE` in `scripts/check-css-important.ts`.
+beats every layered rule but a layered `!important` (swiper's and nouislider's,
+[Unlayered, on purpose](#unlayered-on-purpose)), and the check skips the file. A fork that keeps
+`!important` elsewhere on purpose adds that file to `IGNORE` in `scripts/check-css-important.ts`.
 
 All three run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 

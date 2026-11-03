@@ -1,12 +1,33 @@
 // @vitest-environment node
+import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { findImportant, importantSources } from "./check-css-important.js";
 
+const SCRIPT = fileURLToPath(new URL("./check-css-important.ts", import.meta.url));
+
 function found(file: string, source: string): [number, string][] {
   return findImportant(file, source).map(({ line, text }) => [line, text]);
+}
+
+function unparsed(file: string, source: string): [number, string][] {
+  return findImportant(file, source)
+    .filter(({ isUnparsed }) => isUnparsed)
+    .map(({ line, text }) => [line, text]);
+}
+
+function writeFiles(files: Record<string, string>): string {
+  const root = mkdtempSync(path.join(tmpdir(), "important-"));
+
+  for (const [file, source] of Object.entries(files)) {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), source);
+  }
+
+  return root;
 }
 
 describe("check-css-important", () => {
@@ -78,6 +99,28 @@ describe("check-css-important", () => {
         [3, "before:!content-['']"],
       ]);
     });
+
+    it("reports !@container", () => {
+      expect(found("a.scss", ".a { @apply !@container @lg:!p-0; }")).toEqual([
+        [1, "!@container"],
+        [1, "@lg:!p-0"],
+      ]);
+    });
+
+    it("reports a style it cannot parse at its line in the file", () => {
+      const sfc = [
+        "<template>",
+        "  <div />",
+        "</template>",
+        "",
+        '<style lang="scss">',
+        ".a { color: red;",
+        "</style>",
+      ].join("\n");
+
+      expect(unparsed("a.scss", ".a { color: red;")).toEqual([[1, "Unclosed block"]]);
+      expect(unparsed("a.vue", sfc)).toEqual([[6, "Unclosed block"]]);
+    });
   });
 
   describe("vue", () => {
@@ -114,6 +157,20 @@ describe("check-css-important", () => {
         [12, 'setProperty(…, "important")'],
         [16, "!important"],
       ]);
+    });
+
+    it("reports a token of a multi-line class at its own line", () => {
+      const sfc = [
+        "<template>",
+        "  <div",
+        '    class="flex',
+        "      gap-2",
+        '      !mt-4"',
+        "  />",
+        "</template>",
+      ].join("\n");
+
+      expect(found("a.vue", sfc)).toEqual([[5, "!mt-4"]]);
     });
 
     it("ignores negation, comments and text", () => {
@@ -159,6 +216,12 @@ describe("check-css-important", () => {
         [5, "!important"],
         [9, "!important"],
         [12, "!p-0"],
+      ]);
+    });
+
+    it("reports index.html markup it cannot parse", () => {
+      expect(unparsed("index.html", '<html>\n  <body>\n    <div class="a"\n</html>')).toEqual([
+        [3, "Element is missing end tag."],
       ]);
     });
   });
@@ -209,6 +272,18 @@ describe("check-css-important", () => {
         [4, "!important"],
       ]);
     });
+
+    it("reports !important before an escape", () => {
+      const code = [
+        'const a = ".a { color: red !important\\n}";',
+        "const b = '[style=\"color: red !important\\\"]';",
+      ].join("\n");
+
+      expect(found("a.ts", code)).toEqual([
+        [1, "!important"],
+        [2, "!important"],
+      ]);
+    });
   });
 
   describe("importantSources", () => {
@@ -251,6 +326,52 @@ describe("check-css-important", () => {
           path.join(root, "x.ts"),
         ]),
       ).toEqual(["client-app/a.vue"]);
+    });
+  });
+
+  describe("cli", () => {
+    let root: string;
+
+    afterEach(() => {
+      rmSync(root, { recursive: true, force: true });
+    });
+
+    function run(files: Record<string, string>) {
+      root = writeFiles(files);
+
+      return spawnSync(process.execPath, [SCRIPT], { cwd: root, encoding: "utf-8" });
+    }
+
+    it("exits 1 and lists each !important at its file and line", () => {
+      const { status, stderr } = run({ "client-app/a.scss": ".a {\n  color: red !important;\n}\n" });
+
+      expect(status).toBe(1);
+      expect(stderr).toContain("  client-app/a.scss:2  !important\n");
+    });
+
+    it("exits 1 and lists a file it cannot parse", () => {
+      const { status, stderr } = run({ "client-app/a.vue": "<template>\n  <div>\n</template>\n" });
+
+      expect(status).toBe(1);
+      expect(stderr).toMatch(/Could not parse these files[\s\S]*\n {2}client-app\/a\.vue:2 {2}\S/);
+    });
+
+    it("goes on after a file it cannot parse", () => {
+      const { status, stderr } = run({
+        "client-app/a.scss": ".a { color: red;\n",
+        "client-app/b.scss": ".b { color: red !important; }\n",
+      });
+
+      expect(status).toBe(1);
+      expect(stderr).toContain("  client-app/b.scss:1  !important\n");
+      expect(stderr).toMatch(/Could not parse these files[\s\S]*\n {2}client-app\/a\.scss:1 {2}Unclosed block/);
+    });
+
+    it("exits 0 on a clean tree", () => {
+      const { status, stdout } = run({ "client-app/a.scss": ".a { color: red; }\n", "index.html": "<html></html>\n" });
+
+      expect(status).toBe(0);
+      expect(stdout).toContain("!important check passed: 2 files.");
     });
   });
 });

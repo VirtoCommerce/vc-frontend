@@ -2,14 +2,14 @@
 // Plain JS without dependencies: the hook loads it on every edit, on any Node version.
 
 const IMPORTANT = /!\s*important/gi;
-/** Where a CSS value ends: at the end of the string or before `;`, `}` or a quote. Prose ("instead of !important.") does not. */
-const IMPORTANT_VALUE = /!\s*important(?=\s*(?:[;}"'`]|$))/gi;
+/** Where a CSS value can end: at the end of the string or before `;`, `}`, a quote or an escape (`\n`, `\"`). */
+const IMPORTANT_VALUE = /!\s*important(?=\s*(?:[;}"'`\\]|$))/gi;
 /** `[…]` with one nested level: `[state=open]`, `['']`, `[&[data-x='y']]`. */
 const BRACKET = String.raw`\[(?:[^[\]\s]|\[[^[\]\s]*\])+\]`;
 /** `!` after the variants (`lg:`, `group-hover/item:`, `[&>*]:`, `data-[state=open]:`); the rest is one whole token. */
 const IMPORTANT_MODIFIER = new RegExp(String.raw`^(?:(?:[\w\-/@*.]|${BRACKET})+:)*!(\S+)$`);
-/** `-mt-4`, `w-[calc(100%-1rem)]`, `content-['']`. */
-const UTILITY = new RegExp(String.raw`^-?[a-z][\w\-./%#]*(?:${BRACKET}[\w\-./%#]*)*$`);
+/** `-mt-4`, `w-[calc(100%-1rem)]`, `content-['']`, `@container`. */
+const UTILITY = new RegExp(String.raw`^-?@?[a-z][\w\-./%#]*(?:${BRACKET}[\w\-./%#]*)*$`);
 /** `[mask-type:alpha]`. */
 const ARBITRARY_PROPERTY = /^\[[\w-]+:[^\]\s]+\]$/;
 const IMPORTANT_WORD = /^important(?![\w-])/i;
@@ -24,7 +24,8 @@ export function matchImportant(text) {
 }
 
 /**
- * Every `!important` that ends a CSS value in a string that may be prose: `"color: red !important;"`, `'red !important'`.
+ * `!important` where a CSS value can end, for a string that may be prose: `"color: red !important;"`, `'red !important'`.
+ * Prose that names it mid-sentence passes; prose that ends on it or quotes it does not.
  * @param {string} text
  * @returns {RegExpExecArray[]}
  */

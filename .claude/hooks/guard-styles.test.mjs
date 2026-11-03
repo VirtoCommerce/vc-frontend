@@ -32,6 +32,7 @@ test("blocks !important in every form, kit included", () => {
   assert.ok(edit("client-app/shared/a.vue", '<div class="[&>*]:!p-0 !w-[calc(100%-1rem)]">'));
   assert.ok(edit("client-app/shared/a.scss", "  color: red ! IMPORTANT;"));
   assert.ok(edit("client-app/shared/a.vue", "<div class=\"data-[state=open]:!block before:!content-['']\">"));
+  assert.ok(edit("client-app/shared/a.vue", '<div :class="`!p-${size}`">'));
 });
 
 test("passes JS negation in :class", () => {

@@ -7,18 +7,18 @@ import postcssScss from "postcss-scss";
 import ts from "typescript";
 import { parse as parseSfc } from "vue/compiler-sfc";
 import { isImportantUtility, matchImportant, matchImportantValue } from "./important-patterns.mjs";
-import type { AtRule, Declaration } from "postcss";
-import type { SFCTemplateBlock } from "vue/compiler-sfc";
+import type { AtRule, Declaration, Root } from "postcss";
+import type { SFCParseResult, SFCTemplateBlock } from "vue/compiler-sfc";
 
 // The rule is in client-app/assets/styles/README.md: a layered `!important` cannot be overridden by a fork.
-// Reads styles, templates and string literals, never comments, Markdown or locale files.
+// Reads styles, templates and string literals; skips Markdown, locale files and comments outside static attribute values.
 
 export interface IImportantFinding {
   file: string;
   line: number;
   text: string;
   /** The file could not be parsed, so it was not fully checked; `text` is the parser's message. */
-  unparsed?: boolean;
+  isUnparsed?: boolean;
 }
 
 const SOURCES = ["client-app/**/*.{vue,scss,css,html,ts,tsx,js,mjs,cjs,mts,cts}", "index.html"];
@@ -27,6 +27,7 @@ const IGNORE = ["client-app/assets/styles/_custom.scss"];
 
 const TOKEN = /\S+/g;
 const NEWLINE = /\n/g;
+const QUOTED = /^(["'])([\s\S]*)\1$/;
 /** An HTML tag in a string: a story's or test's template, a `render` helper's markup. */
 const MARKUP = /<[a-z][\w-]*[\s/>]/i;
 const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
@@ -39,7 +40,7 @@ const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
   ".cjs": ts.ScriptKind.JS,
 };
 
-type ReportType = (line: number, text: string, unparsed?: boolean) => void;
+type ReportType = (line: number, text: string, isUnparsed?: boolean) => void;
 type MatchType = (text: string) => RegExpExecArray[];
 type TemplateChildNodeType = NonNullable<SFCTemplateBlock["ast"]>["children"][number];
 type ElementNodeType = Extract<TemplateChildNodeType, { tag: string }>;
@@ -68,7 +69,19 @@ function checkText(text: string, startLine: number, report: ReportType, match: M
 
 /** Utilities only in `@apply`: elsewhere `!default`, `!global` and `!optional` are Sass flags. */
 function checkStyles(css: string, startLine: number, report: ReportType): void {
-  const root = postcssScss.parse(css);
+  let root: Root;
+
+  try {
+    root = postcssScss.parse(css);
+  } catch (error) {
+    if (!(error instanceof CssSyntaxError)) {
+      throw error;
+    }
+
+    report(startLine + (error.line ?? 1) - 1, error.reason, true);
+    return;
+  }
+
   const lineOf = (node: Declaration | AtRule) => startLine + (node.source?.start?.line ?? 1) - 1;
 
   // Rebuilt from the clean value, so a comment is never read and a line break before the match still counts.
@@ -126,20 +139,16 @@ function literalMarkup(node: ts.Node, sourceFile: ts.SourceFile): string | undef
  */
 function checkMarkup(markup: string, startLine: number, report: ReportType): void {
   const { descriptor } = parseSfc(`${"\n".repeat(startLine - 1)}<template>${markup}</template>`);
-  const found: [number, string][] = [];
+  const found: Parameters<ReportType>[] = [];
 
-  try {
-    checkTemplate(descriptor.template?.ast?.children ?? [], (line, text) => found.push([line, text]));
-  } catch (error) {
-    if (!(error instanceof CssSyntaxError)) {
-      throw error;
-    }
+  checkTemplate(descriptor.template?.ast?.children ?? [], (...args) => found.push(args));
 
+  if (found.some(([, , isUnparsed]) => isUnparsed)) {
     checkText(markup, startLine, report, matchImportantValue);
     return;
   }
 
-  found.forEach(([line, text]) => report(line, text));
+  found.forEach((args) => report(...args));
 }
 
 function checkScript(code: string, kind: ts.ScriptKind, startLine: number, report: ReportType): void {
@@ -160,7 +169,7 @@ function checkScript(code: string, kind: ts.ScriptKind, startLine: number, repor
     const text = stringLiteralText(node, sourceFile);
 
     if (text !== undefined) {
-      // In a string, `!important` counts only where it ends a CSS value, so prose that names it passes.
+      // In a string, `!important` counts only where a CSS value can end, so prose that names it mid-sentence passes.
       checkText(text, lineOf(node), report, matchImportantValue);
     }
 
@@ -185,7 +194,8 @@ function checkScript(code: string, kind: ts.ScriptKind, startLine: number, repor
 function checkAttribute(prop: PropNodeType, report: ReportType): void {
   if ("value" in prop) {
     if (prop.value) {
-      checkText(prop.value.content, prop.value.loc.start.line, report);
+      // Not `content`: a class list's line breaks are condensed there, so a token's line would be lost.
+      checkText(prop.value.loc.source.replace(QUOTED, "$2"), prop.value.loc.start.line, report);
     }
     return;
   }
@@ -232,12 +242,16 @@ function checkTemplate(nodes: TemplateChildNodeType[], report: ReportType): void
   }
 }
 
-function checkVue(source: string, report: ReportType): void {
-  const { descriptor, errors } = parseSfc(source);
-
+function reportParseErrors(errors: SFCParseResult["errors"], report: ReportType): void {
   for (const error of errors) {
     report("loc" in error && error.loc ? error.loc.start.line : 1, error.message, true);
   }
+}
+
+function checkVue(source: string, report: ReportType): void {
+  const { descriptor, errors } = parseSfc(source);
+
+  reportParseErrors(errors, report);
 
   for (const script of [descriptor.script, descriptor.scriptSetup]) {
     if (script) {
@@ -256,7 +270,9 @@ function checkVue(source: string, report: ReportType): void {
 
 function checkHtml(source: string, report: ReportType): void {
   // Wrapped in a <template> so the SFC parser reads the page; the doctype is dropped in place, lines stay.
-  const { descriptor } = parseSfc(`<template>${source.replace(/<!doctype[^>]*>/i, "")}</template>`);
+  const { descriptor, errors } = parseSfc(`<template>${source.replace(/<!doctype[^>]*>/i, "")}</template>`);
+
+  reportParseErrors(errors, report);
 
   if (descriptor.template?.ast) {
     checkTemplate(descriptor.template.ast.children, report);
@@ -265,8 +281,8 @@ function checkHtml(source: string, report: ReportType): void {
 
 export function findImportant(file: string, source: string): IImportantFinding[] {
   const findings: IImportantFinding[] = [];
-  const report: ReportType = (line, text, unparsed) =>
-    findings.push({ file, line, text, ...(unparsed && { unparsed }) });
+  const report: ReportType = (line, text, isUnparsed) =>
+    findings.push({ file, line, text, ...(isUnparsed && { isUnparsed }) });
   const extension = path.extname(file);
 
   if (extension === ".vue") {
@@ -315,8 +331,8 @@ function main(): void {
   const args = process.argv.slice(2);
   const files = importantSources(process.cwd(), args.length ? args : undefined);
   const findings = files.flatMap((file) => findImportant(file, readFileSync(file, "utf-8")));
-  const important = findings.filter(({ unparsed }) => !unparsed);
-  const unparsed = findings.filter(({ unparsed: isUnparsed }) => isUnparsed);
+  const important = findings.filter(({ isUnparsed }) => !isUnparsed);
+  const unparsed = findings.filter(({ isUnparsed }) => isUnparsed);
 
   if (important.length) {
     console.error(`Found !important that would ship in the storefront styles (${important.length}):\n`);
@@ -333,7 +349,9 @@ function main(): void {
   }
 
   if (findings.length) {
-    process.exit(1);
+    // Not `process.exit`: on macOS it cuts stderr written to a pipe.
+    process.exitCode = 1;
+    return;
   }
 
   console.log(`!important check passed: ${files.length} files.`);
