@@ -152,6 +152,15 @@ describe("RecentOrdersWidget", () => {
     );
   });
 
+  // As many placeholders as rows to come, so the block keeps its height when the orders arrive.
+  it("draws as many placeholder rows as it will list orders", () => {
+    savedRows.value = 3;
+
+    const wrapper = mountWidget();
+
+    expect(wrapper.findComponent(OrdersTable).props()).toMatchObject({ loading: true, skeletonRows: 3 });
+  });
+
   it("offers a chip per status the orders carry, after the baseline, with grouped counts", async () => {
     const wrapper = mountWidget();
     await flushPromises();

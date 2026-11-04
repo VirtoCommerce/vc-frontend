@@ -122,6 +122,34 @@ describe("useLayoutPage", () => {
     expect(page.message.value).toContain("shared.dashboard.save_failed");
   });
 
+  // The region keeps its text until the next announcement, so browse mode would still find "Editing layout…" after
+  // Cancel, or a save's failure after a later save succeeded.
+  it("empties the announcement once edit mode ends", async () => {
+    const { page } = await withPage();
+    page.startEdit();
+    await nextTick();
+    expect(page.message.value).toBe("shared.dashboard.a11y.editing");
+
+    page.cancel();
+    await nextTick();
+
+    expect(page.message.value).toBe("");
+  });
+
+  it("leaves no failure behind once a later save succeeds", async () => {
+    const { layout, page } = await withPage();
+    page.startEdit();
+    layout.failNextSave.value = true;
+    await page.save();
+    await nextTick();
+    expect(page.message.value).toContain("shared.dashboard.save_failed");
+
+    await page.save();
+    await nextTick();
+
+    expect(page.message.value).toBe("");
+  });
+
   // The page reacts to the failure flag changing, so a flag left on by the first failure kept the second silent,
   // with focus on <body>, where `inert` had dropped it.
   it("announces a second failed save in a row and returns focus to Save again", async () => {

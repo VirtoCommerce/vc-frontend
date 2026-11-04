@@ -118,10 +118,19 @@ describe("the layout operations", () => {
     expect(emit).not.toHaveBeenCalled();
   });
 
-  // The control: a failed save is a user action and keeps the toast — so the read above is not passing because
-  // nothing could have toasted.
-  it("keeps the toast for a failed save", async () => {
+  // The edit bar names a failed save itself (its alert and announcement), so the save must not also toast.
+  it("saves without the global error toast", async () => {
     await expect(saveLayout(COMMAND)).rejects.toThrow();
+
+    expect(emit).not.toHaveBeenCalled();
+  });
+
+  // The control: the same client toasts an operation that does not opt out, so the two above are not passing
+  // because nothing could have toasted.
+  it("toasts the same save sent without the opt-out", async () => {
+    await expect(
+      graphqlClient.mutate({ mutation: SaveLayoutDocument, variables: { command: COMMAND } }),
+    ).rejects.toThrow();
 
     expect(emit).toHaveBeenCalledWith("unhandled_error", expect.any(String), "all");
   });

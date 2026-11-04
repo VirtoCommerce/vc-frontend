@@ -14,7 +14,7 @@ import type { MaybeRefOrGetter } from "vue";
 export function useLayoutPage(layout: LayoutControllerType, root: MaybeRefOrGetter<HTMLElement | null | undefined>) {
   const { t } = useI18n();
   const { scope } = layout;
-  const { message, announce, say } = useLayoutAnnouncer(scope);
+  const { message, announce, say, clear } = useLayoutAnnouncer(scope);
   const { focusBlockControl, focusEditToggle, focusSaveButton, focusSurfaceStart } = useLayoutFocus(root);
   const { setHidden, visibleIn, hiddenIn, editing, saveFailed, canEdit } = layout;
 
@@ -61,11 +61,13 @@ export function useLayoutPage(layout: LayoutControllerType, root: MaybeRefOrGett
   }
 
   // Entry rewrites the surface with nothing announcing it, and the arrow keys are otherwise only
-  // discoverable by grabbing something. Exit unmounts the edit bar that held focus.
+  // discoverable by grabbing something. Exit unmounts the edit bar that held focus, and ends whatever the last
+  // announcement described (editing, a move, a failed save), so the region is emptied too.
   watch(editing, (now, was) => {
     if (now && !was) {
       say(t("shared.dashboard.a11y.editing"));
     } else if (was && !now) {
+      clear();
       focusEditToggle();
     }
   });
