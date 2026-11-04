@@ -423,3 +423,56 @@ describe("VcSelect inside a dialog popover", () => {
     },
   );
 });
+
+describe("VcSelect required trigger ARIA", () => {
+  const RequiredHost = defineComponent({
+    components: { VcSelect },
+
+    props: {
+      slotted: { type: Boolean, default: false },
+    },
+
+    setup() {
+      return { items: ["Standard", "Express"] };
+    },
+
+    template: `
+      <VcSelect :items="items" label="Delivery method" required>
+        <template v-if="slotted" #placeholder>Select a delivery method</template>
+      </VcSelect>
+    `,
+  });
+
+  const createRequiredWrapper = createWrapperFactory(mount, RequiredHost, {
+    attachTo: document.body,
+    global: {
+      components: {
+        VcButton,
+        VcCheckbox,
+        VcDropdownMenu,
+        VcIcon,
+        VcInput,
+        VcInputDetails,
+        VcLabel,
+        VcMenuItem,
+        VcPopover,
+        VcScrollbar,
+        VcTooltip,
+      },
+    },
+  });
+
+  // aria-required is not allowed on role="button" (axe aria-allowed-attr).
+  it("keeps aria-required off the slotted role=button trigger", () => {
+    const wrapper = createRequiredWrapper({ props: { slotted: true } });
+    const trigger = wrapper.get('.vc-select__button[role="button"]');
+
+    expect(trigger.attributes()).not.toHaveProperty("aria-required");
+  });
+
+  it("keeps aria-required on the combobox trigger", () => {
+    const wrapper = createRequiredWrapper();
+
+    expect(wrapper.get('[role="combobox"]').attributes("aria-required")).toBe("true");
+  });
+});
