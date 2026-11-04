@@ -37,6 +37,7 @@ type PanelPropsType = {
   compact?: boolean;
   withTable?: boolean;
   withTiles?: boolean;
+  testId?: string;
 };
 
 function mountPanel(props: PanelPropsType = {}, slots = {}) {
@@ -122,6 +123,25 @@ describe("ReportingPanel", () => {
     expect(chart.props("months")).toHaveLength(3);
   });
 
+  it("reads figures fetched before midnight with today's month states when the windows stay the same", () => {
+    state.today = new Date(2026, 2, 31).getTime();
+    const data = dataFor("q1");
+    state.today = new Date(2026, 3, 1).getTime();
+
+    const wrapper = mountPanel({ period: "q1", data });
+    const months = wrapper.findComponent({ name: "ReportingChart" }).props("months");
+    const tiles = wrapper.findAllComponents({ name: "ReportingKpiTile" }).map((tile) => tile.props("testId"));
+
+    expect(months.map((month: { state: string }) => month.state)).toEqual(["closed", "closed", "closed"]);
+    expect(tiles).not.toContain("reporting-month-tile");
+  });
+
+  it("treats a loading left undefined as not loading", () => {
+    const charts = mountPanel({ loading: undefined }).findAllComponents({ name: "ReportingChart" });
+
+    expect(charts.map((chart) => chart.props("loading"))).toEqual([false, false]);
+  });
+
   it("shows both charts loading while a new period loads", () => {
     const charts = mountPanel({ loading: true }).findAllComponents({ name: "ReportingChart" });
 
@@ -183,6 +203,14 @@ describe("ReportingPanel", () => {
 
     expect(first).toMatch(/^reporting-period-/);
     expect(first).not.toBe(second);
+  });
+
+  it("prefixes its test ids with the given one", () => {
+    const wrapper = mountPanel({ testId: "dashboard-report" });
+    const [sales] = wrapper.findAllComponents({ name: "ReportingKpiTile" });
+
+    expect(wrapper.find("[data-test-id='dashboard-report-tiles-section']").exists()).toBe(true);
+    expect(sales.props("testId")).toBe("dashboard-report-sales-tile");
   });
 
   it("marks itself compact for a narrow column", () => {

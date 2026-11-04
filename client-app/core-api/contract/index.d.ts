@@ -6071,8 +6071,10 @@ declare const REPORTING_PERIODS: readonly ["6m", "12m", "year", "q1", "q2", "q3"
 type ReportingPeriodType = (typeof REPORTING_PERIODS)[number];
 declare const REPORTING_DEFAULT_PERIOD: ReportingPeriodType;
 declare function isReportingPeriod(value: unknown): value is ReportingPeriodType;
+declare const MONTH_SLOT_INDEXES: readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+type ReportingSlotIndexType = (typeof MONTH_SLOT_INDEXES)[number];
 /** A caller's query carries this many month slots; no period is longer. */
-declare const REPORTING_MONTH_SLOTS = 12;
+declare const REPORTING_MONTH_SLOTS: 12;
 type ReportingMonthStateType = "closed" | "current" | "upcoming";
 type ReportingMonthSlotType = {
     year: number;
@@ -6128,7 +6130,11 @@ declare function buildReportingPlan(period: ReportingPeriodType, now?: Date): Re
 type ReportingVariablesType = {
     prevFrom: string;
     prevTo: string;
-} & Record<`use${number}`, boolean> & Record<`${"from" | "to" | "lyFrom" | "lyTo"}${number}`, string | undefined>;
+} & {
+    [I in ReportingSlotIndexType as `use${I}`]: boolean;
+} & {
+    [I in ReportingSlotIndexType as `${"from" | "to" | "lyFrom" | "lyTo"}${I}`]?: string;
+};
 declare function buildReportingVariables(plan: ReportingPlanType): ReportingVariablesType;
 type ReportingStatisticsSlotType = {
     total: {
@@ -6162,6 +6168,8 @@ interface IProps {
     withTable?: boolean;
     /** The KPI tiles; off where the page already shows the same figures. */
     withTiles?: boolean;
+    /** Prefixes every test id inside the panel, so two panels on one page keep theirs apart. */
+    testId?: string;
 }
 type __VLS_Props = IProps;
 type __VLS_ModelProps = {
@@ -6178,6 +6186,8 @@ declare const __VLS_base: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {},
     "onUpdate:period"?: ((value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any) | undefined;
 }>, {
     data: ReportingDataType;
+    testId: string;
+    loading: boolean;
     withTable: boolean;
     withTiles: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;

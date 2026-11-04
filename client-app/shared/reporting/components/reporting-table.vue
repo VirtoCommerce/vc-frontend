@@ -1,5 +1,5 @@
 <template>
-  <details class="reporting-table" data-test-id="reporting-table-section">
+  <details class="reporting-table" :data-test-id="testId">
     <summary class="reporting-table__toggle">{{ t("shared.reporting.table.toggle") }}</summary>
 
     <VcTable
@@ -63,6 +63,7 @@ interface IProps {
   months: ReportingMonthType[];
   currencyCode: string;
   loading?: boolean;
+  testId?: string;
 }
 
 type RowType = {

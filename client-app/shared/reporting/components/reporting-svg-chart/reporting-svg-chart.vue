@@ -136,20 +136,20 @@
           <template #default="{ triggerProps }">
             <!-- A column only shows its figures, so it drops the button semantics the trigger props give it. -->
             <svg
-              :ref="(element) => setHitElement(column.index, element)"
+              :ref="(element) => setHitElement(column.category.id, element)"
               class="reporting-svg-chart__hit-area"
               :style="{ height: `${baseline - hitTop(column)}px` }"
               v-bind="triggerProps"
               role="img"
               :aria-expanded="undefined"
               :aria-controls="undefined"
-              :tabindex="column.index === tabStop ? 0 : -1"
+              :tabindex="column.category.id === tabStop ? 0 : -1"
               :aria-label="column.category.label"
               @mouseenter="activate(column.index)"
               @mouseleave="deactivate(column.index)"
-              @focusin="onHitFocus(column.index)"
+              @focusin="onHitFocus(column)"
               @focusout="deactivate(column.index)"
-              @keydown="onHitKeydown($event, column.index)"
+              @keydown="onHitKeydown($event, column.category.id)"
             />
           </template>
 
@@ -363,38 +363,37 @@ function deactivate(index: number): void {
   }
 }
 
-// One tab stop for the whole chart (the last focused column); the arrow keys move between columns.
-const focusedIndex = ref<number | null>(null);
-const dataIndexes = computed(() => dataColumns.value.map((column) => column.index));
+// One tab stop for the whole chart (the last focused column); the arrow keys move between columns. Columns are
+// tracked by category id: when the period changes, a month keeps its id while its index shifts.
+const focusedId = ref<string>();
+const dataIds = computed(() => dataColumns.value.map((column) => column.category.id));
 const tabStop = computed(() =>
-  focusedIndex.value !== null && dataIndexes.value.includes(focusedIndex.value)
-    ? focusedIndex.value
-    : dataIndexes.value[0],
+  focusedId.value !== undefined && dataIds.value.includes(focusedId.value) ? focusedId.value : dataIds.value[0],
 );
 
-const hitElements = new Map<number, SVGSVGElement>();
+const hitElements = new Map<string, SVGSVGElement>();
 
-function setHitElement(index: number, element: Element | ComponentPublicInstance | null): void {
+function setHitElement(id: string, element: Element | ComponentPublicInstance | null): void {
   if (element instanceof SVGSVGElement) {
-    hitElements.set(index, element);
+    hitElements.set(id, element);
   } else {
-    hitElements.delete(index);
+    hitElements.delete(id);
   }
 }
 
-function onHitFocus(index: number): void {
-  focusedIndex.value = index;
-  activate(index);
+function onHitFocus(column: ColumnType): void {
+  focusedId.value = column.category.id;
+  activate(column.index);
 }
 
-function onHitKeydown(event: KeyboardEvent, index: number): void {
-  const indexes = dataIndexes.value;
-  const position = indexes.indexOf(index);
-  const targets: Record<string, number | undefined> = {
-    ArrowLeft: indexes[position - 1],
-    ArrowRight: indexes[position + 1],
-    Home: indexes[0],
-    End: indexes.at(-1),
+function onHitKeydown(event: KeyboardEvent, id: string): void {
+  const ids = dataIds.value;
+  const position = ids.indexOf(id);
+  const targets: Record<string, string | undefined> = {
+    ArrowLeft: ids[position - 1],
+    ArrowRight: ids[position + 1],
+    Home: ids[0],
+    End: ids.at(-1),
   };
   if (!(event.key in targets)) {
     return;

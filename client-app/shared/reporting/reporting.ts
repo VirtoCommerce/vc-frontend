@@ -15,8 +15,12 @@ export const REPORTING_PERCENT_DIGITS = 1;
 /** Shown for an amount or a change that has no value (no orders, no baseline), never as $0 or NaN. */
 export const REPORTING_NO_VALUE = "—";
 
+// The slot count and the slot index type both come from this list.
+const MONTH_SLOT_INDEXES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+type ReportingSlotIndexType = (typeof MONTH_SLOT_INDEXES)[number];
+
 /** A caller's query carries this many month slots; no period is longer. */
-export const REPORTING_MONTH_SLOTS = 12;
+export const REPORTING_MONTH_SLOTS = MONTH_SLOT_INDEXES.length;
 
 const MONTHS_IN_QUARTER = 3;
 const ROLLING_MONTHS: Partial<Record<ReportingPeriodType, number>> = { "6m": 6, "12m": 12 };
@@ -333,15 +337,18 @@ export function toReportingMonths(data: Pick<ReportingDataType, "plan" | "months
  * `use{i}` / `from{i}` / `to{i}` / `lyFrom{i}` / `lyTo{i}` per slot and `prevFrom` / `prevTo`. A slot the period leaves
  * empty, or a month to come, is not asked for.
  */
-export type ReportingVariablesType = { prevFrom: string; prevTo: string } & Record<`use${number}`, boolean> &
-  Record<`${"from" | "to" | "lyFrom" | "lyTo"}${number}`, string | undefined>;
+export type ReportingVariablesType = { prevFrom: string; prevTo: string } & {
+  [I in ReportingSlotIndexType as `use${I}`]: boolean;
+} & {
+  [I in ReportingSlotIndexType as `${"from" | "to" | "lyFrom" | "lyTo"}${I}`]?: string;
+};
 
 export function buildReportingVariables(plan: ReportingPlanType): ReportingVariablesType {
   const variables: Record<string, string | boolean | undefined> = {
     prevFrom: plan.previous.from,
     prevTo: plan.previous.to,
   };
-  for (let i = 0; i < REPORTING_MONTH_SLOTS; i++) {
+  for (const i of MONTH_SLOT_INDEXES) {
     const month = plan.months.at(i);
     variables[`use${i}`] = month !== undefined && month.state !== "upcoming";
     variables[`from${i}`] = month?.from;

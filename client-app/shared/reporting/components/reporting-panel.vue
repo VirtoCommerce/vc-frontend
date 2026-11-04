@@ -14,7 +14,7 @@
         />
       </fieldset>
 
-      <div v-if="$slots.actions" class="reporting-panel__actions" data-test-id="reporting-actions-section">
+      <div v-if="$slots.actions" class="reporting-panel__actions" :data-test-id="`${testId}-actions-section`">
         <slot name="actions" />
       </div>
     </div>
@@ -22,28 +22,28 @@
     <VcEmptyView v-if="error && !loading" :text="t('shared.reporting.load_failed')" variant="error" />
 
     <template v-else>
-      <div v-if="withTiles" class="reporting-panel__tiles" data-test-id="reporting-tiles-section">
+      <div v-if="withTiles" class="reporting-panel__tiles" :data-test-id="`${testId}-tiles-section`">
         <VcLoaderOverlay :visible="loading" />
 
         <ReportingKpiTile
           :label="t('shared.reporting.kpi.sales', { period: periodLabel })"
           :value="formatters.compactMoney(summary.revenue, currencyCode)"
           :change="summary.revenueChange"
-          test-id="reporting-sales-tile"
+          :test-id="`${testId}-sales-tile`"
         />
 
         <ReportingKpiTile
           :label="t('shared.reporting.kpi.orders', { period: periodLabel })"
           :value="n(summary.orders)"
           :change="summary.ordersChange"
-          test-id="reporting-orders-tile"
+          :test-id="`${testId}-orders-tile`"
         />
 
         <ReportingKpiTile
           :label="t('shared.reporting.kpi.aov', { period: periodLabel })"
           :value="formatters.money(summary.periodAov, currencyCode)"
           :change="summary.aovChange"
-          test-id="reporting-aov-tile"
+          :test-id="`${testId}-aov-tile`"
         />
 
         <ReportingKpiTile
@@ -52,7 +52,7 @@
           :value="currentMonthTile.value"
           :caption="currentMonthTile.caption"
           :progress="currentMonthTile.progress"
-          test-id="reporting-month-tile"
+          :test-id="`${testId}-month-tile`"
         />
       </div>
 
@@ -64,7 +64,7 @@
         :months="months"
         :currency-code="currencyCode"
         :loading="loading"
-        test-id="reporting-sales"
+        :test-id="`${testId}-sales`"
       />
 
       <ReportingChart
@@ -75,12 +75,18 @@
         :months="months"
         :currency-code="currencyCode"
         :loading="loading"
-        test-id="reporting-aov"
+        :test-id="`${testId}-aov`"
       />
 
-      <ReportingTable v-if="withTable" :months="months" :currency-code="currencyCode" :loading="loading" />
+      <ReportingTable
+        v-if="withTable"
+        :months="months"
+        :currency-code="currencyCode"
+        :loading="loading"
+        :test-id="`${testId}-table-section`"
+      />
 
-      <p class="reporting-panel__footnote" data-test-id="reporting-footnote-label">
+      <p class="reporting-panel__footnote" :data-test-id="`${testId}-footnote-label`">
         <VcIcon name="info" size="xs" />
 
         {{ footnote }}
@@ -120,12 +126,16 @@ interface IProps {
   withTable?: boolean;
   /** The KPI tiles; off where the page already shows the same figures. */
   withTiles?: boolean;
+  /** Prefixes every test id inside the panel, so two panels on one page keep theirs apart. */
+  testId?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   data: undefined,
+  loading: false,
   withTable: true,
   withTiles: true,
+  testId: "reporting",
 });
 
 // The owner decides where the period lives: a page can keep it in the URL, a widget in the browser.
@@ -164,25 +174,27 @@ const aovWithLastYear = useLocalStorage("vc-reporting-aov-last-year", false);
 
 const plan = useReportingPlan(period);
 
-// The figures stay paired with the plan they were fetched for: their month slots are positional.
-const fetchedPlan = computed(() => props.data?.plan ?? plan.value);
-const months = computed(() => toReportingMonths(props.data ?? { plan: plan.value, months: [] }));
+/**
+ * The plan the figures on screen are read against. Their month slots are positional, so it is the plan they were
+ * fetched for until a newly picked period loads. A plan over the same windows (12 months and the current year in
+ * December, a quarter that has just ended) brings no new figures, so the current plan reads them: its period and month
+ * states are today's.
+ */
+const shownPlan = computed(() => {
+  const fetchedPlan = props.data?.plan;
+  return fetchedPlan && !isSameWindows(fetchedPlan, plan.value) ? fetchedPlan : plan.value;
+});
+const months = computed(() =>
+  toReportingMonths({ plan: shownPlan.value, months: props.data?.months ?? [], previous: props.data?.previous }),
+);
 const summary = computed(() => summarizeReporting(months.value));
 const currencyCode = computed(() => props.data?.currencyCode ?? globals.currencyCode);
 
-/**
- * The period of the figures on screen: until a newly picked period loads, still the previous one. A period over the
- * same months (12 months and the current year in December) asks for the same windows, so no new figures come.
- */
-const reportPeriod = computed(() =>
-  isSameWindows(fetchedPlan.value, plan.value) ? period.value : fetchedPlan.value.period,
-);
-
 // The tiles and charts are labelled with the period of their figures, which trail the tabs while a new one loads.
-const periodLabel = computed(() => t(PERIOD_LABELS[reportPeriod.value]));
+const periodLabel = computed(() => t(PERIOD_LABELS[shownPlan.value.period]));
 
 const chartPeriodTitle = computed(() =>
-  t(CHART_PERIOD_TITLES[reportPeriod.value], {
+  t(CHART_PERIOD_TITLES[shownPlan.value.period], {
     period: periodLabel.value,
     year: months.value[0]?.year ?? new Date(today.value).getFullYear(),
   }),
