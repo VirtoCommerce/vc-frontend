@@ -168,9 +168,9 @@ const setPage = (page: number) => {
   // Override the two knobs as a pair: the ink default follows the palette and flips in dark.
   --page-active-bg: var(--vc-pagination-page-active-bg, theme("colors.primary.500"));
   --page-active-text: var(--vc-pagination-page-active-text, theme("colors.additional.50"));
-  // The ring's colours live here because a design may not set colour: it only gives the ring a width.
-  --page-border-color: var(--vc-pagination-page-border-color, theme("colors.neutral.200"));
-  --page-hover-border-color: var(--vc-pagination-page-hover-border-color, theme("colors.primary.200"));
+  // No ring colour of its own: the ring has no width unless a design gives it one, along with its colours.
+  --page-border-color: var(--vc-pagination-page-border-color, theme("borderColor.DEFAULT"));
+  --page-hover-border-color: var(--vc-pagination-page-hover-border-color, var(--page-border-color));
 
   @apply flex max-w-full;
 
@@ -232,12 +232,7 @@ const setPage = (page: number) => {
     &--ellipsis {
       @apply pointer-events-none border-0;
 
-      // A design may not set colour, so it only switches the muted ink on: 0 keeps the inherited text, 1 is neutral-400.
-      color: color-mix(
-        in srgb,
-        theme("colors.neutral.400") calc(var(--vc-pagination-ellipsis-muted, 0) * 100%),
-        currentColor
-      );
+      color: var(--vc-pagination-ellipsis-color, currentColor);
     }
   }
 
