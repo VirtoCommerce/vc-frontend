@@ -30,7 +30,13 @@
       <div class="product-price-block__actions">
         <AddToList class="product-price-block__add-to-list" :product="product" :icon-size="20" />
 
-        <AddToCompareCatalog class="product-price-block__add-to-compare" :product="product" :icon-size="20" />
+        <ExtensionPointList
+          category="productActions"
+          class="product-price-block__action"
+          :product="product"
+          :configuration-sections="configurationSections"
+          :condition-params="product"
+        />
 
         <VcPopover class="product-price-block__share-popover" :offset-options="8" z-index="10" enable-teleport>
           <template #default="{ triggerProps, opened }">
@@ -115,8 +121,8 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { stringFormat } from "@/core/utilities";
-import { useConfigurableLineItemId } from "@/shared/catalog/composables";
-import { AddToCompareCatalog } from "@/shared/compare/components";
+import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
@@ -138,7 +144,13 @@ const route = useRoute();
 const { t } = useI18n();
 
 const isMobile = toRef(props, "isMobile");
+const productId = computed(() => props.product.id);
 const { configurableLineItemId } = useConfigurableLineItemId();
+const { selectedConfigurationInput } = useConfigurableProduct(productId);
+
+const configurationSections = computed(() =>
+  selectedConfigurationInput.value.filter((section) => section.type !== CONFIGURABLE_SECTION_TYPES.file),
+);
 
 const createNewConfigurationRoute = computed(() => {
   const query = Object.fromEntries(
@@ -171,7 +183,7 @@ function print() {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .product-price-block {
   &__configuration-checklist:not(:first-child) {
     @apply mt-4;
@@ -192,13 +204,18 @@ function print() {
   }
 
   &__actions {
-    @apply flex select-none divide-x print:hidden;
+    @apply grid select-none auto-cols-fr grid-flow-col divide-x print:hidden;
   }
 
   &__add-to-list,
-  &__add-to-compare,
+  &__action,
   &__share-popover {
-    @apply w-1/5 hover:bg-neutral-50;
+    @apply hover:bg-neutral-50;
+  }
+
+  // A plugin's action button draws its icon at the size the host gives its own.
+  &__action {
+    --vc-icon-size: 1.25rem;
   }
 
   &__share-button {
@@ -211,7 +228,7 @@ function print() {
 
   &__mail-link,
   &__print-button {
-    @apply flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 text-primary hover:bg-neutral-50;
+    @apply flex cursor-pointer items-center justify-center px-2 py-4 text-primary hover:bg-neutral-50;
   }
 
   &__share-content {

@@ -68,8 +68,11 @@ Every field is optional. `definePluginManifest({})` declares nothing.
 | `block`   | holds a whole region, with a loader                       | a region that must not show without you (payment) |
 | `none`    | holds nothing                                             | data you contribute to host markup                |
 
+A `reserve` slot with no host markup of its own to keep is sized by the host: `productCard/card-button` holds a
+button's height, `productActions/<name>` one icon button.
+
 Not declarable, because nothing about them shows before the code runs: locales, Apollo cache policies, wishlist
-sharing scopes, anything the plugin keeps to itself.
+sharing scopes, product configuration sources, anything the plugin keeps to itself.
 
 ## 3. Conditions
 
@@ -97,7 +100,7 @@ sharing scopes, anything the plugin keeps to itself.
 
 | Slots                                                                                  | Data                            |
 | -------------------------------------------------------------------------------------- | ------------------------------- |
-| `productCard/*`, `productPage/*`                                                       | the `Product`                   |
+| `productCard/*`, `productPage/*`, `productActions/*`                                   | the `Product`                   |
 | `paymentPage/*`, `orderPaymentPage/*`                                                  | `{ order, paymentTypeName }`    |
 | `cartPayment/*`                                                                        | `{ paymentTypeName }`           |
 | `orderDetails/*`                                                                       | the `CustomerOrderType`         |

@@ -32,6 +32,10 @@ export {
   VcLoaderOverlay,
   VcMenuItem,
   VcPopover,
+  VcProductActions,
+  VcProductActionsButton,
+  VcProductPrice,
+  VcProductTitle,
   VcRating,
   VcSelect,
   VcTabSwitch,
@@ -47,6 +51,7 @@ export {
   VcBreadcrumbs,
   VcCheckbox,
   VcCheckboxGroup,
+  VcContainer,
   VcIcon,
   VcImage,
   VcInputDetails,
@@ -79,11 +84,18 @@ export { VcLayout } from "@/ui-kit/components/templates";
  * and the root export is types-only outside the MF shared scope.
  */
 export { default as OrderStatus } from "@/shared/account/components/order-status.vue";
+/**
+ * The stock chip the host's product cards and pages show: digital, in stock (with the quantity) or out of stock.
+ * Props are contract.
+ */
+export { default as InStock } from "@/shared/catalog/components/in-stock.vue";
 
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
 export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+// What the host passes to a `productActions` entry, and the count a `headerMenu` or `mobileMenu` entry contributes.
+export type { MenuCountContributionType, ProductActionPropsType } from "@/shared/common/types/extensionRegistryMap";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -128,6 +140,14 @@ export { usePageHead } from "@/core/composables/usePageHead";
 // back/forward. Each write pushes a history entry; `updateMethod: "replace"` overwrites it instead.
 export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
+// The cart the header counts: an add through it updates the header, and `cart.id` names the cart.
+export { useShortCart } from "@/shared/cart/composables/useCart";
+// The quantity rules the host's add-to-cart controls validate with: min, max, pack size, available stock.
+export { useQuantityValidationSchema } from "@/ui-kit/composables/useQuantityValidationSchema";
+// A URL parameter a plugin owns preselects the product page's configuration.
+export { registerProductConfigurationSource } from "@/shared/catalog/composables/useProductConfigurationSources";
+export type { ProductConfigurationSourceType } from "@/shared/catalog/composables/useProductConfigurationSources";
+export type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";

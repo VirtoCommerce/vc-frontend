@@ -150,7 +150,7 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useBreakpoints, useElementVisibility, useLocalStorage } from "@vueuse/core";
+import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import productTemplateDefault from "@/config/product-default.json";
@@ -159,11 +159,7 @@ import { useBreadcrumbs, usePageTitle, useSeoKeywords } from "@/core/composables
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import {
-  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
-  CONFIGURATION_URL_SEARCH_PARAM,
-  LINE_ITEM_ID_URL_SEARCH_PARAM,
-} from "@/core/constants";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -190,6 +186,7 @@ import {
   useProducts,
   useRecommendedProducts,
   useConfigurableProduct,
+  useProductConfigurationSources,
   useProductPickupLocations,
   useProductVariations,
   useLoyaltyCatalogCurrency,
@@ -204,7 +201,7 @@ import { useAnchorScroll } from "@/shared/static-content";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ISortInfo } from "@/core/types";
-import type { FiltersDisplayOrderType, LocalConfigurationType, ProductsFiltersType } from "@/shared/catalog";
+import type { FiltersDisplayOrderType, ProductsFiltersType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
@@ -226,7 +223,6 @@ interface IProps {
   filtersDisplayOrder?: FiltersDisplayOrderType;
 }
 
-const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
@@ -245,6 +241,7 @@ const {
   currencyCodeOverride: loyaltyCurrencyOverride,
 });
 const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId);
+const { initialConfiguration } = useProductConfigurationSources(productId);
 const {
   fetchingProducts: fetchingVariations,
   products: variations,
@@ -282,16 +279,6 @@ useAnchorScroll(() => product.value);
 
 const { cart, loading: loadingCart } = useShortCart();
 const { updateLocalizedUrl } = useLanguages();
-
-const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
-  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
-  [],
-);
-
-const initialConfiguration = computed(() => {
-  const configurationLocal = localProductConfigurations.value.find((config) => config.localId === configurationId);
-  return configurationLocal?.configuration;
-});
 
 const selectedVariationName = computed(() => {
   return applicableVariations.value.length === 1 ? applicableVariations.value[0].name : undefined;

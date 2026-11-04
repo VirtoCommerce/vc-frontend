@@ -66,8 +66,8 @@
 ### 3. Contributing data instead of markup
 
 Some extension points are host chrome: the host wants to keep its own markup and take only a value
-from you (the mobile menu's "My customers" link takes a count badge). Register a `use()` instead of
-a component:
+from you (a link in the desktop header or the mobile menu takes a count badge, `{ count }`).
+Register a `use()` instead of a component:
 
 ```ts
 // The id belongs to the plugin, so the plugin owns the constant — as `sales-rep` does with
@@ -76,6 +76,8 @@ a component:
 // compile error, not an `undefined` you find out about when the badge never appears.
 const { registerContribution } = useExtensionRegistry();
 registerContribution("mobileMenu", MY_COUNT_ID, { use: useMyCount });
+// The same link in the desktop header:
+registerContribution("headerMenu", MY_COUNT_ID, { use: useMyCount });
 ```
 
 The rules, because they are not obvious:
