@@ -11,7 +11,9 @@ import {
   checkPresets,
   checkPresetSelector,
   checkTokensSelector,
+  colorSemantics,
   definedBlocks,
+  sourceBlocks,
 } from "./check-designs.js";
 import type { IDesignCheckOptions } from "./check-designs.js";
 
@@ -323,7 +325,11 @@ ${loads("dark")}  }
         write(path.join(root, file), text);
       }
 
-      return { designsDir, sources: Object.keys(SOURCES).map((file) => path.join(root, file)) };
+      return {
+        designsDir,
+        blocks: sourceBlocks(Object.keys(SOURCES).map((file) => path.join(root, file))),
+        semantics: colorSemantics(),
+      };
     }
 
     const check = async (files: Record<string, string | null>) => (await checkDesigns(designs(files))).errors;
@@ -1034,7 +1040,7 @@ ${loads("dark")}  }
         }
       }
 
-      return (await checkPresets({ presetsDir, sources })).errors;
+      return (await checkPresets({ presetsDir, blocks: sourceBlocks(sources), semantics: colorSemantics() })).errors;
     }
 
     it("passes recolours of kit and app blocks in light and dark, from preset variables", async () => {
@@ -1076,13 +1082,18 @@ ${loads("dark")}  }
       root = mkdtempSync(path.join(tmpdir(), "presets-"));
       writeFileSync(path.join(root, "mercury.json"), "{}");
 
-      expect(await checkPresets({ presetsDir: root, sources: [] })).toEqual({ errors: [], fileCount: 0 });
+      expect(await checkPresets({ presetsDir: root, blocks: new Set(), semantics: new Set() })).toEqual({
+        errors: [],
+        fileCount: 0,
+      });
     });
 
     it("reports a missing presets folder", async () => {
       root = mkdtempSync(path.join(tmpdir(), "presets-"));
 
-      expect(await checkPresets({ presetsDir: path.join(root, "missing"), sources: [] })).toEqual({
+      expect(
+        await checkPresets({ presetsDir: path.join(root, "missing"), blocks: new Set(), semantics: new Set() }),
+      ).toEqual({
         errors: [expect.stringContaining("missing is missing; the presets are not where this check looks")],
         fileCount: 0,
       });

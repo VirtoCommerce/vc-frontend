@@ -17,17 +17,18 @@ import type { Exception, Importer } from "sass";
 
 export interface IDesignCheckOptions {
   designsDir: string;
-  /** Stylesheets and components that define the blocks. */
-  sources: string[];
-  /** Where the semantic colours (`--link-color` …) are declared; a colour may read them. */
-  colorsFile?: string;
+  /** The blocks the stylesheets and components define, from `sourceBlocks`. */
+  blocks: Set<string>;
+  /** The semantic colours (`--link-color` …) a colour may read, from `colorSemantics`. */
+  semantics: ReadonlySet<string>;
 }
 
 export interface IPresetCheckOptions {
   presetsDir: string;
-  /** Stylesheets and components that define the blocks. */
-  sources: string[];
-  colorsFile?: string;
+  /** The blocks the stylesheets and components define, from `sourceBlocks`. */
+  blocks: Set<string>;
+  /** The semantic colours (`--link-color` …) a colour may read, from `colorSemantics`. */
+  semantics: ReadonlySet<string>;
 }
 
 export interface IDesignCheckResult {
@@ -191,7 +192,7 @@ export function definedBlocks(sources: { file: string; css: string }[]): Set<str
   return blocks;
 }
 
-function sourceBlocks(sources: string[]): Set<string> {
+export function sourceBlocks(sources: string[]): Set<string> {
   const blocks = definedBlocks(sources.map((file) => ({ file, css: styleText(file) })));
 
   // A component is a block named after its file, styled or not (VcLink has no <style>).
@@ -210,18 +211,24 @@ function hasBlockClass(compound: selectorParser.Node[], block: string): boolean 
   return compound.some((node) => node.type === "class" && belongsToBlock(node.value, block));
 }
 
+function isHtml(node: selectorParser.Node): boolean {
+  return node.type === "tag" && node.value.toLowerCase() === "html";
+}
+
+function isDark(node: selectorParser.Node): boolean {
+  return node.type === "class" && node.value === "dark";
+}
+
 function prefixKind(
   compound: selectorParser.Node[],
   design: string,
   attribute = "data-design",
 ): FileKindType | undefined {
-  const isHtml = (node: selectorParser.Node) => node.type === "tag" && node.value.toLowerCase() === "html";
   const isDesign = (node: selectorParser.Node) =>
     node.type === "attribute" &&
     node.attribute.toLowerCase() === attribute &&
     node.operator === "=" &&
     node.value === design;
-  const isDark = (node: selectorParser.Node) => node.type === "class" && node.value === "dark";
   const count = (test: (node: selectorParser.Node) => boolean) => compound.filter(test).length;
 
   if (count(isHtml) !== 1 || count(isDesign) !== 1 || count(isDark) > 1) {
@@ -338,14 +345,11 @@ export function checkBlockSelector(
 
   selectorParser((root) => {
     root.walk((node) => {
-      if (
-        (node.type === "tag" && node.value.toLowerCase() === "html") ||
-        (node.type === "attribute" && node.attribute.toLowerCase() === "data-design")
-      ) {
+      if (isHtml(node) || (node.type === "attribute" && node.attribute.toLowerCase() === "data-design")) {
         namesWiring = true;
       }
 
-      if (node.type === "class" && node.value === "dark") {
+      if (isDark(node)) {
         namesDark = true;
       }
     });
@@ -369,8 +373,8 @@ export function checkBlockSelector(
 
 function isWiring(node: selectorParser.Node): boolean {
   return (
-    (node.type === "tag" && node.value.toLowerCase() === "html") ||
-    (node.type === "class" && node.value === "dark") ||
+    isHtml(node) ||
+    isDark(node) ||
     (node.type === "attribute" && ["data-design", "data-preset"].includes(node.attribute.toLowerCase()))
   );
 }
@@ -583,7 +587,7 @@ function setsColor(prop: string, value: string): boolean {
 }
 
 /** The semantic colours `_colors.scss` derives from the preset's keys, `--link-color` and the like. */
-function colorSemantics(file: string): Set<string> {
+export function colorSemantics(file = COLORS_FILE): Set<string> {
   const names = new Set<string>();
 
   if (existsSync(file)) {
@@ -771,10 +775,7 @@ function colorProblem(
   const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(name);
   const isShadowToken = !isPreset && SHADOW_TOKEN.test(name);
   const isColor =
-    isShadowToken ||
-    COLOR_PROPERTY.test(unescapeIdent(prop).toLowerCase()) ||
-    setsColor(prop, value) ||
-    isColorToken(prop);
+    isShadowToken || COLOR_PROPERTY.test(name.toLowerCase()) || setsColor(prop, value) || isColorToken(prop);
   const colors = DEFAULT_SHADOW_TOKEN.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value;
   const valueProblem = isColor ? checkColorValue(colors, semantics) : null;
   const privateProblem = "a private variable; set the component's public --vc-* token, or the property itself";
@@ -1081,8 +1082,8 @@ function designFolders(designsDir: string): string[] {
 
 export async function checkDesigns({
   designsDir,
-  sources,
-  colorsFile = COLORS_FILE,
+  blocks,
+  semantics,
 }: IDesignCheckOptions): Promise<IDesignCheckResult> {
   // A moved folder is reported as a check failure, not as readdirSync's ENOENT stack trace.
   if (!existsSync(designsDir)) {
@@ -1093,8 +1094,6 @@ export async function checkDesigns({
     };
   }
 
-  const blocks = sourceBlocks(sources);
-  const semantics = colorSemantics(colorsFile);
   const folders = designFolders(designsDir);
   const errors: string[] = [];
   let fileCount = 0;
@@ -1177,8 +1176,8 @@ function checkPresetFile(
 /** Every `<name>.scss` next to the preset JSON files: a preset's optional stylesheet. */
 export async function checkPresets({
   presetsDir,
-  sources,
-  colorsFile = COLORS_FILE,
+  blocks,
+  semantics,
 }: IPresetCheckOptions): Promise<IPresetCheckResult> {
   // A moved folder fails the check, as in checkDesigns, instead of passing with nothing checked.
   if (!existsSync(presetsDir)) {
@@ -1193,8 +1192,6 @@ export async function checkPresets({
     return { errors: [], fileCount: 0 };
   }
 
-  const blocks = sourceBlocks(sources);
-  const semantics = colorSemantics(colorsFile);
   const errors: string[] = [];
 
   const compiled = await Promise.all(
@@ -1240,8 +1237,10 @@ async function main(): Promise<void> {
       "client-app/assets/styles/_custom.scss",
     ],
   });
-  const designs = await checkDesigns({ designsDir: "client-app/designs", sources });
-  const presets = await checkPresets({ presetsDir: "client-app/assets/presets", sources });
+  const blocks = sourceBlocks(sources);
+  const semantics = colorSemantics();
+  const designs = await checkDesigns({ designsDir: "client-app/designs", blocks, semantics });
+  const presets = await checkPresets({ presetsDir: "client-app/assets/presets", blocks, semantics });
   const errors = [...designs.errors, ...presets.errors];
 
   if (errors.length) {
