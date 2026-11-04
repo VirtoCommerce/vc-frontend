@@ -182,7 +182,6 @@
     "@graphql-codegen/plugin-helpers/lodash": "^4.18.1",
     "@module-federation/dts-plugin/adm-zip": "^0.6.0",
     "@module-federation/dts-plugin/undici": "^7.29.0",
-    "skyflow-js/lodash": "^4.18.1",
     "uri-js": "npm:uri-js-replace@^1.0.0"
   },
   "lint-staged": {

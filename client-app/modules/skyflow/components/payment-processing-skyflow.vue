@@ -108,7 +108,6 @@ import type {
 } from "@/core/api/graphql/types";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { ComposableContainer, ComposableElement, InsertRequest as IInsertRecordInput } from "skyflow-js";
-import type { IInsertResponse } from "skyflow-js/types/core/types";
 import PaymentPolicies from "@/shared/payment/components/payment-policies.vue";
 
 const emit = defineEmits<IPaymentMethodEmits>();
@@ -575,9 +574,9 @@ async function payWithNewCreditCard(
   loading.value = true;
 
   try {
-    const res = (await fullCardCollector.collect({
+    const res = await fullCardCollector.collect({
       additionalFields: getAdditionalRecords(),
-    })) as IInsertResponse;
+    });
 
     if (!res?.records) {
       emit("fail");
