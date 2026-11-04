@@ -20,6 +20,8 @@ export interface ILayerCheckOptions {
   stylesheets: Map<string, string>;
   /** The stylesheets `index.html` links, in load order. */
   loadOrder: string[];
+  /** That `index.html`, as messages name it. */
+  indexFile: string;
 }
 
 export interface ILayerCheckResult {
@@ -116,7 +118,7 @@ function childrenByParent(names: string[]): Map<string, string[]> {
   return children;
 }
 
-/** The same-origin stylesheets an `index.html` links, as paths under `dir`, in load order. */
+/** The root-relative (`/…`) stylesheets an `index.html` links, as paths under `dir`, in load order. */
 export function linkedStylesheets(html: string, dir: string): string[] {
   return [...html.matchAll(STYLESHEET_LINK)]
     .map((link) => HREF.exec(link[0])?.[1])
@@ -124,7 +126,12 @@ export function linkedStylesheets(html: string, dir: string): string[] {
     .map((href) => path.join(dir, href));
 }
 
-export function checkCssLayers({ layersSource, stylesheets, loadOrder }: ILayerCheckOptions): ILayerCheckResult {
+export function checkCssLayers({
+  layersSource,
+  stylesheets,
+  loadOrder,
+  indexFile,
+}: ILayerCheckOptions): ILayerCheckResult {
   const errors: string[] = [];
   const declared = layerNames(postcssScss.parse(layersSource), LAYERS_FILE, errors);
   const declaredChildren = childrenByParent(declared);
@@ -142,7 +149,7 @@ export function checkCssLayers({ layersSource, stylesheets, loadOrder }: ILayerC
   const firstLayered = loadOrder.find((file) => namesByFile.get(path.normalize(file))?.length);
 
   if (!firstLayered) {
-    errors.push(`${distDir}/index.html: no linked stylesheet declares the layer order`);
+    errors.push(`${indexFile}: no linked stylesheet declares the layer order`);
 
     return { errors };
   }
@@ -175,7 +182,9 @@ export function checkCssLayers({ layersSource, stylesheets, loadOrder }: ILayerC
 }
 
 function main(): void {
-  if (!existsSync(path.join(distDir, "index.html"))) {
+  const indexFile = path.join(distDir, "index.html");
+
+  if (!existsSync(indexFile)) {
     console.error(`No build output in "${distDir}". Run \`yarn build\` first.`);
     process.exit(1);
   }
@@ -185,11 +194,12 @@ function main(): void {
       .sort((a, b) => a.localeCompare(b))
       .map((file): [string, string] => [file, readFileSync(file, "utf-8")]),
   );
-  const loadOrder = linkedStylesheets(readFileSync(path.join(distDir, "index.html"), "utf-8"), distDir);
+  const loadOrder = linkedStylesheets(readFileSync(indexFile, "utf-8"), distDir);
   const { errors, firstLayered } = checkCssLayers({
     layersSource: readFileSync(LAYERS_FILE, "utf-8"),
     stylesheets,
     loadOrder,
+    indexFile,
   });
 
   if (errors.length) {

@@ -1,9 +1,15 @@
 // @vitest-environment node
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { checkCssLayers, linkedStylesheets } from "./check-css-layers.js";
+
+const require = createRequire(import.meta.url);
+const { parseLayerOrder } = require("../postcss.sfc-layers.cjs") as {
+  parseLayerOrder: (source: string, file: string) => string[];
+};
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const LAYERS_FILE = "client-app/assets/styles/_layers.scss";
@@ -13,7 +19,12 @@ const FIRST = "dist/assets/index.css";
 const CHUNK = "dist/assets/chunk.css";
 
 function check(sheets: Record<string, string>, loadOrder = [FIRST], layersSource = LAYERS) {
-  return checkCssLayers({ layersSource, stylesheets: new Map(Object.entries(sheets)), loadOrder });
+  return checkCssLayers({
+    layersSource,
+    stylesheets: new Map(Object.entries(sheets)),
+    loadOrder,
+    indexFile: "dist/index.html",
+  });
 }
 
 describe("check-css-layers", () => {
@@ -27,9 +38,8 @@ describe("check-css-layers", () => {
 
     it("passes the real _layers.scss stated as the first sheet", () => {
       const source = readFileSync(path.join(ROOT, LAYERS_FILE), "utf-8");
-      const statements = source.match(/^@layer [^;]+;/gm) ?? [];
+      const statements = parseLayerOrder(source, LAYERS_FILE).map((names) => `@layer ${names};`);
 
-      expect(statements).toHaveLength(3);
       expect(check({ [FIRST]: statements.join("\n") }, [FIRST], source).errors).toEqual([]);
     });
 
@@ -100,7 +110,7 @@ describe("check-css-layers", () => {
   });
 
   describe("linkedStylesheets", () => {
-    it("returns the same-origin stylesheets in load order, under the build directory", () => {
+    it("returns the root-relative stylesheets in load order, under the build directory", () => {
       const html = [
         '<link rel="stylesheet" href="https://cdn.example.com/x.css">',
         '<link rel="stylesheet" crossorigin href="/assets/b.css">',
