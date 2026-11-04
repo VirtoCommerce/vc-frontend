@@ -1141,6 +1141,80 @@
       "price_high_to_low": "Цена: от высокой к низкой",
       "date_new_to_old": "Дата, от новых к старым",
       "date_old_to_new": "Дата: сначала старые"
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Средний чек за период: {aov}",
+        "title": "Средний чек"
+      },
+      "axis": {
+        "aov": "Средний чек, {currency}"
+      },
+      "cancelled_excluded": "Отменённые заказы не учитываются",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "последние 6 месяцев",
+        "twelve_months": "последние 12 месяцев",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, текущий месяц по {today}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_closed": "{from} – {to}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_upcoming": "Этот период ещё не начался.",
+      "kpi": {
+        "aov": "Средний чек · {period}",
+        "month_to_date": "{month} на сегодня · день {day} из {days}",
+        "orders": "Заказы · {period}",
+        "projected": "{share} месяца · прогноз {value}",
+        "sales": "Продажи · {period}",
+        "vs_last_year": "{change} к прошлому году"
+      },
+      "last_year": "Прошлый год",
+      "last_year_toggle": "Показать прошлый год на графике «{chart}»",
+      "legend": {
+        "aov_closed": "Средний чек, закрытые месяцы",
+        "current": "Текущий месяц, на сегодня",
+        "down": "спад",
+        "last_year": "Прошлый год",
+        "projection": "Прогноз на конец месяца",
+        "sales_closed": "Продажи, закрытые месяцы",
+        "up": "рост",
+        "vs_last_year": "к тому же месяцу прошлого года"
+      },
+      "load_failed": "Не удалось загрузить отчёт. Попробуйте позже.",
+      "period_label": "Период",
+      "periods": {
+        "q1": "I кв.",
+        "q2": "II кв.",
+        "q3": "III кв.",
+        "q4": "IV кв.",
+        "six_months": "6 месяцев",
+        "twelve_months": "12 месяцев",
+        "year": "Текущий год"
+      },
+      "sales_chart": {
+        "subtitle": "В среднем {value} за закрытый месяц",
+        "title": "Продажи по месяцам · {period}"
+      },
+      "table": {
+        "aov": "Средний чек",
+        "change": "К прошлому году",
+        "description": "Продажи, заказы и средний чек по месяцам",
+        "last_year": "Тот же месяц прошлого года",
+        "month": "Месяц",
+        "orders": "Заказы",
+        "sales": "Продажи",
+        "toggle": "Показать таблицей"
+      },
+      "tooltip": {
+        "aov": "Средний чек",
+        "last_year_aov": "Средний чек, {month}",
+        "last_year_revenue": "Выручка, {month}",
+        "projection": "Прогноз на конец месяца",
+        "revenue": "Выручка",
+        "revenue_to_date": "Выручка на сегодня",
+        "vs_month": "К {month}"
+      },
+      "upcoming": "Впереди"
     }
   },
   "pages": {

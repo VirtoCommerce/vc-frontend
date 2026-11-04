@@ -1141,6 +1141,80 @@
       "price_high_to_low": "Prezzo, dal più caro al più economico",
       "date_new_to_old": "Data, dal più recente",
       "date_old_to_new": "Data, dal meno recente al più recente"
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "AOV nel periodo: {aov}",
+        "title": "Valore medio ordine"
+      },
+      "axis": {
+        "aov": "AOV, {currency}"
+      },
+      "cancelled_excluded": "Ordini annullati esclusi",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "ultimi 6 mesi",
+        "twelve_months": "ultimi 12 mesi",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mese corrente fino al {today}. Le vendite sono nette, per data dell'ordine; gli ordini annullati sono esclusi.",
+      "footnote_closed": "{from} – {to}. Le vendite sono nette, per data dell'ordine; gli ordini annullati sono esclusi.",
+      "footnote_upcoming": "Questo periodo non è ancora iniziato.",
+      "kpi": {
+        "aov": "Valore medio ordine · {period}",
+        "month_to_date": "{month} a oggi · giorno {day} di {days}",
+        "orders": "Ordini · {period}",
+        "projected": "{share} del mese · previsione {value}",
+        "sales": "Vendite · {period}",
+        "vs_last_year": "{change} vs anno scorso"
+      },
+      "last_year": "Anno scorso",
+      "last_year_toggle": "Mostra l'anno scorso nel grafico «{chart}»",
+      "legend": {
+        "aov_closed": "AOV, mesi chiusi",
+        "current": "Questo mese, a oggi",
+        "down": "calo",
+        "last_year": "Anno scorso",
+        "projection": "Previsione a fine mese",
+        "sales_closed": "Vendite, mesi chiusi",
+        "up": "aumento",
+        "vs_last_year": "vs stesso mese dell'anno scorso"
+      },
+      "load_failed": "Impossibile caricare il report. Riprova più tardi.",
+      "period_label": "Periodo",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 mesi",
+        "twelve_months": "12 mesi",
+        "year": "Anno in corso"
+      },
+      "sales_chart": {
+        "subtitle": "In media {value} per mese chiuso",
+        "title": "Vendite mensili · {period}"
+      },
+      "table": {
+        "aov": "AOV",
+        "change": "vs anno scorso",
+        "description": "Vendite, ordini e valore medio ordine per mese",
+        "last_year": "Stesso mese dell'anno scorso",
+        "month": "Mese",
+        "orders": "Ordini",
+        "sales": "Vendite",
+        "toggle": "Mostra come tabella"
+      },
+      "tooltip": {
+        "aov": "AOV",
+        "last_year_aov": "AOV, {month}",
+        "last_year_revenue": "Entrate, {month}",
+        "projection": "Previsione a fine mese",
+        "revenue": "Entrate",
+        "revenue_to_date": "Entrate a oggi",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "In arrivo"
     }
   },
   "pages": {
