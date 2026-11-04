@@ -252,6 +252,7 @@ export default defineConfigWithVueTs(
       "sonarjs/prefer-native-lodash-alternative": "warn",
       "sonarjs/parameterized-tests": "warn",
       "sonarjs/super-linear-regex": "warn",
+      "sonarjs/vitest-mock-at-module-scope": "warn",
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
