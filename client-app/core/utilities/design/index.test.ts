@@ -1,8 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { byDesignName, DESIGN_NAMES, getDesign, loadDesignStyles, resolveDesign, setDesignAttribute } from "./index";
+import { design as softDesign } from "@/designs/soft/design";
+import {
+  byDesignName,
+  DESIGN_NAMES,
+  getDesign,
+  getDesignFonts,
+  loadDesignFonts,
+  loadDesignStyles,
+  resolveDesign,
+  setDesignAttribute,
+} from "./index";
 
 const settings = vi.hoisted((): { value: Record<string, unknown> } => ({ value: {} }));
 const warn = vi.hoisted(() => vi.fn());
+
+const fontLinks = () => document.head.querySelectorAll<HTMLLinkElement>("link[data-design-fonts]");
 
 vi.mock("@/config/settings_data.json", () => ({
   default: {
@@ -15,6 +27,8 @@ vi.mock("@/config/settings_data.json", () => ({
 
 vi.mock("@/core/utilities/logger", () => ({ Logger: { warn, error: vi.fn() } }));
 
+vi.mock("@/designs/custom-fonts", () => ({ customFonts: {} }));
+
 async function importDesign(dev: boolean) {
   vi.resetModules();
   vi.doMock("@/core/constants/environment", () => ({ IS_DEVELOPMENT: dev }));
@@ -25,6 +39,7 @@ async function importDesign(dev: boolean) {
 describe("design", () => {
   beforeEach(() => {
     warn.mockClear();
+    fontLinks().forEach((link) => link.remove());
   });
 
   afterEach(() => {
@@ -126,7 +141,83 @@ describe("design", () => {
     });
   });
 
+  describe("getDesignFonts", () => {
+    it("lists no fonts for classic", () => {
+      expect(getDesignFonts("classic")).toEqual([]);
+    });
+
+    it("takes soft's fonts from designs/soft/design.ts", () => {
+      expect(getDesignFonts("soft")).toEqual(softDesign.fonts);
+      expect(softDesign.fonts).toHaveLength(1);
+    });
+
+    it("lets custom fonts replace a design's own", () => {
+      expect(getDesignFonts("b", { b: { fonts: ["https://f/a.css"] } }, { b: ["https://f/c.css"] })).toEqual([
+        "https://f/c.css",
+      ]);
+    });
+
+    it("loads no fonts for an empty custom list", () => {
+      expect(getDesignFonts("b", { b: { fonts: ["https://f/a.css"] } }, { b: [] })).toEqual([]);
+    });
+
+    it("lists no fonts for a design named like an object member", () => {
+      expect(getDesignFonts("constructor", {}, {})).toEqual([]);
+    });
+  });
+
+  describe("loadDesignFonts", () => {
+    it("appends one stylesheet link per font URL", () => {
+      loadDesignFonts("b", ["https://f/a.css", "https://f/c.css"]);
+
+      expect([...fontLinks()].map((link) => [link.rel, link.href])).toEqual([
+        ["stylesheet", "https://f/a.css"],
+        ["stylesheet", "https://f/c.css"],
+      ]);
+    });
+
+    it("replaces the previous design's links, and classic clears them", () => {
+      loadDesignFonts("b", ["https://f/a.css"]);
+      loadDesignFonts("classic");
+
+      expect(fontLinks()).toHaveLength(0);
+
+      loadDesignFonts("c", ["https://f/c.css"]);
+
+      expect([...fontLinks()].map((link) => link.href)).toEqual(["https://f/c.css"]);
+    });
+
+    it("warns with the href when a font stylesheet fails to load", () => {
+      loadDesignFonts("b", ["https://f/a.css"]);
+
+      const [link] = fontLinks();
+      link.dispatchEvent(new Event("error"));
+
+      expect(warn).toHaveBeenCalledExactlyOnceWith(expect.any(String), link.href);
+    });
+  });
+
   describe("loadDesignStyles", () => {
+    it("downloads no fonts for classic", async () => {
+      await loadDesignStyles("classic", { classic: vi.fn() });
+
+      expect(fontLinks()).toHaveLength(0);
+    });
+
+    it("loads the soft fonts with the soft styles", async () => {
+      const load = vi.fn(async () => ({}));
+
+      await loadDesignStyles("soft", { soft: load });
+
+      expect(load).toHaveBeenCalledOnce();
+      expect([...fontLinks()].map((link) => link.href)).toEqual(softDesign.fonts);
+    });
+
+    it("resolves without waiting for the soft fonts", async () => {
+      await expect(loadDesignStyles("soft", { soft: vi.fn(async () => ({})) })).resolves.toBeUndefined();
+      expect(fontLinks()).toHaveLength(1);
+    });
+
     it("downloads nothing for classic", async () => {
       const load = vi.fn();
 
