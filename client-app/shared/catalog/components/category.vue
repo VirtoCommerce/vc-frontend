@@ -794,8 +794,6 @@ watch(
         finishPreparing?.();
       }
 
-      // The page was left or switched to another category while this answer was on its way:
-      // it no longer describes the page on screen, so it must not rewrite that page's URL.
       if (isCancelled) {
         return;
       }
