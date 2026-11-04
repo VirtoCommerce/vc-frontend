@@ -3,6 +3,14 @@ html[data-design="soft"] {
   --vc-base-font-family: Inter, sans-serif;
   --vc-heading-font-family: Geologica, sans-serif;
 
+  // VcPagination
+  --vc-pagination-pages-gap: 0.5rem;
+  --vc-pagination-page-radius: 9999px;
+  --vc-pagination-page-border-width: 1px;
+  --vc-pagination-page-border-color: var(--color-neutral-200);
+  --vc-pagination-page-hover-border-color: var(--color-primary-200);
+  --vc-pagination-ellipsis-color: var(--color-neutral-400);
+
   // VcShape
   --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
 
@@ -26,4 +34,11 @@ html[data-design="soft"] {
   @media (forced-colors: active) {
     --vc-widget-border-width: 1px;
   }
+}
+
+html.dark[data-design="soft"] {
+  // The inverted neutral-200 ring is about 1.1:1 on a dark surface, so the ring is the light ink at 16% instead;
+  // primary-200 inverts to a dull dark step, so the hover ring would fade instead of light up.
+  --vc-pagination-page-border-color: rgb(from var(--color-additional-950) r g b / 0.16);
+  --vc-pagination-page-hover-border-color: var(--color-primary-500);
 }
