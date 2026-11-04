@@ -290,6 +290,17 @@ ${loads("dark")}  }
       expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
     });
 
+    it("allows a design.ts in a design folder, which is not a checked file", async () => {
+      const result = await checkDesigns(
+        designs({
+          "soft/design.ts": "export const design = { fonts: [] };",
+          "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }`,
+        }),
+      );
+
+      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
+    });
+
     it("ignores hidden files in a design folder, its blocks/ and its dark/", async () => {
       const result = await checkDesigns(
         designs({
@@ -330,14 +341,16 @@ ${loads("dark")}  }
 
     it.each([
       ["soft/extra.scss", "soft/extra.scss"],
-      ["soft/design.ts", "soft/design.ts"],
+      ["soft/design.js", "soft/design.js"],
+      ["soft/custom-fonts.ts", "soft/custom-fonts.ts"],
+      ["soft/design.ts/x.scss", "soft/design.ts"],
       ["soft/notes/x.scss", "soft/notes"],
     ])("reports %s, which is outside the layout", async (file, reported) => {
       const errors = await check({ [file]: ".footer-links { margin: 0; }" });
 
       expect(errors).toEqual([
         expect.stringContaining(
-          `${reported}  is not part of a design folder (_tokens.scss, index.scss, blocks/, dark/)`,
+          `${reported}  is not part of a design folder (design.ts, _tokens.scss, index.scss, blocks/, dark/)`,
         ),
       ]);
     });

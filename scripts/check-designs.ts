@@ -48,6 +48,7 @@ type ReportType = (node: ChildNode, message: string) => void;
 const DESIGN_NAME = /^[a-z][a-z0-9-]*$/;
 const CLASSIC = "classic";
 const LAYOUT = new Map([
+  ["design.ts", "file"],
   ["_tokens.scss", "file"],
   ["index.scss", "file"],
   ["blocks", "folder"],
@@ -780,7 +781,7 @@ function layoutOf(dir: string, errors: string[]): IDesignFiles {
     const at = path.join(dir, entry.name);
 
     if (LAYOUT.get(entry.name) !== (entry.isDirectory() ? "folder" : "file")) {
-      errors.push(`${at}  is not part of a design folder (_tokens.scss, index.scss, blocks/, dark/)`);
+      errors.push(`${at}  is not part of a design folder (design.ts, _tokens.scss, index.scss, blocks/, dark/)`);
     } else if (entry.name === "_tokens.scss") {
       files.tokens = at;
     } else if (entry.name === "index.scss") {
