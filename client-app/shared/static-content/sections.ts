@@ -10,16 +10,12 @@ const DEFAULT_HEADING_TAG: HeadingTagType = "h2";
 
 type DeclaredPropsType = string[] | Record<string, unknown>;
 
-/** Targets that keep the link in the current browsing context, so the opened page gets no `window.opener`. */
+/** No new window, so no `window.opener` to cut with `rel`. */
 const SAME_CONTEXT_TARGETS = new Set(["", "_self", "_parent", "_top"]);
 
 const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
 
-/**
- * `defineAsyncComponent` keeps the declared props on the inner component, so they are known only after
- * `__asyncLoader` resolves; `__asyncResolved` holds it from then on. Vue reads the same fields for hydration
- * and KeepAlive.
- */
+/** Vue internals, also read by hydration and KeepAlive: an async section declares its props on the loaded inner component. */
 type AsyncComponentWrapperType = {
   __asyncLoader?: () => Promise<Component>;
   __asyncResolved?: Component;
@@ -37,7 +33,7 @@ htmlPurifier.addHook("afterSanitizeAttributes", (node) => {
   node.setAttribute("rel", [...rel].join(" "));
 });
 
-/** Own-key lookup, so a type such as `toString` does not resolve to an `Object.prototype` member. */
+/** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */
 export function getRegisteredSection(
   registry: Record<string, Component>,
   type: string | undefined,
@@ -49,12 +45,10 @@ export function toHeadingTag(value: unknown): HeadingTagType {
   return HEADING_TAGS.find((tag) => tag === value) ?? DEFAULT_HEADING_TAG;
 }
 
-/** Sanitizes HTML authored in a Page Builder setting before it is rendered with `v-html`. */
 export function sanitizeSectionHtml(html: string | undefined): string {
   return html ? htmlPurifier.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ["target"] }) : "";
 }
 
-/** Returns the component that declares the section props, or `undefined` while a lazy one is not loaded yet. */
 export function getLoadedSectionComponent(component: Component): Component | undefined {
   return isAsyncWrapper(component) ? component.__asyncResolved : component;
 }
@@ -67,7 +61,6 @@ export async function loadSectionComponent(component: Component): Promise<Compon
   return await component.__asyncLoader();
 }
 
-/** Keeps only the entries of a Page Builder item that the section component declares as props. */
 export function pickDeclaredProps(component: Component, item: Record<string, unknown>): Record<string, unknown> {
   const declaredProps = getDeclaredPropNames(component);
 

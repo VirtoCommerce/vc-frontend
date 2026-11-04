@@ -9,9 +9,8 @@ import { getLoadedSectionComponent, loadSectionComponent, pickDeclaredProps } fr
 import type { Component } from "vue";
 
 interface IProps {
-  /** Registered section component; nothing is rendered without one. */
   component?: Component;
-  /** Page Builder item: only the keys the component declares as props are passed on. */
+  /** Undeclared keys are dropped: they would otherwise land as attributes on the section's root. */
   item: Record<string, unknown>;
 }
 
@@ -19,10 +18,7 @@ defineOptions({ inheritAttrs: false });
 
 const props = defineProps<IProps>();
 
-/**
- * The component whose declared props filter the item. A lazy section still renders through its async
- * wrapper, which resets a failed load so the next mount retries; until it loads, no item keys pass.
- */
+/** Read for its props only: rendering goes through the async wrapper, which retries a failed load on the next mount. */
 const propsSource = shallowRef<Component>();
 
 const declaredProps = computed(() => (propsSource.value ? pickDeclaredProps(propsSource.value, props.item) : {}));

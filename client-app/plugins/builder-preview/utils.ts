@@ -2,7 +2,7 @@ import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 
 let cachedBuilderOrigin: string | undefined;
 
-/** Origin of the designer that frames this preview; `undefined` outside a frame, so nobody else can drive it. */
+/** `undefined` outside a frame: only the designer that frames the preview may drive it. */
 export function getBuilderOrigin() {
   if (cachedBuilderOrigin === undefined) {
     const urlParams = new URLSearchParams(globalThis.location.search);
