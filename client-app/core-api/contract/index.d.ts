@@ -6208,6 +6208,10 @@ type ReportingSettledType<TStatistics> = {
  * The report's figures, each response kept with the plan it was fetched for. A query result keeps the previous
  * response until the next one lands, and its month slots are positional, so it is never read against a plan picked
  * after it. Pass the plan the query variables were built from (`useReportingPlan`).
+ *
+ * Built for Apollo `useQuery` with `keepPreviousResult: true`; without it the report empties while a new period loads.
+ * Leave out `debounce` and `throttle`: they keep the previous query running after the plan changes, and its late
+ * response would be read against the new plan.
  */
 declare function useReportingData<TStatistics extends ReportingStatisticsType>(plan: Readonly<Ref<ReportingPlanType>>, statistics: MaybeRefOrGetter<TStatistics | null | undefined>): {
     data: vue.ComputedRef<ReportingDataType | undefined>;
