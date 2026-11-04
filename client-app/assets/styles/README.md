@@ -563,9 +563,10 @@ Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same
 `*-move`) and state classes (`is-*`, `has-*`) are not blocks, so a block file may use them on its own
 elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 
-`scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
-`_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
-declared layer, and its names follow the declared order per parent.
+`scripts/check-css-layers.ts` (built CSS in `dist/`): every layer has a name, declared in
+`_layers.scss`; a stylesheet `index.html` links declares layers, and the first one that does starts
+with `theme`, places every declared layer, and its names follow the declared order per parent. The
+tests are in `scripts/check-css-layers.test.ts`.
 
 Both run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 
