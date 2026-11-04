@@ -259,6 +259,18 @@ describe("check-css-important", () => {
       ]);
     });
 
+    it("reads markup with escaped quotes in a string", () => {
+      const code = [
+        'const a = "<b class=\\"!mt-4\\">x</b>";',
+        'const b = "<b style=\\"color:red !important\\">x</b>";',
+      ].join("\n");
+
+      expect(found("a.ts", code)).toEqual([
+        [1, "!mt-4"],
+        [2, "!important"],
+      ]);
+    });
+
     it("reports !important that ends a CSS value, not prose that names it", () => {
       const code = [
         'const docs = "Use cascade layers instead of !important.";',
@@ -336,10 +348,14 @@ describe("check-css-important", () => {
       rmSync(root, { recursive: true, force: true });
     });
 
+    function check(args: string[] = []) {
+      return spawnSync(process.execPath, [SCRIPT, ...args], { cwd: root, encoding: "utf-8" });
+    }
+
     function run(files: Record<string, string>) {
       root = writeFiles(files);
 
-      return spawnSync(process.execPath, [SCRIPT], { cwd: root, encoding: "utf-8" });
+      return check();
     }
 
     it("exits 1 and lists each !important at its file and line", () => {
@@ -365,6 +381,32 @@ describe("check-css-important", () => {
       expect(status).toBe(1);
       expect(stderr).toContain("  client-app/b.scss:1  !important\n");
       expect(stderr).toMatch(/Could not parse these files[\s\S]*\n {2}client-app\/a\.scss:1 {2}Unclosed block/);
+    });
+
+    it("counts the files it cannot parse, not their errors", () => {
+      const { stderr } = run({
+        "client-app/a.scss": ".a { color: red;\n",
+        "client-app/b.vue": "<style>\n.a {\n</style>\n<style>\n.b {\n</style>\n",
+      });
+
+      expect(stderr).toContain("not fully checked for !important (2):");
+    });
+
+    it("checks only the files passed", () => {
+      root = writeFiles({
+        "client-app/a.scss": ".a { color: red; }\n",
+        "client-app/b.scss": ".b { color: red !important; }\n",
+      });
+      const clean = check(["client-app/a.scss"]);
+
+      expect(clean.status).toBe(0);
+      expect(clean.stdout).toContain("!important check passed: 1 files.");
+
+      const dirty = check(["client-app/b.scss"]);
+
+      expect(dirty.status).toBe(1);
+      expect(dirty.stderr).toContain("  client-app/b.scss:1  !important\n");
+      expect(dirty.stderr).not.toContain("client-app/a.scss");
     });
 
     it("exits 0 on a clean tree", () => {

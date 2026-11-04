@@ -266,15 +266,21 @@ declared layer, and its names follow the declared order per parent.
 
 `scripts/check-css-important.ts` fails on any `!important` and any Tailwind important modifier
 (`!mt-4`, `lg:!hidden`, `data-[state=open]:!block`) in `client-app/` and `index.html`, and names the
-file and line. It reads style declarations and `@apply`, inline `<style>`, static attribute values,
-Vue bindings and interpolations, string literals in scripts (markup in a string, such as a story's
-template, is read as a template) and `style.setProperty(…, "important")`. It skips Markdown, locale
-files, text between tags, comments in style blocks, templates and scripts, code negation
-(`v-if="!open"`) and the Sass flags `!default`, `!global` and `!optional`. A static attribute value is
-read whole, so `title="!open"` and a comment in `style="…"` fail it. In a string, `!important` counts
-only where a CSS value can end: before `;`, `}`, a quote or an escape, or at the end of the string.
-So `"red !important"` fails it, as does prose that ends on `!important` or quotes it; prose that
-names it mid-sentence passes. A file it cannot parse fails it too and is listed apart. The pre-commit
+file and line. It reads style declarations and at-rules (`@apply` included), inline `<style>`, static
+attribute values, Vue bindings and interpolations, string literals in scripts (markup in a string,
+such as a story's template, is read as a template) and `style.setProperty(…, "important")`. It skips
+Markdown, locale files, text between tags, comments between style rules and declarations, comments in
+templates and scripts, code negation (`v-if="!open"`) and the Sass flags `!default`, `!global` and
+`!optional`.
+
+What it reads, it reads whole, comments included: a comment inside a declaration or an at-rule's
+prelude (`color: /* !important */ red`, `@media /* !important */ screen`) fails it, and so does a
+static attribute value such as `title="!open"` or a comment in `style="…"`. In a string,
+`!important` counts only where a CSS value can end: before `;`, `}`, a quote or an escape, or at the
+end of the string. So `"red !important"` fails it, and so does prose with `!important` in such a
+place (`"avoid !important; use a layer"`, a sentence that ends on it or quotes it); other prose that
+names it passes. Markup in a string whose `<style>` does not parse is read as a plain string, its text
+and comments included. A file it cannot parse fails the check too and is listed apart. The pre-commit
 hook runs it on the staged files only. Its patterns live in `scripts/important-patterns.mjs`, shared
 with the agents' edit hook (`.claude/hooks/guard-styles.mjs`). The tests are in
 `scripts/check-css-important.test.ts`.

@@ -25,7 +25,7 @@ export function matchImportant(text) {
 
 /**
  * `!important` where a CSS value can end, for a string that may be prose: `"color: red !important;"`, `'red !important'`.
- * Prose that names it mid-sentence passes; prose that ends on it or quotes it does not.
+ * Prose passes unless `;`, `}`, a quote or an escape follows `!important` there, or the string ends with it.
  * @param {string} text
  * @returns {RegExpExecArray[]}
  */

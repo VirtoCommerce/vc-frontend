@@ -11,7 +11,7 @@ import type { AtRule, Declaration, Root } from "postcss";
 import type { SFCParseResult, SFCTemplateBlock } from "vue/compiler-sfc";
 
 // The rule is in client-app/assets/styles/README.md: a layered `!important` cannot be overridden by a fork.
-// Reads styles, templates and string literals; skips Markdown, locale files and comments outside static attribute values.
+// What the check reads and what it skips is in that README's "Checks" section.
 
 export interface IImportantFinding {
   file: string;
@@ -30,6 +30,7 @@ const NEWLINE = /\n/g;
 const QUOTED = /^(["'])([\s\S]*)\1$/;
 /** An HTML tag in a string: a story's or test's template, a `render` helper's markup. */
 const MARKUP = /<[a-z][\w-]*[\s/>]/i;
+const ESCAPED_QUOTE = /\\(["'`])/g;
 const SCRIPT_KINDS: Record<string, ts.ScriptKind> = {
   ".ts": ts.ScriptKind.TS,
   ".mts": ts.ScriptKind.TS,
@@ -84,7 +85,7 @@ function checkStyles(css: string, startLine: number, report: ReportType): void {
 
   const lineOf = (node: Declaration | AtRule) => startLine + (node.source?.start?.line ?? 1) - 1;
 
-  // Rebuilt from the clean value, so a comment is never read and a line break before the match still counts.
+  // The declaration as written, comments inside it included, so a line break before the match still counts.
   root.walkDecls((decl) => {
     const text = `${decl.prop}${decl.raws.between ?? ""}${decl.value}`;
     checkImportant(text, lineOf(decl), report);
@@ -160,7 +161,8 @@ function checkScript(code: string, kind: ts.ScriptKind, startLine: number, repor
     const markup = literalMarkup(node, sourceFile);
 
     if (markup !== undefined && MARKUP.test(markup)) {
-      checkMarkup(markup, lineOf(node), report);
+      // Unescaped, so `class=\"!mt-4\"` is read as a quoted attribute.
+      checkMarkup(markup.replaceAll(ESCAPED_QUOTE, "$1"), lineOf(node), report);
       // Only the expressions in `${…}`: the literal parts were read as markup.
       ts.forEachChild(node, (child) => (ts.isTemplateSpan(child) ? visit(child.expression) : undefined));
       return;
@@ -169,7 +171,7 @@ function checkScript(code: string, kind: ts.ScriptKind, startLine: number, repor
     const text = stringLiteralText(node, sourceFile);
 
     if (text !== undefined) {
-      // In a string, `!important` counts only where a CSS value can end, so prose that names it mid-sentence passes.
+      // In a string, `!important` counts only where a CSS value can end (matchImportantValue).
       checkText(text, lineOf(node), report, matchImportantValue);
     }
 
@@ -209,10 +211,6 @@ function checkAttribute(prop: PropNodeType, report: ReportType): void {
   }
 }
 
-function checkInlineScript(code: string, startLine: number, report: ReportType): void {
-  checkScript(code, ts.ScriptKind.JS, startLine, report);
-}
-
 function checkElement(element: ElementNodeType, report: ReportType): void {
   element.props.forEach((prop) => checkAttribute(prop, report));
 
@@ -223,7 +221,11 @@ function checkElement(element: ElementNodeType, report: ReportType): void {
   if (tag !== "style" && tag !== "script") {
     checkTemplate(element.children, report);
   } else if (text && "content" in text && typeof text.content === "string") {
-    (tag === "style" ? checkStyles : checkInlineScript)(text.content, text.loc.start.line, report);
+    if (tag === "style") {
+      checkStyles(text.content, text.loc.start.line, report);
+    } else {
+      checkScript(text.content, ts.ScriptKind.JS, text.loc.start.line, report);
+    }
   }
 }
 
@@ -333,6 +335,7 @@ function main(): void {
   const findings = files.flatMap((file) => findImportant(file, readFileSync(file, "utf-8")));
   const important = findings.filter(({ isUnparsed }) => !isUnparsed);
   const unparsed = findings.filter(({ isUnparsed }) => isUnparsed);
+  const unparsedFiles = new Set(unparsed.map(({ file }) => file));
 
   if (important.length) {
     console.error(`Found !important that would ship in the storefront styles (${important.length}):\n`);
@@ -342,7 +345,7 @@ function main(): void {
 
   if (unparsed.length) {
     console.error(
-      `\nCould not parse these files, so they were not fully checked for !important (${unparsed.length}):\n`,
+      `\nCould not parse these files, so they were not fully checked for !important (${unparsedFiles.size}):\n`,
     );
     console.error(listFindings(unparsed));
     console.error("\nFix the syntax error and run `yarn check:css-important` again.");
