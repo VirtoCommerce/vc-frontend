@@ -10,17 +10,13 @@
 
     <span v-if="caption" class="reporting-kpi-tile__caption">{{ caption }}</span>
 
-    <span
+    <progress
       v-if="progress !== undefined"
-      class="reporting-kpi-tile__track"
-      role="progressbar"
-      :aria-valuenow="Math.round(clampedProgress * 100)"
-      aria-valuemin="0"
-      aria-valuemax="100"
+      class="reporting-kpi-tile__progress"
+      :value="clampedProgress"
+      max="1"
       :aria-label="label"
-    >
-      <span class="reporting-kpi-tile__fill" :style="{ width: `${clampedProgress * 100}%` }" />
-    </span>
+    />
   </div>
 </template>
 
@@ -63,12 +59,20 @@ const clampedProgress = computed(() => Math.min(1, Math.max(0, props.progress ??
     @apply text-xs text-neutral-600;
   }
 
-  &__track {
-    @apply mt-1 block h-1 w-full overflow-hidden rounded-full bg-neutral-200;
-  }
+  &__progress {
+    @apply mt-1 block h-1 w-full appearance-none overflow-hidden rounded-full bg-neutral-200;
 
-  &__fill {
-    @apply block h-full rounded-full bg-primary-500;
+    &::-webkit-progress-bar {
+      @apply bg-neutral-200;
+    }
+
+    &::-webkit-progress-value {
+      @apply rounded-full bg-primary-500;
+    }
+
+    &::-moz-progress-bar {
+      @apply rounded-full bg-primary-500;
+    }
   }
 }
 </style>

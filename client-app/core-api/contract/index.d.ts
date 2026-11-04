@@ -6135,13 +6135,13 @@ type ReportingStatisticsSlotType = {
         amount: number;
     };
     count: number;
-} | null | undefined;
+} | null;
 /** A statistics response under the aliases every reporting query uses: `m{i}`, `ly{i}` per slot and `prev`. */
 type ReportingStatisticsType = {
     currencyCode: string;
     prev?: ReportingStatisticsSlotType;
 } & {
-    [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType;
+    [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType | undefined;
 };
 /** One response as the report reads it. `plan` must be the plan the response was fetched for. */
 declare function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType;

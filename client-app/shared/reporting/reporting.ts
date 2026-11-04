@@ -352,14 +352,14 @@ export function buildReportingVariables(plan: ReportingPlanType): ReportingVaria
   return variables as ReportingVariablesType;
 }
 
-type ReportingStatisticsSlotType = { total: { amount: number }; count: number } | null | undefined;
+type ReportingStatisticsSlotType = { total: { amount: number }; count: number } | null;
 
 /** A statistics response under the aliases every reporting query uses: `m{i}`, `ly{i}` per slot and `prev`. */
 export type ReportingStatisticsType = { currencyCode: string; prev?: ReportingStatisticsSlotType } & {
-  [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType;
+  [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType | undefined;
 };
 
-function toTotals(slot: ReportingStatisticsSlotType): ReportingPeriodTotalsType | undefined {
+function toTotals(slot: ReportingStatisticsSlotType | undefined): ReportingPeriodTotalsType | undefined {
   return slot ? { amount: slot.total.amount, count: slot.count } : undefined;
 }
 

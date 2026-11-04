@@ -1,7 +1,7 @@
 <template>
   <div :class="['reporting-panel', { 'reporting-panel--compact': compact }]">
     <div class="reporting-panel__toolbar">
-      <div class="reporting-panel__periods" role="group" :aria-label="t('shared.reporting.period_label')">
+      <fieldset class="reporting-panel__periods" :aria-label="t('shared.reporting.period_label')">
         <VcTabSwitch
           v-for="option in REPORTING_PERIODS"
           :key="option"
@@ -12,7 +12,7 @@
           size="sm"
           @change="period = $event"
         />
-      </div>
+      </fieldset>
 
       <div v-if="$slots.actions" class="reporting-panel__actions" data-test-id="reporting-actions-section">
         <slot name="actions" />
@@ -258,7 +258,8 @@ const footnote = computed(() => {
     --vc-tab-switch-hover-color: var(--color-neutral-900);
 
     // Wraps rather than scrolls: a scrolling row would clip the tabs' focus ring and the checked tab's shadow.
-    @apply flex max-w-full flex-wrap gap-1;
+    // min-w-0: preflight misses the fieldset's min-inline-size: min-content.
+    @apply flex min-w-0 max-w-full flex-wrap gap-1;
   }
 
   &__actions {

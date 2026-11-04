@@ -1,5 +1,5 @@
 <template>
-  <div class="reporting-svg-chart" role="group" :aria-label="ariaLabel">
+  <fieldset class="reporting-svg-chart" :aria-label="ariaLabel">
     <span v-if="yLabel" class="reporting-svg-chart__y-label">{{ yLabel }}</span>
 
     <div ref="plot" class="reporting-svg-chart__plot" :style="{ height: `${height}px` }">
@@ -135,7 +135,7 @@
         >
           <template #default="{ triggerProps }">
             <!-- A column only shows its figures, so it drops the button semantics the trigger props give it. -->
-            <div
+            <svg
               :ref="(element) => setHitElement(column.index, element)"
               class="reporting-svg-chart__hit-area"
               :style="{ height: `${baseline - hitTop(column)}px` }"
@@ -174,7 +174,7 @@
 
       <slot name="legend-append" />
     </ul>
-  </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
@@ -216,7 +216,7 @@ interface ISlots {
 
 const props = withDefaults(defineProps<IProps>(), {
   barLayout: "grouped",
-  yFormat: (value: number) => String(value),
+  yFormat: String,
   height: 230,
   showLegend: true,
 });
@@ -372,10 +372,10 @@ const tabStop = computed(() =>
     : dataIndexes.value[0],
 );
 
-const hitElements = new Map<number, HTMLElement>();
+const hitElements = new Map<number, SVGSVGElement>();
 
 function setHitElement(index: number, element: Element | ComponentPublicInstance | null): void {
-  if (element instanceof HTMLElement) {
+  if (element instanceof SVGSVGElement) {
     hitElements.set(index, element);
   } else {
     hitElements.delete(index);
@@ -420,7 +420,8 @@ onMounted(measureTickLabels);
   --legend-color: var(--reporting-svg-chart-legend-color, var(--color-neutral-700));
   --active-shade: var(--reporting-svg-chart-active-shade, 10%);
 
-  @apply flex flex-col gap-3;
+  // min-w-0: preflight misses the fieldset's min-inline-size: min-content, which would stop the plot shrinking.
+  @apply flex min-w-0 flex-col gap-3;
 
   &__plot {
     // Keeps the loader overlay's z-index inside the plot, under any popup that opens over the chart.
