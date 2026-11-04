@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import VcWidget from "../widget/vc-widget.vue";
 import VcWidgetSkeleton from "./vc-widget-skeleton.vue";
 
@@ -38,6 +38,14 @@ describe("VcWidgetSkeleton", () => {
     const wrapper = mountSkeleton({}, { border: false, class: "h-full" });
 
     expect(wrapper.classes()).toEqual(expect.arrayContaining(["vc-widget--no-border", "h-full"]));
+  });
+
+  it("passes listeners through to the widget", async () => {
+    const onClick = vi.fn();
+
+    await mountSkeleton({}, { onClick }).trigger("click");
+
+    expect(onClick).toHaveBeenCalledOnce();
   });
 
   it("renders no title text from a title", () => {
