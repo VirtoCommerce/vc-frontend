@@ -114,7 +114,6 @@ export function replaceXFromBeginning(input: string, by: string = "•••• 
 
 type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
 
-/** Schemes that run script or render a document when followed. */
 const UNSAFE_LINK_PROTOCOLS = new Set(["javascript:", "vbscript:", "data:"]);
 
 /** A denylist, so app links such as `sms:` keep working. */

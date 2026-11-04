@@ -10,12 +10,11 @@ const DEFAULT_HEADING_TAG: HeadingTagType = "h2";
 
 type DeclaredPropsType = string[] | Record<string, unknown>;
 
-/** No new window, so no `window.opener` to cut with `rel`. */
 const SAME_CONTEXT_TARGETS = new Set(["", "_self", "_parent", "_top"]);
 
 const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
 
-/** Vue internals, also read by hydration and KeepAlive: an async section declares its props on the loaded inner component. */
+/** Vue internals: an async section declares its props on the loaded inner component. */
 type AsyncComponentWrapperType = {
   __asyncLoader?: () => Promise<Component>;
   __asyncResolved?: Component;
