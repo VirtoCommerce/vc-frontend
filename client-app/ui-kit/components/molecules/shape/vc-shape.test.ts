@@ -12,6 +12,8 @@ describe("VcShape mask", () => {
   });
 
   it("writes an explicit mask inline, so it wins over the --vc-shape-mask-image token", () => {
-    expect(mountShape({ mask: "polygon" }).attributes("style")).toMatch(/mask-image: url\("[^"]*\/polygon\.svg"\)/);
+    expect(mountShape({ mask: "circle-mask" }).attributes("style")).toMatch(
+      /mask-image: url\("[^"]*\/circle-mask\.svg"\)/,
+    );
   });
 });

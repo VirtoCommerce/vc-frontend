@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { omitBy } from "lodash-es";
 import { camelize, computed, useAttrs } from "vue";
+import type VcWidget from "../widget/vc-widget.vue";
 
 /** Renders a VcWidget; its frame props, classes and listeners pass through, its title, icons and collapsible do not. */
 interface IProps {
@@ -69,10 +70,15 @@ withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const WIDGET_CONTENT_PROPS = ["title", "prependIcon", "appendIcon", "collapsible"];
+const WIDGET_CONTENT_PROPS: ReadonlySet<string> = new Set<keyof InstanceType<typeof VcWidget>["$props"]>([
+  "title",
+  "prependIcon",
+  "appendIcon",
+  "collapsible",
+]);
 
 const attrs = useAttrs();
-const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PROPS.includes(camelize(name))));
+const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PROPS.has(camelize(name))));
 </script>
 
 <style lang="scss">
@@ -144,7 +150,7 @@ const widgetAttrs = computed(() => omitBy(attrs, (_, name) => WIDGET_CONTENT_PRO
   &__footer-container,
   &__footer {
     *:not(:has(*)) {
-      @apply h-4 rounded bg-neutral-100;
+      @apply h-5 rounded bg-neutral-100;
 
       &:not([class*="w-"]) {
         @apply w-1/3;

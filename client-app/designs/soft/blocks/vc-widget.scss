@@ -1,5 +1,8 @@
 .vc-widget {
   $lg: "";
+  $header-container: "";
+  $header: "";
+  $slot-container: "";
 
   // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
   &--size--xs,
@@ -11,8 +14,35 @@
     $lg: &;
   }
 
+  &__header-container {
+    $header-container: &;
+  }
+
+  &__header {
+    $header: &;
+  }
+
+  &__slot-container {
+    $slot-container: &;
+  }
+
+  // Short plates take the smaller radius: small and collapsed widgets, and a widget with only a header or
+  // only a footer. A widget with only a one-line body has nothing to key on and still draws a pill.
+  &--size--xs,
+  &--size--sm,
+  &--collapsed,
+  &:where(:not(:has(> :nth-child(2))):not(:has(> #{$slot-container}))) {
+    --vc-widget-radius: var(--vc-radius);
+  }
+
+  // A plate without its shadow keeps a light edge.
+  &--no-shadow {
+    --vc-widget-border-width: 1px;
+  }
+
   &__title {
-    #{$lg} & {
+    // The lg widget's own title only: a widget nested in its body keeps its title size.
+    #{$lg} > #{$header-container} > #{$header} > & {
       font-size: theme("fontSize.base");
     }
   }

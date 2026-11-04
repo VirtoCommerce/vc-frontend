@@ -136,6 +136,8 @@ watchEffect(() => {
   --inner-radius: calc(
     var(--vc-widget-radius, calc(theme("borderRadius.DEFAULT") + var(--border-width))) - var(--border-width)
   );
+  // No fallback: without a design's radius token the body keeps classic's square corners.
+  --body-radius: calc(var(--vc-widget-radius) - var(--border-width));
   --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
 
@@ -216,6 +218,7 @@ watchEffect(() => {
     --bg-color: transparent;
     --radius: 0;
     --inner-radius: 0;
+    --body-radius: 0;
     --shadow: 0 0 #0000;
 
     @apply divide-none;
@@ -257,6 +260,16 @@ watchEffect(() => {
     font-weight: var(--vc-widget-title-font-weight, var(--vc-heading-font-weight, theme("fontWeight.bold")));
     text-transform: var(--vc-widget-title-text-transform, var(--vc-heading-text-transform, uppercase));
     letter-spacing: var(--vc-widget-title-letter-spacing, var(--vc-heading-letter-spacing, inherit));
+  }
+
+  &__slot-container {
+    &:first-child {
+      @apply rounded-t-[--body-radius];
+    }
+
+    &:last-child {
+      @apply rounded-b-[--body-radius];
+    }
   }
 
   &__slot {

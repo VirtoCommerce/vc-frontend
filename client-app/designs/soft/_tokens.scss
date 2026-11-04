@@ -14,6 +14,7 @@ html[data-design="soft"] {
   // VcWidget
   --vc-widget-radius: 1.375rem;
   --vc-widget-border-width: 0px;
+  // One line: Sass keeps a wrapped value's line breaks, and check:designs then cannot match this rule.
   // prettier-ignore
   --vc-widget-shadow: 0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05), 0 6px 20px 0 rgb(from var(--color-additional-950) r g b / 0.06);
   --vc-widget-padding-x: 1.5rem;
@@ -24,5 +25,10 @@ html[data-design="soft"] {
   @media (width >= theme("screens.lg")) {
     --vc-widget-radius: 1.75rem;
     --vc-widget-padding-x: 2rem;
+  }
+
+  // Forced colours drop the shadow, so the plate keeps an edge.
+  @media (forced-colors: active) {
+    --vc-widget-border-width: 1px;
   }
 }
