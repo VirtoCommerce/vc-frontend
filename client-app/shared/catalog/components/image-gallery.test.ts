@@ -1,6 +1,6 @@
-import { shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import { Swiper } from "swiper/vue";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import ImageGallery from "./image-gallery.vue";
 import type { ImageType } from "@/core/api/graphql/types";
@@ -19,11 +19,13 @@ function images(count: number): ImageType[] {
 
 let mounted: VueWrapper | undefined;
 
-// Attached, so the `#id …` selectors Swiper gets resolve as they do on the page.
 function mountGallery(count: number) {
-  mounted = shallowMount(ImageGallery, {
+  mounted = mount(ImageGallery, {
     props: { images: images(count) },
-    global: { mocks: { $t: (key: string) => key } },
+    global: {
+      mocks: { $t: (key: string) => key },
+      stubs: { VcIcon: true, VcImage: true, VcNavButton: true, VcCarouselPagination: true },
+    },
     attachTo: document.body,
   });
 
@@ -35,20 +37,24 @@ function thumbs(wrapper: VueWrapper) {
 }
 
 describe("ImageGallery thumbs", () => {
-  afterEach(() => {
-    mounted?.unmount();
+  beforeEach(() => {
+    // jsdom lays nothing out; Swiper sizes the slides from the strip's width.
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockReturnValue(400);
   });
 
-  it.each([4, 5])("leaves hiding the thumb buttons to Swiper's lock class with %i images", (count) => {
-    const wrapper = mountGallery(count);
-    const navigation = thumbs(wrapper).props("navigation") as { prevEl: string; nextEl: string; lockClass: string };
-    const buttons = wrapper.findAll(".image-gallery__nav");
+  afterEach(() => {
+    mounted?.unmount();
+    vi.restoreAllMocks();
+  });
 
-    expect(navigation.lockClass).toBe("image-gallery__nav--locked");
+  it.each([
+    [4, true],
+    [5, false],
+  ])("with %i images, Swiper locks the thumb buttons: %s", (count, locked) => {
+    const buttons = mountGallery(count).findAll("[data-nav-prev], [data-nav-next]");
+
     expect(buttons).toHaveLength(2);
-    expect(document.querySelector(navigation.prevEl)).toBe(buttons[0].element);
-    expect(document.querySelector(navigation.nextEl)).toBe(buttons[1].element);
-    expect(buttons.every((button) => button.isVisible())).toBe(true);
+    expect(buttons.map((button) => button.classes("image-gallery__nav--locked"))).toEqual([locked, locked]);
   });
 
   it.each([

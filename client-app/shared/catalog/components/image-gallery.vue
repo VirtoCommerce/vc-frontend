@@ -166,7 +166,6 @@ const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
 
-// Swiper locks the strip when every thumb fits and hides its buttons by `lockClass`; only a sliding strip loops.
 const canSlideThumbs = computed(() => props.images.length > THUMBS_PER_VIEW);
 
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
@@ -284,6 +283,7 @@ onUnmounted(() => {
   }
 
   &__nav {
+    // Swiper's navigation `lockClass`, on both buttons while every thumb fits.
     &--locked {
       @apply hidden;
     }
