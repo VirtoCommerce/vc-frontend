@@ -3,11 +3,15 @@
 @layer vc.preset {
   html[data-preset="paprika"] {
     --vc-widget-bg-color: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+    // The kit hovers a row on neutral-200, paprika's line colour: across a whole row it reads as a selected row.
+    --vc-table-row-hover-bg-color: var(--color-neutral-100);
   }
 
   // The light rule matches in dark too, so dark sets the plate back to additional-50.
   html.dark[data-preset="paprika"] {
     --vc-widget-bg-color: var(--color-additional-50);
     --vc-widget-divide-color: var(--color-neutral-300);
+    // Dark neutral-100 is the plate's own colour, so the kit's dark hover would not show on a widget.
+    --vc-table-row-hover-bg-color: var(--color-neutral-200);
   }
 }
