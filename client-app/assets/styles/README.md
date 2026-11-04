@@ -541,6 +541,8 @@ of its place: that is reported once, at the file's `meta.load-css` line in `inde
 | It matches no `[class]` by presence, prefix or substring | `[class]`, `[class^="x"]`, `[class*="x"]` |
 | A design file loads only `.scss` files of its own folder and `sass:` modules | `@use "@/ui-kit/styles/focus-ring"`, `@use "../../x"`, a path that matches several files |
 | Its CSS holds no at-rule but `@media`, `@supports`, `@container` and `@starting-style` (and, in `index.scss`, the top-level `@layer` blocks) | `@keyframes`, `@layer`, `@import`, `@scope`, `@property` |
+| No `@media` on `prefers-color-scheme`: it follows the OS theme, not the storefront's dark mode (`html.dark`); dark rules go in `dark/<block>.scss`, dark tokens on `html.dark[data-design="<name>"]` | `@apply dark:underline`, `@media (prefers-color-scheme: dark) { … }` |
+| No print-only `@media` (every query `print` or `only print`): print rules live in `vc.print` (`print/`), which wins in print over every design; `@media screen, print` stays allowed | `@media print { … }`, `@apply print:hidden`, `@media only print and (min-width: 1px)` |
 | `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix |
 
 Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same way:
@@ -550,6 +552,8 @@ Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same 
 | It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
 | Every rule is inside a top-level `@layer vc.preset { … }` block; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, the layer inside `@media`, a bare `@layer vc.preset;`, `@keyframes` |
 | No separate dark stylesheet: dark rules go in `<name>.scss` under `html.dark[data-preset="<name>"]` | `mercury.dark.scss` |
+| No `@media` on `prefers-color-scheme`, which follows the OS theme: dark rules go under `html.dark[data-preset="<name>"]` | `@apply dark:text-primary`, `@media (prefers-color-scheme: dark) { … }` |
+| No print-only `@media`: print rules live in `vc.print` (`print/`); `@media screen, print` stays allowed | `@media print { … }`, `@apply print:text-primary` |
 | Every selector is the preset's `html`, `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, alone or followed by a block: then it names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"]` and `html[data-preset="red"] .vc-button` in `mercury.scss`, `html[data-preset="mercury"]:hover`, `… .dark .vc-button`, `… .vc-button svg` |
 | On the preset's `html` alone, only public `--vc-*` tokens | `color: var(--color-primary-500)`, `--color-primary-500: …` on `html[data-preset="mercury"]` |
 | Colours only, by the value rule above; a shadow token sets geometry too, so a preset sets none | `margin: 0`, `--vc-button-radius: 0`, `--vc-widget-shadow: …`, `color: #fff` |

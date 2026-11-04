@@ -1,4 +1,5 @@
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { globSync } from "glob";
@@ -133,6 +134,11 @@ const IDENTIFIER = /(?<![\w-])[a-z][\w-]*/gi;
 
 /** At-rules a design file may emit; any other one, `@layer` or `@keyframes`, ships CSS out of its place. */
 const ALLOWED_AT_RULES = new Set(["media", "supports", "container", "starting-style"]);
+const OS_COLOR_SCHEME = /prefers-color-scheme/i;
+
+const require = createRequire(import.meta.url);
+// The build's own test, so a design or preset rejects exactly the `@media` components move to `vc.print`.
+const { isPrintOnly } = require("../postcss.sfc-layers.cjs") as { isPrintOnly: (node: ChildNode) => boolean };
 
 const STYLE_BLOCK = /<style[^>]*>([\s\S]*?)<\/style>/g;
 
@@ -658,6 +664,28 @@ function declarationsByFile(rule: Rule): Map<string | undefined, Declaration[]> 
   return groups;
 }
 
+/**
+ * Reports an `@media` on the OS colour scheme (`@apply dark:…` writes one) or a print-only one (`print:`):
+ * the storefront's dark mode is `html.dark`, and print rules sit in `vc.print`, above every design and preset.
+ */
+function reportMedia(node: ChildNode, report: ReportType, owner: string, darkPlace: string): void {
+  if (node.type !== "atrule" || node.name !== "media") {
+    return;
+  }
+
+  if (OS_COLOR_SCHEME.test(node.params)) {
+    report(
+      node,
+      `@media ${node.params} follows the OS theme, not the storefront's dark mode (\`dark:\` writes it); put dark rules ${darkPlace}`,
+    );
+  } else if (isPrintOnly(node)) {
+    report(
+      node,
+      `@media ${node.params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`,
+    );
+  }
+}
+
 /** An at-rule a file may not hold is reported once, and what is inside it is not read. */
 function shippedNodes(
   container: Container,
@@ -807,8 +835,11 @@ function checkCompiledFile(
     }
   };
   const reportColor = colorReporter(errors, file);
+  const darkPlace = kind === "tokens" ? `on html.dark[data-design="${design}"]` : `in dark/${block}.scss`;
 
   for (const node of shippedNodes(css, (atRule) => ALLOWED_AT_RULES.has(atRule.name), report)) {
+    reportMedia(node, report, "a design file", darkPlace);
+
     if (node.type === "rule") {
       reportAll(node, node.selectors.map(selectorProblem));
 
@@ -1113,6 +1144,8 @@ function checkPresetFile(
   const isAllowed = (atRule: AtRule) => ALLOWED_AT_RULES.has(atRule.name) || isPresetLayer(atRule);
 
   for (const node of shippedNodes(css, isAllowed, report, "a preset stylesheet")) {
+    reportMedia(node, report, "a preset stylesheet", `under html.dark[data-preset="${preset}"]`);
+
     if (node.type === "rule") {
       for (const problem of presetRuleProblems(node, preset, blocks)) {
         report(node, problem);

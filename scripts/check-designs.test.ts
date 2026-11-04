@@ -878,6 +878,72 @@ ${loads("dark")}  }
       ]);
     });
 
+    const osTheme = (scheme: string, place: string) =>
+      `@media (prefers-color-scheme: ${scheme}) follows the OS theme, not the storefront's dark mode (\`dark:\` writes it); put dark rules ${place}`;
+    const printOnly = (params: string) =>
+      `@media ${params}: a design file holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`;
+
+    it.each([
+      ["@apply dark:", "blocks", ".footer-links {\n  @apply dark:underline;\n}", "dark", 2],
+      [
+        "a nested @media",
+        "blocks",
+        ".footer-links {\n  @media (prefers-color-scheme: dark) {\n    opacity: 0;\n  }\n}",
+        "dark",
+        2,
+      ],
+      [
+        "a top-level @media on light",
+        "blocks",
+        "@media (prefers-color-scheme: light) {\n  .footer-links { opacity: 0; }\n}",
+        "light",
+        1,
+      ],
+      ["@apply dark: in a dark file", "dark", ".footer-links {\n  @apply dark:underline;\n}", "dark", 2],
+    ])(
+      "reports the OS colour scheme from %s at its line, pointing to the dark file",
+      async (_name, folder, text, scheme, line) => {
+        expect(await check({ [`soft/${folder}/footer-links.scss`]: text })).toEqual([
+          expect.stringContaining(
+            `soft/${folder}/footer-links.scss:${line}  ${osTheme(scheme, "in dark/footer-links.scss")}`,
+          ),
+        ]);
+      },
+    );
+
+    it("reports the OS colour scheme in _tokens.scss, pointing to the dark tokens", async () => {
+      expect(
+        await check({ "soft/_tokens.scss": `@media (prefers-color-scheme: dark) {\n  ${SOFT} { --vc-radius: 0; }\n}` }),
+      ).toEqual([
+        expect.stringContaining(`soft/_tokens.scss:1  ${osTheme("dark", 'on html.dark[data-design="soft"]')}`),
+      ]);
+    });
+
+    it.each([
+      ["@apply print:", ".footer-links {\n  @apply print:hidden;\n}", "print", 2],
+      ["a nested @media print", ".footer-links {\n  @media print {\n    opacity: 0;\n  }\n}", "print", 2],
+      ["a top-level @media print", "@media print {\n  .footer-links { opacity: 0; }\n}", "print", 1],
+      [
+        "@media only print with a feature",
+        "@media only print and (min-width: 1px) {\n  .footer-links { opacity: 0; }\n}",
+        "only print and (min-width: 1px)",
+        1,
+      ],
+      ["two print queries", "@media print, only print {\n  .footer-links { opacity: 0; }\n}", "print, only print", 1],
+    ])("reports a print-only rule from %s at its line, pointing to vc.print", async (_name, text, params, line) => {
+      expect(await check({ "soft/blocks/footer-links.scss": text })).toEqual([
+        expect.stringContaining(`soft/blocks/footer-links.scss:${line}  ${printOnly(params)}`),
+      ]);
+    });
+
+    it.each([
+      ["@media screen, print", "@media screen, print { .footer-links { opacity: 0; } }"],
+      ["@media not print", "@media not print { .footer-links { opacity: 0; } }"],
+      ["a width @media", "@media (min-width: 1px) { .footer-links { opacity: 0; } }"],
+    ])("allows %s, neither print-only nor on the OS colour scheme", async (_name, text) => {
+      expect(await check({ "soft/blocks/footer-links.scss": text })).toEqual([]);
+    });
+
     it.each([
       ["a selector built by interpolation", '.vc-button { &--#{"x .vc-card"} { opacity: 0; } }'],
       ["@at-root", ".vc-button { @at-root .vc-card { opacity: 0; } }"],
@@ -1024,6 +1090,37 @@ ${loads("dark")}  }
       const css = `@layer vc.preset {
         ${MERCURY} .vc-button { @media (min-width: 1px) { color: var(--color-primary-500); } }
       }`;
+
+      expect(await check({ "mercury.scss": css })).toEqual([]);
+    });
+
+    it.each([
+      [
+        "@apply dark:",
+        `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @apply dark:text-primary;\n  }\n}`,
+        3,
+        '@media (prefers-color-scheme: dark) follows the OS theme, not the storefront\'s dark mode (`dark:` writes it); put dark rules under html.dark[data-preset="mercury"]',
+      ],
+      [
+        "@media print",
+        `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @media print {\n      color: inherit;\n    }\n  }\n}`,
+        3,
+        "@media print: a preset stylesheet holds no print rules (`print:` writes them); they go in vc.print, client-app/assets/styles/print/",
+      ],
+      [
+        "@apply print:",
+        `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @apply print:text-primary;\n  }\n}`,
+        3,
+        "@media print: a preset stylesheet holds no print rules (`print:` writes them); they go in vc.print, client-app/assets/styles/print/",
+      ],
+    ])("rejects %s inside the layer, at its line", async (_name, css, line, message) => {
+      expect(await check({ "mercury.scss": css })).toEqual([
+        expect.stringContaining(`mercury.scss:${line}  ${message}`),
+      ]);
+    });
+
+    it("passes @media screen, print inside the layer", async () => {
+      const css = `@layer vc.preset { @media screen, print { ${MERCURY} .vc-button { color: inherit; } } }`;
 
       expect(await check({ "mercury.scss": css })).toEqual([]);
     });
