@@ -71,44 +71,30 @@ const SlottedHost = defineComponent({
   `,
 });
 
+// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only on the
+// host.
+const kitComponents = {
+  VcButton,
+  VcCheckbox,
+  VcDropdownMenu,
+  VcIcon,
+  VcInput,
+  VcInputDetails,
+  VcLabel,
+  VcMenuItem,
+  VcPopover,
+  VcScrollbar,
+  VcTooltip,
+};
+
 const createWrapper = createWrapperFactory(mount, Host, {
   attachTo: document.body,
-  global: {
-    // VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
-    // on the host.
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
-  },
+  global: { components: kitComponents },
 });
 
 const createSlottedWrapper = createWrapperFactory(mount, SlottedHost, {
   attachTo: document.body,
-  global: {
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
-  },
+  global: { components: kitComponents },
 });
 
 async function openDialogAndSelect(wrapper: VueWrapper) {
@@ -445,21 +431,7 @@ describe("VcSelect required trigger ARIA", () => {
 
   const createRequiredWrapper = createWrapperFactory(mount, RequiredHost, {
     attachTo: document.body,
-    global: {
-      components: {
-        VcButton,
-        VcCheckbox,
-        VcDropdownMenu,
-        VcIcon,
-        VcInput,
-        VcInputDetails,
-        VcLabel,
-        VcMenuItem,
-        VcPopover,
-        VcScrollbar,
-        VcTooltip,
-      },
-    },
+    global: { components: kitComponents },
   });
 
   // aria-required is not allowed on role="button" (axe aria-allowed-attr).
