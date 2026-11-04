@@ -5,6 +5,7 @@ export * from "./useOrderView";
 export * from "./useOrganizationSwitcher";
 export * from "./usePasswordRequirements";
 export * from "./usePromotionCoupons";
+export * from "./useSignInMethods";
 export * from "./useSignMeIn";
 export * from "./useSignMeOut";
 export * from "./useUser";

@@ -3,7 +3,7 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="bg-[--footer-top-bg-color] px-10 pb-7 pt-8 text-[--footer-top-text-color] sm:flex sm:gap-14 md:gap-16 print:!hidden"
+      class="bg-[--footer-top-bg-color] px-10 pb-7 pt-8 text-[--footer-top-text-color] sm:flex sm:gap-14 md:gap-16 print:hidden"
     >
       <!-- Logo column -->
       <div class="mb-5 flex-none">

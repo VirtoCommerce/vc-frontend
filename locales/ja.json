@@ -290,7 +290,8 @@
       "company_members": "メンバー",
       "contact_administrator": "管理者に連絡",
       "skip_to_main_content": "メインコンテンツへスキップ",
-      "skip_to_footer": "フッターへスキップ"
+      "skip_to_footer": "フッターへスキップ",
+      "security": "セキュリティ"
     },
     "titles": {
       "all_actions": "全ての操作",
@@ -383,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "後で保存",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -499,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1491,6 +1494,21 @@
       "promotion_coupons": {
         "title": "すべてのクーポンとプロモーション",
         "no_lists": "クーポンやプロモーションはありません"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "キーがありません",
+        "unnamed_key": "名前のないキー",
+        "created": "{date} に作成",
+        "changed": "{date} に変更",
+        "rename_modal": {
+          "title": "キーの名前を変更",
+          "name_label": "名前"
+        },
+        "delete_modal": {
+          "title": "キーを削除",
+          "message": "このキーではサインインできなくなります。"
+        }
       }
     },
     "company": {
@@ -1830,7 +1848,11 @@
     "PasswordRequiresNonAlphanumeric": "パスワードには英数字以外の文字を1文字以上含める必要があります",
     "PasswordRequiresUpper": "パスワードには大文字（'A'～'Z'）を1文字以上含める必要があります",
     "PasswordRequiresUniqueChars": "パスワードには異なる文字を使用する必要があります",
-    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください"
+    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください",
+    "user_not_editable": "このユーザーは編集できません",
+    "sign_in_key_not_found": "サインインキーが見つかりませんでした",
+    "last_sign_in_key": "最後のサインインキーは削除できません",
+    "operation_not_supported": "この操作はサポートされていません"
   },
   "password_tips": {
     "title": "強力なパスワードを作成するためのヒント：",
