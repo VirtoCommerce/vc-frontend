@@ -1,18 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
+import { createSurfaceRoot } from "../../layout-test-utils";
 import { useLayoutFocus } from "./useLayoutFocus";
 
 type LayoutFocusType = ReturnType<typeof useLayoutFocus>;
 
-/** Renders one surface per markup, in order, and returns their roots; `tabIndex` as the template sets it. */
+/** Renders one surface per markup, in order, and returns their roots. */
 function render(...surfaces: string[]): HTMLElement[] {
-  const roots = surfaces.map((markup) => {
-    const root = document.createElement("div");
-    root.dataset.layoutSurface = "";
-    root.tabIndex = -1;
-    root.replaceChildren(...new DOMParser().parseFromString(markup, "text/html").body.childNodes);
-    return root;
-  });
+  const roots = surfaces.map((markup) => createSurfaceRoot(markup));
   document.body.replaceChildren(...roots);
   return roots;
 }

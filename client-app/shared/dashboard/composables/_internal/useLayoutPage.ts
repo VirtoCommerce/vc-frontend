@@ -70,25 +70,24 @@ export function useLayoutPage(layout: LayoutControllerType, root: MaybeRefOrGett
     }
   });
 
-  // VcAlert carries no live-region semantics, so the failure is otherwise visual only. Focus has to
-  // come back too — `inert` dropped it to `<body>` when the save started, and edit mode is still on.
+  // VcAlert carries no live-region semantics, so the failure is otherwise visual only.
   watch(saveFailed, (failed) => {
     if (failed) {
       say(t("shared.dashboard.save_failed"));
-      if (canEdit.value) {
-        focusSaveButton();
-      }
     }
   });
 
-  // After a save the backend echoed back differently, Save stays disabled while the stored document is read
-  // again, so the failure above leaves focus alone. Once the read lands, Save takes it — unless the user has
-  // moved it meanwhile.
-  watch(canEdit, (editable) => {
-    if (editable && editing.value && saveFailed.value && document.activeElement === document.body) {
-      focusSaveButton();
-    }
-  });
+  // `inert` dropped focus to `<body>` when the save started, and a failure keeps edit mode on, so Save takes focus
+  // back as soon as it can be used: at once, or once a stored document being read again has landed (Save is disabled
+  // until then). Focus the user has moved elsewhere meanwhile stays where it is.
+  watch(
+    () => editing.value && saveFailed.value && canEdit.value,
+    (ready) => {
+      if (ready && document.activeElement === document.body) {
+        focusSaveButton();
+      }
+    },
+  );
 
   // Listed rather than spread, so this is the whole surface a page gets. `setHidden` is deliberately
   // absent: `toggleHidden` is the same call plus the focus move, and reaching past it would silently

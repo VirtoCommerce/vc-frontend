@@ -175,21 +175,23 @@ export type LayoutInputType = {
 };
 
 /**
- * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
- * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
- * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
+ * A change against the previous period: `positive` = up (green), `negative` = down (red), `neutral` = unchanged or a
+ * plain informational count.
  */
-/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
 export type StatDeltaToneType = "positive" | "negative" | "neutral";
 
+/**
+ * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
+ * pre-formatted strings owned by the dashboard that builds the card.
+ */
 export type StatCardType = {
   /** The `statistics` block id this card renders as. */
   key: string;
   labelKey: string;
   icon: string;
   value: string;
-  // Optional, as on <VcStatWidget>: color and deltaTone have defaults, and sub/delta/deltaIcon are
-  // v-if-guarded, so a card can omit any of them.
+  // Optional: <VcStatWidget> defaults `color`, the stat row reads a missing `deltaTone` as positive, and
+  // sub/delta/deltaIcon are v-if-guarded, so a card can omit any of them.
   color?: VcStatWidgetColorType;
   /** De-emphasized unit rendered right after `value` (e.g. "items" in "34 items"). */
   valueSuffix?: string;

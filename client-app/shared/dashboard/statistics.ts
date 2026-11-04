@@ -140,8 +140,9 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
   // Half away from zero, so a fall reads like a rise of the same size: `Math.round` alone takes −12.5 to −12 but
   // 12.5 to 13, and the backend sends the change unrounded.
   const rounded = Math.sign(percent) * Math.round(Math.abs(percent));
-  // The locale's percent and sign ("+12%", "+12 %" in German); a change that rounds to zero carries no sign.
-  const text = globals.i18n.global.n(rounded / 100, { style: "percent", signDisplay: "exceptZero" });
+  // The locale's percent and sign ("+12%", "+12 %" in German); a change that rounds to zero carries no sign. On the
+  // app's `decimal` format, so vue-i18n keeps one formatter per locale rather than building one per call.
+  const text = globals.i18n.global.n(rounded / 100, { key: "decimal", style: "percent", signDisplay: "exceptZero" });
 
   if (rounded > 0) {
     return { text, tone: "positive", icon: "chevron-up" };

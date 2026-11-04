@@ -6375,12 +6375,14 @@ type StatDataNeedsType<TNeed extends string> = {
     ready: Readonly<Ref<boolean>>;
 };
 /**
- * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
- * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
- * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
+ * A change against the previous period: `positive` = up (green), `negative` = down (red), `neutral` = unchanged or a
+ * plain informational count.
  */
-/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
 type StatDeltaToneType = "positive" | "negative" | "neutral";
+/**
+ * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
+ * pre-formatted strings owned by the dashboard that builds the card.
+ */
 type StatCardType = {
     /** The `statistics` block id this card renders as. */
     key: string;

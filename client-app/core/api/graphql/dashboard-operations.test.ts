@@ -6,6 +6,7 @@ import { saveLayout } from "./account/mutations/saveLayout";
 import { getLayout } from "./account/queries/getLayout";
 import { graphqlClient } from "./client";
 import { errorHandlerLink } from "./config/error-handler";
+import { options } from "./config/options";
 import { useGetOrderStatisticsQuery } from "./orders/queries/getOrderStatistics";
 import { GetLayoutDocument, GetOrderStatisticsDocument, SaveLayoutDocument } from "./types";
 import type { GetOrderStatisticsQueryVariables, InputLayout } from "./types";
@@ -32,10 +33,12 @@ const failingLink = new ApolloLink(
     }),
 );
 
-// The wrappers' own client, with the failing link in place of the network.
+// The wrappers' own client, with the failing link in place of the network. Every client here takes the app's options,
+// which keep Apollo's devtools off under vitest.
 vi.mock("./client", async () => {
   const apollo = await import("@apollo/client/core");
   const { errorHandlerLink: errorLink } = await import("./config/error-handler");
+  const { options: clientOptions } = await import("./config/options");
   const failing = new apollo.ApolloLink(
     () =>
       new apollo.Observable((observer) => {
@@ -44,6 +47,7 @@ vi.mock("./client", async () => {
   );
   return {
     graphqlClient: new apollo.ApolloClient({
+      ...clientOptions,
       link: apollo.ApolloLink.from([errorLink, failing]),
       cache: new apollo.InMemoryCache(),
       defaultOptions: { query: { fetchPolicy: "no-cache" }, mutate: { fetchPolicy: "no-cache" } },
@@ -142,9 +146,9 @@ describe("the order statistics query", () => {
   it("fails without the global error toast", async () => {
     provideApolloClient(
       new ApolloClient({
+        ...options,
         link: ApolloLink.from([errorHandlerLink, failingLink]),
         cache: new InMemoryCache(),
-        devtools: { enabled: false },
       }),
     );
     const owner = effectScope();
@@ -161,12 +165,12 @@ describe("the order statistics query", () => {
     const requests = vi.fn();
     provideApolloClient(
       new ApolloClient({
+        ...options,
         link: new ApolloLink(() => {
           requests();
           return new Observable(() => {});
         }),
         cache: new InMemoryCache(),
-        devtools: { enabled: false },
       }),
     );
     const owner = effectScope();

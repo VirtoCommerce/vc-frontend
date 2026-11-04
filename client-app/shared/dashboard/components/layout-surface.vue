@@ -54,7 +54,6 @@
             :scope="layout.scope"
             :entries="visibleIn('mainLeft')"
             orientation="vertical"
-            :group="`${componentId}-main-left`"
             :editing="editing"
             @reorder="reorderVisible('mainLeft', $event)"
             @set-hidden="toggleHidden"
@@ -73,7 +72,7 @@
           />
         </div>
 
-        <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
+        <!-- Neither column has a Sortable group, so no widget moves between them, or in from another surface. -->
         <LayoutRegion
           v-if="visibleIn('mainRight').length"
           class="layout-surface__aside"
@@ -81,7 +80,6 @@
           :scope="layout.scope"
           :entries="visibleIn('mainRight')"
           orientation="vertical"
-          :group="`${componentId}-main-right`"
           :editing="editing"
           @reorder="reorderVisible('mainRight', $event)"
           @set-hidden="toggleHidden"
@@ -117,7 +115,6 @@
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useComponentId } from "@/ui-kit/composables";
 import { useLayoutPage } from "../composables/_internal/useLayoutPage";
 import { provideLayoutSettings } from "../composables/_internal/useLayoutSettings";
 import { getBlock } from "../registry";
@@ -150,8 +147,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-// Drag groups per instance, not per scope: two surfaces of one dashboard on a page must not trade blocks.
-const componentId = useComponentId("layout-surface");
 // The focus moves look only inside this element, so two surfaces on a page keep their own.
 const root = useTemplateRef<HTMLElement>("root");
 

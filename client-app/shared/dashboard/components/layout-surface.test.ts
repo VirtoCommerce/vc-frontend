@@ -89,6 +89,26 @@ function controllerOver(
   return createLayoutController({ scope: SCOPE, load, save, defaults: () => getBlockRegistry(SCOPE) });
 }
 
+/**
+ * The real controller whose first read answers `first` and whose every save gets an echo that disagrees, so the
+ * stored document is read again; that read waits for `landReread`.
+ */
+function controllerWithHeldReread(first: SavedLayoutType | null) {
+  let reads = 0;
+  let land: (saved: SavedLayoutType | null) => void = () => {};
+  const layout = controllerOver(
+    () =>
+      reads++ === 0
+        ? Promise.resolve(first)
+        : new Promise<SavedLayoutType | null>((resolve) => {
+            land = resolve;
+          }),
+    () => Promise.resolve({ regions: [] }),
+  );
+
+  return { layout, landReread: (saved: SavedLayoutType | null) => land(saved) };
+}
+
 describe("LayoutSurface block bindings", () => {
   // The customer profile's organization reaches its widgets this way; losing it renders every block for the
   // wrong customer.
@@ -214,17 +234,7 @@ describe("LayoutSurface while saving", () => {
 // A save whose echo disagrees with what was sent ends with the stored document read again (useLayout.ts).
 describe("LayoutSurface while the stored document is read again", () => {
   async function saveIntoARereadThatWaits() {
-    let reads = 0;
-    let landReread: (saved: SavedLayoutType | null) => void = () => {};
-    const layout = controllerOver(
-      () =>
-        reads++ === 0
-          ? Promise.resolve(null)
-          : new Promise((resolve) => {
-              landReread = resolve;
-            }),
-      () => Promise.resolve({ regions: [] }),
-    );
+    const { layout, landReread } = controllerWithHeldReread(null);
     const wrapper = mountSurface(layout);
     await flushPromises();
     layout.startEdit();
@@ -232,7 +242,7 @@ describe("LayoutSurface while the stored document is read again", () => {
     await layout.save();
     await flushPromises();
 
-    return { wrapper, landReread: (saved: SavedLayoutType | null) => landReread(saved) };
+    return { wrapper, landReread };
   }
 
   // A save meanwhile would replace a document nobody has seen.
@@ -260,16 +270,24 @@ describe("LayoutSurface while the stored document is read again", () => {
 
 // Two surfaces of one dashboard on a page.
 describe("LayoutSurface beside another surface", () => {
-  // They must not trade blocks through a shared group name.
-  it("gives each surface groups of its own", async () => {
+  // They must not trade blocks: the widget columns take no drop from any other list, and each stat row pairs its two
+  // zones under a group of its own.
+  it("lets no block move between surfaces", async () => {
     const first = mountSurface(createFakeLayout(SCOPE));
     const second = mountSurface(createFakeLayout(SCOPE));
     await flushPromises();
-    const groupsOf = (wrapper: ReturnType<typeof mountSurface>) =>
-      wrapper.findAllComponents(LayoutRegion).map((region) => String(region.props("group")));
+    const groupsIn = (wrapper: ReturnType<typeof mountSurface>, orientation: "horizontal" | "vertical") =>
+      wrapper
+        .findAllComponents(LayoutRegion)
+        .filter((region) => region.props("orientation") === orientation)
+        .map((region) => region.props("group"));
+    const columns = groupsIn(first, "vertical");
+    const statRow = groupsIn(first, "horizontal");
 
-    expect(groupsOf(first).length).toBeGreaterThan(0);
-    expect(groupsOf(second).filter((group) => groupsOf(first).includes(group))).toEqual([]);
+    expect(columns.length).toBeGreaterThan(0);
+    expect(columns.every((group) => group === undefined)).toBe(true);
+    expect(statRow.length).toBeGreaterThan(0);
+    expect(groupsIn(second, "horizontal").filter((group) => statRow.includes(group))).toEqual([]);
   });
 
   // Both in edit mode, so a lookup across the whole page would find the first surface's Save first.
@@ -361,17 +379,7 @@ describe("LayoutSurface with every block hidden", () => {
   // A restore whose echo disagrees reads the stored document again, and nothing may be written until that read
   // lands — Cancel brings the empty state back meanwhile.
   it("disables both actions while the layout cannot be edited", async () => {
-    let reads = 0;
-    let landReread: (saved: SavedLayoutType) => void = () => {};
-    const layout = controllerOver(
-      () =>
-        reads++ === 0
-          ? Promise.resolve(allHidden())
-          : new Promise((resolve) => {
-              landReread = resolve;
-            }),
-      () => Promise.resolve({ regions: [] }),
-    );
+    const { layout, landReread } = controllerWithHeldReread(allHidden());
     const wrapper = await mountAllHidden(layout);
 
     await wrapper.get("[data-layout-restore]").trigger("click");

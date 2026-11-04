@@ -1,7 +1,7 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
-import { createFakeLayout, registerTestDashboard } from "../../layout-test-utils";
+import { createFakeLayout, createSurfaceRoot, registerTestDashboard } from "../../layout-test-utils";
 import { getBlockRegistry } from "../../registry";
 import { useLayoutPage } from "./useLayoutPage";
 import type { FakeLayoutType } from "../../layout-test-utils";
@@ -18,14 +18,11 @@ registerTestDashboard(SCOPE);
 // layout is read first, as on a page: until then it cannot be edited.
 let scopes: EffectScope[] = [];
 
-// The surface's root, where the page's focus moves look; `tabIndex` so jsdom lets a div take focus, as the template
-// does.
+// The surface's root, where the page's focus moves look.
 let root: HTMLElement;
 
 beforeEach(() => {
-  root = document.createElement("div");
-  root.dataset.layoutSurface = "";
-  root.tabIndex = -1;
+  root = createSurfaceRoot();
   document.body.append(root);
 });
 
@@ -71,6 +68,23 @@ describe("useLayoutPage", () => {
 
     expect(page.editing.value).toBe(true);
     expect(activeMarker()).toBe("layoutSave");
+  });
+
+  // Save takes back only the focus `inert` dropped: one the user has moved elsewhere meanwhile stays put.
+  it("leaves focus where the user moved it when a save fails", async () => {
+    renderChrome();
+    const elsewhere = document.createElement("input");
+    document.body.append(elsewhere);
+    const { layout, page } = await withPage();
+    layout.failNextSave.value = true;
+    page.startEdit();
+    elsewhere.focus();
+
+    await page.save();
+    await nextTick();
+    await nextTick();
+
+    expect(document.activeElement).toBe(elsewhere);
   });
 
   it("returns focus to the edit toggle when edit mode ends", async () => {

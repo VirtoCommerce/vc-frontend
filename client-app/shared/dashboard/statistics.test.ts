@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { globals } from "@/core/globals";
 import { getDefaultNumberFormats } from "@/i18n";
 import { buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney } from "./statistics";
@@ -182,6 +182,16 @@ describe("formatStatCount", () => {
   });
 });
 
+// As `applyLocale` switches the language: the new locale's number formats, then the locale itself.
+function switchToGerman(): void {
+  globals.i18n.global.mergeNumberFormat("de-DE", getDefaultNumberFormats("USD"));
+  globals.i18n.global.locale.value = "de-DE";
+}
+
+afterEach(() => {
+  globals.i18n.global.locale.value = "en-US";
+});
+
 describe("formatStatMoney", () => {
   it("passes through the backend-formatted amount", () => {
     expect(formatStatMoney({ formattedAmount: "$1,234.00" })).toBe("$1,234.00");
@@ -195,14 +205,9 @@ describe("formatStatMoney", () => {
 
   // The app's own `currency` format, which a locale switch brings along (`applyLocale`), not one built here.
   it("renders absent money with the app's currency format of the active locale", () => {
-    globals.i18n.global.mergeNumberFormat("de-DE", getDefaultNumberFormats("USD"));
-    globals.i18n.global.locale.value = "de-DE";
+    switchToGerman();
 
-    try {
-      expect(formatStatMoney()).toBe("0,00 $");
-    } finally {
-      globals.i18n.global.locale.value = "en-US";
-    }
+    expect(formatStatMoney()).toBe("0,00\u00a0$");
   });
 
   it("falls back to a plain 0 instead of throwing when no currency is configured yet", async () => {
@@ -246,12 +251,21 @@ describe("formatSignedPercent", () => {
 
   // Not glued by hand: German puts a no-break space before the percent sign.
   it("writes the sign and the percent the way the locale does", () => {
-    globals.i18n.global.locale.value = "de-DE";
+    switchToGerman();
 
-    try {
-      expect(formatSignedPercent(12.4)?.text).toBe("+12\u00a0%");
-    } finally {
-      globals.i18n.global.locale.value = "en-US";
-    }
+    expect(formatSignedPercent(12.4)?.text).toBe("+12\u00a0%");
+  });
+
+  // On the app's `decimal` format, so vue-i18n keeps the formatter: options passed alone build one per call.
+  it("builds no formatter per call", () => {
+    formatSignedPercent(1);
+    const formatters = vi.spyOn(Intl, "NumberFormat");
+
+    formatSignedPercent(2);
+    formatSignedPercent(-3);
+    const built = formatters.mock.calls.length;
+    formatters.mockRestore();
+
+    expect(built).toBe(0);
   });
 });

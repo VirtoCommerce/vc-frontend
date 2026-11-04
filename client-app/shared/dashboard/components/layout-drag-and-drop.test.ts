@@ -64,6 +64,11 @@ beforeEach(() => {
   zones.length = 0;
 });
 
+// A spec that stubs a global (`matchMedia`) leaves the next one without it.
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 // Async because the layout is read first, as on a page: until then it cannot be edited.
 async function setup() {
   const layout = createFakeLayout(SCOPE);
@@ -342,22 +347,19 @@ describe("stat row drag and drop", () => {
 
   // jsdom has no `matchMedia`, so every other spec runs with motion allowed.
   it("drops the slide animation when the system asks for reduced motion", async () => {
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: (query: string) => ({
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn((query: string) => ({
         matches: query === "(prefers-reduced-motion: reduce)",
         media: query,
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
-      }),
-    });
+      })),
+    );
 
-    try {
-      await setup();
-      expect(zones[0].options.animation).toBe(0);
-    } finally {
-      Reflect.deleteProperty(window, "matchMedia");
-    }
+    await setup();
+
+    expect(zones[0].options.animation).toBe(0);
   });
 
   // A pointer drag and a keyboard grab reordering the same array at once drops the wrong block.
@@ -532,7 +534,6 @@ describe("rail with a block registered at runtime", () => {
                 scope: RAIL_SCOPE,
                 entries: layout.visibleIn("mainRight"),
                 orientation: "vertical",
-                group: `layout-${RAIL_SCOPE}-main-right`,
                 editing: layout.editing.value,
                 onReorder: (ids: string[]) => layout.reorderVisible("mainRight", ids),
                 onSetHidden: toggleHidden,

@@ -42,8 +42,9 @@ interface IProps {
   entries: readonly string[];
   orientation: KeyboardSortOrientationType;
   editing?: boolean;
-  /** Shared name = cross-zone drags allowed. The two widget columns get distinct names on purpose. */
-  group: string;
+  /** Shared name = cross-zone drags allowed, as between the stat row's two zones. Without one, the region only
+   *  reorders its own blocks: nothing can be dropped in from another list. */
+  group?: string;
   /** Element to render as — `aside` for the customer profile's rail, `div` everywhere else. */
   tag?: string;
   /** Whole-card drag, no hide button — the stat row. Widgets use a handle instead. */
