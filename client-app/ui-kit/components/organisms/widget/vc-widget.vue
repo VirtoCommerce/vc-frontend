@@ -219,9 +219,8 @@ watchEffect(() => {
     --radius: 0;
     --inner-radius: 0;
     --body-radius: 0;
-    --shadow: 0 0 #0000;
 
-    @apply divide-none;
+    @apply divide-none shadow-none;
 
     @media (width < theme("screens.md")) {
       .vc-container & {
