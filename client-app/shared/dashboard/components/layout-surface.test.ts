@@ -258,8 +258,9 @@ describe("LayoutSurface while the stored document is read again", () => {
   });
 });
 
-describe("LayoutSurface drag groups", () => {
-  // Two surfaces of one dashboard on a page must not trade blocks through a shared group name.
+// Two surfaces of one dashboard on a page.
+describe("LayoutSurface beside another surface", () => {
+  // They must not trade blocks through a shared group name.
   it("gives each surface groups of its own", async () => {
     const first = mountSurface(createFakeLayout(SCOPE));
     const second = mountSurface(createFakeLayout(SCOPE));
@@ -269,6 +270,24 @@ describe("LayoutSurface drag groups", () => {
 
     expect(groupsOf(first).length).toBeGreaterThan(0);
     expect(groupsOf(second).filter((group) => groupsOf(first).includes(group))).toEqual([]);
+  });
+
+  // Both in edit mode, so a lookup across the whole page would find the first surface's Save first.
+  it("hands focus to its own Save when its save fails", async () => {
+    const first = createFakeLayout(SCOPE);
+    const second = createFakeLayout(SCOPE);
+    mountSurface(first);
+    const wrapper = mountSurface(second);
+    await flushPromises();
+    first.startEdit();
+    second.startEdit();
+    await flushPromises();
+    second.failNextSave.value = true;
+
+    await second.save();
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.get("[data-layout-save]").element);
   });
 });
 

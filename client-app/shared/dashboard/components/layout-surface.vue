@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-surface" tabindex="-1" data-layout-surface>
+  <div ref="root" class="layout-surface" tabindex="-1" data-layout-surface>
     <!-- What renders below is registry defaults, not the user's layout, and there is no edit button. -->
     <VcAlert v-if="loadFailed" color="danger" size="sm" variant="soft" icon>
       {{ t("shared.dashboard.load_failed") }}
@@ -115,6 +115,7 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId } from "@/ui-kit/composables";
 import { useLayoutPage } from "../composables/_internal/useLayoutPage";
@@ -151,10 +152,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 // Drag groups per instance, not per scope: two surfaces of one dashboard on a page must not trade blocks.
 const componentId = useComponentId("layout-surface");
+// The focus moves look only inside this element, so two surfaces on a page keep their own.
+const root = useTemplateRef<HTMLElement>("root");
 
 // A surface's controller is structural — one page, one layout, for its whole life.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const page = useLayoutPage(props.layout);
+const page = useLayoutPage(props.layout, root);
 
 const {
   message,

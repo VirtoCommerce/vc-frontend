@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
-import { focusBlockControl } from "../composables/_internal/useLayoutFocus";
+import { useLayoutFocus } from "../composables/_internal/useLayoutFocus";
 import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import {
   createFakeLayout,
@@ -55,9 +55,9 @@ registerBlock(RAIL_SCOPE, {
 });
 
 // Every harness mounts with `attachTo: document.body`, and jsdom is reset per file rather than per
-// test — so without this each test leaves its DOM behind for the next one. `focusBlockControl` looks
-// its target up with a document-wide `querySelector`, which would then find an earlier test's card and
-// let a focus assertion pass while the wrapper under test was never touched.
+// test — so without this each test leaves its DOM behind for the next one. The harnesses' `focusBlockControl`
+// looks its target up in the whole body, which would then find an earlier test's card and let a focus
+// assertion pass while the wrapper under test was never touched.
 enableAutoUnmount(afterEach);
 
 beforeEach(() => {
@@ -73,7 +73,9 @@ async function setup() {
 
   const Harness = defineComponent({
     setup() {
-      // As the surface does, so focus follows a parked block.
+      // As the surface does, so focus follows a parked block; the body stands in for the surface's root.
+      const { focusBlockControl } = useLayoutFocus(document.body);
+
       function toggleHidden(id: string, hidden: boolean, index?: number): void {
         setHidden(id, hidden, index);
         layout.setHidden(id, hidden, index);
@@ -513,6 +515,8 @@ describe("rail with a block registered at runtime", () => {
     const Harness = defineComponent({
       setup() {
         // As useLayoutPage's toggleHidden does — both the region's ✕ and the tray's restore land here.
+        const { focusBlockControl } = useLayoutFocus(document.body);
+
         function toggleHidden(id: string, hidden: boolean, index?: number): void {
           layout.setHidden(id, hidden, index);
           focusBlockControl(id);

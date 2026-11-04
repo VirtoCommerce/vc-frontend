@@ -3,14 +3,19 @@ import { useI18n } from "vue-i18n";
 import { LAYOUT_REGION_IDS } from "../../constants";
 import { getBlock } from "../../registry";
 import { useLayoutAnnouncer } from "./useLayoutAnnouncer";
-import { focusBlockControl, focusEditToggle, focusSaveButton, focusSurfaceStart } from "./useLayoutFocus";
+import { useLayoutFocus } from "./useLayoutFocus";
 import type { LayoutControllerType } from "../../types";
+import type { MaybeRefOrGetter } from "vue";
 
-/** Everything a layout surface needs on top of the page's layout controller. */
-export function useLayoutPage(layout: LayoutControllerType) {
+/**
+ * Everything a layout surface needs on top of the page's layout controller. `root` is the surface's own element:
+ * the focus moves stay inside it.
+ */
+export function useLayoutPage(layout: LayoutControllerType, root: MaybeRefOrGetter<HTMLElement | null | undefined>) {
   const { t } = useI18n();
   const { scope } = layout;
   const { message, announce, say } = useLayoutAnnouncer(scope);
+  const { focusBlockControl, focusEditToggle, focusSaveButton, focusSurfaceStart } = useLayoutFocus(root);
   const { setHidden, visibleIn, hiddenIn, editing, saveFailed, canEdit } = layout;
 
   // Widgets from both columns share one tray; the stat row has its own paired zone instead.

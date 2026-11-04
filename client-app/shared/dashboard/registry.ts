@@ -12,6 +12,12 @@ import type { BlockType } from "./types";
 
 const useBlockRegistries = createGlobalState(() => shallowRef<Readonly<Record<string, readonly BlockType[]>>>({}));
 
+// The backend compares block ids ignoring case, so the registry does too: an id in any case names one block.
+function isSameId(a: string, b: string): boolean {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameters
+  return a.toLowerCase() === b.toLowerCase();
+}
+
 /**
  * Adds a block to a dashboard; the dashboard (`scope`) is created by its first block. Rules for a contributor:
  * - register synchronously in the module's `init()`, which runs before the app mounts, so a dashboard's first
@@ -38,9 +44,8 @@ export function registerBlock(scope: string, block: BlockType): void {
 
   const registries = useBlockRegistries();
   const blocks = registries.value[scope] ?? [];
-  const id = block.id.toLowerCase();
 
-  if (blocks.some((registered) => registered.id.toLowerCase() === id)) {
+  if (blocks.some((registered) => isSameId(registered.id, block.id))) {
     Logger.warn(`registerBlock: the block "${block.id}" is already registered on "${scope}"; ignoring.`);
     return;
   }
@@ -49,13 +54,17 @@ export function registerBlock(scope: string, block: BlockType): void {
   registries.value = { ...registries.value, [scope]: [...blocks, block] };
 }
 
-/** Removes a block from a dashboard. A saved document that names it keeps working: reconciliation drops it. */
+/**
+ * Removes a block from a dashboard, matching its id in any case, as `registerBlock` does. A saved document that
+ * names it keeps working: reconciliation drops it.
+ */
 export function unregisterBlock(scope: string, id: string): void {
   const registries = useBlockRegistries();
   const blocks = registries.value[scope] ?? [];
+  const remaining = blocks.filter((block) => !isSameId(block.id, id));
 
-  if (blocks.some((block) => block.id === id)) {
-    registries.value = { ...registries.value, [scope]: blocks.filter((block) => block.id !== id) };
+  if (remaining.length < blocks.length) {
+    registries.value = { ...registries.value, [scope]: remaining };
   }
 }
 
@@ -65,5 +74,5 @@ export function getBlockRegistry(scope: string): readonly BlockType[] {
 }
 
 export function getBlock(scope: string, id: string): BlockType | undefined {
-  return getBlockRegistry(scope).find((block) => block.id === id);
+  return getBlockRegistry(scope).find((block) => isSameId(block.id, id));
 }

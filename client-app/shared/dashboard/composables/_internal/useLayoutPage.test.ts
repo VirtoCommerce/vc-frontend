@@ -1,5 +1,5 @@
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
 import { createFakeLayout, registerTestDashboard } from "../../layout-test-utils";
 import { getBlockRegistry } from "../../registry";
@@ -18,10 +18,21 @@ registerTestDashboard(SCOPE);
 // layout is read first, as on a page: until then it cannot be edited.
 let scopes: EffectScope[] = [];
 
+// The surface's root, where the page's focus moves look; `tabIndex` so jsdom lets a div take focus, as the template
+// does.
+let root: HTMLElement;
+
+beforeEach(() => {
+  root = document.createElement("div");
+  root.dataset.layoutSurface = "";
+  root.tabIndex = -1;
+  document.body.append(root);
+});
+
 async function withPage(layout: FakeLayoutType = createFakeLayout(SCOPE)) {
   const owner = effectScope();
   scopes.push(owner);
-  const page = owner.run(() => useLayoutPage(layout))!;
+  const page = owner.run(() => useLayoutPage(layout, root))!;
   await flushPromises();
   return { layout, page };
 }
@@ -39,7 +50,7 @@ function renderChrome(): void {
   save.dataset.layoutSave = "";
   const toggle = document.createElement("button");
   toggle.dataset.layoutEditToggle = "";
-  document.body.append(save, toggle);
+  root.append(save, toggle);
 }
 
 const activeMarker = () =>
@@ -162,14 +173,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   const allHiddenPage = () => withPage(createFakeLayout(SCOPE, { saved: savedShowing() }));
 
-  // Where the empty state's actions send focus; `tabIndex` so jsdom lets a div take it, as the template does.
-  function renderSurface(): void {
-    const surface = document.createElement("div");
-    surface.dataset.layoutSurface = "";
-    surface.tabIndex = -1;
-    document.body.append(surface);
-  }
-
   // In edit mode the empty zones and the tray are the way back, so the empty state would only cover them.
   it("reports the surface empty outside edit mode only", async () => {
     const { page } = await allHiddenPage();
@@ -191,7 +194,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   it("announces a restore that saved and hands focus to the start of the surface", async () => {
     renderChrome();
-    renderSurface();
     const { page } = await allHiddenPage();
 
     await page.restoreDefaults();
@@ -204,7 +206,6 @@ describe("useLayoutPage with every block hidden", () => {
   });
 
   it("leaves focus alone when the page is gone before a restore lands", async () => {
-    renderSurface();
     const elsewhere = document.createElement("input");
     document.body.append(elsewhere);
     const layout = createFakeLayout(SCOPE, { saved: savedShowing() });
@@ -212,7 +213,7 @@ describe("useLayoutPage with every block hidden", () => {
     const land = layout.holdNextSave();
 
     const owner = effectScope();
-    const page = owner.run(() => useLayoutPage(layout))!;
+    const page = owner.run(() => useLayoutPage(layout, root))!;
     const restoring = page.restoreDefaults();
     owner.stop();
     elsewhere.focus();
@@ -243,7 +244,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   it("enters edit mode from the empty state with focus at the start of the surface", async () => {
     renderChrome();
-    renderSurface();
     const { page } = await allHiddenPage();
 
     page.editFromEmpty();
@@ -259,7 +259,7 @@ describe("useLayoutPage with every block hidden", () => {
   it("hands focus to the empty state's Edit layout when edit mode ends on an empty surface", async () => {
     const emptyEdit = document.createElement("button");
     emptyEdit.dataset.layoutEmptyEdit = "";
-    document.body.append(emptyEdit);
+    root.append(emptyEdit);
     const { page } = await allHiddenPage();
     page.startEdit();
 

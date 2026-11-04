@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { globals } from "@/core/globals";
+import { getDefaultNumberFormats } from "@/i18n";
 import { buildStatisticsWindows, formatSignedPercent, formatStatCount, formatStatMoney } from "./statistics";
 
 // Pinned so the expectations don't depend on the runtime's default locale.
@@ -190,6 +191,18 @@ describe("formatStatMoney", () => {
   it("renders absent money as a zero in the query's currency, so a money slot never shows a bare 0", () => {
     expect(formatStatMoney()).toBe("$0.00");
     expect(formatStatMoney(null)).toBe("$0.00");
+  });
+
+  // The app's own `currency` format, which a locale switch brings along (`applyLocale`), not one built here.
+  it("renders absent money with the app's currency format of the active locale", () => {
+    globals.i18n.global.mergeNumberFormat("de-DE", getDefaultNumberFormats("USD"));
+    globals.i18n.global.locale.value = "de-DE";
+
+    try {
+      expect(formatStatMoney()).toBe("0,00 $");
+    } finally {
+      globals.i18n.global.locale.value = "en-US";
+    }
   });
 
   it("falls back to a plain 0 instead of throwing when no currency is configured yet", async () => {

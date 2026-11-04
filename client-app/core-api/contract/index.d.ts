@@ -6565,7 +6565,10 @@ declare function useStatDataNeeds<TNeed extends string>(layout: LayoutVisibility
  * A block with a key outside these formats, or with an id already taken in any case, is ignored with a warning.
  */
 declare function registerBlock(scope: string, block: BlockType): void;
-/** Removes a block from a dashboard. A saved document that names it keeps working: reconciliation drops it. */
+/**
+ * Removes a block from a dashboard, matching its id in any case, as `registerBlock` does. A saved document that
+ * names it keeps working: reconciliation drops it.
+ */
 declare function unregisterBlock(scope: string, id: string): void;
 
 /**
