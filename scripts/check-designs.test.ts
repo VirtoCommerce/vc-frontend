@@ -17,6 +17,12 @@ import type { IDesignCheckOptions } from "./check-designs.js";
 
 const SOFT = 'html[data-design="soft"]';
 const TOKENS_ONLY = `_tokens.scss sets tokens only on ${SOFT} or html.dark[data-design="soft"]`;
+const DARK_MEDIA =
+  "@media (prefers-color-scheme: dark) follows the OS theme, not the storefront's dark mode (`dark:` writes it)";
+const LIGHT_MEDIA = "@media (prefers-color-scheme: light) follows the OS theme, not the storefront's dark mode";
+const osTheme = (media: string, places: string) => `${media}; drop it: ${places}`;
+const printOnly = (params: string, owner: string) =>
+  `@media ${params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`;
 
 describe("check-designs", () => {
   describe("checkBlockSelector", () => {
@@ -878,44 +884,57 @@ ${loads("dark")}  }
       ]);
     });
 
-    const osTheme = (scheme: string, place: string) =>
-      `@media (prefers-color-scheme: ${scheme}) follows the OS theme, not the storefront's dark mode (\`dark:\` writes it); put dark rules ${place}`;
-    const printOnly = (params: string) =>
-      `@media ${params}: a design file holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`;
+    const blockPlaces = "dark-mode rules go in dark/footer-links.scss, the rest in blocks/footer-links.scss";
 
     it.each([
-      ["@apply dark:", "blocks", ".footer-links {\n  @apply dark:underline;\n}", "dark", 2],
+      ["@apply dark:", "blocks", ".footer-links {\n  @apply dark:underline;\n}", DARK_MEDIA, 2],
       [
         "a nested @media",
         "blocks",
         ".footer-links {\n  @media (prefers-color-scheme: dark) {\n    opacity: 0;\n  }\n}",
-        "dark",
+        DARK_MEDIA,
         2,
       ],
       [
         "a top-level @media on light",
         "blocks",
         "@media (prefers-color-scheme: light) {\n  .footer-links { opacity: 0; }\n}",
-        "light",
+        LIGHT_MEDIA,
         1,
       ],
-      ["@apply dark: in a dark file", "dark", ".footer-links {\n  @apply dark:underline;\n}", "dark", 2],
+      [
+        "a dark query with a width, which `dark:` does not write",
+        "blocks",
+        "@media (prefers-color-scheme: dark) and (min-width: 1px) {\n  .footer-links { opacity: 0; }\n}",
+        "@media (prefers-color-scheme: dark) and (min-width: 1px) follows the OS theme, not the storefront's dark mode",
+        1,
+      ],
+      ["@apply dark: in a dark file", "dark", ".footer-links {\n  @apply dark:underline;\n}", DARK_MEDIA, 2],
+      [
+        "a light @media in a dark file",
+        "dark",
+        "@media (prefers-color-scheme: light) {\n  .footer-links { opacity: 0; }\n}",
+        LIGHT_MEDIA,
+        1,
+      ],
     ])(
-      "reports the OS colour scheme from %s at its line, pointing to the dark file",
-      async (_name, folder, text, scheme, line) => {
+      "reports the OS colour scheme from %s at its line, naming the dark and the block file",
+      async (_name, folder, text, media, line) => {
         expect(await check({ [`soft/${folder}/footer-links.scss`]: text })).toEqual([
-          expect.stringContaining(
-            `soft/${folder}/footer-links.scss:${line}  ${osTheme(scheme, "in dark/footer-links.scss")}`,
-          ),
+          expect.stringContaining(`soft/${folder}/footer-links.scss:${line}  ${osTheme(media, blockPlaces)}`),
         ]);
       },
     );
 
-    it("reports the OS colour scheme in _tokens.scss, pointing to the dark tokens", async () => {
-      expect(
-        await check({ "soft/_tokens.scss": `@media (prefers-color-scheme: dark) {\n  ${SOFT} { --vc-radius: 0; }\n}` }),
-      ).toEqual([
-        expect.stringContaining(`soft/_tokens.scss:1  ${osTheme("dark", 'on html.dark[data-design="soft"]')}`),
+    it.each([
+      ["dark", DARK_MEDIA],
+      ["light", LIGHT_MEDIA],
+    ])("reports the OS colour scheme on %s in _tokens.scss, naming both token roots", async (scheme, media) => {
+      const tokens = `@media (prefers-color-scheme: ${scheme}) {\n  ${SOFT} { --vc-radius: 0; }\n}`;
+      const places = `dark-mode tokens go on html.dark[data-design="soft"], the rest on ${SOFT}`;
+
+      expect(await check({ "soft/_tokens.scss": tokens })).toEqual([
+        expect.stringContaining(`soft/_tokens.scss:1  ${osTheme(media, places)}`),
       ]);
     });
 
@@ -932,7 +951,7 @@ ${loads("dark")}  }
       ["two print queries", "@media print, only print {\n  .footer-links { opacity: 0; }\n}", "print, only print", 1],
     ])("reports a print-only rule from %s at its line, pointing to vc.print", async (_name, text, params, line) => {
       expect(await check({ "soft/blocks/footer-links.scss": text })).toEqual([
-        expect.stringContaining(`soft/blocks/footer-links.scss:${line}  ${printOnly(params)}`),
+        expect.stringContaining(`soft/blocks/footer-links.scss:${line}  ${printOnly(params, "a design file")}`),
       ]);
     });
 
@@ -1094,24 +1113,33 @@ ${loads("dark")}  }
       expect(await check({ "mercury.scss": css })).toEqual([]);
     });
 
+    const presetPlaces = `dark-mode rules go under ${DARK_MERCURY}, the rest under ${MERCURY}`;
+    const presetPrint = printOnly("print", "a preset stylesheet");
+
     it.each([
       [
         "@apply dark:",
         `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @apply dark:text-primary;\n  }\n}`,
         3,
-        '@media (prefers-color-scheme: dark) follows the OS theme, not the storefront\'s dark mode (`dark:` writes it); put dark rules under html.dark[data-preset="mercury"]',
+        osTheme(DARK_MEDIA, presetPlaces),
+      ],
+      [
+        "@media on light",
+        `@layer vc.preset {\n  @media (prefers-color-scheme: light) {\n    ${MERCURY} .vc-button {\n      color: inherit;\n    }\n  }\n}`,
+        2,
+        osTheme(LIGHT_MEDIA, presetPlaces),
       ],
       [
         "@media print",
         `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @media print {\n      color: inherit;\n    }\n  }\n}`,
         3,
-        "@media print: a preset stylesheet holds no print rules (`print:` writes them); they go in vc.print, client-app/assets/styles/print/",
+        presetPrint,
       ],
       [
         "@apply print:",
         `@layer vc.preset {\n  ${MERCURY} .vc-button {\n    @apply print:text-primary;\n  }\n}`,
         3,
-        "@media print: a preset stylesheet holds no print rules (`print:` writes them); they go in vc.print, client-app/assets/styles/print/",
+        presetPrint,
       ],
     ])("rejects %s inside the layer, at its line", async (_name, css, line, message) => {
       expect(await check({ "mercury.scss": css })).toEqual([

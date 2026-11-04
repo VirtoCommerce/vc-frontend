@@ -135,9 +135,11 @@ const IDENTIFIER = /(?<![\w-])[a-z][\w-]*/gi;
 /** At-rules a design file may emit; any other one, `@layer` or `@keyframes`, ships CSS out of its place. */
 const ALLOWED_AT_RULES = new Set(["media", "supports", "container", "starting-style"]);
 const OS_COLOR_SCHEME = /prefers-color-scheme/i;
+/** The query Tailwind's `dark:` writes, as `darkMode` stays `media`. */
+const DARK_VARIANT_QUERY = "(prefers-color-scheme: dark)";
 
 const require = createRequire(import.meta.url);
-// The build's own test, so a design or preset rejects exactly the `@media` components move to `vc.print`.
+// The build's print-only test (postcss.sfc-layers.cjs), so both read the same queries as print.
 const { isPrintOnly } = require("../postcss.sfc-layers.cjs") as { isPrintOnly: (node: ChildNode) => boolean };
 
 const STYLE_BLOCK = /<style[^>]*>([\s\S]*?)<\/style>/g;
@@ -667,16 +669,19 @@ function declarationsByFile(rule: Rule): Map<string | undefined, Declaration[]> 
 /**
  * Reports an `@media` on the OS colour scheme (`@apply dark:…` writes one) or a print-only one (`print:`):
  * the storefront's dark mode is `html.dark`, and print rules sit in `vc.print`, above every design and preset.
+ * `places` says where the file's dark-mode rules and the rest go.
  */
-function reportMedia(node: ChildNode, report: ReportType, owner: string, darkPlace: string): void {
+function reportMedia(node: ChildNode, report: ReportType, owner: string, places: string): void {
   if (node.type !== "atrule" || node.name !== "media") {
     return;
   }
 
   if (OS_COLOR_SCHEME.test(node.params)) {
+    const source = node.params === DARK_VARIANT_QUERY ? " (`dark:` writes it)" : "";
+
     report(
       node,
-      `@media ${node.params} follows the OS theme, not the storefront's dark mode (\`dark:\` writes it); put dark rules ${darkPlace}`,
+      `@media ${node.params} follows the OS theme, not the storefront's dark mode${source}; drop it: ${places}`,
     );
   } else if (isPrintOnly(node)) {
     report(
@@ -835,10 +840,13 @@ function checkCompiledFile(
     }
   };
   const reportColor = colorReporter(errors, file);
-  const darkPlace = kind === "tokens" ? `on html.dark[data-design="${design}"]` : `in dark/${block}.scss`;
+  const places =
+    kind === "tokens"
+      ? `dark-mode tokens go on html.dark[data-design="${design}"], the rest on html[data-design="${design}"]`
+      : `dark-mode rules go in dark/${block}.scss, the rest in blocks/${block}.scss`;
 
   for (const node of shippedNodes(css, (atRule) => ALLOWED_AT_RULES.has(atRule.name), report)) {
-    reportMedia(node, report, "a design file", darkPlace);
+    reportMedia(node, report, "a design file", places);
 
     if (node.type === "rule") {
       reportAll(node, node.selectors.map(selectorProblem));
@@ -1142,9 +1150,10 @@ function checkPresetFile(
   const report: ReportType = (node, message) => errors.push(`${where(node, file)}  ${message}`);
   const reportColor = colorReporter(errors, file);
   const isAllowed = (atRule: AtRule) => ALLOWED_AT_RULES.has(atRule.name) || isPresetLayer(atRule);
+  const places = `dark-mode rules go under html.dark[data-preset="${preset}"], the rest under html[data-preset="${preset}"]`;
 
   for (const node of shippedNodes(css, isAllowed, report, "a preset stylesheet")) {
-    reportMedia(node, report, "a preset stylesheet", `under html.dark[data-preset="${preset}"]`);
+    reportMedia(node, report, "a preset stylesheet", places);
 
     if (node.type === "rule") {
       for (const problem of presetRuleProblems(node, preset, blocks)) {
