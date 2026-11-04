@@ -1218,8 +1218,7 @@ watch(
 
     @apply px-4 py-1 h-10 font-bold text-[length:var(--font-size)] leading-[var(--line-height)];
 
-    // A design may not set colour, so it only switches the muted ink on: 0 keeps the inherited text, 1 is neutral-700.
-    color: color-mix(in srgb, theme("colors.neutral.700") calc(var(--vc-table-title-muted, 0) * 100%), currentColor);
+    color: var(--vc-table-title-color, currentColor);
 
     @include column-align;
 
@@ -1236,9 +1235,9 @@ watch(
 
   &__body {
     word-break: break-word;
-    // The same switch as the title's, to neutral-800. On the body rather than the cells, so rows rendered by
-    // `#desktop-item` / `#desktop-body` mute too and a colour set on a row still reaches its cells.
-    color: color-mix(in srgb, theme("colors.neutral.800") calc(var(--vc-table-cell-muted, 0) * 100%), currentColor);
+    // On the body rather than the cells, so rows rendered by `#desktop-item` / `#desktop-body` take it too and a
+    // colour set on a row still reaches its cells.
+    color: var(--vc-table-body-color, currentColor);
 
     &:first-child {
       tr:first-child {
@@ -1323,8 +1322,8 @@ watch(
     &--strong {
       @apply font-bold;
 
-      // Keeps the row's colour; when the body is muted, the same switch lifts this cell back to neutral-950.
-      color: color-mix(in srgb, theme("colors.neutral.950") calc(var(--vc-table-cell-muted, 0) * 100%), currentColor);
+      // Keeps the row's colour by default; a design that mutes the body lifts the identifying cell back with this token.
+      color: var(--vc-table-cell-strong-color, currentColor);
     }
 
     &--fixed {

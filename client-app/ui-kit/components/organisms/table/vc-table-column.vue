@@ -53,7 +53,7 @@ interface IProps {
   sortable?: boolean;
   /** Text alignment within the column */
   align?: VcTableAlignType;
-  /** Marks the column that identifies the row (an order number, a name): its cells are bold and stay in the darkest text colour when a design mutes the rest. */
+  /** Marks the column that identifies the row (an order number, a name): its cells are bold and take `--vc-table-cell-strong-color`, so they stay dark when a design mutes the rest of the body. */
   strong?: boolean;
   /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
   width?: string;

@@ -10,9 +10,9 @@ declare global {
     sortable?: boolean;
     align?: VcTableAlignType;
     /**
-     * Marks the column that identifies the row: its cells are bold and stay in the darkest text colour when a design
-     * mutes the rest. Applies to the cells VcTable renders from `VcTableColumn` slots; `#desktop-item` and
-     * `#desktop-body` render their own cells.
+     * Marks the column that identifies the row: its cells are bold and take `--vc-table-cell-strong-color`, so they
+     * stay dark when a design mutes the rest of the body. Applies to the cells VcTable renders from `VcTableColumn`
+     * slots; `#desktop-item` and `#desktop-body` render their own cells.
      */
     strong?: boolean;
     classes?: string;
