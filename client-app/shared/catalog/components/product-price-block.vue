@@ -34,7 +34,7 @@
           category="productActions"
           class="product-price-block__action"
           :product="product"
-          :configuration-sections="configurationSections"
+          :configuration-sections="selectedConfigurationInput"
           :condition-params="product"
         />
 
@@ -122,7 +122,6 @@ import { useRoute } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { stringFormat } from "@/core/utilities";
 import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
-import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
@@ -147,10 +146,6 @@ const isMobile = toRef(props, "isMobile");
 const productId = computed(() => props.product.id);
 const { configurableLineItemId } = useConfigurableLineItemId();
 const { selectedConfigurationInput } = useConfigurableProduct(productId);
-
-const configurationSections = computed(() =>
-  selectedConfigurationInput.value.filter((section) => section.type !== CONFIGURABLE_SECTION_TYPES.file),
-);
 
 const createNewConfigurationRoute = computed(() => {
   const query = Object.fromEntries(

@@ -18,7 +18,7 @@ export type MenuCountContributionType = { count?: MaybeRefOrGetter<number> };
  */
 export type ProductActionPropsType = {
   product: Product;
-  /** The product page's current configurator selection, File sections left out. Absent on cards. */
+  /** The product page's current configurator selection. Absent on cards. */
   configurationSections?: ConfigurationSectionInput[];
 };
 

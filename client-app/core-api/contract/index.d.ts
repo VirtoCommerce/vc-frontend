@@ -16,6 +16,7 @@ import { ApolloClient, TypePolicies } from '@apollo/client/core';
 import * as _vueuse_core from '@vueuse/core';
 import { DeepPartial } from 'utility-types';
 import * as _vue_apollo_composable from '@vue/apollo-composable';
+import * as _vue_apollo_composable_dist_useLazyQuery_js from '@vue/apollo-composable/dist/useLazyQuery.js';
 import * as _intlify_core_base from '@intlify/core-base';
 import { LocaleMessage } from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
@@ -1117,6 +1118,13 @@ type InputNewCartItemType = {
     /** Product quantity */
     quantity?: InputMaybe<Scalars['Int']['input']>;
 };
+type InputPushHistoricalEventType = {
+    eventType?: InputMaybe<Scalars['String']['input']>;
+    productId?: InputMaybe<Scalars['String']['input']>;
+    productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+    sessionId?: InputMaybe<Scalars['String']['input']>;
+    storeId?: InputMaybe<Scalars['String']['input']>;
+};
 type InputRegisterByInvitationType = {
     /** Customer order Id to be associated with this user. */
     customerOrderId?: InputMaybe<Scalars['String']['input']>;
@@ -2085,6 +2093,10 @@ declare enum PropertyValueTypes {
     Number = "NUMBER",
     ShortText = "SHORT_TEXT"
 }
+type QuerySearchHistoryArgs = {
+    maxCount: Scalars['Int']['input'];
+    storeId: Scalars['String']['input'];
+};
 type Rating = {
     /** Total count of customer reviews */
     reviewCount: Scalars['Int']['output'];
@@ -2621,6 +2633,11 @@ type GetShortCartQuery = {
         shipments: Array<{
             id: string;
         }>;
+    };
+};
+type GetSearchHistoryQuery = {
+    searchHistory?: {
+        queries?: Array<string>;
     };
 };
 type GetStoreQuery = {
@@ -5015,7 +5032,7 @@ type MenuCountContributionType = {
  */
 type ProductActionPropsType = {
     product: Product;
-    /** The product page's current configurator selection, File sections left out. Absent on cards. */
+    /** The product page's current configurator selection. Absent on cards. */
     configurationSections?: ConfigurationSectionInput[];
 };
 /** The plugin renders its own markup in place of the host's. */
@@ -5789,6 +5806,127 @@ declare function useShortCart(): {
     changing: vue.ComputedRef<boolean>;
 };
 
+interface ICustomAnalyticsEventMap {
+}
+
+interface IBasicAnalyticsEventMap {
+    viewItemList: [items: {
+        code: string;
+    }[], params?: EventParamsType & ListPropertiesType];
+    selectItem: [
+        item: Product | LineItemType,
+        params?: EventParamsType & ListPropertiesType & SelectItemParamsAdditionalType
+    ];
+    viewItem: [item: Product, params?: EventParamsType];
+    addItemToWishList: [item: Product, params?: EventParamsType];
+    addItemToCart: [
+        item: Product | VariationType,
+        quantity?: number,
+        params?: EventParamsType & AddToCartParamsAdditionalType
+    ];
+    updateCartItem: [itemId: string, newQuantity: number, previousQuantity: number, params?: EventParamsType];
+    addItemsToCart: [items: (Product | VariationType)[], params?: EventParamsType & AddToCartParamsAdditionalType];
+    addBulkItemsToCart: [items: BulkLineItemFragment[], params?: EventParamsType & AddToCartParamsAdditionalType];
+    removeItemsFromCart: [items: LineItemType[], params?: EventParamsType];
+    viewCart: [cart: CartType, params?: EventParamsType];
+    clearCart: [cart: CartType, params?: EventParamsType];
+    beginCheckout: [cart: CartType, params?: EventParamsType];
+    addShippingInfo: [cart?: CartType, params?: EventParamsType, shipmentMethodOption?: string];
+    addPaymentInfo: [cart?: CartType, params?: EventParamsType, paymentGatewayCode?: string];
+    purchase: [order: CustomerOrderType, params?: EventParamsType];
+    placeOrder: [order: CustomerOrderType, params?: EventParamsType];
+    search: [searchTerm: string, visibleItems?: {
+        code: string;
+    }[], itemsCount?: number];
+    viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
+    login: [method: string, params?: EventParamsType & LoginParamsAdditionalType];
+    signUp: [method: string, params?: EventParamsType & SignUpParamsAdditionalType];
+}
+type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never ? IBasicAnalyticsEventMap : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
+type AnalyticsEventNameType = keyof AnalyticsEventMapType;
+type AddToCartParamsAdditionalType = {
+    source_route?: string;
+    source_block?: string;
+    search_term?: string;
+};
+type SelectItemParamsAdditionalType = {
+    index?: number;
+};
+type LoginParamsAdditionalType = {
+    errors?: string;
+    success?: boolean;
+};
+type SignUpParamsAdditionalType = {
+    type?: string;
+    errors?: string;
+    success?: boolean;
+};
+type ViewSearchResultsParamsAdditionalType = {
+    visible_items?: {
+        code: string;
+    }[];
+    results_count?: number;
+    results_page?: number;
+};
+type EventParamsType = Record<string, unknown>;
+type TrackerType = {
+    meta?: TrackerMetaType;
+    events: TrackerEventsType;
+};
+type TrackerMetaType = {
+    name: string;
+};
+type TrackerEventsType = Partial<{
+    [K in AnalyticsEventNameType]: (...args: AnalyticsEventMapType[K]) => void | Promise<void>;
+}>;
+type ListPropertiesType = {
+    item_list_id?: string;
+    item_list_name?: string;
+    related_id?: string;
+    related_type?: string;
+};
+
+declare function useAnalyticsUtils(): {
+    trackAddItemToCart: (product: Product | VariationType, quantity: number, params?: EventParamsType & AddToCartParamsAdditionalType) => void;
+    trackAddItemsToCart: (products: Product[] | VariationType[], params?: AddToCartParamsAdditionalType) => void;
+};
+
+declare function useGetSearchHistoryQuery(payload?: Partial<QuerySearchHistoryArgs>): _vue_apollo_composable_dist_useLazyQuery_js.UseLazyQueryReturn<GetSearchHistoryQuery, {
+    storeId: string;
+    maxCount: number;
+}>;
+
+declare function useHistoricalEvents(): {
+    pushHistoricalEvent: () => Promise<void>;
+    saveSearchQuery: (payload: string) => void;
+    useGetSearchHistoryQuery: () => {
+        load: () => Promise<void>;
+        result: vue.ComputedRef<{
+            searchHistory: {
+                queries: string[];
+            };
+        }>;
+        loading: vue.Ref<boolean, boolean>;
+    };
+} | {
+    pushHistoricalEvent: (payload: InputPushHistoricalEventType, sendUnauthenticated?: false) => Promise<void>;
+    saveSearchQuery: (payload: string) => Promise<void>;
+    useGetSearchHistoryQuery: (payload?: Parameters<typeof useGetSearchHistoryQuery>[0]) => _vue_apollo_composable_dist_useLazyQuery_js.UseLazyQueryReturn<GetSearchHistoryQuery, {
+        storeId: string;
+        maxCount: number;
+    }> | {
+        load: () => Promise<void>;
+        result: vue.ComputedRef<{
+            searchHistory: {
+                queries: string[];
+            };
+        }>;
+        loading: vue.Ref<boolean, boolean>;
+    };
+};
+
+declare function getPropertiesGroupedByName(properties: Property[], type?: PropertyType): Record<string, Property>;
+
 /**
  * Answers the value of a URL parameter with the configuration the product page preselects for that product.
  * `undefined` leaves the page's defaults.
@@ -6123,86 +6261,6 @@ declare function _useThemeContext(): {
 };
 declare const useThemeContext: typeof _useThemeContext;
 
-interface ICustomAnalyticsEventMap {
-}
-
-interface IBasicAnalyticsEventMap {
-    viewItemList: [items: {
-        code: string;
-    }[], params?: EventParamsType & ListPropertiesType];
-    selectItem: [
-        item: Product | LineItemType,
-        params?: EventParamsType & ListPropertiesType & SelectItemParamsAdditionalType
-    ];
-    viewItem: [item: Product, params?: EventParamsType];
-    addItemToWishList: [item: Product, params?: EventParamsType];
-    addItemToCart: [
-        item: Product | VariationType,
-        quantity?: number,
-        params?: EventParamsType & AddToCartParamsAdditionalType
-    ];
-    updateCartItem: [itemId: string, newQuantity: number, previousQuantity: number, params?: EventParamsType];
-    addItemsToCart: [items: (Product | VariationType)[], params?: EventParamsType & AddToCartParamsAdditionalType];
-    addBulkItemsToCart: [items: BulkLineItemFragment[], params?: EventParamsType & AddToCartParamsAdditionalType];
-    removeItemsFromCart: [items: LineItemType[], params?: EventParamsType];
-    viewCart: [cart: CartType, params?: EventParamsType];
-    clearCart: [cart: CartType, params?: EventParamsType];
-    beginCheckout: [cart: CartType, params?: EventParamsType];
-    addShippingInfo: [cart?: CartType, params?: EventParamsType, shipmentMethodOption?: string];
-    addPaymentInfo: [cart?: CartType, params?: EventParamsType, paymentGatewayCode?: string];
-    purchase: [order: CustomerOrderType, params?: EventParamsType];
-    placeOrder: [order: CustomerOrderType, params?: EventParamsType];
-    search: [searchTerm: string, visibleItems?: {
-        code: string;
-    }[], itemsCount?: number];
-    viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
-    login: [method: string, params?: EventParamsType & LoginParamsAdditionalType];
-    signUp: [method: string, params?: EventParamsType & SignUpParamsAdditionalType];
-}
-type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never ? IBasicAnalyticsEventMap : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
-type AnalyticsEventNameType = keyof AnalyticsEventMapType;
-type AddToCartParamsAdditionalType = {
-    source_route?: string;
-    source_block?: string;
-    search_term?: string;
-};
-type SelectItemParamsAdditionalType = {
-    index?: number;
-};
-type LoginParamsAdditionalType = {
-    errors?: string;
-    success?: boolean;
-};
-type SignUpParamsAdditionalType = {
-    type?: string;
-    errors?: string;
-    success?: boolean;
-};
-type ViewSearchResultsParamsAdditionalType = {
-    visible_items?: {
-        code: string;
-    }[];
-    results_count?: number;
-    results_page?: number;
-};
-type EventParamsType = Record<string, unknown>;
-type TrackerType = {
-    meta?: TrackerMetaType;
-    events: TrackerEventsType;
-};
-type TrackerMetaType = {
-    name: string;
-};
-type TrackerEventsType = Partial<{
-    [K in AnalyticsEventNameType]: (...args: AnalyticsEventMapType[K]) => void | Promise<void>;
-}>;
-type ListPropertiesType = {
-    item_list_id?: string;
-    item_list_name?: string;
-    related_id?: string;
-    related_type?: string;
-};
-
 declare function _useAnalytics(): {
     addTracker: (tracker: TrackerType) => void;
     analytics: <E extends AnalyticsEventNameType>(event: E, ...args: AnalyticsEventMapType[E]) => void;
@@ -6514,7 +6572,7 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$6 as IdentityProvider, _default$7 as InStock, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$8 as OrderStatus, _default$2 as OrderSummary, PlatformPermissions, QueryParamName, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$D as VcAlert, _default$P as VcBadge, _default$O as VcBreadcrumbs, _default$C as VcButton, _default$B as VcCalendar, _default$N as VcCheckbox, _default$M as VcCheckboxGroup, _default$A as VcChip, _default$L as VcContainer, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$z as VcDialog, _default$y as VcDialogContent, _default$x as VcDialogFooter, _default$w as VcDialogHeader, _default$v as VcEmptyView, _default$K as VcIcon, _default$J as VcImage, _default$u as VcInput, _default$I as VcInputDetails, _default$H as VcLabel, _default$9 as VcLayout, _default$G as VcLink, _default$t as VcLoaderOverlay, _default$F as VcMarkdownRender, _default$s as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$r as VcPopover, _default$q as VcProductActions, _default$p as VcProductActionsButton, _default$o as VcProductPrice, _default$n as VcProductTitle, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$E as VcTooltip, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default as VendorName, XApiPermissions, apolloClient, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, registerCacheTypePolicies, registerLocaleLoader, registerProductConfigurationSource, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useRouteQueryParam, useShortCart, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
+export { _default$4 as AcceptedGifts, _default$1 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$6 as IdentityProvider, _default$7 as InStock, Logger, _default$3 as OrderCommentSection, _default$5 as OrderLineItems, _default$8 as OrderStatus, _default$2 as OrderSummary, PlatformPermissions, QueryParamName, ROUTES, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$D as VcAlert, _default$P as VcBadge, _default$O as VcBreadcrumbs, _default$C as VcButton, _default$B as VcCalendar, _default$N as VcCheckbox, _default$M as VcCheckboxGroup, _default$A as VcChip, _default$L as VcContainer, _default$h as VcDatePicker, _default$g as VcDateRangePicker, _default$z as VcDialog, _default$y as VcDialogContent, _default$x as VcDialogFooter, _default$w as VcDialogHeader, _default$v as VcEmptyView, _default$K as VcIcon, _default$J as VcImage, _default$u as VcInput, _default$I as VcInputDetails, _default$H as VcLabel, _default$9 as VcLayout, _default$G as VcLink, _default$t as VcLoaderOverlay, _default$F as VcMarkdownRender, _default$s as VcMenuItem, _default$f as VcModal, _default$e as VcPagination, _default$r as VcPopover, _default$q as VcProductActions, _default$p as VcProductActionsButton, _default$o as VcProductPrice, _default$n as VcProductTitle, _default$m as VcRating, _default$l as VcSelect, _default$k as VcTabSwitch, _default$d as VcTable, _default$c as VcTableColumn, _default$j as VcTextarea, _default$E as VcTooltip, _default$i as VcTypography, _default$b as VcWidget, _default$a as VcWidgetSkeleton, _default as VendorName, XApiPermissions, apolloClient, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, registerCacheTypePolicies, registerLocaleLoader, registerProductConfigurationSource, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAnalyticsUtils, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useRouteQueryParam, useShortCart, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
 export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ProductActionPropsType, ProductConfigurationSourceType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──

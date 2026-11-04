@@ -124,14 +124,14 @@ beforeEach(() => {
 });
 
 describe("ProductPriceBlock product actions", () => {
-  it("renders a registered action right after Add to list, with the product and the selection minus File sections", () => {
+  it("renders a registered action right after Add to list, with the product and the configurator's selection", () => {
     register({ component: ProductAction });
 
     const wrapper = mountPriceBlock();
     const action = wrapper.getComponent(ProductAction);
 
     expect(action.props("product")).toEqual(PRODUCT);
-    expect(action.props("configurationSections")).toEqual([TEXT_SECTION, PRODUCT_SECTION]);
+    expect(action.props("configurationSections")).toEqual([TEXT_SECTION, FILE_SECTION, PRODUCT_SECTION]);
     expect(action.classes()).toContain("product-price-block__action");
     expect(wrapper.getComponent({ name: "AddToList" }).element.nextElementSibling).toBe(action.element);
   });

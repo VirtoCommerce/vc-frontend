@@ -142,6 +142,12 @@ export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
 // The cart the header counts: an add through it updates the header, and `cart.id` names the cart.
 export { useShortCart } from "@/shared/cart/composables/useCart";
+// The host's add-to-cart bookkeeping, so a plugin's own add to cart reports what the host's buttons do: the
+// analytics event, and the recommendations' historical event.
+export { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+export { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+// Product properties grouped and formatted as the product page shows them: hidden ones out, multivalues joined.
+export { getPropertiesGroupedByName } from "@/core/utilities/properties";
 // The quantity rules the host's add-to-cart controls validate with: min, max, pack size, available stock.
 export { useQuantityValidationSchema } from "@/ui-kit/composables/useQuantityValidationSchema";
 // A URL parameter a plugin owns preselects the product page's configuration.
