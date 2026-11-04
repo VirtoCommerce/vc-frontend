@@ -23,7 +23,7 @@ function check(sheets: Record<string, string>, loadOrder = [FIRST], layersSource
     layersSource,
     stylesheets: new Map(Object.entries(sheets)),
     loadOrder,
-    indexFile: "dist/index.html",
+    indexFile: "build/index.html",
   });
 }
 
@@ -104,7 +104,7 @@ describe("check-css-layers", () => {
       ["the linked sheet is not in the build", ["dist/assets/missing.css"]],
     ])("rejects a build where %s", (_, loadOrder) => {
       expect(check({ [FIRST]: ".a {}", [CHUNK]: ORDER }, loadOrder)).toEqual({
-        errors: ["dist/index.html: no linked stylesheet declares the layer order"],
+        errors: ["build/index.html: no linked stylesheet declares the layer order"],
       });
     });
   });
