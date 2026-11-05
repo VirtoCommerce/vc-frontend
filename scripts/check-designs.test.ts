@@ -239,6 +239,11 @@ describe("check-designs", () => {
       ["rgb(from rgb(227 6 19 / 0) r g b / 1)", 'rgb() without "from" is a literal colour'],
       ["rgb(from #fff0 r g b / 1)", "#fff0 is a literal colour"],
       ["rgb(from #0000 r g b / 1)", "#0000 is a literal colour"],
+      ["rgb(from var(--vc-x, #fff0) r g b / 1)", "#fff0 is a literal colour"],
+      ["rgb(from var(--vc-x, rgb(227 6 19 / 0)) r g b / 1)", 'rgb() without "from" is a literal colour'],
+      ["rgb(from transparent r g b / 1)", "transparent is a named colour"],
+      ["hsl(from transparent h s l / 1)", "transparent is a named colour"],
+      ["rgb(from var(--vc-x, transparent) r g b / 1)", "transparent is a named colour"],
     ])("rejects %s", (value, reason) => {
       expect(checkColorValue(value, semantics)).toBe(reason);
     });
@@ -668,6 +673,27 @@ ${loads("dark")}  }
         ["-webkit-backdrop-filter"],
       ],
       ["a prefixed box shadow", "blocks", "-webkit-box-shadow: 0 0 4px red", ["-webkit-box-shadow"]],
+      ["a prefixed text emphasis", "blocks", "-webkit-text-emphasis: 'x' red", ["-webkit-text-emphasis"]],
+      ["a prefixed column rule", "blocks", "-webkit-column-rule: 1px solid red", ["-webkit-column-rule"]],
+      [
+        "-moz- shorthands",
+        "blocks",
+        "-moz-column-rule: 1px solid red; -moz-border-start: 1px solid red",
+        ["-moz-column-rule", "-moz-border-start"],
+      ],
+      ["a prefixed text stroke", "blocks", "-webkit-text-stroke: 1px red", ["-webkit-text-stroke"]],
+      [
+        "prefixed border sides",
+        "blocks",
+        "-webkit-border-before: 1px solid red; -webkit-border-after: 1px solid red; -webkit-border-start: 1px solid red; -webkit-border-end: 1px solid red",
+        ["-webkit-border-before", "-webkit-border-after", "-webkit-border-start", "-webkit-border-end"],
+      ],
+      [
+        "a foreign variable in a kit shadow token",
+        "blocks",
+        "--vc-shadow-md-1: 0 4px 6px 0 var(--my-shadow)",
+        ["--vc-shadow-md-1"],
+      ],
       [
         "a transparent colour as a relative colour's origin",
         "blocks",
@@ -740,6 +766,8 @@ ${loads("dark")}  }
       "--vc-x-skew: calc(tan(10deg) * 100%)",
       "--vc-x: #fff0",
       "--vc-x: #ffffff00",
+      "--x: #fff0",
+      "background-color: rgb(from currentColor r g b / 0.5)",
     ])("does not read %s as a colour", async (declarations) => {
       expect(await check({ "soft/blocks/footer-links.scss": `.footer-links { ${declarations}; }` })).toEqual([]);
     });
@@ -1345,6 +1373,16 @@ ${loads("dark")}  }
         "a shadow shorthand, which has no colour longhand",
         `@layer vc.preset { ${MERCURY} .vc-button { box-shadow: 0 0 4px var(--color-neutral-950); } }`,
         `box-shadow: ${SHORTHAND}; box-shadow has no colour longhand`,
+      ],
+      [
+        "a filter, which has no colour longhand",
+        `@layer vc.preset { ${MERCURY} .vc-button { filter: drop-shadow(0 0 4px var(--color-neutral-950)); } }`,
+        `filter: ${SHORTHAND}; filter has no colour longhand`,
+      ],
+      [
+        "a prefixed border side shorthand",
+        `@layer vc.preset { ${MERCURY} .vc-button { -webkit-border-before: 1px solid var(--color-neutral-300); } }`,
+        `-webkit-border-before: ${SHORTHAND}: set -webkit-border-before-color, not -webkit-border-before`,
       ],
       [
         "a shorthand that holds no colour",

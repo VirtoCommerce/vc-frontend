@@ -93,11 +93,14 @@ const DEFAULT_SHADOW_FALLBACK_BLACK =
 /** Tailwind's shadow geometry, which reads the colour from `--tw-shadow-color`. */
 const SHADOW_GEOMETRY = "--tw-shadow-colored";
 const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/i;
+/** A shorthand counts with or without a `-webkit-` or `-moz-` prefix: `-webkit-column-rule` is `column-rule`. */
 const COLOR_SHORTHAND =
-  /^(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|-webkit-box-shadow|text-shadow|-webkit-text-stroke|filter|-webkit-filter|backdrop-filter|-webkit-backdrop-filter)$/;
+  /^(?:-(?:webkit|moz)-)?(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|text-shadow|text-stroke|filter|backdrop-filter)$/;
 /** The shorthands without a colour longhand; the others have `<shorthand>-color`. */
 const NO_COLOR_LONGHAND = /(?:shadow|filter)$/;
-const BORDER_SHORTHAND = /^border(?:-(?:top|right|bottom|left|(?:block|inline)(?:-(?:start|end))?))?$/;
+/** `border` and its sides, `border-inline-start` too; `before` and `after` are the sides of `-webkit-border-before`. */
+const BORDER_SHORTHAND =
+  /^(?:-(?:webkit|moz)-)?border(?:-(?:block|inline))?(?:-(?:top|right|bottom|left|before|after|start|end))?$/;
 // Tailwind writes these besides the `--tw-*-color` tokens: a gradient's stops and the alpha of a colour.
 const TAILWIND_COLOR = /^--tw-(?:gradient-(?:from|to)|(?:bg|text|border|divide|placeholder|ring)-opacity)$/;
 const NO_COLOR = new Set([
@@ -142,8 +145,11 @@ const ZERO_ALPHA = /^(?:[^(),/]*\/|(?:[^(),/]*,){3})\s*(?:0*\.)?0+%?\s*\)/;
 const HEX = /#[\da-f]+/gi;
 /** A hex colour with alpha 0, `#fff0` or `#ffffff00`; `#0000` is Tailwind's fallback, `var(--tw-shadow, 0 0 #0000)`. */
 const ZERO_ALPHA_HEX = /^#(?:[\da-f]{3}0|[\da-f]{6}00)$/i;
-/** The text before a relative colour's origin, whose alpha does not count: `rgb(from rgb(0 0 0 / 0) r g b / 1)`. */
-const BEFORE_ORIGIN = /(?<![\w-])from\s+$/i;
+/**
+ * The text before a relative colour's origin, whose alpha does not count: `rgb(from rgb(0 0 0 / 0) r g b / 1)`, also
+ * in a `var()` fallback, `rgb(from var(--x, #fff0) r g b / 1)`, which reads `from  , #fff0` once the `var(--x` is cut.
+ */
+const BEFORE_ORIGIN = /(?<![\w-])from\s+(?:,\s*)*$/i;
 /** A word, not a function's name: `tan(10deg)` holds no colour. */
 const IDENTIFIER = /(?<![\w-])[a-z][\w-]*(?![\w(-])/gi;
 
@@ -623,8 +629,8 @@ export function colorSemantics(file = COLORS_FILE): Set<string> {
 /**
  * `null` when every colour in a value comes from preset variables: `var()` of a preset key (`--color-*`),
  * a `_colors.scss` semantic, a public `--vc-*` token or Tailwind's `--tw-*`, `color-mix()` or a relative colour
- * of these, the keywords and a colour function or hex with alpha 0 that is no origin; otherwise why not: the first
- * foreign variable or literal.
+ * of these, the keywords (`transparent` only where it is no origin) and a colour function or hex with alpha 0 that
+ * is no origin; otherwise why not: the first foreign variable or literal.
  */
 export function checkColorValue(value: string, semantics: ReadonlySet<string>): string | null {
   const text = value.replaceAll(QUOTED_OR_URL, " ");
@@ -655,9 +661,12 @@ export function checkColorValue(value: string, semantics: ReadonlySet<string>): 
     return `${literal[1]}() without "from" is a literal colour`;
   }
 
-  const named = (rest.match(IDENTIFIER) ?? []).find((word) => NAMED_COLORS.has(word));
+  // `rgb(from transparent r g b / 1)` is opaque black.
+  const named = [...rest.matchAll(IDENTIFIER)].find(
+    (match) => NAMED_COLORS.has(match[0]) || (match[0] === "transparent" && isOrigin(match.index)),
+  );
 
-  return named ? `${named} is a named colour` : null;
+  return named ? `${named[0]} is a named colour` : null;
 }
 
 /** The at-rules around a rule, outermost first: `@layer vc.design > @media (width >= 1px)`. */
