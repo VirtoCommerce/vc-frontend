@@ -71,44 +71,30 @@ const SlottedHost = defineComponent({
   `,
 });
 
+// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only on the
+// host.
+const kitComponents = {
+  VcButton,
+  VcCheckbox,
+  VcDropdownMenu,
+  VcIcon,
+  VcInput,
+  VcInputDetails,
+  VcLabel,
+  VcMenuItem,
+  VcPopover,
+  VcScrollbar,
+  VcTooltip,
+};
+
 const createWrapper = createWrapperFactory(mount, Host, {
   attachTo: document.body,
-  global: {
-    // VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
-    // on the host.
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
-  },
+  global: { components: kitComponents },
 });
 
 const createSlottedWrapper = createWrapperFactory(mount, SlottedHost, {
   attachTo: document.body,
-  global: {
-    components: {
-      VcButton,
-      VcCheckbox,
-      VcDropdownMenu,
-      VcIcon,
-      VcInput,
-      VcInputDetails,
-      VcLabel,
-      VcMenuItem,
-      VcPopover,
-      VcScrollbar,
-      VcTooltip,
-    },
-  },
+  global: { components: kitComponents },
 });
 
 async function openDialogAndSelect(wrapper: VueWrapper) {
@@ -422,4 +408,43 @@ describe("VcSelect inside a dialog popover", () => {
       expect(dialogIsOpen(wrapper)).toBe(true);
     },
   );
+});
+
+describe("VcSelect required trigger ARIA", () => {
+  const RequiredHost = defineComponent({
+    components: { VcSelect },
+
+    props: {
+      slotted: { type: Boolean, default: false },
+    },
+
+    setup() {
+      return { items: ["Standard", "Express"] };
+    },
+
+    template: `
+      <VcSelect :items="items" label="Delivery method" required>
+        <template v-if="slotted" #placeholder>Select a delivery method</template>
+      </VcSelect>
+    `,
+  });
+
+  const createRequiredWrapper = createWrapperFactory(mount, RequiredHost, {
+    attachTo: document.body,
+    global: { components: kitComponents },
+  });
+
+  // aria-required is not allowed on role="button" (axe aria-allowed-attr).
+  it("keeps aria-required off the slotted role=button trigger", () => {
+    const wrapper = createRequiredWrapper({ props: { slotted: true } });
+    const trigger = wrapper.get('.vc-select__button[role="button"]');
+
+    expect(trigger.attributes()).not.toHaveProperty("aria-required");
+  });
+
+  it("keeps aria-required on the combobox trigger", () => {
+    const wrapper = createRequiredWrapper();
+
+    expect(wrapper.get('[role="combobox"]').attributes("aria-required")).toBe("true");
+  });
 });
