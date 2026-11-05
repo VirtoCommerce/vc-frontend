@@ -101,6 +101,11 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/punchout/api/graphql",
     schemaPath: `${backendUrl}/graphql/punchout`,
   },
+  {
+    name: "Mfa",
+    apiPath: "client-app/modules/mfa/api/graphql",
+    schemaPath: `${backendUrl}/graphql/mfa`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",
