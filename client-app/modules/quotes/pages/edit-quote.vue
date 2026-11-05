@@ -125,10 +125,10 @@ import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useCustomerAddresses, useUser } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { AddressSelection, SaveChangesModal } from "@/shared/common";
-import { useOrganizationAddresses } from "@/shared/company";
+import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -150,16 +150,30 @@ const router = useRouter();
 const { t } = useI18n();
 const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
+
+const ADDRESSES_PER_PAGE = 6;
+
 const {
   addresses: personalAddresses,
-  fetchAddresses: fetchPersonalAddresses,
+  loading: personalAddressesLoading,
+  totalCount: personalAddressesTotalCount,
+  page: personalAddressesPage,
   addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-} = useUserAddresses();
+} = useCustomerAddresses(
+  ADDRESSES_PER_PAGE,
+  computed(() => isAuthenticated.value && !isCorporateMember.value),
+);
 const {
   addresses: organizationsAddresses,
-  fetchAddresses: fetchOrganizationAddresses,
+  loading: organizationAddressesLoading,
+  totalCount: organizationAddressesTotalCount,
+  page: organizationAddressesPage,
   addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-} = useOrganizationAddresses(user.value.contact?.organizationId || "");
+} = useCurrentOrganizationAddresses(
+  () => user.value.contact?.organizationId ?? "",
+  ADDRESSES_PER_PAGE,
+  computed(() => isAuthenticated.value && isCorporateMember.value),
+);
 const {
   fetching,
   quote,
@@ -254,7 +268,9 @@ const canSubmit = computed<boolean>(() => {
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
 });
 
-const userHasAddresses = computed<boolean>(() => !!accountAddresses.value.length);
+const userHasAddresses = computed<boolean>(() =>
+  isCorporateMember.value ? organizationAddressesTotalCount.value > 0 : personalAddressesTotalCount.value > 0,
+);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
@@ -288,10 +304,6 @@ async function editComment(): Promise<void> {
   commentValid.value = result.valid;
 }
 
-function accountAddressExists(address: AnyAddressType): boolean {
-  return accountAddresses.value.some((item) => isEqualAddresses(item, address));
-}
-
 function onRemoveItem(itemId: string): void {
   remove(quote.value!.items, ({ id }) => id === itemId);
 }
@@ -323,12 +335,8 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
         setQuoteAddress(quoteAddress);
         closeModal();
 
-        // Save address in account
+        // Save address in account; the backend skips it if the same address already exists
         const addressToSave = { ...updatedAddress, addressType: AddressType.BillingAndShipping };
-
-        if (accountAddressExists(addressToSave)) {
-          return;
-        }
 
         if (isCorporateMember.value) {
           await addOrUpdateOrganizationAddresses([addressToSave]);
@@ -343,12 +351,30 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
 }
 
 function openSelectAddressModal(addressType: AddressType): void {
+  if (isCorporateMember.value) {
+    organizationAddressesPage.value = 1;
+  } else {
+    personalAddressesPage.value = 1;
+  }
+
   openModal({
     component: SelectAddressModal,
     props: {
-      addresses: accountAddresses.value,
+      // addresses, loading and totalCount are passed as refs on purpose: the modal re-renders on page change
+      addresses: accountAddresses,
       currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
+      paginationMode: "server",
+      pageSize: ADDRESSES_PER_PAGE,
+      loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
+      totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+      onPageChange(newPage: number) {
+        if (isCorporateMember.value) {
+          organizationAddressesPage.value = newPage;
+        } else {
+          personalAddressesPage.value = newPage;
+        }
+      },
 
       onResult(selectedAddress: MemberAddressFieldsFragment): void {
         const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
@@ -435,18 +461,6 @@ async function submit(): Promise<void> {
   void router.replace({ name: "Quotes" });
 }
 
-async function fetchAddresses(): Promise<void> {
-  if (!isAuthenticated.value) {
-    return;
-  }
-
-  if (isCorporateMember.value) {
-    await fetchOrganizationAddresses();
-  } else {
-    await fetchPersonalAddresses();
-  }
-}
-
 function onFileDownload(file: FileType) {
   if (file && file.url) {
     void downloadFile(file.url, file.name);
@@ -467,7 +481,7 @@ onMounted(() => {
 });
 
 watchEffect(async () => {
-  await Promise.all([fetchFileOptions(), fetchAddresses(), fetchQuote({ id: props.quoteId })]);
+  await Promise.all([fetchFileOptions(), fetchQuote({ id: props.quoteId })]);
 
   originalQuote.value = cloneDeep(quote.value);
   comment.value = quote.value?.comment;
