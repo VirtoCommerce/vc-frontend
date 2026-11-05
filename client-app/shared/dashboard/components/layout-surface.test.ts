@@ -463,16 +463,30 @@ describe("LayoutSurface full-width region", () => {
   const WIDE_ID = "wide";
 
   const Wide = defineComponent({ setup: () => () => h("div", { "data-test-id": "wide-block" }) });
+  const Narrow = defineComponent({ setup: () => () => h("div", { "data-test-id": "narrow-block" }) });
+  // A block's own placeholder, captioned with the title the skeleton hands it.
+  const Placeholder = defineComponent({
+    props: { title: { type: String, default: undefined } },
+    setup: (props) => () => h("div", { "data-test-id": "block-placeholder" }, props.title),
+  });
 
   registerTestDashboard(FULL_SCOPE);
-  const WIDE_SKELETON_ROWS = 12;
   registerBlock(FULL_SCOPE, {
     id: WIDE_ID,
     region: "fullWidth",
     titleKey: "wide.title",
     order: 1,
     component: Wide,
-    skeletonRows: WIDE_SKELETON_ROWS,
+    skeleton: Placeholder,
+  });
+  // After the test dashboard's own column widgets, which bring no placeholder.
+  registerBlock(FULL_SCOPE, {
+    id: "narrow",
+    region: "mainLeft",
+    titleKey: "narrow.title",
+    order: 100,
+    component: Narrow,
+    skeleton: Placeholder,
   });
 
   function fullWidthRegion(wrapper: ReturnType<typeof mountSurface>) {
@@ -497,17 +511,21 @@ describe("LayoutSurface full-width region", () => {
     expect(full.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  // A tall block's placeholder is as tall as the block, so the columns below do not jump when it lands.
-  it("draws a block's own number of placeholder lines while the layout is read", () => {
+  // A tall block's placeholder has the block's shape, so the columns below do not jump when it lands.
+  it("draws a block's own placeholder, with its title, while the layout is read", () => {
     const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { read: "pending" }));
-    // Every placeholder line is an empty div, as is the head's one. In page order: the full-width block, then the
-    // test dashboard's four column widgets at the default five lines.
-    const lines = wrapper
-      .getComponent(LayoutSkeleton)
-      .findAllComponents(VcWidgetSkeleton)
-      .map((skeleton) => skeleton.findAll("div:empty").length - 1);
+    const skeleton = wrapper.getComponent(LayoutSkeleton);
 
-    expect(lines).toEqual([WIDE_SKELETON_ROWS, 5, 5, 5, 5]);
+    expect(skeleton.findAll('[data-test-id="block-placeholder"]').map((placeholder) => placeholder.text())).toEqual([
+      "wide.title",
+      "narrow.title",
+    ]);
+    // Every placeholder line is an empty div, as is the head's one: the test dashboard's four column widgets keep the
+    // kit's skeleton at five lines.
+    const lines = skeleton
+      .findAllComponents(VcWidgetSkeleton)
+      .map((widgetSkeleton) => widgetSkeleton.findAll("div:empty").length - 1);
+    expect(lines).toEqual([5, 5, 5, 5]);
   });
 
   it("does not mount the region on a dashboard with no full-width block", async () => {

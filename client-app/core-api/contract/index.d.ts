@@ -6303,10 +6303,13 @@ interface IWidgetBlock extends IBlockBase {
     /** What the user can configure in edit mode. Absent = nothing, which is most blocks. */
     settings?: readonly BlockSettingType[];
     /**
-     * Placeholder lines (1.5rem each) the loading skeleton draws for this block, so the page does not jump when the
-     * block replaces it. Default 5, a short list; a block much taller than that sets its own.
+     * The block's placeholder while the dashboard reads the saved layout, given the block's `title`. Without one, the
+     * kit's widget skeleton stands in, about a short list's height; a taller block draws its own shape, so the page does
+     * not jump when the block replaces it. It renders before `component` has loaded, so it is not lazy: keep it light.
+     * Pass it as the async component's `loadingComponent` too, with `delay: 0`, to hold the block's place while that
+     * component loads.
      */
-    skeletonRows?: number;
+    skeleton?: Component;
 }
 type BlockType = IStatBlock | IWidgetBlock;
 /**

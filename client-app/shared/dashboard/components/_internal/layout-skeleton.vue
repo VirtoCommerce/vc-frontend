@@ -6,18 +6,26 @@
     </div>
 
     <div v-if="fullIds.length" class="layout-skeleton__full">
-      <VcWidgetSkeleton v-for="id in fullIds" :key="id" head size="md">
-        <div v-for="row in rowsOf(id)" :key="row"></div>
-      </VcWidgetSkeleton>
+      <template v-for="id in fullIds" :key="id">
+        <component :is="skeletonOf(id)" v-if="skeletonOf(id)" :title="titleOf(id)" />
+
+        <VcWidgetSkeleton v-else head size="md">
+          <div v-for="row in BLOCK_ROWS" :key="row"></div>
+        </VcWidgetSkeleton>
+      </template>
     </div>
 
     <div class="layout-skeleton__row">
       <!-- Empty divs are the kit's contract for a placeholder line. An empty column is skipped, as in
            layout-surface, and `md` is the size every registered widget renders at. -->
       <div v-for="column in columns" :key="column.name" :class="`layout-skeleton__${column.name}`">
-        <VcWidgetSkeleton v-for="id in column.blocks" :key="id" head size="md">
-          <div v-for="row in rowsOf(id)" :key="row"></div>
-        </VcWidgetSkeleton>
+        <template v-for="id in column.blocks" :key="id">
+          <component :is="skeletonOf(id)" v-if="skeletonOf(id)" :title="titleOf(id)" />
+
+          <VcWidgetSkeleton v-else head size="md">
+            <div v-for="row in BLOCK_ROWS" :key="row"></div>
+          </VcWidgetSkeleton>
+        </template>
       </div>
     </div>
   </div>
@@ -28,6 +36,7 @@ import { computed } from "vue";
 import { useBlockTitle } from "../../composables/_internal/useBlockTitle";
 import { reconcileLayout } from "../../document";
 import { getBlock, getBlockRegistry } from "../../registry";
+import type { Component } from "vue";
 
 interface IProps {
   scope: string;
@@ -35,7 +44,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// A short list's height, for a block that names none of its own (`skeletonRows`).
+// A short list's height, for a block that brings no placeholder of its own (`skeleton`).
 const BLOCK_ROWS = 5;
 
 // A never-saved layout's arrangement: the saved one is exactly what is not known yet.
@@ -46,9 +55,9 @@ const fullIds = computed(() => defaults.value.fullWidth.visible);
 
 const { titleOf } = useBlockTitle(() => props.scope);
 
-function rowsOf(id: string): number {
+function skeletonOf(id: string): Component | undefined {
   const block = getBlock(props.scope, id);
-  return (block && "skeletonRows" in block ? block.skeletonRows : undefined) ?? BLOCK_ROWS;
+  return block && "skeleton" in block ? block.skeleton : undefined;
 }
 
 const columns = computed(() =>

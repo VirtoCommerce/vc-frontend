@@ -109,11 +109,42 @@ its own, `salesRepDashboard` and `salesRepCustomerProfile`.
    field in the widget's header) and `{ kind: "ruleTabs" }` (the user unchecks the filter tabs they don't want;
    filter yours with `visibleTabRules`). Read both from `useBlockChrome()?.savedSettings`.
 
+7. **Bring a placeholder, if the widget is tall.** While the dashboard reads the saved layout, a widget stands as the
+   kit's widget skeleton, about a short list's height. A taller widget passes `skeleton`: a light component in the
+   widget's shape, given the block's `title`. Pass the same component as `loadingComponent` with `delay: 0`, and it
+   also holds the widget's place while the widget's own chunk loads.
+
+   ```ts
+   import AcmeChartSkeleton from "./components/acme-chart-skeleton.vue";
+
+   const AcmeChartPlaceholder = markRaw(AcmeChartSkeleton);
+   const AcmeChart = markRaw(
+     defineAsyncComponent({
+       loader: () => import("./components/acme-chart.vue"),
+       loadingComponent: AcmeChartPlaceholder,
+       delay: 0,
+     }),
+   );
+
+   registerBlock("accountDashboard", {
+     id: "acmeChart",
+     region: "fullWidth",
+     titleKey: "acme.chart.title",
+     order: 30,
+     component: AcmeChart,
+     skeleton: AcmeChartPlaceholder,
+   });
+   ```
+
+   The placeholder loads with the plugin's entry, not with the widget, so keep it to markup and styles. Lay it out
+   on the widget's own grid, with bars about as wide as its labels, and it keeps the widget's height at every width.
+   The account dashboard's Sales Statistics block does this (`shared/account/components/dashboard/sales-report-skeleton.vue`).
+
 ### A dashboard of the plugin's own
 
-7. **Register its blocks under a scope of its own,** such as `acmeDashboard`, as in steps 2–6.
+8. **Register its blocks under a scope of its own,** such as `acmeDashboard`, as in steps 2–7.
 
-8. **Render it on the plugin's page.** 📁 `StorefrontApp`
+9. **Render it on the plugin's page.** 📁 `StorefrontApp`
 
    ```vue
    <template>
