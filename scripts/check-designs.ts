@@ -15,20 +15,19 @@ import type { Exception, Importer } from "sass";
 
 // The rules are in client-app/assets/styles/README.md; `yarn lint` does not parse SCSS, so this runs in CI.
 
-export interface IDesignCheckOptions {
-  designsDir: string;
+export interface ICheckOptions {
   /** The blocks the stylesheets and components define, from `sourceBlocks`. */
   blocks: Set<string>;
   /** The semantic colours (`--link-color` …) a colour may read, from `colorSemantics`. */
   semantics: ReadonlySet<string>;
 }
 
-export interface IPresetCheckOptions {
+export interface IDesignCheckOptions extends ICheckOptions {
+  designsDir: string;
+}
+
+export interface IPresetCheckOptions extends ICheckOptions {
   presetsDir: string;
-  /** The blocks the stylesheets and components define, from `sourceBlocks`. */
-  blocks: Set<string>;
-  /** The semantic colours (`--link-color` …) a colour may read, from `colorSemantics`. */
-  semantics: ReadonlySet<string>;
 }
 
 export interface IDesignCheckResult {
