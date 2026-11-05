@@ -1,7 +1,7 @@
 <template>
   <ProductTitledBlock
     v-if="isBlockVisible"
-    :title="model.title ?? $t('shared.catalog.product_details.options.title')"
+    :title="model.title || $t('shared.catalog.product_details.options.title')"
     icon="collection"
     class="options"
   >
@@ -53,7 +53,7 @@ import ProductTitledBlock from "@/shared/catalog/components/product-titled-block
 
 interface IProps {
   model: {
-    title?: string;
+    title: string;
     hidden?: boolean;
   };
   variations: Product[];
