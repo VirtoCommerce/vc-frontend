@@ -4842,6 +4842,10 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
+    /** Widgets on Account › Security, below the sign-in methods. */
+    accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+    /** Widgets on Company › Info, between the company name and the addresses. */
+    companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 /** The parameter a category's `condition` accepts. */
 type ConditionParamType<C extends keyof ExtensionCategoryMapType> = NonNullable<ExtensionCategoryMapType[C]["condition"]> extends (parameter: infer P) => boolean ? P : unknown;
@@ -4942,6 +4946,8 @@ declare const EXTENSION_CATEGORIES: {
     readonly checkout: "checkout";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
+    readonly accountSecurity: "accountSecurity";
+    readonly companyInfo: "companyInfo";
 };
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
