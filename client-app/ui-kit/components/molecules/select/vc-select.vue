@@ -42,7 +42,6 @@
           :aria-controls="isShown ? listboxId : undefined"
           :aria-activedescendant="activeDescendantId"
           :aria-invalid="error || undefined"
-          :aria-required="required || undefined"
           :aria-disabled="disabled || undefined"
           :aria-describedby="detailsId"
           class="vc-select__button"

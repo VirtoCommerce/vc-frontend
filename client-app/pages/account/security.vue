@@ -69,6 +69,8 @@
         </VcWidget>
       </template>
     </ExtensionPoint>
+
+    <ExtensionPointList :category="EXTENSION_CATEGORIES.accountSecurity" />
   </div>
 </template>
 
