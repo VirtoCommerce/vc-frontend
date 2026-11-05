@@ -427,13 +427,17 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
 function createMessageQueue(): (task: () => Promise<void>) => void {
   let messageQueue: Promise<void> = Promise.resolve();
 
+  async function run(task: () => Promise<void>): Promise<void> {
+    try {
+      await task();
+    } catch (error) {
+      // Never break the chain: a failed message must not stall every following one.
+      Logger.error("Failed to handle the builder preview message", error);
+    }
+  }
+
   return (task) => {
-    messageQueue = messageQueue.then(() =>
-      task().catch((error: unknown) => {
-        // Never break the chain: a failed message must not stall every following one.
-        Logger.error("Failed to handle the builder preview message", error);
-      }),
-    );
+    messageQueue = messageQueue.then(() => run(task));
   };
 }
 

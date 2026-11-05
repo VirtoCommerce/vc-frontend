@@ -34,7 +34,7 @@ export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $store
 export const DESIGNER_PREVIEW_PATH = "/designer-preview";
 
 /** The same pattern the storefront reads a language prefix of the URL with (`useLanguages`). */
-export const URL_LOCALE_PATTERN = "^\\/?([a-z]{2}(?:-[A-Z]{2})?)(\\/|$)";
+export const URL_LOCALE_PATTERN = String.raw`^\/?([a-z]{2}(?:-[A-Z]{2})?)(\/|$)`;
 
 /** The localStorage key of the language a visitor pinned (`useLanguages`). */
 export const PINNED_LOCALE_KEY = "pinnedLocale";
