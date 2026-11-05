@@ -9,6 +9,7 @@ import selectorParser from "postcss-selector-parser";
 import { compileString } from "sass";
 import tailwindcss from "tailwindcss";
 import loadConfig from "tailwindcss/loadConfig.js";
+import resolveConfig from "tailwindcss/resolveConfig.js";
 import type { Dirent } from "node:fs";
 import type { AtRule, ChildNode, Container, CssSyntaxError, Declaration, Root, Rule } from "postcss";
 import type { Exception, Importer } from "sass";
@@ -80,10 +81,11 @@ const COLOR_TOKEN = /(?:color|bg)|(?:-(?:text|border|icon)$)/i;
 /** A shadow token holds its shadow's colour: `--vc-widget-shadow`, `--vc-shadow-md-1`. */
 const SHADOW_TOKEN = /^--vc-(?:[a-z\d]+-)*shadow(?:-[a-z\d]+)*$/i;
 /**
- * The default `shadow` step and the `drop-shadow-*` steps (`--tw-drop-shadow`, not tokenised) keep Tailwind's black
- * when a design reshapes them; the other `shadow-*` steps read the preset.
+ * The default `shadow` step keeps Tailwind's black when a design reshapes it, and so do the theme's `drop-shadow-*`
+ * steps (`DROP_SHADOW_STEPS`); the other `shadow-*` steps read the preset.
  */
-const BLACK_SHADOW = /^--(?:vc-shadow-default-\d+|tw-drop-shadow)$/;
+const BLACK_SHADOW = /^--vc-shadow-default-\d+$/;
+const DROP_SHADOW = "--tw-drop-shadow";
 const DEFAULT_SHADOW_BLACK = /(?<![\w-])rgb\(\s*0\s+0\s+0\s*\/\s*[\d.]+%?\s*\)/gi;
 /** The default step's black in its token's fallback, as `@apply shadow` writes it. */
 const DEFAULT_SHADOW_FALLBACK_BLACK =
@@ -92,11 +94,12 @@ const DEFAULT_SHADOW_FALLBACK_BLACK =
 const SHADOW_GEOMETRY = "--tw-shadow-colored";
 const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/i;
 const COLOR_SHORTHAND =
-  /^(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|text-shadow|-webkit-text-stroke|filter|backdrop-filter)$/;
+  /^(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|-webkit-box-shadow|text-shadow|-webkit-text-stroke|filter|-webkit-filter|backdrop-filter|-webkit-backdrop-filter)$/;
+/** The shorthands without a colour longhand; the others have `<shorthand>-color`. */
+const NO_COLOR_LONGHAND = /(?:shadow|filter)$/;
 const BORDER_SHORTHAND = /^border(?:-(?:top|right|bottom|left|(?:block|inline)(?:-(?:start|end))?))?$/;
 // Tailwind writes these besides the `--tw-*-color` tokens: a gradient's stops and the alpha of a colour.
 const TAILWIND_COLOR = /^--tw-(?:gradient-(?:from|to)|(?:bg|text|border|divide|placeholder|ring)-opacity)$/;
-// `#0000` is Tailwind's transparent fallback, `var(--tw-shadow, 0 0 #0000)`.
 const NO_COLOR = new Set([
   "transparent",
   "currentcolor",
@@ -107,7 +110,6 @@ const NO_COLOR = new Set([
   "revert-layer",
   "none",
   "auto",
-  "#0000",
 ]);
 const NAMED_COLORS = new Set(
   `aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown burlywood
@@ -138,7 +140,12 @@ const RELATIVE_COLOR = /^\s*from\s/i;
 /** Alpha 0, `rgb(0 0 0 / 0)` or `rgba(0, 0, 0, 0)`: transparent, as Tailwind writes it in a gradient stop. */
 const ZERO_ALPHA = /^(?:[^(),/]*\/|(?:[^(),/]*,){3})\s*(?:0*\.)?0+%?\s*\)/;
 const HEX = /#[\da-f]+/gi;
-const IDENTIFIER = /(?<![\w-])[a-z][\w-]*/gi;
+/** A hex colour with alpha 0, `#fff0` or `#ffffff00`; `#0000` is Tailwind's fallback, `var(--tw-shadow, 0 0 #0000)`. */
+const ZERO_ALPHA_HEX = /^#(?:[\da-f]{3}0|[\da-f]{6}00)$/i;
+/** The text before a relative colour's origin, whose alpha does not count: `rgb(from rgb(0 0 0 / 0) r g b / 1)`. */
+const BEFORE_ORIGIN = /(?<![\w-])from\s+$/i;
+/** A word, not a function's name: `tan(10deg)` holds no colour. */
+const IDENTIFIER = /(?<![\w-])[a-z][\w-]*(?![\w(-])/gi;
 
 /** At-rules a design file may emit; any other one, `@layer` or `@keyframes`, ships CSS out of its place. */
 const ALLOWED_AT_RULES = new Set(["media", "supports", "container", "starting-style"]);
@@ -155,6 +162,11 @@ const STYLE_BLOCK = /<style[^>]*>([\s\S]*?)<\/style>/g;
 // `tailwind.config.ts` sets `module.exports`, so it is loaded the way Tailwind loads it, not imported.
 const tailwindConfig = loadConfig(fileURLToPath(new URL("../tailwind.config.ts", import.meta.url)));
 const tailwind = tailwindcss({ ...tailwindConfig, content: [{ raw: "" }] });
+const { dropShadow } = resolveConfig(tailwindConfig).theme as { dropShadow: Record<string, string | string[]> };
+/** `--tw-drop-shadow` as the theme's `drop-shadow-*` steps write it; an arbitrary `drop-shadow-[…]` is none of them. */
+const DROP_SHADOW_STEPS = new Set(
+  Object.values(dropShadow).map((step) => `drop-shadow(${[step].flat().join(") drop-shadow(")})`),
+);
 
 function styleText(file: string): string {
   const text = readFileSync(file, "utf-8");
@@ -571,7 +583,7 @@ function hasColor(value: string): boolean {
   return (
     variables.some((name) => isColorToken(name)) ||
     COLOR_FUNCTION.test(rest) ||
-    (rest.match(HEX) ?? []).some((hex) => !NO_COLOR.has(hex)) ||
+    (rest.match(HEX) ?? []).some((hex) => !ZERO_ALPHA_HEX.test(hex)) ||
     (rest.match(IDENTIFIER) ?? []).some((word) => NAMED_COLORS.has(word))
   );
 }
@@ -611,7 +623,8 @@ export function colorSemantics(file = COLORS_FILE): Set<string> {
 /**
  * `null` when every colour in a value comes from preset variables: `var()` of a preset key (`--color-*`),
  * a `_colors.scss` semantic, a public `--vc-*` token or Tailwind's `--tw-*`, `color-mix()` or a relative colour
- * of these, the keywords and a colour function with alpha 0; otherwise why not: the first foreign variable or literal.
+ * of these, the keywords and a colour function or hex with alpha 0 that is no origin; otherwise why not: the first
+ * foreign variable or literal.
  */
 export function checkColorValue(value: string, semantics: ReadonlySet<string>): string | null {
   const text = value.replaceAll(QUOTED_OR_URL, " ");
@@ -624,16 +637,18 @@ export function checkColorValue(value: string, semantics: ReadonlySet<string>): 
   }
 
   const rest = text.replaceAll(VAR_REFERENCE, " ").toLowerCase();
-  const hex = (rest.match(HEX) ?? []).find((item) => !NO_COLOR.has(item));
+  // A relative colour's origin counts whatever its alpha: `rgb(from #fff0 r g b / 1)` is opaque.
+  const isOrigin = (index: number) => BEFORE_ORIGIN.test(rest.slice(0, index));
+  const hex = [...rest.matchAll(HEX)].find((match) => !ZERO_ALPHA_HEX.test(match[0]) || isOrigin(match.index));
 
   if (hex) {
-    return `${hex} is a literal colour`;
+    return `${hex[0]} is a literal colour`;
   }
 
   const literal = [...rest.matchAll(COLOR_FUNCTION_CALL)].find((match) => {
     const args = rest.slice(match.index + match[0].length);
 
-    return match[1] !== "color-mix" && !RELATIVE_COLOR.test(args) && !ZERO_ALPHA.test(args);
+    return match[1] !== "color-mix" && !RELATIVE_COLOR.test(args) && (!ZERO_ALPHA.test(args) || isOrigin(match.index));
   });
 
   if (literal) {
@@ -793,6 +808,20 @@ function isPresetColor(prop: string): boolean {
   return COLOR_PROPERTY.test(name) || TAILWIND_COLOR.test(name) || isColorToken(prop);
 }
 
+/** Why a preset may not set a property; a shorthand that holds a colour sets geometry too, so its longhand is named. */
+function presetProblem(prop: string, text: string): string {
+  const name = unescapeIdent(prop).toLowerCase();
+  const problem = "a preset stylesheet sets colours only";
+
+  if (!(COLOR_SHORTHAND.test(name) || BORDER_SHORTHAND.test(name)) || !hasColor(text)) {
+    return problem;
+  }
+
+  return NO_COLOR_LONGHAND.test(name)
+    ? `a shorthand sets geometry too, and ${problem}; ${name} has no colour longhand`
+    : `a shorthand sets geometry too, and ${problem}: set ${name}-color, not ${name}`;
+}
+
 /**
  * Why a declaration breaks the colour rules, or `undefined`. A colour (`isDesignColor`) comes only from preset
  * variables, and no private variable carries one, whatever its name. A preset stylesheet sets colour longhands
@@ -807,7 +836,8 @@ function colorProblem(
   const text = value.replaceAll(QUOTED_OR_URL, " ");
   const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(name);
   const isColor = isPreset ? isPresetColor(prop) : isDesignColor(prop, value, text);
-  const colors = (BLACK_SHADOW.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value).replaceAll(
+  const keepsBlack = BLACK_SHADOW.test(name) || (name === DROP_SHADOW && DROP_SHADOW_STEPS.has(value));
+  const colors = (keepsBlack ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value).replaceAll(
     DEFAULT_SHADOW_FALLBACK_BLACK,
     "$1 ",
   );
@@ -819,7 +849,7 @@ function colorProblem(
   }
 
   if (!isColor && isPreset) {
-    return "a preset stylesheet sets colours only";
+    return presetProblem(prop, text);
   }
 
   if (valueProblem) {

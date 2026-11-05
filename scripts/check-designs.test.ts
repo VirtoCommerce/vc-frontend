@@ -216,6 +216,9 @@ describe("check-designs", () => {
       "rgb(255 255 255 / 0)",
       "rgba(0, 0, 0, 0)",
       "hsl(0 0% 0% / 0%)",
+      "#fff0",
+      "#ffffff00",
+      "0 0 #0000",
     ])("allows %s", (value) => {
       expect(checkColorValue(value, semantics)).toBeNull();
     });
@@ -232,6 +235,10 @@ describe("check-designs", () => {
       ["hsl(0 0% 0%)", 'hsl() without "from" is a literal colour'],
       ["color-mix(in srgb, var(--color-primary-500), white)", "white is a named colour"],
       ["red", "red is a named colour"],
+      ["#ffffff01", "#ffffff01 is a literal colour"],
+      ["rgb(from rgb(227 6 19 / 0) r g b / 1)", 'rgb() without "from" is a literal colour'],
+      ["rgb(from #fff0 r g b / 1)", "#fff0 is a literal colour"],
+      ["rgb(from #0000 r g b / 1)", "#0000 is a literal colour"],
     ])("rejects %s", (value, reason) => {
       expect(checkColorValue(value, semantics)).toBe(reason);
     });
@@ -551,10 +558,12 @@ ${loads("dark")}  }
       const errors = await check({
         "soft/_tokens.scss": `${SOFT} { --vc-widget-shadow: 0 6px 20px 0 red; }`,
         "soft/blocks/vc-card.scss": ".vc-card { --vc-shadow-md-1: 0 4px 6px 0 rgb(0 0 0 / 0.1); }",
+        "soft/blocks/footer-links.scss": ".footer-links { --vc-widget-shadow: 0 6px 20px 0 var(--my-shadow); }",
       });
 
       expect(errors).toEqual([
         expect.stringContaining(`--vc-widget-shadow: red is a named colour; ${COLOR}`),
+        expect.stringContaining(`--vc-widget-shadow: var(--my-shadow) is no preset variable; ${COLOR}`),
         expect.stringContaining(`--vc-shadow-md-1: rgb() without "from" is a literal colour; ${COLOR}`),
       ]);
     });
@@ -639,12 +648,33 @@ ${loads("dark")}  }
       ["a drop shadow in a filter", "blocks", "filter: drop-shadow(0 0 4px red)", ["filter"]],
       ["a drop shadow written with @apply", "blocks", "@apply drop-shadow-[0_0_4px_red]", ["--tw-drop-shadow"]],
       [
+        "Tailwind's black in a drop shadow that is no theme step",
+        "blocks",
+        "@apply drop-shadow-[0_0_40px_rgb(0_0_0/1)]",
+        ["--tw-drop-shadow"],
+      ],
+      [
         "a drop shadow in a backdrop filter",
         "blocks",
         "backdrop-filter: drop-shadow(0 0 4px #e30613)",
         ["backdrop-filter"],
       ],
       ["a public token that holds a colour, whatever its name", "blocks", "--vc-brand: #e30613", ["--vc-brand"]],
+      ["a prefixed filter", "blocks", "-webkit-filter: drop-shadow(0 0 4px red)", ["-webkit-filter"]],
+      [
+        "a prefixed backdrop filter",
+        "blocks",
+        "-webkit-backdrop-filter: drop-shadow(0 0 4px red)",
+        ["-webkit-backdrop-filter"],
+      ],
+      ["a prefixed box shadow", "blocks", "-webkit-box-shadow: 0 0 4px red", ["-webkit-box-shadow"]],
+      [
+        "a transparent colour as a relative colour's origin",
+        "blocks",
+        "color: rgb(from rgb(227 6 19 / 0) r g b / 1)",
+        ["color"],
+      ],
+      ["a transparent hex as a relative colour's origin", "blocks", "--vc-x: rgb(from #fff0 r g b / 1)", ["--vc-x"]],
     ])("reports %s once, naming the properties its line sets", async (_name, dir, declarations, props) => {
       const errors = await check({ [`soft/${dir}/footer-links.scss`]: `.footer-links { ${declarations}; }` });
 
@@ -707,6 +737,9 @@ ${loads("dark")}  }
       "box-shadow: var(--vc-shadow-md)",
       "@apply bg-gradient-to-r",
       "background-image: linear-gradient(to right, var(--tw-gradient-stops))",
+      "--vc-x-skew: calc(tan(10deg) * 100%)",
+      "--vc-x: #fff0",
+      "--vc-x: #ffffff00",
     ])("does not read %s as a colour", async (declarations) => {
       expect(await check({ "soft/blocks/footer-links.scss": `.footer-links { ${declarations}; }` })).toEqual([]);
     });
@@ -1071,6 +1104,7 @@ ${loads("dark")}  }
 
     const MERCURY = 'html[data-preset="mercury"]';
     const DARK_MERCURY = 'html.dark[data-preset="mercury"]';
+    const SHORTHAND = "a shorthand sets geometry too, and a preset stylesheet sets colours only";
 
     /** Writes `presets/<file>` and a sources folder; every `<name>.scss` gets a `<name>.json` unless `json` is false. */
     async function check(files: Record<string, string>, json = true): Promise<string[]> {
@@ -1285,16 +1319,36 @@ ${loads("dark")}  }
       [
         "a border and a box-shadow shorthand, which set geometry too",
         `@layer vc.preset { ${MERCURY} .vc-button { border: 2px dashed var(--color-neutral-300); box-shadow: 0 20px 40px 0 var(--color-neutral-950); } }`,
-        "border, box-shadow: a preset stylesheet sets colours only",
+        `border, box-shadow: ${SHORTHAND}: set border-color, not border`,
       ],
       [
         "an outline shorthand",
         `@layer vc.preset { ${MERCURY} .vc-button { outline: 3px solid var(--color-primary-500); } }`,
-        "outline: a preset stylesheet sets colours only",
+        `outline: ${SHORTHAND}: set outline-color, not outline`,
       ],
       [
         "a background shorthand",
         `@layer vc.preset { ${MERCURY} .vc-button { background: var(--color-primary-50) url("x.png") no-repeat; } }`,
+        `background: ${SHORTHAND}: set background-color, not background`,
+      ],
+      [
+        "a background shorthand that holds only a colour",
+        `@layer vc.preset { ${MERCURY} .vc-button { background: var(--color-primary-50); } }`,
+        `background: ${SHORTHAND}: set background-color, not background`,
+      ],
+      [
+        "a border side shorthand",
+        `@layer vc.preset { ${MERCURY} .vc-button { border-inline-start: 1px solid var(--color-neutral-300); } }`,
+        `border-inline-start: ${SHORTHAND}: set border-inline-start-color, not border-inline-start`,
+      ],
+      [
+        "a shadow shorthand, which has no colour longhand",
+        `@layer vc.preset { ${MERCURY} .vc-button { box-shadow: 0 0 4px var(--color-neutral-950); } }`,
+        `box-shadow: ${SHORTHAND}; box-shadow has no colour longhand`,
+      ],
+      [
+        "a shorthand that holds no colour",
+        `@layer vc.preset { ${MERCURY} .vc-button { background: url("x.png") no-repeat; } }`,
         "background: a preset stylesheet sets colours only",
       ],
       [
