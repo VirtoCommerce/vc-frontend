@@ -246,7 +246,7 @@
         >
           <template #desktop-body>
             <tr v-for="contact in contacts" :key="contact.id" class="even:bg-neutral-50">
-              <td class="w-40 truncate px-4 py-2.5" :title="contact.fullName">
+              <td class="w-40 max-w-40 truncate px-4 py-2.5" :title="contact.fullName">
                 {{ contact.fullName }}
               </td>
 
