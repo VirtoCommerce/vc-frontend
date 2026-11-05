@@ -1,3 +1,5 @@
+#import "../../../fragments/orderStatisticsSlotFields.graphql"
+
 # The account dashboard's Sales Statistics (VCST-6258): the signed-in user's OWN orders, as the stat cards count them
 # (GetOrderStatistics), so the two agree. One bucket per month of the selected period (up to 12) with the same month
 # last year, and the month before the period for the first month's "vs previous month". The statistics already leave
@@ -73,166 +75,91 @@ query GetMonthlyOrderStatistics(
   orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
     currencyCode
     prev: period(from: $prevFrom, to: $prevTo) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m0: period(from: $from0, to: $to0) @include(if: $use0) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly0: period(from: $lyFrom0, to: $lyTo0) @include(if: $use0) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m1: period(from: $from1, to: $to1) @include(if: $use1) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly1: period(from: $lyFrom1, to: $lyTo1) @include(if: $use1) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m2: period(from: $from2, to: $to2) @include(if: $use2) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly2: period(from: $lyFrom2, to: $lyTo2) @include(if: $use2) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m3: period(from: $from3, to: $to3) @include(if: $use3) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly3: period(from: $lyFrom3, to: $lyTo3) @include(if: $use3) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m4: period(from: $from4, to: $to4) @include(if: $use4) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly4: period(from: $lyFrom4, to: $lyTo4) @include(if: $use4) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m5: period(from: $from5, to: $to5) @include(if: $use5) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly5: period(from: $lyFrom5, to: $lyTo5) @include(if: $use5) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m6: period(from: $from6, to: $to6) @include(if: $use6) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly6: period(from: $lyFrom6, to: $lyTo6) @include(if: $use6) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m7: period(from: $from7, to: $to7) @include(if: $use7) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly7: period(from: $lyFrom7, to: $lyTo7) @include(if: $use7) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m8: period(from: $from8, to: $to8) @include(if: $use8) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly8: period(from: $lyFrom8, to: $lyTo8) @include(if: $use8) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m9: period(from: $from9, to: $to9) @include(if: $use9) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly9: period(from: $lyFrom9, to: $lyTo9) @include(if: $use9) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m10: period(from: $from10, to: $to10) @include(if: $use10) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly10: period(from: $lyFrom10, to: $lyTo10) @include(if: $use10) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
     m11: period(from: $from11, to: $to11) @include(if: $use11) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
       excludedCount
     }
     ly11: period(from: $lyFrom11, to: $lyTo11) @include(if: $use11) {
-      count
-      total {
-        amount
-      }
+      ...orderStatisticsSlotFields
     }
   }
 }
