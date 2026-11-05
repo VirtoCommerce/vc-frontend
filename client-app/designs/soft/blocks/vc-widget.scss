@@ -4,20 +4,12 @@
   $header: "";
   $slot-container: "";
 
-  // _tokens.scss's plate again, so a nested widget does not inherit the tokens the rules below set on its parent.
+  // The plate html computes (_tokens.scss) again, so a nested widget does not inherit the tokens the rules below
+  // set on its parent.
   :where(.vc-widget) & {
-    --vc-widget-radius: 1.375rem;
-    --vc-widget-border-width: 0px;
-    --vc-widget-padding-x: 1.5rem;
-
-    @media (width >= theme("screens.lg")) {
-      --vc-widget-radius: 1.75rem;
-      --vc-widget-padding-x: 2rem;
-    }
-
-    @media (forced-colors: active) {
-      --vc-widget-border-width: 1px;
-    }
+    --vc-widget-radius: var(--design-widget-radius);
+    --vc-widget-border-width: var(--design-widget-border-width);
+    --vc-widget-padding-x: var(--design-widget-padding-x);
   }
 
   // Small widgets (filters, side menus) keep the classic inset: `initial` drops the token.
