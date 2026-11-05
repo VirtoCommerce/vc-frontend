@@ -185,7 +185,6 @@ import {
   useLoyaltyCatalogCurrency,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
-import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
 import { FloatingBar } from "@/shared/common";
 import {
   getAnchorId,
@@ -297,7 +296,7 @@ const {
   parts: templateParts,
   productInfoSection,
   isB2cLayout,
-  layoutPropertyValue,
+  variationsLayout: templateLayout,
 } = useProductTemplate(product);
 
 const productVariationsBlock = computed(() =>
@@ -307,10 +306,6 @@ const productVariationsBlock = computed(() =>
 const sectionContext = computed(() => ({ product: product.value }));
 
 const columnSectionContext = computed(() => ({ product: product.value, isCollapsible: false }));
-
-const templateLayout = computed(() =>
-  isB2cLayout.value ? PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c : layoutPropertyValue.value,
-);
 
 const variationSortInfo = ref<ISortInfo>({
   column: "name",

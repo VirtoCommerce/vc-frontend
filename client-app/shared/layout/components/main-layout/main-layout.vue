@@ -1,17 +1,22 @@
 <template>
   <div class="main-layout">
-    <SkipToLinks />
+    <SkipToLinks :with-footer="chrome === 'full'" />
 
-    <VcHeader v-if="chrome === 'full'" />
+    <!-- Kept alive, so a page on another layout does not make them mount and load their menus again -->
+    <KeepAlive>
+      <VcHeader v-if="chrome === 'full'" />
 
-    <MinimalHeader v-else-if="chrome === 'minimal'" />
+      <MinimalHeader v-else-if="chrome === 'minimal'" />
+    </KeepAlive>
 
     <!-- Main Content -->
     <main id="main-content" class="main-layout__content">
       <slot />
     </main>
 
-    <VcFooter v-if="chrome === 'full'" />
+    <KeepAlive>
+      <VcFooter v-if="chrome === 'full'" />
+    </KeepAlive>
   </div>
 </template>
 

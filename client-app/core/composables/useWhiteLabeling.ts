@@ -50,6 +50,25 @@ function pickBrandField(
   return whiteLabelingValue ?? fallback;
 }
 
+/**
+ * The logo for dark backgrounds that belongs with `logoUrl`: from the same source (white-labeling, the Page Builder
+ * theme, the storefront's settings), so a light logo of one source never gets the dark logo of another.
+ */
+function pickDarkLogo(): string | undefined {
+  const settings = whiteLabelingSettings.value;
+
+  if (settings?.logoUrl) {
+    // The secondary logo merged with an organization's logo may be the store's: nothing tells whose it is.
+    return settings.isOrganizationLogoUploaded ? undefined : settings.secondaryLogoUrl || undefined;
+  }
+
+  if (theme.value?.brand.logoUrl) {
+    return theme.value.brand.secondaryLogoUrl || undefined;
+  }
+
+  return themeContext.value?.settings?.logo_inverted_image;
+}
+
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (!moduleEnabled.value) {
@@ -80,6 +99,7 @@ function _useWhiteLabeling() {
         themeContext.value?.settings?.logo_inverted_image,
       ),
     ),
+    darkLogoUrl: computed(pickDarkLogo),
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),

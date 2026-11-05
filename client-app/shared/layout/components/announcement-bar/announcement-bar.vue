@@ -18,20 +18,35 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
+import { useStaticPage } from "@/shared/static-content/composables/useStaticPage";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import type { StyleValue } from "vue";
 
 /** A palette token name, as a `color-token` setting holds it: `color_primary_500`. */
 const TOKEN_REGEX = /^[a-z][a-z0-9_]*$/;
 
+const HOME_PERMALINK_REGEX = /^\/*$/;
+
 const route = useRoute();
 const { announcementBar } = useThemeChrome();
+const { staticPagePreviewSubject } = useStaticPage();
+
+/** The home page; on the designer's preview route, the page the designer shows there. */
+const isHomePage = computed(() => {
+  if (route.path === DESIGNER_PREVIEW_PATH) {
+    const permalink = staticPagePreviewSubject.value?.permalink;
+    return permalink !== undefined && HOME_PERMALINK_REGEX.test(permalink);
+  }
+
+  return route.path === "/";
+});
 
 const announcements = computed(() => {
   const bar = announcementBar.value;
 
-  if (!bar || (bar.home_only === true && route.path !== "/")) {
+  if (!bar || (bar.home_only === true && !isHomePage.value)) {
     return [];
   }
 

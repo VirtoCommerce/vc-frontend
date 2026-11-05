@@ -27,11 +27,19 @@ function snapshotResponse(overrides: { storeId?: string; cultureName?: string; p
   };
 }
 
-function leaveBootRequest(response: Promise<unknown>): void {
+function leaveBootRequest(response: Promise<unknown>, cultureName?: string): void {
   (window as unknown as Record<string, unknown>)[THEME_SNAPSHOT_GLOBAL] = {
-    variables: { domain: "localhost" },
+    variables: { domain: "localhost", cultureName },
     response,
   };
+}
+
+/** A router whose first navigation, the application's own, is done. */
+async function startRouter() {
+  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/:path(.*)", component: {} }] });
+  installThemeSnapshotNavigation(router, () => ({ storeId: STORE_ID, cultureName: "en-US" }));
+  await router.push("/");
+  return router;
 }
 
 /** Lets the boot request's chain settle, as it does long before pageContext returns. */
@@ -103,6 +111,18 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().published.value?.cultureName).toBe("de-DE");
   });
 
+  it("does not ask again when the language it asked for is served in the store default language", async () => {
+    const fetchMock = mockFetch();
+    leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })), "fr");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "fr-FR" });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(useThemeSnapshot().published.value?.cultureName).toBe("en-US");
+  });
+
   it("renders the built-in templates when the store has no theme", async () => {
     leaveBootRequest(Promise.resolve({ data: { themeSnapshot: null } }));
 
@@ -117,8 +137,7 @@ describe("startThemeSnapshot", () => {
   it("keeps a late snapshot for the next navigation and retries a failed request on it", async () => {
     let resolveLate: (value: unknown) => void = () => {};
     leaveBootRequest(new Promise((resolve) => (resolveLate = resolve)));
-    const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/:path(.*)", component: {} }] });
-    installThemeSnapshotNavigation(router, () => ({ storeId: STORE_ID, cultureName: "en-US" }));
+    const router = await startRouter();
 
     const boot = startThemeSnapshot({ domain: "localhost" });
     await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
@@ -134,13 +153,13 @@ describe("startThemeSnapshot", () => {
   it("asks again on the next navigation after a failure", async () => {
     leaveBootRequest(Promise.reject(new Error("offline")));
     const fetchMock = mockFetch(snapshotResponse({ publication: 9 }));
-    const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/:path(.*)", component: {} }] });
-    installThemeSnapshotNavigation(router, () => ({ storeId: STORE_ID, cultureName: "en-US" }));
 
     const boot = startThemeSnapshot({ domain: "localhost" });
     await flushRequests();
     await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
     expect(useThemeSnapshot().hasFailed.value).toBe(true);
+    const router = await startRouter();
+    expect(fetchMock).not.toHaveBeenCalled();
 
     await router.push("/a");
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
@@ -148,6 +167,24 @@ describe("startThemeSnapshot", () => {
     await router.push("/b");
 
     expect(useThemeSnapshot().published.value?.publication).toBe(9);
+  });
+
+  it("does not re-render the page when a navigation is cancelled", async () => {
+    let resolveLate: (value: unknown) => void = () => {};
+    leaveBootRequest(new Promise((resolve) => (resolveLate = resolve)));
+    const router = await startRouter();
+    router.beforeEach((to) => to.path !== "/blocked");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    resolveLate(snapshotResponse({ publication: 7 }));
+    await flushRequests();
+
+    await router.push("/blocked");
+    expect(useThemeSnapshot().published.value).toBeUndefined();
+
+    await router.push("/next");
+    expect(useThemeSnapshot().published.value?.publication).toBe(7);
   });
 
   it("does not hold boot longer than the refetch timeout", async () => {

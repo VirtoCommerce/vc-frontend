@@ -5,8 +5,8 @@ import { createMemoryHistory, createRouter } from "vue-router";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
-import { findEditableElement, findEditableTexts } from "./inline-text-editor";
-import { buildPreviewCatalog, createPreviewV2, PREVIEW_PROTOCOL } from "./preview-v2";
+import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
+import { buildPreviewCatalog, createPreviewV2, findSchemaField, PREVIEW_PROTOCOL } from "./preview-v2";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 
@@ -23,7 +23,15 @@ vi.mock("@/core/composables/useWhiteLabeling", async () => {
 
 const SCHEMAS = {
   sections: { banner: { settings: [{ id: "title", type: "string", translatable: true }] } },
-  blocks: {},
+  blocks: {
+    "footer-menu": {
+      settings: [
+        { id: "heading", type: "string", translatable: true },
+        { id: "links", type: "list", element: [{ id: "label", type: "string", translatable: true }] },
+        { id: "columns", type: "select" },
+      ],
+    },
+  },
   shared: {},
   objects: {},
   templates: {},
@@ -50,6 +58,7 @@ function createPreview(options: { hasPreviewToken?: boolean } = {}) {
     allowNavigation,
     applyLocale: () => Promise.resolve(),
     hasPreviewToken: () => !!options.hasPreviewToken,
+    enqueue: (task: () => Promise<void>) => void task(),
   });
 
   return { preview, router, blocker, post, renderPage, allowNavigation };
@@ -151,6 +160,35 @@ describe("preview protocol 2", () => {
     });
   });
 
+  it("shows the add-section model at the end of a template, as on a page", async () => {
+    const { preview } = createPreview();
+
+    await preview.handleRender(render({ templateKey: "product", url: "/x1", model: { type: "banner", title: "New" } }));
+
+    const content = useThemeTemplates().resolveTemplate("product", {}).document.content;
+    expect(content.at(-2)).toMatchObject({ type: "banner", title: "New" });
+  });
+
+  it("does not report the previous page's template for a page that has not chosen yet", async () => {
+    const { preview, post } = createPreview();
+    useThemeTemplates().setLastResolution({ pageType: "page", template: "page", ruleId: null, document: DOCUMENT });
+
+    await preview.handleRender(render({ templateKey: "product", url: "/printers/x1" }));
+
+    expect(post).not.toHaveBeenCalledWith("resolved", expect.anything());
+  });
+
+  it("loads the page it shows again after the designer switches the user", async () => {
+    const { preview, router } = createPreview();
+    await preview.handleRender(render({ templateKey: "product", url: "/printers/x1" }));
+    const visited: string[] = [];
+    router.afterEach((to) => visited.push(to.fullPath));
+
+    await preview.reload();
+
+    expect(visited).toEqual(["/designer-preview", "/printers/x1"]);
+  });
+
   it("switches between light and dark", () => {
     createPreview().preview.setColorScheme("dark");
 
@@ -177,6 +215,41 @@ describe("inline editing", () => {
       { itemId: "s1", path: ["title"], value: "Hello" },
       { itemId: "b1", path: ["links", 0, "label"], value: "Sale" },
     ]);
+  });
+
+  it("finds only the settings the schema has as plain text", () => {
+    const texts = findEditableTexts(
+      { id: "b1", type: "footer-menu", heading: "Shop", columns: "3", links: [{ label: "Sale" }] },
+      (itemType, path) => findSchemaField(SCHEMAS, itemType, path)?.type === "string",
+    );
+
+    expect(texts.map(({ path }) => path)).toEqual([["heading"], ["links", 0, "label"]]);
+  });
+
+  it("finds a translatable setting inside a list by its element's schema", () => {
+    expect(findSchemaField(SCHEMAS, "footer-menu", ["links", 0, "label"])?.translatable).toBe(true);
+    expect(findSchemaField(SCHEMAS, "footer-menu", ["columns"])?.translatable).toBeUndefined();
+  });
+
+  it("edits the text as stored, ends when focus leaves it and keeps a click inside from acting", () => {
+    document.body.innerHTML = `<section data-pb-section="s1"><a href="/sale"><span id="title">Hello</span></a></section>`;
+    const title = document.getElementById("title") as HTMLElement;
+    title.style.textTransform = "uppercase";
+    document.elementsFromPoint = () => [title];
+    const onEnd = vi.fn();
+    const editor = new InlineTextEditor(document.createElement("div"), vi.fn(), onEnd);
+
+    editor.start([{ itemId: "s1", path: ["title"], value: "Hello" }], 0, 0);
+    expect(title.style.textTransform).toBe("none");
+
+    const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+    title.dispatchEvent(click);
+    expect(click.defaultPrevented).toBe(true);
+
+    title.dispatchEvent(new FocusEvent("blur"));
+    expect(editor.isEditing).toBe(false);
+    expect(onEnd).toHaveBeenCalledOnce();
+    expect(title.style.textTransform).toBe("uppercase");
   });
 
   it("edits the element a data-pb-field names, else the one whose text exactly one setting has", () => {

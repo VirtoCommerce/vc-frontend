@@ -227,16 +227,33 @@ export function _useNavigations() {
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
 
+  const { getGroupSection, getMenuLinks } = useThemeGroups();
+  const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
+
+  /** The Page Builder theme header's category menu, unless white-labeling has a main menu of its own. */
+  const themeCatalogMenuItems = computed(() =>
+    whiteLabelingMainMenuLinks.value?.length
+      ? undefined
+      : getMenuLinks(getGroupSection("header", "site-header")?.catalog_menu, true),
+  );
+
+  /** The category menu the header shows, on desktop and in the mobile menu alike. */
+  const shownCatalogMenuItems = computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value);
+
+  const isCatalogMenuShown = computed(() => getGroupSection("header", "site-header")?.show_catalog_menu !== false);
+
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-    (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
-      const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
+    (menuSchema.value?.header?.mobile?.main || [])
+      .filter((item: ExtendedMenuLinkType) => item.id !== "catalog" || isCatalogMenuShown.value)
+      .map((item: ExtendedMenuLinkType) => {
+        const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
 
-      if (menuLink.id === "catalog") {
-        menuLink.children = catalogMenuItems.value;
-      }
+        if (menuLink.id === "catalog") {
+          menuLink.children = shownCatalogMenuItems.value;
+        }
 
-      return menuLink;
-    }),
+        return menuLink;
+      }),
   );
 
   const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
@@ -354,9 +371,6 @@ export function _useNavigations() {
     const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      // Get white labeling main menu links
-      const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
-
       if (whiteLabelingMainMenuLinks.value?.length) {
         // First priority: use white labeling main menu if available
         catalogMenuItems.value = whiteLabelingMainMenuLinks.value;
@@ -393,16 +407,6 @@ export function _useNavigations() {
     }
   }
 
-  const { getGroupSection, getMenuLinks } = useThemeGroups();
-  const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
-
-  /** The Page Builder theme header's category menu, unless white-labeling has a main menu of its own. */
-  const themeCatalogMenuItems = computed(() =>
-    whiteLabelingMainMenuLinks.value?.length
-      ? undefined
-      : getMenuLinks(getGroupSection("header", "site-header")?.catalog_menu, true),
-  );
-
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
@@ -430,7 +434,7 @@ export function _useNavigations() {
     matchingRouteName: readonly(matchingRouteName),
 
     fetchCatalogMenu,
-    catalogMenuItems: computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value),
+    catalogMenuItems: shownCatalogMenuItems,
 
     fetchFooterLinks,
     footerLinks: computed(() => footerLinks.value),

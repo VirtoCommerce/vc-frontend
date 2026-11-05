@@ -116,18 +116,21 @@ function _useThemeContext() {
   }
 
   /**
-   * Puts the Page Builder theme's palette in place of the preset, or the preset back without one. Call it only when
-   * white-labeling chose no preset: its preset replaces the whole palette, and the two are never mixed.
+   * Puts the Page Builder theme's palette over the preset, or the preset back without one; a token the palette lacks
+   * keeps the preset's value. Call it only when white-labeling chose no preset: its preset replaces the whole palette,
+   * and the two are never mixed.
    */
   function setThemePalette(palette: IThemePalette | undefined): void {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");
     }
 
-    // A theme palette holds every token of the built-in presets: the module validates it against the list the
-    // storefront announces (`paletteTokens`), so it has the preset's shape.
+    // Nothing checks that a palette has every token, and a storefront release can add one that older snapshots lack.
     const source = palette
-      ? { light: palette.light as unknown as IThemeConfigPreset, dark: palette.dark as IThemeConfigPreset | undefined }
+      ? {
+          light: { ...presetPalette?.light, ...palette.light } as IThemeConfigPreset,
+          dark: palette.dark ? ({ ...presetPalette?.dark, ...palette.dark } as IThemeConfigPreset) : undefined,
+        }
       : presetPalette;
 
     if (source) {

@@ -607,6 +607,18 @@ describe("useThemeContext - preset loading functions", () => {
 
       expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
     });
+
+    it("keeps the preset's value of a token the theme's palette lacks", async () => {
+      const { useThemeContext } = await importComposable();
+      const { setThemeContext, addPresetToThemeContext, setThemePalette, themeContext } = useThemeContext();
+      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
+      await addPresetToThemeContext("coffee");
+
+      setThemePalette({ light: { color_primary_50: "#theme" } });
+
+      expect(themeContext.value.preset?.color_primary_50).toBe("#theme");
+      expect(themeContext.value.preset?.color_primary_100).toBe("#coffee");
+    });
   });
 
   describe("integration", () => {

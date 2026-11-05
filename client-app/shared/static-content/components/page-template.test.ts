@@ -94,4 +94,14 @@ describe("PageTemplate", () => {
     mountPage({ layout: "full" });
     expect(usePageLayout().pageLayout.value).toBe("full");
   });
+
+  it("keeps the template's layout when the page's own layout was cleared", () => {
+    publish({
+      templates: { page: { settings: { layout: "minimal" }, content: [{ id: "main", type: "page-content" }] } },
+    });
+
+    mountPage({ layout: null });
+
+    expect(usePageLayout().pageLayout.value).toBe("minimal");
+  });
 });

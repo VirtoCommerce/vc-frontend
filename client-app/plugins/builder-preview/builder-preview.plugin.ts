@@ -266,6 +266,8 @@ interface IPreviewContext {
   schemas?: PageBuilderSchemaType;
   /** The Vue designer's side, once it connects with protocol 2; only with the new Page Builder. */
   previewV2?: PreviewV2Type;
+  /** Runs a task after the designer's messages that came before it. */
+  enqueue: (task: () => Promise<void>) => void;
 }
 
 function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
@@ -289,6 +291,7 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       },
       applyLocale: applyPreviewLocale,
       hasPreviewToken: () => !!previewToken,
+      enqueue: context.enqueue,
     });
   }
 
@@ -353,8 +356,9 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
   // so a non-default-language page never flashes in the store default language.
   await applyPreviewLocale(message.cultureName);
 
-  // The Vue designer shows the page after its first render; its other messages come before it.
-  if (bodyEl && !context.previewV2) {
+  // The Vue designer shows the page after its first render; its other messages come before it. `auth` shows nothing
+  // either: it comes first when `connect` came before this listener and only the unasked `loaded` reached the designer.
+  if (bodyEl && !context.previewV2 && message.type !== "auth") {
     bodyEl.style.visibility = "visible";
   }
 
@@ -393,14 +397,14 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
       }
       break;
     case "auth":
-      applyAuth(context, message);
+      await applyAuth(context, message);
       break;
     default:
       Logger.warn(`Unknown message type: ${message.type}`);
   }
 }
 
-function applyAuth(context: IPreviewContext, message: TransferDataType): void {
+async function applyAuth(context: IPreviewContext, message: TransferDataType): Promise<void> {
   previewToken = message.token?.access_token || null;
   if (!originalUserId) {
     originalUserId = globals.userId;
@@ -412,21 +416,30 @@ function applyAuth(context: IPreviewContext, message: TransferDataType): void {
   context.sharedComponentOverlay?.update([], []);
   // An impersonation token keeps clicks blocked even with the inspector off.
   context.previewV2?.refreshInteraction();
+  await context.previewV2?.reload();
 }
 
-function handleMessages(context: IPreviewContext) {
-  // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
-  // navigation), so unqueued handlers would interleave: an older message could apply its template
-  // after a newer one. Chaining them keeps preview state in the order the builder sent it.
+/**
+ * Builder messages arrive as independent tasks, and each handler awaits (locale switch, router navigation), so
+ * unqueued handlers would interleave: an older message could apply its template after a newer one. Chaining them
+ * keeps preview state in the order the builder sent it.
+ */
+function createMessageQueue(): (task: () => Promise<void>) => void {
   let messageQueue: Promise<void> = Promise.resolve();
 
-  return addBuilderMessageListener(window, context.builderOrigin, window.parent, (data) => {
+  return (task) => {
     messageQueue = messageQueue.then(() =>
-      handleMessage(context, data).catch((error: unknown) => {
+      task().catch((error: unknown) => {
         // Never break the chain: a failed message must not stall every following one.
         Logger.error("Failed to handle the builder preview message", error);
       }),
     );
+  };
+}
+
+function handleMessages(context: IPreviewContext) {
+  return addBuilderMessageListener(window, context.builderOrigin, window.parent, (data) => {
+    context.enqueue(() => handleMessage(context, data));
   });
 }
 
@@ -472,6 +485,7 @@ export default {
         options,
         builderOrigin,
         loadedNotifier,
+        enqueue: createMessageQueue(),
         ...createOverlay(builderOrigin),
       };
       handleMessages(context);

@@ -8,7 +8,7 @@ function runScript(path: string, options?: { domain?: string }): SentRequestType
   window.history.replaceState(null, "", path);
   // The script is written for index.html, where it runs as plain JavaScript in the page.
   // eslint-disable-next-line sonarjs/code-eval -- runs the generated script under test
-  new Function(buildThemeSnapshotScript(options))();
+  new Function(buildThemeSnapshotScript(options))(); // nosemgrep: vc-dynamic-code-execution -- the script under test
   return (window as unknown as Record<string, SentRequestType>)[THEME_SNAPSHOT_GLOBAL];
 }
 

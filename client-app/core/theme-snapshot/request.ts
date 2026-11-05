@@ -54,7 +54,7 @@ export function requestThemeSnapshot(variables: IThemeSnapshotVariables): ITheme
  * Reads a GraphQL response of the snapshot request: `null` when the store has no theme (the New Page Builder store
  * setting is off, or the snapshot is in a format this storefront does not read). Throws on a GraphQL error.
  */
-export function readThemeSnapshotResponse(body: unknown): IPublishedTheme | null {
+export function readThemeSnapshotResponse(body: unknown, requestedCultureName?: string): IPublishedTheme | null {
   if (!isRecord(body)) {
     throw new Error("The theme snapshot response is not an object");
   }
@@ -78,10 +78,34 @@ export function readThemeSnapshotResponse(body: unknown): IPublishedTheme | null
   return {
     storeId: field.storeId,
     cultureName: field.cultureName,
+    requestedCultureName,
     publication: typeof field.publication === "number" ? field.publication : snapshot.publication,
     snapshot,
     menus: Array.isArray(field.menus) ? field.menus.filter(isMenu) : [],
   };
+}
+
+/**
+ * Whether the theme answers for the language: it is in that language, or it was asked for it and the server served
+ * its default language because the publication has no file in that one. A language part (`fr`, a URL prefix) stands
+ * for the store's only language of it, as the storefront's short locales do.
+ */
+export function isThemeForLanguage(
+  theme: Pick<IPublishedTheme, "cultureName" | "requestedCultureName">,
+  cultureName: string,
+): boolean {
+  return [theme.cultureName, theme.requestedCultureName].some((name) => isSameLanguage(name, cultureName));
+}
+
+function isSameLanguage(name: string | undefined, cultureName: string): boolean {
+  if (!name) {
+    return false;
+  }
+
+  const value = name.toLowerCase();
+  const expected = cultureName.toLowerCase();
+
+  return value === expected || (!value.includes("-") && expected.split("-")[0] === value);
 }
 
 function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {

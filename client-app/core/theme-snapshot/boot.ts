@@ -1,6 +1,12 @@
+import { START_LOCATION } from "vue-router";
 import { Logger } from "@/core/utilities";
 import { isNewPageBuilderEnabled } from "./enabled";
-import { readThemeSnapshotResponse, requestThemeSnapshot, takeBootThemeSnapshotRequest } from "./request";
+import {
+  isThemeForLanguage,
+  readThemeSnapshotResponse,
+  requestThemeSnapshot,
+  takeBootThemeSnapshotRequest,
+} from "./request";
 import { useThemeSnapshot } from "./useThemeSnapshot";
 import type { IThemeSnapshotRequest } from "./request";
 import type { IPublishedTheme } from "./types";
@@ -56,8 +62,9 @@ export function startThemeSnapshot(fallback: { domain: string; cultureName?: str
 }
 
 /**
- * Lets a snapshot that arrived late, or the retry of a failed request, take over on the next navigation inside the
- * site, so a page is never re-rendered under the visitor.
+ * Lets a snapshot that arrived late, or the retry of a failed request, take over once a navigation inside the site is
+ * done: the next page renders with it, and neither the page being left nor a cancelled navigation is re-rendered.
+ * The first navigation does not retry, as the request failed only moments before.
  */
 export function installThemeSnapshotNavigation(router: Router, getContext: () => IThemeSnapshotContext): void {
   if (!isNewPageBuilderEnabled()) {
@@ -67,18 +74,22 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
   const { promoteLate, hasFailed } = useThemeSnapshot();
   let isRetrying = false;
 
-  router.beforeEach(() => {
-    if (promoteLate() || !hasFailed.value || isRetrying) {
+  async function retry(context: IThemeSnapshotContext): Promise<void> {
+    isRetrying = true;
+
+    try {
+      await acceptLate(await readOutcome(requestThemeSnapshot(context)), context);
+    } finally {
+      isRetrying = false;
+    }
+  }
+
+  router.afterEach((_to, from, failure) => {
+    if (failure || promoteLate() || from === START_LOCATION || !hasFailed.value || isRetrying) {
       return;
     }
 
-    const context = getContext();
-    isRetrying = true;
-    void readOutcome(requestThemeSnapshot(context))
-      .then((value) => acceptLate(value, context))
-      .finally(() => {
-        isRetrying = false;
-      });
+    void retry(getContext());
   });
 }
 
@@ -130,16 +141,16 @@ async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, 
 }
 
 /**
- * The store must be the one `pageContext` resolved. The language must be the current one unless this is already the
- * second request: a language the publication has no file for is served in the store default language.
+ * The store must be the one `pageContext` resolved, and the request must have asked for its language: a language the
+ * publication has no file for is served in the store default language, and asking again would get the same.
  */
 function matches(theme: IPublishedTheme, context: IThemeSnapshotContext): boolean {
-  return theme.storeId === context.storeId && theme.cultureName.toLowerCase() === context.cultureName.toLowerCase();
+  return theme.storeId === context.storeId && isThemeForLanguage(theme, context.cultureName);
 }
 
 async function readOutcome(request: IThemeSnapshotRequest): Promise<OutcomeType> {
   try {
-    return { result: readThemeSnapshotResponse(await request.response) };
+    return { result: readThemeSnapshotResponse(await request.response, request.variables.cultureName) };
   } catch (error) {
     return { error };
   }

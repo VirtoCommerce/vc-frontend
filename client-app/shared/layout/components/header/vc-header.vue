@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
 import { useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
@@ -56,16 +56,31 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
-watch(headerHeight, (value) => {
+function writeSidebarOffset(value: number): void {
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
-});
+}
 
-watch([headerHeight, isMobile], ([value, mobile]) => {
+function writeAppHeaderHeight(value: number, mobile: boolean): void {
   if (mobile) {
     return;
   }
 
   appHeaderHeightVar.value = `${value}px`;
+}
+
+watch(headerHeight, writeSidebarOffset);
+
+watch([headerHeight, isMobile], ([value, mobile]) => writeAppHeaderHeight(value, mobile));
+
+// The main layout keeps the header alive under a page on another layout, which has no header height to leave room for.
+onDeactivated(() => {
+  headerHeightVar.value = undefined;
+  appHeaderHeightVar.value = undefined;
+});
+
+onActivated(() => {
+  writeSidebarOffset(headerHeight.value);
+  writeAppHeaderHeight(headerHeight.value, isMobile.value);
 });
 
 const { isAuthenticated } = useUser();

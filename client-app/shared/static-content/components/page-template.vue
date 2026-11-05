@@ -61,8 +61,11 @@ const templateParts = computed(() =>
   splitTemplate(templateResolution.value?.document.content ?? [], MAIN_SECTION_TYPES.page),
 );
 
-/** The page's settings over its template's. */
-const settings = computed(() => ({ ...templateResolution.value?.document.settings, ...props.pageSettings }));
+/** The page's settings over its template's; one the page left empty (the designer's "Empty") keeps the template's. */
+const settings = computed(() => ({
+  ...templateResolution.value?.document.settings,
+  ...Object.fromEntries(Object.entries(props.pageSettings ?? {}).filter(([, value]) => value != null)),
+}));
 
 watchEffect(() => {
   const { layout } = settings.value;

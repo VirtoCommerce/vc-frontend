@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { nextTick, watch } from "vue";
 import { darkPresets, presets } from "@/assets/presets";
 import { useDarkMode } from "@/core/composables/useDarkMode";
@@ -5,19 +6,21 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals } from "@/core/globals";
 import {
+  isThemeForLanguage,
   isTranslatableDictionary,
   readThemeSnapshotResponse,
   requestThemeSnapshot,
   resolveTranslatableValues,
   useThemeSnapshot,
 } from "@/core/theme-snapshot";
+import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
-import { useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
+import { getTemplatePageType, useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { findSectionElement, SectionOverlay } from "./section-overlay";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
-import type { IThemeDraft, IThemeItem } from "@/core/theme-snapshot";
+import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { Router } from "vue-router";
 
 export const PREVIEW_PROTOCOL = 2;
@@ -26,6 +29,14 @@ export const PREVIEW_PROTOCOL = 2;
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
 
 const LOG_SCOPE = "[builder-preview]";
+
+/** A setting in a section's or block's schema; a list's or object's settings are its `element`. */
+interface ISchemaField {
+  id?: string;
+  type?: string;
+  translatable?: boolean;
+  element?: ISchemaField[];
+}
 
 /** The schemas the storefront has always announced, with what protocol 2 adds: a hash, the palette tokens, the rules. */
 export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
@@ -67,6 +78,8 @@ interface IPreviewV2Options {
   allowNavigation: (url: string) => void;
   applyLocale: (cultureName?: string) => Promise<void>;
   hasPreviewToken: () => boolean;
+  /** Runs a task in the designer's message queue, after the messages before it. */
+  enqueue: (task: () => Promise<void>) => void;
 }
 
 /**
@@ -76,7 +89,7 @@ interface IPreviewV2Options {
 export function createPreviewV2(options: IPreviewV2Options) {
   const { router, body, blocker, post } = options;
   const { setDraft, draft, published, setPublished } = useThemeSnapshot();
-  const { setOpenTemplate, lastResolution } = useThemeTemplates();
+  const { setOpenTemplate, lastResolution, setLastResolution } = useThemeTemplates();
   const { staticPagePreview, staticPagePreviewSubject } = useStaticPage();
   const { colorMode } = useDarkMode();
   const { themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
@@ -85,6 +98,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   let isInspectorEnabled = false;
   let lastRender: IRenderMessage | undefined;
   let heldRender: IRenderMessage | undefined;
+  let heldDraft: IThemeDraft | undefined;
 
   const overlay = new SectionOverlay(
     body,
@@ -103,10 +117,17 @@ export function createPreviewV2(options: IPreviewV2Options) {
       post("edit", { ...edit, cultureName });
     },
     () => {
+      const theme = heldDraft;
       const render = heldRender;
+      heldDraft = undefined;
       heldRender = undefined;
+
+      if (theme) {
+        applyDraft(theme);
+      }
+
       if (render) {
-        void handleRender(render);
+        options.enqueue(() => handleRender(render));
       }
     },
   );
@@ -133,6 +154,12 @@ export function createPreviewV2(options: IPreviewV2Options) {
   }
 
   function applyDraft(theme: IThemeDraft): void {
+    // The echo of the text being edited would re-render it under the caret, so it waits for the edit like a render.
+    if (editor.isEditing) {
+      heldDraft = theme;
+      return;
+    }
+
     setDraft(theme);
     overlay.scheduleRender();
   }
@@ -149,25 +176,29 @@ export function createPreviewV2(options: IPreviewV2Options) {
     overlay.setLabels(message.sectionLabels ?? {});
 
     if (message.templateKey) {
-      setOpenTemplate(message.templateKey, message.document);
+      setOpenTemplate(message.templateKey, withHoverModel(message.document, message.model));
       staticPagePreview.value = undefined;
 
       if (message.url && router.currentRoute.value.fullPath !== message.url) {
+        // The page it goes to chooses once its data is there; until then the previous page's choice is not its own.
+        setLastResolution(undefined);
         options.allowNavigation(message.url);
         await router.push(message.url);
       }
     } else {
       setOpenTemplate(undefined);
-      staticPagePreviewSubject.value = message.page;
+      // The page shows on the preview route: its rules see the page it is, else the address the designer named.
+      staticPagePreviewSubject.value = message.page ?? (message.url ? { permalink: message.url } : undefined);
       await options.renderPage(message);
     }
 
-    const selected = message.selection?.blockId ?? message.selection?.sectionId ?? null;
-    overlay.select(selected);
     applyInteraction();
     body.style.visibility = "visible";
 
     await nextTick();
+
+    const selected = getSelectedId(message.selection);
+    overlay.select(selected);
 
     if (selected && message.selection?.scroll) {
       findSectionElement(selected)?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -181,13 +212,14 @@ export function createPreviewV2(options: IPreviewV2Options) {
   async function ensureSnapshotLanguage(cultureName: string): Promise<void> {
     const current = published.value;
 
-    if (!current || !globals.storeId || current.cultureName.toLowerCase() === cultureName.toLowerCase()) {
+    if (!current || !globals.storeId || isThemeForLanguage(current, cultureName)) {
       return;
     }
 
     try {
       const theme = readThemeSnapshotResponse(
         await requestThemeSnapshot({ storeId: globals.storeId, cultureName }).response,
+        cultureName,
       );
       setPublished(theme);
     } catch (error) {
@@ -195,15 +227,23 @@ export function createPreviewV2(options: IPreviewV2Options) {
     }
   }
 
+  /** The selected block, or its section when the block has no element of its own on the page. */
+  function getSelectedId(selection: IRenderMessage["selection"]): string | null {
+    const blockId = selection?.blockId;
+
+    return (blockId && findSectionElement(blockId) ? blockId : selection?.sectionId) ?? null;
+  }
+
   function reportResolved(): void {
     const resolution = lastResolution.value;
+    const render = lastRender;
 
-    if (!resolution || !lastRender) {
+    if (!resolution || !render || resolution.pageType !== getRenderPageType(render)) {
       return;
     }
 
     post("resolved", {
-      url: router.currentRoute.value.fullPath,
+      url: render.templateKey ? router.currentRoute.value.fullPath : (render.url ?? router.currentRoute.value.fullPath),
       pageType: resolution.pageType,
       template: resolution.template,
       ruleId: resolution.ruleId,
@@ -216,7 +256,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
     if (item) {
       const shown = resolveTranslatableValues(item, globals.cultureName, defaultStoreCulture.value);
-      editor.start(findEditableTexts(shown), event.clientX, event.clientY);
+      editor.start(findEditableTexts(shown, isPlainTextField), event.clientX, event.clientY);
     }
   }
 
@@ -251,15 +291,32 @@ export function createPreviewV2(options: IPreviewV2Options) {
       item,
     );
 
-    if (isTranslatableDictionary(value)) {
-      return true;
+    return (
+      isTranslatableDictionary(value) || (!!item && !!findSchemaField(options.schemas(), item.type, path)?.translatable)
+    );
+  }
+
+  /** A setting the designer takes inline edits for: plain text by its schema, as the protocol requires. */
+  function isPlainTextField(itemType: string, path: (string | number)[]): boolean {
+    return findSchemaField(options.schemas(), itemType, path)?.type === "string";
+  }
+
+  /**
+   * Shows the last render anew, so a page that loaded its data as another user (prices, availability) loads it again
+   * as the one the designer previews as now.
+   */
+  async function reload(): Promise<void> {
+    const render = lastRender;
+
+    if (!render) {
+      return;
     }
 
-    const schemas = options.schemas();
-    const schema = item ? (schemas?.sections[item.type] ?? schemas?.blocks[item.type]) : undefined;
-    const settings = (schema as { settings?: { id?: string; translatable?: boolean }[] } | undefined)?.settings;
+    if (render.templateKey && render.url) {
+      await router.push(DESIGNER_PREVIEW_PATH);
+    }
 
-    return !!settings?.some((setting) => setting.id === path[0] && setting.translatable);
+    await handleRender(render);
   }
 
   applyInteraction();
@@ -269,9 +326,49 @@ export function createPreviewV2(options: IPreviewV2Options) {
     handleRender,
     setInspector,
     setColorScheme,
+    reload,
     hover: (sectionId: string | null) => overlay.hover(sectionId),
     refreshInteraction: applyInteraction,
   };
+}
+
+/**
+ * The schema field of a setting at the path in a section or block of the type: a list's or object's setting is in its
+ * element, and list indexes are skipped.
+ */
+export function findSchemaField(
+  schemas: PageBuilderSchemaType | undefined,
+  itemType: string,
+  path: (string | number)[],
+): ISchemaField | undefined {
+  const schema = (schemas?.sections[itemType] ?? schemas?.blocks[itemType]) as
+    { settings?: ISchemaField[] } | undefined;
+  let fields = schema?.settings;
+  let field: ISchemaField | undefined;
+
+  for (const key of path.filter((step): step is string => typeof step === "string")) {
+    field = fields?.find((candidate) => candidate.id === key);
+    fields = field?.element;
+  }
+
+  return field;
+}
+
+/** The page type a render shows: its template's, else a content page's. */
+function getRenderPageType(render: IRenderMessage): string {
+  return render.templateKey ? getTemplatePageType(render.templateKey) : "page";
+}
+
+/** A template with the section the designer shows on hover in its add-section list, at its end, as a page has it. */
+function withHoverModel(document: IThemePageDocument, model: IRenderMessage["model"]): IThemePageDocument {
+  if (!model) {
+    return document;
+  }
+
+  // A model the designer offers has no id yet: only this preview copy gets one, for rendering and anchors.
+  const item = { ...model, id: model.id ?? `__preview__${uuidv4()}` } as IThemeItem;
+
+  return { ...document, content: [...document.content, item] };
 }
 
 export type PreviewV2Type = ReturnType<typeof createPreviewV2>;

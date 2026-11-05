@@ -19,8 +19,9 @@ export type ThemeGroupType = "header" | "footer";
 export const useThemeGroups = createGlobalState(() => {
   const { theme } = useThemeSnapshot();
   const { currentLanguage, defaultStoreCulture } = useLanguages();
-  /** Menus a draft names that the published snapshot does not carry, read once each. */
+  /** Menus a draft names that the published snapshot does not carry, read once per language. */
   const draftMenus = shallowReactive(new Map<string, ExtendedMenuLinkType[]>());
+  const requestedDraftMenus = new Set<string>();
 
   const groups = computed<Record<ThemeGroupType, IThemeItem[]>>(() => {
     const content = { header: theme.value?.header?.content ?? [], footer: theme.value?.footer?.content ?? [] };
@@ -49,18 +50,21 @@ export const useThemeGroups = createGlobalState(() => {
       return menu.items.map((item) => toMenuLink(item, isCatalogItem));
     }
 
-    if (theme.value?.isDraft && !draftMenus.has(key)) {
-      draftMenus.set(key, []);
-      void loadDraftMenu(name, key);
+    // Undefined until it is read: the part showing it keeps what it shows without the menu meanwhile.
+    const draftKey = `${currentLanguage.value?.cultureName ?? ""}:${key}`;
+
+    if (theme.value?.isDraft && !requestedDraftMenus.has(draftKey)) {
+      requestedDraftMenus.add(draftKey);
+      void loadDraftMenu(name, draftKey);
     }
 
-    return draftMenus.get(key);
+    return draftMenus.get(draftKey);
   }
 
-  async function loadDraftMenu(name: string, key: string): Promise<void> {
+  async function loadDraftMenu(name: string, draftKey: string): Promise<void> {
     try {
       draftMenus.set(
-        key,
+        draftKey,
         (await getMenu(name)).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false)),
       );
     } catch (error) {

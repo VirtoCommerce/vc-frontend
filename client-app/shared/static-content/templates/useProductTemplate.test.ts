@@ -46,11 +46,11 @@ describe("useProductTemplate", () => {
   });
 
   it("gives a product marked B2C the B2C template and its variations", () => {
-    const { resolution, isB2cLayout, layoutPropertyValue } = useProductTemplate(product({ layout: "B2C" }));
+    const { resolution, isB2cLayout, variationsLayout } = useProductTemplate(product({ layout: "B2C" }));
 
     expect(resolution.value).toMatchObject({ template: "product.b2c", ruleId: "default-b2c" });
     expect(isB2cLayout.value).toBe(true);
-    expect(layoutPropertyValue.value).toBe("B2C");
+    expect(variationsLayout.value).toBe("B2C");
   });
 
   it("does not load B2C variations in a B2B template", () => {
@@ -59,7 +59,10 @@ describe("useProductTemplate", () => {
       templates: { product: { settings: {}, content: [{ id: "info", type: "product-info" }] } },
     });
 
-    expect(useProductTemplate(product({ layout: "B2C" })).isB2cLayout.value).toBe(false);
+    const { isB2cLayout, variationsLayout } = useProductTemplate(product({ layout: "B2C" }));
+
+    expect(isB2cLayout.value).toBe(false);
+    expect(variationsLayout.value).toBe("B2B");
   });
 
   it("chooses by any of the product's outlines, whatever the path it was reached by", () => {

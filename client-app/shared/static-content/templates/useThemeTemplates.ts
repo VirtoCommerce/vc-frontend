@@ -52,14 +52,15 @@ export const useThemeTemplates = createGlobalState(() => {
             ownTemplate,
           }) ?? { pageType, template: pageType, ruleId: null, document: BUILT_IN_TEMPLATES[pageType] });
 
-    return { ...resolution, document: withMainSection(localize(resolution.document), pageType) };
+    return { ...resolution, document: withMainSection(localize(resolution.document), pageType, resolution.template) };
   }
 
   function setOpenTemplate(key: string | undefined, document?: IThemePageDocument): void {
     openTemplate.value = key && document ? { key, document } : undefined;
   }
 
-  function setLastResolution(resolution: ITemplateResolution): void {
+  /** `undefined` while the page the preview went to has not chosen yet. */
+  function setLastResolution(resolution: ITemplateResolution | undefined): void {
     lastResolution.value = resolution;
   }
 

@@ -149,4 +149,13 @@ describe("withMainSection", () => {
     expect(withMainSection(DOCUMENT, "product").content.map((item) => item.type)).toEqual(["text", "product-info"]);
     expect(withMainSection(BUILT_IN_TEMPLATES.product, "product")).toBe(BUILT_IN_TEMPLATES.product);
   });
+
+  it("adds the built-in main section with its blocks, the B2C one to a B2C template", () => {
+    const added = withMainSection(DOCUMENT, "product").content[1];
+    const addedB2c = withMainSection(DOCUMENT, "product", "product.b2c").content[1];
+
+    expect(added.blocks?.map((block) => block.type)).toContain("product-variations");
+    expect(added.variationsLayout).toBe("b2b");
+    expect(addedB2c.variationsLayout).toBe("b2c");
+  });
 });

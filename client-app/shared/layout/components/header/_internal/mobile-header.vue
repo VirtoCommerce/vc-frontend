@@ -34,7 +34,7 @@
               <VcImage
                 :src="headerLogoUrl"
                 :alt="$context.storeName"
-                :class="logoWidth ? 'h-auto w-[--header-logo-width]' : 'h-8'"
+                :class="logoWidth ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw]' : 'h-8'"
                 lazy
               />
             </router-link>
@@ -127,7 +127,7 @@
 
 <script setup lang="ts">
 import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
@@ -156,8 +156,9 @@ const { cart } = useShortCart();
 const { headerLogoUrl } = useHeaderLogo();
 const { logoWidth } = useThemeChrome();
 
+// The theme's logo width is the desktop header's; in the phone's bar the logo shrinks to fit, keeping its proportions.
 const logoStyle = computed<StyleValue | undefined>(() =>
-  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
+  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px`, "--vc-image-object-fit": "contain" } : undefined,
 );
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
@@ -169,13 +170,23 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 // this var on desktop (see vc-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
-watch(
-  height,
-  (value) => {
-    appHeaderHeightVar.value = `${value}px`;
-  },
-  { immediate: true },
-);
+function writeAppHeaderHeight(value: number): void {
+  appHeaderHeightVar.value = `${value}px`;
+}
+
+watch(height, writeAppHeaderHeight, { immediate: true });
+
+// Kept alive under a page on another layout: that page has no header, so nothing of it may stay open or locked.
+onDeactivated(() => {
+  appHeaderHeightVar.value = undefined;
+  mobileMenuVisible.value = false;
+
+  if (searchBarVisible.value) {
+    toggleSearchBar();
+  }
+});
+
+onActivated(() => writeAppHeaderHeight(height.value));
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);

@@ -94,7 +94,9 @@ const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
 
 const templateResolution = useTemplateResolution("category", () => {
-  const outline = props.outline ?? currentCategory.value?.outline;
+  // The loaded category may still be the previous one: this route component stays when only the id changes.
+  const loadedOutline = currentCategory.value?.id === props.categoryId ? currentCategory.value?.outline : undefined;
+  const outline = props.outline ?? loadedOutline;
   return props.categoryId
     ? { categoryId: props.categoryId, categoryPaths: outline ? [outline.split("/")] : [] }
     : undefined;

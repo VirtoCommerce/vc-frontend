@@ -98,7 +98,10 @@ export interface IThemeDraft {
 /** A published snapshot the storefront accepted, with the links of the menus it names. */
 export interface IPublishedTheme {
   storeId: string;
+  /** The language the snapshot is in: the store default when the publication has no file in the requested one. */
   cultureName: string;
+  /** The language the request asked for. */
+  requestedCultureName?: string;
   publication: number;
   snapshot: IThemeSnapshot;
   menus: IThemeMenu[];

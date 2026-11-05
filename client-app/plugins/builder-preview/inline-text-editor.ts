@@ -17,19 +17,25 @@ function normalize(text: string): string {
   return text.replaceAll(/\s+/g, " ").trim();
 }
 
+/** Whether a setting of an item of the type is plain text by its schema; without it, any string counts. */
+export type PlainTextFieldPredicateType = (itemType: string, path: (string | number)[]) => boolean;
+
 /** The plain-text settings of a section and of its blocks, nested ones (objects, lists) too. */
-export function findEditableTexts(item: Record<string, unknown>): IEditableText[] {
+export function findEditableTexts(
+  item: Record<string, unknown>,
+  isPlainTextField: PlainTextFieldPredicateType = () => true,
+): IEditableText[] {
   const found: IEditableText[] = [];
 
-  function walk(itemId: string, value: unknown, path: (string | number)[]): void {
+  function walk(owner: { id: string; type: string }, value: unknown, path: (string | number)[]): void {
     if (typeof value === "string") {
-      if (normalize(value) && !NOT_PLAIN.test(value)) {
-        found.push({ itemId, path, value });
+      if (normalize(value) && !NOT_PLAIN.test(value) && isPlainTextField(owner.type, path)) {
+        found.push({ itemId: owner.id, path, value });
       }
     } else if (Array.isArray(value)) {
-      value.forEach((child, index) => walk(itemId, child, [...path, index]));
+      value.forEach((child, index) => walk(owner, child, [...path, index]));
     } else if (typeof value === "object" && value !== null) {
-      Object.entries(value).forEach(([key, child]) => walk(itemId, child, [...path, key]));
+      Object.entries(value).forEach(([key, child]) => walk(owner, child, [...path, key]));
     }
   }
 
@@ -38,9 +44,11 @@ export function findEditableTexts(item: Record<string, unknown>): IEditableText[
       return;
     }
 
+    const owner = { id: value.id, type: typeof value.type === "string" ? value.type : "" };
+
     Object.entries(value)
       .filter(([key]) => !NOT_TEXT.has(key))
-      .forEach(([key, child]) => walk(value.id as string, child, [key]));
+      .forEach(([key, child]) => walk(owner, child, [key]));
   }
 
   walkItem(item);
@@ -82,7 +90,7 @@ export function findEditableElement(
  * or Esc ends editing.
  */
 export class InlineTextEditor {
-  private editing: { element: HTMLElement; text: IEditableText } | null = null;
+  private editing: { element: HTMLElement; text: IEditableText; textTransform: string } | null = null;
 
   constructor(
     private readonly blocker: HTMLElement,
@@ -107,18 +115,22 @@ export class InlineTextEditor {
     }
 
     const { element } = found;
-    this.editing = found;
+    this.editing = { ...found, textTransform: element.style.textTransform };
     element.setAttribute("contenteditable", "plaintext-only");
     if (element.contentEditable !== "plaintext-only") {
       element.setAttribute("contenteditable", "true");
     }
     element.style.outline = OUTLINE;
+    // The text as stored: `innerText` applies `text-transform`, so an uppercase heading would be saved uppercased.
+    element.style.textTransform = "none";
     this.blocker.style.pointerEvents = "none";
     element.focus({ preventScroll: true });
     placeCaret(clientX, clientY);
     element.addEventListener("input", this.handleInput);
     element.addEventListener("keydown", this.handleKeydown);
+    element.addEventListener("blur", this.handleBlur);
     document.addEventListener("mousedown", this.handleOutsidePress, true);
+    document.addEventListener("click", this.handleClickInside, true);
 
     return true;
   }
@@ -128,13 +140,16 @@ export class InlineTextEditor {
       return;
     }
 
-    const { element } = this.editing;
+    const { element, textTransform } = this.editing;
     this.editing = null;
     element.removeEventListener("input", this.handleInput);
     element.removeEventListener("keydown", this.handleKeydown);
+    element.removeEventListener("blur", this.handleBlur);
     document.removeEventListener("mousedown", this.handleOutsidePress, true);
+    document.removeEventListener("click", this.handleClickInside, true);
     element.removeAttribute("contenteditable");
     element.style.outline = "";
+    element.style.textTransform = textTransform;
     element.blur();
     this.blocker.style.pointerEvents = "auto";
     this.onEnd();
@@ -164,6 +179,19 @@ export class InlineTextEditor {
     if (this.editing && !this.editing.element.contains(event.target as Node)) {
       event.preventDefault();
       this.end();
+    }
+  };
+
+  /** Focus leaving the text, as a click in the designer's panel does, ends editing like a press outside. */
+  private readonly handleBlur = (): void => {
+    this.end();
+  };
+
+  /** A click inside the text only places the caret: a link or button around it does not act. */
+  private readonly handleClickInside = (event: MouseEvent): void => {
+    if (this.editing?.element.contains(event.target as Node)) {
+      event.preventDefault();
+      event.stopPropagation();
     }
   };
 }

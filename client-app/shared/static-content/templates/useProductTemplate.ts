@@ -1,5 +1,5 @@
 import { computed, toValue } from "vue";
-import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
 import { MAIN_SECTION_TYPES } from "./built-in";
 import { splitTemplate } from "./split";
 import { useTemplateResolution } from "./useThemeTemplates";
@@ -43,14 +43,10 @@ export function useProductTemplate(product: MaybeRefOrGetter<Product | undefined
   /** How variations load is the template's: the product's property chooses the template, never this directly. */
   const isB2cLayout = computed(() => productInfoSection.value?.variationsLayout === B2C_VARIATIONS_LAYOUT);
 
-  /** The layout the price shows variations for: B2C by the template, else the product's own property. */
-  const layoutPropertyValue = computed(() => {
-    const value = toValue(product)?.properties.find(
-      (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
-    )?.value;
+  /** The variations layout the price block shows: the template's, as the variations load by it. */
+  const variationsLayout = computed(() =>
+    isB2cLayout.value ? PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c : PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2b,
+  );
 
-    return typeof value === "string" ? value : undefined;
-  });
-
-  return { resolution, template, parts, productInfoSection, isB2cLayout, layoutPropertyValue };
+  return { resolution, template, parts, productInfoSection, isB2cLayout, variationsLayout };
 }

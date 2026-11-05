@@ -280,3 +280,42 @@ describe("useNavigations - registerAccountSection", () => {
     expect(navigations.registeredAccountSections.value[0].title).toBe("sales_rep.hub.title");
   });
 });
+
+describe("useNavigations - theme header", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  async function publishSiteHeader(settings: Record<string, unknown>): Promise<void> {
+    const { useThemeSnapshot } = await import("@/core/theme-snapshot/useThemeSnapshot");
+    useThemeSnapshot().setPublished({
+      storeId: "store",
+      cultureName: "en-US",
+      publication: 1,
+      snapshot: {
+        format: 1,
+        publication: 1,
+        cultureName: "en-US",
+        templates: {},
+        header: { content: [{ id: "header", type: "site-header", ...settings }] },
+      },
+      menus: [{ name: "Header-Categories", items: [{ title: "Shoes", url: "/shoes" }] }],
+    });
+  }
+
+  it("gives the mobile menu the theme's category menu, as the desktop header", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Shoes"]);
+    expect(navigations.mobileCatalogMenuItem.value?.children).toEqual(navigations.catalogMenuItems.value);
+  });
+
+  it("leaves the category menu out of the mobile menu when the theme hides it", async () => {
+    await publishSiteHeader({ show_catalog_menu: false });
+    const navigations = await importComposable();
+
+    expect(navigations.mobileCatalogMenuItem.value).toBeUndefined();
+  });
+});

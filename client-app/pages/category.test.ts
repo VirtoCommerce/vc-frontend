@@ -7,13 +7,14 @@ import CategoryPage from "./category.vue";
 import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
+const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
 }));
 vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
 vi.mock("@/shared/catalog/composables/useCategory", () => ({
-  useCategory: () => ({ category: ref({ breadcrumbs: [{ title: "Toner" }] }), fetchCategory: vi.fn() }),
+  useCategory: () => ({ category: ref(loadedCategory.value), fetchCategory: vi.fn() }),
 }));
 vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({ useLoyaltyCatalogCurrency: () => ref() }));
 vi.mock("@/shared/layout/composables/useSearchScore", () => ({
@@ -64,6 +65,7 @@ describe("category page", () => {
   beforeEach(() => {
     useThemeSnapshot().setPublished(null);
     listingProps.value = {};
+    loadedCategory.value = { breadcrumbs: [{ title: "Toner" }] };
   });
 
   afterEach(() => {
@@ -108,5 +110,25 @@ describe("category page", () => {
     expect(listingProps.value).toMatchObject({ viewMode: "list", hideSidebar: true });
     expect(listingProps.value).not.toHaveProperty("cardType");
     expect(listingProps.value).not.toHaveProperty("keyword");
+  });
+
+  it("does not choose the template by the outline of the category shown before", () => {
+    publish({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing" },
+          ],
+        },
+      },
+    });
+    loadedCategory.value = { id: "sale-printers", outline: "catalog/sale/sale-printers", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
   });
 });

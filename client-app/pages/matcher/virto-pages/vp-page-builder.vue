@@ -35,6 +35,7 @@ import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll } from "@/shared/static-content";
 
 interface IProps {
@@ -68,11 +69,17 @@ const templateName = computed(() =>
 );
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 const pageBuilderContent = shallowRef<IPageBuilderContent | null>(null);
+const { setPageLayout } = usePageLayout();
 
 watch(
   () => props.content,
   (content) => {
     pageBuilderContent.value = parsePageBuilderContent(content);
+
+    // Nothing renders the page's template then, so the header and footer must not wait for its layout.
+    if (!pageBuilderContent.value) {
+      setPageLayout("full");
+    }
   },
   { immediate: true },
 );

@@ -14,7 +14,7 @@ const { headerLogoUrl } = useHeaderLogo();
 
 <style lang="scss">
 .minimal-header {
-  @apply flex h-14 items-center bg-additional-50 px-6 shadow-md;
+  @apply flex h-14 items-center bg-[--header-bottom-bg-color] px-6 text-[--header-bottom-text-color] shadow-md;
 
   @media (width >= theme("screens.lg")) {
     @apply h-auto px-12 py-5;

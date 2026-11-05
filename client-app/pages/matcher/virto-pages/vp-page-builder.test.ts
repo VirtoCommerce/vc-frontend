@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VPPageBuilder from "./vp-page-builder.vue";
 
 const routePath = ref("/page-a");
@@ -156,6 +157,14 @@ describe("VPPageBuilder", () => {
     await nextTick();
 
     expect(wrapper.find("#recovered").exists()).toBe(true);
+  });
+
+  it("gives a document that does not parse the full layout, so the header does not wait for it", () => {
+    usePageLayout().setPageLayout("blank");
+
+    mountPageBuilder("invalid-json");
+
+    expect(usePageLayout().pageLayout.value).toBe("full");
   });
 });
 
