@@ -414,7 +414,8 @@
             "navigation": "Navigation",
             "main_navigation": "Navigation principale"
           }
-        }
+        },
+        "link_with_count": "{title} : {count}"
       },
       "footer": {
         "version": "Ver.",

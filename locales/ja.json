@@ -414,7 +414,8 @@
             "navigation": "ナビゲーション",
             "main_navigation": "メインナビゲーション"
           }
-        }
+        },
+        "link_with_count": "{title}：{count}"
       },
       "footer": {
         "version": "Ver.",

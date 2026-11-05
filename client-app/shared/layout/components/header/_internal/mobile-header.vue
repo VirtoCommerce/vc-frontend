@@ -60,31 +60,13 @@
 
             <router-link
               :to="{ name: ROUTES.CART.NAME }"
-              :aria-label="$t('common.links.cart')"
+              :aria-label="getCountLabel($t('common.links.cart'), cart?.itemsQuantity)"
               class="px-1 py-2 xs:px-2"
             >
               <span class="relative block">
                 <VcIcon class="text-primary" name="cart" :size="24" />
 
-                <transition
-                  mode="out-in"
-                  enter-from-class="scale-0"
-                  leave-to-class="scale-0"
-                  enter-active-class="will-change-transform"
-                  leave-active-class="will-change-transform"
-                >
-                  <VcBadge
-                    v-if="cart?.itemsQuantity"
-                    variant="outline"
-                    size="sm"
-                    class="absolute -right-2 -top-2 transition-transform"
-                    rounded
-                    nowrap
-                    max-width="none"
-                  >
-                    {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
-                  </VcBadge>
-                </transition>
+                <HeaderBadge :count="cart?.itemsQuantity" variant="outline" size="xs" overlay />
               </span>
             </router-link>
           </div>
@@ -127,11 +109,13 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
+import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
+import HeaderBadge from "@/shared/layout/components/header-badge/header-badge.vue";
 
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
@@ -141,6 +125,7 @@ const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMB
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar } = useSearchBar();
+const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();

@@ -414,7 +414,8 @@
             "navigation": "Navigointi",
             "main_navigation": "Päänavigointi"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}"
       },
       "footer": {
         "version": "Versio",

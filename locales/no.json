@@ -414,7 +414,8 @@
             "navigation": "Navigasjon",
             "main_navigation": "Hovednavigasjon"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}"
       },
       "footer": {
         "version": "Versjon",

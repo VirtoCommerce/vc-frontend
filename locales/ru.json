@@ -414,7 +414,8 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}"
       },
       "footer": {
         "version": "Версия",
