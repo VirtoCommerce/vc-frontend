@@ -25,7 +25,7 @@ import type { Component } from "vue";
 interface IProps {
   /** The section component; without one, the section registered for the item's type. Nothing renders without either. */
   component?: Component;
-  /** Page Builder item: only the keys the component declares as props are passed on. */
+  /** Undeclared keys are dropped: they would otherwise land as attributes on the section's root. */
   item: Record<string, unknown>;
   /** The host's data for the section (the product, the category): passed only when declared, over the item's keys. */
   context?: Record<string, unknown>;
@@ -43,8 +43,8 @@ const LAZY_ROOT_MARGIN = "400px";
 const component = computed(() => props.component ?? getPageBuilderSection(props.item.type));
 
 /**
- * The component whose declared props filter the item. A lazy section still renders through its async
- * wrapper, which resets a failed load so the next mount retries; until it loads, no item keys pass.
+ * Read for its props only: rendering goes through the async wrapper, which retries a failed load on the next mount.
+ * Until it loads, no item keys pass.
  */
 const propsSource = shallowRef<Component>();
 

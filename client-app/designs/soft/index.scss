@@ -1,1 +1,11 @@
-// The design's entry: load its _tokens.scss, blocks/ and dark/ files here.
+@use "sass:meta";
+
+@layer theme {
+  @include meta.load-css("tokens");
+}
+
+@layer vc.design {
+  html[data-design="soft"] {
+    @include meta.load-css("blocks/footer-links");
+  }
+}

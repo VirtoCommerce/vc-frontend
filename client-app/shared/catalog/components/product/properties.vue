@@ -1,7 +1,7 @@
 <template>
   <ProductTitledBlock
     v-if="showPropertiesBlock"
-    :title="model.title ?? $t('shared.catalog.product_details.technical_specs_block_title')"
+    :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
     icon="adjustments"
     class="properties"
   >

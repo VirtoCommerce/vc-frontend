@@ -10,7 +10,7 @@
       <div class="text-center">
         <div class="checkbox-text mt-4">
           <VcCheckbox class="inline-flex">
-            <!-- eslint-disable-next-line vue/no-v-html -- sanitized by sanitizeSectionHtml -->
+            <!-- eslint-disable-next-line vue/no-v-html -- the value is sanitized -->
             <span v-html="checkboxHtml" class="checkbox-label"></span>
           </VcCheckbox>
         </div>

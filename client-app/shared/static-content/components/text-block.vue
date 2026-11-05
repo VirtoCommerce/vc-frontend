@@ -3,7 +3,7 @@
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
       <component :is="headingTag" class="mb-3 text-2xl">{{ title }}</component>
 
-      <!-- eslint-disable-next-line vue/no-v-html -- sanitized by sanitizeSectionHtml -->
+      <!-- eslint-disable-next-line vue/no-v-html -- the value is sanitized -->
       <div v-html="contentValue" class="block-content text-lg"></div>
     </div>
   </div>
