@@ -1529,6 +1529,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ingen nøkler",
         "unnamed_key": "Nøkkel uten navn",
+        "rename_key_label": "Gi {name} nytt navn",
+        "delete_key_label": "Slett {name}",
         "created": "Opprettet {date}",
         "changed": "Endret {date}",
         "rename_modal": {

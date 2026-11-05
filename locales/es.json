@@ -1529,6 +1529,8 @@
         "title": "@:common.links.security",
         "no_keys": "No hay claves",
         "unnamed_key": "Clave sin nombre",
+        "rename_key_label": "Cambiar el nombre de {name}",
+        "delete_key_label": "Eliminar {name}",
         "created": "Creada el {date}",
         "changed": "Modificada el {date}",
         "rename_modal": {

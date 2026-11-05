@@ -33,7 +33,7 @@
 
               <div class="security__key-info">
                 <div class="security__key-name">
-                  {{ key.name || $t("pages.account.security.unnamed_key") }}
+                  {{ getKeyName(key) }}
                 </div>
 
                 <div class="security__key-details">
@@ -47,7 +47,7 @@
                 variant="ghost"
                 color="neutral"
                 size="sm"
-                :aria-label="$t('common.buttons.edit')"
+                :aria-label="$t('pages.account.security.rename_key_label', { name: getKeyName(key) })"
                 @click="openRenameModal(signInMethod, key)"
               />
 
@@ -57,7 +57,7 @@
                 variant="ghost"
                 color="neutral"
                 size="sm"
-                :aria-label="$t('common.buttons.delete')"
+                :aria-label="$t('pages.account.security.delete_key_label', { name: getKeyName(key) })"
                 @click="openDeleteModal(signInMethod, key)"
               />
             </li>
@@ -113,6 +113,10 @@ function getTitle(signInMethod: SignInMethodType, contribution?: SignInMethodCon
 async function createKey(contribution: SignInMethodContributionType): Promise<void> {
   await contribution.createKey?.();
   await refetch();
+}
+
+function getKeyName(key: SignInKeyType): string {
+  return key.name || t("pages.account.security.unnamed_key");
 }
 
 function getKeyDetails(key: SignInKeyType, contribution?: SignInMethodContributionType): string {
