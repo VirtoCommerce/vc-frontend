@@ -282,7 +282,7 @@
 
           <template #mobile-item="{ item }">
             <div class="flex items-center border-b px-5">
-              <div class="grow py-4.5 [word-break:break-word]">
+              <div class="min-w-0 grow py-4.5 [word-break:break-word]">
                 <div>
                   <b>{{ item.fullName }}</b>
                 </div>
