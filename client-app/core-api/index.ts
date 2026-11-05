@@ -190,6 +190,32 @@ export { default as VendorName } from "@/shared/common/components/vendor-name.vu
 // orders here: `getFilterExpression` is the host's generic filter joiner in @/core/utilities.
 export { getFilterExpression as getOrdersFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
 export type { OrdersFilterDataType } from "@/shared/account/types";
+
+// Sales report (VCST-6650): the panel renders monthly sales and AOV from figures the caller fetches; the plan says
+// which month windows to fetch them for, `useReportingData` keeps each response with the plan it was fetched for.
+export {
+  buildReportingPlan,
+  buildReportingVariables,
+  isReportingPeriod,
+  REPORTING_DEFAULT_PERIOD,
+  REPORTING_MONTH_SLOTS,
+  REPORTING_PERIODS,
+  ReportingPanel,
+  toReportingData,
+  useReportingData,
+  useReportingPlan,
+} from "@/shared/reporting";
+export type {
+  ReportingDataType,
+  ReportingMonthSlotType,
+  ReportingPeriodTotalsType,
+  ReportingPeriodType,
+  ReportingPlanType,
+  ReportingRawMonthType,
+  ReportingSettledType,
+  ReportingStatisticsType,
+  ReportingVariablesType,
+} from "@/shared/reporting";
 export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 
 // The promotion coupon card of the host's "Promotion coupons" page, so a plugin lists coupons the way the
