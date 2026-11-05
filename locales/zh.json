@@ -1573,6 +1573,8 @@
         "title": "@:common.links.security",
         "no_keys": "没有密钥",
         "unnamed_key": "未命名的密钥",
+        "rename_key_label": "重命名 {name}",
+        "delete_key_label": "删除 {name}",
         "created": "创建于 {date}",
         "changed": "更改于 {date}",
         "rename_modal": {
