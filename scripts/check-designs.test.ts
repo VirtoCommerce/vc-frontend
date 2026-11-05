@@ -212,6 +212,10 @@ describe("check-designs", () => {
       "currentColor",
       "inherit",
       "1rem",
+      "rgb(0 0 0 / 0) var(--tw-gradient-to-position)",
+      "rgb(255 255 255 / 0)",
+      "rgba(0, 0, 0, 0)",
+      "hsl(0 0% 0% / 0%)",
     ])("allows %s", (value) => {
       expect(checkColorValue(value, semantics)).toBeNull();
     });
@@ -222,6 +226,9 @@ describe("check-designs", () => {
       ["#fff", "#fff is a literal colour"],
       ["var(--color-primary-500, #fff)", "#fff is a literal colour"],
       ["rgb(0 0 0 / 0.1)", 'rgb() without "from" is a literal colour'],
+      ["rgb(255 0 0 / 0.5)", 'rgb() without "from" is a literal colour'],
+      ["rgb(0, 0, 0)", 'rgb() without "from" is a literal colour'],
+      ["rgba(0, 0, 0, 0.5)", 'rgba() without "from" is a literal colour'],
       ["hsl(0 0% 0%)", 'hsl() without "from" is a literal colour'],
       ["color-mix(in srgb, var(--color-primary-500), white)", "white is a named colour"],
       ["red", "red is a named colour"],
@@ -521,7 +528,7 @@ ${loads("dark")}  }
     it("passes colour tokens set from preset variables, and a private size variable named like one", async () => {
       expect(
         await check({
-          "soft/_tokens.scss": `${SOFT} { --vc-x-bg: var(--color-primary-500); --vc-x-color: var(--link-color); }`,
+          "soft/_tokens.scss": `${SOFT} { --vc-x-bg: var(--color-primary-500); --vc-x-color: var(--link-color); --vc-brand: var(--color-primary-500); }`,
           "soft/blocks/vc-button.scss": `.vc-button {
             --vc-button-bg-color: color-mix(in srgb, var(--color-primary-500) 40%, transparent);
             --title-text: 1rem;
@@ -558,6 +565,30 @@ ${loads("dark")}  }
     ])("reports a colour other than black in a default-step shadow token: %s", async (shadow, message) => {
       expect(await check({ "soft/_tokens.scss": `${SOFT} { --vc-shadow-default-1: ${shadow}; }` })).toEqual([
         expect.stringContaining(`--vc-shadow-default-1: ${message}; ${COLOR}`),
+      ]);
+    });
+
+    it("passes the default step's black in its token's fallback, as theme() writes it, and no other colour there", async () => {
+      const errors = await check({
+        "soft/_tokens.scss": `${SOFT} {
+          --vc-widget-shadow: theme("boxShadow.DEFAULT");
+          --vc-card-shadow: var(--vc-shadow-default-1, 0 1px 3px 0 rgb(255 0 0 / 0.1));
+        }`,
+      });
+
+      expect(errors).toEqual([
+        expect.stringContaining(`_tokens.scss:3  --vc-card-shadow: rgb() without "from" is a literal colour; ${COLOR}`),
+      ]);
+    });
+
+    it("reports a design's own token that holds a literal colour where it is set, not where it is read", async () => {
+      const errors = await check({
+        "soft/_tokens.scss": `${SOFT} { --vc-brand: #e30613; }`,
+        "soft/blocks/footer-links.scss": ".footer-links { &__title { color: var(--vc-brand); } }",
+      });
+
+      expect(errors).toEqual([
+        expect.stringContaining(`_tokens.scss:1  --vc-brand: #e30613 is a literal colour; ${COLOR}`),
       ]);
     });
 
@@ -604,6 +635,16 @@ ${loads("dark")}  }
         "color: color-mix(in srgb, var(--color-primary-500), white)",
         ["color"],
       ],
+      ["a shadow written with @apply", "blocks", "@apply shadow-[0_2px_10px_rgba(0,0,0,0.1)]", ["--tw-shadow"]],
+      ["a drop shadow in a filter", "blocks", "filter: drop-shadow(0 0 4px red)", ["filter"]],
+      ["a drop shadow written with @apply", "blocks", "@apply drop-shadow-[0_0_4px_red]", ["--tw-drop-shadow"]],
+      [
+        "a drop shadow in a backdrop filter",
+        "blocks",
+        "backdrop-filter: drop-shadow(0 0 4px #e30613)",
+        ["backdrop-filter"],
+      ],
+      ["a public token that holds a colour, whatever its name", "blocks", "--vc-brand: #e30613", ["--vc-brand"]],
     ])("reports %s once, naming the properties its line sets", async (_name, dir, declarations, props) => {
       const errors = await check({ [`soft/${dir}/footer-links.scss`]: `.footer-links { ${declarations}; }` });
 
@@ -638,8 +679,19 @@ ${loads("dark")}  }
     });
 
     it.each([
+      "@apply shadow",
       "@apply shadow-md",
       "@apply ring-2",
+      "@apply drop-shadow-md",
+      "@apply bg-gradient-to-t from-transparent to-additional-50",
+      "@apply bg-gradient-to-t from-additional-50 via-transparent to-additional-50",
+      "@apply bg-gradient-to-t from-current to-additional-50",
+      "@apply bg-gradient-to-t from-additional-50/0 to-additional-50",
+    ])("passes %s: Tailwind's own colours, from the preset, its default black or transparent", async (declarations) => {
+      expect(await check({ "soft/blocks/footer-links.scss": `.footer-links { ${declarations}; }` })).toEqual([]);
+    });
+
+    it.each([
       "@apply shadow-none",
       "border: 1px solid",
       "border-width: 2px",
@@ -1116,6 +1168,14 @@ ${loads("dark")}  }
       ).toEqual([expect.stringContaining("dark rules go in mercury.scss under html.dark[data-preset]")]);
     });
 
+    it("passes colour longhands and colour utilities on a block", async () => {
+      const css = `@layer vc.preset {
+        ${MERCURY} .vc-button { border-color: var(--color-neutral-300); @apply bg-primary-50 border-primary-500; }
+      }`;
+
+      expect(await check({ "mercury.scss": css })).toEqual([]);
+    });
+
     it("passes a rule under @media inside the layer", async () => {
       const css = `@layer vc.preset {
         ${MERCURY} .vc-button { @media (min-width: 1px) { color: var(--color-primary-500); } }
@@ -1221,6 +1281,21 @@ ${loads("dark")}  }
         "a public token that is not a colour",
         `@layer vc.preset { ${MERCURY} .vc-button { --vc-button-radius: 0; } }`,
         "--vc-button-radius: a preset stylesheet sets colours only",
+      ],
+      [
+        "a border and a box-shadow shorthand, which set geometry too",
+        `@layer vc.preset { ${MERCURY} .vc-button { border: 2px dashed var(--color-neutral-300); box-shadow: 0 20px 40px 0 var(--color-neutral-950); } }`,
+        "border, box-shadow: a preset stylesheet sets colours only",
+      ],
+      [
+        "an outline shorthand",
+        `@layer vc.preset { ${MERCURY} .vc-button { outline: 3px solid var(--color-primary-500); } }`,
+        "outline: a preset stylesheet sets colours only",
+      ],
+      [
+        "a background shorthand",
+        `@layer vc.preset { ${MERCURY} .vc-button { background: var(--color-primary-50) url("x.png") no-repeat; } }`,
+        "background: a preset stylesheet sets colours only",
       ],
       [
         "a shadow token, which sets geometry too",

@@ -79,14 +79,20 @@ const LOAD_CSS = /load-css\(\s*(?:\$url\s*:\s*)?["']([^"']+)["']/g;
 const COLOR_TOKEN = /(?:color|bg)|(?:-(?:text|border|icon)$)/i;
 /** A shadow token holds its shadow's colour: `--vc-widget-shadow`, `--vc-shadow-md-1`. */
 const SHADOW_TOKEN = /^--vc-(?:[a-z\d]+-)*shadow(?:-[a-z\d]+)*$/i;
-/** The default `shadow` step keeps Tailwind's black when a design reshapes it; the other steps read the preset. */
-const DEFAULT_SHADOW_TOKEN = /^--vc-shadow-default-\d+$/;
+/**
+ * The default `shadow` step and the `drop-shadow-*` steps (`--tw-drop-shadow`, not tokenised) keep Tailwind's black
+ * when a design reshapes them; the other `shadow-*` steps read the preset.
+ */
+const BLACK_SHADOW = /^--(?:vc-shadow-default-\d+|tw-drop-shadow)$/;
 const DEFAULT_SHADOW_BLACK = /(?<![\w-])rgb\(\s*0\s+0\s+0\s*\/\s*[\d.]+%?\s*\)/gi;
+/** The default step's black in its token's fallback, as `@apply shadow` writes it. */
+const DEFAULT_SHADOW_FALLBACK_BLACK =
+  /(var\(\s*--vc-shadow-default-\d+\s*,[^()]*)(?<![\w-])rgb\(\s*0\s+0\s+0\s*\/\s*[\d.]+%?\s*\)/gi;
 /** Tailwind's shadow geometry, which reads the colour from `--tw-shadow-color`. */
 const SHADOW_GEOMETRY = "--tw-shadow-colored";
-const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/;
+const COLOR_PROPERTY = /^(?:color|fill|stroke|.+-color)$/i;
 const COLOR_SHORTHAND =
-  /^(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|text-shadow|-webkit-text-stroke)$/;
+  /^(?:background|outline|column-rule|text-decoration|text-emphasis|box-shadow|text-shadow|-webkit-text-stroke|filter|backdrop-filter)$/;
 const BORDER_SHORTHAND = /^border(?:-(?:top|right|bottom|left|(?:block|inline)(?:-(?:start|end))?))?$/;
 // Tailwind writes these besides the `--tw-*-color` tokens: a gradient's stops and the alpha of a colour.
 const TAILWIND_COLOR = /^--tw-(?:gradient-(?:from|to)|(?:bg|text|border|divide|placeholder|ring)-opacity)$/;
@@ -129,6 +135,8 @@ const COLOR_FUNCTION = /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|c
 const COLOR_FUNCTION_CALL = /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|light-dark)\(/gi;
 /** Relative colour syntax, `rgb(from var(--color-x) r g b / 0.5)`: the colour is its origin's. */
 const RELATIVE_COLOR = /^\s*from\s/i;
+/** Alpha 0, `rgb(0 0 0 / 0)` or `rgba(0, 0, 0, 0)`: transparent, as Tailwind writes it in a gradient stop. */
+const ZERO_ALPHA = /^(?:[^(),/]*\/|(?:[^(),/]*,){3})\s*(?:0*\.)?0+%?\s*\)/;
 const HEX = /#[\da-f]+/gi;
 const IDENTIFIER = /(?<![\w-])[a-z][\w-]*/gi;
 
@@ -603,7 +611,7 @@ export function colorSemantics(file = COLORS_FILE): Set<string> {
 /**
  * `null` when every colour in a value comes from preset variables: `var()` of a preset key (`--color-*`),
  * a `_colors.scss` semantic, a public `--vc-*` token or Tailwind's `--tw-*`, `color-mix()` or a relative colour
- * of these, and the keywords; otherwise why not: the first foreign variable or literal colour it holds.
+ * of these, the keywords and a colour function with alpha 0; otherwise why not: the first foreign variable or literal.
  */
 export function checkColorValue(value: string, semantics: ReadonlySet<string>): string | null {
   const text = value.replaceAll(QUOTED_OR_URL, " ");
@@ -622,9 +630,11 @@ export function checkColorValue(value: string, semantics: ReadonlySet<string>): 
     return `${hex} is a literal colour`;
   }
 
-  const literal = [...rest.matchAll(COLOR_FUNCTION_CALL)].find(
-    (match) => match[1] !== "color-mix" && !RELATIVE_COLOR.test(rest.slice(match.index + match[0].length)),
-  );
+  const literal = [...rest.matchAll(COLOR_FUNCTION_CALL)].find((match) => {
+    const args = rest.slice(match.index + match[0].length);
+
+    return match[1] !== "color-mix" && !RELATIVE_COLOR.test(args) && !ZERO_ALPHA.test(args);
+  });
 
   if (literal) {
     return `${literal[1]}() without "from" is a literal colour`;
@@ -761,9 +771,32 @@ interface IColorLine {
 }
 
 /**
- * Why a declaration breaks the colour rules, or `undefined`. A colour (a colour property, a custom property
- * named as a colour token, or a design's shadow token) comes only from preset variables, and no private
- * variable carries one, whatever its name. A preset stylesheet sets colours only, and no private variable at all.
+ * In a design: a colour property, a shorthand or gradient that holds a colour, a colour or shadow token, and a
+ * public custom property whose value holds one (`--vc-brand: #e30613`, the `--tw-shadow` of `shadow-[…]`).
+ */
+function isDesignColor(prop: string, value: string, text: string): boolean {
+  const name = unescapeIdent(prop);
+
+  return (
+    SHADOW_TOKEN.test(name) ||
+    COLOR_PROPERTY.test(name) ||
+    setsColor(prop, value) ||
+    isColorToken(prop) ||
+    (PUBLIC_VARIABLE.test(name) && hasColor(text))
+  );
+}
+
+/** In a preset, what sets a colour and nothing else: a colour longhand (`border-color`, not `border`) or token. */
+function isPresetColor(prop: string): boolean {
+  const name = unescapeIdent(prop).toLowerCase();
+
+  return COLOR_PROPERTY.test(name) || TAILWIND_COLOR.test(name) || isColorToken(prop);
+}
+
+/**
+ * Why a declaration breaks the colour rules, or `undefined`. A colour (`isDesignColor`) comes only from preset
+ * variables, and no private variable carries one, whatever its name. A preset stylesheet sets colour longhands
+ * and tokens only (`isPresetColor`), and no private variable at all.
  */
 function colorProblem(
   { prop, value }: Declaration,
@@ -771,11 +804,13 @@ function colorProblem(
   isPreset = false,
 ): string | undefined {
   const name = unescapeIdent(prop);
+  const text = value.replaceAll(QUOTED_OR_URL, " ");
   const isPrivate = isCustomProperty(prop) && !PUBLIC_VARIABLE.test(name);
-  const isShadowToken = !isPreset && SHADOW_TOKEN.test(name);
-  const isColor =
-    isShadowToken || COLOR_PROPERTY.test(name.toLowerCase()) || setsColor(prop, value) || isColorToken(prop);
-  const colors = DEFAULT_SHADOW_TOKEN.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value;
+  const isColor = isPreset ? isPresetColor(prop) : isDesignColor(prop, value, text);
+  const colors = (BLACK_SHADOW.test(name) ? value.replaceAll(DEFAULT_SHADOW_BLACK, " ") : value).replaceAll(
+    DEFAULT_SHADOW_FALLBACK_BLACK,
+    "$1 ",
+  );
   const valueProblem = isColor ? checkColorValue(colors, semantics) : null;
   const privateProblem = "a private variable; set the component's public --vc-* token, or the property itself";
 
@@ -791,7 +826,7 @@ function colorProblem(
     return `${valueProblem}; ${COLOR_RULE}`;
   }
 
-  return isPrivate && hasColor(value.replaceAll(QUOTED_OR_URL, " ")) ? privateProblem : undefined;
+  return isPrivate && hasColor(text) ? privateProblem : undefined;
 }
 
 /** A declared property comes before Tailwind's `--tw-*` companions: `background-color, --tw-bg-opacity`. */
