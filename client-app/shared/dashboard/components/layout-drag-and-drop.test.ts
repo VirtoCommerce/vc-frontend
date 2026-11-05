@@ -643,7 +643,8 @@ describe("a drop the draft refuses", () => {
 });
 
 // Full-width blocks are built for the page's width: they reorder among themselves, and no drag can carry one into a
-// column or a column block into their region — SortableJS only lets a drop through between lists of one group.
+// column, a column block into their region, or a block in from another surface — SortableJS only lets a drop through
+// between lists of one named group, and the region has none.
 describe("full-width region drag and drop", () => {
   const FULL_SCOPE = "dragSpecFull";
   registerTestDashboard(FULL_SCOPE);
@@ -672,15 +673,16 @@ describe("full-width region drag and drop", () => {
 
   const zoneOf = (id: string) => zones.find((zone) => zone.el.querySelector(`[data-block-id="${id}"]`));
 
-  it("gives the region a drag group no column shares", async () => {
+  it("gives the region no drag group, as for the columns", async () => {
     await setupSurface();
 
     const full = zoneOf("wideA");
     const columns = [zoneOf("list"), zoneOf("side")];
 
-    expect(full?.options.group).toBe(`layout-${FULL_SCOPE}-full-width`);
+    expect(full).toBeDefined();
+    expect(full?.options.group).toBeUndefined();
     for (const column of columns) {
-      expect(column?.options.group).not.toBe(full?.options.group);
+      expect(column?.options.group).toBeUndefined();
     }
   });
 

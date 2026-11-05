@@ -45,15 +45,15 @@
         @announce="announce"
       />
 
-      <!-- Spans both columns, between the stat row and them. Its own Sortable group: a full-width block is built for
-           the width and never lands in a column, nor a column block here. Absent while nothing in it is visible. -->
+      <!-- Spans both columns, between the stat row and them. No Sortable group, as for the columns: a full-width block
+           is built for the width and never lands in a column, nor a column block here. Absent while nothing in it is
+           visible. -->
       <LayoutRegion
         v-if="!allHidden && visibleIn('fullWidth').length"
         class="layout-surface__full"
         :scope="layout.scope"
         :entries="visibleIn('fullWidth')"
         orientation="vertical"
-        :group="`layout-${layout.scope}-full-width`"
         :editing="editing"
         @reorder="reorderVisible('fullWidth', $event)"
         @set-hidden="toggleHidden"

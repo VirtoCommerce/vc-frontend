@@ -44,7 +44,7 @@ export interface IStatBlock extends IBlockBase {
 /** A widget in the full-width region or one of the two content columns. Renders through layout-widget.vue, which
  * puts the drag controls in the widget's own header slots. */
 export interface IWidgetBlock extends IBlockBase {
-  region: "fullWidth" | "mainLeft" | "mainRight";
+  region: Exclude<LayoutRegionIdType, "statistics">;
   component: Component;
   /** Extra props for `component`. `title` comes from `titleKey` and is passed by the surface. */
   props?: Record<string, unknown>;

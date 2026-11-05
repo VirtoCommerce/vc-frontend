@@ -457,7 +457,7 @@ describe("LayoutSurface with every block hidden", () => {
 });
 
 // A block that needs the whole width of the page sits in its own region, between the stat row and the two
-// columns, and keeps its own drag group so it cannot be dropped into a column built for narrower boxes.
+// columns. Like the columns it has no drag group, so it cannot be dropped into a column built for narrower boxes.
 describe("LayoutSurface full-width region", () => {
   const FULL_SCOPE = "surfaceFullWidthSpec";
   const WIDE_ID = "wide";
@@ -475,22 +475,24 @@ describe("LayoutSurface full-width region", () => {
     skeletonRows: WIDE_SKELETON_ROWS,
   });
 
-  function regionWithGroup(wrapper: ReturnType<typeof mountSurface>, group: string) {
-    return wrapper.findAllComponents(LayoutRegion).find((region) => region.props("group") === group);
+  function fullWidthRegion(wrapper: ReturnType<typeof mountSurface>) {
+    return wrapper
+      .findAllComponents(LayoutRegion)
+      .find((region) => region.find('[data-test-id="wide-block"]').exists());
   }
 
-  it("renders its block after the stat row and before the columns, in a drag group of its own", async () => {
+  it("renders its block after the stat row and before the columns, with no drag group", async () => {
     const wrapper = mountSurface(createFakeLayout(FULL_SCOPE));
     await flushPromises();
 
-    const full = regionWithGroup(wrapper, `layout-${FULL_SCOPE}-full-width`);
+    const full = fullWidthRegion(wrapper);
     const stats = wrapper.getComponent(LayoutStats).element;
     const firstColumn = wrapper.get('[data-block-id="list"]').element;
 
     if (!full) {
       throw new Error("the full-width region did not render");
     }
-    expect(full.find('[data-test-id="wide-block"]').exists()).toBe(true);
+    expect(full.props("group")).toBeUndefined();
     expect(stats.compareDocumentPosition(full.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(full.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
@@ -509,10 +511,24 @@ describe("LayoutSurface full-width region", () => {
   });
 
   it("does not mount the region on a dashboard with no full-width block", async () => {
-    const wrapper = mountSurface(createFakeLayout(SCOPE));
+    const layout = createFakeLayout(SCOPE);
+    const wrapper = mountSurface(layout);
     await flushPromises();
 
-    expect(regionWithGroup(wrapper, `layout-${SCOPE}-full-width`)).toBeUndefined();
+    const verticalEntries = wrapper
+      .findAllComponents(LayoutRegion)
+      .filter((region) => region.props("orientation") === "vertical")
+      .map((region) => region.props("entries"));
+    expect(verticalEntries).toEqual([layout.visibleIn("mainLeft"), layout.visibleIn("mainRight")]);
+  });
+
+  it("lets no full-width block move between two surfaces of one dashboard", async () => {
+    const first = mountSurface(createFakeLayout(FULL_SCOPE));
+    const second = mountSurface(createFakeLayout(FULL_SCOPE));
+    await flushPromises();
+
+    expect(fullWidthRegion(first)?.props("group")).toBeUndefined();
+    expect(fullWidthRegion(second)?.props("group")).toBeUndefined();
   });
 
   it("offers a hidden full-width block back through the tray", async () => {
