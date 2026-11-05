@@ -1,4 +1,5 @@
 @use "../client-app/assets/styles/layers";
+@use "../client-app/assets/styles/typography-roles" as *;
 @use "../client-app/ui-kit/styles/focus-ring" as *;
 
 @layer theme {
@@ -11,6 +12,8 @@
   @tailwind base;
 
   @layer base {
+    @include typography-roles;
+
     body {
       background-color: var(--color-additional-50);
 

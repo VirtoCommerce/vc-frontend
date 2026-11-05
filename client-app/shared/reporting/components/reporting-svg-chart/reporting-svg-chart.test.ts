@@ -25,6 +25,14 @@ const CATEGORIES: ChartCategoryType[] = [
 ];
 
 const SOLID: ChartSeriesType = { id: "actual", type: "bar", name: "Actual", data: [100, 200, 300] };
+
+const YEAR: ChartCategoryType[] = Array.from({ length: 12 }, (_, i) => ({
+  id: `m${i}`,
+  label: `M${i}`,
+  shortLabel: `${i}`,
+}));
+const YEAR_SALES: ChartSeriesType = { ...SOLID, data: YEAR.map((_, i) => (i + 1) * 10) };
+const LAST_SIX_MONTHS = { categories: YEAR.slice(6), series: [{ ...YEAR_SALES, data: YEAR_SALES.data.slice(6) }] };
 const OUTLINE: ChartSeriesType = { id: "plan", type: "bar", name: "Plan", variant: "dashed", data: [150, null, null] };
 const LINE: ChartSeriesType = {
   id: "trend",
@@ -234,6 +242,27 @@ describe("ReportingSvgChart", () => {
     const tab = new KeyboardEvent("keydown", { key: "Tab", cancelable: true });
     targets[1].element.dispatchEvent(tab);
     expect(tab.defaultPrevented).toBe(false);
+  });
+
+  it("keeps the arrow keys working after the leading months drop out", async () => {
+    const chart = mountChart({ categories: YEAR, series: [YEAR_SALES] });
+
+    await chart.setProps(LAST_SIX_MONTHS);
+    const targets = chart.findAll("[role='img']");
+    (targets[0].element as SVGSVGElement).focus();
+    await targets[0].trigger("keydown", { key: "ArrowRight" });
+
+    expect(document.activeElement).toBe(targets[1].element);
+  });
+
+  it("keeps the tab stop on the same month when the months shift", async () => {
+    const chart = mountChart({ categories: YEAR, series: [YEAR_SALES] });
+    await chart.findAll("[role='img']")[8].trigger("focusin");
+
+    await chart.setProps(LAST_SIX_MONTHS);
+    const tabStops = chart.findAll("[role='img']").filter((target) => target.attributes("tabindex") === "0");
+
+    expect(tabStops.map((target) => target.attributes("aria-label"))).toEqual(["M8"]);
   });
 
   it("exposes a column as an image with its tooltip, not as a button", () => {

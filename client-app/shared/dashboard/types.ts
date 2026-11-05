@@ -44,17 +44,20 @@ export interface IStatBlock extends IBlockBase {
 /** A widget in the full-width region or one of the two content columns. Renders through layout-widget.vue, which
  * puts the drag controls in the widget's own header slots. */
 export interface IWidgetBlock extends IBlockBase {
-  region: "fullWidth" | "mainLeft" | "mainRight";
+  region: Exclude<LayoutRegionIdType, "statistics">;
   component: Component;
   /** Extra props for `component`. `title` comes from `titleKey` and is passed by the surface. */
   props?: Record<string, unknown>;
   /** What the user can configure in edit mode. Absent = nothing, which is most blocks. */
   settings?: readonly BlockSettingType[];
   /**
-   * Placeholder lines (1.5rem each) the loading skeleton draws for this block, so the page does not jump when the
-   * block replaces it. Default 5, a short list; a block much taller than that sets its own.
+   * The block's placeholder while the dashboard reads the saved layout, given the block's `title`. Without one, the
+   * kit's widget skeleton stands in, about a short list's height; a taller block draws its own shape, so the page does
+   * not jump when the block replaces it. It renders before `component` has loaded, so it is not lazy: keep it light.
+   * Pass it as the async component's `loadingComponent` too, with `delay: 0`, to hold the block's place while that
+   * component loads.
    */
-  skeletonRows?: number;
+  skeleton?: Component;
 }
 
 export type BlockType = IStatBlock | IWidgetBlock;
@@ -181,21 +184,23 @@ export type LayoutInputType = {
 };
 
 /**
- * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
- * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
- * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
+ * A change against the previous period: `positive` = up (green), `negative` = down (red), `neutral` = unchanged or a
+ * plain informational count.
  */
-/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
 export type StatDeltaToneType = "positive" | "negative" | "neutral";
 
+/**
+ * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
+ * pre-formatted strings owned by the dashboard that builds the card.
+ */
 export type StatCardType = {
   /** The `statistics` block id this card renders as. */
   key: string;
   labelKey: string;
   icon: string;
   value: string;
-  // Optional, as on <VcStatWidget>: color and deltaTone have defaults, and sub/delta/deltaIcon are
-  // v-if-guarded, so a card can omit any of them.
+  // Optional: <VcStatWidget> defaults `color`, the stat row reads a missing `deltaTone` as positive, and
+  // sub/delta/deltaIcon are v-if-guarded, so a card can omit any of them.
   color?: VcStatWidgetColorType;
   /** De-emphasized unit rendered right after `value` (e.g. "items" in "34 items"). */
   valueSuffix?: string;

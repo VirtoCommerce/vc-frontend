@@ -1,11 +1,12 @@
 // The account dashboard's blocks (VCST-6078): the buyer's own order figures as stat cards, their sales report
 // (VCST-6258) and their recent orders.
 // app-runner registers them into the core layout engine before the app mounts, as a module registers its own in
-// `init()`. Only these tables load with the app; the queries behind them come with the dashboard page
-// (composables/useAccountDashboard.ts, components/dashboard/recent-orders-widget.vue).
+// `init()`. Only these tables and the sales report's placeholder load with the app; the queries behind them come
+// with the dashboard page (composables/useAccountDashboard.ts, components/dashboard/recent-orders-widget.vue).
 import { defineAsyncComponent, markRaw } from "vue";
 import { RECENT_ORDERS_DEFAULT_ROWS, RECENT_ORDERS_MAX_ROWS } from "@/core/constants";
 import { LAYOUT_SCOPES, MIN_ROWS, registerBlock, statBlocks } from "@/shared/dashboard";
+import SalesReportSkeleton from "./components/dashboard/sales-report-skeleton.vue";
 import type { BlockType, IStatCardDefType } from "@/shared/dashboard";
 
 /**
@@ -50,15 +51,22 @@ export const ACCOUNT_DASHBOARD_CARDS = [
 // Load-bearing like the card keys.
 export const RECENT_ORDERS_BLOCK_ID = "recent_orders";
 export const SALES_REPORT_BLOCK_ID = "sales_report";
-const SALES_REPORT_SKELETON_ROWS = 36;
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
 const RecentOrdersWidget = markRaw(
   defineAsyncComponent(() => import("./components/dashboard/recent-orders-widget.vue")),
 );
 
-// The charts need the page's width: in a column they would squeeze a year of months into half of it.
-const SalesReportWidget = markRaw(defineAsyncComponent(() => import("./components/dashboard/sales-report-widget.vue")));
+// The charts need the page's width: in a column they would squeeze a year of months into half of it. Its
+// placeholder stays on screen from the layout's skeleton until the report's own chunk has loaded.
+const SalesReportPlaceholder = markRaw(SalesReportSkeleton);
+const SalesReportWidget = markRaw(
+  defineAsyncComponent({
+    loader: () => import("./components/dashboard/sales-report-widget.vue"),
+    loadingComponent: SalesReportPlaceholder,
+    delay: 0,
+  }),
+);
 
 const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
   ...statBlocks(ACCOUNT_DASHBOARD_CARDS),
@@ -68,8 +76,7 @@ const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
     titleKey: "shared.account.dashboard.sales_report.title",
     order: 10,
     component: SalesReportWidget,
-    // The period row, the KPI tiles and two charts: about 900px at desktop width.
-    skeletonRows: SALES_REPORT_SKELETON_ROWS,
+    skeleton: SalesReportPlaceholder,
   },
   {
     id: RECENT_ORDERS_BLOCK_ID,

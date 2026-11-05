@@ -90,6 +90,26 @@ function controllerOver(
   return createLayoutController({ scope: SCOPE, load, save, defaults: () => getBlockRegistry(SCOPE) });
 }
 
+/**
+ * The real controller whose first read answers `first` and whose every save gets an echo that disagrees, so the
+ * stored document is read again; that read waits for `landReread`.
+ */
+function controllerWithHeldReread(first: SavedLayoutType | null) {
+  let reads = 0;
+  let land: (saved: SavedLayoutType | null) => void = () => {};
+  const layout = controllerOver(
+    () =>
+      reads++ === 0
+        ? Promise.resolve(first)
+        : new Promise<SavedLayoutType | null>((resolve) => {
+            land = resolve;
+          }),
+    () => Promise.resolve({ regions: [] }),
+  );
+
+  return { layout, landReread: (saved: SavedLayoutType | null) => land(saved) };
+}
+
 describe("LayoutSurface block bindings", () => {
   // The customer profile's organization reaches its widgets this way; losing it renders every block for the
   // wrong customer.
@@ -215,17 +235,7 @@ describe("LayoutSurface while saving", () => {
 // A save whose echo disagrees with what was sent ends with the stored document read again (useLayout.ts).
 describe("LayoutSurface while the stored document is read again", () => {
   async function saveIntoARereadThatWaits() {
-    let reads = 0;
-    let landReread: (saved: SavedLayoutType | null) => void = () => {};
-    const layout = controllerOver(
-      () =>
-        reads++ === 0
-          ? Promise.resolve(null)
-          : new Promise((resolve) => {
-              landReread = resolve;
-            }),
-      () => Promise.resolve({ regions: [] }),
-    );
+    const { layout, landReread } = controllerWithHeldReread(null);
     const wrapper = mountSurface(layout);
     await flushPromises();
     layout.startEdit();
@@ -233,7 +243,7 @@ describe("LayoutSurface while the stored document is read again", () => {
     await layout.save();
     await flushPromises();
 
-    return { wrapper, landReread: (saved: SavedLayoutType | null) => landReread(saved) };
+    return { wrapper, landReread };
   }
 
   // A save meanwhile would replace a document nobody has seen.
@@ -259,17 +269,44 @@ describe("LayoutSurface while the stored document is read again", () => {
   });
 });
 
-describe("LayoutSurface drag groups", () => {
-  // Two surfaces of one dashboard on a page must not trade blocks through a shared group name.
-  it("gives each surface groups of its own", async () => {
+// Two surfaces of one dashboard on a page.
+describe("LayoutSurface beside another surface", () => {
+  // They must not trade blocks: the widget columns take no drop from any other list, and each stat row pairs its two
+  // zones under a group of its own.
+  it("lets no block move between surfaces", async () => {
     const first = mountSurface(createFakeLayout(SCOPE));
     const second = mountSurface(createFakeLayout(SCOPE));
     await flushPromises();
-    const groupsOf = (wrapper: ReturnType<typeof mountSurface>) =>
-      wrapper.findAllComponents(LayoutRegion).map((region) => String(region.props("group")));
+    const groupsIn = (wrapper: ReturnType<typeof mountSurface>, orientation: "horizontal" | "vertical") =>
+      wrapper
+        .findAllComponents(LayoutRegion)
+        .filter((region) => region.props("orientation") === orientation)
+        .map((region) => region.props("group"));
+    const columns = groupsIn(first, "vertical");
+    const statRow = groupsIn(first, "horizontal");
 
-    expect(groupsOf(first).length).toBeGreaterThan(0);
-    expect(groupsOf(second).filter((group) => groupsOf(first).includes(group))).toEqual([]);
+    expect(columns.length).toBeGreaterThan(0);
+    expect(columns.every((group) => group === undefined)).toBe(true);
+    expect(statRow.length).toBeGreaterThan(0);
+    expect(groupsIn(second, "horizontal").filter((group) => statRow.includes(group))).toEqual([]);
+  });
+
+  // Both in edit mode, so a lookup across the whole page would find the first surface's Save first.
+  it("hands focus to its own Save when its save fails", async () => {
+    const first = createFakeLayout(SCOPE);
+    const second = createFakeLayout(SCOPE);
+    mountSurface(first);
+    const wrapper = mountSurface(second);
+    await flushPromises();
+    first.startEdit();
+    second.startEdit();
+    await flushPromises();
+    second.failNextSave.value = true;
+
+    await second.save();
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.get("[data-layout-save]").element);
   });
 });
 
@@ -343,17 +380,7 @@ describe("LayoutSurface with every block hidden", () => {
   // A restore whose echo disagrees reads the stored document again, and nothing may be written until that read
   // lands — Cancel brings the empty state back meanwhile.
   it("disables both actions while the layout cannot be edited", async () => {
-    let reads = 0;
-    let landReread: (saved: SavedLayoutType) => void = () => {};
-    const layout = controllerOver(
-      () =>
-        reads++ === 0
-          ? Promise.resolve(allHidden())
-          : new Promise((resolve) => {
-              landReread = resolve;
-            }),
-      () => Promise.resolve({ regions: [] }),
-    );
+    const { layout, landReread } = controllerWithHeldReread(allHidden());
     const wrapper = await mountAllHidden(layout);
 
     await wrapper.get("[data-layout-restore]").trigger("click");
@@ -430,62 +457,96 @@ describe("LayoutSurface with every block hidden", () => {
 });
 
 // A block that needs the whole width of the page sits in its own region, between the stat row and the two
-// columns, and keeps its own drag group so it cannot be dropped into a column built for narrower boxes.
+// columns. Like the columns it has no drag group, so it cannot be dropped into a column built for narrower boxes.
 describe("LayoutSurface full-width region", () => {
   const FULL_SCOPE = "surfaceFullWidthSpec";
   const WIDE_ID = "wide";
 
   const Wide = defineComponent({ setup: () => () => h("div", { "data-test-id": "wide-block" }) });
+  const Narrow = defineComponent({ setup: () => () => h("div", { "data-test-id": "narrow-block" }) });
+  // A block's own placeholder, captioned with the title the skeleton hands it.
+  const Placeholder = defineComponent({
+    props: { title: { type: String, default: undefined } },
+    setup: (props) => () => h("div", { "data-test-id": "block-placeholder" }, props.title),
+  });
 
   registerTestDashboard(FULL_SCOPE);
-  const WIDE_SKELETON_ROWS = 12;
   registerBlock(FULL_SCOPE, {
     id: WIDE_ID,
     region: "fullWidth",
     titleKey: "wide.title",
     order: 1,
     component: Wide,
-    skeletonRows: WIDE_SKELETON_ROWS,
+    skeleton: Placeholder,
+  });
+  // After the test dashboard's own column widgets, which bring no placeholder.
+  registerBlock(FULL_SCOPE, {
+    id: "narrow",
+    region: "mainLeft",
+    titleKey: "narrow.title",
+    order: 100,
+    component: Narrow,
+    skeleton: Placeholder,
   });
 
-  function regionWithGroup(wrapper: ReturnType<typeof mountSurface>, group: string) {
-    return wrapper.findAllComponents(LayoutRegion).find((region) => region.props("group") === group);
+  function fullWidthRegion(wrapper: ReturnType<typeof mountSurface>) {
+    return wrapper
+      .findAllComponents(LayoutRegion)
+      .find((region) => region.find('[data-test-id="wide-block"]').exists());
   }
 
-  it("renders its block after the stat row and before the columns, in a drag group of its own", async () => {
+  it("renders its block after the stat row and before the columns, with no drag group", async () => {
     const wrapper = mountSurface(createFakeLayout(FULL_SCOPE));
     await flushPromises();
 
-    const full = regionWithGroup(wrapper, `layout-${FULL_SCOPE}-full-width`);
+    const full = fullWidthRegion(wrapper);
     const stats = wrapper.getComponent(LayoutStats).element;
     const firstColumn = wrapper.get('[data-block-id="list"]').element;
 
     if (!full) {
       throw new Error("the full-width region did not render");
     }
-    expect(full.find('[data-test-id="wide-block"]').exists()).toBe(true);
+    expect(full.props("group")).toBeUndefined();
     expect(stats.compareDocumentPosition(full.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(full.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  // A tall block's placeholder is as tall as the block, so the columns below do not jump when it lands.
-  it("draws a block's own number of placeholder lines while the layout is read", () => {
+  // A tall block's placeholder has the block's shape, so the columns below do not jump when it lands.
+  it("draws a block's own placeholder, with its title, while the layout is read", () => {
     const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { read: "pending" }));
-    // Every placeholder line is an empty div, as is the head's one. In page order: the full-width block, then the
-    // test dashboard's four column widgets at the default five lines.
-    const lines = wrapper
-      .getComponent(LayoutSkeleton)
-      .findAllComponents(VcWidgetSkeleton)
-      .map((skeleton) => skeleton.findAll("div:empty").length - 1);
+    const skeleton = wrapper.getComponent(LayoutSkeleton);
 
-    expect(lines).toEqual([WIDE_SKELETON_ROWS, 5, 5, 5, 5]);
+    expect(skeleton.findAll('[data-test-id="block-placeholder"]').map((placeholder) => placeholder.text())).toEqual([
+      "wide.title",
+      "narrow.title",
+    ]);
+    // Every placeholder line is an empty div, as is the head's one: the test dashboard's four column widgets keep the
+    // kit's skeleton at five lines.
+    const lines = skeleton
+      .findAllComponents(VcWidgetSkeleton)
+      .map((widgetSkeleton) => widgetSkeleton.findAll("div:empty").length - 1);
+    expect(lines).toEqual([5, 5, 5, 5]);
   });
 
   it("does not mount the region on a dashboard with no full-width block", async () => {
-    const wrapper = mountSurface(createFakeLayout(SCOPE));
+    const layout = createFakeLayout(SCOPE);
+    const wrapper = mountSurface(layout);
     await flushPromises();
 
-    expect(regionWithGroup(wrapper, `layout-${SCOPE}-full-width`)).toBeUndefined();
+    const verticalEntries = wrapper
+      .findAllComponents(LayoutRegion)
+      .filter((region) => region.props("orientation") === "vertical")
+      .map((region) => region.props("entries"));
+    expect(verticalEntries).toEqual([layout.visibleIn("mainLeft"), layout.visibleIn("mainRight")]);
+  });
+
+  it("lets no full-width block move between two surfaces of one dashboard", async () => {
+    const first = mountSurface(createFakeLayout(FULL_SCOPE));
+    const second = mountSurface(createFakeLayout(FULL_SCOPE));
+    await flushPromises();
+
+    expect(fullWidthRegion(first)?.props("group")).toBeUndefined();
+    expect(fullWidthRegion(second)?.props("group")).toBeUndefined();
   });
 
   it("offers a hidden full-width block back through the tray", async () => {

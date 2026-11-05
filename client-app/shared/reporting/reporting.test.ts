@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildReportingMonths,
   buildReportingPlan,
+  buildReportingVariables,
   isSameWindows,
   toReportingMonths,
   changeDirection,
@@ -10,6 +11,7 @@ import {
   percentChange,
   previousMonthWindow,
   summarizeReporting,
+  toReportingData,
   toReportingMonth,
   withMonthChanges,
   REPORTING_PERIODS,
@@ -323,5 +325,52 @@ describe("toReportingMonths", () => {
     expect(months[0].revenueMonthChange).toBe(100);
     // A month without figures has no orders and breaks the chain.
     expect(months[2].revenueMonthChange).toBeNull();
+  });
+});
+
+describe("buildReportingVariables", () => {
+  it("asks for the period's started months and leaves the other slots out", () => {
+    const plan = buildReportingPlan("q4", NOW); // Oct is current, Nov and Dec are to come
+    const variables = buildReportingVariables(plan);
+
+    expect(variables).toMatchObject({
+      prevFrom: plan.previous.from,
+      prevTo: plan.previous.to,
+      use0: true,
+      from0: plan.months[0].from,
+      to0: plan.months[0].to,
+      lyFrom0: plan.months[0].lyFrom,
+      lyTo0: plan.months[0].lyTo,
+      use1: false,
+      use2: false,
+      use3: false,
+      use11: false,
+    });
+    expect(variables.from3).toBeUndefined();
+  });
+});
+
+describe("toReportingData", () => {
+  it("reads each slot alias into its month of the plan", () => {
+    const plan = buildReportingPlan("q1", NOW);
+    const data = toReportingData(plan, {
+      currencyCode: "EUR",
+      m0: { total: { amount: 100 }, count: 1 },
+      ly0: { total: { amount: 80 }, count: 2 },
+      m1: null,
+      m2: { total: { amount: 300 }, count: 3 },
+      prev: { total: { amount: 50 }, count: 1 },
+    });
+
+    expect(data).toEqual({
+      plan,
+      months: [
+        { totals: { amount: 100, count: 1 }, lastYear: { amount: 80, count: 2 } },
+        { totals: undefined, lastYear: undefined },
+        { totals: { amount: 300, count: 3 }, lastYear: undefined },
+      ],
+      previous: { amount: 50, count: 1 },
+      currencyCode: "EUR",
+    });
   });
 });

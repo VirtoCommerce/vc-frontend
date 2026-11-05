@@ -25,7 +25,7 @@ const ReportingPanelStub = defineComponent({
   name: "ReportingPanel",
   props: ["period", "data", "loading", "error", "withTiles", "withTable"],
   emits: { "update:period": (value: unknown) => typeof value === "string" },
-  template: '<div class="panel" />',
+  template: '<div class="panel"><slot name="footnote-append" /></div>',
 });
 
 function mountWidget() {
@@ -109,14 +109,17 @@ describe("SalesReportWidget", () => {
     expect(mountWidget().findComponent(ReportingPanelStub).exists()).toBe(true);
   });
 
+  // In the panel's own footnote row, so it follows the panel's loading and error states.
   it("says how many orders in other currencies are left out", () => {
     report.state.excludedCount.value = 3;
 
-    expect(mountWidget().find('[data-test-id="sales-report-excluded-label"]').text()).toContain('"count":"3"');
+    expect(mountWidget().findComponent(ReportingPanelStub).text()).toContain(
+      'shared.account.dashboard.excluded_orders:{"count":"3"}',
+    );
   });
 
   it("says nothing about left-out orders when there are none", () => {
-    expect(mountWidget().find('[data-test-id="sales-report-excluded-label"]').exists()).toBe(false);
+    expect(mountWidget().findComponent(ReportingPanelStub).text()).toBe("");
   });
 
   it("remembers the picked period in the browser and ignores a stored value it does not know", async () => {

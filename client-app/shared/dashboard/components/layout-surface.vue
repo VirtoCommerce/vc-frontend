@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-surface" tabindex="-1" data-layout-surface>
+  <div ref="root" class="layout-surface" tabindex="-1" data-layout-surface>
     <!-- What renders below is registry defaults, not the user's layout, and there is no edit button. -->
     <VcAlert v-if="loadFailed" color="danger" size="sm" variant="soft" icon>
       {{ t("shared.dashboard.load_failed") }}
@@ -45,15 +45,15 @@
         @announce="announce"
       />
 
-      <!-- Spans both columns, between the stat row and them. Its own Sortable group: a full-width block is built for
-           the width and never lands in a column, nor a column block here. Absent while nothing in it is visible. -->
+      <!-- Spans both columns, between the stat row and them. No Sortable group, as for the columns: a full-width block
+           is built for the width and never lands in a column, nor a column block here. Absent while nothing in it is
+           visible. -->
       <LayoutRegion
         v-if="!allHidden && visibleIn('fullWidth').length"
         class="layout-surface__full"
         :scope="layout.scope"
         :entries="visibleIn('fullWidth')"
         orientation="vertical"
-        :group="`layout-${layout.scope}-full-width`"
         :editing="editing"
         @reorder="reorderVisible('fullWidth', $event)"
         @set-hidden="toggleHidden"
@@ -73,7 +73,6 @@
             :scope="layout.scope"
             :entries="visibleIn('mainLeft')"
             orientation="vertical"
-            :group="`${componentId}-main-left`"
             :editing="editing"
             @reorder="reorderVisible('mainLeft', $event)"
             @set-hidden="toggleHidden"
@@ -92,7 +91,7 @@
           />
         </div>
 
-        <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
+        <!-- Neither column has a Sortable group, so no widget moves between them, or in from another surface. -->
         <LayoutRegion
           v-if="visibleIn('mainRight').length"
           class="layout-surface__aside"
@@ -100,7 +99,6 @@
           :scope="layout.scope"
           :entries="visibleIn('mainRight')"
           orientation="vertical"
-          :group="`${componentId}-main-right`"
           :editing="editing"
           @reorder="reorderVisible('mainRight', $event)"
           @set-hidden="toggleHidden"
@@ -134,8 +132,8 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useComponentId } from "@/ui-kit/composables";
 import { useLayoutPage } from "../composables/_internal/useLayoutPage";
 import { provideLayoutSettings } from "../composables/_internal/useLayoutSettings";
 import { getBlock } from "../registry";
@@ -168,12 +166,12 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-// Drag groups per instance, not per scope: two surfaces of one dashboard on a page must not trade blocks.
-const componentId = useComponentId("layout-surface");
+// The focus moves look only inside this element, so two surfaces on a page keep their own.
+const root = useTemplateRef<HTMLElement>("root");
 
 // A surface's controller is structural — one page, one layout, for its whole life.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const page = useLayoutPage(props.layout);
+const page = useLayoutPage(props.layout, root);
 
 const {
   message,

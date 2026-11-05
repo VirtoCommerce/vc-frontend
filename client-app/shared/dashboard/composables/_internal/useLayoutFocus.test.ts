@@ -1,35 +1,51 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
-import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
+import { createSurfaceRoot } from "../../layout-test-utils";
+import { useLayoutFocus } from "./useLayoutFocus";
 
-function render(markup: string): void {
-  const parsed = new DOMParser().parseFromString(markup, "text/html");
-  document.body.replaceChildren(...parsed.body.childNodes);
+type LayoutFocusType = ReturnType<typeof useLayoutFocus>;
+
+/** Renders one surface per markup, in order, and returns their roots. */
+function render(...surfaces: string[]): HTMLElement[] {
+  const roots = surfaces.map((markup) => createSurfaceRoot(markup));
+  document.body.replaceChildren(...roots);
+  return roots;
 }
 
 afterEach(() => {
-  render("");
+  document.body.replaceChildren();
 });
 
 describe("focusEditToggle", () => {
   it("focuses the edit toggle", async () => {
-    render(`<button data-layout-edit-toggle>Edit layout</button>`);
+    const [root] = render(`<button data-layout-edit-toggle>Edit layout</button>`);
 
-    focusEditToggle();
+    useLayoutFocus(root).focusEditToggle();
     await nextTick();
 
-    expect(document.activeElement).toBe(document.querySelector("[data-layout-edit-toggle]"));
+    expect(document.activeElement).toBe(root.querySelector("[data-layout-edit-toggle]"));
   });
 
   it("does nothing when there is no toggle to focus", async () => {
-    render(`<button id="elsewhere"></button>`);
-    const elsewhere = document.querySelector<HTMLElement>("#elsewhere")!;
+    const [root] = render(`<button id="elsewhere"></button>`);
+    const elsewhere = root.querySelector<HTMLElement>("#elsewhere")!;
     elsewhere.focus();
 
-    focusEditToggle();
+    useLayoutFocus(root).focusEditToggle();
     await nextTick();
 
     expect(document.activeElement).toBe(elsewhere);
+  });
+});
+
+describe("focusSurfaceStart", () => {
+  it("focuses the surface itself", async () => {
+    const [root] = render(`<button data-layout-save>Save layout</button>`);
+
+    useLayoutFocus(root).focusSurfaceStart();
+    await nextTick();
+
+    expect(document.activeElement).toBe(root);
   });
 });
 
@@ -37,20 +53,20 @@ describe("focusEditToggle", () => {
 // mounted with nothing holding it, since edit mode never ends.
 describe("focusSaveButton", () => {
   it("focuses the save button", async () => {
-    render(`<button data-layout-save>Save layout</button>`);
+    const [root] = render(`<button data-layout-save>Save layout</button>`);
 
-    focusSaveButton();
+    useLayoutFocus(root).focusSaveButton();
     await nextTick();
 
-    expect(document.activeElement).toBe(document.querySelector("[data-layout-save]"));
+    expect(document.activeElement).toBe(root.querySelector("[data-layout-save]"));
   });
 
   it("does nothing when the edit bar is gone", async () => {
-    render(`<button id="elsewhere"></button>`);
-    const elsewhere = document.querySelector<HTMLElement>("#elsewhere")!;
+    const [root] = render(`<button id="elsewhere"></button>`);
+    const elsewhere = root.querySelector<HTMLElement>("#elsewhere")!;
     elsewhere.focus();
 
-    focusSaveButton();
+    useLayoutFocus(root).focusSaveButton();
     await nextTick();
 
     expect(document.activeElement).toBe(elsewhere);
@@ -65,9 +81,9 @@ describe("focusBlockControl", () => {
     ["whole stat card", `<div data-block-id="orders" role="button" tabindex="0"></div>`, "DIV"],
     ["tray restore button", `<button data-restore-id="orders"></button>`, "BUTTON"],
   ])("focuses the %s", async (_label, markup, tag) => {
-    render(markup);
+    const [root] = render(markup);
 
-    focusBlockControl("orders");
+    useLayoutFocus(root).focusBlockControl("orders");
     await nextTick();
 
     expect(document.activeElement?.tagName).toBe(tag);
@@ -75,11 +91,41 @@ describe("focusBlockControl", () => {
   });
 
   it("leaves focus alone when the block is gone", async () => {
-    render(`<div data-block-id="something-else" role="button" tabindex="0"></div>`);
+    const [root] = render(`<div data-block-id="something-else" role="button" tabindex="0"></div>`);
 
-    focusBlockControl("orders");
+    useLayoutFocus(root).focusBlockControl("orders");
     await nextTick();
 
     expect(document.activeElement).toBe(document.body);
+  });
+});
+
+// Two surfaces of one dashboard, both in edit mode: the first surface's controls come first in the page.
+describe("with two surfaces on the page", () => {
+  const chrome = `
+    <button data-layout-edit-toggle></button>
+    <button data-layout-save></button>
+    <div data-block-id="orders"><button class="layout-widget__handle"></button></div>`;
+
+  it.each<[string, (focus: LayoutFocusType) => void, string]>([
+    ["edit toggle", (focus) => focus.focusEditToggle(), "[data-layout-edit-toggle]"],
+    ["Save", (focus) => focus.focusSaveButton(), "[data-layout-save]"],
+    ["block control", (focus) => focus.focusBlockControl("orders"), ".layout-widget__handle"],
+  ])("focuses the %s of its own surface", async (_label, move, selector) => {
+    const [, second] = render(chrome, chrome);
+
+    move(useLayoutFocus(second));
+    await nextTick();
+
+    expect(document.activeElement).toBe(second.querySelector(selector));
+  });
+
+  it("focuses the start of its own surface", async () => {
+    const [, second] = render(chrome, chrome);
+
+    useLayoutFocus(second).focusSurfaceStart();
+    await nextTick();
+
+    expect(document.activeElement).toBe(second);
   });
 });

@@ -249,7 +249,6 @@ function tooltipRows(month: ReportingMonthType): ITooltipRow[] {
 </script>
 
 <style lang="scss">
-// @apply: module is self-contained as an MF remote (no global utility layer).
 .reporting-chart {
   @apply flex flex-col gap-3 rounded-[--vc-radius] border border-neutral-200 p-3;
 

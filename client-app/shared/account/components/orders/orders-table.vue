@@ -8,6 +8,7 @@
     :hide-default-footer="hideDefaultFooter"
     :description="$t('pages.account.orders.meta.table_description')"
     :bordered="bordered"
+    :skeleton-rows="skeletonRows"
     mobile-breakpoint="lg"
     class="orders-table"
     @header-click="emit('headerClick', $event)"
@@ -104,6 +105,8 @@ interface IProps {
   hideDefaultFooter?: boolean;
   bordered?: boolean;
   orderScope: OrderScopeType;
+  /** Placeholder rows while loading; the table's own default when absent. */
+  skeletonRows?: number;
 }
 
 interface IEmits {

@@ -191,14 +191,17 @@ export { getFilterExpression as getOrdersFilterExpression } from "@/shared/accou
 export type { OrdersFilterDataType } from "@/shared/account/types";
 
 // Sales report (VCST-6650): the panel renders monthly sales and AOV from figures the caller fetches; the plan says
-// which month windows to fetch them for.
+// which month windows to fetch them for, `useReportingData` keeps each response with the plan it was fetched for.
 export {
   buildReportingPlan,
+  buildReportingVariables,
   isReportingPeriod,
   REPORTING_DEFAULT_PERIOD,
   REPORTING_MONTH_SLOTS,
   REPORTING_PERIODS,
   ReportingPanel,
+  toReportingData,
+  useReportingData,
   useReportingPlan,
 } from "@/shared/reporting";
 export type {
@@ -208,6 +211,9 @@ export type {
   ReportingPeriodType,
   ReportingPlanType,
   ReportingRawMonthType,
+  ReportingSettledType,
+  ReportingStatisticsType,
+  ReportingVariablesType,
 } from "@/shared/reporting";
 export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 
