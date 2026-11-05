@@ -51,7 +51,7 @@ vi.mock("@/shared/reporting", async () => {
       name: "ReportingPanel",
       props: ["period", "data", "loading", "error", "withTiles", "withTable"],
       emits: { "update:period": (value: unknown) => typeof value === "string" },
-      template: '<div class="panel"><slot name="actions" /></div>',
+      template: '<div class="panel"><slot name="actions" /><slot name="footnote-append" /></div>',
     }),
   };
 });
@@ -179,7 +179,10 @@ describe("CompanyReporting", () => {
   it("says how many orders in other currencies are left out", () => {
     h.report.excludedCount.value = 2;
 
-    expect(mountPage().find('[data-test-id="company-reporting-excluded-label"]').text()).toContain('"count":"2"');
+    // In the panel's own footnote row, so it follows the panel's loading and error states.
+    expect(mountPage().findComponent(ReportingPanelStub).text()).toContain(
+      'shared.account.dashboard.excluded_orders:{"count":"2"}',
+    );
   });
 
   it("links to the orders list", () => {

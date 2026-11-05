@@ -29,37 +29,29 @@
         data-test-id="company-reporting-empty-section"
       />
 
-      <template v-else>
-        <ReportingPanel v-model:period="period" :data="data" :loading="loading" :error="failed">
-          <template #actions>
-            <VcSelect
-              class="company-reporting__member"
-              :model-value="memberId"
-              :items="memberItems"
-              :aria-label="$t('pages.company.reporting.member_label')"
-              :disabled="membersLoading"
-              :error="membersFailed"
-              :message="membersFailed ? $t('pages.company.reporting.members_failed') : undefined"
-              text-field="name"
-              value-field="id"
-              size="sm"
-              test-id-dropdown="company-reporting-member-select"
-              autocomplete
-              @change="memberId = $event ?? COMPANY_REPORTING_ALL_MEMBERS"
-            />
-          </template>
-        </ReportingPanel>
+      <ReportingPanel v-else v-model:period="period" :data="data" :loading="loading" :error="failed">
+        <template #actions>
+          <VcSelect
+            class="company-reporting__member"
+            :model-value="memberId"
+            :items="memberItems"
+            :aria-label="$t('pages.company.reporting.member_label')"
+            :disabled="membersLoading"
+            :error="membersFailed"
+            :message="membersFailed ? $t('pages.company.reporting.members_failed') : undefined"
+            text-field="name"
+            value-field="id"
+            size="sm"
+            test-id-dropdown="company-reporting-member-select"
+            autocomplete
+            @change="memberId = $event ?? COMPANY_REPORTING_ALL_MEMBERS"
+          />
+        </template>
 
-        <p
-          v-if="excludedCount && !failed"
-          class="company-reporting__excluded"
-          data-test-id="company-reporting-excluded-label"
-        >
-          <VcIcon name="info" size="xs" />
-
+        <template v-if="excludedCount" #footnote-append>
           {{ $t("shared.account.dashboard.excluded_orders", { count: formatStatCount(excludedCount) }, excludedCount) }}
-        </p>
-      </template>
+        </template>
+      </ReportingPanel>
     </VcWidget>
   </div>
 </template>
@@ -137,10 +129,6 @@ usePageHead({
     @media (width >= theme("screens.md")) {
       @apply w-64 flex-none;
     }
-  }
-
-  &__excluded {
-    @apply mt-3 flex items-center gap-1.5 text-xs text-neutral-600;
   }
 }
 </style>
