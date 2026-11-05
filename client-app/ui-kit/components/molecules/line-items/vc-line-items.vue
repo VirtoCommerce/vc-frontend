@@ -328,13 +328,13 @@ watchEffect(() => {
   &__button {
     @apply me-1;
 
-    &--mobile.vc-button {
+    &--mobile {
       @container (width > theme("containers.2xl")) {
         @apply hidden;
       }
     }
 
-    &--desktop.vc-button {
+    &--desktop {
       @apply hidden;
 
       @container (width > theme("containers.2xl")) {
