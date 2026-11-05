@@ -110,6 +110,22 @@ describe("block registry", () => {
     expect(getBlockRegistry("registrySpecE").map((block) => block.id)).toEqual(["keep"]);
   });
 
+  // Registration takes an id in any case as the one already taken, so finding and unregistering do too.
+  it("finds a block by its id in any case", () => {
+    registerBlock("registrySpecI", widget("acmeOrders"));
+
+    expect(getBlock("registrySpecI", "ACMEORDERS")?.id).toBe("acmeOrders");
+  });
+
+  it("unregisters a block by its id in any case", () => {
+    registerBlock("registrySpecJ", widget("keep"));
+    registerBlock("registrySpecJ", widget("acmeOrders"));
+
+    unregisterBlock("registrySpecJ", "AcmeOrders");
+
+    expect(getBlockRegistry("registrySpecJ").map((block) => block.id)).toEqual(["keep"]);
+  });
+
   // A dashboard's skeleton and reconciled layout read the registry inside computeds; a block registered after
   // they first ran must still reach them.
   it("is reactive", () => {

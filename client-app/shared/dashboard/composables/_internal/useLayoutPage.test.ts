@@ -1,7 +1,7 @@
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
-import { createFakeLayout, registerTestDashboard } from "../../layout-test-utils";
+import { createFakeLayout, createSurfaceRoot, registerTestDashboard } from "../../layout-test-utils";
 import { getBlockRegistry } from "../../registry";
 import { useLayoutPage } from "./useLayoutPage";
 import type { FakeLayoutType } from "../../layout-test-utils";
@@ -18,10 +18,18 @@ registerTestDashboard(SCOPE);
 // layout is read first, as on a page: until then it cannot be edited.
 let scopes: EffectScope[] = [];
 
+// The surface's root, where the page's focus moves look.
+let root: HTMLElement;
+
+beforeEach(() => {
+  root = createSurfaceRoot();
+  document.body.append(root);
+});
+
 async function withPage(layout: FakeLayoutType = createFakeLayout(SCOPE)) {
   const owner = effectScope();
   scopes.push(owner);
-  const page = owner.run(() => useLayoutPage(layout))!;
+  const page = owner.run(() => useLayoutPage(layout, root))!;
   await flushPromises();
   return { layout, page };
 }
@@ -39,7 +47,7 @@ function renderChrome(): void {
   save.dataset.layoutSave = "";
   const toggle = document.createElement("button");
   toggle.dataset.layoutEditToggle = "";
-  document.body.append(save, toggle);
+  root.append(save, toggle);
 }
 
 const activeMarker = () =>
@@ -60,6 +68,23 @@ describe("useLayoutPage", () => {
 
     expect(page.editing.value).toBe(true);
     expect(activeMarker()).toBe("layoutSave");
+  });
+
+  // Save takes back only the focus `inert` dropped: one the user has moved elsewhere meanwhile stays put.
+  it("leaves focus where the user moved it when a save fails", async () => {
+    renderChrome();
+    const elsewhere = document.createElement("input");
+    document.body.append(elsewhere);
+    const { layout, page } = await withPage();
+    layout.failNextSave.value = true;
+    page.startEdit();
+    elsewhere.focus();
+
+    await page.save();
+    await nextTick();
+    await nextTick();
+
+    expect(document.activeElement).toBe(elsewhere);
   });
 
   it("returns focus to the edit toggle when edit mode ends", async () => {
@@ -95,6 +120,34 @@ describe("useLayoutPage", () => {
     await nextTick();
 
     expect(page.message.value).toContain("shared.dashboard.save_failed");
+  });
+
+  // The region keeps its text until the next announcement, so browse mode would still find "Editing layout…" after
+  // Cancel, or a save's failure after a later save succeeded.
+  it("empties the announcement once edit mode ends", async () => {
+    const { page } = await withPage();
+    page.startEdit();
+    await nextTick();
+    expect(page.message.value).toBe("shared.dashboard.a11y.editing");
+
+    page.cancel();
+    await nextTick();
+
+    expect(page.message.value).toBe("");
+  });
+
+  it("leaves no failure behind once a later save succeeds", async () => {
+    const { layout, page } = await withPage();
+    page.startEdit();
+    layout.failNextSave.value = true;
+    await page.save();
+    await nextTick();
+    expect(page.message.value).toContain("shared.dashboard.save_failed");
+
+    await page.save();
+    await nextTick();
+
+    expect(page.message.value).toBe("");
   });
 
   // The page reacts to the failure flag changing, so a flag left on by the first failure kept the second silent,
@@ -162,14 +215,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   const allHiddenPage = () => withPage(createFakeLayout(SCOPE, { saved: savedShowing() }));
 
-  // Where the empty state's actions send focus; `tabIndex` so jsdom lets a div take it, as the template does.
-  function renderSurface(): void {
-    const surface = document.createElement("div");
-    surface.dataset.layoutSurface = "";
-    surface.tabIndex = -1;
-    document.body.append(surface);
-  }
-
   // In edit mode the empty zones and the tray are the way back, so the empty state would only cover them.
   it("reports the surface empty outside edit mode only", async () => {
     const { page } = await allHiddenPage();
@@ -191,7 +236,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   it("announces a restore that saved and hands focus to the start of the surface", async () => {
     renderChrome();
-    renderSurface();
     const { page } = await allHiddenPage();
 
     await page.restoreDefaults();
@@ -204,7 +248,6 @@ describe("useLayoutPage with every block hidden", () => {
   });
 
   it("leaves focus alone when the page is gone before a restore lands", async () => {
-    renderSurface();
     const elsewhere = document.createElement("input");
     document.body.append(elsewhere);
     const layout = createFakeLayout(SCOPE, { saved: savedShowing() });
@@ -212,7 +255,7 @@ describe("useLayoutPage with every block hidden", () => {
     const land = layout.holdNextSave();
 
     const owner = effectScope();
-    const page = owner.run(() => useLayoutPage(layout))!;
+    const page = owner.run(() => useLayoutPage(layout, root))!;
     const restoring = page.restoreDefaults();
     owner.stop();
     elsewhere.focus();
@@ -243,7 +286,6 @@ describe("useLayoutPage with every block hidden", () => {
 
   it("enters edit mode from the empty state with focus at the start of the surface", async () => {
     renderChrome();
-    renderSurface();
     const { page } = await allHiddenPage();
 
     page.editFromEmpty();
@@ -259,7 +301,7 @@ describe("useLayoutPage with every block hidden", () => {
   it("hands focus to the empty state's Edit layout when edit mode ends on an empty surface", async () => {
     const emptyEdit = document.createElement("button");
     emptyEdit.dataset.layoutEmptyEdit = "";
-    document.body.append(emptyEdit);
+    root.append(emptyEdit);
     const { page } = await allHiddenPage();
     page.startEdit();
 

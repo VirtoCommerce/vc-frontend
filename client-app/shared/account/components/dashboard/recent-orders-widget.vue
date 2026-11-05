@@ -79,6 +79,7 @@
             :page="1"
             hide-default-footer
             :bordered="false"
+            :skeleton-rows="rowLimit"
             order-scope="private"
             @row-click="goToOrderDetails"
           />

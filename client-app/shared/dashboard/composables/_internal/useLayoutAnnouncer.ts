@@ -54,5 +54,10 @@ export function useLayoutAnnouncer(scope: string) {
     }
   }
 
-  return { message, announce, say };
+  // Once the state an announcement describes is over, browse mode must not still find it in the region.
+  function clear(): void {
+    message.value = "";
+  }
+
+  return { message, announce, say, clear };
 }

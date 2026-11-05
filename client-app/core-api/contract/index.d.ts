@@ -6071,8 +6071,10 @@ declare const REPORTING_PERIODS: readonly ["6m", "12m", "year", "q1", "q2", "q3"
 type ReportingPeriodType = (typeof REPORTING_PERIODS)[number];
 declare const REPORTING_DEFAULT_PERIOD: ReportingPeriodType;
 declare function isReportingPeriod(value: unknown): value is ReportingPeriodType;
+declare const MONTH_SLOT_INDEXES: readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+type ReportingSlotIndexType = (typeof MONTH_SLOT_INDEXES)[number];
 /** A caller's query carries this many month slots; no period is longer. */
-declare const REPORTING_MONTH_SLOTS = 12;
+declare const REPORTING_MONTH_SLOTS: 12;
 type ReportingMonthStateType = "closed" | "current" | "upcoming";
 type ReportingMonthSlotType = {
     year: number;
@@ -6120,11 +6122,41 @@ type ReportingDataType = {
     currencyCode: string;
 };
 declare function buildReportingPlan(period: ReportingPeriodType, now?: Date): ReportingPlanType;
+/**
+ * A statistics query's month windows for one plan, under the variable names every reporting query uses:
+ * `use{i}` / `from{i}` / `to{i}` / `lyFrom{i}` / `lyTo{i}` per slot and `prevFrom` / `prevTo`. A slot the period leaves
+ * empty, or a month to come, is not asked for.
+ */
+type ReportingVariablesType = {
+    prevFrom: string;
+    prevTo: string;
+} & {
+    [I in ReportingSlotIndexType as `use${I}`]: boolean;
+} & {
+    [I in ReportingSlotIndexType as `${"from" | "to" | "lyFrom" | "lyTo"}${I}`]?: string;
+};
+declare function buildReportingVariables(plan: ReportingPlanType): ReportingVariablesType;
+type ReportingStatisticsSlotType = {
+    total: {
+        amount: number;
+    };
+    count: number;
+} | null;
+/** A statistics response under the aliases every reporting query uses: `m{i}`, `ly{i}` per slot and `prev`. */
+type ReportingStatisticsType = {
+    currencyCode: string;
+    prev?: ReportingStatisticsSlotType;
+} & {
+    [slot: `${"m" | "ly"}${number}`]: ReportingStatisticsSlotType | undefined;
+};
+/** One response as the report reads it. `plan` must be the plan the response was fetched for. */
+declare function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType;
 
 interface IProps$2 {
     /**
-     * The figures to show, with the plan they were fetched for (build the query from `useReportingPlan`). Until the
-     * first figures arrive the panel shows the current period's months with no orders.
+     * The figures to show, with the plan they were fetched for: build the query from `useReportingPlan` and
+     * `buildReportingVariables`, and take `data` from `useReportingData`. Until the first figures arrive the panel shows
+     * the current period's months with no orders.
      */
     data?: ReportingDataType;
     loading?: boolean;
@@ -6136,6 +6168,8 @@ interface IProps$2 {
     withTable?: boolean;
     /** The KPI tiles; off where the page already shows the same figures. */
     withTiles?: boolean;
+    /** Prefixes every test id inside the panel, so two panels on one page keep theirs apart. */
+    testId?: string;
 }
 type __VLS_Props = IProps$2;
 type __VLS_ModelProps = {
@@ -6152,6 +6186,8 @@ declare const __VLS_base$1: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {
     "onUpdate:period"?: ((value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any) | undefined;
 }>, {
     data: ReportingDataType;
+    testId: string;
+    loading: boolean;
     withTable: boolean;
     withTiles: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -6162,6 +6198,25 @@ type __VLS_WithSlots$1<T, S> = T & {
     new (): {
         $slots: S;
     };
+};
+
+type ReportingSettledType<TStatistics> = {
+    plan: ReportingPlanType;
+    statistics: TStatistics;
+};
+/**
+ * The report's figures, each response kept with the plan it was fetched for. A query result keeps the previous
+ * response until the next one lands, and its month slots are positional, so it is never read against a plan picked
+ * after it. Pass the plan the query variables were built from (`useReportingPlan`).
+ *
+ * Built for Apollo `useQuery` with `keepPreviousResult: true`; without it the report empties while a new period loads.
+ * Leave out `debounce` and `throttle`: they keep the previous query running after the plan changes, and its late
+ * response would be read against the new plan.
+ */
+declare function useReportingData<TStatistics extends ReportingStatisticsType>(plan: Readonly<Ref<ReportingPlanType>>, statistics: MaybeRefOrGetter<TStatistics | null | undefined>): {
+    data: vue.ComputedRef<ReportingDataType | undefined>;
+    /** The response with its plan, for figures of the caller's own that the report does not show. */
+    settled: vue.ComputedRef<ReportingSettledType<TStatistics> | undefined>;
 };
 
 /**
@@ -6326,12 +6381,14 @@ type StatDataNeedsType<TNeed extends string> = {
     ready: Readonly<Ref<boolean>>;
 };
 /**
- * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
- * pre-formatted strings owned by the dashboard that builds the card. Delta tone: `positive` = higher than the
- * previous period (green), `negative` = lower (red), `neutral` = unchanged or a plain informational count.
+ * A change against the previous period: `positive` = up (green), `negative` = down (red), `neutral` = unchanged or a
+ * plain informational count.
  */
-/** `positive` = up on the previous period, `negative` = down, `neutral` = unchanged or a plain count. */
 type StatDeltaToneType = "positive" | "negative" | "neutral";
+/**
+ * Presentational model of a KPI card. Only `labelKey` is localized by the stat row — value, sub and delta are
+ * pre-formatted strings owned by the dashboard that builds the card.
+ */
 type StatCardType = {
     /** The `statistics` block id this card renders as. */
     key: string;
@@ -6516,7 +6573,10 @@ declare function useStatDataNeeds<TNeed extends string>(layout: LayoutVisibility
  * A block with a key outside these formats, or with an id already taken in any case, is ignored with a warning.
  */
 declare function registerBlock(scope: string, block: BlockType): void;
-/** Removes a block from a dashboard. A saved document that names it keeps working: reconciliation drops it. */
+/**
+ * Removes a block from a dashboard, matching its id in any case, as `registerBlock` does. A saved document that
+ * names it keeps working: reconciliation drops it.
+ */
 declare function unregisterBlock(scope: string, id: string): void;
 
 /**
@@ -6588,8 +6648,8 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$7 as AcceptedGifts, _default$4 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$9 as IdentityProvider, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$6 as OrderCommentSection, _default$8 as OrderLineItems, _default$a as OrderStatus, _default$5 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$2 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$B as VcAlert, _default$M as VcBadge, _default$L as VcBreadcrumbs, _default$A as VcButton, _default$z as VcCalendar, _default$K as VcCheckbox, _default$J as VcCheckboxGroup, _default$y as VcChip, _default$j as VcDatePicker, _default$i as VcDateRangePicker, _default$x as VcDialog, _default$w as VcDialogContent, _default$v as VcDialogFooter, _default$u as VcDialogHeader, _default$t as VcEmptyView, _default$I as VcIcon, _default$H as VcImage, _default$s as VcInput, _default$G as VcInputDetails, _default$F as VcLabel, _default$b as VcLayout, _default$E as VcLink, _default$r as VcLoaderOverlay, _default$D as VcMarkdownRender, _default$q as VcMenuItem, _default$h as VcModal, _default$g as VcPagination, _default$p as VcPopover, _default$o as VcRating, _default$n as VcSelect, _default$m as VcTabSwitch, _default$f as VcTable, _default$e as VcTableColumn, _default$l as VcTextarea, _default$C as VcTooltip, _default$k as VcTypography, _default$d as VcWidget, _default$c as VcWidgetSkeleton, _default$3 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingPlan, useRouteQueryParam, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
-export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$7 as AcceptedGifts, _default$4 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$9 as IdentityProvider, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$6 as OrderCommentSection, _default$8 as OrderLineItems, _default$a as OrderStatus, _default$5 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$2 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$B as VcAlert, _default$M as VcBadge, _default$L as VcBreadcrumbs, _default$A as VcButton, _default$z as VcCalendar, _default$K as VcCheckbox, _default$J as VcCheckboxGroup, _default$y as VcChip, _default$j as VcDatePicker, _default$i as VcDateRangePicker, _default$x as VcDialog, _default$w as VcDialogContent, _default$v as VcDialogFooter, _default$u as VcDialogHeader, _default$t as VcEmptyView, _default$I as VcIcon, _default$H as VcImage, _default$s as VcInput, _default$G as VcInputDetails, _default$F as VcLabel, _default$b as VcLayout, _default$E as VcLink, _default$r as VcLoaderOverlay, _default$D as VcMarkdownRender, _default$q as VcMenuItem, _default$h as VcModal, _default$g as VcPagination, _default$p as VcPopover, _default$o as VcRating, _default$n as VcSelect, _default$m as VcTabSwitch, _default$f as VcTable, _default$e as VcTableColumn, _default$l as VcTextarea, _default$C as VcTooltip, _default$k as VcTypography, _default$d as VcWidget, _default$c as VcWidgetSkeleton, _default$3 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
+export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

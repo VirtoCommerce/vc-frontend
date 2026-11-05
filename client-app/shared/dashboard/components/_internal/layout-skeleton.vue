@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+import { useBlockTitle } from "../../composables/_internal/useBlockTitle";
 import { reconcileLayout } from "../../document";
 import { getBlock, getBlockRegistry } from "../../registry";
 
@@ -44,11 +44,7 @@ const defaults = computed(() => reconcileLayout(null, getBlockRegistry(props.sco
 const statIds = computed(() => defaults.value.statistics.visible);
 const fullIds = computed(() => defaults.value.fullWidth.visible);
 
-const { t } = useI18n();
-const titleOf = (id: string): string => {
-  const titleKey = getBlock(props.scope, id)?.titleKey;
-  return titleKey ? t(titleKey) : "";
-};
+const { titleOf } = useBlockTitle(() => props.scope);
 
 function rowsOf(id: string): number {
   const block = getBlock(props.scope, id);
@@ -98,7 +94,7 @@ const columns = computed(() =>
     }
   }
 
-  // Wraps like layout-region--horizontal; the card pulses on its own.
+  // Wraps like layout-region--horizontal; VcStatWidget draws its own loading state.
   &__card {
     @apply min-w-0 grow basis-44;
   }

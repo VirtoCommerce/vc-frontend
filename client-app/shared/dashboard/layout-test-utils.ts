@@ -140,3 +140,12 @@ export function createFakeLayout(scope: string, options: FakeLayoutOptionsType =
 
   return { ...layout, failNextSave, holdNextSave };
 }
+
+/** A layout surface's root as its template renders it, holding `markup`; `tabIndex` so jsdom lets the div take focus. */
+export function createSurfaceRoot(markup = ""): HTMLElement {
+  const root = document.createElement("div");
+  root.dataset.layoutSurface = "";
+  root.tabIndex = -1;
+  root.replaceChildren(...new DOMParser().parseFromString(markup, "text/html").body.childNodes);
+  return root;
+}
