@@ -20,7 +20,7 @@ const sources = shallowRef(new Map<string, ProductConfigurationSourceType>());
  * Lets a plugin preselect the product page's configuration from a URL parameter it owns: a page opened with
  * `?<param>=<value>` calls `resolve(value, productId)` and preselects what comes back. A second call for the same
  * parameter replaces the first. A page that opened before the call still applies it, and the page asks again for
- * every product it loads.
+ * every product it loads. File sections are not preselected: `fileUrls` is ignored.
  */
 export function registerProductConfigurationSource(param: string, resolve: ProductConfigurationSourceType): void {
   sources.value = new Map(sources.value).set(param, resolve);

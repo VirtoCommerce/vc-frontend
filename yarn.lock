@@ -5035,6 +5035,7 @@ __metadata:
     "@internationalized/date": ^3.12.2
     "@intlify/core-base": ^11.4.6
     "@tailwindcss/container-queries": ^0.1.1
+    "@vue/apollo-composable": ^4.2.0
     "@vue/shared": ^3.5.40
     "@vue/test-utils": ^2.4.11
     "@vueuse/core": ^14.3.0
@@ -5045,6 +5046,7 @@ __metadata:
     vue: ^3.5.0
     vue-i18n: ^11.4.0
     vue-router: ^4.6.0
+    yup: ^1.7.1
   peerDependenciesMeta:
     "@tailwindcss/container-queries":
       optional: true
