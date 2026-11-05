@@ -91,6 +91,17 @@
 
         {{ footnote }}
       </p>
+
+      <!-- The owner's own note about the figures, under the panel's and drawn as it is. -->
+      <p
+        v-if="$slots['footnote-append']"
+        class="reporting-panel__footnote"
+        :data-test-id="`${testId}-footnote-append-label`"
+      >
+        <VcIcon name="info" size="xs" />
+
+        <slot name="footnote-append" />
+      </p>
     </template>
   </div>
 </template>

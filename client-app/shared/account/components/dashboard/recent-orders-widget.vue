@@ -218,7 +218,7 @@ watch([rowLimit, status], load, { immediate: true });
   }
 
   &__all-link {
-    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
+    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-normal text-[--link-color] hover:text-[--link-hover-color];
   }
 }
 </style>

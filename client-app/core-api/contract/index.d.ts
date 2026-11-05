@@ -4297,7 +4297,7 @@ interface IProps$g {
 }
 declare function close$1(): void;
 declare var __VLS_56: {};
-declare var __VLS_65: {
+declare var __VLS_65$1: {
     close: typeof close$1;
 };
 declare var __VLS_67: {
@@ -4309,7 +4309,7 @@ declare var __VLS_77: {
 type __VLS_Slots$7 = {} & {
     title?: (props: typeof __VLS_56) => any;
 } & {
-    container?: (props: typeof __VLS_65) => any;
+    container?: (props: typeof __VLS_65$1) => any;
 } & {
     default?: (props: typeof __VLS_67) => any;
 } & {
@@ -6177,8 +6177,11 @@ type __VLS_ModelProps = {
 };
 type __VLS_PublicProps = __VLS_Props & __VLS_ModelProps;
 declare var __VLS_8: {};
+declare var __VLS_65: {};
 type __VLS_Slots$1 = {} & {
     actions?: (props: typeof __VLS_8) => any;
+} & {
+    'footnote-append'?: (props: typeof __VLS_65) => any;
 };
 declare const __VLS_base$1: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
     "update:period": (value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any;

@@ -26,20 +26,12 @@
       </template>
     </VcEmptyView>
 
-    <template v-else>
-      <!-- The KPI tiles as on the Sales Rep Hub Reporting page; the table stays behind "All orders". -->
-      <ReportingPanel v-model:period="period" :data="data" :loading="loading" :error="failed" :with-table="false" />
-
-      <p
-        v-if="excludedCount && !failed"
-        class="sales-report-widget__excluded"
-        data-test-id="sales-report-excluded-label"
-      >
-        <VcIcon name="info" size="xs" />
-
+    <!-- The KPI tiles as on the Sales Rep Hub Reporting page; the table stays behind "All orders". -->
+    <ReportingPanel v-else v-model:period="period" :data="data" :loading="loading" :error="failed" :with-table="false">
+      <template v-if="excludedCount" #footnote-append>
         {{ $t("shared.account.dashboard.excluded_orders", { count: formatStatCount(excludedCount) }, excludedCount) }}
-      </p>
-    </template>
+      </template>
+    </ReportingPanel>
   </LayoutWidget>
 </template>
 
@@ -86,10 +78,6 @@ const { data, excludedCount, hasOrders, loading, failed } = useAccountSalesRepor
 .sales-report-widget {
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-normal text-[--link-color] hover:text-[--link-hover-color];
-  }
-
-  &__excluded {
-    @apply mt-3 flex items-center gap-1.5 text-xs text-neutral-600;
   }
 }
 </style>
