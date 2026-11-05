@@ -117,7 +117,7 @@ function stringLiteralText(node: ts.Node, sourceFile: ts.SourceFile): string | u
 /** A whole string or template literal as written, each `${…}` replaced by a placeholder on as many lines. */
 function literalMarkup(node: ts.Node, sourceFile: ts.SourceFile): string | undefined {
   if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-    return node.getText(sourceFile).slice(1, -1);
+    return stringLiteralText(node, sourceFile);
   }
 
   if (ts.isTemplateExpression(node)) {
