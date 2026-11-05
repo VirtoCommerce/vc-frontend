@@ -244,6 +244,8 @@ describe("check-designs", () => {
       ["rgb(from transparent r g b / 1)", "transparent is a named colour"],
       ["hsl(from transparent h s l / 1)", "transparent is a named colour"],
       ["rgb(from var(--vc-x, transparent) r g b / 1)", "transparent is a named colour"],
+      ["rgb(from var(--vc-x, var(--vc-y, #fff0)) r g b / 1)", "#fff0 is a literal colour"],
+      ["rgb(from var(--vc-x, var(--vc-y, transparent)) r g b / 1)", "transparent is a named colour"],
     ])("rejects %s", (value, reason) => {
       expect(checkColorValue(value, semantics)).toBe(reason);
     });
