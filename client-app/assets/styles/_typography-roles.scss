@@ -1,0 +1,24 @@
+// Typography roles shared by the app and Storybook preflights. A mixin, because a top-level rule
+// in a `@use`d file lands outside every layer, above the layer order. Include it in `@layer base`
+// after `@tailwind base`, so the heading rule overrides its `font-weight: inherit`.
+
+@mixin typography-roles {
+  html,
+  :host {
+    @apply font-base;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+
+    font-weight: var(--vc-heading-font-weight, inherit);
+    font-style: var(--vc-heading-font-style, inherit);
+    text-transform: var(--vc-heading-text-transform, inherit);
+    letter-spacing: var(--vc-heading-letter-spacing, inherit);
+  }
+}

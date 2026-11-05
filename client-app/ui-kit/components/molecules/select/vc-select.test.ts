@@ -71,9 +71,9 @@ const SlottedHost = defineComponent({
   `,
 });
 
-// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only
-// on the host.
-const KIT_COMPONENTS = {
+// VcDropdownMenu renders VcPopover itself, so the kit has to be resolvable globally, not only on the
+// host.
+const kitComponents = {
   VcButton,
   VcCheckbox,
   VcDropdownMenu,
@@ -89,16 +89,12 @@ const KIT_COMPONENTS = {
 
 const createWrapper = createWrapperFactory(mount, Host, {
   attachTo: document.body,
-  global: {
-    components: KIT_COMPONENTS,
-  },
+  global: { components: kitComponents },
 });
 
 const createSlottedWrapper = createWrapperFactory(mount, SlottedHost, {
   attachTo: document.body,
-  global: {
-    components: KIT_COMPONENTS,
-  },
+  global: { components: kitComponents },
 });
 
 async function openDialogAndSelect(wrapper: VueWrapper) {
@@ -419,16 +415,14 @@ const requiredSelectProps = { items: ["Pickup", "Courier"], label: "Shipping met
 const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
   attachTo: document.body,
   props: requiredSelectProps,
-  global: {
-    components: KIT_COMPONENTS,
-  },
+  global: { components: kitComponents },
 });
 
 describe("VcSelect required", () => {
   it("binds the label to the input trigger, which carries aria-required", () => {
     const wrapper = createSelectWrapper();
     const label = wrapper.get(".vc-label");
-    const input = wrapper.get("input");
+    const input = wrapper.get('input[role="combobox"]');
 
     expect(label.attributes("for")).toBe(input.attributes("id"));
     expect(input.attributes("aria-required")).toBe("true");
@@ -442,7 +436,7 @@ describe("VcSelect required", () => {
     const wrapper = createSelectWrapper({ props: { ...requiredSelectProps, modelValue }, slots });
     const label = wrapper.get(".vc-label");
 
-    expect(wrapper.find(".vc-select__button").exists()).toBe(true);
+    expect(wrapper.find('.vc-select__button[role="button"]').exists()).toBe(true);
     // role="button" does not allow aria-required.
     expect(wrapper.get(".vc-select__button").attributes("aria-required")).toBeUndefined();
     expect(label.element.tagName).toBe("DIV");
