@@ -84,10 +84,10 @@ component chunk can load before the entry CSS, as in the federation build), and 
 every `.scss`/`.css` entry. **Never hand-wrap an SFC style in `@layer`.** Each SFC module carries one
 copy of the order statements; an identical re-declaration changes nothing.
 
-Inside `vc.kit` load order differs between the storefront and Storybook, so VcButton's own root rules
-sit in `:where()` (zero specificity): a kit parent lays a VcButton out with its plain BEM class
-(`.vc-add-to-cart__text-button`), never `&__x.vc-button`. Other kit roots have no blanket `:where()`;
-some parents' rules on them lose today, so a root moves only when nothing on screen changes.
+Inside `vc.kit` load order differs between the storefront and Storybook, so VcButton's layout rules
+sit in `:where()` (zero specificity): a kit parent lays it out with its plain BEM class
+(`.vc-add-to-cart__text-button`) in any load order, never `&__x.vc-button`. Its size typography and
+custom properties keep one class; its look changes through props and `--vc-button-*` tokens only.
 
 ### Entry stylesheets
 
