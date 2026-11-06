@@ -152,31 +152,18 @@ describe("VcButton", () => {
           media: "",
           selector: ":where(.vc-button)",
           styles: [
-            "@apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color]",
+            "@apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color] motion-safe:transition-colors",
             "appearance: button",
           ],
         },
         {
           media: "",
-          selector: ":where(.vc-button--icon)",
-          styles: ["@apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))]"],
+          selector: ":where(.vc-button--icon, .vc-button--square)",
+          styles: ["@apply flex-none h-[--size] min-w-[var(--min-w,var(--size))]"],
         },
-        {
-          media: "",
-          selector: ":where(.vc-button--square)",
-          styles: ["@apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))]"],
-        },
+        { media: "", selector: ":where(.vc-button--icon)", styles: ["@apply p-0"] },
+        { media: "", selector: ":where(.vc-button--square)", styles: ["@apply px-0.5"] },
         { media: "", selector: ":where(.vc-button--full-width)", styles: ["@apply w-full"] },
-        {
-          media: "",
-          selector: ":where(.vc-button:not(.vc-button--icon, .vc-button--square))",
-          styles: ["@apply min-w-[--min-w]"],
-        },
-        {
-          media: "@media (prefers-reduced-motion: no-preference)",
-          selector: ":where(.vc-button)",
-          styles: ["@apply transition-colors"],
-        },
       ],
     ],
     [
