@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}: {count}",
-        "cart_items_tooltip": "Nenhum item | {n} item | {n} itens | {n} itens"
+        "cart_items_tooltip": "Nenhum item | {n} item | {n} itens"
       },
       "footer": {
         "version": "Ver.",

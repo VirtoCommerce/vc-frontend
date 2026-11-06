@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}：{count}",
-        "cart_items_tooltip": "商品なし | {n} 点 | {n} 点 | {n} 点"
+        "cart_items_tooltip": "商品なし | {n} 点 | {n} 点"
       },
       "footer": {
         "version": "Ver.",

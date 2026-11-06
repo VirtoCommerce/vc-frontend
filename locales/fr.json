@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title} : {count}",
-        "cart_items_tooltip": "Aucun article | {n} article | {n} articles | {n} articles"
+        "cart_items_tooltip": "Aucun article | {n} article | {n} articles"
       },
       "footer": {
         "version": "Ver.",

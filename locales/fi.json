@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}: {count}",
-        "cart_items_tooltip": "Ei tuotteita | {n} tuote | {n} tuotetta | {n} tuotetta"
+        "cart_items_tooltip": "Ei tuotteita | {n} tuote | {n} tuotetta"
       },
       "footer": {
         "version": "Versio",

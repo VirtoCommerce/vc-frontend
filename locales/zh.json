@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}：{count}",
-        "cart_items_tooltip": "无商品 | {n} 件商品 | {n} 件商品 | {n} 件商品"
+        "cart_items_tooltip": "无商品 | {n} 件商品 | {n} 件商品"
       },
       "footer": {
         "version": "版本。",

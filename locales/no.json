@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}: {count}",
-        "cart_items_tooltip": "Ingen varer | {n} vare | {n} varer | {n} varer"
+        "cart_items_tooltip": "Ingen varer | {n} vare | {n} varer"
       },
       "footer": {
         "version": "Versjon",

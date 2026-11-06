@@ -416,7 +416,7 @@
           }
         },
         "link_with_count": "{title}: {count}",
-        "cart_items_tooltip": "Inga artiklar | {n} artikel | {n} artiklar | {n} artiklar"
+        "cart_items_tooltip": "Inga artiklar | {n} artikel | {n} artiklar"
       },
       "footer": {
         "version": "Ver.",
