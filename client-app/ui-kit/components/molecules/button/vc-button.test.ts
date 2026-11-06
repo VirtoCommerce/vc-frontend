@@ -1,21 +1,22 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
-import postcss from "postcss";
+import postcss, { AtRule } from "postcss";
 import { compileString } from "sass";
 import { describe, expect, it } from "vitest";
 import { parse } from "vue/compiler-sfc";
 import VcButton from "./vc-button.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
-const ROOT_ALONE = /^\.vc-button(?:--(?:icon|square|full-width)|:not\([^)]*\))?$/;
 const CUSTOM_PROPERTY = /^--/;
+const WHERE = /:where\(/;
+const WHERE_WRAPPED = /^:where\((.+)\)$/;
 
 function readSource(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), "utf8");
 }
 
-type CompiledRuleType = { selectors: string[]; styles: string[] };
+type CompiledRuleType = { media: string; selector: string; styles: string[] };
 
 function compiledRules(scss: string): CompiledRuleType[] {
   const rules: CompiledRuleType[] = [];
@@ -25,22 +26,18 @@ function compiledRules(scss: string): CompiledRuleType[] {
 
     rule.each((node) => {
       if (node.type === "decl") {
-        styles.push(node.prop);
+        styles.push(`${node.prop}: ${node.value}`);
       } else if (node.type === "atrule") {
-        styles.push(`@${node.name}`);
+        styles.push(`@${node.name} ${node.params}`);
       }
     });
 
-    rules.push({ selectors: rule.selectors, styles });
+    const media = rule.parent instanceof AtRule ? `@${rule.parent.name} ${rule.parent.params}` : "";
+
+    rules.push({ media, selector: rule.selectors.join(", "), styles });
   });
 
   return rules;
-}
-
-function isStyledAtOneClass({ selectors, styles }: CompiledRuleType): boolean {
-  return (
-    selectors.some((selector) => ROOT_ALONE.test(selector)) && styles.some((style) => !CUSTOM_PROPERTY.test(style))
-  );
 }
 
 function mountButton(options: ComponentMountingOptions<typeof VcButton> = {}) {
@@ -86,16 +83,61 @@ describe("VcButton", () => {
     expect(wrapper.attributes("aria-busy")).toBeUndefined();
   });
 
-  it.each([
-    ["component", parse(readSource("./vc-button.vue")).descriptor.styles[0].content, ["@apply", "appearance"]],
-    ["print", readSource("../../../../assets/styles/print/atoms/vc-button.scss"), ["@apply"]],
-  ])(
-    "%s styles: the root block is :where(.vc-button) and the bare root, --icon, --square, --full-width and min-width rules set only custom properties, so a parent's class wins in any load order",
-    (_, scss, rootBlock) => {
-      const rules = compiledRules(scss);
+  describe.each([
+    [
+      "vc-button.vue",
+      parse(readSource("./vc-button.vue")).descriptor.styles[0].content,
+      [
+        {
+          media: "",
+          selector: ":where(.vc-button)",
+          styles: [
+            "@apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color]",
+            "appearance: button",
+          ],
+        },
+        {
+          media: "",
+          selector: ":where(.vc-button--icon)",
+          styles: ["@apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))]"],
+        },
+        {
+          media: "",
+          selector: ":where(.vc-button--square)",
+          styles: ["@apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))]"],
+        },
+        { media: "", selector: ":where(.vc-button--full-width)", styles: ["@apply w-full"] },
+        {
+          media: "",
+          selector: ":where(.vc-button:not(.vc-button--icon, .vc-button--square))",
+          styles: ["@apply min-w-[--min-w]"],
+        },
+        {
+          media: "@media (prefers-reduced-motion: no-preference)",
+          selector: ":where(.vc-button)",
+          styles: ["@apply transition-colors"],
+        },
+      ],
+    ],
+    [
+      "print/atoms/vc-button.scss",
+      readSource("../../../../assets/styles/print/atoms/vc-button.scss"),
+      [{ media: "", selector: ":where(.vc-button)", styles: ["@apply hidden"] }],
+    ],
+  ])("%s styles", (_, scss, whereRules: CompiledRuleType[]) => {
+    const rules = compiledRules(scss);
 
-      expect(rules.filter(isStyledAtOneClass)).toEqual([]);
-      expect(rules).toContainEqual({ selectors: [":where(.vc-button)"], styles: rootBlock });
-    },
-  );
+    it("compile to exactly the listed :where() rules, each with its media and declarations", () => {
+      expect(rules.filter(({ selector }) => WHERE.test(selector))).toEqual(whereRules);
+    });
+
+    it("declare nothing but custom properties on the same selectors outside :where()", () => {
+      const bareSelectors = new Set(whereRules.map(({ selector }) => WHERE_WRAPPED.exec(selector)?.[1]));
+      const styledBare = rules.filter(
+        ({ selector, styles }) => bareSelectors.has(selector) && styles.some((style) => !CUSTOM_PROPERTY.test(style)),
+      );
+
+      expect(styledBare).toEqual([]);
+    });
+  });
 });
