@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { buildReportingPlan } from "@/shared/reporting";
 import { excludedOrdersCount, useAccountSalesReport } from "./useAccountSalesReport";
+import type { SalesReportScopeType } from "./useAccountSalesReport";
 import type { GetMonthlyOrderStatisticsQuery } from "@/core/api/graphql/types";
 import type { ReportingPeriodType } from "@/shared/reporting";
 import type { MaybeRefOrGetter, Ref } from "vue";
@@ -67,9 +68,12 @@ describe("excludedOrdersCount", () => {
 });
 
 describe("useAccountSalesReport", () => {
-  function run(period: MaybeRefOrGetter<ReportingPeriodType> = "year") {
+  function run(
+    period: MaybeRefOrGetter<ReportingPeriodType> = "year",
+    reportScope?: MaybeRefOrGetter<SalesReportScopeType | undefined>,
+  ) {
     const scope = effectScope();
-    const report = scope.run(() => useAccountSalesReport(period));
+    const report = scope.run(() => useAccountSalesReport(period, reportScope));
     if (!report) {
       throw new Error("the scope did not run");
     }
@@ -131,12 +135,36 @@ describe("useAccountSalesReport", () => {
       currencyCode: "USD",
       cultureName: "en-US",
     });
+    // The dashboard counts the user's own orders: no scope is sent.
+    expect(queries.monthlyVariables?.value.organizationScope).toBeUndefined();
+    expect(queries.monthlyVariables?.value.memberId).toBeUndefined();
 
     period.value = "q2";
     await nextTick();
 
     const plan = buildReportingPlan("q2", new Date());
     expect(queries.monthlyVariables?.value).toMatchObject({ from0: plan.months[0].from, use3: false });
+  });
+
+  it("asks for the organization's orders, or one member's", async () => {
+    const reportScope = ref<SalesReportScopeType>({ organization: true });
+    run("year", reportScope);
+
+    expect(queries.monthlyVariables?.value).toMatchObject({ organizationScope: true, memberId: undefined });
+
+    reportScope.value = { organization: true, memberId: "contact-1" };
+    await nextTick();
+
+    expect(queries.monthlyVariables?.value).toMatchObject({ organizationScope: true, memberId: "contact-1" });
+  });
+
+  // A member who never ordered gets zeros: the empty state would also take away the picker that leads back.
+  it("asks for the organization's history, never one member's", () => {
+    run("year", { organization: true, memberId: "contact-1" });
+
+    expect(queries.historyVariables).toEqual([
+      { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", organizationScope: true, memberId: undefined },
+    ]);
   });
 
   // The month slots are positional, so last period's figures must never be read against the months just picked.

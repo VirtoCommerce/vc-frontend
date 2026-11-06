@@ -1,0 +1,22 @@
+# The organization's members for a picker: an id and what names them. Its own narrow operation, not the Members page's
+# (roles, statuses), which costs far more than a dropdown needs. The name parts and the e-mails are there because a
+# contact's full name can be blank: an invited member, or one saved without a name. The account ids match a member
+# to the orders they placed.
+query GetOrganizationMemberOptions($id: String!, $userId: String!, $first: Int, $sort: String) {
+  organization(id: $id, userId: $userId) {
+    contacts(first: $first, sort: $sort) {
+      items {
+        id
+        name
+        fullName
+        firstName
+        lastName
+        emails
+        securityAccounts {
+          id
+        }
+      }
+      totalCount
+    }
+  }
+}

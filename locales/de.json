@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Einstellungen",
           "currency": "Währung",
@@ -1700,6 +1701,17 @@
           "invite_revoked": "Einladung widerrufen",
           "invite_resent": "Einladung erneut gesendet"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Berichte",
+        "subtitle": "Umsatz, Bestellungen und durchschnittlicher Bestellwert Ihrer Organisation im Vergleich zum Vorjahr",
+        "member_label": "Mitglied",
+        "all_members": "Alle Mitglieder ({count})",
+        "all_members_plain": "Alle Mitglieder",
+        "members_failed": "Die Mitglieder konnten nicht geladen werden"
       }
     },
     "cart": {

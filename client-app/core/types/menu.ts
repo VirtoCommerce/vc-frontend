@@ -50,6 +50,9 @@ export type ExtendedMenuLinkType = {
   priority?: number;
   isCatalogItem?: boolean;
   dataTestId?: string;
+  // A permission the signed-in user needs to see the link (e.g. "xapi:my_organization:order:view"). It only hides the
+  // link: the route keeps its own guard.
+  permission?: string;
   // Overrides the active state on the account rail and in the mobile menu for a link that owns pages beyond its
   // route record (siblings, a rule on the query): vue-router matches by record. Without it the record match stands.
   activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;

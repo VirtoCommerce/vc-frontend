@@ -4,11 +4,14 @@
 # (GetOrderStatistics), so the two agree. One bucket per month of the selected period (up to 12) with the same month
 # last year, and the month before the period for the first month's "vs previous month". The statistics already leave
 # Cancelled orders out. `use<N>` switches off the slots a shorter period does not fill and the months that have not
-# started.
+# started. `organizationScope` (and `memberId`) count the current organization's orders, or one member's, instead
+# (Company → Reporting, VCST-6651); the backend checks the permission.
 query GetMonthlyOrderStatistics(
   $storeId: String
   $currencyCode: String
   $cultureName: String
+  $organizationScope: Boolean
+  $memberId: String
   $prevFrom: DateTime
   $prevTo: DateTime
   $use0: Boolean!
@@ -72,7 +75,13 @@ query GetMonthlyOrderStatistics(
   $lyFrom11: DateTime
   $lyTo11: DateTime
 ) {
-  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+  orderStatistics(
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    organizationScope: $organizationScope
+    memberId: $memberId
+  ) {
     currencyCode
     prev: period(from: $prevFrom, to: $prevTo) {
       ...orderStatisticsSlotFields

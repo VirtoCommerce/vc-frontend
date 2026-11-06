@@ -13,3 +13,4 @@ export * from "./queries/getCurrentOrganizationAddresses";
 export * from "./queries/getOrganizationAddresses";
 export * from "./queries/getOrganizationContactRoles";
 export * from "./queries/getOrganizationContacts";
+export * from "./queries/getOrganizationMemberOptions";

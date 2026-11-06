@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Inställningar",
           "currency": "Valuta",
@@ -1700,6 +1701,17 @@
           "invite_revoked": "Inbjudan återkallad",
           "invite_resent": "Inbjudan skickad igen"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Rapporter",
+        "subtitle": "Försäljning, beställningar och genomsnittligt ordervärde för din organisation jämfört med förra året",
+        "member_label": "Medlem",
+        "all_members": "Alla medlemmar ({count})",
+        "all_members_plain": "Alla medlemmar",
+        "members_failed": "Det gick inte att läsa in medlemmarna"
       }
     },
     "cart": {
