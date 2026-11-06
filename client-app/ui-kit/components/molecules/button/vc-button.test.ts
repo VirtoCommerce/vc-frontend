@@ -8,7 +8,6 @@ import { parse } from "vue/compiler-sfc";
 import VcButton from "./vc-button.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
-// The root alone: the root, its layout modifiers and its min-width rule
 const ROOT_ALONE = /^\.vc-button(?:--(?:icon|square|full-width)|:not\([^)]*\))?$/;
 const CUSTOM_PROPERTY = /^--/;
 
@@ -87,14 +86,16 @@ describe("VcButton", () => {
     expect(wrapper.attributes("aria-busy")).toBeUndefined();
   });
 
-  // A kit parent's single class must lay the root out in any load order, screen and print alike.
   it.each([
-    ["component", parse(readSource("./vc-button.vue")).descriptor.styles[0].content],
-    ["print", readSource("../../../../assets/styles/print/atoms/vc-button.scss")],
-  ])("keeps the root's own %s rules in :where()", (_, scss) => {
-    const rules = compiledRules(scss);
+    ["component", parse(readSource("./vc-button.vue")).descriptor.styles[0].content, ["@apply", "appearance"]],
+    ["print", readSource("../../../../assets/styles/print/atoms/vc-button.scss"), ["@apply"]],
+  ])(
+    "%s styles: the root block is :where(.vc-button) and the bare root, --icon, --square, --full-width and min-width rules set only custom properties, so a parent's class wins in any load order",
+    (_, scss, rootBlock) => {
+      const rules = compiledRules(scss);
 
-    expect(rules.filter(isStyledAtOneClass)).toEqual([]);
-    expect(rules).toContainEqual({ selectors: [":where(.vc-button)"], styles: expect.arrayContaining(["@apply"]) });
-  });
+      expect(rules.filter(isStyledAtOneClass)).toEqual([]);
+      expect(rules).toContainEqual({ selectors: [":where(.vc-button)"], styles: rootBlock });
+    },
+  );
 });
