@@ -3,6 +3,7 @@
 // (styles.md §1.4, §18; ui-kit.md §9). Exit code 2 blocks the edit and shows stderr to the agent.
 import { readFileSync, realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { isImportantUtility, matchImportant } from "../../scripts/important-patterns.mjs";
 
 const STYLE_FILE = /\.(vue|scss|css)$/;
 const KIT_OR_GLOBAL_STYLES = /(^|\/)client-app\/(ui-kit|assets\/styles)\//;
@@ -14,8 +15,8 @@ const APPLY = /@apply\s([^;]+)/g;
 // `class="…"` (static value) or `:class="…"` / `v-bind:class="…"` (JS expression).
 const CLASS_ATTR = /(?<=\s)(:|v-bind:)?class="([^"]*)"/g;
 const JS_STRING = /'([^']*)'|`([^`]*)`/g;
-// Tailwind important utility: `!mt-4`, `!-mt-4`, `lg:!hidden`.
-const IMPORTANT_UTILITY = /^(\S*:)?!-?[\w[]/;
+// `${…}` in a template literal: `!p-${size}` is checked as `!p-`.
+const INTERPOLATION = /\$\{[^}]*\}/g;
 
 export function check(toolInput, readCurrent) {
   const file = (toolInput.file_path ?? "").replaceAll("\\", "/");
@@ -57,15 +58,17 @@ function findViolations(file, text) {
   const styles = file.endsWith(".vue") ? [...text.matchAll(STYLE_BLOCK)].map((match) => match[1]).join("\n") : text;
   const classLists = [
     ...[...text.matchAll(CLASS_ATTR)].flatMap(([, bound, value]) =>
-      bound ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2]) : [value],
+      bound
+        ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2].replaceAll(INTERPOLATION, " "))
+        : [value],
     ),
     ...[...styles.matchAll(APPLY)].map((match) => match[1]),
   ];
 
   return {
     important: [
-      ...getLines(text).filter((line) => line.includes("!important")),
-      ...classLists.flatMap((list) => list.split(/\s+/)).filter((name) => IMPORTANT_UTILITY.test(name)),
+      ...getLines(text).filter((line) => matchImportant(line).length),
+      ...classLists.flatMap((list) => list.split(/\s+/)).filter(isImportantUtility),
     ],
     vcSelectors:
       KIT_OR_GLOBAL_STYLES.test(file) || DESIGN_BLOCK_STYLES.test(file)

@@ -26,10 +26,11 @@ us; renaming or removing a BEM class or token is a breaking change (alias the to
 list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
 (`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
 
-`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders and layer
-names (`client-app/assets/styles/README.md`, "Checks"). Beyond them, only the Sass/Tailwind compile in `yarn build`
-catches anything, so everything below is review-only. Severity guide: breaks the build or renders visibly wrong
-(in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
+`yarn lint` does not parse SCSS; `yarn check:designs`, `yarn check:css-layers` and `yarn check:css-important` check
+design folders, layer names and `!important` (§18) (`client-app/assets/styles/README.md`, "Checks"). Beyond them,
+only the Sass/Tailwind compile in `yarn build` catches anything, so everything else below is review-only. Severity
+guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, print) → `major`; convention violation →
+`minor`; polish → `nit`.
 
 ## 1. Where styles live
 
@@ -126,6 +127,7 @@ catches anything, so everything below is review-only. Severity guide: breaks the
     in a template class, inline style) and everywhere, UI kit, `dark/` and `print/` included. Fix the conflict at its
     cause: a UI-kit component → its props or `--vc-<component>-…` tokens (see `ui-kit.md`); your own rules →
     selector order or structure. If that isn't possible, raise it — don't ship the `!important`.
+    `yarn check:css-important` enforces this in pre-commit (staged files) and CI.
 
 ## 4. Responsive
 
