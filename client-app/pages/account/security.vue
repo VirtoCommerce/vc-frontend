@@ -18,7 +18,7 @@
               prepend-icon="plus"
               size="sm"
               :loading="toValue(extensionProps.creating)"
-              data-test-id="create-sign-in-key-button"
+              :data-test-id="`${signInMethod.name}-create-key-button`"
               @click="createKey(signInMethod, extensionProps)"
             >
               {{ toValue(extensionProps.createKeyText) }}
@@ -75,7 +75,7 @@
             :ref="keysAreaRef(signInMethod.name)"
             class="security__empty"
             tabindex="-1"
-            data-test-id="sign-in-keys-empty-label"
+            :data-test-id="`${signInMethod.name}-no-keys-label`"
           >
             {{ toValue(extensionProps?.noKeysText) || $t("pages.account.security.no_keys") }}
           </p>
@@ -148,23 +148,24 @@ function keysAreaRef(name: string): (el: Element | ComponentPublicInstance | nul
   };
 }
 
-// The control that started the action is disabled or removed by it, so focus would fall to the page body.
+// A loading VcButton is disabled, so the browser moves focus off it; the dialog can't return focus to a deleted
+// key's Delete button. Waiting for the next render also lets the dialog's own focus return run first.
 async function focusSignInMethod(name: string): Promise<void> {
   await nextTick();
+  (createKeyButtons.get(name) ?? keysAreas.get(name))?.focus();
+}
 
-  const createKeyButton = createKeyButtons.get(name);
-
-  if (createKeyButton) {
-    createKeyButton.focus();
-  } else {
-    keysAreas.get(name)?.focus();
-  }
+function isFocusLost(): boolean {
+  return !document.activeElement || document.activeElement === document.body;
 }
 
 async function createKey(signInMethod: SignInMethodType, contribution: SignInMethodContributionType): Promise<void> {
   await contribution.createKey?.();
   await refetch();
-  await focusSignInMethod(signInMethod.name);
+
+  if (isFocusLost()) {
+    await focusSignInMethod(signInMethod.name);
+  }
 }
 
 function getKeyName(key: SignInKeyType): string {
@@ -218,8 +219,6 @@ function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
         closeDeleteModal();
 
         if (deleted) {
-          // The mutation does not wait for its list refetch, so wait here before focusing the updated list.
-          await refetch();
           await focusSignInMethod(signInMethod.name);
         }
       },
