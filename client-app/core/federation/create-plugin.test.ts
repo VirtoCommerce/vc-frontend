@@ -219,13 +219,18 @@ describe("create-plugin scaffolder", () => {
     expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
   });
 
-  it("scaffolds the tailwind variant with the config/styles files", () => {
+  it("scaffolds the tailwind variant with its config and scoped @apply, without a global utility sheet", () => {
     const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 
-    for (const file of ["tailwind.config.cjs", "postcss.config.cjs", "src/styles.css"]) {
+    for (const file of ["tailwind.config.cjs", "postcss.config.cjs"]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
-    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
+    // A global `@tailwind utilities` sheet would override the storefront's responsive utilities.
+    expect(existsSync(join(dir, "src", "styles.css"))).toBe(false);
+    expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).not.toContain("styles.css");
+    const page = readFileSync(join(dir, "src", "pages", "my-page.vue"), "utf8");
+    expect(page).toContain("<style scoped>");
+    expect(page).toContain("@apply p-6 text-primary-700;");
   });
 
   it("rejects unknown flags instead of silently ignoring them", () => {
