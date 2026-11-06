@@ -11,7 +11,7 @@
           <VcIcon :key="totalCount" class="text-primary" name="notification-v2" :size="24" />
         </transition>
 
-        <HeaderBadge :count="unreadCount" variant="outline" size="xs" overlay />
+        <HeaderBadge :count="unreadCount" dot />
       </button>
     </template>
   </PushMessages>

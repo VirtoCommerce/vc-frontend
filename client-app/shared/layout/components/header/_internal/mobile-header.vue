@@ -66,7 +66,7 @@
               <span class="relative block">
                 <VcIcon class="text-primary" name="cart" :size="24" />
 
-                <HeaderBadge :count="cart?.itemsQuantity" variant="outline" size="xs" overlay />
+                <HeaderBadge :count="cart?.itemsQuantity" size="sm" overlay />
               </span>
             </router-link>
           </div>

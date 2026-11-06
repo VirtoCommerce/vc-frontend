@@ -415,7 +415,8 @@
             "main_navigation": "Navigazione principale"
           }
         },
-        "link_with_count": "{title}: {count}"
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Nessun articolo | {n} articolo | {n} articoli | {n} articoli"
       },
       "footer": {
         "version": "Ver.",

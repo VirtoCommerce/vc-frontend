@@ -24,7 +24,7 @@ export function highlightSearchText(text: string, rawSearchText: string): string
   );
 }
 
-const HEADER_BADGE_MAX = 99;
+export const HEADER_BADGE_MAX = 99;
 
 // Header counters show the exact value up to 99, then "99+": compact notation varies in width per locale
 export function formatHeaderBadgeCount(count: number): string {
