@@ -116,14 +116,14 @@ type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object
 
 const UNSAFE_LINK_PROTOCOLS = new Set(["javascript:", "vbscript:", "data:"]);
 
-/** A denylist, so app links such as `sms:` keep working. */
+/** `false` for a script or document scheme and for a URL that does not parse; app schemes such as `sms:` pass. */
 export function isSafeLinkUrl(url: string): boolean {
   const parsed = parseUrl(url, location.origin);
   return parsed !== null && !UNSAFE_LINK_PROTOCOLS.has(parsed.protocol);
 }
 
 export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
-  if (typeof link === "string" && isSafeLinkUrl(link)) {
+  if (typeof link === "string") {
     if (link.startsWith("/")) {
       return { to: link };
     } else {

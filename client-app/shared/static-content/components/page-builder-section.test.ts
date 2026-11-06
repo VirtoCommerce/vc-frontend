@@ -79,4 +79,26 @@ describe("PageBuilderSection", () => {
     expect(loader).toHaveBeenCalledTimes(2);
     expect(wrapper.find('[data-test-id="page-builder-test-section"]').text()).toBe("Hello");
   });
+
+  it("gives every section of a lazy type its props on its first setup", async () => {
+    const setupTitles: Array<string | undefined> = [];
+    const RecordingSection = defineComponent({
+      props: { title: { type: String, default: undefined } },
+
+      setup(props) {
+        // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- records what the first setup run receives
+        setupTitles.push(props.title);
+        return () => h("section", props.title);
+      },
+    });
+    const LazySection = defineAsyncComponent(() => Promise.resolve(RecordingSection));
+
+    mount(() => [
+      h(PageBuilderSection, { component: LazySection, item: { title: "First" } }),
+      h(PageBuilderSection, { component: LazySection, item: { title: "Second" } }),
+    ]);
+    await flushPromises();
+
+    expect(setupTitles).toEqual(["First", "Second"]);
+  });
 });
