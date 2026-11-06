@@ -6,6 +6,12 @@ html[data-design="soft"] {
   // VcShape
   --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
 
+  // VcTable
+  --vc-table-title-font-size: 0.8125rem;
+  --vc-table-title-color: var(--color-neutral-700);
+  --vc-table-body-color: var(--color-neutral-800);
+  --vc-table-cell-strong-color: var(--color-neutral-950);
+
   // VcWidget
   --vc-widget-radius: 1.375rem;
   --vc-widget-border-width: 0px;
