@@ -38,6 +38,12 @@ interface ISchemaField {
   element?: ISchemaField[];
 }
 
+/** A section's or block's schema: its own settings, and the shared setting groups it includes by name. */
+interface ISchemaWithSettings {
+  settings?: ISchemaField[];
+  includeShared?: string[];
+}
+
 /** The schemas the storefront has always announced, with what protocol 2 adds: a hash, the palette tokens, the rules. */
 export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
   const catalog = {
@@ -197,11 +203,13 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
     await nextTick();
 
-    const selected = getSelectedId(message.selection);
-    overlay.select(selected);
+    const { sectionId, blockId, scroll } = message.selection ?? {};
+    overlay.select(blockId ?? sectionId ?? null, blockId ? (sectionId ?? null) : null);
 
-    if (selected && message.selection?.scroll) {
-      findSectionElement(selected)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (scroll) {
+      const element =
+        (blockId ? findSectionElement(blockId) : undefined) ?? (sectionId ? findSectionElement(sectionId) : undefined);
+      element?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     overlay.scheduleRender();
@@ -225,13 +233,6 @@ export function createPreviewV2(options: IPreviewV2Options) {
     } catch (error) {
       Logger.warn(`${LOG_SCOPE} The theme snapshot in ${cultureName} did not load`, error);
     }
-  }
-
-  /** The selected block, or its section when the block has no element of its own on the page. */
-  function getSelectedId(selection: IRenderMessage["selection"]): string | null {
-    const blockId = selection?.blockId;
-
-    return (blockId && findSectionElement(blockId) ? blockId : selection?.sectionId) ?? null;
   }
 
   function reportResolved(): void {
@@ -333,17 +334,19 @@ export function createPreviewV2(options: IPreviewV2Options) {
 }
 
 /**
- * The schema field of a setting at the path in a section or block of the type: a list's or object's setting is in its
- * element, and list indexes are skipped.
+ * The schema field of a setting at the path in a section or block of the type: its own settings and the shared groups
+ * it includes (`title`, `buttons`); a list's or object's setting is in its element, and list indexes are skipped.
  */
 export function findSchemaField(
   schemas: PageBuilderSchemaType | undefined,
   itemType: string,
   path: (string | number)[],
 ): ISchemaField | undefined {
-  const schema = (schemas?.sections[itemType] ?? schemas?.blocks[itemType]) as
-    { settings?: ISchemaField[] } | undefined;
-  let fields = schema?.settings;
+  const schema = (schemas?.sections[itemType] ?? schemas?.blocks[itemType]) as ISchemaWithSettings | undefined;
+  const sharedFields = (schema?.includeShared ?? []).flatMap(
+    (name) => (schemas?.shared[name] as ISchemaWithSettings | undefined)?.settings ?? [],
+  );
+  let fields: ISchemaField[] | undefined = [...(schema?.settings ?? []), ...sharedFields];
   let field: ISchemaField | undefined;
 
   for (const key of path.filter((step): step is string => typeof step === "string")) {

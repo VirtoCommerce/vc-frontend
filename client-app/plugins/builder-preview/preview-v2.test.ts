@@ -22,7 +22,10 @@ vi.mock("@/core/composables/useWhiteLabeling", async () => {
 });
 
 const SCHEMAS = {
-  sections: { banner: { settings: [{ id: "title", type: "string", translatable: true }] } },
+  sections: {
+    banner: { settings: [{ id: "title", type: "string", translatable: true }] },
+    title: { includeShared: ["title"], settings: [{ id: "subtitle", type: "string" }] },
+  },
   blocks: {
     "footer-menu": {
       settings: [
@@ -32,7 +35,7 @@ const SCHEMAS = {
       ],
     },
   },
-  shared: {},
+  shared: { title: { settings: [{ id: "title", type: "string" }] } },
   objects: {},
   templates: {},
   settingsSchema: {},
@@ -169,11 +172,20 @@ describe("preview protocol 2", () => {
     expect(content.at(-2)).toMatchObject({ type: "banner", title: "New" });
   });
 
-  it("does not report the previous page's template for a page that has not chosen yet", async () => {
+  it("does not report the previous product's template for a product that has not chosen yet", async () => {
     const { preview, post } = createPreview();
-    useThemeTemplates().setLastResolution({ pageType: "page", template: "page", ruleId: null, document: DOCUMENT });
-
     await preview.handleRender(render({ templateKey: "product", url: "/printers/x1" }));
+    useThemeTemplates().setLastResolution({
+      pageType: "product",
+      template: "product.b2c",
+      ruleId: "b2c",
+      document: DOCUMENT,
+    });
+    await flushPromises();
+    post.mockClear();
+
+    await preview.handleRender(render({ templateKey: "product", url: "/printers/x2" }));
+    await flushPromises();
 
     expect(post).not.toHaveBeenCalledWith("resolved", expect.anything());
   });
@@ -229,6 +241,11 @@ describe("inline editing", () => {
   it("finds a translatable setting inside a list by its element's schema", () => {
     expect(findSchemaField(SCHEMAS, "footer-menu", ["links", 0, "label"])?.translatable).toBe(true);
     expect(findSchemaField(SCHEMAS, "footer-menu", ["columns"])?.translatable).toBeUndefined();
+  });
+
+  it("finds a setting a section takes from a shared group it includes", () => {
+    expect(findSchemaField(SCHEMAS, "title", ["title"])?.type).toBe("string");
+    expect(findSchemaField(SCHEMAS, "title", ["subtitle"])?.type).toBe("string");
   });
 
   it("edits the text as stored, ends when focus leaves it and keeps a click inside from acting", () => {

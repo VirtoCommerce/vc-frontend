@@ -27,6 +27,8 @@ export class SectionOverlay {
   private labels: Record<string, string> = {};
   private hovered: string | null = null;
   private selected: string | null = null;
+  /** The section outlined in place of a selected block that has no element of its own on the page. */
+  private selectedFallback: string | null = null;
   private isEnabled = false;
   private frame: number | undefined;
 
@@ -70,8 +72,10 @@ export class SectionOverlay {
     this.scheduleRender();
   }
 
-  select(sectionId: string | null): void {
+  /** Selects a section or block; `fallbackId`, its section, is outlined while the block has no element of its own. */
+  select(sectionId: string | null, fallbackId: string | null = null): void {
     this.selected = sectionId;
+    this.selectedFallback = fallbackId;
     this.scheduleRender();
   }
 
@@ -89,8 +93,9 @@ export class SectionOverlay {
     this.frame = requestAnimationFrame(() => {
       this.frame = requestAnimationFrame(() => {
         this.frame = undefined;
-        this.place(this.selectBox, this.selected);
-        this.place(this.hoverBox, this.hovered === this.selected ? null : this.hovered);
+        const selected = this.selected && findSectionElement(this.selected) ? this.selected : this.selectedFallback;
+        this.place(this.selectBox, selected);
+        this.place(this.hoverBox, this.hovered === selected ? null : this.hovered);
       });
     });
   };

@@ -5250,6 +5250,7 @@ declare function _useNavigations(): {
     matchingRouteName: Readonly<vue.Ref<string, string>>;
     fetchCatalogMenu: () => Promise<void>;
     catalogMenuItems: vue.ComputedRef<ExtendedMenuLinkType[]>;
+    isCatalogMenuShown: vue.ComputedRef<boolean>;
     fetchFooterLinks: () => Promise<void>;
     footerLinks: vue.ComputedRef<ExtendedMenuLinkType[]>;
     fetchPinnedLinks: () => Promise<void>;

@@ -58,10 +58,11 @@ const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_men
 /** False while the main layout keeps the header alive under a page on another layout, which has no header. */
 const isShown = ref(true);
 
-watch([headerHeight, isShown], ([value, shown]) => {
-  headerHeightVar.value = shown ? `${value + OFFSET_TOP}px` : undefined;
+watch(headerHeight, (value) => {
+  headerHeightVar.value = `${value + OFFSET_TOP}px`;
 });
 
+// The page's anchors scroll past the header by this height, so a page without the header gets none.
 watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
   if (!shown) {
     appHeaderHeightVar.value = undefined;
