@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -1143,49 +1142,6 @@
       "date_new_to_old": "Datum, nytt till gammalt",
       "date_old_to_new": "Datum, gammalt till nytt"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Lägg till i jämförelse",
-          "remove": "Ta bort från jämförelse"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Endast {productsLimit} produkter från samma kategori kan jämföras",
-        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> läggs till i jämförelselistan <span class=\"hidden lg:inline\">(återstående - {itemsLeft})</span>",
-        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> togs bort från jämförelselistan",
-        "compare_button": "Jämför",
-        "added_to_cart_html": "Lade till <strong>{productName}</strong> i kundvagnen",
-        "fetch_failed": "Kunde inte ladda vissa jämförda produkter. Försök igen."
-      },
-      "table": {
-        "tabs": {
-          "all": "Alla",
-          "differences": "Skillnader"
-        },
-        "uncategorized": "Osorterad",
-        "unresolved_category": "Okänd kategori",
-        "differ_rows": "Skiljer sig: {count} av {total} rader",
-        "clear_category": "Rensa kategori",
-        "remove_product": "Ta bort från jämförelse",
-        "add_to_cart": "Lägg till i kundvagnen",
-        "fields": {
-          "price_per_unit": "Pris per enhet",
-          "price_per_unit_tooltip": "Pris, exkl. moms, per enhet.",
-          "customer_rating": "Kundbetyg",
-          "availability": "Tillgänglighet",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. beställningsantal",
-          "min_order_qty_tooltip": "MOQ — minsta antal enheter per beställning."
-        },
-        "pin": {
-          "pin_title": "Fäst överst",
-          "unpin_title": "Släpp fästning",
-          "pin_label": "Fäst “{label}”",
-          "unpin_label": "Släpp fästning för “{label}”"
-        }
-      }
-    },
     "reporting": {
       "aov_chart": {
         "subtitle_period": "Snittordervärde för perioden: {aov}",
@@ -1877,34 +1833,6 @@
     },
     "brand": {
       "products_title": "Produkter"
-    },
-    "compare": {
-      "title": "Jämför produkter",
-      "meta": {
-        "keywords": "jämför produkter, produktjämförelse, sida vid sida-jämförelse",
-        "description": "Jämför produkter sida vid sida för att hitta det bästa alternativet för dina behov."
-      },
-      "added_count": "{count} av {total} tillagda",
-      "added_count_in_category": "{count} av {total} tillagda i {category}",
-      "actions": {
-        "clear_all": "Rensa alla"
-      },
-      "clear_all_modal": {
-        "title": "Rensa alla",
-        "message": "Inga produkter kommer att tas bort från jämförelsen. | 1 produkt kommer att tas bort från jämförelsen. | Alla {n} produkter kommer att tas bort från jämförelsen. | Alla {n} produkter kommer att tas bort från jämförelsen."
-      },
-      "clear_category_modal": {
-        "title": "Rensa kategori",
-        "message": "Inga produkter i {category} kommer att tas bort från jämförelsen. | 1 produkt i {category} kommer att tas bort från jämförelsen. | Alla {n} produkter i {category} kommer att tas bort från jämförelsen. | Alla {n} produkter i {category} kommer att tas bort från jämförelsen."
-      },
-      "empty": {
-        "title": "Din jämförelselista är tom",
-        "description": "Lägg till produkter från katalogen för att jämföra deras egenskaper sida vid sida. Du kan jämföra upp till {limit} produkter per kategori.",
-        "restore_button": "Återställ produkter",
-        "add_button": "Lägg till produkter"
-      },
-      "error": "Det gick inte att läsa in data",
-      "retry": "Försök igen"
     }
   },
   "identity_error": {

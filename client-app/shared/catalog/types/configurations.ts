@@ -4,8 +4,3 @@ export type LocalConfigurationItemType = Pick<
   CartConfigurationItemType,
   "id" | "sectionId" | "type" | "productId" | "quantity" | "customText"
 >;
-
-export type LocalConfigurationType = {
-  localId: string;
-  configuration: LocalConfigurationItemType[];
-};

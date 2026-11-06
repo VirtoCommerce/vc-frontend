@@ -36,9 +36,12 @@ on 2026-10-14._
 A plugin can:
 
 1. add **pages** (routes),
-2. add **menu items** (header, account menu),
-3. fill **places in host pages** (the extension registry: product card, payment step, order page…),
-4. use **host services**: the router, the Apollo client, the user, module settings, notifications, modals.
+2. add **menu items** (header, account menu), and put a count on a header or mobile menu link,
+3. fill **places in host pages** (the extension registry: product card and its action buttons, payment step, order
+   page…),
+4. use **host services**: the router, the Apollo client, the user, the cart, module settings, notifications, modals,
+5. hook into **host behaviour**: locale loading, Apollo cache policies, the product page's preselected configuration
+   (`registerProductConfigurationSource`).
 
 **Plugin or in-repo module?**
 

@@ -6,7 +6,7 @@
       <VcProductActions direction="vertical" with-background>
         <AddToList :product="product" />
 
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" class="relative" />
+        <ExtensionPointList category="productActions" :product="product" :condition-params="product" />
       </VcProductActions>
     </template>
 
@@ -54,7 +54,6 @@ import { computed } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
 import { getVariationsCount } from "@/shared/catalog/utilities/variations";
-import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";

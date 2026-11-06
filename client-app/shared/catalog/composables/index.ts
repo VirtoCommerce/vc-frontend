@@ -6,6 +6,7 @@ export * from "./useConfigurableProduct";
 export * from "./useConfigurationSectionNavigation";
 export * from "./useLoyaltyCatalogCurrency";
 export * from "./useProduct";
+export * from "./useProductConfigurationSources";
 export * from "./useProductPickupLocations";
 export * from "./useProductVariations";
 export * from "./useProducts";

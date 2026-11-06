@@ -104,6 +104,7 @@ definePluginManifest({
     },
     { at: "paymentPage/payment-methods", policy: "block", when: (field) => field("paymentTypeName").eq("Skyflow") },
     { at: "cartPayment/skyflow", policy: "block", when: (field) => field("paymentTypeName").eq("Skyflow") },
+    { at: "productActions/compare", policy: "reserve", when: (field) => not(field("isConfigurable")) },
   ],
 });
 

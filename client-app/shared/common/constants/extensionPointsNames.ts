@@ -59,6 +59,7 @@ export const EXTENSION_CATEGORIES = {
   topHeaderStatus: "topHeaderStatus",
   productCard: "productCard",
   productPage: "productPage",
+  productActions: "productActions",
   paymentPage: "paymentPage",
   orderPaymentPage: "orderPaymentPage",
   cartPayment: "cartPayment",
