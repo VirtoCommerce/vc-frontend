@@ -1,16 +1,45 @@
 import { readFileSync } from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
-import postcss, { AtRule, list } from "postcss";
+import postcss, { AtRule } from "postcss";
+import selectorParser from "postcss-selector-parser";
 import { compileString } from "sass";
+import tailwindcss from "tailwindcss";
+import loadConfig from "tailwindcss/loadConfig.js";
 import { describe, expect, it } from "vitest";
 import { parse } from "vue/compiler-sfc";
 import VcButton from "./vc-button.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
-const CUSTOM_PROPERTY = /^--/;
 const WHERE = /:where\(/;
-const WHERE_WRAPPED = /^:where\((.+)\)$/;
+const ROOT_CLASS = /^vc-button(?:--|$)/;
+const LAYOUT_PROPERTIES = new Set([
+  "display",
+  "position",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "width",
+  "min-width",
+  "max-width",
+  "height",
+  "min-height",
+  "max-height",
+  "gap",
+  "row-gap",
+  "column-gap",
+  "align-self",
+  "justify-self",
+  "order",
+]);
+const LAYOUT_PREFIX = /^(?:inset|margin|padding|flex|grid)(?:-|$)/;
+
+const tailwind = tailwindcss({
+  ...loadConfig(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../../../tailwind.config.ts")),
+  content: [{ raw: "" }],
+});
 
 function readSource(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), "utf8");
@@ -38,6 +67,37 @@ function compiledRules(scss: string): CompiledRuleType[] {
   });
 
   return rules;
+}
+
+function hasRootSubject(selector: string): boolean {
+  let found = false;
+
+  selectorParser((selectors) => {
+    selectors.each((compound) => {
+      const subject = compound.nodes.slice(compound.nodes.map((node) => node.type).lastIndexOf("combinator") + 1);
+
+      found ||= subject.some((node) => node.type === "class" && ROOT_CLASS.test(node.value));
+    });
+  }).processSync(selector);
+
+  return found;
+}
+
+async function layoutOnRoot(scss: string): Promise<string[]> {
+  const found: string[] = [];
+
+  const { root } = await postcss([tailwind]).process(compileString(scss).css, { from: undefined });
+
+  root.walkDecls((decl) => {
+    const rule = decl.parent;
+    const isLayout = LAYOUT_PROPERTIES.has(decl.prop) || LAYOUT_PREFIX.test(decl.prop);
+
+    if (isLayout && rule?.type === "rule" && hasRootSubject(rule.selector)) {
+      found.push(`${rule.selector} { ${decl.prop} }`);
+    }
+  });
+
+  return found;
 }
 
 function mountButton(options: ComponentMountingOptions<typeof VcButton> = {}) {
@@ -131,15 +191,8 @@ describe("VcButton", () => {
       expect(rules.filter(({ selector }) => WHERE.test(selector))).toEqual(whereRules);
     });
 
-    it("declare nothing but custom properties on the same selectors outside :where()", () => {
-      const bareSelectors = new Set(whereRules.map(({ selector }) => WHERE_WRAPPED.exec(selector)?.[1]));
-      const styledBare = rules.filter(
-        ({ selector, styles }) =>
-          list.comma(selector).some((part) => bareSelectors.has(part)) &&
-          styles.some((style) => !CUSTOM_PROPERTY.test(style)),
-      );
-
-      expect(styledBare).toEqual([]);
+    it("set no layout property where a .vc-button or .vc-button--* class is the subject outside a pseudo-class argument", async () => {
+      expect(await layoutOnRoot(scss)).toEqual([]);
     });
   });
 });
