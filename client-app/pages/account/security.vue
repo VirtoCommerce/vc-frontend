@@ -14,10 +14,12 @@
         <VcWidget :title="getTitle(signInMethod, extensionProps)" size="lg">
           <template v-if="signInMethod.canCreateKey && extensionProps?.createKey" #append>
             <VcButton
+              :ref="createKeyButtonRef(signInMethod.name)"
               prepend-icon="plus"
               size="sm"
               :loading="toValue(extensionProps.creating)"
-              @click="createKey(extensionProps)"
+              data-test-id="create-sign-in-key-button"
+              @click="createKey(signInMethod, extensionProps)"
             >
               {{ toValue(extensionProps.createKeyText) }}
             </VcButton>
@@ -27,7 +29,12 @@
             {{ toValue(extensionProps.description) }}
           </p>
 
-          <ul v-if="signInMethod.keys?.length" class="security__keys">
+          <ul
+            v-if="signInMethod.keys?.length"
+            :ref="keysAreaRef(signInMethod.name)"
+            class="security__keys"
+            tabindex="-1"
+          >
             <li v-for="key in signInMethod.keys" :key="key.id" class="security__key">
               <VcIcon class="security__key-icon" :name="extensionProps?.getKeyIcon?.(key) ?? 'key'" />
 
@@ -63,7 +70,13 @@
             </li>
           </ul>
 
-          <p v-else-if="!loading" class="security__empty">
+          <p
+            v-else-if="!loading"
+            :ref="keysAreaRef(signInMethod.name)"
+            class="security__empty"
+            tabindex="-1"
+            data-test-id="sign-in-keys-empty-label"
+          >
             {{ toValue(extensionProps?.noKeysText) || $t("pages.account.security.no_keys") }}
           </p>
         </VcWidget>
@@ -75,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toValue } from "vue";
+import { computed, nextTick, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -86,6 +99,8 @@ import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
 import type { GetSignInMethodsQuery, SignInKeyType } from "@/core/api/graphql/types";
 import type { SignInMethodContributionType } from "@/shared/account/types";
+import type { VcButton } from "@/ui-kit/components";
+import type { ComponentPublicInstance } from "vue";
 import RenameSignInKeyModal from "@/shared/account/components/rename-sign-in-key-modal.vue";
 
 type SignInMethodType = NonNullable<GetSignInMethodsQuery["signInMethods"]>[number];
@@ -97,6 +112,9 @@ const { getContribution } = useExtensionRegistry();
 const { signInMethods, loading, renaming, deleting, refetch, renameKey, deleteKey } = useSignInMethods();
 
 usePageHead({ title: computed(() => t("pages.account.security.title")) });
+
+const createKeyButtons = new Map<string, InstanceType<typeof VcButton>>();
+const keysAreas = new Map<string, HTMLElement>();
 
 const extendedSignInMethods = computed(() =>
   signInMethods.value.filter(
@@ -110,9 +128,43 @@ function getTitle(signInMethod: SignInMethodType, contribution?: SignInMethodCon
   return toValue(contribution?.title) || signInMethod.displayName || signInMethod.name;
 }
 
-async function createKey(contribution: SignInMethodContributionType): Promise<void> {
+function createKeyButtonRef(name: string): (el: Element | ComponentPublicInstance | null) => void {
+  return (el) => {
+    if (el) {
+      createKeyButtons.set(name, el as InstanceType<typeof VcButton>);
+    } else {
+      createKeyButtons.delete(name);
+    }
+  };
+}
+
+function keysAreaRef(name: string): (el: Element | ComponentPublicInstance | null) => void {
+  return (el) => {
+    if (el instanceof HTMLElement) {
+      keysAreas.set(name, el);
+    } else {
+      keysAreas.delete(name);
+    }
+  };
+}
+
+// The control that started the action is disabled or removed by it, so focus would fall to the page body.
+async function focusSignInMethod(name: string): Promise<void> {
+  await nextTick();
+
+  const createKeyButton = createKeyButtons.get(name);
+
+  if (createKeyButton) {
+    createKeyButton.focus();
+  } else {
+    keysAreas.get(name)?.focus();
+  }
+}
+
+async function createKey(signInMethod: SignInMethodType, contribution: SignInMethodContributionType): Promise<void> {
   await contribution.createKey?.();
   await refetch();
+  await focusSignInMethod(signInMethod.name);
 }
 
 function getKeyName(key: SignInKeyType): string {
@@ -164,6 +216,7 @@ function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
       async onConfirm() {
         await deleteKey(signInMethod.name, key.id);
         closeDeleteModal();
+        await focusSignInMethod(signInMethod.name);
       },
     },
   });
