@@ -1573,6 +1573,8 @@
         "title": "@:common.links.security",
         "no_keys": "Keine Schlüssel",
         "unnamed_key": "Unbenannter Schlüssel",
+        "rename_key_label": "{name} umbenennen",
+        "delete_key_label": "{name} löschen",
         "created": "Erstellt am {date}",
         "changed": "Geändert am {date}",
         "rename_modal": {

@@ -34,3 +34,12 @@ describe("VcTextarea accessible name", () => {
     expect(wrapper.get("textarea").attributes("aria-label")).toBe("Order comment");
   });
 });
+
+describe("VcTextarea required", () => {
+  it("keeps the asterisk out of the accessible name and exposes required on the field", () => {
+    const wrapper = createWrapper({ props: { label: "Comment", required: true } });
+
+    expect(wrapper.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+    expect(wrapper.get("textarea").attributes("required")).toBeDefined();
+  });
+});

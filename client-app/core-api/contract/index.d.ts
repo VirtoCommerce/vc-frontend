@@ -198,6 +198,10 @@ declare const _default$G: typeof __VLS_export$G;
 interface IProps$B {
     required?: boolean;
     error?: boolean;
+    /**
+     * Renders a `<label for>` bound to this id instead of a `<div>`. A bound label hides the required asterisk from
+     * assistive tech, so the control must expose `required` or `aria-required` itself.
+     */
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
@@ -2995,6 +2999,7 @@ interface IProps$q {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     name?: string;
     ariaLabel?: string;
@@ -3948,6 +3953,10 @@ interface IProps$l {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
+    /**
+     * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
+     * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+     */
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;
@@ -4065,6 +4074,7 @@ interface IProps$k {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and sets native `required` on the textarea. */
     required?: boolean;
     name?: string;
     label?: string;
@@ -4124,6 +4134,7 @@ interface IProps$i {
     name?: string;
     disabled?: boolean;
     readonly?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     message?: string;
     error?: boolean;
@@ -4849,6 +4860,10 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
+    /** Widgets on Account › Security, below the sign-in methods. */
+    accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+    /** Widgets on Company › Info, between the company name and the addresses. */
+    companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 /** The parameter a category's `condition` accepts. */
 type ConditionParamType<C extends keyof ExtensionCategoryMapType> = NonNullable<ExtensionCategoryMapType[C]["condition"]> extends (parameter: infer P) => boolean ? P : unknown;
@@ -4949,6 +4964,8 @@ declare const EXTENSION_CATEGORIES: {
     readonly checkout: "checkout";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
+    readonly accountSecurity: "accountSecurity";
+    readonly companyInfo: "companyInfo";
 };
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
