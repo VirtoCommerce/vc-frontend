@@ -241,7 +241,7 @@ defineExpose({
   $loaderIcon: "";
   $noWrap: "";
 
-  // Layout in :where(): a kit parent's class lays the root out in any load order; its look is props and --vc-button-*
+  // Base rules in :where(): a kit parent's single class beats them in any load order
   :where(&) {
     @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
