@@ -5,6 +5,20 @@ const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
 
+const DESIGNER_URL = "/designer-preview?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F";
+
+/** A fresh document at `url`: every boot reads the URL and the storage again. */
+async function boot(url: string) {
+  vi.resetModules();
+  window.history.replaceState(null, "", url);
+  return await import("./utils");
+}
+
+/** The designer's first load of the frame, the only URL that carries its endpoint. */
+async function loadDesignerFrame() {
+  expect((await boot(DESIGNER_URL)).getBuilderOrigin()).toBe("https://builder.example");
+}
+
 describe("getBuilderOrigin", () => {
   beforeEach(() => {
     vi.stubGlobal("parent", {});
@@ -12,6 +26,8 @@ describe("getBuilderOrigin", () => {
 
   afterEach(() => {
     window.history.replaceState(null, "", "/");
+    sessionStorage.clear();
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
     vi.resetModules();
   });
@@ -23,6 +39,37 @@ describe("getBuilderOrigin", () => {
     const { getBuilderOrigin } = await import("./utils");
 
     expect(getBuilderOrigin()).toBeUndefined();
+    expect(sessionStorage).toHaveLength(0);
+  });
+
+  it("keeps the designer origin when the frame reloads without the endpoint", async () => {
+    await loadDesignerFrame();
+
+    expect((await boot("/printers?sort=price")).getBuilderOrigin()).toBe("https://builder.example");
+    expect((await boot("/designer-preview")).getBuilderOrigin()).toBe("https://builder.example");
+  });
+
+  it("takes the kept origin only in a frame", async () => {
+    await loadDesignerFrame();
+    vi.unstubAllGlobals();
+
+    expect((await boot("/printers")).getBuilderOrigin()).toBeUndefined();
+  });
+
+  it("forgets the kept origin when the frame loads an endpoint that is not the designer's", async () => {
+    await loadDesignerFrame();
+
+    expect((await boot(`/?ep=${encodeURIComponent("javascript:alert(1)")}`)).getBuilderOrigin()).toBeUndefined();
+    expect((await boot("/printers")).getBuilderOrigin()).toBeUndefined();
+  });
+
+  it("is not the designer's preview when the frame cannot read its storage", async () => {
+    await loadDesignerFrame();
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new DOMException("The operation is insecure.", "SecurityError");
+    });
+
+    expect((await boot("/printers")).getBuilderOrigin()).toBeUndefined();
   });
 
   it("uses only the HTTP endpoint origin", async () => {
@@ -87,6 +134,7 @@ describe("isPreviewV2Frame", () => {
 
   afterEach(() => {
     window.history.replaceState(null, "", "/");
+    sessionStorage.clear();
     vi.unstubAllGlobals();
     vi.resetModules();
   });
@@ -186,5 +234,50 @@ describe("installPageInputGuard", () => {
     const { link } = await guardPage(() => true);
 
     expect(dispatch(link, new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))).toBe(false);
+  });
+});
+
+describe("getPreviewBootOptions", () => {
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+    sessionStorage.clear();
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  it("boots a storefront page with the locale prefix and without a preview language", async () => {
+    expect((await boot("/printers?cultureName=fr-FR")).getPreviewBootOptions()).toEqual({
+      isActive: false,
+      cultureName: undefined,
+      useLocalePrefix: true,
+    });
+  });
+
+  it("boots the standalone preview in the page's language, without the locale prefix", async () => {
+    expect((await boot("/designer-preview?pageId=page-1&cultureName=fr-FR")).getPreviewBootOptions()).toEqual({
+      isActive: true,
+      cultureName: "fr-FR",
+      useLocalePrefix: false,
+    });
+  });
+
+  it("boots the designer's frame reloaded on a storefront page as the preview", async () => {
+    vi.stubGlobal("parent", {});
+    await loadDesignerFrame();
+
+    const reloaded = await boot("/printers");
+
+    expect(reloaded.getPreviewBootOptions()).toEqual({
+      isActive: true,
+      cultureName: undefined,
+      useLocalePrefix: false,
+    });
+    expect(reloaded.isDesignerPreview()).toBe(true);
+  });
+
+  it("boots a frame the designer did not load as a storefront", async () => {
+    vi.stubGlobal("parent", {});
+
+    expect((await boot("/printers")).getPreviewBootOptions()).toMatchObject({ isActive: false, useLocalePrefix: true });
   });
 });
