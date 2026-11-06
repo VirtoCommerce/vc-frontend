@@ -766,7 +766,11 @@ watch(
       setQueryScope(searchQueryParam.value);
 
       const finishPreparing = categoryId ? prepareScope() : undefined;
-      onCleanup(() => finishPreparing?.());
+      let isCancelled = false;
+      onCleanup(() => {
+        isCancelled = true;
+        finishPreparing?.();
+      });
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -788,6 +792,10 @@ watch(
         });
       } finally {
         finishPreparing?.();
+      }
+
+      if (isCancelled) {
+        return;
       }
 
       if (!props.isRoot) {
