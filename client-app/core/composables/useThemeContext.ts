@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { cloneDeep } from "lodash-es";
 import { computed, ref } from "vue";
-import { presets } from "@/assets/presets";
+import { darkPresets, presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { presetNameToFileName } from "@/core/utilities";
 import { resolveDesign } from "@/core/utilities/design";
@@ -9,6 +9,7 @@ import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
+import type { IThemePalette } from "@/core/theme-snapshot/types";
 
 const loadedPresets = new Map<string, IThemeConfigPreset>();
 
@@ -72,6 +73,8 @@ function getThemeConfig() {
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
+  /** The preset `addPresetToThemeContext` loaded, which the theme's palette replaces while it has one. */
+  let presetPalette: { light: IThemeConfigPreset; dark?: IThemeConfigPreset } | undefined;
 
   function setThemeContext(store: StoreResponseType) {
     const themeConfig = getThemeConfig();
@@ -104,15 +107,42 @@ function _useThemeContext() {
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.darkPreset = darkPresets[resolvedName];
       themeContext.value.activePresetName = resolvedName;
+      presetPalette = { light: preset, dark: darkPresets[resolvedName] };
     } else {
       throw new Error("Missing preset");
+    }
+  }
+
+  /**
+   * Puts the Page Builder theme's palette over the preset, or the preset back without one; a token the palette lacks
+   * keeps the preset's value. Call it only when white-labeling chose no preset: its preset replaces the whole palette,
+   * and the two are never mixed.
+   */
+  function setThemePalette(palette: IThemePalette | undefined): void {
+    if (!themeContext.value) {
+      throw new Error("The global state should be defined");
+    }
+
+    // Nothing checks that a palette has every token, and a storefront release can add one that older snapshots lack.
+    const source = palette
+      ? {
+          light: { ...presetPalette?.light, ...palette.light } as IThemeConfigPreset,
+          dark: palette.dark ? ({ ...presetPalette?.dark, ...palette.dark } as IThemeConfigPreset) : undefined,
+        }
+      : presetPalette;
+
+    if (source) {
+      themeContext.value.preset = source.light;
+      themeContext.value.darkPreset = source.dark;
     }
   }
 
   return {
     setThemeContext,
     addPresetToThemeContext,
+    setThemePalette,
     themeContext: computed({
       get() {
         if (!themeContext.value) {

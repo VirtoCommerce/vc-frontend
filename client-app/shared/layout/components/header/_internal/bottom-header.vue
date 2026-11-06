@@ -1,12 +1,20 @@
 <template>
-  <div class="relative bg-[--header-bottom-bg-color] text-[--header-bottom-text-color]">
+  <div
+    class="relative bg-[--header-bottom-bg-color] text-[--header-bottom-text-color]"
+    v-bind="getPreviewSectionAttrs(siteHeader?.id)"
+  >
     <nav
       ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
       :aria-label="$t('shared.layout.header.bottom_header.main_menu')"
     >
-      <router-link :to="$context.settings.default_return_url ?? '/'">
-        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
+      <router-link :to="$context.settings.default_return_url ?? '/'" :style="logoStyle">
+        <VcImage
+          :src="headerLogoUrl"
+          :alt="$context.storeName"
+          :class="logoWidth ? 'h-auto w-[--header-logo-width]' : 'h-8 xl:h-[2.8rem]'"
+          lazy
+        />
       </router-link>
 
       <template v-if="organization">
@@ -41,7 +49,7 @@
       <SearchBar />
 
       <ul class="-mx-2 flex items-center">
-        <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
+        <li v-for="item in iconsMenuItems" :key="item.id" :data-test-id="item.dataTestId">
           <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
             <LinkDefault :item="item" />
           </ExtensionPoint>
@@ -76,12 +84,16 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, onDeactivated, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useNavigations, useWhiteLabeling } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
+import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
+import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import CatalogMenu from "./catalog-menu.vue";
 import SearchBar from "./search-bar/search-bar.vue";
+import type { ExtendedMenuLinkType } from "@/core/types";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
 
@@ -93,8 +105,29 @@ defineProps<IProps>();
 
 const router = useRouter();
 const { organization } = useUser();
-const { logoUrl } = useWhiteLabeling();
+const { headerLogoUrl } = useHeaderLogo();
+const { logoWidth, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
+
+const logoStyle = computed<StyleValue | undefined>(() =>
+  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
+);
+
+/**
+ * The theme header's icons menu, in its order: a link to a page a built-in link opens keeps that link's icon and
+ * count. Without the menu, the built-in links.
+ */
+const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+  iconsMenuLinks.value
+    ? iconsMenuLinks.value.map((link) => {
+        const routeName = typeof link.route === "string" ? router.resolve(link.route).name : undefined;
+        const builtIn = desktopMainMenuItems.value.find(
+          (item) => typeof item.route === "object" && "name" in item.route && item.route.name === routeName,
+        );
+        return builtIn ?? { ...link, id: typeof link.route === "string" ? link.route : link.title };
+      })
+    : desktopMainMenuItems.value,
+);
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
@@ -146,6 +179,11 @@ function focusoutDropdown(payload: FocusEvent) {
 }
 
 watch(route, () => {
+  catalogMenuVisible.value = false;
+});
+
+// A header kept alive under a page without it must not leave its menu open or the page unable to scroll.
+onDeactivated(() => {
   catalogMenuVisible.value = false;
 });
 </script>

@@ -1,3 +1,4 @@
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { Logger } from "@/core/utilities";
 import { PageBuilderComponents } from "./page-builder-components";
 import type { PageBuilderDescriptorType } from "./models/PageBuilderComponentType";
@@ -12,6 +13,18 @@ const shared = import.meta.glob("./schemas/shared/*.json") as PageBuilderJsonMod
 const objects = import.meta.glob("./schemas/objects/*.json") as PageBuilderJsonModulesType;
 const templates = import.meta.glob("./schemas/templates/*.json") as PageBuilderJsonModulesType;
 const settingsSchema = import.meta.glob("./schemas/settings_schema.json") as PageBuilderJsonModulesType;
+
+/**
+ * The theme's schemas (header and footer groups, templates, their main sections), over the ones above with the same
+ * name: the storefront announces them only with the new Page Builder, so the Angular designer keeps what it knows.
+ */
+const themeSchemas: Partial<PageBuilderSchemasStructureType<PageBuilderJsonModulesType>> = isNewPageBuilderEnabled()
+  ? {
+      blocks: import.meta.glob("./schemas/theme/blocks/*.json") as PageBuilderJsonModulesType,
+      sections: import.meta.glob("./schemas/theme/sections/*.json") as PageBuilderJsonModulesType,
+      templates: import.meta.glob("./schemas/theme/templates/*.json") as PageBuilderJsonModulesType,
+    }
+  : {};
 
 type SchemaKeysType = keyof PageBuilderSchemaType;
 
@@ -35,7 +48,7 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
   };
 
   for (const jsonModulesName of Object.keys(allModules) as SchemaKeysType[]) {
-    const jsonModules = allModules[jsonModulesName];
+    const jsonModules = { ...allModules[jsonModulesName], ...themeSchemas[jsonModulesName] };
     for (const path in jsonModules) {
       const module = await jsonModules[path]();
       const name = path.split("/").pop()?.split(".")[0];

@@ -181,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { onActivated, ref, toRef } from "vue";
+import { ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { useFiles } from "@/shared/files";
@@ -305,18 +305,24 @@ async function onRemoveFiles(items: FileType[]): Promise<void> {
   await removeFiles(items);
 }
 
-onActivated(async () => {
+/** The reviews of the product shown and whether the visitor can leave one, from its first page. */
+async function loadReviews(): Promise<void> {
+  productReviewsPayload.value.entityId = productId.value;
+  productReviewsPayload.value.page = 1;
+
   await fetchCustomerReviews(productReviewsPayload.value);
 
   if (isAuthenticated.value) {
-    feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
+    feedbackAvailable.value = await canLeaveFeedback(productId.value, ENTITY_TYPE);
     reviewFormVisible.value = !reviews.value?.length;
 
     if (feedbackAvailable.value) {
       await fetchImageUploadOptions();
     }
   }
-});
+}
+
+watch(productId, loadReviews, { immediate: true });
 </script>
 
 <style lang="scss">

@@ -1,0 +1,23 @@
+{
+  "name": "Recommendation list",
+  "icon": "smartphone",
+  "displayField": "model",
+  "settings": [
+    {
+      "id": "model",
+      "label": "Recommendations",
+      "type": "select",
+      "default": "related-products",
+      "options": [
+        {
+          "label": "Related products",
+          "value": "related-products"
+        },
+        {
+          "label": "Bought together",
+          "value": "bought-together"
+        }
+      ]
+    }
+  ]
+}

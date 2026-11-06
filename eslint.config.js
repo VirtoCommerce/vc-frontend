@@ -384,7 +384,14 @@ export default defineConfigWithVueTs(
 
   // Type-aware configuration for Node.js scripts and config files
   {
-    files: ["*.config.js", "*.config.ts", "vite.federation*.ts", "scripts/**/*.ts", ".storybook/main.ts"],
+    files: [
+      "*.config.js",
+      "*.config.ts",
+      "vite.federation*.ts",
+      "vite.page-builder*.ts",
+      "scripts/**/*.ts",
+      ".storybook/main.ts",
+    ],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir,

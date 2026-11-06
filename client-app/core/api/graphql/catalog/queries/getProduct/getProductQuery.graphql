@@ -21,6 +21,11 @@ query GetProduct(
     code
     slug
     outline
+    outlines {
+      items {
+        id
+      }
+    }
     hasVariations
     minQuantity
     maxQuantity

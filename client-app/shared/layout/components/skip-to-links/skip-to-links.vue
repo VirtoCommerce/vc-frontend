@@ -8,7 +8,7 @@
       }}</a>
     </li>
 
-    <li class="skip-to-links__item">
+    <li v-if="withFooter" class="skip-to-links__item">
       <a ref="skip-to-links__link" href="#footer" class="skip-link">{{ $t("common.links.skip_to_footer") }}</a>
     </li>
   </ul>
@@ -17,6 +17,13 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+
+interface IProps {
+  /** Whether the page has the site footer to skip to. */
+  withFooter?: boolean;
+}
+
+withDefaults(defineProps<IProps>(), { withFooter: true });
 
 const route = useRoute();
 const backToTop = ref<HTMLElement | null>(null);

@@ -1,22 +1,41 @@
 <template>
   <div class="main-layout">
-    <SkipToLinks />
+    <SkipToLinks :with-footer="chrome === 'full'" />
 
-    <VcHeader />
+    <!-- Kept alive, so a page on another layout does not make them mount and load their menus again -->
+    <KeepAlive>
+      <VcHeader v-if="chrome === 'full'" />
+
+      <MinimalHeader v-else-if="chrome === 'minimal'" />
+    </KeepAlive>
 
     <!-- Main Content -->
     <main id="main-content" class="main-layout__content">
       <slot />
     </main>
 
-    <VcFooter />
+    <KeepAlive>
+      <VcFooter v-if="chrome === 'full'" />
+    </KeepAlive>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
 import VcHeader from "@/shared/layout/components/header/vc-header.vue";
+import MinimalHeader from "@/shared/layout/components/minimal-header/minimal-header.vue";
 import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
+
+const { pageLayout } = usePageLayout();
+
+/**
+ * The header and footer around the page, switched here so the page under them is never remounted. Without the new
+ * Page Builder every page keeps the full layout.
+ */
+const chrome = computed(() => (isNewPageBuilderEnabled() ? pageLayout.value : "full"));
 </script>
 
 <style lang="scss">

@@ -92,6 +92,11 @@ export type ExtensionCategoryMapType = {
   identityProviders: ExtensionEntryType;
   /** The account security page, keyed by the sign-in method name. */
   signInMethods: DecorateEntryType<SignInMethodContributionType>;
+  /**
+   * Page Builder sections and blocks, keyed by the type stored in page and template content. A late registration
+   * re-renders the pages that show the type.
+   */
+  pageBuilderSection: ExtensionEntryType;
 };
 
 /** The parameter a category's `condition` accepts. */

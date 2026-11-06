@@ -8,6 +8,7 @@
     <CategoryComponent
       v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
+      :outline="slugInfo?.entityInfo?.outline"
       allow-set-meta
     />
 
@@ -38,6 +39,7 @@
 import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
+import { isOwnLayoutSlugPage, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
@@ -129,6 +131,26 @@ watchEffect(() => {
     emitState("empty");
   }
 });
+
+const { setPageLayout } = usePageLayout();
+
+const isContentPage = computed(() =>
+  isOwnLayoutSlugPage({
+    objectType: objectType.value,
+    document: pageDocumentContent.value,
+    isMarkdown: isMarkdownContent.value,
+  }),
+);
+
+watch(
+  () => props.isVisible && !loading.value && !isContentPage.value,
+  (isOtherPage) => {
+    if (isOtherPage) {
+      setPageLayout("full");
+    }
+  },
+  { immediate: true },
+);
 
 const { preparingScope, holdScope } = useSearchScore();
 

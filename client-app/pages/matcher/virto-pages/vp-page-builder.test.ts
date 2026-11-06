@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VPPageBuilder from "./vp-page-builder.vue";
 
 const routePath = ref("/page-a");
@@ -21,10 +22,6 @@ vi.mock("@/core/composables", () => ({
   useBreadcrumbs: () => [],
 }));
 
-vi.mock("@/plugins/builder-preview/block-mapping", () => ({
-  getBlockType: (type: string) => (type === "test-block" ? "section" : type),
-}));
-
 const { scrollToAnchor } = vi.hoisted(() => ({ scrollToAnchor: vi.fn(() => Promise.resolve(true)) }));
 
 vi.mock("@/shared/static-content/anchors", async () => {
@@ -39,11 +36,19 @@ vi.mock("@/shared/static-content", async () => {
   const anchors = await import("@/shared/static-content/anchors");
   const { useAnchorScroll } = await import("@/shared/static-content/composables/useAnchorScroll");
   const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
-  const { getRegisteredSection } = await import("@/shared/static-content/sections");
+  const { registerPageBuilderSections } = await import("@/shared/static-content/sections");
   const { defineComponent, h } = await import("vue");
   const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
+  // The page template is tested on its own; here it only frames the page.
+  const PageTemplate = defineComponent({
+    setup:
+      (_props, { slots }) =>
+      () =>
+        slots.default?.(),
+  });
+  registerPageBuilderSections({ "test-block": section });
 
-  return { ...anchors, useAnchorScroll, getRegisteredSection, PageBuilderSection, templateBlocks: { section } };
+  return { ...anchors, useAnchorScroll, PageBuilderSection, PageTemplate };
 });
 
 const mountedWrappers: Array<{ unmount: () => void }> = [];
@@ -152,6 +157,14 @@ describe("VPPageBuilder", () => {
     await nextTick();
 
     expect(wrapper.find("#recovered").exists()).toBe(true);
+  });
+
+  it("gives a document that does not parse the full layout, so the header does not wait for it", () => {
+    usePageLayout().setPageLayout("blank");
+
+    mountPageBuilder("invalid-json");
+
+    expect(usePageLayout().pageLayout.value).toBe("full");
   });
 });
 

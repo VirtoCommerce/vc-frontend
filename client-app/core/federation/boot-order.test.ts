@@ -122,8 +122,20 @@ vi.mock("@/core/plugins", () => ({
 }));
 vi.mock("@/core/globals", () => ({ setGlobals: vi.fn(), globals: {} }));
 vi.mock("@/core/locale-loaders", () => ({ registerLocaleLoader: vi.fn() }));
+vi.mock("@/shared/layout/composables/usePageLayout", () => ({
+  usePageLayout: () => ({ installPageLayoutRouting: vi.fn() }),
+}));
+vi.mock("@/core/theme-snapshot", () => ({
+  installThemeSnapshotNavigation: vi.fn(),
+  setupThemePalette: vi.fn(),
+  startThemeSnapshot: vi.fn(() => undefined),
+}));
 vi.mock("@/shared/catalog/components/product", () => ({ default: {} }));
-vi.mock("@/shared/static-content", () => ({ templateBlocks: {} }));
+vi.mock("@/shared/static-content", () => ({
+  registerPageBuilderSections: vi.fn(),
+  templateBlocks: {},
+  productTemplateSections: {},
+}));
 vi.mock("@/core/api/graphql/types", () => ({ GetSlugInfoDocument: {} }));
 vi.mock("@/core/utilities", () => ({
   extractHostname: vi.fn(() => "example.test"),
@@ -168,7 +180,6 @@ vi.mock("@/core/composables", () => ({
   useCurrency: () => ({ currentCurrency: ref({ code: "USD" }) }),
   useNavigations: () => ({ fetchCatalogMenu: vi.fn() }),
   useWhiteLabeling: () => ({ themePresetName: ref("p"), setWhiteLabelingSettings: vi.fn() }),
-  useDarkMode: () => ({ setActivePreset: vi.fn() }),
   useModules: () => ({ setModules: record("setModules"), outdatedModules: ref([]) }),
 }));
 

@@ -1,0 +1,38 @@
+{
+  "name": "Menu",
+  "icon": "lucide-list",
+  "displayField": "heading",
+  "settings": [
+    {
+      "id": "heading",
+      "label": "Heading",
+      "type": "string",
+      "translatable": true,
+      "default": "Quick links"
+    },
+    {
+      "id": "menu",
+      "label": "Menu",
+      "type": "menu",
+      "info": "A store link list. Empty: the links below"
+    },
+    {
+      "id": "links",
+      "label": "Links",
+      "type": "list",
+      "element": [
+        {
+          "id": "label",
+          "label": "Label",
+          "type": "string",
+          "translatable": true
+        },
+        {
+          "id": "link",
+          "label": "URL",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

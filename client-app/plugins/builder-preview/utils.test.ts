@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { RouteLocationNormalized } from "vue-router";
 
 describe("getBuilderOrigin", () => {
   beforeEach(() => {
@@ -39,4 +40,32 @@ describe("getBuilderOrigin", () => {
       vi.resetModules();
     },
   );
+});
+
+describe("guardPreviewNavigation", () => {
+  function route(fullPath: string) {
+    const url = new URL(fullPath, "https://store.example");
+    return { path: url.pathname, fullPath, query: {}, hash: url.hash } as unknown as RouteLocationNormalized;
+  }
+
+  async function guard(to: string, from: string, allowedNavigation: string | undefined) {
+    const { guardPreviewNavigation } = await import("./utils");
+    const next = vi.fn();
+    guardPreviewNavigation(route(to), route(from), next, allowedNavigation);
+    return next.mock.calls[0]?.[0];
+  }
+
+  it("shows every page on the preview route for the protocol 1 designer", async () => {
+    expect(await guard("/printers", "/designer-preview", undefined)).toMatchObject({ path: "/designer-preview" });
+  });
+
+  it("goes to the page the Vue designer showed, and to the preview route", async () => {
+    expect(await guard("/printers", "/designer-preview", "/printers")).toBeUndefined();
+    expect(await guard("/designer-preview", "/printers", "/printers")).toBeUndefined();
+  });
+
+  it("keeps the page the Vue designer showed, except for its own query or hash", async () => {
+    expect(await guard("/scanners", "/printers", "/printers")).toBe(false);
+    expect(await guard("/printers?sort=price", "/printers", "/printers")).toBe(true);
+  });
 });
