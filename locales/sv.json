@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} vs förra året"
       },
       "last_year": "Förra året",
-      "last_year_toggle": "Visa förra året i diagrammet ”{chart}”",
+      "last_year_toggle": "Förra året: {chart}",
       "legend": {
         "aov_closed": "Snittordervärde, avslutade månader",
         "current": "Denna månad, hittills",

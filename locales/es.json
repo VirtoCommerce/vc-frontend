@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} vs. año pasado"
       },
       "last_year": "Año pasado",
-      "last_year_toggle": "Mostrar el año pasado en el gráfico «{chart}»",
+      "last_year_toggle": "Año pasado: {chart}",
       "legend": {
         "aov_closed": "Ticket medio, meses cerrados",
         "current": "Este mes, hasta la fecha",

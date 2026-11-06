@@ -1278,7 +1278,7 @@
         "vs_last_year": "较去年 {change}"
       },
       "last_year": "去年",
-      "last_year_toggle": "在“{chart}”中显示去年数据",
+      "last_year_toggle": "去年：{chart}",
       "legend": {
         "aov_closed": "平均订单金额（已结束月份）",
         "current": "本月至今",

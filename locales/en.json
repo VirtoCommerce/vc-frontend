@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} vs last year"
       },
       "last_year": "Last year",
-      "last_year_toggle": "Show last year on {chart}",
+      "last_year_toggle": "Last year: {chart}",
       "legend": {
         "aov_closed": "AOV, closed months",
         "current": "This month, to date",

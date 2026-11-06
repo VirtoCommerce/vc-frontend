@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} к прошлому году"
       },
       "last_year": "Прошлый год",
-      "last_year_toggle": "Показать прошлый год на графике «{chart}»",
+      "last_year_toggle": "Прошлый год: {chart}",
       "legend": {
         "aov_closed": "Средний чек, закрытые месяцы",
         "current": "Текущий месяц, на сегодня",

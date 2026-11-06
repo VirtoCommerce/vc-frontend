@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} ggü. Vorjahr"
       },
       "last_year": "Vorjahr",
-      "last_year_toggle": "Vorjahr im Diagramm „{chart}“ anzeigen",
+      "last_year_toggle": "Vorjahr: {chart}",
       "legend": {
         "aov_closed": "Ø Bestellwert, abgeschlossene Monate",
         "current": "Dieser Monat, bis heute",

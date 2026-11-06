@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} vs viime vuosi"
       },
       "last_year": "Viime vuosi",
-      "last_year_toggle": "Näytä viime vuosi kaaviossa ”{chart}”",
+      "last_year_toggle": "Viime vuosi: {chart}",
       "legend": {
         "aov_closed": "Keskim. tilausarvo, päättyneet kuukaudet",
         "current": "Tämä kuukausi, tähän mennessä",

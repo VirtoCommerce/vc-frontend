@@ -1278,7 +1278,7 @@
         "vs_last_year": "{change} vs poprzedni rok"
       },
       "last_year": "Poprzedni rok",
-      "last_year_toggle": "Pokaż poprzedni rok na wykresie „{chart}”",
+      "last_year_toggle": "Poprzedni rok: {chart}",
       "legend": {
         "aov_closed": "Śr. wartość zamówienia, zamknięte miesiące",
         "current": "Ten miesiąc, do dziś",
