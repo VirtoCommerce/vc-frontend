@@ -5023,6 +5023,14 @@ declare const ROUTES: {
     readonly ORDER_DETAILS: {
         readonly NAME: "OrderDetails";
     };
+    /** The catch-all route that resolves a slug: SEO URLs and content pages. */
+    readonly MATCHER: {
+        readonly NAME: "Matcher";
+    };
+    /** The loyalty catalog's route that resolves a slug under it. */
+    readonly LOYALTY_CATALOG_MATCHER: {
+        readonly NAME: "LoyaltyCatalogMatcher";
+    };
     readonly PROMOTION_COUPONS: {
         readonly NAME: "PromotionCoupons";
         readonly PATH: "coupons";

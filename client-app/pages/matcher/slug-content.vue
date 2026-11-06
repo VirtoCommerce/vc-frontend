@@ -39,7 +39,7 @@
 import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
-import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { isOwnLayoutSlugPage, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
@@ -94,8 +94,6 @@ const {
   markdownContent,
 } = useSlugInfo(seoUrl);
 
-const PAGE_BUILDER_SOURCE = "page-builder";
-
 enum ObjectType {
   Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
@@ -136,20 +134,13 @@ watchEffect(() => {
 
 const { setPageLayout } = usePageLayout();
 
-/**
- * A Page Builder page or a file page reports its own layout once its document is there, so the header waits for it.
- * A document that does not come makes this content empty, and the matcher shows another page in the full layout.
- */
-const isContentPage = computed(() => {
-  switch (objectType.value) {
-    case ObjectType.VirtoPages:
-      return !pageDocumentContent.value || pageDocumentContent.value.source === PAGE_BUILDER_SOURCE;
-    case ObjectType.ContentFile:
-      return !isMarkdownContent.value;
-    default:
-      return false;
-  }
-});
+const isContentPage = computed(() =>
+  isOwnLayoutSlugPage({
+    objectType: objectType.value,
+    document: pageDocumentContent.value,
+    isMarkdown: isMarkdownContent.value,
+  }),
+);
 
 watch(
   () => props.isVisible && !loading.value && !isContentPage.value,

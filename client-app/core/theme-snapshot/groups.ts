@@ -74,7 +74,10 @@ export const useThemeGroups = createGlobalState(() => {
     }
   }
 
-  return { groups, getGroupSection, getMenuLinks };
+  /** The header group's `site-header` section: the settings of the storefront's own header. */
+  const siteHeader = computed(() => getGroupSection("header", "site-header"));
+
+  return { groups, siteHeader, getGroupSection, getMenuLinks };
 });
 
 function toMenuLink(item: IThemeMenuLink, isCatalogItem: boolean): ExtendedMenuLinkType {

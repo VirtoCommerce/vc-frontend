@@ -193,6 +193,8 @@ export default async () => {
   // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
   const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+  const themeSnapshotContext = { storeId: themeContext.value.storeId, cultureName: currentCultureName };
+  themeSnapshotBoot?.prepare(themeSnapshotContext);
 
   // Plural rules must be registered for every locale key messages can resolve under — full
   // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
@@ -244,7 +246,7 @@ export default async () => {
     resolvedCultureName: currentCultureName,
   });
 
-  await themeSnapshotBoot?.settle({ storeId: themeContext.value.storeId, cultureName: currentCultureName });
+  await themeSnapshotBoot?.settle(themeSnapshotContext);
   usePageLayout().installPageLayoutRouting(router);
   installThemeSnapshotNavigation(router, () => ({
     storeId: themeContext.value.storeId,

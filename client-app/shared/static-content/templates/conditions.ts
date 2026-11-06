@@ -1,4 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
+import { escapeRegExp, trim } from "lodash-es";
 import { shallowReactive } from "vue";
 import type { ThemePageType } from "@/core/theme-snapshot";
 
@@ -149,28 +150,13 @@ export function matchesPath(permalink: string | undefined, glob: string): boolea
     return false;
   }
 
-  const pattern = trimSlashes(glob)
-    .split("*")
-    .map((part) => part.replaceAll(/[.+?^${}()|[\]\\]/g, String.raw`\$&`))
-    .join(".*");
+  const pattern = trimSlashes(glob).split("*").map(escapeRegExp).join(".*");
 
   return new RegExp(`^${pattern}$`, "i").test(trimSlashes(permalink));
 }
 
 function trimSlashes(value: string): string {
-  const text = value.trim();
-  let start = 0;
-  let end = text.length;
-
-  while (start < end && text[start] === "/") {
-    start++;
-  }
-
-  while (end > start && text[end - 1] === "/") {
-    end--;
-  }
-
-  return text.slice(start, end);
+  return trim(value.trim(), "/");
 }
 
 function toList(value: unknown): string[] {

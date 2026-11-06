@@ -3,10 +3,11 @@ import { useGlobalInterceptors } from "@/core/api/common";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals, setGlobals } from "@/core/globals";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
-import { addBuilderMessageListener, createPreviewLoadedNotifier, isPreviewV2Message } from "./builder-preview.protocol";
+import { addBuilderMessageListener, createPreviewLoadedNotifier, isPreviewV2Type } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
 import { buildPreviewCatalog, createPreviewV2, PREVIEW_PROTOCOL } from "./preview-v2";
@@ -89,7 +90,7 @@ async function updatePreview(
 
   if (!data.templateKey) {
     if (templateUrl) {
-      await options.router.push("/designer-preview");
+      await options.router.push(DESIGNER_PREVIEW_PATH);
     }
     staticPagePreview.value = newTemplate;
   } else if (templateUrl) {
@@ -281,8 +282,8 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       schemas: () => context.schemas,
       post: (type, data) => window.parent.postMessage({ source: "preview", type, data }, context.builderOrigin),
       renderPage: async (message) => {
-        if (router.currentRoute.value.path !== "/designer-preview") {
-          await router.push("/designer-preview");
+        if (router.currentRoute.value.path !== DESIGNER_PREVIEW_PATH) {
+          await router.push(DESIGNER_PREVIEW_PATH);
         }
         await updatePreview(toTransferData(message), context.options, context.sharedComponentOverlay);
       },
@@ -336,7 +337,7 @@ async function handlePreviewV2Message(context: IPreviewContext, data: PreviewV2M
 }
 
 async function handleMessage(context: IPreviewContext, data: TransferDataType | PreviewV2MessageType) {
-  if (isPreviewV2Message({ ...data, source: "builder" })) {
+  if (isPreviewV2Type(data.type)) {
     await handlePreviewV2Message(context, data as PreviewV2MessageType);
     return;
   }
@@ -456,7 +457,7 @@ function modifyRoutes(router: Router, mode: "preview" | "designer") {
   const matcher = routes.find((x) => x.name === "Matcher")!;
   router.removeRoute("Matcher");
   router.addRoute({
-    path: "/designer-preview",
+    path: DESIGNER_PREVIEW_PATH,
     name: "StaticPage",
     component: mode === "preview" ? PreviewPage : StaticPage,
     props: true,
@@ -492,7 +493,7 @@ export default {
       context.schemas = customComponents;
       // Both designers get the same `loaded`: the Angular one reads the schemas and ignores the rest.
       loadedNotifier.setData(isNewPageBuilderEnabled() ? buildPreviewCatalog(customComponents) : customComponents);
-      await options.router.push("/designer-preview");
+      await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
       // rendering in the page's language instead of the store default (VCST-5219).

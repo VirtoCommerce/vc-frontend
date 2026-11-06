@@ -278,3 +278,8 @@ export function toFirstString(value: unknown): string {
 
   return typeof first === "string" ? first : "";
 }
+
+/** A plain object: neither `null` nor an array. */
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}

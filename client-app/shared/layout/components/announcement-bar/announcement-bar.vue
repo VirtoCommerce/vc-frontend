@@ -72,10 +72,10 @@ function toTokenVariable(token: unknown): string | undefined {
 
 <style lang="scss">
 .announcement-bar {
-  @apply flex flex-wrap items-center justify-center gap-x-6 gap-y-1 px-5 py-2 text-center text-sm;
+  --bg-color: theme("colors.neutral.900");
+  --text-color: theme("colors.additional.50");
 
-  background-color: var(--bg-color, theme("colors.neutral.900"));
-  color: var(--text-color, theme("colors.additional.50"));
+  @apply flex flex-wrap items-center justify-center gap-x-6 gap-y-1 bg-[--bg-color] px-5 py-2 text-center text-sm text-[--text-color];
 
   @media print {
     @apply hidden;

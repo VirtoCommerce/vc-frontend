@@ -97,10 +97,10 @@ interface IPreviewV2Options {
  */
 export function createPreviewV2(options: IPreviewV2Options) {
   const { router, body, blocker, post } = options;
-  const { setDraft, draft, published, setPublished } = useThemeSnapshot();
+  const { setDraft, published, setPublished, theme: renderedTheme } = useThemeSnapshot();
   const { setOpenTemplate, lastResolution, setLastResolution } = useThemeTemplates();
   const { staticPagePreview, staticPagePreviewSubject } = useStaticPage();
-  const { colorMode } = useDarkMode();
+  const { setColorModeOverride } = useDarkMode();
   const { themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
   const { defaultStoreCulture } = useLanguages();
 
@@ -161,7 +161,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   }
 
   function setColorScheme(scheme: "light" | "dark"): void {
-    colorMode.value = scheme;
+    setColorModeOverride(scheme);
   }
 
   function applyDraft(theme: IThemeDraft): void {
@@ -262,8 +262,8 @@ export function createPreviewV2(options: IPreviewV2Options) {
   function findItem(itemId: string): IThemeItem | undefined {
     const sources = [
       lastRender?.document.content ?? [],
-      draft.value?.header?.content ?? published.value?.snapshot.header?.content ?? [],
-      draft.value?.footer?.content ?? published.value?.snapshot.footer?.content ?? [],
+      renderedTheme.value?.header?.content ?? [],
+      renderedTheme.value?.footer?.content ?? [],
     ] as IThemeItem[][];
 
     for (const item of sources.flat()) {

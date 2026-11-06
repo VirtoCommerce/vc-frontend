@@ -180,7 +180,6 @@ vi.mock("@/core/composables", () => ({
   useCurrency: () => ({ currentCurrency: ref({ code: "USD" }) }),
   useNavigations: () => ({ fetchCatalogMenu: vi.fn() }),
   useWhiteLabeling: () => ({ themePresetName: ref("p"), setWhiteLabelingSettings: vi.fn() }),
-  useDarkMode: () => ({ setActivePreset: vi.fn() }),
   useModules: () => ({ setModules: record("setModules"), outdatedModules: ref([]) }),
 }));
 

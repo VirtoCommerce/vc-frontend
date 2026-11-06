@@ -20,6 +20,11 @@ export interface IThemeSnapshotContext {
 
 export interface IThemeSnapshotBoot {
   /**
+   * Asks again in the store and language `pageContext` resolved as soon as the boot snapshot turns out to be for
+   * another one, so the second request runs alongside the rest of boot rather than after it.
+   */
+  prepare(context: IThemeSnapshotContext): void;
+  /**
    * Accepts the boot snapshot for the store and language `pageContext` resolved. A snapshot that has not arrived yet
    * is not waited for: it takes over on the next navigation inside the site. Never throws.
    */
@@ -33,6 +38,8 @@ const LOG_SCOPE = "[theme-snapshot]";
 
 type OutcomeType = { result: IPublishedTheme | null } | { error: unknown };
 
+type RefetchType = () => Promise<OutcomeType>;
+
 /**
  * Picks up the request the inline script in `index.html` sent, or sends it when the script did not run. Returns
  * nothing when the storefront is built without `new_page_builder_enabled`: then no request is sent at all.
@@ -44,19 +51,31 @@ export function startThemeSnapshot(fallback: { domain: string; cultureName?: str
 
   const request = takeBootThemeSnapshotRequest() ?? requestThemeSnapshot(fallback);
   let outcome: OutcomeType | undefined;
+  let refetch: Promise<OutcomeType> | undefined;
   const settled = readOutcome(request).then((value) => {
     outcome = value;
     return value;
   });
 
+  function getRefetch(context: IThemeSnapshotContext): RefetchType {
+    return () => (refetch ??= readOutcome(requestThemeSnapshot(context)));
+  }
+
   return {
+    prepare(context) {
+      void settled.then((value) => {
+        if (isForOtherContext(value, context)) {
+          void getRefetch(context)();
+        }
+      });
+    },
     async settle(context) {
       if (!outcome) {
-        void settled.then((value) => acceptLate(value, context));
+        void settled.then((value) => acceptLate(value, context, getRefetch(context)));
         return;
       }
 
-      await accept(outcome, context);
+      await accept(outcome, context, getRefetch(context));
     },
   };
 }
@@ -76,9 +95,10 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
 
   async function retry(context: IThemeSnapshotContext): Promise<void> {
     isRetrying = true;
+    const ask = () => readOutcome(requestThemeSnapshot(context));
 
     try {
-      await acceptLate(await readOutcome(requestThemeSnapshot(context)), context);
+      await acceptLate(await ask(), context, ask);
     } finally {
       isRetrying = false;
     }
@@ -96,38 +116,40 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
   });
 }
 
-async function accept(outcome: OutcomeType, context: IThemeSnapshotContext): Promise<void> {
-  const { setPublished, setFailed } = useThemeSnapshot();
+async function accept(outcome: OutcomeType, context: IThemeSnapshotContext, refetch: RefetchType): Promise<void> {
+  const { setPublished } = useThemeSnapshot();
 
   if ("error" in outcome) {
-    Logger.warn(`${LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, outcome.error);
-    setFailed();
-    return;
+    return failBoot(outcome.error);
   }
 
-  if (!outcome.result || matches(outcome.result, context)) {
+  if (!isForOtherContext(outcome, context)) {
     setPublished(outcome.result);
     return;
   }
 
-  const refetch = readOutcome(requestThemeSnapshot(context));
-  const second = await withTimeout(refetch, THEME_SNAPSHOT_REFETCH_TIMEOUT_MS);
+  const pending = refetch();
+  const second = await withTimeout(pending, THEME_SNAPSHOT_REFETCH_TIMEOUT_MS);
 
   if (!second) {
-    void refetch.then((value) => acceptLate(value, context, false));
+    void pending.then((value) => acceptLate(value, context));
     return;
   }
 
   if ("error" in second) {
-    Logger.warn(`${LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, second.error);
-    setFailed();
-    return;
+    return failBoot(second.error);
   }
 
   setPublished(second.result);
 }
 
-async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, canRefetch = true): Promise<void> {
+function failBoot(error: unknown): void {
+  Logger.warn(`${LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, error);
+  useThemeSnapshot().setFailed();
+}
+
+/** Without `refetch`, a snapshot for another store or language is kept as it is: the request is not repeated. */
+async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, refetch?: RefetchType): Promise<void> {
   const { setLate, setFailed } = useThemeSnapshot();
 
   if ("error" in outcome) {
@@ -135,20 +157,28 @@ async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, 
     return;
   }
 
-  if (!outcome.result || matches(outcome.result, context) || !canRefetch) {
+  if (!refetch || !isForOtherContext(outcome, context)) {
     setLate(outcome.result);
     return;
   }
 
-  await acceptLate(await readOutcome(requestThemeSnapshot(context)), context, false);
+  await acceptLate(await refetch(), context);
 }
 
 /**
- * The store must be the one `pageContext` resolved, and the request must have asked for its language: a language the
- * publication has no file for is served in the store default language, and asking again would get the same.
+ * A theme is for the context when its store is the one `pageContext` resolved and the request asked for its language:
+ * a language the publication has no file for is served in the store default language, and asking again would get the
+ * same.
  */
-function matches(theme: IPublishedTheme, context: IThemeSnapshotContext): boolean {
-  return theme.storeId === context.storeId && isThemeForLanguage(theme, context.cultureName);
+function isForOtherContext(
+  outcome: OutcomeType,
+  context: IThemeSnapshotContext,
+): outcome is { result: IPublishedTheme } {
+  return (
+    "result" in outcome &&
+    !!outcome.result &&
+    (outcome.result.storeId !== context.storeId || !isThemeForLanguage(outcome.result, context.cultureName))
+  );
 }
 
 async function readOutcome(request: IThemeSnapshotRequest): Promise<OutcomeType> {

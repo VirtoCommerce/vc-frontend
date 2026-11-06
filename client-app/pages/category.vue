@@ -39,13 +39,13 @@ import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
-import { isDesignerPreview } from "@/plugins/builder-preview/utils";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import {
   getAnchorId,
   getPreviewSectionAttrs,
+  isLazySectionsEnabled,
   MAIN_SECTION_TYPES,
   PageBuilderSection,
   splitTemplate,
@@ -88,8 +88,7 @@ const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?
 
 const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
-/** With the new Page Builder, sections below the listing mount as they come near the viewport. */
-const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
+const lazySections = isLazySectionsEnabled();
 
 /** The category whose request has finished, whether it found the category or not. */
 const settledCategoryId = ref<string>();

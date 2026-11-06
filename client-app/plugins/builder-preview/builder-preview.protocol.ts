@@ -1,4 +1,4 @@
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { IThemeDraft, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfig } from "@/core/types";
@@ -49,6 +49,11 @@ export type PreviewV2MessageType =
   | { type: "colorScheme"; scheme: "light" | "dark" };
 
 const PREVIEW_V2_TYPES = new Set(["render", "draft", "inspector", "colorScheme"]);
+
+/** Whether a designer message, already validated, is of protocol 2: its types are not protocol 1's. */
+export function isPreviewV2Type(type: string): boolean {
+  return PREVIEW_V2_TYPES.has(type);
+}
 
 export function isPreviewV2Message(value: unknown): value is PreviewV2MessageType & { source: "builder" } {
   if (!isRecord(value) || value.source !== "builder" || !PREVIEW_V2_TYPES.has(value.type as string)) {
@@ -191,8 +196,4 @@ function isAuthToken(value: unknown): boolean {
   return (
     value === null || (isRecord(value) && (value.access_token === undefined || typeof value.access_token === "string"))
   );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

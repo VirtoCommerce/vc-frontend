@@ -10,9 +10,9 @@ import { buildPreviewCatalog, createPreviewV2, findSchemaField, PREVIEW_PROTOCOL
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 
-const colorMode = vi.hoisted(() => ({ value: "system" }));
+const setColorModeOverride = vi.hoisted(() => vi.fn());
 
-vi.mock("@/core/composables/useDarkMode", () => ({ useDarkMode: () => ({ colorMode }) }));
+vi.mock("@/core/composables/useDarkMode", () => ({ useDarkMode: () => ({ setColorModeOverride }) }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
 }));
@@ -204,7 +204,7 @@ describe("preview protocol 2", () => {
   it("switches between light and dark", () => {
     createPreview().preview.setColorScheme("dark");
 
-    expect(colorMode.value).toBe("dark");
+    expect(setColorModeOverride).toHaveBeenCalledWith("dark");
   });
 });
 

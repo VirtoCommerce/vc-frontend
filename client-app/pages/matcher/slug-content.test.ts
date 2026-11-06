@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, nextTick, ref, watch } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SlugContent from "./slug-content.vue";
 import type { VueWrapper } from "@vue/test-utils";
@@ -164,5 +165,41 @@ describe("SlugContent search scope", () => {
     wrapper = undefined;
 
     expect(isScopePending.value).toBe(false);
+  });
+});
+
+describe("SlugContent page layout", () => {
+  const { pageLayout, setPageLayout } = usePageLayout();
+
+  it("sets the full layout once a category shows", async () => {
+    setPageLayout("minimal");
+    objectType.value = "Category";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("full");
+    categoryPage.finishPreparing?.();
+  });
+
+  it("leaves the layout to a page from the database", async () => {
+    setPageLayout("minimal");
+    objectType.value = "Pages";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("minimal");
+  });
+
+  it("waits until the slug has loaded", async () => {
+    setPageLayout("minimal");
+    loading.value = true;
+    objectType.value = "Category";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("minimal");
   });
 });

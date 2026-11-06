@@ -153,7 +153,6 @@ import {
 } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import {
   buildBreadcrumbs,
   generateFilterExpressionFromFilters,
@@ -168,7 +167,6 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
-import { isDesignerPreview } from "@/plugins/builder-preview/utils";
 import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
@@ -186,6 +184,7 @@ import { FloatingBar } from "@/shared/common";
 import {
   getAnchorId,
   getPreviewSectionAttrs,
+  isLazySectionsEnabled,
   PageBuilderSection,
   useAnchorScroll,
   useProductTemplate,
@@ -282,11 +281,7 @@ const selectedVariationName = computed(() => {
   return applicableVariations.value.length === 1 ? applicableVariations.value[0].name : undefined;
 });
 
-/**
- * With the new Page Builder, sections below the product mount as they come near the viewport; the designer preview
- * shows them all at once. Without it the page sends the same requests as before.
- */
-const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
+const lazySections = isLazySectionsEnabled();
 
 const {
   template: productTemplate,

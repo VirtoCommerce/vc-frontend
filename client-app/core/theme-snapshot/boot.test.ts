@@ -111,6 +111,31 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().published.value?.cultureName).toBe("de-DE");
   });
 
+  it("asks once more as soon as the context is known, and only once", async () => {
+    const fetchMock = mockFetch(snapshotResponse({ cultureName: "de-DE", publication: 4 }));
+    leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })));
+    const context = { storeId: STORE_ID, cultureName: "de-DE" };
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    boot?.prepare(context);
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    await boot?.settle(context);
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(useThemeSnapshot().published.value?.cultureName).toBe("de-DE");
+  });
+
+  it("does not ask again when prepared for the language the boot snapshot is in", async () => {
+    const fetchMock = mockFetch();
+    leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })));
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    boot?.prepare({ storeId: STORE_ID, cultureName: "en-US" });
+    await flushRequests();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("does not ask again when the language it asked for is served in the store default language", async () => {
     const fetchMock = mockFetch();
     leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })), "fr");

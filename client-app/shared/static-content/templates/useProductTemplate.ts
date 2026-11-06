@@ -4,8 +4,8 @@ import { MAIN_SECTION_TYPES } from "./built-in";
 import { splitTemplate } from "./split";
 import { useTemplateResolution } from "./useThemeTemplates";
 import type { ITemplateSubject } from "./conditions";
+import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
-import type { IPageContent } from "@/shared/static-content/types";
 import type { MaybeRefOrGetter } from "vue";
 
 /** Sections shown in the product's main column, beside the price, rather than across the page. */

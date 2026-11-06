@@ -1,4 +1,4 @@
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import { THEME_SNAPSHOT_GLOBAL, THEME_SNAPSHOT_OPERATION, THEME_SNAPSHOT_QUERY } from "./query";
 import type { IPublishedTheme, IThemeMenu, IThemeSnapshot } from "./types";
 
@@ -135,8 +135,4 @@ function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {
 
 function isMenu(value: unknown): value is IThemeMenu {
   return isRecord(value) && typeof value.name === "string" && Array.isArray(value.items);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

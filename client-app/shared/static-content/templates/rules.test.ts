@@ -66,6 +66,28 @@ describe("chooseTemplate", () => {
     expect(resolution).toMatchObject({ template: "product", ruleId: null });
   });
 
+  it("skips a rule whose condition is for another page type", () => {
+    const resolution = choose({
+      pageType: "product",
+      subject: { permalink: "/printers/x1" },
+      templates: { ...BUILT_IN_TEMPLATES, "product.any": DOCUMENT },
+      rules: { version: 2, product: [{ id: "any", template: "product.any", when: { path: "*" } }] },
+    });
+
+    expect(resolution).toMatchObject({ template: "product", ruleId: null });
+  });
+
+  it("reads category ids given as a comma-separated string", () => {
+    const resolution = choose({
+      pageType: "category",
+      subject: { categoryId: "sale" },
+      templates: { ...BUILT_IN_TEMPLATES, "category.sale": DOCUMENT },
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: "shoes, sale" } }] },
+    });
+
+    expect(resolution).toMatchObject({ template: "category.sale", ruleId: "sale" });
+  });
+
   it("treats an empty list as no rules, and a missing list as the default rules", () => {
     const subject = { properties: [{ name: "VirtoFrontend_UI_Layout", value: "B2C" }] };
 

@@ -2,8 +2,8 @@
   <PageTemplate
     v-if="template"
     :page-settings="template.settings"
-    :permalink="permalink ?? previewSubject?.permalink ?? route.path"
-    :object-type="previewSubject?.objectType ?? objectType"
+    :permalink="previewSubject?.permalink ?? route.path"
+    :object-type="previewSubject?.objectType ?? 'ContentFile'"
   >
     <div ref="staticPageAnchor">
       <div
@@ -41,15 +41,6 @@ import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
 import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll, useStaticPage } from "@/shared/static-content";
-
-interface IProps {
-  /** What the page's template rules see; the route's path when absent. */
-  permalink?: string;
-  /** `ContentFile` for a file page, `Pages` for a page from the database. */
-  objectType?: string;
-}
-
-withDefaults(defineProps<IProps>(), { objectType: "ContentFile" });
 
 const route = useRoute();
 

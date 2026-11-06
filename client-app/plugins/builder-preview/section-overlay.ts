@@ -1,9 +1,9 @@
-/** The attribute the storefront marks a section's element with in the designer preview, and only there. */
-export const SECTION_ATTRIBUTE = "data-pb-section";
+import { SECTION_ATTRIBUTE } from "./utils";
+
 /** The attribute that names the setting a text shows, for texts a component does not render as is. */
 export const FIELD_ATTRIBUTE = "data-pb-field";
 
-const OUTLINE_COLOR = "#2563eb";
+export const OUTLINE_COLOR = "#2563eb";
 const LABEL_TEXT_COLOR = "#ffffff";
 /** Above every storefront element, under the click blocker. */
 const OVERLAY_Z_INDEX = "2147483646";

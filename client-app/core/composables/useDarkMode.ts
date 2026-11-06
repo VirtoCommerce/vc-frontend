@@ -1,6 +1,5 @@
 import { createGlobalState, useLocalStorage, useMediaQuery } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
-import { darkPresets } from "@/assets/presets";
 
 type ColorModeType = "light" | "dark" | "system";
 
@@ -20,6 +19,8 @@ function _useDarkMode() {
   }
 
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+  /** A scheme shown without saving it as the visitor's choice: the designer's preview sets it. */
+  const colorModeOverride = ref<"light" | "dark">();
   const activePresetName = ref<string>();
   const hasDarkPreset = ref(false);
 
@@ -29,10 +30,11 @@ function _useDarkMode() {
     if (!isDarkModeAvailable.value) {
       return false;
     }
-    if (storedMode.value === "system") {
+    const mode = colorModeOverride.value ?? storedMode.value;
+    if (mode === "system") {
       return systemPrefersDark.value;
     }
-    return storedMode.value === "dark";
+    return mode === "dark";
   });
 
   // Sync html.dark class with isDark state, but only after preset is known.
@@ -47,14 +49,18 @@ function _useDarkMode() {
     { immediate: true },
   );
 
-  /** `withDarkPreset`: whether the palette has a dark variant; a built-in preset has one when it is in `darkPresets`. */
-  function setActivePreset(presetName: string, withDarkPreset = presetName in darkPresets) {
+  /** `withDarkPreset`: whether the palette has a dark variant. */
+  function setActivePreset(presetName: string, withDarkPreset: boolean) {
     activePresetName.value = presetName;
     hasDarkPreset.value = withDarkPreset;
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);
     // Persist availability flag so the FOUC script in index.html can check it
     localStorage.setItem(DARK_AVAILABLE_KEY, JSON.stringify(isDarkModeAvailable.value));
+  }
+
+  function setColorModeOverride(mode: "light" | "dark"): void {
+    colorModeOverride.value = mode;
   }
 
   function toggle() {
@@ -83,6 +89,7 @@ function _useDarkMode() {
     colorMode: storedMode,
     colorModeIcon,
     setActivePreset,
+    setColorModeOverride,
     toggle,
   };
 }

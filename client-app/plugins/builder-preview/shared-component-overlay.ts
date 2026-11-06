@@ -1,3 +1,4 @@
+import { isRecord } from "@/core/utilities";
 export interface ISharedComponentBoundary {
   placementId: string;
   componentRef: string;
@@ -362,9 +363,4 @@ export class SharedComponentOverlay {
     this.highlight(null);
     this.onHover(null);
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  // Same shape test the preview protocol applies, arrays included — a boundary is always a plain object.
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

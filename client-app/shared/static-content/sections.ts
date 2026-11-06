@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
-import { isDesignerPreview } from "@/plugins/builder-preview/utils";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isDesignerPreview, SECTION_ATTRIBUTE } from "@/plugins/builder-preview/utils";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
@@ -63,10 +64,18 @@ export function getPageBuilderSection(type: unknown): Component | undefined {
  * preview the storefront's markup does not change.
  */
 export function getPreviewSectionAttrs(id: unknown): Record<string, string> {
-  return isDesignerPreview() && typeof id === "string" ? { "data-pb-section": id } : {};
+  return isDesignerPreview() && typeof id === "string" ? { [SECTION_ATTRIBUTE]: id } : {};
 }
 
 /** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */
+/**
+ * Whether sections below a page's main one mount as they come near the viewport: with the new Page Builder, and not
+ * in the designer preview, which shows them all at once. Without it a page sends the same requests as before.
+ */
+export function isLazySectionsEnabled(): boolean {
+  return isNewPageBuilderEnabled() && !isDesignerPreview();
+}
+
 export function getRegisteredSection(
   registry: Record<string, Component>,
   type: string | undefined,

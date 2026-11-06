@@ -6,7 +6,7 @@
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1]">
+    <div class="relative z-[1]" v-bind="getPreviewSectionAttrs(siteHeader?.id)">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
         <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
@@ -34,7 +34,11 @@
               <VcImage
                 :src="headerLogoUrl"
                 :alt="$context.storeName"
-                :class="logoWidth ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw]' : 'h-8'"
+                :class="
+                  logoWidth
+                    ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw] [--vc-image-object-fit:contain]'
+                    : 'h-8'
+                "
                 lazy
               />
             </router-link>
@@ -137,6 +141,7 @@ import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import AnnouncementBar from "../../announcement-bar/announcement-bar.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
@@ -154,11 +159,11 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { headerLogoUrl } = useHeaderLogo();
-const { logoWidth } = useThemeChrome();
+const { logoWidth, siteHeader } = useThemeChrome();
 
 // The theme's logo width is the desktop header's; in the phone's bar the logo shrinks to fit, keeping its proportions.
 const logoStyle = computed<StyleValue | undefined>(() =>
-  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px`, "--vc-image-object-fit": "contain" } : undefined,
+  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
 );
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>

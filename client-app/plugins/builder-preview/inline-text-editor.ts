@@ -1,4 +1,5 @@
-import { FIELD_ATTRIBUTE, SECTION_ATTRIBUTE } from "./section-overlay";
+import { FIELD_ATTRIBUTE, OUTLINE_COLOR } from "./section-overlay";
+import { SECTION_ATTRIBUTE } from "./utils";
 
 /** A plain-text setting of a section or block: the item, the setting's path in it and the text it shows. */
 export interface IEditableText {
@@ -11,7 +12,7 @@ export interface IEditableText {
 const NOT_TEXT = new Set(["id", "type", "hidden", "blocks", "componentRef"]);
 /** Markup, markdown or a link: shown differently from how it is stored, so it is edited in the designer's panel. */
 const NOT_PLAIN = /[<>*_#`[\]]|^\s*(https?:|\/|#)/;
-const OUTLINE = "2px solid #2563eb";
+const OUTLINE = `2px solid ${OUTLINE_COLOR}`;
 
 function normalize(text: string): string {
   return text.replaceAll(/\s+/g, " ").trim();

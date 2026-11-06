@@ -2,6 +2,9 @@ import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
+/** The attribute the storefront marks a section's element with in the designer preview, and only there. */
+export const SECTION_ATTRIBUTE = "data-pb-section";
+
 let cachedBuilderOrigin: string | undefined;
 
 /** `undefined` outside a frame: only the designer that frames the preview may drive it. */
@@ -58,7 +61,7 @@ export function guardPreviewNavigation(
 }
 
 export function isPreviewMode(): boolean {
-  return globalThis.location.pathname === "/designer-preview";
+  return globalThis.location.pathname === DESIGNER_PREVIEW_PATH;
 }
 
 /**

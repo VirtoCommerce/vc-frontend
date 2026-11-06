@@ -16,10 +16,9 @@ interface IFooterMenuBlock {
  * `undefined` while the theme leaves it as it always was.
  */
 export function useThemeChrome() {
-  const { getGroupSection, getMenuLinks } = useThemeGroups();
+  const { siteHeader, getGroupSection, getMenuLinks } = useThemeGroups();
   const { footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 
-  const siteHeader = computed(() => getGroupSection("header", "site-header"));
   const siteFooter = computed(() => getGroupSection("footer", "site-footer"));
   const announcementBar = computed(() => getGroupSection("header", "announcement-bar"));
 

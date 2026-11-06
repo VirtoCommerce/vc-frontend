@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll } from "@/shared/static-content";
@@ -112,10 +112,6 @@ function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
   }
 
   return parsedContent;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function isPageBuilderBlock(value: unknown): value is BlockType {

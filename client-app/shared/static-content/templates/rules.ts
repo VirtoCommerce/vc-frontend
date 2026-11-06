@@ -1,3 +1,8 @@
+import { isRecord } from "@/core/utilities";
+import {
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
+} from "@/shared/catalog/constants/product";
 import type { ITemplateCondition, ITemplateSubject } from "./conditions";
 import type { ITemplateRule, ITemplateRules, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 
@@ -9,7 +14,12 @@ export const DEFAULT_TEMPLATE_RULES: Readonly<Record<ThemePageType, ITemplateRul
     {
       id: "default-b2c",
       template: "product.b2c",
-      when: { property: { name: "VirtoFrontend_UI_Layout", equals: "B2C" } },
+      when: {
+        property: {
+          name: PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+          equals: PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c,
+        },
+      },
     },
   ],
   category: [],
@@ -110,8 +120,4 @@ export function normalizeTemplateRules(value: unknown): ITemplateRules | undefin
 
 function isRuleLike(value: unknown): value is Omit<ITemplateRule, "id"> & { id?: unknown } {
   return isRecord(value) && typeof value.template === "string" && (value.when === undefined || isRecord(value.when));
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

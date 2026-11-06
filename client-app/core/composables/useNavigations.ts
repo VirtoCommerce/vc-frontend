@@ -227,21 +227,19 @@ export function _useNavigations() {
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
 
-  const { getGroupSection, getMenuLinks } = useThemeGroups();
+  const { siteHeader, getMenuLinks } = useThemeGroups();
   const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
 
   /** The Page Builder theme header's category menu, unless white-labeling has a main menu of its own. */
   const themeCatalogMenuItems = computed(() =>
-    whiteLabelingMainMenuLinks.value?.length
-      ? undefined
-      : getMenuLinks(getGroupSection("header", "site-header")?.catalog_menu, true),
+    whiteLabelingMainMenuLinks.value?.length ? undefined : getMenuLinks(siteHeader.value?.catalog_menu, true),
   );
 
   /** The category menu the header shows, on desktop and in the mobile menu alike. */
   const shownCatalogMenuItems = computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value);
 
   /** Whether the header shows the category menu, on desktop and in the mobile menu: the theme's header can hide it. */
-  const isCatalogMenuShown = computed(() => getGroupSection("header", "site-header")?.show_catalog_menu !== false);
+  const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
 
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     (menuSchema.value?.header?.mobile?.main || [])
