@@ -14,6 +14,7 @@ vi.mock("vue-i18n", () => ({
 }));
 
 const Page = { template: "<div />" };
+const VcBadge = { template: "<span><slot /></span>" };
 
 // A rule a route record cannot express: the same route, with ?organizationId=, is another link's page.
 const isCustomerActivity = (route: RouteLocationNormalizedLoaded) =>
@@ -28,7 +29,7 @@ async function mountLink(link: ExtendedMenuLinkType, url: string, count?: number
   return mount(MobileMenuLink, {
     props: { link, count },
     slots: { default: link.title ?? "" },
-    global: { plugins: [router], stubs: { VcIcon: true, VcBadge: { template: "<span><slot /></span>" } } },
+    global: { plugins: [router], stubs: { VcIcon: true, VcBadge } },
   });
 }
 
@@ -80,7 +81,7 @@ describe("MobileMenuLink count", () => {
   it("shows the capped badge but puts the full count into the accessible name", async () => {
     const wrapper = await mountLink({ title: "Cart", route: { name: "Activities" } }, "/company/activities", 1543);
 
-    const badge = wrapper.get(".header-badge");
+    const badge = wrapper.findComponent(VcBadge);
     expect(badge.text()).toBe("99+");
     expect(badge.attributes("aria-hidden")).toBe("true");
     expect(wrapper.get("a").attributes("aria-label")).toBe(
@@ -91,7 +92,7 @@ describe("MobileMenuLink count", () => {
   it("keeps the visible text as the name when there is no count", async () => {
     const wrapper = await mountLink({ title: "Cart", route: { name: "Activities" } }, "/company/activities");
 
-    expect(wrapper.find(".header-badge").exists()).toBe(false);
+    expect(wrapper.findComponent(VcBadge).exists()).toBe(false);
     expect(wrapper.get("a").attributes("aria-label")).toBeUndefined();
   });
 });

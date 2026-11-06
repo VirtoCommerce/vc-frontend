@@ -12,6 +12,9 @@
       aria-hidden="true"
       class="header-badge"
       :class="{ 'header-badge--overlay': overlay }"
+      :size="size"
+      :variant="variant"
+      :color="color"
       rounded
       nowrap
       max-width="none"
@@ -28,6 +31,9 @@ interface IProps {
   count?: number;
   overlay?: boolean;
   dot?: boolean;
+  size?: VcBadgeSizeType;
+  variant?: VcBadgeVariantType;
+  color?: VcBadgeColorType;
 }
 
 defineOptions({
