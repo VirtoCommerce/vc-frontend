@@ -152,9 +152,14 @@ describe("VcButton", () => {
           media: "",
           selector: ":where(.vc-button)",
           styles: [
-            "@apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color] motion-safe:transition-colors",
+            "@apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color]",
             "appearance: button",
           ],
+        },
+        {
+          media: "@media (prefers-reduced-motion: no-preference)",
+          selector: ":where(.vc-button)",
+          styles: ["@apply transition-colors"],
         },
         {
           media: "",

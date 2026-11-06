@@ -241,9 +241,13 @@ defineExpose({
 
   // Base rules in :where(): a kit parent's single class beats them in any load order
   :where(&) {
-    @apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color] motion-safe:transition-colors;
+    @apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
     appearance: button;
+
+    @media (prefers-reduced-motion: no-preference) {
+      @apply transition-colors;
+    }
   }
 
   &--truncate {
@@ -270,10 +274,8 @@ defineExpose({
     @apply px-0.5;
   }
 
-  &--full-width {
-    :where(&) {
-      @apply w-full;
-    }
+  :where(&--full-width) {
+    @apply w-full;
   }
 
   &--no-wrap {
