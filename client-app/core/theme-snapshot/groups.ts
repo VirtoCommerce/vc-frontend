@@ -68,6 +68,8 @@ export const useThemeGroups = createGlobalState(() => {
         (await getMenu(name)).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false)),
       );
     } catch (error) {
+      // Asked for again the next time the menu is read.
+      requestedDraftMenus.delete(draftKey);
       Logger.error(`${useThemeGroups.name}.${loadDraftMenu.name}`, error);
     }
   }

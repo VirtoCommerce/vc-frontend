@@ -242,13 +242,14 @@ vi.mock("@/shared/catalog/components/active-filter-chips.vue", () => ({
 vi.mock("@/shared/catalog/components/category/category-products.vue", () => ({
   default: defineComponent({
     name: "CategoryProducts",
-    props: ["pageNumber", "pageHistory"],
+    props: ["pageNumber", "pageHistory", "savedViewMode"],
     emits: { resetFilterKeyword: () => true },
 
     setup(props, { emit }) {
       return () =>
         h("button", {
           "data-testid": "category-products",
+          "data-view-mode": props.savedViewMode,
           "data-page-number": props.pageNumber,
           "data-page-history": JSON.stringify(props.pageHistory),
           onClick: () => emit("resetFilterKeyword"),
@@ -654,5 +655,19 @@ describe("category page with infinite scroll", () => {
       ["selectItem", OTHER_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_1", index: 1 })],
       ["selectItem", THIRD_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_2", index: 0 })],
     ]);
+  });
+});
+
+describe("category page view mode", () => {
+  afterEach(() => {
+    localStorage.removeItem("viewMode");
+  });
+
+  it("shows the products in the view mode it is given from the first render", async () => {
+    localStorage.setItem("viewMode", "grid");
+
+    await mountAt("/catalog", { viewMode: "list" });
+
+    expect(wrapper!.get('[data-testid="category-products"]').attributes("data-view-mode")).toBe("list");
   });
 });

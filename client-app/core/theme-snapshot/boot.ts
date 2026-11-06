@@ -84,8 +84,11 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
     }
   }
 
-  router.afterEach((_to, from, failure) => {
-    if (failure || promoteLate() || from === START_LOCATION || !hasFailed.value || isRetrying) {
+  router.afterEach((to, from, failure) => {
+    // A query or hash change (sorting, filters, an anchor) keeps the page, which must not change its theme under it.
+    const isSamePage = from !== START_LOCATION && to.path === from.path;
+
+    if (failure || isSamePage || promoteLate() || from === START_LOCATION || !hasFailed.value || isRetrying) {
       return;
     }
 

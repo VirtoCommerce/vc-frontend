@@ -17,9 +17,10 @@ import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { getTemplatePageType, useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
-import { findSectionElement, SectionOverlay } from "./section-overlay";
+import { SectionOverlay } from "./section-overlay";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { Router } from "vue-router";
 
@@ -84,6 +85,8 @@ interface IPreviewV2Options {
   allowNavigation: (url: string) => void;
   applyLocale: (cultureName?: string) => Promise<void>;
   hasPreviewToken: () => boolean;
+  /** The outlines of shared components placed on the page, which follow the inspector as the sections' do. */
+  sharedComponents?: Pick<SharedComponentOverlay, "setEnabled" | "findPlacementAt">;
   /** Runs a task in the designer's message queue, after the messages before it. */
   enqueue: (task: () => Promise<void>) => void;
 }
@@ -114,6 +117,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
       startEditing(selection.blockId ?? selection.sectionId, event);
     },
     (sectionId) => post("hover", { sectionId }),
+    (clientX, clientY) => !!options.sharedComponents?.findPlacementAt(clientX, clientY),
   );
 
   const editor = new InlineTextEditor(
@@ -145,6 +149,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     const isBlocking = isInspectorEnabled || options.hasPreviewToken() || lastRender === undefined;
     blocker.style.pointerEvents = isBlocking ? "auto" : "none";
     overlay.setEnabled(isInspectorEnabled);
+    options.sharedComponents?.setEnabled(isInspectorEnabled);
   }
 
   function setInspector(isEnabled: boolean): void {
@@ -204,15 +209,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     await nextTick();
 
     const { sectionId, blockId, scroll } = message.selection ?? {};
-    overlay.select(blockId ?? sectionId ?? null, blockId ? (sectionId ?? null) : null);
-
-    if (scroll) {
-      const element =
-        (blockId ? findSectionElement(blockId) : undefined) ?? (sectionId ? findSectionElement(sectionId) : undefined);
-      element?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    overlay.scheduleRender();
+    overlay.select(blockId ?? sectionId ?? null, blockId ? (sectionId ?? null) : null, !!scroll);
     reportResolved();
   }
 
@@ -317,7 +314,8 @@ export function createPreviewV2(options: IPreviewV2Options) {
       await router.push(DESIGNER_PREVIEW_PATH);
     }
 
-    await handleRender(render);
+    // The page renders anew from its top, so the selection is brought back into view.
+    await handleRender(render.selection ? { ...render, selection: { ...render.selection, scroll: true } } : render);
   }
 
   applyInteraction();

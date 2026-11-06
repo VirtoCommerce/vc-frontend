@@ -269,6 +269,24 @@ describe("inline editing", () => {
     expect(title.style.textTransform).toBe("uppercase");
   });
 
+  it("gives the page back the text node it renders into when editing replaced it", () => {
+    document.body.innerHTML = `<section data-pb-section="s1"><h2 id="title">Hello</h2></section>`;
+    const title = document.getElementById("title") as HTMLElement;
+    const rendered = title.firstChild as Text;
+    document.elementsFromPoint = () => [title];
+    const editor = new InlineTextEditor(document.createElement("div"), vi.fn(), vi.fn());
+
+    editor.start([{ itemId: "s1", path: ["title"], value: "Hello" }], 0, 0);
+    title.replaceChildren(document.createTextNode("Typed"));
+    editor.end();
+
+    expect(title.firstChild).toBe(rendered);
+    expect(title.textContent).toBe("Typed");
+
+    rendered.nodeValue = "From the panel";
+    expect(title.textContent).toBe("From the panel");
+  });
+
   it("edits the element a data-pb-field names, else the one whose text exactly one setting has", () => {
     document.body.innerHTML = `
       <section data-pb-section="s1">

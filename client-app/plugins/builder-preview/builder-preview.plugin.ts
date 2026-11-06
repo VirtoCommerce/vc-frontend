@@ -16,7 +16,7 @@ import {
   SharedComponentOverlay,
   normalizeSharedComponentBoundaries,
 } from "./shared-component-overlay";
-import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
+import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId, guardPreviewNavigation } from "./utils";
 import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -291,6 +291,7 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       },
       applyLocale: applyPreviewLocale,
       hasPreviewToken: () => !!previewToken,
+      sharedComponents: context.sharedComponentOverlay ?? undefined,
       enqueue: context.enqueue,
     });
   }
@@ -306,7 +307,6 @@ function toTransferData(message: IRenderMessage): TransferDataType {
     template: message.document as unknown as IPageTemplate,
     model: message.model,
     cultureName: message.cultureName,
-    sectionId: message.selection?.sectionId,
     sharedComponentBoundaries: message.sharedComponentBoundaries,
   };
 }
@@ -410,8 +410,8 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
     originalUserId = globals.userId;
   }
   setGlobals({ userId: message.userId || originalUserId });
-  // Force remount of all blocks with new token and restore scroll afterward
-  pendingScrollRestore = true;
+  // Force remount of all blocks with new token and restore scroll afterward; protocol 2 scrolls on its own reload.
+  pendingScrollRestore = !context.previewV2;
   staticPagePreview.value = undefined;
   context.sharedComponentOverlay?.update([], []);
   // An impersonation token keeps clicks blocked even with the inspector off.
@@ -464,13 +464,7 @@ function modifyRoutes(router: Router, mode: "preview" | "designer") {
   });
   router.addRoute(matcher);
 
-  router.beforeEach((to, from, next) => {
-    if (to.path === "/designer-preview" || (allowedNavigation !== undefined && to.fullPath === allowedNavigation)) {
-      next();
-    } else {
-      next({ path: "/designer-preview", query: to.query, hash: to.hash });
-    }
-  });
+  router.beforeEach((to, from, next) => guardPreviewNavigation(to, from, next, allowedNavigation));
 }
 
 // eslint-disable-next-line no-restricted-exports

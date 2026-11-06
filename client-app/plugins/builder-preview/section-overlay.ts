@@ -29,6 +29,8 @@ export class SectionOverlay {
   private selected: string | null = null;
   /** The section outlined in place of a selected block that has no element of its own on the page. */
   private selectedFallback: string | null = null;
+  /** The selection is scrolled to once it has an element: a page may render it after its data has loaded. */
+  private isScrollPending = false;
   private isEnabled = false;
   private frame: number | undefined;
 
@@ -38,6 +40,8 @@ export class SectionOverlay {
     /** A click selected a section, or a block inside one (its innermost marked element). */
     private readonly onSelect: (selection: { sectionId: string; blockId?: string }, event: MouseEvent) => void,
     private readonly onHover: (sectionId: string | null) => void,
+    /** A point another overlay takes, as a shared component's placement: its sections are not the page's. */
+    private readonly isPointTaken: (clientX: number, clientY: number) => boolean = () => false,
   ) {
     this.layer = document.createElement("div");
     this.layer.setAttribute("aria-hidden", "true");
@@ -57,6 +61,12 @@ export class SectionOverlay {
     blocker.addEventListener("click", this.handleClick);
     window.addEventListener("resize", this.scheduleRender);
     window.addEventListener("scroll", this.scheduleRender, { passive: true });
+
+    // Sections render, load and move after the message that selected them. The layer is positioned absolutely, so
+    // placing its boxes does not resize the body again.
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(this.scheduleRender).observe(body);
+    }
   }
 
   /** Turns the outlines and section selection on or off. */
@@ -72,10 +82,14 @@ export class SectionOverlay {
     this.scheduleRender();
   }
 
-  /** Selects a section or block; `fallbackId`, its section, is outlined while the block has no element of its own. */
-  select(sectionId: string | null, fallbackId: string | null = null): void {
+  /**
+   * Selects a section or block; `fallbackId`, its section, is outlined while the block has no element of its own.
+   * With `scroll`, the first of them to have an element is scrolled to.
+   */
+  select(sectionId: string | null, fallbackId: string | null = null, scroll = false): void {
     this.selected = sectionId;
     this.selectedFallback = fallbackId;
+    this.isScrollPending = scroll && sectionId !== null;
     this.scheduleRender();
   }
 
@@ -96,9 +110,19 @@ export class SectionOverlay {
         const selected = this.selected && findSectionElement(this.selected) ? this.selected : this.selectedFallback;
         this.place(this.selectBox, selected);
         this.place(this.hoverBox, this.hovered === selected ? null : this.hovered);
+        this.scrollToSelected(selected);
       });
     });
   };
+
+  private scrollToSelected(sectionId: string | null): void {
+    const element = this.isScrollPending && sectionId ? findSectionElement(sectionId) : undefined;
+
+    if (element) {
+      this.isScrollPending = false;
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
 
   private place(box: HTMLDivElement, sectionId: string | null): void {
     const element = sectionId ? findSectionElement(sectionId) : undefined;
@@ -134,7 +158,9 @@ export class SectionOverlay {
       return;
     }
 
-    const sectionId = this.sectionAt(event.clientX, event.clientY);
+    const sectionId = this.isPointTaken(event.clientX, event.clientY)
+      ? null
+      : this.sectionAt(event.clientX, event.clientY);
 
     if (sectionId !== this.hovered) {
       this.hover(sectionId);
@@ -150,7 +176,8 @@ export class SectionOverlay {
   };
 
   private readonly handleClick = (event: MouseEvent): void => {
-    const innermost = this.isEnabled ? this.sectionAt(event.clientX, event.clientY) : null;
+    const isAvailable = this.isEnabled && !this.isPointTaken(event.clientX, event.clientY);
+    const innermost = isAvailable ? this.sectionAt(event.clientX, event.clientY) : null;
 
     if (!innermost) {
       return;

@@ -4,10 +4,15 @@ import type { App, Plugin } from "vue";
 
 const THEME_VARIABLES_ID = "vc-theme-variables";
 
-function presetToCssVars(preset: IThemeConfigPreset): string {
-  return Object.entries(preset)
-    .map(([key, value]) => `--${key.replaceAll("_", "-")}: ${value};`)
-    .join("");
+// A theme's palette comes from the backend, so its values are set one by one and never parsed as stylesheet text.
+function addPresetRule(sheet: CSSStyleSheet, selector: string, preset: IThemeConfigPreset): void {
+  const rule = sheet.cssRules[sheet.insertRule(`${selector} {}`, sheet.cssRules.length)] as CSSStyleRule;
+
+  Object.entries(preset).forEach(([key, value]) => {
+    if (typeof value === "string") {
+      rule.style.setProperty(`--${key.replaceAll("_", "-")}`, value);
+    }
+  });
 }
 
 /**
@@ -15,7 +20,7 @@ function presetToCssVars(preset: IThemeConfigPreset): string {
  * without one the light part applies unconditionally. A later call replaces what an earlier one wrote.
  */
 export function writeThemeVariables(preset: IThemeConfigPreset, darkPreset?: IThemeConfigPreset): void {
-  let styleElement = document.getElementById(THEME_VARIABLES_ID);
+  let styleElement = document.getElementById(THEME_VARIABLES_ID) as HTMLStyleElement | null;
 
   if (!styleElement) {
     styleElement = document.createElement("style");
@@ -23,9 +28,22 @@ export function writeThemeVariables(preset: IThemeConfigPreset, darkPreset?: ITh
     document.head.prepend(styleElement);
   }
 
-  styleElement.textContent = darkPreset
-    ? `:root:not(.dark) { ${presetToCssVars(preset)} } html.dark { ${presetToCssVars(darkPreset)} }`
-    : `:root { ${presetToCssVars(preset)} }`;
+  const { sheet } = styleElement;
+
+  if (!sheet) {
+    return;
+  }
+
+  while (sheet.cssRules.length) {
+    sheet.deleteRule(0);
+  }
+
+  if (darkPreset) {
+    addPresetRule(sheet, ":root:not(.dark)", preset);
+    addPresetRule(sheet, "html.dark", darkPreset);
+  } else {
+    addPresetRule(sheet, ":root", preset);
+  }
 }
 
 export const configPlugin: Plugin<IThemeContext> = {

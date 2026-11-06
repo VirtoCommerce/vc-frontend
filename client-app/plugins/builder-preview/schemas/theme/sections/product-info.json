@@ -4,15 +4,7 @@
   "icon": "smartphone",
   "displayField": "name",
   "info": "The product itself. A product template always has it.",
-  "blocks": [
-    "image",
-    "text",
-    "product-properties",
-    "product-description",
-    "product-variations",
-    "product-assets",
-    "product-options"
-  ],
+  "blocks": ["product-properties", "product-description", "product-variations", "product-assets", "product-options"],
   "settings": [
     {
       "id": "variationsLayout",

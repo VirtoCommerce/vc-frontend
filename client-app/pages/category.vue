@@ -1,5 +1,5 @@
 <template>
-  <VcContainer>
+  <VcContainer v-if="!isWaitingForCategory">
     <PageBuilderSection
       v-for="item in templateParts.before"
       :key="item.id"
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, toRefs, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
@@ -91,7 +91,23 @@ const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 /** With the new Page Builder, sections below the listing mount as they come near the viewport. */
 const lazySections = isNewPageBuilderEnabled() && !isDesignerPreview();
 
+/** The category whose request has finished, whether it found the category or not. */
+const settledCategoryId = ref<string>();
+
+/**
+ * Without the slug's outline, where the category sits is known once it has loaded, and a theme rule may ask for it:
+ * the page waits for it rather than render one template and switch to another.
+ */
+const isWaitingForCategory = computed(
+  () =>
+    isNewPageBuilderEnabled() && !!props.categoryId && !props.outline && settledCategoryId.value !== props.categoryId,
+);
+
 const templateResolution = useTemplateResolution("category", () => {
+  if (isWaitingForCategory.value) {
+    return undefined;
+  }
+
   // The loaded category may still be the previous one: this route component stays when only the id changes.
   const loadedOutline = currentCategory.value?.id === props.categoryId ? currentCategory.value?.outline : undefined;
   const outline = props.outline ?? loadedOutline;
@@ -127,13 +143,17 @@ watch(
   categoryId,
   (newCategoryId) => {
     if (newCategoryId) {
-      void fetchCategory({
-        categoryId: newCategoryId,
-        maxLevel: 0,
-        currencyCode: loyaltyCurrencyOverride.value,
-      });
+      void loadCategory(newCategoryId);
     }
   },
   { immediate: true },
 );
+
+async function loadCategory(id: string): Promise<void> {
+  try {
+    await fetchCategory({ categoryId: id, maxLevel: 0, currencyCode: loyaltyCurrencyOverride.value });
+  } finally {
+    settledCategoryId.value = id;
+  }
+}
 </script>

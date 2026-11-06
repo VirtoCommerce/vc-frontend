@@ -187,6 +187,25 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().published.value?.publication).toBe(7);
   });
 
+  it("does not re-render the page when only its query or hash changes", async () => {
+    let resolveLate: (value: unknown) => void = () => {};
+    leaveBootRequest(new Promise((resolve) => (resolveLate = resolve)));
+    const router = await startRouter();
+    await router.push("/category");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    resolveLate(snapshotResponse({ publication: 7 }));
+    await flushRequests();
+
+    await router.replace({ path: "/category", query: { sort: "price" } });
+    await router.push({ path: "/category", query: { sort: "price" }, hash: "#reviews" });
+    expect(useThemeSnapshot().published.value).toBeUndefined();
+
+    await router.push("/next");
+    expect(useThemeSnapshot().published.value?.publication).toBe(7);
+  });
+
   it("does not hold boot longer than the refetch timeout", async () => {
     vi.useFakeTimers();
     const fetchMock = vi.fn().mockReturnValue(new Promise(() => {}));

@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
@@ -8,13 +8,28 @@ import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
+/** The category the page's request answers with; without one, the request leaves the loaded category as it is. */
+const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
+const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
+
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
 
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
 }));
 vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
 vi.mock("@/shared/catalog/composables/useCategory", () => ({
-  useCategory: () => ({ category: ref(loadedCategory.value), fetchCategory: vi.fn() }),
+  useCategory: () => {
+    const category = ref(loadedCategory.value);
+
+    return {
+      category,
+      fetchCategory: vi.fn(async () => {
+        await Promise.resolve();
+        category.value = fetchedCategory.value ?? category.value;
+      }),
+    };
+  },
 }));
 vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({ useLoyaltyCatalogCurrency: () => ref() }));
 vi.mock("@/shared/layout/composables/useSearchScore", () => ({
@@ -66,6 +81,8 @@ describe("category page", () => {
     useThemeSnapshot().setPublished(null);
     listingProps.value = {};
     loadedCategory.value = { breadcrumbs: [{ title: "Toner" }] };
+    fetchedCategory.value = undefined;
+    pageBuilder.isEnabled = false;
   });
 
   afterEach(() => {
@@ -130,5 +147,42 @@ describe("category page", () => {
     const wrapper = mountCategory({ categoryId: "toner" });
 
     expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+  });
+
+  it("waits for a category without the slug's outline before choosing its template", async () => {
+    pageBuilder.isEnabled = true;
+    publish({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+    fetchedCategory.value = { id: "toner", outline: "catalog/sale/toner", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+    expect(listingProps.value).toEqual({});
+
+    await flushPromises();
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "toner", viewMode: "list" });
+  });
+
+  it("shows the category once its request has finished, also when it found nothing", async () => {
+    pageBuilder.isEnabled = true;
+    fetchedCategory.value = { id: "catalog", breadcrumbs: [] };
+
+    mountCategory({ categoryId: "missing" });
+    await flushPromises();
+
+    expect(listingProps.value).toMatchObject({ "category-id": "missing" });
   });
 });

@@ -800,11 +800,15 @@ watch(
   { immediate: true },
 );
 
-watch(props, ({ viewMode }) => {
-  if (viewMode && viewModes.includes(viewMode)) {
-    savedViewMode.value = viewMode;
-  }
-});
+watch(
+  () => props.viewMode,
+  (viewMode) => {
+    if (viewMode && viewModes.includes(viewMode)) {
+      savedViewMode.value = viewMode;
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   () => currentCategory.value?.id,

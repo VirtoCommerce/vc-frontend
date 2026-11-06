@@ -1,4 +1,6 @@
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
+import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
+import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 let cachedBuilderOrigin: string | undefined;
 
@@ -33,6 +35,26 @@ export function getPreviewCultureName(): string | undefined {
   const urlParams = new URLSearchParams(globalThis.location.search);
   const cultureName = urlParams.get("cultureName") || undefined;
   return cultureName && LOCALE_ID_REGEX.test(cultureName) ? cultureName : undefined;
+}
+
+/**
+ * Guards a navigation inside the designer's preview. Protocol 1 shows every page on the preview route. Once the Vue
+ * designer has shown a storefront page (`allowedNavigation`), the designer chooses the page: a link may change only
+ * the query or hash of the page it is on, as sorting and filters do.
+ */
+export function guardPreviewNavigation(
+  to: RouteLocationNormalized,
+  from: RouteLocationNormalized,
+  next: NavigationGuardNext,
+  allowedNavigation: string | undefined,
+): void {
+  if (to.path === DESIGNER_PREVIEW_PATH || to.fullPath === allowedNavigation) {
+    next();
+  } else if (allowedNavigation === undefined) {
+    next({ path: DESIGNER_PREVIEW_PATH, query: to.query, hash: to.hash });
+  } else {
+    next(to.path === from.path);
+  }
 }
 
 export function isPreviewMode(): boolean {

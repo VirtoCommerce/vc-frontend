@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, onDeactivated, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -179,6 +179,11 @@ function focusoutDropdown(payload: FocusEvent) {
 }
 
 watch(route, () => {
+  catalogMenuVisible.value = false;
+});
+
+// A header kept alive under a page without it must not leave its menu open or the page unable to scroll.
+onDeactivated(() => {
   catalogMenuVisible.value = false;
 });
 </script>

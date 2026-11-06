@@ -90,7 +90,13 @@ export function findEditableElement(
  * or Esc ends editing.
  */
 export class InlineTextEditor {
-  private editing: { element: HTMLElement; text: IEditableText; textTransform: string } | null = null;
+  private editing: {
+    element: HTMLElement;
+    text: IEditableText;
+    textTransform: string;
+    /** The nodes the page rendered the text into: the page updates the text through them later. */
+    nodes: ChildNode[];
+  } | null = null;
 
   constructor(
     private readonly blocker: HTMLElement,
@@ -115,7 +121,7 @@ export class InlineTextEditor {
     }
 
     const { element } = found;
-    this.editing = { ...found, textTransform: element.style.textTransform };
+    this.editing = { ...found, textTransform: element.style.textTransform, nodes: [...element.childNodes] };
     element.setAttribute("contenteditable", "plaintext-only");
     if (element.contentEditable !== "plaintext-only") {
       element.setAttribute("contenteditable", "true");
@@ -140,7 +146,7 @@ export class InlineTextEditor {
       return;
     }
 
-    const { element, textTransform } = this.editing;
+    const { element, textTransform, nodes } = this.editing;
     this.editing = null;
     element.removeEventListener("input", this.handleInput);
     element.removeEventListener("keydown", this.handleKeydown);
@@ -150,6 +156,7 @@ export class InlineTextEditor {
     element.removeAttribute("contenteditable");
     element.style.outline = "";
     element.style.textTransform = textTransform;
+    restoreNodes(element, nodes);
     element.blur();
     this.blocker.style.pointerEvents = "auto";
     this.onEnd();
@@ -161,8 +168,9 @@ export class InlineTextEditor {
     }
 
     const { element, text } = this.editing;
-    // The editor writes a no-break space for a trailing space; the setting holds a plain one.
-    const value = (element.innerText || element.textContent || "").replaceAll(" ", " ");
+    // The editor writes a no-break space for a trailing space; the setting holds a plain one. An emptied element keeps
+    // only the browser's line break placeholder, which is no text.
+    const value = element.textContent ? (element.innerText || element.textContent).replaceAll(" ", " ") : "";
     this.onEdit({ ...text, value: text.value.includes("\n") ? value : value.replaceAll("\n", " ") });
   };
 
@@ -194,6 +202,25 @@ export class InlineTextEditor {
       event.stopPropagation();
     }
   };
+}
+
+/**
+ * Puts back the nodes the page rendered the text into when editing replaced them, as deleting the whole text does:
+ * the page would otherwise update nodes that are no longer shown. A single text node keeps the text as typed.
+ */
+function restoreNodes(element: HTMLElement, nodes: ChildNode[]): void {
+  const current = element.childNodes;
+  const isReplaced = nodes.length !== current.length || nodes.some((node, index) => current[index] !== node);
+
+  if (!isReplaced) {
+    return;
+  }
+
+  if (nodes.length === 1 && nodes[0].nodeType === Node.TEXT_NODE) {
+    nodes[0].nodeValue = element.textContent;
+  }
+
+  element.replaceChildren(...nodes);
 }
 
 /** Puts the caret where the pointer is; without browser support it stays where focus put it. */
