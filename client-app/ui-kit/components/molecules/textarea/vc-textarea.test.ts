@@ -39,6 +39,15 @@ describe("VcTextarea accessible name", () => {
   });
 });
 
+describe("VcTextarea required", () => {
+  it("keeps the asterisk out of the accessible name and exposes required on the field", () => {
+    const wrapper = createWrapper({ props: { label: "Comment", required: true } });
+
+    expect(wrapper.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+    expect(wrapper.get("textarea").attributes("required")).toBeDefined();
+  });
+});
+
 describe("VcTextarea error state", () => {
   it("marks the field invalid and points it at the rendered message", () => {
     const wrapper = createWrapper({ props: { label: "Comment", error: true, message: "Comment is too long" } });
