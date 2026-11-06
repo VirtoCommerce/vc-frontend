@@ -33,7 +33,9 @@
       <span class="mission-card__note">{{ view.progressLabel }}</span>
 
       <div class="mission-card__progress">
-        <div class="mission-card__track">
+        <progress class="mission-card__native-progress" :value="view.percent" max="100" :aria-labelledby="titleId" />
+
+        <div class="mission-card__track" data-test-id="mission-card-progress-track" aria-hidden="true">
           <div
             class="mission-card__bar"
             :class="{ 'mission-card__bar--completed': view.isCompleted }"
@@ -41,10 +43,10 @@
           />
         </div>
 
-        <span class="mission-card__percent">{{ view.percent }}%</span>
+        <span class="mission-card__percent" aria-hidden="true">{{ view.percent }}%</span>
       </div>
 
-      <VcTypography text-transform="none" class="mission-card__title" tag="h3" variant="h5">
+      <VcTypography :id="titleId" text-transform="none" class="mission-card__title" tag="h3" variant="h5">
         {{ view.title }}
       </VcTypography>
 
@@ -67,6 +69,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useModal } from "@/shared/modal";
+import { useComponentId } from "@/ui-kit/composables";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
 import OrderMissionModal from "./order-mission-modal.vue";
@@ -83,6 +86,8 @@ const props = defineProps<IProps>();
 const { view } = useMissionCard(() => props.mission);
 
 const isBackdropFailed = ref(false);
+
+const titleId = useComponentId("mission-card-title");
 
 const TYPE_ICONS: Record<MissionType, string> = {
   [MISSION_TYPE.PerSkuAll]: "barcode",
@@ -148,6 +153,10 @@ function openMission(): void {
 
   &__progress {
     @apply mb-3.5 flex items-center gap-2.5;
+  }
+
+  &__native-progress {
+    @apply sr-only;
   }
 
   &__track {
