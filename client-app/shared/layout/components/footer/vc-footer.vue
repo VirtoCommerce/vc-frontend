@@ -12,7 +12,12 @@
 
       <nav class="grid sm:grow sm:grid-cols-2 sm:gap-12 md:grid-cols-3 lg:grid-cols-4 xl:gap-19 2xl:grid-cols-5">
         <template v-if="themeFooterColumns">
-          <FooterLinks v-for="(column, index) in themeFooterColumns" :key="column.id ?? index" :links-block="column" />
+          <FooterLinks
+            v-for="(column, index) in themeFooterColumns"
+            :key="column.id ?? index"
+            :links-block="column"
+            v-bind="getPreviewSectionAttrs(column.id)"
+          />
         </template>
 
         <template v-else-if="whiteLabelingFooterLinks?.length">

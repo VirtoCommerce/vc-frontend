@@ -1,7 +1,7 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
-import { isDesignerPreview, SECTION_ATTRIBUTE } from "@/plugins/builder-preview/utils";
+import { FIELD_ATTRIBUTE, isDesignerPreview, SECTION_ATTRIBUTE } from "@/plugins/builder-preview/utils";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
@@ -65,6 +65,15 @@ export function getPageBuilderSection(type: unknown): Component | undefined {
  */
 export function getPreviewSectionAttrs(id: unknown): Record<string, string> {
   return isDesignerPreview() && typeof id === "string" ? { [SECTION_ATTRIBUTE]: id } : {};
+}
+
+/**
+ * The attribute that names the setting a text shows, by its path in its section or block (`buttons.1.label`), so the
+ * designer preview edits the right one of two settings with the same text. Outside the preview the markup does not
+ * change.
+ */
+export function getPreviewFieldAttrs(path: string): Record<string, string> {
+  return isDesignerPreview() ? { [FIELD_ATTRIBUTE]: path } : {};
 }
 
 /** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */

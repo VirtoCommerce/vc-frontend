@@ -305,4 +305,69 @@ describe("inline editing", () => {
     expect(findEditableElement(document.querySelector("#subtitle b"), texts)?.text.path).toEqual(["subtitle"]);
     expect(findEditableElement(document.getElementById("twice"), texts)).toBeNull();
   });
+
+  it("edits the one of two settings with the same text that a data-pb-field names, where it shows the text", () => {
+    document.body.innerHTML = `
+      <section data-pb-section="s1">
+        <a data-pb-field="buttons.0.label"><span>More</span></a>
+        <a data-pb-field="buttons.1.label"><span id="second">More</span></a>
+      </section>`;
+    const texts = [
+      { itemId: "s1", path: ["buttons", 0, "label"], value: "More" },
+      { itemId: "s1", path: ["buttons", 1, "label"], value: "More" },
+    ];
+    const second = document.getElementById("second");
+
+    const found = findEditableElement(second, texts);
+
+    expect(found?.element).toBe(second);
+    expect(found?.text.path).toEqual(["buttons", 1, "label"]);
+  });
+
+  it("tells the same setting of two blocks apart by the block its text is in", () => {
+    document.body.innerHTML = `
+      <section data-pb-section="s1">
+        <div data-pb-section="b1"><h3 data-pb-field="heading">Delivery</h3></div>
+        <div data-pb-section="b2"><h3 data-pb-field="heading" id="heading">Delivery</h3></div>
+      </section>`;
+    const texts = [
+      { itemId: "b1", path: ["heading"], value: "Delivery" },
+      { itemId: "b2", path: ["heading"], value: "Delivery" },
+    ];
+
+    expect(findEditableElement(document.getElementById("heading"), texts)?.text.itemId).toBe("b2");
+  });
+
+  it("matches a text by its content only to the settings no element names", () => {
+    document.body.innerHTML = `
+      <section data-pb-section="s1">
+        <h2 id="title">Fast</h2>
+        <div data-pb-field="columns.0.title">Fast</div>
+      </section>`;
+    const texts = [
+      { itemId: "s1", path: ["title"], value: "Fast" },
+      { itemId: "s1", path: ["columns", 0, "title"], value: "Fast" },
+    ];
+
+    expect(findEditableElement(document.getElementById("title"), texts)?.text.path).toEqual(["title"]);
+  });
+
+  it("takes a plain string of the schema with any characters, but not an address", () => {
+    const item = {
+      id: "s1",
+      type: "promo",
+      title: "Hit #1",
+      code: "SALE_2026",
+      url: "/catalog",
+      link: "https://a.io/b",
+    };
+
+    expect(findEditableTexts(item, () => true).map(({ path }) => path)).toEqual([["title"], ["code"]]);
+  });
+
+  it("without a schema, leaves a text that looks like markup or a link to the designer's panel", () => {
+    const item = { id: "s1", type: "promo", title: "Hit #1", name: "Plain", url: "/catalog" };
+
+    expect(findEditableTexts(item).map(({ path }) => path)).toEqual([["name"]]);
+  });
 });

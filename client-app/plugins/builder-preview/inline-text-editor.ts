@@ -1,5 +1,5 @@
-import { FIELD_ATTRIBUTE, OUTLINE_COLOR } from "./section-overlay";
-import { SECTION_ATTRIBUTE } from "./utils";
+import { OUTLINE_COLOR } from "./section-overlay";
+import { FIELD_ATTRIBUTE, SECTION_ATTRIBUTE } from "./utils";
 
 /** A plain-text setting of a section or block: the item, the setting's path in it and the text it shows. */
 export interface IEditableText {
@@ -10,27 +10,32 @@ export interface IEditableText {
 
 /** Item keys that never hold a text the page shows. */
 const NOT_TEXT = new Set(["id", "type", "hidden", "blocks", "componentRef"]);
-/** Markup, markdown or a link: shown differently from how it is stored, so it is edited in the designer's panel. */
+/**
+ * Without a schema, a text that looks like markup, markdown or a link: shown differently from how it is stored, so it
+ * is edited in the designer's panel.
+ */
 const NOT_PLAIN = /[<>*_#`[\]]|^\s*(https?:|\/|#)/;
+/** A plain-text setting that is an address as a whole: a link's target, not a text the page shows. */
+const ADDRESS = /^\s*(https?:\/\/|\/)\S*\s*$/;
 const OUTLINE = `2px solid ${OUTLINE_COLOR}`;
 
 function normalize(text: string): string {
   return text.replaceAll(/\s+/g, " ").trim();
 }
 
-/** Whether a setting of an item of the type is plain text by its schema; without it, any string counts. */
-export type PlainTextFieldPredicateType = (itemType: string, path: (string | number)[]) => boolean;
+/** Whether a setting of an item of the type is plain text by its schema; `undefined` when there is no schema. */
+export type PlainTextFieldPredicateType = (itemType: string, path: (string | number)[]) => boolean | undefined;
 
 /** The plain-text settings of a section and of its blocks, nested ones (objects, lists) too. */
 export function findEditableTexts(
   item: Record<string, unknown>,
-  isPlainTextField: PlainTextFieldPredicateType = () => true,
+  isPlainTextField: PlainTextFieldPredicateType = () => undefined,
 ): IEditableText[] {
   const found: IEditableText[] = [];
 
   function walk(owner: { id: string; type: string }, value: unknown, path: (string | number)[]): void {
     if (typeof value === "string") {
-      if (normalize(value) && !NOT_PLAIN.test(value) && isPlainTextField(owner.type, path)) {
+      if (isEditableText(value, isPlainTextField(owner.type, path))) {
         found.push({ itemId: owner.id, path, value });
       }
     } else if (Array.isArray(value)) {
@@ -58,31 +63,84 @@ export function findEditableTexts(
   return found;
 }
 
+function isEditableText(value: string, isPlainText: boolean | undefined): boolean {
+  if (!normalize(value) || isPlainText === false) {
+    return false;
+  }
+
+  return isPlainText ? !ADDRESS.test(value) : !NOT_PLAIN.test(value);
+}
+
 /**
- * The element a click edits and the setting it shows: the innermost `data-pb-field` element inside the section, else
- * the innermost element whose text exactly one plain-text setting of the section has.
+ * The element a click edits and the setting it shows. Inside a `data-pb-field` element it is that setting of the
+ * section or block the element is in, edited in the innermost element that shows its text as is, else in the marked
+ * element. Elsewhere it is the innermost element whose text exactly one setting has, of those no element names.
  */
 export function findEditableElement(
   start: Element | null,
   texts: IEditableText[],
 ): { element: HTMLElement; text: IEditableText } | null {
-  for (let element = start; element && !element.hasAttribute(SECTION_ATTRIBUTE); element = element.parentElement) {
-    if (!(element instanceof HTMLElement)) {
-      continue;
-    }
+  if (!start) {
+    return null;
+  }
 
-    const field = element.getAttribute(FIELD_ATTRIBUTE);
+  const ownerId = getOwnerId(start);
+  const fieldElement = start.closest(`[${FIELD_ATTRIBUTE}]`);
+  const named =
+    fieldElement instanceof HTMLElement && getOwnerId(fieldElement) === ownerId
+      ? texts.filter((text) => isText(text, ownerId, fieldElement.getAttribute(FIELD_ATTRIBUTE)))
+      : [];
+
+  if (named.length === 1 && fieldElement instanceof HTMLElement) {
+    const element = findElementShowing(start, fieldElement, named[0].value) ?? fieldElement;
+    return { element, text: named[0] };
+  }
+
+  const namedKeys = new Set(
+    [...start.ownerDocument.querySelectorAll(`[${FIELD_ATTRIBUTE}]`)].map((element) =>
+      toFieldKey(getOwnerId(element), element.getAttribute(FIELD_ATTRIBUTE)),
+    ),
+  );
+  const unnamed = texts.filter((text) => !namedKeys.has(toFieldKey(text.itemId, text.path.join("."))));
+
+  for (
+    let element: Element | null = start;
+    element && !element.hasAttribute(SECTION_ATTRIBUTE);
+    element = element.parentElement
+  ) {
     const shown = normalize(element.textContent ?? "");
-    const matches = field
-      ? texts.filter((text) => text.path.join(".") === field)
-      : texts.filter((text) => shown && normalize(text.value) === shown);
+    const matches = unnamed.filter((text) => shown && normalize(text.value) === shown);
 
-    if (matches.length === 1) {
+    if (element instanceof HTMLElement && matches.length === 1) {
       return { element, text: matches[0] };
     }
   }
 
   return null;
+}
+
+/** The id of the section or block an element is in. */
+function getOwnerId(element: Element): string | null {
+  return element.closest(`[${SECTION_ATTRIBUTE}]`)?.getAttribute(SECTION_ATTRIBUTE) ?? null;
+}
+
+function isText(text: IEditableText, itemId: string | null, path: string | null): boolean {
+  return text.itemId === itemId && text.path.join(".") === path;
+}
+
+function toFieldKey(itemId: string | null, path: string | null): string {
+  return `${itemId ?? ""}|${path ?? ""}`;
+}
+
+/** The innermost element from `start` up to `last` whose text is the value as is. */
+function findElementShowing(start: Element, last: HTMLElement, value: string): HTMLElement | undefined {
+  for (let element: Element | null = start; element && element !== last; element = element.parentElement) {
+    if (element instanceof HTMLElement && normalize(element.textContent ?? "") === normalize(value)) {
+      return element;
+    }
+  }
+
+  return normalize(last.textContent ?? "") === normalize(value) ? last : undefined;
 }
 
 /**

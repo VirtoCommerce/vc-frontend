@@ -11,7 +11,7 @@
             <VcButton
               v-for="(item, index) in buttons"
               :key="index"
-              v-bind="getLinkAttr(item.link)"
+              v-bind="{ ...getLinkAttr(item.link), ...getPreviewFieldAttrs(`buttons.${index}.label`) }"
               class="flex-1 lg:flex-none"
             >
               {{ item.label }}
@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import { getLinkAttr } from "@/core/utilities/common";
+import { getPreviewFieldAttrs } from "../sections";
 
 type ImagePositionType = "left" | "right";
 type ButtonType = {

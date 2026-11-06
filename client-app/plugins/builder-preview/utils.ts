@@ -4,6 +4,8 @@ import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 /** The attribute the storefront marks a section's element with in the designer preview, and only there. */
 export const SECTION_ATTRIBUTE = "data-pb-section";
+/** The attribute that names the setting a text shows, by its path in the section or block the text is in. */
+export const FIELD_ATTRIBUTE = "data-pb-field";
 
 let cachedBuilderOrigin: string | undefined;
 
