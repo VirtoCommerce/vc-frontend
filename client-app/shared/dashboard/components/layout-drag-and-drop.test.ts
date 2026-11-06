@@ -14,11 +14,14 @@ import { registerBlock } from "../registry";
 import LayoutHiddenTray from "./_internal/layout-hidden-tray.vue";
 import LayoutRegion from "./_internal/layout-region.vue";
 import LayoutStats from "./_internal/layout-stats.vue";
+import LayoutSurface from "./layout-surface.vue";
 import LayoutWidget from "./layout-widget.vue";
 import type { Mock } from "vitest";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 import VcStatWidget from "@/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
+import VcWidgetSkeleton from "@/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
@@ -636,5 +639,64 @@ describe("a drop the draft refuses", () => {
 
     release();
     await saving;
+  });
+});
+
+// Full-width blocks are built for the page's width: they reorder among themselves, and no drag can carry one into a
+// column, a column block into their region, or a block in from another surface — SortableJS only lets a drop through
+// between lists of one named group, and the region has none.
+describe("full-width region drag and drop", () => {
+  const FULL_SCOPE = "dragSpecFull";
+  registerTestDashboard(FULL_SCOPE);
+  for (const [id, order] of [
+    ["wideA", 10],
+    ["wideB", 20],
+  ] as const) {
+    registerBlock(FULL_SCOPE, { id, region: "fullWidth", titleKey: `test.blocks.${id}`, order, component: TestWidget });
+  }
+
+  async function setupSurface() {
+    const layout = createFakeLayout(FULL_SCOPE);
+    const wrapper = mount(LayoutSurface, {
+      props: { layout, cards: TEST_STAT_CARDS },
+      attachTo: document.body,
+      global: {
+        components: { VcButton, VcEmptyView, VcStatWidget, VcWidget, VcWidgetSkeleton },
+        stubs: { VcIcon: true, VcShape: true, VcAlert: true, VcLoaderOverlay: true, VcInput: true, "i18n-t": true },
+      },
+    });
+    await flushPromises();
+    layout.startEdit();
+    await nextTick();
+    return { wrapper, layout };
+  }
+
+  const zoneOf = (id: string) => zones.find((zone) => zone.el.querySelector(`[data-block-id="${id}"]`));
+
+  it("gives the region no drag group, as for the columns", async () => {
+    await setupSurface();
+
+    const full = zoneOf("wideA");
+    const columns = [zoneOf("list"), zoneOf("side")];
+
+    expect(full).toBeDefined();
+    expect(full?.options.group).toBeUndefined();
+    for (const column of columns) {
+      expect(column?.options.group).toBeUndefined();
+    }
+  });
+
+  it("reorders its blocks and leaves no duplicate node behind", async () => {
+    const { wrapper, layout } = await setupSurface();
+    const full = zoneOf("wideA");
+    if (!full) {
+      throw new Error("the full-width region did not render");
+    }
+
+    await moveWithin(full, "wideA", 1);
+
+    expect(layout.visibleIn("fullWidth")).toEqual(["wideB", "wideA"]);
+    const ids = blockIds(wrapper);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });

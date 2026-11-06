@@ -8,6 +8,7 @@ import LayoutEditBar from "./_internal/layout-edit-bar.vue";
 import LayoutEditButton from "./_internal/layout-edit-button.vue";
 import LayoutEmptyState from "./_internal/layout-empty-state.vue";
 import LayoutRegion from "./_internal/layout-region.vue";
+import LayoutSkeleton from "./_internal/layout-skeleton.vue";
 import LayoutStats from "./_internal/layout-stats.vue";
 import LayoutSurface from "./layout-surface.vue";
 import type { LayoutControllerOptionsType, LayoutControllerType, LayoutInputType, SavedLayoutType } from "../types";
@@ -475,5 +476,110 @@ describe("LayoutSurface with every block hidden", () => {
     expect(wrapper.findComponent(LayoutEmptyState).exists()).toBe(false);
     expect(wrapper.findComponent(LayoutEditBar).exists()).toBe(false);
     expect(wrapper.findComponent(Probe).exists()).toBe(true);
+  });
+});
+
+// A block that needs the whole width of the page sits in its own region, between the stat row and the two
+// columns. Like the columns it has no drag group, so it cannot be dropped into a column built for narrower boxes.
+describe("LayoutSurface full-width region", () => {
+  const FULL_SCOPE = "surfaceFullWidthSpec";
+  const WIDE_ID = "wide";
+
+  const Wide = defineComponent({ setup: () => () => h("div", { "data-test-id": "wide-block" }) });
+  const Narrow = defineComponent({ setup: () => () => h("div", { "data-test-id": "narrow-block" }) });
+  // A block's own placeholder, captioned with the title the skeleton hands it.
+  const Placeholder = defineComponent({
+    props: { title: { type: String, default: undefined } },
+    setup: (props) => () => h("div", { "data-test-id": "block-placeholder" }, props.title),
+  });
+
+  registerTestDashboard(FULL_SCOPE);
+  registerBlock(FULL_SCOPE, {
+    id: WIDE_ID,
+    region: "fullWidth",
+    titleKey: "wide.title",
+    order: 1,
+    component: Wide,
+    skeleton: Placeholder,
+  });
+  // After the test dashboard's own column widgets, which bring no placeholder.
+  registerBlock(FULL_SCOPE, {
+    id: "narrow",
+    region: "mainLeft",
+    titleKey: "narrow.title",
+    order: 100,
+    component: Narrow,
+    skeleton: Placeholder,
+  });
+
+  function fullWidthRegion(wrapper: ReturnType<typeof mountSurface>) {
+    return wrapper
+      .findAllComponents(LayoutRegion)
+      .find((region) => region.find('[data-test-id="wide-block"]').exists());
+  }
+
+  it("renders its block after the stat row and before the columns, with no drag group", async () => {
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE));
+    await flushPromises();
+
+    const full = fullWidthRegion(wrapper);
+    const stats = wrapper.getComponent(LayoutStats).element;
+    const firstColumn = wrapper.get('[data-block-id="list"]').element;
+
+    if (!full) {
+      throw new Error("the full-width region did not render");
+    }
+    expect(full.props("group")).toBeUndefined();
+    expect(stats.compareDocumentPosition(full.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(full.element.compareDocumentPosition(firstColumn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  // A tall block's placeholder has the block's shape, so the columns below do not jump when it lands.
+  it("draws a block's own placeholder, with its title, while the layout is read", () => {
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { read: "pending" }));
+    const skeleton = wrapper.getComponent(LayoutSkeleton);
+
+    expect(skeleton.findAll('[data-test-id="block-placeholder"]').map((placeholder) => placeholder.text())).toEqual([
+      "wide.title",
+      "narrow.title",
+    ]);
+    // Every placeholder line is an empty div, as is the head's one: the test dashboard's four column widgets keep the
+    // kit's skeleton at five lines.
+    const lines = skeleton
+      .findAllComponents(VcWidgetSkeleton)
+      .map((widgetSkeleton) => widgetSkeleton.findAll("div:empty").length - 1);
+    expect(lines).toEqual([5, 5, 5, 5]);
+  });
+
+  it("does not mount the region on a dashboard with no full-width block", async () => {
+    const layout = createFakeLayout(SCOPE);
+    const wrapper = mountSurface(layout);
+    await flushPromises();
+
+    const verticalEntries = wrapper
+      .findAllComponents(LayoutRegion)
+      .filter((region) => region.props("orientation") === "vertical")
+      .map((region) => region.props("entries"));
+    expect(verticalEntries).toEqual([layout.visibleIn("mainLeft"), layout.visibleIn("mainRight")]);
+  });
+
+  it("lets no full-width block move between two surfaces of one dashboard", async () => {
+    const first = mountSurface(createFakeLayout(FULL_SCOPE));
+    const second = mountSurface(createFakeLayout(FULL_SCOPE));
+    await flushPromises();
+
+    expect(fullWidthRegion(first)?.props("group")).toBeUndefined();
+    expect(fullWidthRegion(second)?.props("group")).toBeUndefined();
+  });
+
+  it("offers a hidden full-width block back through the tray", async () => {
+    const saved: SavedLayoutType = { regions: [{ blocks: [{ type: WIDE_ID, hidden: true }] }] };
+    const wrapper = mountSurface(createFakeLayout(FULL_SCOPE, { saved }));
+    await flushPromises();
+    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="wide-block"]').exists()).toBe(false);
+    expect(wrapper.find(`[data-restore-id="${WIDE_ID}"]`).exists()).toBe(true);
   });
 });

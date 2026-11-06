@@ -19,6 +19,7 @@ region, is code.
 | Region       | Holds                                                                    |
 | ------------ | ------------------------------------------------------------------------ |
 | `statistics` | stat cards, in one row. A stat block has no component: the page feeds it |
+| `fullWidth`  | widgets across the page, between the stat row and the columns            |
 | `mainLeft`   | widgets in the wide column                                               |
 | `mainRight`  | widgets in the rail. The surface passes them no `title`                  |
 

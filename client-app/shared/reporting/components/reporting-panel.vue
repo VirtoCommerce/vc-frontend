@@ -91,6 +91,17 @@
 
         {{ footnote }}
       </p>
+
+      <!-- The owner's own note about the figures, under the panel's and drawn as it is. -->
+      <p
+        v-if="$slots['footnote-append']"
+        class="reporting-panel__footnote"
+        :data-test-id="`${testId}-footnote-append-label`"
+      >
+        <VcIcon name="info" size="xs" />
+
+        <slot name="footnote-append" />
+      </p>
     </template>
   </div>
 </template>
@@ -259,7 +270,13 @@ const footnote = computed(() => {
 
 <style lang="scss">
 .reporting-panel {
+  $compact: "";
+
   @apply flex flex-col gap-4;
+
+  &--compact {
+    $compact: &;
+  }
 
   &__toolbar {
     @apply flex flex-wrap items-center justify-between gap-3;
@@ -288,12 +305,10 @@ const footnote = computed(() => {
 
     @media (width >= theme("screens.lg")) {
       @apply grid-cols-4;
-    }
-  }
 
-  &--compact &__tiles {
-    @media (width >= theme("screens.lg")) {
-      @apply grid-cols-2;
+      #{$compact} & {
+        @apply grid-cols-2;
+      }
     }
   }
 

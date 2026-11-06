@@ -652,6 +652,9 @@
         "vs_last_year": "{delta} vs last year",
         "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Sales Statistics"
+        },
         "recent_orders": {
           "title": "My recent orders",
           "view_all": "All orders",
@@ -1275,7 +1278,7 @@
         "vs_last_year": "{change} vs last year"
       },
       "last_year": "Last year",
-      "last_year_toggle": "Show last year on {chart}",
+      "last_year_toggle": "Last year: {chart}",
       "legend": {
         "aov_closed": "AOV, closed months",
         "current": "This month, to date",

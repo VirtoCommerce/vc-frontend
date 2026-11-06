@@ -532,24 +532,18 @@ onMounted(measureTickLabels);
   }
 
   &__swatch {
-    @apply inline-block;
+    @apply inline-block size-3.5;
 
-    &--solid {
-      @apply size-3.5;
-
-      background: var(--series-color);
-    }
+    background: var(--series-color);
 
     &--dashed {
-      @apply size-3.5 border border-dashed;
+      @apply border border-dashed bg-transparent;
 
       border-color: var(--series-color);
     }
 
     &--line {
       @apply h-0.5 w-5;
-
-      background: var(--series-color);
     }
   }
 }

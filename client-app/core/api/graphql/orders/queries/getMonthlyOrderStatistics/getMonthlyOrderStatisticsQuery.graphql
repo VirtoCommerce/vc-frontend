@@ -1,0 +1,165 @@
+#import "../../../fragments/orderStatisticsSlotFields.graphql"
+
+# The account dashboard's Sales Statistics (VCST-6258): the signed-in user's OWN orders, as the stat cards count them
+# (GetOrderStatistics), so the two agree. One bucket per month of the selected period (up to 12) with the same month
+# last year, and the month before the period for the first month's "vs previous month". The statistics already leave
+# Cancelled orders out. `use<N>` switches off the slots a shorter period does not fill and the months that have not
+# started.
+query GetMonthlyOrderStatistics(
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $prevFrom: DateTime
+  $prevTo: DateTime
+  $use0: Boolean!
+  $from0: DateTime
+  $to0: DateTime
+  $lyFrom0: DateTime
+  $lyTo0: DateTime
+  $use1: Boolean!
+  $from1: DateTime
+  $to1: DateTime
+  $lyFrom1: DateTime
+  $lyTo1: DateTime
+  $use2: Boolean!
+  $from2: DateTime
+  $to2: DateTime
+  $lyFrom2: DateTime
+  $lyTo2: DateTime
+  $use3: Boolean!
+  $from3: DateTime
+  $to3: DateTime
+  $lyFrom3: DateTime
+  $lyTo3: DateTime
+  $use4: Boolean!
+  $from4: DateTime
+  $to4: DateTime
+  $lyFrom4: DateTime
+  $lyTo4: DateTime
+  $use5: Boolean!
+  $from5: DateTime
+  $to5: DateTime
+  $lyFrom5: DateTime
+  $lyTo5: DateTime
+  $use6: Boolean!
+  $from6: DateTime
+  $to6: DateTime
+  $lyFrom6: DateTime
+  $lyTo6: DateTime
+  $use7: Boolean!
+  $from7: DateTime
+  $to7: DateTime
+  $lyFrom7: DateTime
+  $lyTo7: DateTime
+  $use8: Boolean!
+  $from8: DateTime
+  $to8: DateTime
+  $lyFrom8: DateTime
+  $lyTo8: DateTime
+  $use9: Boolean!
+  $from9: DateTime
+  $to9: DateTime
+  $lyFrom9: DateTime
+  $lyTo9: DateTime
+  $use10: Boolean!
+  $from10: DateTime
+  $to10: DateTime
+  $lyFrom10: DateTime
+  $lyTo10: DateTime
+  $use11: Boolean!
+  $from11: DateTime
+  $to11: DateTime
+  $lyFrom11: DateTime
+  $lyTo11: DateTime
+) {
+  orderStatistics(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    currencyCode
+    prev: period(from: $prevFrom, to: $prevTo) {
+      ...orderStatisticsSlotFields
+    }
+    m0: period(from: $from0, to: $to0) @include(if: $use0) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly0: period(from: $lyFrom0, to: $lyTo0) @include(if: $use0) {
+      ...orderStatisticsSlotFields
+    }
+    m1: period(from: $from1, to: $to1) @include(if: $use1) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly1: period(from: $lyFrom1, to: $lyTo1) @include(if: $use1) {
+      ...orderStatisticsSlotFields
+    }
+    m2: period(from: $from2, to: $to2) @include(if: $use2) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly2: period(from: $lyFrom2, to: $lyTo2) @include(if: $use2) {
+      ...orderStatisticsSlotFields
+    }
+    m3: period(from: $from3, to: $to3) @include(if: $use3) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly3: period(from: $lyFrom3, to: $lyTo3) @include(if: $use3) {
+      ...orderStatisticsSlotFields
+    }
+    m4: period(from: $from4, to: $to4) @include(if: $use4) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly4: period(from: $lyFrom4, to: $lyTo4) @include(if: $use4) {
+      ...orderStatisticsSlotFields
+    }
+    m5: period(from: $from5, to: $to5) @include(if: $use5) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly5: period(from: $lyFrom5, to: $lyTo5) @include(if: $use5) {
+      ...orderStatisticsSlotFields
+    }
+    m6: period(from: $from6, to: $to6) @include(if: $use6) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly6: period(from: $lyFrom6, to: $lyTo6) @include(if: $use6) {
+      ...orderStatisticsSlotFields
+    }
+    m7: period(from: $from7, to: $to7) @include(if: $use7) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly7: period(from: $lyFrom7, to: $lyTo7) @include(if: $use7) {
+      ...orderStatisticsSlotFields
+    }
+    m8: period(from: $from8, to: $to8) @include(if: $use8) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly8: period(from: $lyFrom8, to: $lyTo8) @include(if: $use8) {
+      ...orderStatisticsSlotFields
+    }
+    m9: period(from: $from9, to: $to9) @include(if: $use9) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly9: period(from: $lyFrom9, to: $lyTo9) @include(if: $use9) {
+      ...orderStatisticsSlotFields
+    }
+    m10: period(from: $from10, to: $to10) @include(if: $use10) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly10: period(from: $lyFrom10, to: $lyTo10) @include(if: $use10) {
+      ...orderStatisticsSlotFields
+    }
+    m11: period(from: $from11, to: $to11) @include(if: $use11) {
+      ...orderStatisticsSlotFields
+      excludedCount
+    }
+    ly11: period(from: $lyFrom11, to: $lyTo11) @include(if: $use11) {
+      ...orderStatisticsSlotFields
+    }
+  }
+}

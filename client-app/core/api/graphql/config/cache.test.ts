@@ -45,4 +45,56 @@ describe("hostTypePolicies", () => {
       orderStatistics: { __typename: "OrderStatistics", week: { __typename: "OrderStatisticsPeriod", count: 2 } },
     });
   });
+
+  // The stat cards' month to date and the Sales Statistics' current month ask for the same window, so both land on
+  // one `period(from, to)` entry, each selecting its own fields of `total`. Neither may knock out the other's.
+  it("keeps both selections of one order statistics period when two queries read the same window", () => {
+    const cache = new InMemoryCache({ typePolicies: hostTypePolicies });
+    const cardsQuery = gql`
+      query Cards {
+        orderStatistics(storeId: "B2B-store") {
+          mtd: period(from: "2026-11-01", to: "2026-11-02") {
+            count
+            total {
+              formattedAmount
+            }
+          }
+        }
+      }
+    `;
+    const reportQuery = gql`
+      query Report {
+        orderStatistics(storeId: "B2B-store") {
+          m10: period(from: "2026-11-01", to: "2026-11-02") {
+            count
+            total {
+              amount
+            }
+          }
+        }
+      }
+    `;
+    const cards = {
+      orderStatistics: {
+        __typename: "OrderStatistics",
+        mtd: {
+          __typename: "OrderStatisticsPeriod",
+          count: 3,
+          total: { __typename: "MoneyType", formattedAmount: "$300.00" },
+        },
+      },
+    };
+    const report = {
+      orderStatistics: {
+        __typename: "OrderStatistics",
+        m10: { __typename: "OrderStatisticsPeriod", count: 3, total: { __typename: "MoneyType", amount: 300 } },
+      },
+    };
+
+    cache.writeQuery({ query: cardsQuery, data: cards });
+    cache.writeQuery({ query: reportQuery, data: report });
+
+    expect(cache.readQuery({ query: cardsQuery })).toEqual(cards);
+    expect(cache.readQuery({ query: reportQuery })).toEqual(report);
+  });
 });

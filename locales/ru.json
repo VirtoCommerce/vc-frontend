@@ -652,6 +652,9 @@
         "vs_last_year": "{delta} к прошлому году",
         "excluded_orders": "Не учтено {count} заказов в других валютах | Не учтён {count} заказ в другой валюте | Не учтены {count} заказа в других валютах | Не учтено {count} заказов в других валютах",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Статистика продаж"
+        },
         "recent_orders": {
           "title": "Мои последние заказы",
           "view_all": "Все заказы",
@@ -1275,7 +1278,7 @@
         "vs_last_year": "{change} к прошлому году"
       },
       "last_year": "Прошлый год",
-      "last_year_toggle": "Показать прошлый год на графике «{chart}»",
+      "last_year_toggle": "Прошлый год: {chart}",
       "legend": {
         "aov_closed": "Средний чек, закрытые месяцы",
         "current": "Текущий месяц, на сегодня",

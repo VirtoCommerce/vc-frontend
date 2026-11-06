@@ -652,6 +652,9 @@
         "vs_last_year": "{delta} vs förra året",
         "excluded_orders": "{count} beställning i en annan valuta ingår inte | {count} beställningar i andra valutor ingår inte",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Försäljningsstatistik"
+        },
         "recent_orders": {
           "title": "Mina senaste beställningar",
           "view_all": "Alla beställningar",
@@ -1275,7 +1278,7 @@
         "vs_last_year": "{change} vs förra året"
       },
       "last_year": "Förra året",
-      "last_year_toggle": "Visa förra året i diagrammet ”{chart}”",
+      "last_year_toggle": "Förra året: {chart}",
       "legend": {
         "aov_closed": "Snittordervärde, avslutade månader",
         "current": "Denna månad, hittills",
