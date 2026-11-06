@@ -1,24 +1,65 @@
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
+import { Logger } from "@/core/utilities";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+
+const BUILDER_ORIGIN_STORAGE_KEY = "builderPreviewOrigin";
 
 let cachedBuilderOrigin: string | undefined;
 
-/** `undefined` outside a frame: only the designer that frames the preview may drive it. */
+/**
+ * `undefined` outside a frame: only the designer that frames the preview may drive it. The designer passes `?ep=` in
+ * the frame's first URL only, so the frame keeps the origin for its session: a full reload inside the frame (language
+ * switch, chunk-load recovery) comes back as the designer's preview and answers its `connect`.
+ */
 export function getBuilderOrigin() {
-  if (cachedBuilderOrigin === undefined) {
-    const urlParams = new URLSearchParams(globalThis.location.search);
-    const ep = globalThis.parent === globalThis.window ? null : urlParams.get("ep");
-    try {
-      const endpoint = ep ? new URL(ep) : null;
-      cachedBuilderOrigin =
-        endpoint && (endpoint.protocol === "http:" || endpoint.protocol === "https:") ? endpoint.origin : "";
-    } catch {
-      cachedBuilderOrigin = "";
-    }
-  }
+  cachedBuilderOrigin ??= globalThis.parent === globalThis.window ? "" : resolveFramedBuilderOrigin();
 
   return cachedBuilderOrigin || undefined;
+}
+
+function resolveFramedBuilderOrigin(): string {
+  const endpoint = new URLSearchParams(globalThis.location.search).get("ep");
+
+  if (endpoint === null) {
+    return toHttpOrigin(readStoredBuilderOrigin());
+  }
+
+  const origin = toHttpOrigin(endpoint);
+  storeBuilderOrigin(origin);
+  return origin;
+}
+
+function toHttpOrigin(endpoint: string | null): string {
+  try {
+    const url = endpoint ? new URL(endpoint) : null;
+    return url && (url.protocol === "http:" || url.protocol === "https:") ? url.origin : "";
+  } catch (error) {
+    Logger.warn("[builder-preview] Ignored a designer endpoint that is not a URL", error);
+    return "";
+  }
+}
+
+function readStoredBuilderOrigin(): string | null {
+  try {
+    return sessionStorage.getItem(BUILDER_ORIGIN_STORAGE_KEY);
+  } catch (error) {
+    Logger.warn("[builder-preview] Reading the designer origin failed", error);
+    return null;
+  }
+}
+
+/** An empty origin forgets the kept one: the frame was loaded with an endpoint that is not the designer's. */
+function storeBuilderOrigin(origin: string): void {
+  try {
+    if (origin) {
+      sessionStorage.setItem(BUILDER_ORIGIN_STORAGE_KEY, origin);
+    } else {
+      sessionStorage.removeItem(BUILDER_ORIGIN_STORAGE_KEY);
+    }
+  } catch (error) {
+    Logger.warn("[builder-preview] Keeping the designer origin failed", error);
+  }
 }
 
 export function getPreviewPageId(): string | undefined {
@@ -85,13 +126,15 @@ export type PreviewBootOptionsType = {
 };
 
 /**
- * Everything storefront boot needs to know about a Page Builder preview, resolved from the URL
- * before the preview plugin is installed. Boot has to decide the locale and the router base up
- * front, so it can't wait for the plugin — this keeps the reasoning here instead of scattering
- * Page Builder branches across `app-runner` (VCST-5219).
+ * Everything storefront boot needs to know about a Page Builder preview, resolved from the URL and
+ * the designer origin the frame keeps, before the preview plugin is installed. Boot has to decide
+ * the locale and the router base up front, so it can't wait for the plugin — this keeps the
+ * reasoning here instead of scattering Page Builder branches across `app-runner` (VCST-5219).
+ * A designer frame reloaded on a storefront page is still the preview: the plugin takes it back
+ * to the preview route.
  */
 export function getPreviewBootOptions(): PreviewBootOptionsType {
-  const isActive = isPreviewMode();
+  const isActive = isDesignerPreview();
 
   return {
     isActive,
