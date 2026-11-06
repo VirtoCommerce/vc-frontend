@@ -18,7 +18,7 @@
         ref="inputRef"
         type="checkbox"
         class="vc-checkbox__input"
-        :aria-label="ariaLabel || name"
+        :aria-label="ariaLabel || ($slots.default ? undefined : name)"
         :name="name"
         :value="value"
         :disabled="disabled"
@@ -69,6 +69,10 @@ interface IEmits {
 
 interface IProps {
   modelValue?: boolean;
+  /**
+   * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
+   * Ignored inside a clickable or linked `VcMenuItem`, where no input renders.
+   */
   name?: string;
   value?: string | number | object;
   disabled?: boolean;
@@ -82,6 +86,7 @@ interface IProps {
   testId?: string;
   preventDefault?: boolean;
   tabindex?: string;
+  /** Accessible name; overrides the slot label. Ignored inside a clickable or linked `VcMenuItem`, where no input renders. */
   ariaLabel?: string;
   tooltip?: {
     placement?: VcPopoverPlacementType;
