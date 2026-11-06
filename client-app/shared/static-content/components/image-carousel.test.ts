@@ -1,10 +1,11 @@
 import { mount } from "@vue/test-utils";
 import { describe, it, expect } from "vitest";
 import ImageCarousel from "./image-carousel.vue";
+import PageBuilderSection from "./page-builder-section.vue";
 
 const SliderStub = {
   name: "Slider",
-  props: ["slides", "title", "subtitle", "height"],
+  props: ["slides", "title", "subtitle", "height", "background"],
   template: "<div />",
 };
 
@@ -29,5 +30,14 @@ describe("ImageCarousel", () => {
     const slider = mountCarousel({ images: [], title: "Title", subtitle: "Subtitle", height: "large" });
 
     expect(slider.props()).toMatchObject({ slides: [], title: "Title", subtitle: "Subtitle", height: "large" });
+  });
+
+  it("takes the background chosen in the designer", () => {
+    const slider = mount(PageBuilderSection, {
+      props: { component: ImageCarousel, item: { type: "image-carousel", background: "bg-neutral-800" } },
+      global: { stubs: { Slider: SliderStub } },
+    }).findComponent(SliderStub);
+
+    expect(slider.props("background")).toBe("bg-neutral-800");
   });
 });

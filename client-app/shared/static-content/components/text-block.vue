@@ -1,15 +1,17 @@
 <template>
   <div class="text-block pb-16 pt-6" :class="background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <component :is="heading" class="mb-3 text-2xl">{{ title }}</component>
+      <component :is="headingTag" class="mb-3 text-2xl">{{ title }}</component>
 
-      <div v-html-safe="contentValue" class="block-content text-lg"></div>
+      <!-- eslint-disable-next-line vue/no-v-html -- the value is sanitized -->
+      <div v-html="contentValue" class="block-content text-lg"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { sanitizeSectionHtml, toHeadingTag } from "../sections";
 
 export interface IProps {
   heading: string;
@@ -20,8 +22,10 @@ export interface IProps {
 
 const props = defineProps<IProps>();
 
+const headingTag = computed(() => toHeadingTag(props.heading));
+
 const contentValue = computed(() => {
-  return typeof props.text === "object" ? props.text?.html : props.text;
+  return sanitizeSectionHtml(typeof props.text === "object" ? props.text?.html : props.text);
 });
 </script>
 

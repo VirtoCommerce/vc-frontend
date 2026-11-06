@@ -15,6 +15,8 @@ import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
+export { default as PageBuilderSection } from "./page-builder-section.vue";
+
 const Slider = defineAsyncComponent(() => import("./slider.vue"));
 const ImageCarousel = defineAsyncComponent(() => import("./image-carousel.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("./products-block.vue"));
