@@ -5,7 +5,7 @@
     <VcContainer v-else>
       <VcBreadcrumbs class="news-article__breadcrumbs" :items="breadcrumbs" />
 
-      <VcWidgetSkeleton v-if="loading" head size="lg" />
+      <VcWidgetSkeleton v-if="loading" class="news-article__skeleton" head size="lg" />
 
       <NewsArticle
         v-else-if="newsArticle"
@@ -103,6 +103,11 @@ watchEffect(fetchNewsArticle);
 .news-article {
   &__breadcrumbs {
     @apply mb-3;
+  }
+
+  // The article that replaces it stays inside VcContainer's padding, unlike a widget.
+  &__skeleton {
+    @apply mx-0;
   }
 }
 </style>
