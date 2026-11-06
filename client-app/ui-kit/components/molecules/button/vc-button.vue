@@ -262,16 +262,12 @@ defineExpose({
     $loading: &;
   }
 
-  :where(&--icon, &--square) {
-    @apply flex-none h-[--size] min-w-[var(--min-w,var(--size))];
-  }
-
   :where(&--icon) {
-    @apply p-0;
+    @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
   :where(&--square) {
-    @apply px-0.5;
+    @apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
   :where(&--full-width) {

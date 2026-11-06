@@ -163,11 +163,14 @@ describe("VcButton", () => {
         },
         {
           media: "",
-          selector: ":where(.vc-button--icon, .vc-button--square)",
-          styles: ["@apply flex-none h-[--size] min-w-[var(--min-w,var(--size))]"],
+          selector: ":where(.vc-button--icon)",
+          styles: ["@apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))]"],
         },
-        { media: "", selector: ":where(.vc-button--icon)", styles: ["@apply p-0"] },
-        { media: "", selector: ":where(.vc-button--square)", styles: ["@apply px-0.5"] },
+        {
+          media: "",
+          selector: ":where(.vc-button--square)",
+          styles: ["@apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))]"],
+        },
         { media: "", selector: ":where(.vc-button--full-width)", styles: ["@apply w-full"] },
       ],
     ],
