@@ -1,5 +1,6 @@
 {
   "name": "Title",
+  "description": "Hero-style heading on a tinted background: a heading element (h2–h6, default h2) with an optional short subtitle line under it. Use when: opening a content area that needs a clear topic announcement with a brief lead-in — blog post intros, mid-page section breaks. Skip when: you need body copy (use a text section), a heading paired with an action button (use call-to-action), or the page-level H1/SEO header (use the pinned page-header section). Subtitle is a 1–2 sentence lead-in; for longer body copy use a text section.",
   "icon": "article",
   "displayField": "name",
   "includeShared": ["title"],

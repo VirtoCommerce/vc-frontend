@@ -1,5 +1,6 @@
 {
   "name": "Call to Action with Image",
+  "description": "Marketing CTA pairing a hero image with a title, subtitle and action buttons in a two-column layout. Use when: visual promotional block — feature highlight, product/service promotion, signup with brand imagery. Skip when: text-only CTA (use `call-to-action`), pure imagery (use `image` or `slider`), a heading without action (use `title`), or product showcase (use `products` family). `title` is the headline; `subtitle` is a short multi-line elaboration; `image` is the hero image URL — leave empty if the user did not supply one; `imageDescription` becomes the image's `alt` attribute (required for SEO/accessibility — generate from title if not given); `imagePosition` chooses left vs right placement on desktop (`right` is the typical default).",
   "icon": "article",
   "displayField": "name",
   "includeShared": ["buttons"],
