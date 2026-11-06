@@ -23,8 +23,7 @@
         :key="item.id"
         :item="item"
         :id="getAnchorId(item)"
-        :model="item"
-        :settings="pageBuilderContent.settings"
+        :context="sectionContext"
       />
     </template>
   </PageTemplate>
@@ -69,6 +68,9 @@ const templateName = computed(() =>
 );
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 const pageBuilderContent = shallowRef<IPageBuilderContent | null>(null);
+
+/** The page's settings, for the sections that declare them. */
+const sectionContext = computed(() => ({ settings: pageBuilderContent.value?.settings }));
 const { setPageLayout } = usePageLayout();
 
 watch(

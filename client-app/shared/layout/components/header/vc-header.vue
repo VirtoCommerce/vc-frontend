@@ -25,10 +25,9 @@
 <script setup lang="ts">
 import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
 import { computed, onActivated, onDeactivated, ref, watch } from "vue";
-import { useWhiteLabeling, useThemeContext } from "@/core/composables";
+import { useNavigations, useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
-import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import AnnouncementBar from "../announcement-bar/announcement-bar.vue";
 import Created from "../print/created.vue";
@@ -56,35 +55,28 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
-function writeSidebarOffset(value: number): void {
-  headerHeightVar.value = `${value + OFFSET_TOP}px`;
-}
+/** False while the main layout keeps the header alive under a page on another layout, which has no header. */
+const isShown = ref(true);
 
-function writeAppHeaderHeight(value: number, mobile: boolean): void {
+watch([headerHeight, isShown], ([value, shown]) => {
+  headerHeightVar.value = shown ? `${value + OFFSET_TOP}px` : undefined;
+});
+
+watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
+  if (!shown) {
+    appHeaderHeightVar.value = undefined;
+    return;
+  }
+
   if (mobile) {
     return;
   }
 
   appHeaderHeightVar.value = `${value}px`;
-}
-
-watch(headerHeight, writeSidebarOffset);
-
-watch([headerHeight, isMobile], ([value, mobile]) => writeAppHeaderHeight(value, mobile));
-
-// The main layout keeps the header alive under a page on another layout, which has no header height to leave room for.
-onDeactivated(() => {
-  headerHeightVar.value = undefined;
-  appHeaderHeightVar.value = undefined;
-});
-
-onActivated(() => {
-  writeSidebarOffset(headerHeight.value);
-  writeAppHeaderHeight(headerHeight.value, isMobile.value);
 });
 
 const { isAuthenticated } = useUser();
-const { isCatalogMenuShown } = useThemeChrome();
+const { isCatalogMenuShown } = useNavigations();
 
 const isMegamenuShown = computed(() => {
   return (
@@ -92,5 +84,13 @@ const isMegamenuShown = computed(() => {
     desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
     (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
   );
+});
+
+onActivated(() => {
+  isShown.value = true;
+});
+
+onDeactivated(() => {
+  isShown.value = false;
 });
 </script>

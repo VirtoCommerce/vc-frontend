@@ -170,23 +170,30 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 // this var on desktop (see vc-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
-function writeAppHeaderHeight(value: number): void {
-  appHeaderHeightVar.value = `${value}px`;
-}
+/** False while the main layout keeps the header alive under a page on another layout, which has no header. */
+const isShown = ref(true);
 
-watch(height, writeAppHeaderHeight, { immediate: true });
+watch(
+  [height, isShown],
+  ([value, shown]) => {
+    appHeaderHeightVar.value = shown ? `${value}px` : undefined;
+  },
+  { immediate: true },
+);
 
-// Kept alive under a page on another layout: that page has no header, so nothing of it may stay open or locked.
+onActivated(() => {
+  isShown.value = true;
+});
+
+// Nothing of a header that is not shown may stay open or keep the page from scrolling.
 onDeactivated(() => {
-  appHeaderHeightVar.value = undefined;
+  isShown.value = false;
   mobileMenuVisible.value = false;
 
   if (searchBarVisible.value) {
     toggleSearchBar();
   }
 });
-
-onActivated(() => writeAppHeaderHeight(height.value));
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);

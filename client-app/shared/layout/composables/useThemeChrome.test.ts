@@ -35,7 +35,6 @@ describe("useThemeChrome", () => {
   it("leaves the header and footer as they are without a theme", () => {
     const chrome = useThemeChrome();
 
-    expect(chrome.isCatalogMenuShown.value).toBe(true);
     expect(chrome.logoWidth.value).toBeUndefined();
     expect(chrome.footerColumns.value).toBeUndefined();
     expect(chrome.isCreditShown.value).toBe(true);
@@ -43,7 +42,7 @@ describe("useThemeChrome", () => {
 
   it("reads the header and footer settings of the theme's groups", () => {
     publish({
-      header: { content: [{ id: "h", type: "site-header", logo_width: 160, show_catalog_menu: false }] },
+      header: { content: [{ id: "h", type: "site-header", logo_width: 160 }] },
       footer: {
         content: [
           {
@@ -64,7 +63,6 @@ describe("useThemeChrome", () => {
     const chrome = useThemeChrome();
 
     expect(chrome.logoWidth.value).toBe(160);
-    expect(chrome.isCatalogMenuShown.value).toBe(false);
     expect(chrome.copyright.value).toBe("© Acme");
     expect(chrome.isCreditShown.value).toBe(false);
     expect(chrome.footerColumns.value).toEqual([

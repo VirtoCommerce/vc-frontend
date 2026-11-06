@@ -45,7 +45,7 @@ import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
-import { registerPageBuilderSections, templateBlocks } from "@/shared/static-content";
+import { productTemplateSections, registerPageBuilderSections, templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -338,7 +338,7 @@ export default async () => {
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
   // The section renderer finds a stored section type through the extension registry, where modules add theirs.
-  registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks });
+  registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks, ...productTemplateSections });
 
   await router.isReady();
 

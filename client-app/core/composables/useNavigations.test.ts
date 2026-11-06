@@ -316,6 +316,7 @@ describe("useNavigations - theme header", () => {
     await publishSiteHeader({ show_catalog_menu: false });
     const navigations = await importComposable();
 
+    expect(navigations.isCatalogMenuShown.value).toBe(false);
     expect(navigations.mobileCatalogMenuItem.value).toBeUndefined();
   });
 });

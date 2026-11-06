@@ -131,6 +131,31 @@ describe("PageBuilderSection", () => {
     });
   });
 
+  it("gives the whole item as `model` and the page's settings only to a section that declares them", () => {
+    const LegacySection = defineComponent({
+      props: { model: { type: Object, default: undefined }, settings: { type: Object, default: undefined } },
+
+      setup(props) {
+        return () =>
+          h(
+            "section",
+            { "data-test-id": "page-builder-legacy-section" },
+            `${props.model?.title}:${props.settings?.header}`,
+          );
+      },
+    });
+    const context = { settings: { header: "Page" } };
+    const item = { id: "1", type: "test", title: "Hello" };
+
+    const legacy = mount(PageBuilderSection, { props: { component: LegacySection, item, context } });
+    const current = mount(PageBuilderSection, { props: { component: Section, item, context } });
+
+    expect(legacy.find('[data-test-id="page-builder-legacy-section"]').text()).toBe("Hello:Page");
+    expect(current.find('[data-test-id="page-builder-test-section"]').attributes()).toEqual({
+      "data-test-id": "page-builder-test-section",
+    });
+  });
+
   it("passes the host's data only when declared, over the item's keys", () => {
     const wrapper = mount(PageBuilderSection, {
       props: {

@@ -4,8 +4,7 @@
     :key="item.id"
     :item="item"
     :id="getAnchorId(item)"
-    :model="item"
-    :settings="settings"
+    :context="sectionContext"
   />
 
   <slot />
@@ -15,8 +14,7 @@
     :key="item.id"
     :item="item"
     :id="getAnchorId(item)"
-    :model="item"
-    :settings="settings"
+    :context="sectionContext"
   />
 </template>
 
@@ -66,6 +64,9 @@ const settings = computed(() => ({
   ...templateResolution.value?.document.settings,
   ...Object.fromEntries(Object.entries(props.pageSettings ?? {}).filter(([, value]) => value != null)),
 }));
+
+/** The page's settings, for the template's sections that declare them. */
+const sectionContext = computed(() => ({ settings: settings.value }));
 
 watchEffect(() => {
   const { layout } = settings.value;

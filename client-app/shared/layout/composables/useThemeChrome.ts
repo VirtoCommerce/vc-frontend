@@ -29,8 +29,6 @@ export function useThemeChrome() {
     return Number.isFinite(value) && value > 0 ? value : undefined;
   });
 
-  const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
-
   /** The links of the header's icons menu, which the icons of the built-in links keep. */
   const iconsMenuLinks = computed(() => getMenuLinks(siteHeader.value?.icons_menu));
 
@@ -68,7 +66,6 @@ export function useThemeChrome() {
     siteFooter,
     announcementBar,
     logoWidth,
-    isCatalogMenuShown,
     iconsMenuLinks,
     footerColumns,
     copyright,

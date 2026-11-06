@@ -131,7 +131,11 @@ vi.mock("@/core/theme-snapshot", () => ({
   startThemeSnapshot: vi.fn(() => undefined),
 }));
 vi.mock("@/shared/catalog/components/product", () => ({ default: {} }));
-vi.mock("@/shared/static-content", () => ({ registerPageBuilderSections: vi.fn(), templateBlocks: {} }));
+vi.mock("@/shared/static-content", () => ({
+  registerPageBuilderSections: vi.fn(),
+  templateBlocks: {},
+  productTemplateSections: {},
+}));
 vi.mock("@/core/api/graphql/types", () => ({ GetSlugInfoDocument: {} }));
 vi.mock("@/core/utilities", () => ({
   extractHostname: vi.fn(() => "example.test"),

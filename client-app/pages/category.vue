@@ -6,7 +6,6 @@
       :item="item"
       :context="sectionContext"
       :id="getAnchorId(item)"
-      :model="item"
       class="mb-5 xl:mb-6"
     />
 
@@ -30,7 +29,6 @@
       :context="sectionContext"
       :lazy="lazySections"
       :id="getAnchorId(item)"
-      :model="item"
       class="mt-5 xl:mt-6"
     />
   </VcContainer>

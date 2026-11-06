@@ -25,9 +25,15 @@ import type { Component } from "vue";
 interface IProps {
   /** The section component; without one, the section registered for the item's type. Nothing renders without either. */
   component?: Component;
-  /** Undeclared keys are dropped: they would otherwise land as attributes on the section's root. */
+  /**
+   * Undeclared keys are dropped: they would otherwise land as attributes on the section's root. A section that declares
+   * `model` gets the whole item there, as older sections read it.
+   */
   item: Record<string, unknown>;
-  /** The host's data for the section (the product, the category): passed only when declared, over the item's keys. */
+  /**
+   * The host's data for the section (the product, the category, the page's settings): passed only when declared, over
+   * the item's keys.
+   */
   context?: Record<string, unknown>;
   /** Mounts the section only when it comes near the viewport, so a section below the fold loads its data late. */
   lazy?: boolean;
@@ -52,6 +58,7 @@ const declaredProps = computed(() =>
   propsSource.value
     ? {
         ...pickDeclaredProps(propsSource.value, props.item),
+        ...pickDeclaredProps(propsSource.value, { model: props.item }),
         ...pickDeclaredProps(propsSource.value, props.context ?? {}),
       }
     : {},

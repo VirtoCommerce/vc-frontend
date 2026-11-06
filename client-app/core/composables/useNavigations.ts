@@ -240,6 +240,7 @@ export function _useNavigations() {
   /** The category menu the header shows, on desktop and in the mobile menu alike. */
   const shownCatalogMenuItems = computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value);
 
+  /** Whether the header shows the category menu, on desktop and in the mobile menu: the theme's header can hide it. */
   const isCatalogMenuShown = computed(() => getGroupSection("header", "site-header")?.show_catalog_menu !== false);
 
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
@@ -435,6 +436,7 @@ export function _useNavigations() {
 
     fetchCatalogMenu,
     catalogMenuItems: shownCatalogMenuItems,
+    isCatalogMenuShown,
 
     fetchFooterLinks,
     footerLinks: computed(() => footerLinks.value),

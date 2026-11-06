@@ -18,14 +18,12 @@
       </div>
 
       <template v-for="item in template.content">
-        <!-- @deprecated: settings and model go once every section takes only its item's props -->
         <PageBuilderSection
           v-if="!item.hidden"
           :key="item.id"
           :item="item"
           :id="getAnchorId(item)"
-          :model="item"
-          :settings="template.settings"
+          :context="sectionContext"
         />
       </template>
     </div>
@@ -56,6 +54,9 @@ withDefaults(defineProps<IProps>(), { objectType: "ContentFile" });
 const route = useRoute();
 
 const { staticPage: template, staticPagePreviewSubject: previewSubject } = useStaticPage();
+
+/** The page's settings, for the sections that declare them. */
+const sectionContext = computed(() => ({ settings: template.value?.settings }));
 
 // VCST-5274: the live page name is injected into `settings.name` upstream (useSlugInfo), so the
 // breadcrumb follows renames. Humanize here as well to keep the leaf friendly for the fallback
