@@ -14,6 +14,7 @@
       @keydown.enter="searchDropdownRef?.handleSearch()"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
+      @click="showSearchDropdown"
     >
       <template #prepend="{ focusInput }">
         <VcButton

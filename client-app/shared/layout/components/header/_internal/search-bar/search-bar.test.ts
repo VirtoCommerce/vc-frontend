@@ -229,6 +229,16 @@ describe("SearchBar scope chip removal", () => {
 
     expect(searchDropdownVisible.value).toBe(true);
   });
+
+  it("opens the search dropdown on a click in the input that kept focus", async () => {
+    setCategoryScope("printers", "Printers");
+    const wrapper = createComponent({ attachTo: document.body });
+
+    await removeChip(wrapper);
+    await wrapper.get(SEARCH_INPUT_SELECTOR).trigger("click");
+
+    expect(searchDropdownVisible.value).toBe(true);
+  });
 });
 
 describe("SearchBar scope slot geometry", () => {
