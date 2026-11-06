@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
-import postcss, { AtRule } from "postcss";
+import postcss, { AtRule, list } from "postcss";
 import { compileString } from "sass";
 import { describe, expect, it } from "vitest";
 import { parse } from "vue/compiler-sfc";
@@ -134,7 +134,9 @@ describe("VcButton", () => {
     it("declare nothing but custom properties on the same selectors outside :where()", () => {
       const bareSelectors = new Set(whereRules.map(({ selector }) => WHERE_WRAPPED.exec(selector)?.[1]));
       const styledBare = rules.filter(
-        ({ selector, styles }) => bareSelectors.has(selector) && styles.some((style) => !CUSTOM_PROPERTY.test(style)),
+        ({ selector, styles }) =>
+          list.comma(selector).some((part) => bareSelectors.has(part)) &&
+          styles.some((style) => !CUSTOM_PROPERTY.test(style)),
       );
 
       expect(styledBare).toEqual([]);
