@@ -301,8 +301,8 @@ const { value: countryCode } = useField("countryCode", toTypedSchema(yup.string(
 const { value: countryName } = useField("countryName", toTypedSchema(yup.string().max(128).nullable()));
 const { value: regionName } = useField("regionName", toTypedSchema(yup.string().max(128).nullable()));
 const { value: regionId } = useField("regionId", regionRules);
-const { value: line1 } = useField("line1", toTypedSchema(yup.string().trim().max(128).required().nullable()));
-const { value: line2 } = useField("line2", toTypedSchema(yup.string().trim().max(128).nullable()));
+const { value: line1 } = useField("line1", toTypedSchema(yup.string().trim().max(2048).required().nullable()));
+const { value: line2 } = useField("line2", toTypedSchema(yup.string().trim().max(2048).nullable()));
 const { value: description } = useField("description", toTypedSchema(yup.string().trim().max(128).nullable()));
 
 const save = handleSubmit((address) => {
