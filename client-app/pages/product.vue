@@ -477,6 +477,9 @@ watch(
     });
 
     await fetchProduct(productId.value);
+    if (isCancelled) {
+      return;
+    }
     if (product.value?.isConfigurable) {
       await fetchProductConfiguration();
     }
