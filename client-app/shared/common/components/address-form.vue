@@ -134,7 +134,7 @@
           class="mb-4"
           required
           test-id-input="line-1-input"
-          :maxlength="128"
+          :maxlength="2048"
         />
 
         <VcInput
@@ -145,7 +145,7 @@
           :label="$t('common.labels.address_line2')"
           class="mb-4"
           test-id-input="line-2-input"
-          :maxlength="128"
+          :maxlength="2048"
         />
       </div>
     </div>
