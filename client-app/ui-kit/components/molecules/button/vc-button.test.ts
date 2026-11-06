@@ -1,7 +1,48 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
+import postcss from "postcss";
+import { compileString } from "sass";
 import { describe, expect, it } from "vitest";
+import { parse } from "vue/compiler-sfc";
 import VcButton from "./vc-button.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
+
+// The root alone: the root, its layout modifiers and its min-width rule
+const ROOT_ALONE = /^\.vc-button(?:--(?:icon|square|full-width)|:not\([^)]*\))?$/;
+const CUSTOM_PROPERTY = /^--/;
+
+function readSource(relativePath: string): string {
+  return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), "utf8");
+}
+
+type CompiledRuleType = { selectors: string[]; styles: string[] };
+
+function compiledRules(scss: string): CompiledRuleType[] {
+  const rules: CompiledRuleType[] = [];
+
+  postcss.parse(compileString(scss).css).walkRules((rule) => {
+    const styles: string[] = [];
+
+    rule.each((node) => {
+      if (node.type === "decl") {
+        styles.push(node.prop);
+      } else if (node.type === "atrule") {
+        styles.push(`@${node.name}`);
+      }
+    });
+
+    rules.push({ selectors: rule.selectors, styles });
+  });
+
+  return rules;
+}
+
+function isStyledAtOneClass({ selectors, styles }: CompiledRuleType): boolean {
+  return (
+    selectors.some((selector) => ROOT_ALONE.test(selector)) && styles.some((style) => !CUSTOM_PROPERTY.test(style))
+  );
+}
 
 function mountButton(options: ComponentMountingOptions<typeof VcButton> = {}) {
   return mount(VcButton, { ...options, global: { stubs: { VcIcon: true } } });
@@ -44,5 +85,16 @@ describe("VcButton", () => {
     const wrapper = mountButton({ slots: { default: "Browse files" } });
 
     expect(wrapper.attributes("aria-busy")).toBeUndefined();
+  });
+
+  // A kit parent's single class must lay the root out in any load order, screen and print alike.
+  it.each([
+    ["component", parse(readSource("./vc-button.vue")).descriptor.styles[0].content],
+    ["print", readSource("../../../../assets/styles/print/atoms/vc-button.scss")],
+  ])("keeps the root's own %s rules in :where()", (_, scss) => {
+    const rules = compiledRules(scss);
+
+    expect(rules.filter(isStyledAtOneClass)).toEqual([]);
+    expect(rules).toContainEqual({ selectors: [":where(.vc-button)"], styles: expect.arrayContaining(["@apply"]) });
   });
 });
