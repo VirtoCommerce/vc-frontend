@@ -214,9 +214,14 @@ function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
       title: t("pages.account.security.delete_modal.title"),
       text: t("pages.account.security.delete_modal.message"),
       async onConfirm() {
-        await deleteKey(signInMethod.name, key.id);
+        const deleted = await deleteKey(signInMethod.name, key.id);
         closeDeleteModal();
-        await focusSignInMethod(signInMethod.name);
+
+        if (deleted) {
+          // The mutation does not wait for its list refetch, so wait here before focusing the updated list.
+          await refetch();
+          await focusSignInMethod(signInMethod.name);
+        }
       },
     },
   });

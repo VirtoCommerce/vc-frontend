@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   openModal: vi.fn(),
   deleteKey: vi.fn(),
   createKey: vi.fn(),
+  refetch: vi.fn(),
 }));
 
 const signInMethods = ref<
@@ -25,7 +26,7 @@ vi.mock("@/shared/account", () => ({
     loading: ref(false),
     renaming: ref(false),
     deleting: ref(false),
-    refetch: vi.fn(),
+    refetch: mocks.refetch,
     renameKey: vi.fn(),
     deleteKey: mocks.deleteKey,
   }),
@@ -142,10 +143,15 @@ describe("security page — keyboard focus after adding or deleting a key (VCST-
     expect(document.activeElement).toBe(add);
   });
 
-  it("moves focus to Add passkey after the key is deleted, not to the page body", async () => {
-    mocks.deleteKey.mockImplementation(async () => {
+  // Like the real mutation, the delete resolves before the list is refetched: the old rows are still rendered.
+  function emptyListOnRefetch(): void {
+    mocks.deleteKey.mockResolvedValue(true);
+    mocks.refetch.mockImplementation(async () => {
       signInMethods.value = [{ ...signInMethods.value[0], keys: [] }];
     });
+  }
+
+  async function confirmDelete(): Promise<HTMLButtonElement> {
     mocks.openModal.mockReturnValue(vi.fn());
     mountPage();
     const deleteButton = document.querySelector<HTMLButtonElement>("li button")!;
@@ -156,24 +162,34 @@ describe("security page — keyboard focus after adding or deleting a key (VCST-
     await props.onConfirm();
     await flushPromises();
 
+    return deleteButton;
+  }
+
+  it("moves focus to Add passkey after the key is deleted, not to the page body", async () => {
+    emptyListOnRefetch();
+
+    const deleteButton = await confirmDelete();
+
+    expect(mocks.refetch).toHaveBeenCalled();
     expect(deleteButton.isConnected).toBe(false);
     expect(document.activeElement).toBe(addPasskeyButton());
   });
 
-  it("moves focus to the passkey list when there is no Add passkey button", async () => {
+  it("moves focus to the empty-state text when there is no Add passkey button and the last key is deleted", async () => {
     signInMethods.value = [{ ...signInMethods.value[0], canCreateKey: false }];
-    mocks.deleteKey.mockImplementation(async () => {
-      signInMethods.value = [{ ...signInMethods.value[0], keys: [] }];
-    });
-    mocks.openModal.mockReturnValue(vi.fn());
-    mountPage();
-    document.querySelector<HTMLButtonElement>("li button")!.click();
+    emptyListOnRefetch();
 
-    const [{ props }] = mocks.openModal.mock.calls[0] as [{ props: { onConfirm: () => Promise<void> } }];
-    await props.onConfirm();
-    await flushPromises();
+    await confirmDelete();
 
-    expect(document.activeElement).not.toBe(document.body);
     expect(document.activeElement).toBe(document.querySelector("[data-test-id='sign-in-keys-empty-label']"));
+  });
+
+  it("leaves focus on the Delete button when the delete fails", async () => {
+    mocks.deleteKey.mockResolvedValue(false);
+
+    const deleteButton = await confirmDelete();
+
+    expect(deleteButton.isConnected).toBe(true);
+    expect(document.activeElement).toBe(deleteButton);
   });
 });
