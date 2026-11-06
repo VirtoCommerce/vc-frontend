@@ -1573,6 +1573,8 @@
         "title": "@:common.links.security",
         "no_keys": "キーがありません",
         "unnamed_key": "名前のないキー",
+        "rename_key_label": "{name} の名前を変更",
+        "delete_key_label": "{name} を削除",
         "created": "{date} に作成",
         "changed": "{date} に変更",
         "rename_modal": {
