@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import {
   applyDiscount,
+  cardLabel,
+  fetchAllPages,
   intervalKey,
   intervalLabel,
   needsCardPaymentMethodNotice,
@@ -77,6 +79,51 @@ describe("needsCardPaymentMethodNotice", () => {
   it("isn't needed when a method is offered or the cart has no subscription", () => {
     expect(needsCardPaymentMethodNotice(true, [{ code: "MockStoredCardPaymentMethod" }])).toBe(false);
     expect(needsCardPaymentMethodNotice(false, [])).toBe(false);
+  });
+});
+
+describe("cardLabel", () => {
+  it("names the card by its brand and last digits", () => {
+    expect(cardLabel("Visa", "4242", "Karte")).toBe("Visa •••• 4242");
+  });
+
+  it("uses the given word for a card without a brand", () => {
+    expect(cardLabel(null, "4242", "Karte")).toBe("Karte •••• 4242");
+    expect(cardLabel("", undefined, "Karte")).toBe("Karte •••• ????");
+  });
+});
+
+describe("fetchAllPages", () => {
+  const list = (count: number) => Array.from({ length: count }, (_, i) => `item-${i}`);
+
+  it("asks for the next page with `after` until it has `totalCount` items", async () => {
+    const all = list(25);
+    const fetchPage = vi.fn(({ first, after }: { first: number; after: string }) =>
+      Promise.resolve({ totalCount: all.length, items: all.slice(Number(after), Number(after) + first) }),
+    );
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toEqual(all);
+    expect(fetchPage.mock.calls.map(([page]) => page)).toEqual([
+      { first: 20, after: "0" },
+      { first: 20, after: "20" },
+    ]);
+  });
+
+  it("asks once when the first page holds everything", async () => {
+    const fetchPage = vi.fn(() => Promise.resolve({ totalCount: 3, items: list(3) }));
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toEqual(list(3));
+    expect(fetchPage).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops at an empty page, even when the total promised more", async () => {
+    const fetchPage = vi
+      .fn()
+      .mockResolvedValueOnce({ totalCount: 30, items: list(20) })
+      .mockResolvedValueOnce({ totalCount: 30, items: [] });
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toHaveLength(20);
+    expect(fetchPage).toHaveBeenCalledTimes(2);
   });
 });
 

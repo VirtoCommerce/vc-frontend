@@ -5,7 +5,7 @@ import type { GetSubscriptionOffersQuery } from "../api/graphql/types";
 
 export type SubscriptionOfferType = NonNullable<GetSubscriptionOffersQuery["subscriptionOffers"]>[number];
 
-// Shared across components: one request per product id for the whole session.
+// Shared across components: one successful request per product id for the whole session.
 const offers = reactive(new Map<string, SubscriptionOfferType | null>());
 const pending = new Map<string, Promise<void>>();
 
@@ -20,8 +20,8 @@ async function loadOffers(productIds: string[]): Promise<void> {
         const byProduct = new Map((result ?? []).map((offer) => [offer.productId, offer]));
         missing.forEach((id) => offers.set(id, byProduct.get(id) ?? null));
       } catch (e) {
+        // The ids stay unset, so the next call asks for them again.
         Logger.error(`${useSubscriptionOffers.name}.${loadOffers.name}`, e);
-        missing.forEach((id) => offers.set(id, null));
       } finally {
         missing.forEach((id) => pending.delete(id));
       }

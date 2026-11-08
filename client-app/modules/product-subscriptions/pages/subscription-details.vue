@@ -12,6 +12,21 @@
 
     <VcLoaderOverlay v-if="loading && !subscription" />
 
+    <VcAlert
+      v-else-if="loadFailed"
+      color="danger"
+      variant="soft"
+      icon
+      role="alert"
+      data-test-id="subscription-load-failed"
+    >
+      {{ $t("product_subscriptions.details.load_failed") }}
+
+      <VcButton size="xs" variant="outline" class="subscription-details__retry" @click="load">
+        {{ $t("product_subscriptions.common.retry") }}
+      </VcButton>
+    </VcAlert>
+
     <VcEmptyView v-else-if="!subscription" :text="$t('product_subscriptions.details.not_found')" icon="refresh" />
 
     <template v-else>
@@ -87,7 +102,7 @@
                 v-for="renewal in attentionRenewals"
                 :key="renewal.id"
                 :renewal="renewal"
-                :busy="renewalBusy"
+                :busy="renewalBusy[renewal.id]"
                 @action="onRenewalAction"
               />
             </div>
@@ -103,7 +118,7 @@
             <RenewalPanel
               v-if="currentRenewal"
               :renewal="currentRenewal"
-              :busy="renewalBusy"
+              :busy="renewalBusy[currentRenewal.id]"
               @action="onRenewalAction"
             />
 
@@ -153,12 +168,13 @@
             prepend-icon="pencil"
             size="lg"
           >
-            <form class="subscription-details__form" @submit.prevent="save">
+            <!-- novalidate: the rules apply to a changed quantity only, and quantityError checks them -->
+            <form class="subscription-details__form" novalidate @submit.prevent="save">
               <VcInput
                 v-model.number="form.quantity"
                 type="number"
                 :min="quantityMin"
-                :max="quantityRules.maxQuantity ?? 9999"
+                :max="quantityMax"
                 :step="quantityRules.packSize"
                 :label="$t('product_subscriptions.details.quantity')"
                 :message="quantityError ?? quantityHint"
@@ -265,7 +281,15 @@
               <template v-if="subscription.savedPaymentMethod">
                 <dt>{{ $t("product_subscriptions.details.paid_with") }}</dt>
 
-                <dd>{{ cardLabel(subscription.savedPaymentMethod.brand, subscription.savedPaymentMethod.last4) }}</dd>
+                <dd>
+                  {{
+                    cardLabel(
+                      subscription.savedPaymentMethod.brand,
+                      subscription.savedPaymentMethod.last4,
+                      $t("product_subscriptions.common.card"),
+                    )
+                  }}
+                </dd>
               </template>
 
               <template v-if="subscription.shippingAddress">
@@ -492,8 +516,10 @@ const { activeMethods, fetch: fetchCards } = useSavedPaymentMethods();
 usePageHead({ title: t("product_subscriptions.details.meta_title") });
 
 const loading = ref(false);
+const loadFailed = ref(false);
 const busy = ref<string>();
-const renewalBusy = ref<string>();
+// Per renewal: a panel shows a loader only for its own renewal's action.
+const renewalBusy = reactive<Record<string, string | undefined>>({});
 const subscription = ref<SubscriptionType>();
 const history = ref<RenewalFieldsFragment[]>([]);
 const attentionRenewals = ref<RenewalFieldsFragment[]>([]);
@@ -533,14 +559,14 @@ const intervalItems = computed(() =>
 const cardItems = computed(() => {
   const items = activeMethods.value.map((x) => ({
     id: x.id,
-    label: `${cardLabel(x.brand, x.last4)} · ${x.expirationMonth}/${x.expirationYear}`,
+    label: `${cardLabel(x.brand, x.last4, t("product_subscriptions.common.card"))} · ${x.expirationMonth}/${x.expirationYear}`,
   }));
   const current = subscription.value?.savedPaymentMethod;
   if (current && !items.some((x) => x.id === current.id)) {
     items.unshift({
       id: current.id,
       label: [
-        cardLabel(current.brand, current.last4),
+        cardLabel(current.brand, current.last4, t("product_subscriptions.common.card")),
         t(`product_subscriptions.card_status.${current.status}`, current.status),
       ].join(" · "),
     });
@@ -590,6 +616,9 @@ const addressLines = computed(() => {
   ].filter((x): x is string => !!x);
 });
 
+// The input needs a ceiling when the product sets no maximum.
+const DEFAULT_MAX_QUANTITY = 9999;
+
 const quantityRules = computed(
   () => subscription.value?.quantityRules ?? { packSize: 1, minQuantity: 1, maxQuantity: null },
 );
@@ -601,6 +630,8 @@ const quantityMin = computed(() => {
   return packSize > 1 ? Math.ceil(min / packSize) * packSize : min;
 });
 
+const quantityMax = computed(() => quantityRules.value.maxQuantity ?? DEFAULT_MAX_QUANTITY);
+
 const quantityHint = computed(() =>
   quantityRules.value.packSize > 1
     ? t("product_subscriptions.details.quantity_pack", { packSize: quantityRules.value.packSize })
@@ -608,7 +639,7 @@ const quantityHint = computed(() =>
 );
 
 const quantityError = computed<string | undefined>(() => {
-  const { packSize, maxQuantity } = quantityRules.value;
+  const { packSize } = quantityRules.value;
   const quantity = Number(form.quantity);
 
   // The rules apply to a new quantity only: the server checks it only when it changes.
@@ -619,8 +650,8 @@ const quantityError = computed<string | undefined>(() => {
   if (!Number.isInteger(quantity) || quantity < quantityMin.value) {
     return t("product_subscriptions.details.quantity_min", { min: quantityMin.value });
   }
-  if (maxQuantity && quantity > maxQuantity) {
-    return t("product_subscriptions.details.quantity_max", { max: maxQuantity });
+  if (quantity > quantityMax.value) {
+    return t("product_subscriptions.details.quantity_max", { max: quantityMax.value });
   }
   if (packSize > 1 && quantity % packSize !== 0) {
     return t("product_subscriptions.details.quantity_pack", { packSize });
@@ -637,7 +668,8 @@ const isDirty = computed(() => {
   return (
     form.quantity !== s.quantity ||
     form.interval !== intervalKey(s.intervalUnit, s.intervalCount) ||
-    (s.status !== "Paused" && form.nextOrderDate !== toDateInputValue(s.nextOrderDate)) ||
+    // An emptied date is no change: save() leaves it out.
+    (s.status !== "Paused" && !!form.nextOrderDate && form.nextOrderDate !== toDateInputValue(s.nextOrderDate)) ||
     (form.savedPaymentMethodId ?? null) !== (s.storedPaymentMethodId ?? null)
   );
 });
@@ -656,6 +688,7 @@ function resetForm() {
 
 async function load() {
   loading.value = true;
+  loadFailed.value = false;
   try {
     const [result, renewals] = await Promise.all([
       getProductSubscription(props.subscriptionId),
@@ -670,6 +703,7 @@ async function load() {
     resetForm();
   } catch (e) {
     Logger.error("subscription-details.load", e);
+    loadFailed.value = true;
   } finally {
     loading.value = false;
   }
@@ -799,7 +833,7 @@ async function onRenewalAction({
   action: "accept" | "retry" | "skip";
   renewal: RenewalFieldsFragment;
 }) {
-  renewalBusy.value = action;
+  renewalBusy[renewal.id] = action;
   try {
     const command = { renewalId: renewal.id };
     if (action === "accept") {
@@ -824,7 +858,7 @@ async function onRenewalAction({
       text: subscriptionErrorMessage(e, t),
     });
   } finally {
-    renewalBusy.value = undefined;
+    renewalBusy[renewal.id] = undefined;
   }
 }
 
@@ -847,6 +881,10 @@ onMounted(() => {
   }
 
   @apply flex flex-col gap-5;
+
+  &__retry {
+    @apply mt-2;
+  }
 
   &__hero {
     @apply flex items-center gap-4;

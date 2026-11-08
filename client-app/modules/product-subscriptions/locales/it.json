@@ -42,7 +42,9 @@
       "paused": "Paused",
       "paused_until": "Paused until {date}",
       "cancelled_on": "Cancelled {date}",
-      "back": "Back"
+      "back": "Back",
+      "card": "Carta",
+      "retry": "Riprova"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -108,7 +110,8 @@
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
       },
-      "tabs_label": "Subscription status"
+      "tabs_label": "Subscription status",
+      "load_failed": "Impossibile caricare i tuoi abbonamenti."
     },
     "renewal": {
       "total": "Total",
@@ -139,6 +142,7 @@
       "meta_title": "Subscription",
       "back": "All subscriptions",
       "not_found": "This subscription was not found.",
+      "load_failed": "Impossibile caricare questo abbonamento.",
       "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
       "pending": "Your subscription starts as soon as the first payment is confirmed.",
       "paused": "This subscription is paused. No deliveries or charges until you resume it.",

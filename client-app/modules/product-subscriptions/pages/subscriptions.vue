@@ -70,6 +70,16 @@
 
         <VcLoaderOverlay v-if="loading && !subscriptions.length" />
 
+        <div v-else-if="loadFailed" class="subscriptions-page__error">
+          <VcAlert color="danger" variant="soft" icon role="alert" data-test-id="subscriptions-load-failed">
+            {{ $t("product_subscriptions.list.load_failed") }}
+
+            <VcButton size="xs" variant="outline" class="subscriptions-page__retry" @click="load">
+              {{ $t("product_subscriptions.common.retry") }}
+            </VcButton>
+          </VcAlert>
+        </div>
+
         <VcEmptyView
           v-else-if="!visibleSubscriptions.length"
           :text="$t(`product_subscriptions.list.empty.${activeTab}`)"
@@ -175,7 +185,7 @@ import {
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
 import { ATTENTION_RENEWAL_STATES, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
-import { discountLabel, subscriptionErrorMessage, intervalLabel } from "../utils";
+import { discountLabel, fetchAllPages, subscriptionErrorMessage, intervalLabel } from "../utils";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 
 type TabType = "active" | "paused" | "cancelled";
@@ -191,7 +201,11 @@ const tabs: { id: TabType; statuses: string[] }[] = [
   { id: "cancelled", statuses: ["Cancelled"] },
 ];
 
+const SUBSCRIPTIONS_PAGE_SIZE = 100;
+const RENEWALS_PAGE_SIZE = 50;
+
 const loading = ref(false);
+const loadFailed = ref(false);
 const activeTab = ref<TabType>("active");
 const subscriptions = ref<ProductSubscriptionFieldsFragment[]>([]);
 const renewals = ref<RenewalFieldsFragment[]>([]);
@@ -227,21 +241,28 @@ function countFor(tab: TabType): number {
 
 async function load(): Promise<void> {
   loading.value = true;
+  loadFailed.value = false;
   try {
-    const [subscriptionResult, openRenewals, recentRenewals] = await Promise.all([
-      getProductSubscriptions({ first: 100 }),
-      getSubscriptionRenewals({ onlyOpen: true, first: 20 }),
+    // The tabs count every subscription and the sections show every open renewal, so both lists are read in full.
+    // A fixed sort keeps the renewal pages from overlapping.
+    const [allSubscriptions, openRenewals, recentRenewals] = await Promise.all([
+      fetchAllPages((page) => getProductSubscriptions(page), SUBSCRIPTIONS_PAGE_SIZE),
+      fetchAllPages(
+        (page) => getSubscriptionRenewals({ ...page, onlyOpen: true, sort: "ScheduledDate:asc" }),
+        RENEWALS_PAGE_SIZE,
+      ),
       getSubscriptionRenewals({ first: 10, sort: "ModifiedDate:desc" }),
     ]);
 
-    subscriptions.value = subscriptionResult?.items ?? [];
+    subscriptions.value = allSubscriptions;
 
     // Open renewals, plus recently failed ones the customer can still fix.
     const failed = (recentRenewals?.items ?? []).filter((x) => x.state === "Failed" && x.canRetryPayment);
-    const merged = [...(openRenewals?.items ?? []), ...failed];
+    const merged = [...openRenewals, ...failed];
     renewals.value = merged.filter((x, i) => merged.findIndex((y) => y.id === x.id) === i);
   } catch (e) {
     Logger.error("subscriptions.load", e);
+    loadFailed.value = true;
   } finally {
     loading.value = false;
   }
@@ -341,6 +362,18 @@ onMounted(load);
 
   &__tab-count {
     @apply rounded-full bg-neutral-100 px-2 text-xs text-neutral-700;
+  }
+
+  &__error {
+    @apply p-3;
+
+    @media (width >= theme("screens.md")) {
+      @apply p-5;
+    }
+  }
+
+  &__retry {
+    @apply mt-2;
   }
 
   &__list {
