@@ -42,7 +42,8 @@
       "paused": "Paused",
       "paused_until": "Paused until {date}",
       "cancelled_on": "Cancelled {date}",
-      "back": "Back"
+      "back": "Back",
+      "retry": "Réessayer"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -105,10 +106,12 @@
       },
       "empty": {
         "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
+        "no_active": "Aucun abonnement actif.",
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
       },
-      "tabs_label": "Subscription status"
+      "tabs_label": "Subscription status",
+      "load_failed": "Impossible de charger vos abonnements."
     },
     "renewal": {
       "total": "Total",
@@ -139,11 +142,13 @@
       "meta_title": "Subscription",
       "back": "All subscriptions",
       "not_found": "This subscription was not found.",
+      "load_failed": "Impossible de charger cet abonnement.",
       "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
       "pending": "Your subscription starts as soon as the first payment is confirmed.",
       "paused": "This subscription is paused. No deliveries or charges until you resume it.",
       "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
       "cancelled": "Cancelled {date}. You won't be charged again.",
+      "cancelled_undated": "Cet abonnement est résilié. Vous ne serez plus débité.",
       "next_delivery": "Next delivery",
       "next_hint": "We'll email you a reminder with the price a few days before.",
       "no_next": "No upcoming deliveries.",

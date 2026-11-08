@@ -1,5 +1,5 @@
 <template>
-  <div class="renewal-panel" :class="`renewal-panel--${tone}`" :data-test-id="`renewal-${renewal.number}`">
+  <div class="renewal-panel" :class="tone && `renewal-panel--${tone}`" :data-test-id="`renewal-${renewal.number}`">
     <div class="renewal-panel__header">
       <div class="renewal-panel__date">
         <VcIcon name="calendar" size="sm" />
@@ -18,7 +18,7 @@
       size="sm"
       variant="soft"
       icon
-      class="mb-3"
+      class="renewal-panel__alert"
     >
       {{ renewal.reviewReason }}
     </VcAlert>
@@ -29,34 +29,13 @@
       size="sm"
       variant="soft"
       icon
-      class="mb-3"
+      class="renewal-panel__alert"
     >
       {{ renewal.lastErrorMessage }}
     </VcAlert>
 
     <ul class="renewal-panel__items">
-      <li
-        v-for="item in renewal.items"
-        :key="item.subscriptionId"
-        :class="{ 'renewal-panel__item--excluded': item.isExcluded || !item.isAvailable }"
-      >
-        <VcImage :src="item.imageUrl" :alt="item.productName ?? ''" class="renewal-panel__image" lazy />
-
-        <span class="renewal-panel__item-name">
-          {{ item.productName }}
-          <span class="text-neutral-500">× {{ item.quantity }}</span>
-
-          <span v-if="!item.isAvailable && !item.isExcluded" class="renewal-panel__item-warning">{{
-            item.message
-          }}</span>
-
-          <span v-if="item.isExcluded" class="renewal-panel__item-warning">{{
-            $t("product_subscriptions.renewal.excluded")
-          }}</span>
-        </span>
-
-        <span v-if="item.total" class="renewal-panel__item-total">{{ formatMoney(item.total, renewal.currency) }}</span>
-      </li>
+      <RenewalItem v-for="item in renewal.items" :key="item.subscriptionId" :item="item" :currency="renewal.currency" />
     </ul>
 
     <div class="renewal-panel__footer">
@@ -128,6 +107,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatMoney } from "../utils";
+import RenewalItem from "./renewal-item.vue";
 import SubscriptionStatusBadge from "./subscription-status-badge.vue";
 import type { RenewalFieldsFragment } from "../api/graphql/types";
 
@@ -146,12 +126,12 @@ const { t, d } = useI18n();
 
 const total = computed(() => props.renewal.orderTotal ?? props.renewal.notifiedTotal ?? props.renewal.previewTotal);
 
-const tone = computed(() => {
+const tone = computed<"warning" | "danger" | undefined>(() => {
   if (["ReviewRequired", "PaymentActionRequired", "RetryScheduled"].includes(props.renewal.state)) {
     return "warning";
   }
 
-  return props.renewal.state === "Failed" ? "danger" : "default";
+  return props.renewal.state === "Failed" ? "danger" : undefined;
 });
 
 const message = computed(() => {
@@ -199,14 +179,19 @@ function emitAction(action: "accept" | "retry" | "skip") {
 
 <style lang="scss">
 .renewal-panel {
-  @apply rounded-lg border border-neutral-200 bg-additional-50 p-4;
+  --border-color: var(--color-neutral-200);
+  --bg-color: var(--color-additional-50);
+
+  @apply rounded-[--vc-radius] border border-[--border-color] bg-[--bg-color] p-4;
 
   &--warning {
-    @apply border-warning-300 bg-warning-50;
+    --border-color: var(--color-warning-300);
+    --bg-color: var(--color-warning-50);
   }
 
   &--danger {
-    @apply border-danger-300 bg-danger-50;
+    --border-color: var(--color-danger-300);
+    --bg-color: var(--color-danger-50);
   }
 
   &__header {
@@ -221,32 +206,12 @@ function emitAction(action: "accept" | "retry" | "skip") {
     @apply mb-3 text-sm text-neutral-700;
   }
 
+  &__alert {
+    @apply mb-3;
+  }
+
   &__items {
     @apply mb-3 flex flex-col gap-2;
-
-    li {
-      @apply flex items-center gap-3 text-sm;
-    }
-  }
-
-  &__item--excluded {
-    @apply opacity-60;
-  }
-
-  &__image {
-    @apply size-10 shrink-0 rounded border border-neutral-100 bg-additional-50 object-contain;
-  }
-
-  &__item-name {
-    @apply flex min-w-0 grow flex-col;
-  }
-
-  &__item-warning {
-    @apply text-xs text-danger;
-  }
-
-  &__item-total {
-    @apply shrink-0 font-bold;
   }
 
   &__footer {

@@ -29,7 +29,7 @@
       </VcAlert>
 
       <ul class="checkout-subscription-terms__items">
-        <li v-for="item in subscribedLines" :key="item.lineItemId">
+        <li v-for="item in subscribedLines" :key="item.lineItemId" class="checkout-subscription-terms__item">
           <strong>{{ item.name }}</strong>
 
           <span class="checkout-subscription-terms__interval">{{
@@ -65,7 +65,9 @@
         {{ $t("product_subscriptions.checkout.required") }}
       </p>
 
-      <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="mt-3">{{ error }}</VcAlert>
+      <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="checkout-subscription-terms__error">{{
+        error
+      }}</VcAlert>
     </template>
   </VcWidget>
 </template>
@@ -76,16 +78,12 @@ import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useFullCart } from "@/shared/cart/composables";
+import { useOrderPlacement } from "@/shared/checkout/composables/useCheckout";
 import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useCartSubscriptions } from "../composables/useCartSubscriptions";
-import {
-  intervalLabel,
-  needsCardPaymentMethodNotice,
-  shouldWithdrawCardSaving,
-  subscriptionErrorMessage,
-} from "../utils";
+import { intervalLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 
@@ -104,6 +102,7 @@ const showNoPaymentMethod = computed(() =>
 );
 // Subscriptions are paid with the checkout's card, so accepting the terms makes the card form save it with the consent.
 const cardSaving = useCardSavingRequirement();
+const { placingOrder } = useOrderPlacement();
 
 const terms = ref<GetSubscriptionTermsQuery["subscriptionTerms"]>();
 const termsFailed = ref(false);
@@ -158,27 +157,26 @@ async function onToggle(value: boolean) {
   }
 }
 
-// A cart that no longer has subscription lines needs no consent, and its card no longer has to be saved, unless the
-// lines left because they were ordered: placing the order refetches the cart before its payment form reads the consent.
-watch(subscribedItems, (items, previous) => {
-  if (items.length || !accepted.value) {
-    return;
-  }
-
+// The stored consent lives only as long as this checkbox is ticked. The one exception is an order being placed: placing
+// it refetches the cart (no subscribed lines left) and leaves the page, and its payment form still reads the consent.
+function withdrawConsent(): void {
   accepted.value = false;
-  if (
-    shouldWithdrawCardSaving(
-      (previous ?? []).map((x) => x.lineItemId),
-      cart.value?.items,
-    )
-  ) {
+  if (!placingOrder.value) {
     cardSaving.clear();
+  }
+}
+
+watch(hasSubscriptionItems, (hasItems) => {
+  if (!hasItems) {
+    withdrawConsent();
   }
 });
 
 // Registered for as long as the review shows: the order waits until the cart's subscriptions are known, and the
 // terms are accepted when there are any. A failed load keeps it blocked until the retry succeeds.
 onMounted(() => {
+  // The checkbox starts unticked, so a consent stored earlier (e.g. before going back to the cart) no longer applies.
+  cardSaving.clear();
   registerGuard(GUARD_ID, {
     canPlaceOrder: () => !loading.value && !failed.value && (!hasSubscriptionItems.value || accepted.value),
   });
@@ -186,7 +184,10 @@ onMounted(() => {
   void loadTerms();
 });
 
-onUnmounted(() => unregisterGuard(GUARD_ID));
+onUnmounted(() => {
+  unregisterGuard(GUARD_ID);
+  withdrawConsent();
+});
 </script>
 
 <style lang="scss">
@@ -195,13 +196,13 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
 
   &__items {
     @apply mb-3 flex flex-col gap-1 text-sm text-neutral-800;
+  }
 
-    li {
-      @apply flex flex-col;
+  &__item {
+    @apply flex flex-col;
 
-      @media (width >= theme("screens.sm")) {
-        @apply flex-row flex-wrap items-baseline gap-x-2;
-      }
+    @media (width >= theme("screens.sm")) {
+      @apply flex-row flex-wrap items-baseline gap-x-2;
     }
   }
 
@@ -219,7 +220,7 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
   }
 
   &__text {
-    @apply mb-4 rounded-md bg-neutral-50 p-3 text-sm leading-relaxed text-neutral-800;
+    @apply mb-4 rounded-[--vc-radius] bg-neutral-50 p-3 text-sm leading-relaxed text-neutral-800;
   }
 
   &__required {
@@ -232,6 +233,10 @@ onUnmounted(() => unregisterGuard(GUARD_ID));
 
   &__notice {
     @apply mb-3;
+  }
+
+  &__error {
+    @apply mt-3;
   }
 }
 </style>

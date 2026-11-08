@@ -5,34 +5,51 @@
       size="sm"
       prepend-icon="chevron-left"
       :to="{ name: SUBSCRIPTIONS_ROUTE_NAME }"
-      class="self-start"
+      class="subscription-details__back"
     >
       {{ $t("product_subscriptions.details.back") }}
     </VcButton>
 
     <VcLoaderOverlay v-if="loading && !subscription" />
 
+    <VcAlert
+      v-else-if="loadFailed"
+      color="danger"
+      variant="soft"
+      icon
+      role="alert"
+      data-test-id="subscription-load-failed"
+    >
+      {{ $t("product_subscriptions.details.load_failed") }}
+
+      <VcButton size="xs" variant="outline" class="subscription-details__retry" @click="load">
+        {{ $t("product_subscriptions.common.retry") }}
+      </VcButton>
+    </VcAlert>
+
     <VcEmptyView v-else-if="!subscription" :text="$t('product_subscriptions.details.not_found')" icon="refresh" />
 
     <template v-else>
       <!-- Product header -->
       <div class="subscription-details__hero">
-        <VcImage
-          :src="subscription.imageUrl"
-          :alt="subscription.productName ?? ''"
-          class="subscription-details__image"
-        />
+        <div class="subscription-details__thumb">
+          <VcImage
+            :src="subscription.imageUrl"
+            :alt="subscription.productName ?? ''"
+            class="subscription-details__image"
+          />
+        </div>
 
-        <div class="min-w-0 grow">
-          <div class="flex flex-wrap items-center gap-2">
+        <div class="subscription-details__heading">
+          <div class="subscription-details__meta">
             <SubscriptionStatusBadge :status="subscription.status" />
 
-            <span class="text-xs text-neutral-500">#{{ subscription.number }}</span>
+            <span class="subscription-details__number">#{{ subscription.number }}</span>
           </div>
 
           <VcTypography tag="h1" class="subscription-details__title">{{ subscription.productName }}</VcTypography>
 
-          <p class="text-sm text-neutral-600">
+          <p class="subscription-details__interval">
             {{ intervalLabel($t, subscription.intervalUnit, subscription.intervalCount) }}
             <template v-if="savings"> · {{ savings }}</template>
           </p>
@@ -66,9 +83,11 @@
 
       <VcAlert v-else-if="subscription.status === 'Cancelled'" color="info" variant="soft" icon>
         {{
-          $t("product_subscriptions.details.cancelled", {
-            date: subscription.cancelledDate ? $d(new Date(subscription.cancelledDate), "short") : "",
-          })
+          subscription.cancelledDate
+            ? $t("product_subscriptions.details.cancelled", {
+                date: $d(new Date(subscription.cancelledDate), "short"),
+              })
+            : $t("product_subscriptions.details.cancelled_undated")
         }}
       </VcAlert>
 
@@ -82,12 +101,12 @@
             size="lg"
             data-test-id="subscription-attention"
           >
-            <div class="flex flex-col gap-3">
+            <div class="subscription-details__renewals">
               <RenewalPanel
                 v-for="renewal in attentionRenewals"
                 :key="renewal.id"
                 :renewal="renewal"
-                :busy="renewalBusy"
+                :busy="renewalBusy[renewal.id]"
                 @action="onRenewalAction"
               />
             </div>
@@ -103,7 +122,7 @@
             <RenewalPanel
               v-if="currentRenewal"
               :renewal="currentRenewal"
-              :busy="renewalBusy"
+              :busy="renewalBusy[currentRenewal.id]"
               @action="onRenewalAction"
             />
 
@@ -111,14 +130,14 @@
               v-else-if="subscription.status === 'Active' || subscription.status === 'PastDue'"
               class="subscription-details__next"
             >
-              <div class="text-2xl font-bold text-neutral-900">
+              <div class="subscription-details__next-date">
                 {{ $d(new Date(subscription.nextOrderDate), "short") }}
               </div>
 
-              <p class="text-sm text-neutral-600">{{ $t("product_subscriptions.details.next_hint") }}</p>
+              <p class="subscription-details__hint">{{ $t("product_subscriptions.details.next_hint") }}</p>
             </div>
 
-            <p v-else class="text-sm text-neutral-600">{{ $t("product_subscriptions.details.no_next") }}</p>
+            <p v-else class="subscription-details__hint">{{ $t("product_subscriptions.details.no_next") }}</p>
 
             <div v-if="subscription.canSkip || canOrderNow" class="subscription-details__quick">
               <VcButton
@@ -153,12 +172,13 @@
             prepend-icon="pencil"
             size="lg"
           >
-            <form class="subscription-details__form" @submit.prevent="save">
+            <!-- novalidate: the rules apply to a changed quantity only, and quantityError checks them -->
+            <form class="subscription-details__form" novalidate @submit.prevent="save">
               <VcInput
                 v-model.number="form.quantity"
                 type="number"
                 :min="quantityMin"
-                :max="quantityRules.maxQuantity ?? 9999"
+                :max="quantityMax"
                 :step="quantityRules.packSize"
                 :label="$t('product_subscriptions.details.quantity')"
                 :message="quantityError ?? quantityHint"
@@ -210,7 +230,7 @@
                   $t("product_subscriptions.details.reset")
                 }}</VcButton>
 
-                <router-link :to="{ name: ROUTES.PAYMENT_METHODS.NAME }" class="text-sm text-primary hover:underline">
+                <router-link :to="{ name: ROUTES.PAYMENT_METHODS.NAME }" class="subscription-details__link">
                   {{ $t("product_subscriptions.details.manage_cards") }}
                 </router-link>
               </div>
@@ -219,28 +239,12 @@
 
           <!-- History -->
           <VcWidget :title="$t('product_subscriptions.details.history')" prepend-icon="clock" size="lg">
-            <p v-if="!history.length" class="text-sm text-neutral-600">
+            <p v-if="!history.length" class="subscription-details__hint">
               {{ $t("product_subscriptions.details.no_history") }}
             </p>
 
             <ul v-else class="subscription-details__history">
-              <li v-for="renewal in history" :key="renewal.id">
-                <span class="font-bold">{{ $d(new Date(renewal.scheduledDate), "short") }}</span>
-
-                <SubscriptionStatusBadge :status="renewal.state" />
-
-                <router-link
-                  v-if="renewal.orderId"
-                  :to="{ name: 'OrderDetails', params: { orderId: renewal.orderId } }"
-                  class="text-primary hover:underline"
-                >
-                  {{ renewal.orderNumber }}
-                </router-link>
-
-                <span class="ms-auto font-bold">{{
-                  formatMoney(renewal.orderTotal ?? renewal.previewTotal, renewal.currency)
-                }}</span>
-              </li>
+              <RenewalHistoryRow v-for="renewal in history" :key="renewal.id" :renewal="renewal" />
             </ul>
           </VcWidget>
         </div>
@@ -248,41 +252,53 @@
         <aside class="subscription-details__aside">
           <VcWidget :title="$t('product_subscriptions.details.summary')" size="lg">
             <dl class="subscription-details__facts">
-              <dt>{{ $t("product_subscriptions.details.started") }}</dt>
+              <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.started") }}</dt>
 
-              <dd>{{ $d(new Date(subscription.startDate), "short") }}</dd>
+              <dd class="subscription-details__fact-value">{{ $d(new Date(subscription.startDate), "short") }}</dd>
 
-              <dt>{{ $t("product_subscriptions.details.deliveries") }}</dt>
+              <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.deliveries") }}</dt>
 
-              <dd>{{ subscription.ordersCount }}</dd>
+              <dd class="subscription-details__fact-value">{{ subscription.ordersCount }}</dd>
 
               <template v-if="subscription.referencePrice">
-                <dt>{{ $t("product_subscriptions.details.price") }}</dt>
+                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.price") }}</dt>
 
-                <dd>{{ formatMoney(subscription.referencePrice, subscription.currency) }}</dd>
+                <dd class="subscription-details__fact-value">
+                  {{ formatMoney(subscription.referencePrice, subscription.currency) }}
+                </dd>
               </template>
 
               <template v-if="subscription.savedPaymentMethod">
-                <dt>{{ $t("product_subscriptions.details.paid_with") }}</dt>
+                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.paid_with") }}</dt>
 
-                <dd>{{ cardLabel(subscription.savedPaymentMethod.brand, subscription.savedPaymentMethod.last4) }}</dd>
+                <dd class="subscription-details__fact-value">
+                  {{
+                    savedCardLabel(
+                      subscription.savedPaymentMethod.brand,
+                      subscription.savedPaymentMethod.last4,
+                      $t("shared.payment.saved_cards.card"),
+                    )
+                  }}
+                </dd>
               </template>
 
               <template v-if="subscription.shippingAddress">
-                <dt>{{ $t("product_subscriptions.details.ships_to") }}</dt>
+                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.ships_to") }}</dt>
 
-                <dd>
-                  <span v-for="line in addressLines" :key="line" class="block">{{ line }}</span>
+                <dd class="subscription-details__fact-value">
+                  <span v-for="line in addressLines" :key="line" class="subscription-details__address-line">{{
+                    line
+                  }}</span>
                 </dd>
               </template>
 
               <template v-if="subscription.initialOrderId">
-                <dt>{{ $t("product_subscriptions.details.first_order") }}</dt>
+                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.first_order") }}</dt>
 
-                <dd>
+                <dd class="subscription-details__fact-value">
                   <router-link
                     :to="{ name: 'OrderDetails', params: { orderId: subscription.initialOrderId } }"
-                    class="text-primary hover:underline"
+                    class="subscription-details__link"
                   >
                     {{ subscription.initialOrderNumber }}
                   </router-link>
@@ -296,7 +312,7 @@
             :title="$t('product_subscriptions.details.actions')"
             size="lg"
           >
-            <div class="flex flex-col gap-2">
+            <div class="subscription-details__actions">
               <VcButton
                 v-if="subscription.canResume"
                 full-width
@@ -344,9 +360,9 @@
       max-width="28rem"
       @close="showPause = false"
     >
-      <p class="mb-4 text-sm">{{ $t("product_subscriptions.pause.text") }}</p>
+      <p class="subscription-details__modal-text">{{ $t("product_subscriptions.pause.text") }}</p>
 
-      <div class="flex flex-col gap-2">
+      <div class="subscription-details__pause-options">
         <div v-for="option in pauseOptions" :key="option.id" class="subscription-details__pause-option">
           <VcRadioButton
             v-model="pauseChoice"
@@ -361,17 +377,13 @@
 
       <template #actions="{ close }">
         <div class="subscription-details__modal-actions">
-          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+          <VcButton variant="outline" color="neutral" @click="close">{{
             $t("product_subscriptions.common.back")
           }}</VcButton>
 
-          <VcButton
-            class="max-sm:w-full"
-            :loading="busy === 'pause'"
-            data-test-id="subscription-pause-confirm"
-            @click="pause"
-            >{{ $t("product_subscriptions.pause.confirm") }}</VcButton
-          >
+          <VcButton :loading="busy === 'pause'" data-test-id="subscription-pause-confirm" @click="pause">{{
+            $t("product_subscriptions.pause.confirm")
+          }}</VcButton>
         </div>
       </template>
     </VcModal>
@@ -385,7 +397,7 @@
       max-width="28rem"
       @close="showCancel = false"
     >
-      <p class="mb-4 text-sm">{{ $t("product_subscriptions.cancel.text") }}</p>
+      <p class="subscription-details__modal-text">{{ $t("product_subscriptions.cancel.text") }}</p>
 
       <VcSelect
         v-model="cancelReason"
@@ -399,12 +411,11 @@
 
       <template #actions="{ close }">
         <div class="subscription-details__modal-actions">
-          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+          <VcButton variant="outline" color="neutral" @click="close">{{
             $t("product_subscriptions.cancel.keep")
           }}</VcButton>
 
           <VcButton
-            class="max-sm:w-full"
             color="danger"
             :loading="busy === 'cancel'"
             data-test-id="subscription-cancel-confirm"
@@ -423,21 +434,17 @@
       max-width="28rem"
       @close="confirmAction = undefined"
     >
-      <p class="text-sm">{{ $t("product_subscriptions.order_now.text") }}</p>
+      <p class="subscription-details__modal-text">{{ $t("product_subscriptions.order_now.text") }}</p>
 
       <template #actions="{ close }">
         <div class="subscription-details__modal-actions">
-          <VcButton class="max-sm:w-full" variant="outline" color="neutral" @click="close">{{
+          <VcButton variant="outline" color="neutral" @click="close">{{
             $t("product_subscriptions.common.back")
           }}</VcButton>
 
-          <VcButton
-            class="max-sm:w-full"
-            :loading="busy === 'orderNow'"
-            data-test-id="subscription-order-now-confirm"
-            @click="orderNow"
-            >{{ $t("product_subscriptions.order_now.confirm") }}</VcButton
-          >
+          <VcButton :loading="busy === 'orderNow'" data-test-id="subscription-order-now-confirm" @click="orderNow">{{
+            $t("product_subscriptions.order_now.confirm")
+          }}</VcButton>
         </div>
       </template>
     </VcModal>
@@ -453,6 +460,7 @@ import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+import { savedCardLabel } from "@/shared/payment/utils/saved-card-label";
 import {
   acceptSubscriptionRenewal,
   cancelProductSubscription,
@@ -466,11 +474,11 @@ import {
   skipProductSubscription,
   skipSubscriptionRenewal,
 } from "../api/graphql";
+import RenewalHistoryRow from "../components/renewal-history-row.vue";
 import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
 import { ATTENTION_RENEWAL_STATES, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
 import {
-  cardLabel,
   discountLabel,
   subscriptionErrorMessage,
   formatMoney,
@@ -492,8 +500,10 @@ const { activeMethods, fetch: fetchCards } = useSavedPaymentMethods();
 usePageHead({ title: t("product_subscriptions.details.meta_title") });
 
 const loading = ref(false);
+const loadFailed = ref(false);
 const busy = ref<string>();
-const renewalBusy = ref<string>();
+// Per renewal: a panel shows a loader only for its own renewal's action.
+const renewalBusy = reactive<Record<string, string | undefined>>({});
 const subscription = ref<SubscriptionType>();
 const history = ref<RenewalFieldsFragment[]>([]);
 const attentionRenewals = ref<RenewalFieldsFragment[]>([]);
@@ -533,14 +543,14 @@ const intervalItems = computed(() =>
 const cardItems = computed(() => {
   const items = activeMethods.value.map((x) => ({
     id: x.id,
-    label: `${cardLabel(x.brand, x.last4)} · ${x.expirationMonth}/${x.expirationYear}`,
+    label: `${savedCardLabel(x.brand, x.last4, t("shared.payment.saved_cards.card"))} · ${x.expirationMonth}/${x.expirationYear}`,
   }));
   const current = subscription.value?.savedPaymentMethod;
   if (current && !items.some((x) => x.id === current.id)) {
     items.unshift({
       id: current.id,
       label: [
-        cardLabel(current.brand, current.last4),
+        savedCardLabel(current.brand, current.last4, t("shared.payment.saved_cards.card")),
         t(`product_subscriptions.card_status.${current.status}`, current.status),
       ].join(" · "),
     });
@@ -590,6 +600,9 @@ const addressLines = computed(() => {
   ].filter((x): x is string => !!x);
 });
 
+// The input needs a ceiling when the product sets no maximum.
+const DEFAULT_MAX_QUANTITY = 9999;
+
 const quantityRules = computed(
   () => subscription.value?.quantityRules ?? { packSize: 1, minQuantity: 1, maxQuantity: null },
 );
@@ -601,6 +614,8 @@ const quantityMin = computed(() => {
   return packSize > 1 ? Math.ceil(min / packSize) * packSize : min;
 });
 
+const quantityMax = computed(() => quantityRules.value.maxQuantity ?? DEFAULT_MAX_QUANTITY);
+
 const quantityHint = computed(() =>
   quantityRules.value.packSize > 1
     ? t("product_subscriptions.details.quantity_pack", { packSize: quantityRules.value.packSize })
@@ -608,7 +623,7 @@ const quantityHint = computed(() =>
 );
 
 const quantityError = computed<string | undefined>(() => {
-  const { packSize, maxQuantity } = quantityRules.value;
+  const { packSize } = quantityRules.value;
   const quantity = Number(form.quantity);
 
   // The rules apply to a new quantity only: the server checks it only when it changes.
@@ -619,8 +634,8 @@ const quantityError = computed<string | undefined>(() => {
   if (!Number.isInteger(quantity) || quantity < quantityMin.value) {
     return t("product_subscriptions.details.quantity_min", { min: quantityMin.value });
   }
-  if (maxQuantity && quantity > maxQuantity) {
-    return t("product_subscriptions.details.quantity_max", { max: maxQuantity });
+  if (quantity > quantityMax.value) {
+    return t("product_subscriptions.details.quantity_max", { max: quantityMax.value });
   }
   if (packSize > 1 && quantity % packSize !== 0) {
     return t("product_subscriptions.details.quantity_pack", { packSize });
@@ -637,7 +652,8 @@ const isDirty = computed(() => {
   return (
     form.quantity !== s.quantity ||
     form.interval !== intervalKey(s.intervalUnit, s.intervalCount) ||
-    (s.status !== "Paused" && form.nextOrderDate !== toDateInputValue(s.nextOrderDate)) ||
+    // An emptied date is no change: save() leaves it out.
+    (s.status !== "Paused" && !!form.nextOrderDate && form.nextOrderDate !== toDateInputValue(s.nextOrderDate)) ||
     (form.savedPaymentMethodId ?? null) !== (s.storedPaymentMethodId ?? null)
   );
 });
@@ -656,6 +672,7 @@ function resetForm() {
 
 async function load() {
   loading.value = true;
+  loadFailed.value = false;
   try {
     const [result, renewals] = await Promise.all([
       getProductSubscription(props.subscriptionId),
@@ -670,6 +687,7 @@ async function load() {
     resetForm();
   } catch (e) {
     Logger.error("subscription-details.load", e);
+    loadFailed.value = true;
   } finally {
     loading.value = false;
   }
@@ -799,7 +817,7 @@ async function onRenewalAction({
   action: "accept" | "retry" | "skip";
   renewal: RenewalFieldsFragment;
 }) {
-  renewalBusy.value = action;
+  renewalBusy[renewal.id] = action;
   try {
     const command = { renewalId: renewal.id };
     if (action === "accept") {
@@ -824,7 +842,7 @@ async function onRenewalAction({
       text: subscriptionErrorMessage(e, t),
     });
   } finally {
-    renewalBusy.value = undefined;
+    renewalBusy[renewal.id] = undefined;
   }
 }
 
@@ -848,24 +866,58 @@ onMounted(() => {
 
   @apply flex flex-col gap-5;
 
+  &__retry {
+    @apply mt-2;
+  }
+
+  &__back {
+    @apply self-start;
+  }
+
   &__hero {
     @apply flex items-center gap-4;
   }
 
-  &__image {
-    @apply size-20 shrink-0 rounded-lg border border-neutral-100 bg-additional-50 object-contain;
+  &__thumb {
+    @apply flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-[--vc-radius] border border-neutral-100 bg-additional-50;
 
     @media (width >= theme("screens.md")) {
       @apply size-24;
     }
   }
 
+  &__image {
+    @apply max-h-full max-w-full;
+  }
+
+  &__heading {
+    @apply min-w-0 grow;
+  }
+
+  &__meta {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  &__number {
+    @apply text-xs text-neutral-600;
+  }
+
   &__title {
-    @apply mt-1 text-xl;
+    --vc-typography-font-size: theme("fontSize.xl");
+
+    @apply mt-1;
 
     @media (width >= theme("screens.md")) {
-      @apply text-2xl;
+      --vc-typography-font-size: theme("fontSize.2xl");
     }
+  }
+
+  &__interval {
+    @apply text-sm text-neutral-600;
+  }
+
+  &__renewals {
+    @apply flex flex-col gap-3;
   }
 
   &__grid {
@@ -883,6 +935,18 @@ onMounted(() => {
 
   &__next {
     @apply flex flex-col gap-1;
+  }
+
+  &__next-date {
+    @apply text-2xl font-bold text-neutral-900;
+  }
+
+  &__hint {
+    @apply text-sm text-neutral-600;
+  }
+
+  &__link {
+    @apply text-sm text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__quick {
@@ -907,35 +971,46 @@ onMounted(() => {
 
   &__history {
     @apply flex flex-col divide-y divide-neutral-100;
-
-    li {
-      @apply flex flex-wrap items-center gap-3 py-3 text-sm;
-    }
   }
 
   &__facts {
     @apply grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm;
+  }
 
-    dt {
-      @apply text-neutral-600;
-    }
+  &__fact-label {
+    @apply text-neutral-600;
+  }
 
-    dd {
-      @apply text-end font-bold text-neutral-900;
+  &__fact-value {
+    @apply text-end font-bold text-neutral-900;
+  }
+
+  &__address-line {
+    @apply block;
+  }
+
+  &__actions {
+    @apply flex flex-col gap-2;
+  }
+
+  &__modal-text {
+    @apply text-sm;
+
+    &:not(:last-child) {
+      @apply mb-4;
     }
+  }
+
+  &__pause-options {
+    @apply flex flex-col gap-2;
   }
 
   &__pause-option {
-    @apply rounded-md border border-neutral-200 text-sm;
+    @apply rounded-[--vc-radius] border border-neutral-200 p-3 text-sm;
   }
 
-  // the radio's own label fills the option, so the whole option selects it
   &__pause-radio {
     @apply w-full;
-
-    .vc-radio-button__container {
-      @apply w-full items-center gap-3 p-3;
-    }
   }
 }
 </style>

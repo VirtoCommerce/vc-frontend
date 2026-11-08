@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import {
   applyDiscount,
+  fetchAllPages,
   intervalKey,
   intervalLabel,
   needsCardPaymentMethodNotice,
   parseIntervalKey,
-  shouldWithdrawCardSaving,
   toDateInputValue,
 } from "./utils";
 
@@ -80,19 +80,36 @@ describe("needsCardPaymentMethodNotice", () => {
   });
 });
 
-describe("shouldWithdrawCardSaving", () => {
-  const cart = (...ids: string[]) => ids.map((id) => ({ id }));
+describe("fetchAllPages", () => {
+  const list = (count: number) => Array.from({ length: count }, (_, i) => `item-${i}`);
 
-  it("withdraws when the subscribed lines stay in the cart: turned one-time or left out of checkout", () => {
-    expect(shouldWithdrawCardSaving(["line-1"], cart("line-1", "line-2"))).toBe(true);
+  it("asks for the next page with `after` until it has `totalCount` items", async () => {
+    const all = list(25);
+    const fetchPage = vi.fn(({ first, after }: { first: number; after: string }) =>
+      Promise.resolve({ totalCount: all.length, items: all.slice(Number(after), Number(after) + first) }),
+    );
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toEqual(all);
+    expect(fetchPage.mock.calls.map(([page]) => page)).toEqual([
+      { first: 20, after: "0" },
+      { first: 20, after: "20" },
+    ]);
   });
 
-  it("keeps the requirement when the subscribed lines left the cart: they were ordered and the order is paid next", () => {
-    expect(shouldWithdrawCardSaving(["line-1"], cart("line-2"))).toBe(false);
-    expect(shouldWithdrawCardSaving(["line-1"], undefined)).toBe(false);
+  it("asks once when the first page holds everything", async () => {
+    const fetchPage = vi.fn(() => Promise.resolve({ totalCount: 3, items: list(3) }));
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toEqual(list(3));
+    expect(fetchPage).toHaveBeenCalledTimes(1);
   });
 
-  it("has nothing to withdraw when there were no subscribed lines", () => {
-    expect(shouldWithdrawCardSaving([], cart("line-1"))).toBe(false);
+  it("stops at an empty page, even when the total promised more", async () => {
+    const fetchPage = vi
+      .fn()
+      .mockResolvedValueOnce({ totalCount: 30, items: list(20) })
+      .mockResolvedValueOnce({ totalCount: 30, items: [] });
+
+    await expect(fetchAllPages(fetchPage, 20)).resolves.toHaveLength(20);
+    expect(fetchPage).toHaveBeenCalledTimes(2);
   });
 });

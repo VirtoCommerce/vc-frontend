@@ -107,13 +107,35 @@ export function toDateInputValue(date: string | Date | null | undefined): string
   return `${value.getUTCFullYear()}-${month}-${day}`;
 }
 
-export function cardLabel(brand?: string | null, last4?: string | null): string {
-  return `${brand || "Card"} •••• ${last4 ?? "????"}`;
+type PageType<T> = { totalCount?: number | null; items?: T[] | null } | null | undefined;
+
+/** Every item of a paged list: asks for the next page with `after` until `totalCount` items are read. */
+export async function fetchAllPages<T>(
+  fetchPage: (page: { first: number; after: string }) => Promise<PageType<T>>,
+  pageSize: number,
+): Promise<T[]> {
+  const items: T[] = [];
+  let totalCount = 0;
+
+  do {
+    // Each page starts where the previous one ended, so the requests can't run in parallel.
+    const page = await fetchPage({ first: pageSize, after: String(items.length) });
+    const pageItems = page?.items ?? [];
+    if (!pageItems.length) {
+      break;
+    }
+
+    items.push(...pageItems);
+    totalCount = page?.totalCount ?? 0;
+  } while (items.length < totalCount);
+
+  return items;
 }
 
 /**
- * What a shopper is told when a subscription action fails: a translated message. The server's own message is in English
- * and meant for logs, so it is logged here instead of shown.
+ * What a shopper is told when a subscription action fails: a translated message. The error's own message is in English
+ * and meant for logs, so it is logged here instead of shown. (A renewal panel still shows the reason stored on the
+ * renewal itself, such as its review reason or the card's decline message.)
  */
 export function subscriptionErrorMessage(
   error: unknown,
@@ -133,17 +155,4 @@ export function needsCardPaymentMethodNotice(
   paymentMethods: unknown[] | null | undefined,
 ): boolean {
   return hasSubscriptionItems && !paymentMethods?.length;
-}
-
-/**
- * Whether accepted terms no longer need the card saved, once the cart has no subscription lines left: the lines that
- * were subscribed are still in the cart, so the shopper turned them one-time or left them out of checkout. Lines that
- * left the cart were ordered, and the order's payment still needs the card saved with the consent.
- */
-export function shouldWithdrawCardSaving(
-  previousLineIds: string[],
-  cartItems: { id: string }[] | null | undefined,
-): boolean {
-  const lineIds = new Set((cartItems ?? []).map((item) => item.id));
-  return previousLineIds.some((id) => lineIds.has(id));
 }

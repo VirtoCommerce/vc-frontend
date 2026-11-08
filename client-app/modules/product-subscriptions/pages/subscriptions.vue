@@ -1,10 +1,10 @@
 <template>
-  <div class="subscriptions-page">
-    <div class="subscriptions-page__header">
+  <div class="subscriptions">
+    <div class="subscriptions__header">
       <div>
         <VcTypography tag="h1">{{ $t("product_subscriptions.list.title") }}</VcTypography>
 
-        <p class="subscriptions-page__subtitle">{{ $t("product_subscriptions.list.subtitle") }}</p>
+        <p class="subscriptions__subtitle">{{ $t("product_subscriptions.list.subtitle") }}</p>
       </div>
 
       <VcButton variant="outline" size="sm" prepend-icon="credit-card" :to="{ name: ROUTES.PAYMENT_METHODS.NAME }">
@@ -13,13 +13,13 @@
     </div>
 
     <!-- Deliveries that need the customer -->
-    <section v-if="attentionRenewals.length" class="subscriptions-page__section" aria-labelledby="ps-attention">
-      <h2 id="ps-attention" class="subscriptions-page__section-title">
-        <VcIcon name="exclamation-circle" size="sm" class="text-warning" />
+    <section v-if="attentionRenewals.length" class="subscriptions__section" aria-labelledby="ps-attention">
+      <VcTypography id="ps-attention" tag="h2" variant="h3" class="subscriptions__section-title">
+        <VcIcon name="exclamation-circle" size="sm" color="warning" />
         {{ $t("product_subscriptions.list.needs_attention") }}
-      </h2>
+      </VcTypography>
 
-      <div class="subscriptions-page__renewals">
+      <div class="subscriptions__renewals">
         <RenewalPanel
           v-for="renewal in attentionRenewals"
           :key="renewal.id"
@@ -31,13 +31,13 @@
     </section>
 
     <!-- Upcoming deliveries -->
-    <section v-if="upcomingRenewals.length" class="subscriptions-page__section" aria-labelledby="ps-upcoming">
-      <h2 id="ps-upcoming" class="subscriptions-page__section-title">
+    <section v-if="upcomingRenewals.length" class="subscriptions__section" aria-labelledby="ps-upcoming">
+      <VcTypography id="ps-upcoming" tag="h2" variant="h3" class="subscriptions__section-title">
         <VcIcon name="truck" size="sm" />
         {{ $t("product_subscriptions.list.upcoming") }}
-      </h2>
+      </VcTypography>
 
-      <div class="subscriptions-page__renewals">
+      <div class="subscriptions__renewals">
         <RenewalPanel
           v-for="renewal in upcomingRenewals"
           :key="renewal.id"
@@ -50,7 +50,7 @@
 
     <VcWidget size="lg">
       <template #default-container>
-        <div class="subscriptions-page__tabs" role="group" :aria-label="$t('product_subscriptions.list.tabs_label')">
+        <div class="subscriptions__tabs" role="group" :aria-label="$t('product_subscriptions.list.tabs_label')">
           <VcTabSwitch
             v-for="tab in tabs"
             :key="tab.id"
@@ -61,95 +61,34 @@
             :data-test-id="`subscriptions-tab-${tab.id}`"
             @change="activeTab = tab.id"
           >
-            <span class="subscriptions-page__tab-label">
+            <span class="subscriptions__tab-label">
               {{ $t(`product_subscriptions.list.tabs.${tab.id}`) }}
-              <span class="subscriptions-page__tab-count">{{ countFor(tab.id) }}</span>
+              <span class="subscriptions__tab-count">{{ countFor(tab.id) }}</span>
             </span>
           </VcTabSwitch>
         </div>
 
         <VcLoaderOverlay v-if="loading && !subscriptions.length" />
 
-        <VcEmptyView
-          v-else-if="!visibleSubscriptions.length"
-          :text="$t(`product_subscriptions.list.empty.${activeTab}`)"
-          icon="refresh"
-          class="py-10"
-        >
+        <div v-else-if="loadFailed" class="subscriptions__error">
+          <VcAlert color="danger" variant="soft" icon role="alert" data-test-id="subscriptions-load-failed">
+            {{ $t("product_subscriptions.list.load_failed") }}
+
+            <VcButton size="xs" variant="outline" class="subscriptions__retry" @click="load">
+              {{ $t("product_subscriptions.common.retry") }}
+            </VcButton>
+          </VcAlert>
+        </div>
+
+        <VcEmptyView v-else-if="!visibleSubscriptions.length" :text="emptyText" icon="refresh">
           <template v-if="activeTab === 'active'" #button>
             <VcButton :to="{ name: 'Catalog' }">{{ $t("product_subscriptions.list.browse") }}</VcButton>
           </template>
         </VcEmptyView>
 
-        <ul v-else class="subscriptions-page__list">
-          <li v-for="subscription in visibleSubscriptions" :key="subscription.id">
-            <router-link
-              :to="{ name: SUBSCRIPTION_DETAILS_ROUTE_NAME, params: { subscriptionId: subscription.id } }"
-              class="subscription-row"
-              :data-test-id="`subscription-row-${subscription.number}`"
-            >
-              <VcImage
-                :src="subscription.imageUrl"
-                :alt="subscription.productName ?? ''"
-                class="subscription-row__image"
-                lazy
-              />
-
-              <div class="subscription-row__main">
-                <div class="subscription-row__title">{{ subscription.productName }}</div>
-
-                <div class="subscription-row__meta">
-                  <span>{{ $t("product_subscriptions.common.qty", { quantity: subscription.quantity }) }}</span>
-
-                  <span>· {{ intervalLabel($t, subscription.intervalUnit, subscription.intervalCount) }}</span>
-
-                  <span
-                    v-if="
-                      discountLabel($t, subscription.discountType, subscription.discountValue, subscription.currency)
-                    "
-                  >
-                    ·
-                    {{
-                      discountLabel($t, subscription.discountType, subscription.discountValue, subscription.currency)
-                    }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="subscription-row__side">
-                <SubscriptionStatusBadge :status="subscription.status" />
-
-                <span class="subscription-row__next">
-                  <template v-if="subscription.status === 'Active' || subscription.status === 'PastDue'">
-                    {{
-                      $t("product_subscriptions.common.next", {
-                        date: $d(new Date(subscription.nextOrderDate), "short"),
-                      })
-                    }}
-                  </template>
-
-                  <template v-else-if="subscription.status === 'Paused'">
-                    {{
-                      subscription.pausedUntil
-                        ? $t("product_subscriptions.common.paused_until", {
-                            date: $d(new Date(subscription.pausedUntil), "short"),
-                          })
-                        : $t("product_subscriptions.common.paused")
-                    }}
-                  </template>
-
-                  <template v-else-if="subscription.status === 'Cancelled' && subscription.cancelledDate">
-                    {{
-                      $t("product_subscriptions.common.cancelled_on", {
-                        date: $d(new Date(subscription.cancelledDate), "short"),
-                      })
-                    }}
-                  </template>
-                </span>
-              </div>
-
-              <VcIcon name="chevron-right" size="sm" class="subscription-row__chevron" />
-            </router-link>
+        <ul v-else class="subscriptions__list">
+          <li v-for="subscription in visibleSubscriptions" :key="subscription.id" class="subscriptions__item">
+            <SubscriptionRow :subscription="subscription" />
           </li>
         </ul>
       </template>
@@ -173,9 +112,9 @@ import {
   skipSubscriptionRenewal,
 } from "../api/graphql";
 import RenewalPanel from "../components/renewal-panel.vue";
-import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
-import { ATTENTION_RENEWAL_STATES, SUBSCRIPTION_DETAILS_ROUTE_NAME } from "../constants";
-import { discountLabel, subscriptionErrorMessage, intervalLabel } from "../utils";
+import SubscriptionRow from "../components/subscription-row.vue";
+import { ATTENTION_RENEWAL_STATES } from "../constants";
+import { fetchAllPages, subscriptionErrorMessage } from "../utils";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 
 type TabType = "active" | "paused" | "cancelled";
@@ -191,7 +130,11 @@ const tabs: { id: TabType; statuses: string[] }[] = [
   { id: "cancelled", statuses: ["Cancelled"] },
 ];
 
+const SUBSCRIPTIONS_PAGE_SIZE = 100;
+const RENEWALS_PAGE_SIZE = 50;
+
 const loading = ref(false);
+const loadFailed = ref(false);
 const activeTab = ref<TabType>("active");
 const subscriptions = ref<ProductSubscriptionFieldsFragment[]>([]);
 const renewals = ref<RenewalFieldsFragment[]>([]);
@@ -220,6 +163,13 @@ const visibleSubscriptions = computed(() => {
     .sort((a, b) => new Date(a.nextOrderDate).getTime() - new Date(b.nextOrderDate).getTime());
 });
 
+// "No subscriptions yet" only when there are none at all, not when the other tabs have some.
+const emptyText = computed(() =>
+  activeTab.value === "active" && subscriptions.value.length
+    ? t("product_subscriptions.list.empty.no_active")
+    : t(`product_subscriptions.list.empty.${activeTab.value}`),
+);
+
 function countFor(tab: TabType): number {
   const statuses = tabs.find((x) => x.id === tab)?.statuses ?? [];
   return subscriptions.value.filter((x) => statuses.includes(x.status)).length;
@@ -227,21 +177,28 @@ function countFor(tab: TabType): number {
 
 async function load(): Promise<void> {
   loading.value = true;
+  loadFailed.value = false;
   try {
-    const [subscriptionResult, openRenewals, recentRenewals] = await Promise.all([
-      getProductSubscriptions({ first: 100 }),
-      getSubscriptionRenewals({ onlyOpen: true, first: 20 }),
+    // The tabs count every subscription and the sections show every open renewal, so both lists are read in full.
+    // A fixed sort keeps the renewal pages from overlapping.
+    const [allSubscriptions, openRenewals, recentRenewals] = await Promise.all([
+      fetchAllPages((page) => getProductSubscriptions(page), SUBSCRIPTIONS_PAGE_SIZE),
+      fetchAllPages(
+        (page) => getSubscriptionRenewals({ ...page, onlyOpen: true, sort: "ScheduledDate:asc" }),
+        RENEWALS_PAGE_SIZE,
+      ),
       getSubscriptionRenewals({ first: 10, sort: "ModifiedDate:desc" }),
     ]);
 
-    subscriptions.value = subscriptionResult?.items ?? [];
+    subscriptions.value = allSubscriptions;
 
     // Open renewals, plus recently failed ones the customer can still fix.
     const failed = (recentRenewals?.items ?? []).filter((x) => x.state === "Failed" && x.canRetryPayment);
-    const merged = [...(openRenewals?.items ?? []), ...failed];
+    const merged = [...openRenewals, ...failed];
     renewals.value = merged.filter((x, i) => merged.findIndex((y) => y.id === x.id) === i);
   } catch (e) {
     Logger.error("subscriptions.load", e);
+    loadFailed.value = true;
   } finally {
     loading.value = false;
   }
@@ -296,7 +253,7 @@ onMounted(load);
 </script>
 
 <style lang="scss">
-.subscriptions-page {
+.subscriptions {
   @apply flex flex-col gap-5;
 
   &__header {
@@ -316,7 +273,7 @@ onMounted(load);
   }
 
   &__section-title {
-    @apply flex items-center gap-2 text-lg font-bold text-neutral-900;
+    @apply flex items-center gap-2;
   }
 
   &__renewals {
@@ -343,61 +300,20 @@ onMounted(load);
     @apply rounded-full bg-neutral-100 px-2 text-xs text-neutral-700;
   }
 
+  &__error {
+    @apply p-3;
+
+    @media (width >= theme("screens.md")) {
+      @apply p-5;
+    }
+  }
+
+  &__retry {
+    @apply mt-2;
+  }
+
   &__list {
     @apply divide-y divide-neutral-100;
-  }
-}
-
-.subscription-row {
-  @apply flex items-center gap-3 px-3 py-4 transition-colors;
-
-  @media (width >= theme("screens.md")) {
-    @apply px-5;
-  }
-
-  &:hover,
-  &:focus-visible {
-    @apply bg-neutral-50;
-  }
-
-  &__image {
-    @apply size-14 shrink-0 rounded-md border border-neutral-100 bg-additional-50 object-contain;
-  }
-
-  &__main {
-    @apply min-w-0 grow;
-  }
-
-  &__title {
-    @apply line-clamp-2 text-sm font-bold text-neutral-900;
-
-    @media (width >= theme("screens.md")) {
-      @apply text-base;
-    }
-  }
-
-  &__meta {
-    @apply mt-1 flex flex-wrap gap-x-1 text-xs text-neutral-600;
-
-    @media (width >= theme("screens.md")) {
-      @apply text-sm;
-    }
-  }
-
-  &__side {
-    @apply flex shrink-0 flex-col items-end gap-1 text-right;
-  }
-
-  &__next {
-    @apply text-xs text-neutral-600;
-  }
-
-  &__chevron {
-    @apply hidden shrink-0 text-neutral-400;
-
-    @media (width >= theme("screens.sm")) {
-      @apply block;
-    }
   }
 }
 </style>

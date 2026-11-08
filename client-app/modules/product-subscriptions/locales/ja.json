@@ -42,7 +42,8 @@
       "paused": "Paused",
       "paused_until": "Paused until {date}",
       "cancelled_on": "Cancelled {date}",
-      "back": "Back"
+      "back": "Back",
+      "retry": "再試行"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -105,10 +106,12 @@
       },
       "empty": {
         "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
+        "no_active": "有効な定期購入はありません。",
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
       },
-      "tabs_label": "Subscription status"
+      "tabs_label": "Subscription status",
+      "load_failed": "定期購入を読み込めませんでした。"
     },
     "renewal": {
       "total": "Total",
@@ -139,11 +142,13 @@
       "meta_title": "Subscription",
       "back": "All subscriptions",
       "not_found": "This subscription was not found.",
+      "load_failed": "この定期購入を読み込めませんでした。",
       "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
       "pending": "Your subscription starts as soon as the first payment is confirmed.",
       "paused": "This subscription is paused. No deliveries or charges until you resume it.",
       "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
       "cancelled": "Cancelled {date}. You won't be charged again.",
+      "cancelled_undated": "この定期購入はキャンセルされました。今後請求されることはありません。",
       "next_delivery": "Next delivery",
       "next_hint": "We'll email you a reminder with the price a few days before.",
       "no_next": "No upcoming deliveries.",

@@ -2,51 +2,32 @@
   <div class="purchase-options">
     <template v-if="offer">
       <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
-        <div class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'once' }">
-          <VcRadioButton
-            v-model="mode"
-            value="once"
-            name="purchase-mode"
-            size="sm"
-            :disabled="isSaving"
-            class="purchase-options__radio"
-            data-test-id="purchase-option-once"
-          >
-            <span class="purchase-options__choice-body">
-              <span class="purchase-options__choice-title">{{
-                $t("product_subscriptions.purchase_options.one_time")
-              }}</span>
+        <PurchaseOption
+          v-model="mode"
+          value="once"
+          name="purchase-mode"
+          :disabled="isSaving"
+          :price="product.price?.actual"
+          test-id="purchase-option-once"
+        >
+          <template #title>{{ $t("product_subscriptions.purchase_options.one_time") }}</template>
+        </PurchaseOption>
 
-              <span class="purchase-options__choice-price">{{ formatMoney(basePrice, currency) }}</span>
-            </span>
-          </VcRadioButton>
-        </div>
+        <PurchaseOption
+          v-model="mode"
+          value="subscribe"
+          name="purchase-mode"
+          :disabled="isSaving"
+          :strike-price="subscribePrice < basePrice ? product.price?.actual : undefined"
+          test-id="purchase-option-subscribe"
+        >
+          <template #title>
+            {{ $t("product_subscriptions.purchase_options.subscribe") }}
+            <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
+          </template>
 
-        <div class="purchase-options__choice" :class="{ 'purchase-options__choice--active': mode === 'subscribe' }">
-          <VcRadioButton
-            v-model="mode"
-            value="subscribe"
-            name="purchase-mode"
-            size="sm"
-            :disabled="isSaving"
-            class="purchase-options__radio"
-            data-test-id="purchase-option-subscribe"
-          >
-            <span class="purchase-options__choice-body">
-              <span class="purchase-options__choice-title">
-                {{ $t("product_subscriptions.purchase_options.subscribe") }}
-                <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
-              </span>
-
-              <span class="purchase-options__choice-price">
-                {{ formatMoney(subscribePrice, currency) }}
-                <s v-if="subscribePrice < basePrice" class="purchase-options__strike">{{
-                  formatMoney(basePrice, currency)
-                }}</s>
-              </span>
-            </span>
-          </VcRadioButton>
-        </div>
+          <template #price>{{ formatMoney(subscribePrice, currency) }}</template>
+        </PurchaseOption>
       </fieldset>
 
       <div v-if="mode === 'subscribe'" class="purchase-options__subscribe">
@@ -62,9 +43,13 @@
         />
 
         <ul class="purchase-options__benefits">
-          <li><VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_reminder") }}</li>
+          <li class="purchase-options__benefit">
+            <VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_reminder") }}
+          </li>
 
-          <li><VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_cancel") }}</li>
+          <li class="purchase-options__benefit">
+            <VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_cancel") }}
+          </li>
         </ul>
 
         <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
@@ -86,7 +71,7 @@
     <output
       v-if="offer && lineItem && syncState"
       class="purchase-options__status"
-      :class="`purchase-options__status--${syncState}`"
+      :class="{ 'purchase-options__status--error': syncState === 'error' }"
     >
       <VcIcon :name="syncState === 'error' ? 'exclamation-circle' : 'refresh'" size="xs" />
 
@@ -121,6 +106,7 @@ import {
   intervalLabel,
   parseIntervalKey,
 } from "../utils";
+import PurchaseOption from "./purchase-option.vue";
 import type { Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
@@ -238,64 +224,19 @@ onMounted(() => {
   @apply flex flex-col gap-3;
 
   &__choices {
-    @apply flex flex-col gap-2 border-0 p-0 m-0;
-  }
-
-  &__choice {
-    @apply rounded-lg border border-neutral-200 bg-additional-50 transition-colors;
-
-    &:hover {
-      @apply border-accent-300;
-    }
-
-    // Selection is accent, not primary: primary stays with the action (Add to cart).
-    &--active {
-      @apply border-accent bg-accent-50;
-    }
-  }
-
-  // the radio's own label fills the card, so the whole card selects the option
-  &__radio {
-    @apply w-full;
-
-    // the checked marker follows the card: accent, not the primary default
-    --vc-radio-button-base-color: var(--color-accent-500);
-
-    .vc-radio-button__container {
-      @apply w-full items-start gap-3 p-3;
-    }
-
-    .vc-radio-button__label {
-      @apply flex min-w-0 grow;
-    }
-  }
-
-  &__choice-body {
-    @apply flex min-w-0 grow flex-wrap items-center justify-between gap-x-3 gap-y-1;
-  }
-
-  &__choice-title {
-    @apply flex items-center gap-2 text-sm font-bold text-neutral-900;
-  }
-
-  &__choice-price {
-    @apply text-sm font-bold text-neutral-900;
-  }
-
-  &__strike {
-    @apply ms-1 text-xs font-normal text-neutral-500;
+    @apply flex flex-col gap-2;
   }
 
   &__subscribe {
-    @apply flex flex-col gap-3 rounded-lg bg-neutral-50 p-3;
+    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
   }
 
   &__benefits {
     @apply flex flex-col gap-1 text-xs text-neutral-700;
+  }
 
-    li {
-      @apply flex items-center gap-1.5;
-    }
+  &__benefit {
+    @apply flex items-center gap-1.5;
   }
 
   &__status {
