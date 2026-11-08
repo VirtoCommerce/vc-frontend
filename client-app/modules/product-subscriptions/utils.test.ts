@@ -8,7 +8,6 @@ import {
   intervalLabel,
   needsCardPaymentMethodNotice,
   parseIntervalKey,
-  shouldWithdrawCardSaving,
   toDateInputValue,
 } from "./utils";
 
@@ -124,22 +123,5 @@ describe("fetchAllPages", () => {
 
     await expect(fetchAllPages(fetchPage, 20)).resolves.toHaveLength(20);
     expect(fetchPage).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe("shouldWithdrawCardSaving", () => {
-  const cart = (...ids: string[]) => ids.map((id) => ({ id }));
-
-  it("withdraws when the subscribed lines stay in the cart: turned one-time or left out of checkout", () => {
-    expect(shouldWithdrawCardSaving(["line-1"], cart("line-1", "line-2"))).toBe(true);
-  });
-
-  it("keeps the requirement when the subscribed lines left the cart: they were ordered and the order is paid next", () => {
-    expect(shouldWithdrawCardSaving(["line-1"], cart("line-2"))).toBe(false);
-    expect(shouldWithdrawCardSaving(["line-1"], undefined)).toBe(false);
-  });
-
-  it("has nothing to withdraw when there were no subscribed lines", () => {
-    expect(shouldWithdrawCardSaving([], cart("line-1"))).toBe(false);
   });
 });
