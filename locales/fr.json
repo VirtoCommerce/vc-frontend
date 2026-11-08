@@ -1185,6 +1185,80 @@
           "unpin_label": "Désépingler « {label} »"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Panier moyen sur la période : {aov}",
+        "title": "Valeur moyenne des commandes"
+      },
+      "axis": {
+        "aov": "Panier moyen, {currency}"
+      },
+      "cancelled_excluded": "Commandes annulées exclues",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "6 derniers mois",
+        "twelve_months": "12 derniers mois",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mois en cours jusqu'au {today}. Les ventes sont nettes, par date de commande ; les commandes annulées sont exclues.",
+      "footnote_closed": "{from} – {to}. Les ventes sont nettes, par date de commande ; les commandes annulées sont exclues.",
+      "footnote_upcoming": "Cette période n'a pas encore commencé.",
+      "kpi": {
+        "aov": "Valeur moyenne des commandes · {period}",
+        "month_to_date": "{month} à ce jour · jour {day} sur {days}",
+        "orders": "Commandes · {period}",
+        "projected": "{share} du mois · prévision {value}",
+        "sales": "Ventes · {period}",
+        "vs_last_year": "{change} vs année dernière"
+      },
+      "last_year": "Année dernière",
+      "last_year_toggle": "Afficher l'année dernière sur le graphique « {chart} »",
+      "legend": {
+        "aov_closed": "Panier moyen, mois clôturés",
+        "current": "Ce mois-ci, à ce jour",
+        "down": "baisse",
+        "last_year": "Année dernière",
+        "projection": "Prévision de fin de mois",
+        "sales_closed": "Ventes, mois clôturés",
+        "up": "hausse",
+        "vs_last_year": "vs même mois de l'année dernière"
+      },
+      "load_failed": "Impossible de charger le rapport. Veuillez réessayer plus tard.",
+      "period_label": "Période",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 mois",
+        "twelve_months": "12 mois",
+        "year": "Année en cours"
+      },
+      "sales_chart": {
+        "subtitle": "En moyenne {value} par mois clôturé",
+        "title": "Ventes mensuelles · {period}"
+      },
+      "table": {
+        "aov": "Panier moyen",
+        "change": "vs année dernière",
+        "description": "Ventes, commandes et valeur moyenne des commandes par mois",
+        "last_year": "Même mois l'année dernière",
+        "month": "Mois",
+        "orders": "Commandes",
+        "sales": "Ventes",
+        "toggle": "Afficher sous forme de tableau"
+      },
+      "tooltip": {
+        "aov": "Panier moyen",
+        "last_year_aov": "Panier moyen, {month}",
+        "last_year_revenue": "Revenus, {month}",
+        "projection": "Prévision de fin de mois",
+        "revenue": "Revenus",
+        "revenue_to_date": "Revenus à ce jour",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "À venir"
     }
   },
   "pages": {
@@ -1499,6 +1573,8 @@
         "title": "@:common.links.security",
         "no_keys": "Aucune clé",
         "unnamed_key": "Clé sans nom",
+        "rename_key_label": "Renommer {name}",
+        "delete_key_label": "Supprimer {name}",
         "created": "Créée le {date}",
         "changed": "Modifiée le {date}",
         "rename_modal": {
