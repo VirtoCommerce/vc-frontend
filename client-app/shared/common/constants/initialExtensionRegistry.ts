@@ -51,4 +51,8 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   sharedList: {},
   checkout: {},
   addCardForm: {},
+  identityProviders: {},
+  signInMethods: {},
+  accountSecurity: {},
+  companyInfo: {},
 };

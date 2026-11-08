@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Denna artikel kan inte köpas",
       "item_is_out_of_stock": "Denna artikel är slut i lager",
       "invalid_value": "Ogiltigt värde",
+      "invalid_characters": "Innehåller ogiltiga tecken",
+      "html_tags_not_allowed": "HTML-taggar är inte tillåtna",
+      "unsafe_content": "Innehåller otillåtet innehåll",
+      "invalid_addresses": "Några av adresserna är ogiltiga",
+      "invalid_data": "Några av de angivna uppgifterna är ogiltiga",
       "invalid_user_id_or_token": "Användar-ID eller token är ogiltig.",
       "product_no_longer_available": "Inte längre tillgänglig",
       "item_quantity_required_field": "Artikelantalet får inte vara tomt",
@@ -285,7 +290,8 @@
       "company_members": "Företagsmedlemmar",
       "contact_administrator": "kontakta webbplatsadministratören",
       "skip_to_main_content": "Hoppa till huvudinnehåll",
-      "skip_to_footer": "Hoppa till sidfot"
+      "skip_to_footer": "Hoppa till sidfot",
+      "security": "Säkerhet"
     },
     "titles": {
       "all_actions": "Alla åtgärder",
@@ -379,7 +385,8 @@
             "orders": "@:common.links.orders",
             "saved_for_later": "Sparat till senare",
             "lists": "@:common.links.lists",
-            "payment_methods": "Betalningsmetoder"
+            "payment_methods": "Betalningsmetoder",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -496,7 +503,8 @@
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "payment_methods": "Betalningsmetoder"
+          "payment_methods": "Betalningsmetoder",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1209,6 +1217,80 @@
           "unpin_label": "Släpp fästning för “{label}”"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Snittordervärde för perioden: {aov}",
+        "title": "Genomsnittligt ordervärde"
+      },
+      "axis": {
+        "aov": "Snittordervärde, {currency}"
+      },
+      "cancelled_excluded": "Annullerade order ingår inte",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "senaste 6 månaderna",
+        "twelve_months": "senaste 12 månaderna",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, innevarande månad till och med {today}. Försäljningen redovisas netto, per orderdatum; annullerade order ingår inte.",
+      "footnote_closed": "{from} – {to}. Försäljningen redovisas netto, per orderdatum; annullerade order ingår inte.",
+      "footnote_upcoming": "Den här perioden har inte börjat än.",
+      "kpi": {
+        "aov": "Genomsnittligt ordervärde · {period}",
+        "month_to_date": "Hittills i {month} · dag {day} av {days}",
+        "orders": "Order · {period}",
+        "projected": "{share} av månaden · prognos {value}",
+        "sales": "Försäljning · {period}",
+        "vs_last_year": "{change} vs förra året"
+      },
+      "last_year": "Förra året",
+      "last_year_toggle": "Visa förra året i diagrammet ”{chart}”",
+      "legend": {
+        "aov_closed": "Snittordervärde, avslutade månader",
+        "current": "Denna månad, hittills",
+        "down": "minskning",
+        "last_year": "Förra året",
+        "projection": "Prognos vid månadens slut",
+        "sales_closed": "Försäljning, avslutade månader",
+        "up": "ökning",
+        "vs_last_year": "vs samma månad förra året"
+      },
+      "load_failed": "Kunde inte läsa in rapporten. Försök igen senare.",
+      "period_label": "Period",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6 månader",
+        "twelve_months": "12 månader",
+        "year": "Innevarande år"
+      },
+      "sales_chart": {
+        "subtitle": "I genomsnitt {value} / avslutad månad",
+        "title": "Försäljning per månad · {period}"
+      },
+      "table": {
+        "aov": "Snittordervärde",
+        "change": "vs förra året",
+        "description": "Försäljning, order och genomsnittligt ordervärde per månad",
+        "last_year": "Samma månad förra året",
+        "month": "Månad",
+        "orders": "Order",
+        "sales": "Försäljning",
+        "toggle": "Visa som tabell"
+      },
+      "tooltip": {
+        "aov": "Snittordervärde",
+        "last_year_aov": "Snittordervärde, {month}",
+        "last_year_revenue": "Intäkter, {month}",
+        "projection": "Prognos vid månadens slut",
+        "revenue": "Intäkter",
+        "revenue_to_date": "Intäkter hittills",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Kommande"
     }
   },
   "pages": {
@@ -1518,6 +1600,23 @@
       "promotion_coupons": {
         "title": "Alla kuponger & kampanjer",
         "no_lists": "Du har inga kuponger eller kampanjer"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Inga nycklar",
+        "unnamed_key": "Namnlös nyckel",
+        "rename_key_label": "Byt namn på {name}",
+        "delete_key_label": "Ta bort {name}",
+        "created": "Skapad {date}",
+        "changed": "Ändrad {date}",
+        "rename_modal": {
+          "title": "Byt namn på nyckel",
+          "name_label": "Namn"
+        },
+        "delete_modal": {
+          "title": "Ta bort nyckel",
+          "message": "Du kommer inte längre att kunna logga in med den här nyckeln."
+        }
       }
     },
     "company": {
@@ -1857,7 +1956,11 @@
     "PasswordRequiresNonAlphanumeric": "Lösenordet måste innehålla minst ett icke-alfanumeriskt tecken",
     "PasswordRequiresUpper": "Lösenordet måste innehålla minst en stor bokstav ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Lösenordet måste använda olika tecken",
-    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat."
+    "RecentPasswordUsed": "Du har använt detta lösenord tidigare. Vänligen skapa ett annat.",
+    "user_not_editable": "Den här användaren kan inte redigeras",
+    "sign_in_key_not_found": "Inloggningsnyckeln hittades inte",
+    "last_sign_in_key": "Den sista inloggningsnyckeln kan inte tas bort",
+    "operation_not_supported": "Den här åtgärden stöds inte"
   },
   "password_tips": {
     "title": "Tips för att skapa ett starkt lösenord:",

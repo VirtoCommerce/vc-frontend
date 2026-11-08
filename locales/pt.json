@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Este item não pode ser comprado",
       "item_is_out_of_stock": "Este item está esgotado",
       "invalid_value": "Valor inválido",
+      "invalid_characters": "Contém caracteres inválidos",
+      "html_tags_not_allowed": "Tags HTML não são permitidas",
+      "unsafe_content": "Contém conteúdo não permitido",
+      "invalid_addresses": "Alguns dos endereços não são válidos",
+      "invalid_data": "Alguns dos dados inseridos não são válidos",
       "invalid_user_id_or_token": "ID do usuário ou token inválido.",
       "product_no_longer_available": "Não está mais disponível",
       "item_quantity_required_field": "O valor da quantidade do item não pode estar vazio",
@@ -285,7 +290,8 @@
       "company_members": "Membros da Empresa",
       "contact_administrator": "contate o administrador do site",
       "skip_to_main_content": "Ir para o conteúdo principal",
-      "skip_to_footer": "Ir para o rodapé"
+      "skip_to_footer": "Ir para o rodapé",
+      "security": "Segurança"
     },
     "titles": {
       "all_actions": "Todas as ações",
@@ -379,7 +385,8 @@
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardados para mais tarde",
             "lists": "@:common.links.lists",
-            "payment_methods": "Métodos de pagamento"
+            "payment_methods": "Métodos de pagamento",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -496,7 +503,8 @@
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "payment_methods": "Métodos de pagamento"
+          "payment_methods": "Métodos de pagamento",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -1209,6 +1217,80 @@
           "unpin_label": "Desafixar “{label}”"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Ticket médio de {aov} no período",
+        "title": "Valor médio do pedido"
+      },
+      "axis": {
+        "aov": "Ticket médio, {currency}"
+      },
+      "cancelled_excluded": "Exceto pedidos cancelados",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "últimos 6 meses",
+        "twelve_months": "últimos 12 meses",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mês atual até {today}. As vendas são líquidas, por data do pedido; os pedidos cancelados são excluídos.",
+      "footnote_closed": "{from} – {to}. As vendas são líquidas, por data do pedido; os pedidos cancelados são excluídos.",
+      "footnote_upcoming": "Este período ainda não começou.",
+      "kpi": {
+        "aov": "Valor médio do pedido · {period}",
+        "month_to_date": "Acumulado de {month} · dia {day} de {days}",
+        "orders": "Pedidos · {period}",
+        "projected": "{share} do mês · projeção de {value}",
+        "sales": "Vendas · {period}",
+        "vs_last_year": "{change} vs ano passado"
+      },
+      "last_year": "Ano passado",
+      "last_year_toggle": "Mostrar o ano passado no gráfico «{chart}»",
+      "legend": {
+        "aov_closed": "Ticket médio, meses fechados",
+        "current": "Mês atual, até hoje",
+        "down": "queda",
+        "last_year": "Ano passado",
+        "projection": "Projeção para o fim do mês",
+        "sales_closed": "Vendas, meses fechados",
+        "up": "alta",
+        "vs_last_year": "vs mesmo mês do ano passado"
+      },
+      "load_failed": "Não foi possível carregar o relatório. Tente novamente mais tarde.",
+      "period_label": "Período",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 meses",
+        "twelve_months": "12 meses",
+        "year": "Ano atual"
+      },
+      "sales_chart": {
+        "subtitle": "Média de {value} por mês fechado",
+        "title": "Vendas mensais · {period}"
+      },
+      "table": {
+        "aov": "Ticket médio",
+        "change": "vs ano passado",
+        "description": "Vendas, pedidos e valor médio do pedido por mês",
+        "last_year": "Mesmo mês do ano passado",
+        "month": "Mês",
+        "orders": "Pedidos",
+        "sales": "Vendas",
+        "toggle": "Mostrar como tabela"
+      },
+      "tooltip": {
+        "aov": "Ticket médio",
+        "last_year_aov": "Ticket médio, {month}",
+        "last_year_revenue": "Receita, {month}",
+        "projection": "Projeção para o fim do mês",
+        "revenue": "Receita",
+        "revenue_to_date": "Receita até hoje",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Por vir"
     }
   },
   "pages": {
@@ -1518,6 +1600,23 @@
       "promotion_coupons": {
         "title": "Todos os cupons e promoções",
         "no_lists": "Você não tem cupons ou promoções"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Nenhuma chave",
+        "unnamed_key": "Chave sem nome",
+        "rename_key_label": "Renomear {name}",
+        "delete_key_label": "Excluir {name}",
+        "created": "Criada em {date}",
+        "changed": "Alterada em {date}",
+        "rename_modal": {
+          "title": "Renomear chave",
+          "name_label": "Nome"
+        },
+        "delete_modal": {
+          "title": "Excluir chave",
+          "message": "Você não poderá mais entrar com esta chave."
+        }
       }
     },
     "company": {
@@ -1857,7 +1956,11 @@
     "PasswordRequiresNonAlphanumeric": "As senhas devem ter pelo menos um caractere não alfanumérico",
     "PasswordRequiresUpper": "As senhas devem ter pelo menos uma letra maiúscula ('A'-'Z')",
     "PasswordRequiresUniqueChars": "As senhas devem usar caracteres diferentes",
-    "RecentPasswordUsed": "Você já usou essa senha no passado. Por favor, crie outra."
+    "RecentPasswordUsed": "Você já usou essa senha no passado. Por favor, crie outra.",
+    "user_not_editable": "Este usuário não pode ser editado",
+    "sign_in_key_not_found": "A chave de login não foi encontrada",
+    "last_sign_in_key": "A última chave de login não pode ser removida",
+    "operation_not_supported": "Esta operação não é suportada"
   },
   "password_tips": {
     "title": "Dicas para criar uma senha forte:",

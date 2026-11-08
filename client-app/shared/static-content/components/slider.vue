@@ -175,7 +175,10 @@ function getLinkAttr(item: SlideType) {
   }
 
   &__image {
-    @apply w-full h-full object-cover object-left;
+    --vc-image-object-fit: cover;
+    --vc-image-object-position: left;
+
+    @apply w-full h-full;
   }
 }
 

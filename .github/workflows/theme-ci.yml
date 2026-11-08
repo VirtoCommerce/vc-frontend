@@ -17,7 +17,58 @@ on:
       - 'README.md'
       - 'LICENSE'
 
+# A new push to a PR cancels that PR's previous run. Pushes to dev/master get a group of their own, so each one runs to its deploy.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
+  sonar:
+    # Same gate as ci. Outside vc-frontend it also needs SONAR_PROJECT_KEY, which ci's "Check per-repository settings" step reports when missing.
+    if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
+         (github.repository_id == '296335982' || vars.SONAR_PROJECT_KEY != '') &&
+         github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Node 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          yarn install --mode=skip-build
+
+      - name: Get Image Version
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.7
+        with:
+          projectType: theme
+        id: image
+
+      # The project's new code is "previous version": without sonar.projectVersion the baseline never moves and years of code count as new.
+      # The prefix is the version without the build suffix, so the baseline moves once per release, not on every push.
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        with:
+          args: >-
+            -Dsonar.projectVersion=${{ steps.image.outputs.prefix }}
+            ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   ci:
     # Upstream (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof) or a repo with VC_CI=true: every job here is skipped in the private theme mirror (VCST-5970).
     if: ${{ (github.repository_id == '296335982' || vars.VC_CI == 'true') &&
@@ -30,7 +81,6 @@ jobs:
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
-      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
       VERSION: ''
@@ -89,14 +139,14 @@ jobs:
           fi
 
       - name: Get Image Version
-        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.7
         with:
           projectType: theme
         id: image
 
       - name: Get changelog
         id: changelog
-        uses: VirtoCommerce/.github/actions/changelog-generator@v3.1000.1
+        uses: VirtoCommerce/.github/actions/changelog-generator@v3.1000.7
 
       - name: Set release VERSION_SUFFIX
         run: |
@@ -122,15 +172,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
-        with:
-          args: ${{ vars.SONAR_PROJECT_KEY && format('-Dsonar.projectKey={0}', vars.SONAR_PROJECT_KEY) || '' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          yarn install --mode=skip-build
 
       - name: Check Locales
         run: |
@@ -141,23 +183,27 @@ jobs:
             exit 1
           fi
 
+      - name: Check Designs
+        run: |
+          yarn check:designs
+
       - name: Build
         run: |
           yarn build
 
-      - name: Unit Tests with Coverage
+      - name: Check CSS Layers
         run: |
-          yarn test:coverage
+          yarn check:css-layers
+
+      - name: Unit and Typing Tests with Coverage
+        run: |
+          yarn test:coverage --typecheck
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: coverage-report
           path: coverage
-
-      - name: Typing Tests
-        run: |
-          yarn test:typing --run
 
       - name: BUILD_STATE::successful
         if: success()
@@ -174,14 +220,14 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.7
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: VirtoCommerce/.github/actions/publish-artifact-link@v3.1000.1
+        uses: VirtoCommerce/.github/actions/publish-artifact-link@v3.1000.7
         with:
           artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
           repoOrg: ${{ github.repository_owner }}
@@ -220,7 +266,7 @@ jobs:
           fi
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.1
+        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.7
         if: always()
         id: jira_keys
         with:
@@ -229,7 +275,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Build Info to Jira
-        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        if: ${{ github.repository_id == '296335982' && env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && !cancelled() }}
         id: push_build_info_to_jira
         uses: VirtoCommerce/jira-upload-build-info@master
         with:
@@ -255,7 +301,7 @@ jobs:
 
       - name: Update Jira Tasks with Release Number
         if: ${{ github.repository_id == '296335982' && github.ref == 'refs/heads/master' }}
-        uses: VirtoCommerce/.github/actions/update-jira-tasks-with-release-number@v3.1000.1
+        uses: VirtoCommerce/.github/actions/update-jira-tasks-with-release-number@v3.1000.7
         with:
           ghRepository: ${{ github.repository }}
           ghReleaseTag: ${{ steps.image.outputs.prefix }}
@@ -285,7 +331,7 @@ jobs:
     if: ${{ (github.repository_id == '296335982' || vars.VC_E2E == 'true') &&
         (((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
-    uses: VirtoCommerce/.github/.github/workflows/playwright-tests.yml@v3.1000.3
+    uses: VirtoCommerce/.github/.github/workflows/playwright-tests.yml@v3.1000.7
     with:
       installModules: 'false'
       installCustomModule: 'false'

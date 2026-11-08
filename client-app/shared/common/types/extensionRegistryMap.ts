@@ -1,5 +1,6 @@
 import type { CartType, CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType, PreparedLineItemType } from "@/core/types";
+import type { SignInMethodContributionType } from "@/shared/account/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
@@ -104,6 +105,14 @@ export type ExtensionCategoryMapType = {
   >;
   /** The cart and checkout review steps. A provider decides on its own state whether it takes over. */
   checkout: ExtensionEntryType<never, never, () => boolean>;
+  /** The sign-in buttons, keyed by the authentication type. */
+  identityProviders: ExtensionEntryType;
+  /** The account security page, keyed by the sign-in method name. */
+  signInMethods: DecorateEntryType<SignInMethodContributionType>;
+  /** Widgets on Account › Security, below the sign-in methods. */
+  accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+  /** Widgets on Company › Info, between the company name and the addresses. */
+  companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 
 /** The parameter a category's `condition` accepts. */

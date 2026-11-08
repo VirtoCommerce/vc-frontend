@@ -83,7 +83,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
-export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -143,6 +143,14 @@ export type {
   WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+export { useThemeContext } from "@/core/composables/useThemeContext";
+export { useAnalytics } from "@/core/composables/useAnalytics";
+export { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
+export { useAuth } from "@/core/composables/useAuth";
+export { useSignMeIn } from "@/shared/account/composables/useSignMeIn";
+export { default as IdentityProvider } from "@/shared/sign-in/components/identity-provider.vue";
+export type { SignInMethodContributionType } from "@/shared/account/types";
+export type { IdentityErrorType, SignInKeyType } from "@/core/api/graphql/types";
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
@@ -180,12 +188,44 @@ export { default as OrderCommentSection } from "@/shared/checkout/components/ord
 export { default as OrderSummary } from "@/shared/checkout/components/order-summary.vue";
 export { default as AddressInfo } from "@/shared/common/components/address-info.vue";
 export { default as VendorName } from "@/shared/common/components/vendor-name.vue";
+
 // The orders `filter` expression the host builds from its filter panel model, and the facet name
 // the status chips read - a plugin listing orders has to speak the same filter grammar. Named for
 // orders here: `getFilterExpression` is the host's generic filter joiner in @/core/utilities.
 export { getFilterExpression as getOrdersFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
 export type { OrdersFilterDataType } from "@/shared/account/types";
+
+// Sales report (VCST-6650): the panel renders monthly sales and AOV from figures the caller fetches; the plan says
+// which month windows to fetch them for, `useReportingData` keeps each response with the plan it was fetched for.
+export {
+  buildReportingPlan,
+  buildReportingVariables,
+  isReportingPeriod,
+  REPORTING_DEFAULT_PERIOD,
+  REPORTING_MONTH_SLOTS,
+  REPORTING_PERIODS,
+  ReportingPanel,
+  toReportingData,
+  useReportingData,
+  useReportingPlan,
+} from "@/shared/reporting";
+export type {
+  ReportingDataType,
+  ReportingMonthSlotType,
+  ReportingPeriodTotalsType,
+  ReportingPeriodType,
+  ReportingPlanType,
+  ReportingRawMonthType,
+  ReportingSettledType,
+  ReportingStatisticsType,
+  ReportingVariablesType,
+} from "@/shared/reporting";
 export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
+
+// The promotion coupon card of the host's "Promotion coupons" page, so a plugin lists coupons the way the
+// host does. Props and the `after-description` slot are contract.
+export { default as CouponItem } from "@/shared/account/components/coupon-item.vue";
+export { default as CouponItemSkeleton } from "@/shared/account/components/coupon-item-skeleton.vue";
 
 // Files. `useFetch` is the host's fetch with its auth interceptors, so a plugin can read a
 // protected file URL as the signed-in user; `downloadFile` saves one through it.

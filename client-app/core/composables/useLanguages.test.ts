@@ -198,6 +198,32 @@ describe("useLanguages", () => {
     });
 
     it.each([
+      { condition: "default language has no prefix", cultureName: "en-US", permalink: "/faq", expected: "/faq" },
+      {
+        condition: "default language matches regardless of letter case",
+        cultureName: "en-us",
+        permalink: "/faq",
+        expected: "/faq",
+      },
+      {
+        condition: "unambiguous language uses short prefix",
+        cultureName: "fr-FR",
+        permalink: "a-propos",
+        expected: "/fr/a-propos",
+      },
+      {
+        condition: "ambiguous language uses full prefix",
+        cultureName: "pt-BR",
+        permalink: "/sobre",
+        expected: "/pt-BR/sobre",
+      },
+      { condition: "home page of another language", cultureName: "de-DE", permalink: "/", expected: "/de" },
+    ])("getLocalizedPath $condition", async ({ cultureName, permalink, expected }) => {
+      const { useLanguages } = await importComposable();
+      expect(useLanguages().getLocalizedPath(cultureName, permalink)).toBe(expected);
+    });
+
+    it.each([
       {
         condition: "strips short alias locale prefix and preserves query/hash",
         url: "/fr/cart?x=1#sec",

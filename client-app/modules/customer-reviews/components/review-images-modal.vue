@@ -111,7 +111,9 @@ onUnmounted(() => {
   }
 
   &__img {
-    @apply size-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply size-full;
   }
 
   &__caption {
