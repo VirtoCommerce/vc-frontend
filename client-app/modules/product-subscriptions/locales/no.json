@@ -43,7 +43,6 @@
       "paused_until": "Paused until {date}",
       "cancelled_on": "Cancelled {date}",
       "back": "Back",
-      "card": "Kort",
       "retry": "Prøv igjen"
     },
     "errors": {

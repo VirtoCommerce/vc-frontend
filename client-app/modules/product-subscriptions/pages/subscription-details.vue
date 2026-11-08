@@ -273,10 +273,10 @@
 
                 <dd class="subscription-details__fact-value">
                   {{
-                    cardLabel(
+                    savedCardLabel(
                       subscription.savedPaymentMethod.brand,
                       subscription.savedPaymentMethod.last4,
-                      $t("product_subscriptions.common.card"),
+                      $t("shared.payment.saved_cards.card"),
                     )
                   }}
                 </dd>
@@ -460,6 +460,7 @@ import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+import { savedCardLabel } from "@/shared/payment/utils/saved-card-label";
 import {
   acceptSubscriptionRenewal,
   cancelProductSubscription,
@@ -478,7 +479,6 @@ import RenewalPanel from "../components/renewal-panel.vue";
 import SubscriptionStatusBadge from "../components/subscription-status-badge.vue";
 import { ATTENTION_RENEWAL_STATES, SUBSCRIPTIONS_ROUTE_NAME } from "../constants";
 import {
-  cardLabel,
   discountLabel,
   subscriptionErrorMessage,
   formatMoney,
@@ -543,14 +543,14 @@ const intervalItems = computed(() =>
 const cardItems = computed(() => {
   const items = activeMethods.value.map((x) => ({
     id: x.id,
-    label: `${cardLabel(x.brand, x.last4, t("product_subscriptions.common.card"))} · ${x.expirationMonth}/${x.expirationYear}`,
+    label: `${savedCardLabel(x.brand, x.last4, t("shared.payment.saved_cards.card"))} · ${x.expirationMonth}/${x.expirationYear}`,
   }));
   const current = subscription.value?.savedPaymentMethod;
   if (current && !items.some((x) => x.id === current.id)) {
     items.unshift({
       id: current.id,
       label: [
-        cardLabel(current.brand, current.last4, t("product_subscriptions.common.card")),
+        savedCardLabel(current.brand, current.last4, t("shared.payment.saved_cards.card")),
         t(`product_subscriptions.card_status.${current.status}`, current.status),
       ].join(" · "),
     });

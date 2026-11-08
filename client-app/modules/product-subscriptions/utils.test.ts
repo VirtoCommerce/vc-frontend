@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import {
   applyDiscount,
-  cardLabel,
   fetchAllPages,
   intervalKey,
   intervalLabel,
@@ -78,17 +77,6 @@ describe("needsCardPaymentMethodNotice", () => {
   it("isn't needed when a method is offered or the cart has no subscription", () => {
     expect(needsCardPaymentMethodNotice(true, [{ code: "MockStoredCardPaymentMethod" }])).toBe(false);
     expect(needsCardPaymentMethodNotice(false, [])).toBe(false);
-  });
-});
-
-describe("cardLabel", () => {
-  it("names the card by its brand and last digits", () => {
-    expect(cardLabel("Visa", "4242", "Karte")).toBe("Visa •••• 4242");
-  });
-
-  it("uses the given word for a card without a brand", () => {
-    expect(cardLabel(null, "4242", "Karte")).toBe("Karte •••• 4242");
-    expect(cardLabel("", undefined, "Karte")).toBe("Karte •••• ????");
   });
 });
 

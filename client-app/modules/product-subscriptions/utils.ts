@@ -107,15 +107,6 @@ export function toDateInputValue(date: string | Date | null | undefined): string
   return `${value.getUTCFullYear()}-${month}-${day}`;
 }
 
-/** A saved card as "Visa •••• 4242"; `fallbackBrand` is the translated word shown for a card without a brand. */
-export function cardLabel(
-  brand: string | null | undefined,
-  last4: string | null | undefined,
-  fallbackBrand: string,
-): string {
-  return `${brand || fallbackBrand} •••• ${last4 ?? "????"}`;
-}
-
 type PageType<T> = { totalCount?: number | null; items?: T[] | null } | null | undefined;
 
 /** Every item of a paged list: asks for the next page with `after` until `totalCount` items are read. */
