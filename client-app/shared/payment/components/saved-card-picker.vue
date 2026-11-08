@@ -22,7 +22,11 @@
 
           <span class="saved-card-picker__text">
             {{ savedCardLabel(method.brand, method.last4, $t("shared.payment.saved_cards.card")) }}
-            <span class="saved-card-picker__expiry">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
+            <span
+              v-if="savedCardExpiry(method.expirationMonth, method.expirationYear)"
+              class="saved-card-picker__expiry"
+              >{{ savedCardExpiry(method.expirationMonth, method.expirationYear) }}</span
+            >
           </span>
 
           <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
@@ -53,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { savedCardLabel } from "../utils/saved-card-label";
+import { savedCardExpiry, savedCardLabel } from "../utils/saved-card-label";
 import type { SavedPaymentMethodFieldsFragment } from "../api/graphql/types";
 
 interface IProps {

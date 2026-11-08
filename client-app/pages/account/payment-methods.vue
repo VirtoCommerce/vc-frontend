@@ -3,7 +3,7 @@
     <div>
       <VcTypography tag="h1">{{ $t("shared.payment.saved_cards.page_title") }}</VcTypography>
 
-      <p class="mt-1 text-sm text-neutral-600">{{ $t("shared.payment.saved_cards.page_subtitle") }}</p>
+      <p class="payment-methods__subtitle">{{ $t("shared.payment.saved_cards.page_subtitle") }}</p>
     </div>
 
     <VcWidget size="lg">
@@ -30,7 +30,6 @@
           v-else-if="!visibleMethods.length"
           :text="$t('shared.payment.saved_cards.empty')"
           icon="credit-card"
-          class="py-10"
         />
 
         <ul v-else class="payment-methods__list">
@@ -90,13 +89,13 @@
 
       <template v-if="provider">
         <AddCardAuthorizeNet
-          v-if="provider.paymentMethodCode === AUTHORIZE_NET_PAYMENT_CODE"
+          v-if="provider.paymentMethodCode === AUTHORIZE_NET_PAYMENT_METHOD_CODE"
           :key="provider.paymentMethodCode"
           :method="provider"
           :set-default="setAsDefault"
           @added="onAdded"
         >
-          <VcCheckbox v-model="setAsDefault" class="mt-4">{{
+          <VcCheckbox v-model="setAsDefault" class="payment-methods__set-default">{{
             $t("shared.payment.saved_cards.set_default")
           }}</VcCheckbox>
         </AddCardAuthorizeNet>
@@ -111,7 +110,7 @@
             @added="onAdded"
           />
 
-          <VcCheckbox v-model="setAsDefault" class="mt-4">{{
+          <VcCheckbox v-model="setAsDefault" class="payment-methods__set-default">{{
             $t("shared.payment.saved_cards.set_default")
           }}</VcCheckbox>
         </template>
@@ -141,12 +140,11 @@ import { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 import { useNotifications } from "@/shared/notification";
 import { getCardPaymentMethods } from "@/shared/payment/api/graphql";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+import { AUTHORIZE_NET_PAYMENT_METHOD_CODE } from "@/shared/payment/constants";
 import { savedCardErrorMessage } from "@/shared/payment/utils/saved-card-label";
 import type { GetCardPaymentMethodsQuery } from "@/shared/payment/api/graphql/types";
 import AddCardAuthorizeNet from "@/shared/payment/components/add-card-authorize-net.vue";
 import SavedCard from "@/shared/payment/components/saved-card.vue";
-
-const AUTHORIZE_NET_PAYMENT_CODE = "AuthorizeNetPaymentMethod";
 
 const { t } = useI18n();
 const notifications = useNotifications();
@@ -168,7 +166,7 @@ const visibleMethods = computed(() => methods.value.filter((x) => x.status !== "
 const formMethods = computed(() =>
   cardMethods.value.filter(
     (x) =>
-      x.paymentMethodCode === AUTHORIZE_NET_PAYMENT_CODE ||
+      x.paymentMethodCode === AUTHORIZE_NET_PAYMENT_METHOD_CODE ||
       canRender("addCardForm", x.paymentMethodCode, x.paymentMethodCode),
   ),
 );
@@ -247,6 +245,10 @@ onMounted(() => Promise.all([fetch(), loadCardMethods()]));
 .payment-methods {
   @apply flex flex-col gap-5;
 
+  &__subtitle {
+    @apply mt-1 text-sm text-neutral-600;
+  }
+
   &__list {
     @apply divide-y divide-neutral-100;
   }
@@ -261,6 +263,10 @@ onMounted(() => Promise.all([fetch(), loadCardMethods()]));
 
   &__providers {
     @apply mb-4 flex flex-wrap gap-x-6 gap-y-2;
+  }
+
+  &__set-default {
+    @apply mt-4;
   }
 }
 </style>

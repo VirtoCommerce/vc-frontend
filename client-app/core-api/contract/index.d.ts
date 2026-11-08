@@ -4892,7 +4892,10 @@ type ExtensionCategoryMapType = {
         lineItem: PreparedLineItemType;
         readonly?: boolean;
     }, never, (lineItem: PreparedLineItemType) => boolean>;
-    /** The checkout review step, above the order summary (`pages/checkout/review.vue`). */
+    /**
+     * Before placing the order: on the multi-step checkout's review step, above the order summary
+     * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+     */
     checkoutReview: ExtensionEntryType<{
         cart?: CartType;
     }, never, (cart?: CartType) => boolean>;

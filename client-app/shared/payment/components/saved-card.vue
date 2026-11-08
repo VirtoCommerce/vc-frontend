@@ -18,16 +18,7 @@
         }}</VcBadge>
       </div>
 
-      <div class="saved-card__meta">
-        {{
-          $t("shared.payment.saved_cards.expires", {
-            date: `${method.expirationMonth}/${method.expirationYear}`,
-          })
-        }}
-        <template v-if="providerName"> · {{ providerName }}</template>
-
-        <template v-if="method.cardholderName"> · {{ method.cardholderName }}</template>
-      </div>
+      <div v-if="details.length" class="saved-card__meta">{{ details.join(" · ") }}</div>
     </div>
 
     <div class="saved-card__actions">
@@ -57,7 +48,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { savedCardLabel } from "../utils/saved-card-label";
+import { useI18n } from "vue-i18n";
+import { savedCardExpiry, savedCardLabel } from "../utils/saved-card-label";
 import type { SavedPaymentMethodFieldsFragment } from "../api/graphql/types";
 
 interface IProps {
@@ -74,6 +66,18 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
+const { t } = useI18n();
+
+/** Expiry, provider and cardholder, each only when known. */
+const details = computed(() => {
+  const expiry = savedCardExpiry(props.method.expirationMonth, props.method.expirationYear);
+  return [
+    expiry && t("shared.payment.saved_cards.expires", { date: expiry }),
+    props.providerName,
+    props.method.cardholderName,
+  ].filter((x): x is string => !!x);
+});
 
 const canMakeDefault = computed(
   () => !props.method.isDefault && props.method.status === "Active" && !props.method.isExpired,

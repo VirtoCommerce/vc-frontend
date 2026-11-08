@@ -11,7 +11,7 @@
         v-model:valid="cardValid"
         :errors="cardErrors"
         :disabled="adding"
-        class="xl:w-2/3"
+        class="add-card-authorize-net__card-form"
         @submit="addCard"
       />
 
@@ -59,11 +59,24 @@
 
       <slot />
 
-      <VcAlert v-if="addError" color="danger" size="sm" variant="soft" icon class="mt-3" role="alert">{{
-        addError
-      }}</VcAlert>
+      <VcAlert
+        v-if="addError"
+        color="danger"
+        size="sm"
+        variant="soft"
+        icon
+        class="add-card-authorize-net__error"
+        role="alert"
+        >{{ addError }}</VcAlert
+      >
 
-      <VcButton class="mt-4" type="submit" :disabled="!canAdd" :loading="adding" data-test-id="saved-card-add">
+      <VcButton
+        class="add-card-authorize-net__submit"
+        type="submit"
+        :disabled="!canAdd"
+        :loading="adding"
+        data-test-id="saved-card-add"
+      >
         {{ $t("shared.payment.saved_cards.add") }}
       </VcButton>
     </form>
@@ -98,7 +111,7 @@ const ADDRESS_TYPE_BILLING = 1;
 const ADDRESS_TYPE_BILLING_AND_SHIPPING = 3;
 
 const { t } = useI18n();
-// The customer's addresses, to default the card's billing address to their billing address.
+// The customer's addresses, to prefill the card's billing address (see prefillBilling).
 const { addresses } = useCustomerAddresses(20);
 
 const initialized = ref(false);
@@ -164,7 +177,10 @@ function tokenize(): Promise<Accept.OpaqueData | null> {
   });
 }
 
-/** The card's billing address defaults to the customer's billing address. */
+/**
+ * Prefills the card's billing address from the customer's addresses: the default billing address, else any default
+ * address, else the first one. Never overwrites an address the customer has typed.
+ */
 function prefillBilling() {
   const address =
     addresses.value.find(
@@ -253,8 +269,22 @@ onMounted(async () => {
 
 <style lang="scss">
 .add-card-authorize-net {
+  &__card-form {
+    @media (width >= theme("screens.xl")) {
+      @apply w-2/3;
+    }
+  }
+
   &__billing {
-    @apply mt-5 grid gap-3 xl:w-2/3 sm:grid-cols-2;
+    @apply mt-5 grid gap-3;
+
+    @media (width >= theme("screens.sm")) {
+      @apply grid-cols-2;
+    }
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-2/3;
+    }
   }
 
   &__legend {
@@ -266,7 +296,17 @@ onMounted(async () => {
   }
 
   &__address {
-    @apply sm:col-span-2;
+    @media (width >= theme("screens.sm")) {
+      @apply col-span-2;
+    }
+  }
+
+  &__error {
+    @apply mt-3;
+  }
+
+  &__submit {
+    @apply mt-4;
   }
 }
 </style>

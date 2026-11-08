@@ -93,7 +93,10 @@ export type ExtensionCategoryMapType = {
     never,
     (lineItem: PreparedLineItemType) => boolean
   >;
-  /** The checkout review step, above the order summary (`pages/checkout/review.vue`). */
+  /**
+   * Before placing the order: on the multi-step checkout's review step, above the order summary
+   * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+   */
   checkoutReview: ExtensionEntryType<{ cart?: CartType }, never, (cart?: CartType) => boolean>;
   /** The order details page. A provider decides from the order whether it has anything to offer. */
   orderDetails: ExtensionEntryType<{ order?: CustomerOrderType }, never, (order?: CustomerOrderType) => boolean>;

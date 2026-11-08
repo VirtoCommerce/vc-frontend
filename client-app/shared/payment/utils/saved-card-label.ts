@@ -12,6 +12,14 @@ export function savedCardLabel(
   return `${brand || fallbackBrand} •••• ${last4 ?? "????"}`;
 }
 
+/** The card's expiry as "MM/YY", or undefined when either part is missing. */
+export function savedCardExpiry(
+  month: string | number | null | undefined,
+  year: string | number | null | undefined,
+): string | undefined {
+  return month && year ? `${month}/${year}` : undefined;
+}
+
 /**
  * The text shown for a failed saved-card operation: always the translated fallback. The server's own message (e.g.
  * "This card pays for 2 subscriptions.") is not translated, so it only goes to the log.

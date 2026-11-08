@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { Logger } from "@/core/utilities";
-import { savedCardErrorMessage, savedCardLabel } from "./saved-card-label";
+import { savedCardErrorMessage, savedCardExpiry, savedCardLabel } from "./saved-card-label";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn() } }));
 
@@ -12,6 +12,14 @@ describe("savedCardLabel", () => {
   it("uses the given translated word when the brand is unknown", () => {
     expect(savedCardLabel(null, "4242", "Karte")).toBe("Karte •••• 4242");
     expect(savedCardLabel("", undefined, "Karte")).toBe("Karte •••• ????");
+  });
+});
+
+describe("savedCardExpiry", () => {
+  it("is month/year, or nothing when either is missing", () => {
+    expect(savedCardExpiry(12, 2027)).toBe("12/2027");
+    expect(savedCardExpiry(null, null)).toBeUndefined();
+    expect(savedCardExpiry(12, undefined)).toBeUndefined();
   });
 });
 

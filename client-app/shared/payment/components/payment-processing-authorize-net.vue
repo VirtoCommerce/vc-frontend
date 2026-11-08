@@ -78,6 +78,7 @@ import { PaymentActionType } from "@/shared/payment/types";
 import { usePayment } from "../composables";
 import { useCardSavingRequirement } from "../composables/useCardSavingRequirement";
 import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
+import { AUTHORIZE_NET_PAYMENT_METHOD_CODE } from "../constants";
 import PaymentPolicies from "./payment-policies.vue";
 import SavedCardPicker from "./saved-card-picker.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
@@ -95,8 +96,6 @@ import CardLabels from "@/shared/payment/components/card-labels.vue";
 const emit = defineEmits<IPaymentMethodEmits>();
 const props = defineProps<IPaymentMethodParameters>();
 
-/** Saved cards can only pay through the payment method that saved them. */
-const PAYMENT_METHOD_CODE = "AuthorizeNetPaymentMethod";
 const NEW_CARD = "new";
 
 const emptyBankCardData: BankCardType = {
@@ -142,7 +141,7 @@ watch(cardSaving.revision, () => (cardSavingRequirement.value = readCardSavingRe
 
 /** Only a signed-in customer has an account to keep cards in. */
 const canSaveCard = computed(() => isAuthenticated.value);
-const savedCards = computed(() => (isAuthenticated.value ? methodsFor(PAYMENT_METHOD_CODE) : []));
+const savedCards = computed(() => (isAuthenticated.value ? methodsFor(AUTHORIZE_NET_PAYMENT_METHOD_CODE) : []));
 const isSavedCardSelected = computed(() => selectedCard.value !== NEW_CARD);
 const canPay = computed(() => isSavedCardSelected.value || isValidBankCard.value);
 
@@ -187,7 +186,8 @@ async function initSavedCards() {
 
   await fetchSavedCards();
 
-  // A link to pay an order can name the card to use (e.g. a renewal the bank declined); otherwise the default card.
+  // A link to pay an order can name the card to use (e.g. a renewal the bank declined); otherwise the default card,
+  // else the first one.
   const requested = new URLSearchParams(window.location.search).get("card");
   const cards = savedCards.value;
   const preferred = cards.find((x) => x.id === requested) ?? cards.find((x) => x.isDefault) ?? cards[0];
@@ -275,9 +275,18 @@ function showErrors(messages: Accept.Message[]) {
   });
 }
 
-function onPaid(order: CustomerOrderType, result: AuthorizePaymentResultType, isCartFinalization: boolean) {
+/** `usedRequirement`: the payment carried the card-saving requirement, which it fulfils once approved. */
+function onPaid(
+  order: CustomerOrderType,
+  result: AuthorizePaymentResultType,
+  isCartFinalization: boolean,
+  usedRequirement: boolean,
+) {
   if (result.isSuccess) {
-    cardSaving.clear();
+    if (usedRequirement) {
+      cardSaving.clear();
+    }
+
     emit("success");
 
     /**
@@ -306,13 +315,14 @@ async function pay(
     inPayments: [{ id: paymentId }],
   } = order;
 
+  const usedRequirement = canSaveCard.value && !!cardSavingRequirement.value;
   const result = await sendOpaqueData({
     orderId,
     paymentId,
     opaqueData,
     additionalParameters: cardSavingParameters.value,
   });
-  onPaid(order, result, !!orderToPay);
+  onPaid(order, result, !!orderToPay, usedRequirement);
 
   return result;
 }
@@ -327,7 +337,7 @@ async function payWithSavedCard(
     paymentId: order.inPayments[0].id,
     parameters: [{ key: "storedPaymentMethodId", value: selectedCard.value }],
   });
-  onPaid(order, result, isCartFinalization);
+  onPaid(order, result, isCartFinalization, false);
 
   return result;
 }

@@ -177,6 +177,27 @@ describe("PaymentProcessingAuthorizeNet", () => {
     expect(await findByText("shared.payment.saved_cards.save_card_required")).toBeInTheDocument();
   });
 
+  it("clears the requirement after a payment that carried it, and keeps one it did not use", async () => {
+    cardSaving.require("consent-1", "cart-2");
+    const first = renderForm();
+    await waitFor(() =>
+      expect(first.container.querySelector('[data-test-id="authorize-net-save-card"]')).not.toBeNull(),
+    );
+
+    await usePayment().finalizePayment(order);
+    expect(cardSaving.read({ cart: { id: "cart-2" } })?.consentId).toBe("consent-1");
+    first.unmount();
+
+    cardSaving.require("consent-1", cart.id);
+    const second = renderForm();
+    await waitFor(() =>
+      expect(second.container.querySelector('[data-test-id="authorize-net-save-card"]')).not.toBeNull(),
+    );
+
+    await usePayment().finalizePayment(order);
+    expect(cardSaving.read({ cart })).toBeUndefined();
+  });
+
   it("asks nothing and sends no consent when no requirement applies", async () => {
     const { container } = renderForm();
     await waitFor(() => expect(container.querySelector('[data-test-id="authorize-net-save-card"]')).not.toBeNull());
