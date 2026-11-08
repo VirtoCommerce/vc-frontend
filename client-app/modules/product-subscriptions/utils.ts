@@ -142,8 +142,9 @@ export async function fetchAllPages<T>(
 }
 
 /**
- * What a shopper is told when a subscription action fails: a translated message. The server's own message is in English
- * and meant for logs, so it is logged here instead of shown.
+ * What a shopper is told when a subscription action fails: a translated message. The error's own message is in English
+ * and meant for logs, so it is logged here instead of shown. (A renewal panel still shows the reason stored on the
+ * renewal itself, such as its review reason or the card's decline message.)
  */
 export function subscriptionErrorMessage(
   error: unknown,

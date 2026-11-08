@@ -65,7 +65,9 @@
         {{ $t("product_subscriptions.checkout.required") }}
       </p>
 
-      <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="mt-3">{{ error }}</VcAlert>
+      <VcAlert v-if="error" color="danger" size="sm" variant="soft" icon class="checkout-subscription-terms__error">{{
+        error
+      }}</VcAlert>
     </template>
   </VcWidget>
 </template>
@@ -218,7 +220,7 @@ onUnmounted(() => {
   }
 
   &__text {
-    @apply mb-4 rounded-md bg-neutral-50 p-3 text-sm leading-relaxed text-neutral-800;
+    @apply mb-4 rounded-[--vc-radius] bg-neutral-50 p-3 text-sm leading-relaxed text-neutral-800;
   }
 
   &__required {
@@ -231,6 +233,10 @@ onUnmounted(() => {
 
   &__notice {
     @apply mb-3;
+  }
+
+  &__error {
+    @apply mt-3;
   }
 }
 </style>

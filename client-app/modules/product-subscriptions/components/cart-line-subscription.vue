@@ -123,7 +123,7 @@ function changeInterval(key: string) {
 
 <style lang="scss">
 .cart-line-subscription {
-  @apply mt-2 rounded-md border border-dashed border-neutral-300 px-3 py-2;
+  @apply mt-2 rounded-[--vc-radius] border border-dashed border-neutral-300 px-3 py-2;
 
   &--active {
     @apply border-solid border-success-300 bg-success-50;

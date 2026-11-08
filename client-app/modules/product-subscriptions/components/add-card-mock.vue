@@ -1,6 +1,6 @@
 <template>
   <div class="add-card-mock">
-    <VcAlert color="warning" size="sm" variant="soft" icon class="mb-4">{{
+    <VcAlert color="warning" size="sm" variant="soft" icon class="add-card-mock__banner">{{
       $t("product_subscriptions.mock_payment.banner")
     }}</VcAlert>
 
@@ -9,11 +9,11 @@
       v-model="card"
       v-model:valid="cardValid"
       :disabled="adding"
-      class="xl:w-2/3"
+      class="add-card-mock__card-form"
       @submit="addCard(false)"
     />
 
-    <div class="mt-3 flex flex-wrap gap-2">
+    <div class="add-card-mock__test-cards">
       <VcButton
         v-for="testCard in MOCK_TEST_CARDS"
         :key="testCard.number"
@@ -28,12 +28,12 @@
       </VcButton>
     </div>
 
-    <VcAlert v-if="addError" color="danger" size="sm" variant="soft" icon class="mt-3" role="alert">{{
+    <VcAlert v-if="addError" color="danger" size="sm" variant="soft" icon class="add-card-mock__error" role="alert">{{
       addError
     }}</VcAlert>
 
     <VcButton
-      class="mt-4"
+      class="add-card-mock__submit"
       :disabled="!cardValid"
       :loading="adding"
       data-test-id="saved-card-add"
@@ -42,31 +42,12 @@
       {{ $t("shared.payment.saved_cards.add") }}
     </VcButton>
 
-    <VcModal
+    <ThreeDsModal
       :show="showThreeDs"
-      :title="$t('product_subscriptions.mock_payment.three_ds_title')"
-      icon="shield-check"
-      is-persistent
-      hide-actions
-      max-width="26rem"
-      @close="showThreeDs = false"
-    >
-      <div class="flex flex-col items-center gap-3 text-center">
-        <VcIcon name="lock" size="lg" class="text-primary" />
-
-        <p class="text-sm">{{ $t("product_subscriptions.mock_payment.three_ds_verify_card") }}</p>
-
-        <div class="flex w-full flex-col gap-2 sm:flex-row">
-          <VcButton variant="outline" color="neutral" full-width @click="showThreeDs = false">{{
-            $t("product_subscriptions.mock_payment.three_ds_decline")
-          }}</VcButton>
-
-          <VcButton full-width @click="addCard(true)">{{
-            $t("product_subscriptions.mock_payment.three_ds_approve")
-          }}</VcButton>
-        </div>
-      </div>
-    </VcModal>
+      :message="$t('product_subscriptions.mock_payment.three_ds_verify_card')"
+      @decline="showThreeDs = false"
+      @approve="addCard(true)"
+    />
   </div>
 </template>
 
@@ -77,6 +58,7 @@ import { globals } from "@/core/globals";
 import { addSavedPaymentMethod } from "@/shared/payment/api/graphql";
 import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS } from "../constants";
 import { subscriptionErrorMessage } from "../utils";
+import ThreeDsModal from "./three-ds-modal.vue";
 import type { BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
 
@@ -152,8 +134,30 @@ async function addCard(threeDsCompleted: boolean) {
 
 <style lang="scss">
 .add-card-mock {
+  &__banner {
+    @apply mb-4;
+  }
+
+  &__card-form {
+    @media (width >= theme("screens.xl")) {
+      @apply w-2/3;
+    }
+  }
+
+  &__test-cards {
+    @apply mt-3 flex flex-wrap gap-2;
+  }
+
   &__chip-number {
     @apply me-1 font-mono;
+  }
+
+  &__error {
+    @apply mt-3;
+  }
+
+  &__submit {
+    @apply mt-4;
   }
 }
 </style>

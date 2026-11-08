@@ -107,6 +107,7 @@
       },
       "empty": {
         "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
+        "no_active": "No active subscriptions.",
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
       },
@@ -148,6 +149,7 @@
       "paused": "This subscription is paused. No deliveries or charges until you resume it.",
       "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
       "cancelled": "Cancelled {date}. You won't be charged again.",
+      "cancelled_undated": "This subscription is cancelled. You won't be charged again.",
       "next_delivery": "Next delivery",
       "next_hint": "We'll email you a reminder with the price a few days before.",
       "no_next": "No upcoming deliveries.",
