@@ -9,6 +9,8 @@ function _useSavedPaymentMethods() {
   const methods = ref<SavedPaymentMethodFieldsFragment[]>([]);
   const loading = ref(false);
   const loaded = ref(false);
+  /** The last load failed: the cards on hand may be stale or missing, so a page shows an error with a retry. */
+  const failed = ref(false);
 
   /** Cards that can pay: active and not expired. */
   const activeMethods = computed(() => methods.value.filter((x) => x.status === "Active" && !x.isExpired));
@@ -16,10 +18,12 @@ function _useSavedPaymentMethods() {
 
   async function fetch(): Promise<void> {
     loading.value = true;
+    failed.value = false;
     try {
       methods.value = (await getSavedPaymentMethods()) ?? [];
       loaded.value = true;
     } catch (e) {
+      failed.value = true;
       Logger.error(`${_useSavedPaymentMethods.name}.${fetch.name}`, e);
     } finally {
       loading.value = false;
@@ -47,6 +51,7 @@ function _useSavedPaymentMethods() {
     defaultMethod,
     loading,
     loaded,
+    failed,
     fetch,
     methodsFor,
     remove,

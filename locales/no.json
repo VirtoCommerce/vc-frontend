@@ -1079,7 +1079,11 @@
         "state": "Delstat",
         "zip": "Postnummer",
         "form_unavailable": "Kort kan ikke lagres akkurat nå. Prøv igjen senere.",
-        "error": "Noe gikk galt. Prøv igjen."
+        "error": "Noe gikk galt. Prøv igjen.",
+        "card": "Kort",
+        "load_failed": "Kunne ikke laste inn de lagrede kortene.",
+        "forms_load_failed": "Kunne ikke laste inn kortskjemaene.",
+        "retry": "Prøv igjen"
       }
     },
     "wishlists": {

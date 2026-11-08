@@ -17,16 +17,18 @@
         class="saved-card-picker__radio"
         :data-test-id="`saved-card-option-${method.last4}`"
       >
-        <VcIcon name="credit-card" size="sm" />
+        <span class="saved-card-picker__content">
+          <VcIcon name="credit-card" size="sm" />
 
-        <span class="saved-card-picker__text">
-          {{ savedCardLabel(method.brand, method.last4) }}
-          <span class="text-neutral-500">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
+          <span class="saved-card-picker__text">
+            {{ savedCardLabel(method.brand, method.last4, $t("shared.payment.saved_cards.card")) }}
+            <span class="saved-card-picker__expiry">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
+          </span>
+
+          <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
+            $t("shared.payment.saved_cards.default")
+          }}</VcBadge>
         </span>
-
-        <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
-          $t("shared.payment.saved_cards.default")
-        }}</VcBadge>
       </VcRadioButton>
     </div>
 
@@ -40,9 +42,11 @@
         class="saved-card-picker__radio"
         data-test-id="saved-card-option-new"
       >
-        <VcIcon name="plus" size="sm" />
+        <span class="saved-card-picker__content">
+          <VcIcon name="plus" size="sm" />
 
-        <span class="saved-card-picker__text">{{ $t("shared.payment.saved_cards.new_card") }}</span>
+          <span class="saved-card-picker__text">{{ $t("shared.payment.saved_cards.new_card") }}</span>
+        </span>
       </VcRadioButton>
     </div>
   </div>
@@ -70,7 +74,7 @@ const model = defineModel<string>({ required: true });
   @apply mb-4 flex flex-col gap-2;
 
   &__option {
-    @apply rounded-lg border border-neutral-200 text-sm;
+    @apply rounded-[--vc-radius] border border-neutral-200 p-3 text-sm;
 
     // Selection is accent, not primary: primary stays with the action (Pay).
     &--active {
@@ -78,24 +82,21 @@ const model = defineModel<string>({ required: true });
     }
   }
 
-  // the radio's own label fills the card, so the whole card selects the option
   &__radio {
-    @apply w-full;
-
     // the checked marker follows the card: accent, not the primary default
     --vc-radio-button-base-color: var(--color-accent-500);
+  }
 
-    .vc-radio-button__container {
-      @apply w-full items-center gap-3 p-3;
-    }
-
-    .vc-radio-button__label {
-      @apply flex min-w-0 grow items-center gap-3;
-    }
+  &__content {
+    @apply flex min-w-0 items-center gap-3;
   }
 
   &__text {
-    @apply flex grow flex-wrap items-center gap-x-2;
+    @apply flex flex-wrap items-center gap-x-2;
+  }
+
+  &__expiry {
+    @apply text-neutral-600;
   }
 }
 </style>

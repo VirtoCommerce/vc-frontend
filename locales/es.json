@@ -1079,7 +1079,11 @@
         "state": "Provincia",
         "zip": "Código postal",
         "form_unavailable": "No se pueden guardar tarjetas en este momento. Inténtelo más tarde.",
-        "error": "Algo salió mal. Inténtelo de nuevo."
+        "error": "Algo salió mal. Inténtelo de nuevo.",
+        "card": "Tarjeta",
+        "load_failed": "No se pudieron cargar sus tarjetas guardadas.",
+        "forms_load_failed": "No se pudieron cargar los formularios de tarjeta.",
+        "retry": "Intentar de nuevo"
       }
     },
     "wishlists": {

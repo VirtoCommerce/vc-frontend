@@ -1079,7 +1079,11 @@
         "state": "Osavaltio",
         "zip": "Postinumero",
         "form_unavailable": "Kortteja ei voi tallentaa juuri nyt. Yritä myöhemmin uudelleen.",
-        "error": "Jokin meni vikaan. Yritä uudelleen."
+        "error": "Jokin meni vikaan. Yritä uudelleen.",
+        "card": "Kortti",
+        "load_failed": "Tallennettuja kortteja ei voitu ladata.",
+        "forms_load_failed": "Korttilomakkeita ei voitu ladata.",
+        "retry": "Yritä uudelleen"
       }
     },
     "wishlists": {

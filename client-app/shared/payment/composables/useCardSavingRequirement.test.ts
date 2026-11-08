@@ -24,21 +24,32 @@ describe("useCardSavingRequirement", () => {
     expect(cardSaving.read({ cart: { id: "cart-2" } })).toBeUndefined();
   });
 
-  it("is claimed by the first order placed after the consent, and no other order gets it", () => {
+  it("covers the order placed from the consent's cart only", () => {
     cardSaving.require("consent-1", "cart-1");
 
-    expect(cardSaving.read({ order: { id: "old-order", createdDate: "2026-10-25T09:00:00Z" } })).toBeUndefined();
-    expect(cardSaving.read({ order: { id: "order-1", createdDate: "2026-10-26T10:01:00Z" } })?.consentId).toBe(
-      "consent-1",
-    );
-    expect(cardSaving.read({ order: { id: "order-2", createdDate: "2026-10-26T10:02:00Z" } })).toBeUndefined();
-    expect(cardSaving.read({ order: { id: "order-1", createdDate: "2026-10-26T10:01:00Z" } })?.orderId).toBe("order-1");
+    vi.setSystemTime(new Date(consentAt.getTime() + 60 * 1000));
+    expect(cardSaving.read({ order: { id: "order-2", shoppingCartId: "cart-2" } })).toBeUndefined();
+    expect(cardSaving.read({ order: { id: "order-3" } })).toBeUndefined();
+    expect(cardSaving.read({ order: { id: "order-1", shoppingCartId: "cart-1" } })?.consentId).toBe("consent-1");
+    // reading has no side effect: another order of another cart still gets nothing, the right one still gets it
+    expect(cardSaving.read({ order: { id: "order-2", shoppingCartId: "cart-2" } })).toBeUndefined();
+    expect(cardSaving.read({ order: { id: "order-1", shoppingCartId: "cart-1" } })?.consentId).toBe("consent-1");
   });
 
   it("covers nothing when the form pays neither a cart nor an order", () => {
     cardSaving.require("consent-1", "cart-1");
 
     expect(cardSaving.read({})).toBeUndefined();
+  });
+
+  it("changes its revision on every require and clear", () => {
+    const before = cardSaving.revision.value;
+
+    cardSaving.require("consent-1", "cart-1");
+    expect(cardSaving.revision.value).toBe(before + 1);
+
+    cardSaving.clear();
+    expect(cardSaving.revision.value).toBe(before + 2);
   });
 
   it("expires after two hours and can be cleared", () => {

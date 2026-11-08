@@ -1079,7 +1079,11 @@
         "state": "Delstat",
         "zip": "Postnummer",
         "form_unavailable": "Det går inte att spara kort just nu. Försök igen senare.",
-        "error": "Något gick fel. Försök igen."
+        "error": "Något gick fel. Försök igen.",
+        "card": "Kort",
+        "load_failed": "Det gick inte att läsa in dina sparade kort.",
+        "forms_load_failed": "Det gick inte att läsa in kortformulären.",
+        "retry": "Försök igen"
       }
     },
     "wishlists": {

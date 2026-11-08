@@ -1079,7 +1079,11 @@
         "state": "State",
         "zip": "ZIP code",
         "form_unavailable": "Cards can't be saved right now. Please try again later.",
-        "error": "Something went wrong. Please try again."
+        "error": "Something went wrong. Please try again.",
+        "card": "Card",
+        "load_failed": "Your saved cards couldn't be loaded.",
+        "forms_load_failed": "Card forms couldn't be loaded.",
+        "retry": "Try again"
       }
     },
     "wishlists": {

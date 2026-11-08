@@ -1079,7 +1079,11 @@
         "state": "Bundesland",
         "zip": "Postleitzahl",
         "form_unavailable": "Karten können derzeit nicht gespeichert werden. Bitte versuchen Sie es später erneut.",
-        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        "card": "Karte",
+        "load_failed": "Ihre gespeicherten Karten konnten nicht geladen werden.",
+        "forms_load_failed": "Die Kartenformulare konnten nicht geladen werden.",
+        "retry": "Erneut versuchen"
       }
     },
     "wishlists": {

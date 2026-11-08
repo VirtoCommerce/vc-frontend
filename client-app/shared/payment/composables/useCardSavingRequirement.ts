@@ -1,22 +1,23 @@
+import { readonly, ref } from "vue";
+
 const STORAGE_KEY = "vc-card-saving-requirement";
 const MAX_AGE_MS = 2 * 60 * 60 * 1000;
-// An order placed from the cart is created on the server; allow for the browser's clock running ahead of it.
-const CLOCK_SKEW_MS = 5 * 60 * 1000;
+
+/** Increased on every require() and clear(), so a mounted card form can read the requirement again. */
+const revision = ref(0);
 
 export interface ICardSavingRequirement {
   /** The consent record that covers saving the card, e.g. accepted auto-renewal terms. */
   consentId?: string;
-  /** The cart the consent was given for. */
+  /** The cart the consent was given for; it also covers the order placed from that cart. */
   cartId?: string;
-  /** The order placed from that cart, once a payment form for it has claimed the requirement. */
-  orderId?: string;
   requiredAt: number;
 }
 
 /** What a payment form is paying: a cart at checkout, or an order. */
 export interface ICardSavingTarget {
   cart?: { id?: string } | null;
-  order?: { id?: string; createdDate?: string } | null;
+  order?: { id?: string; shoppingCartId?: string | null } | null;
 }
 
 function load(): ICardSavingRequirement | undefined {
@@ -43,12 +44,10 @@ function save(value: ICardSavingRequirement): void {
 
 function requireCardSaving(consentId: string | undefined, cartId: string): void {
   save({ consentId, cartId, requiredAt: Date.now() });
+  revision.value++;
 }
 
-/**
- * The requirement, when it covers what the form pays: the same cart, or the order placed from it. An order claims the
- * requirement when it is the first one created after the consent; any other order never gets it.
- */
+/** The requirement, when it covers what the form pays: the same cart, or the order placed from that cart. */
 function readCardSaving(target: ICardSavingTarget): ICardSavingRequirement | undefined {
   const requirement = load();
   if (!requirement) {
@@ -60,22 +59,11 @@ function readCardSaving(target: ICardSavingTarget): ICardSavingRequirement | und
   }
 
   const order = target.order;
-  if (!order?.id) {
+  if (!order?.id || !order.shoppingCartId) {
     return undefined;
   }
 
-  if (requirement.orderId) {
-    return requirement.orderId === order.id ? requirement : undefined;
-  }
-
-  const createdAt = order.createdDate ? new Date(order.createdDate).getTime() : Number.NaN;
-  if (Number.isNaN(createdAt) || createdAt < requirement.requiredAt - CLOCK_SKEW_MS) {
-    return undefined;
-  }
-
-  const claimed = { ...requirement, orderId: order.id };
-  save(claimed);
-  return claimed;
+  return requirement.cartId === order.shoppingCartId ? requirement : undefined;
 }
 
 function clearCardSaving(): void {
@@ -84,13 +72,17 @@ function clearCardSaving(): void {
   } catch {
     // See save().
   }
+  revision.value++;
 }
 
 /**
  * Lets a module require that the card of a checkout is saved, e.g. because a subscription will charge it later. The
  * card forms of that checkout then save the card without asking and send the consent with the payment. Kept for the
  * browser tab session, two hours at most, so it survives the step from placing the order to paying it.
+ *
+ * `revision` changes whenever the requirement is set or cleared: a form shown before the consent was given (e.g. on
+ * single-page checkout, where the terms are accepted below the card form) watches it and reads the requirement again.
  */
 export function useCardSavingRequirement() {
-  return { require: requireCardSaving, read: readCardSaving, clear: clearCardSaving };
+  return { require: requireCardSaving, read: readCardSaving, clear: clearCardSaving, revision: readonly(revision) };
 }

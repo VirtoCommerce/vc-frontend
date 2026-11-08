@@ -1079,7 +1079,11 @@
         "state": "Provincia",
         "zip": "CAP",
         "form_unavailable": "Al momento non è possibile salvare carte. Riprova più tardi.",
-        "error": "Qualcosa è andato storto. Riprova."
+        "error": "Qualcosa è andato storto. Riprova.",
+        "card": "Carta",
+        "load_failed": "Impossibile caricare le carte salvate.",
+        "forms_load_failed": "Impossibile caricare i moduli della carta.",
+        "retry": "Riprova"
       }
     },
     "wishlists": {

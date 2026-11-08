@@ -1079,7 +1079,11 @@
         "state": "État",
         "zip": "Code postal",
         "form_unavailable": "Les cartes ne peuvent pas être enregistrées pour le moment. Veuillez réessayer plus tard.",
-        "error": "Une erreur s'est produite. Veuillez réessayer."
+        "error": "Une erreur s'est produite. Veuillez réessayer.",
+        "card": "Carte",
+        "load_failed": "Impossible de charger vos cartes enregistrées.",
+        "forms_load_failed": "Impossible de charger les formulaires de carte.",
+        "retry": "Réessayer"
       }
     },
     "wishlists": {

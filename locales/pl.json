@@ -1079,7 +1079,11 @@
         "state": "Województwo",
         "zip": "Kod pocztowy",
         "form_unavailable": "Obecnie nie można zapisywać kart. Spróbuj ponownie później.",
-        "error": "Coś poszło nie tak. Spróbuj ponownie."
+        "error": "Coś poszło nie tak. Spróbuj ponownie.",
+        "card": "Karta",
+        "load_failed": "Nie udało się wczytać zapisanych kart.",
+        "forms_load_failed": "Nie udało się wczytać formularzy karty.",
+        "retry": "Spróbuj ponownie"
       }
     },
     "wishlists": {

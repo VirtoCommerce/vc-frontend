@@ -30,10 +30,11 @@
 
       <template v-if="canSaveCard">
         <VcCheckbox
-          v-model="saveCard"
+          :model-value="saveCard || !!cardSavingRequirement"
           :disabled="!!cardSavingRequirement || loading"
           class="mt-4"
           test-id="authorize-net-save-card"
+          @update:model-value="saveCard = $event"
         >
           {{ $t("shared.payment.saved_cards.save_card") }}
         </VcCheckbox>
@@ -132,9 +133,12 @@ const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePa
 const { fetch: fetchSavedCards, methodsFor } = useSavedPaymentMethods();
 const cardSaving = useCardSavingRequirement();
 
-// Read once, for what this form pays: the requirement covers only the cart it was given for, or the order placed from it.
+// For what this form pays: the requirement covers only the cart it was given for, or the order placed from it. Read
+// again whenever it changes: on single-page checkout the terms are accepted below this form, after it is shown.
 const { cart: paidCart, order: paidOrder } = toRefs(props);
-const cardSavingRequirement = cardSaving.read({ cart: paidCart.value, order: paidOrder.value });
+const readCardSavingRequirement = () => cardSaving.read({ cart: paidCart.value, order: paidOrder.value });
+const cardSavingRequirement = shallowRef(readCardSavingRequirement());
+watch(cardSaving.revision, () => (cardSavingRequirement.value = readCardSavingRequirement()), { flush: "sync" });
 
 /** Only a signed-in customer has an account to keep cards in. */
 const canSaveCard = computed(() => isAuthenticated.value);
@@ -148,14 +152,13 @@ const cardSavingParameters = computed<KeyValueType[]>(() => {
     return [];
   }
 
-  // said out loud, so an earlier "save it" for this order isn't sent again on a retry
-  if (!(saveCard.value || cardSavingRequirement)) {
+  if (!(saveCard.value || cardSavingRequirement.value)) {
     return [{ key: "storeForFutureUse", value: "false" }];
   }
 
   return [
     { key: "storeForFutureUse", value: "true" },
-    { key: "consentId", value: cardSavingRequirement?.consentId ?? "" },
+    { key: "consentId", value: cardSavingRequirement.value?.consentId ?? "" },
   ];
 });
 

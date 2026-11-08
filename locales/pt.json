@@ -1079,7 +1079,11 @@
         "state": "Estado",
         "zip": "Código postal",
         "form_unavailable": "Não é possível guardar cartões neste momento. Tente novamente mais tarde.",
-        "error": "Algo correu mal. Tente novamente."
+        "error": "Algo correu mal. Tente novamente.",
+        "card": "Cartão",
+        "load_failed": "Não foi possível carregar os cartões guardados.",
+        "forms_load_failed": "Não foi possível carregar os formulários de cartão.",
+        "retry": "Tentar novamente"
       }
     },
     "wishlists": {

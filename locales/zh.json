@@ -1079,7 +1079,11 @@
         "state": "州/省",
         "zip": "邮政编码",
         "form_unavailable": "目前无法保存卡。请稍后再试。",
-        "error": "出现问题。请重试。"
+        "error": "出现问题。请重试。",
+        "card": "卡",
+        "load_failed": "无法加载已保存的卡。",
+        "forms_load_failed": "无法加载添加卡的表单。",
+        "retry": "重试"
       }
     },
     "wishlists": {
