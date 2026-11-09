@@ -30,7 +30,7 @@ function _useThemeSnapshot() {
       header: parts?.header ?? snapshot?.header,
       footer: parts?.footer ?? snapshot?.footer,
       brand: parts?.brand ?? snapshot?.brand ?? {},
-      palette: parts?.palette ?? snapshot?.palette,
+      palette: parts?.palette === undefined ? snapshot?.palette : (parts.palette ?? undefined),
       menus: published.value?.menus ?? [],
       isDraft: !!parts,
     };

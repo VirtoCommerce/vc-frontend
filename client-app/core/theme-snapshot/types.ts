@@ -92,7 +92,8 @@ export interface IThemeDraft {
   header?: IThemeSectionGroup;
   footer?: IThemeSectionGroup;
   brand?: IThemeBrand;
-  palette?: IThemePalette;
+  /** `null`: the theme has no palette (the preset shows), as its next publication will have none. */
+  palette?: IThemePalette | null;
 }
 
 /** A content page at the snapshot request's permalink, as the server read it. */

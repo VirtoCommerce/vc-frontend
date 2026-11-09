@@ -58,4 +58,22 @@ describe("useThemeSnapshot", () => {
       expect(hasNoTheme.value).toBe(true);
     });
   });
+
+  describe("theme palette", () => {
+    const PUBLISHED_PALETTE = { light: { color_primary_500: "#published" } };
+
+    it("takes the draft's palette, the published one when the draft leaves it out, and none for a null one", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, palette: PUBLISHED_PALETTE } });
+
+      setDraft({ brand: {} });
+      expect(theme.value?.palette).toEqual(PUBLISHED_PALETTE);
+
+      setDraft({ palette: { light: { color_primary_500: "#draft" } } });
+      expect(theme.value?.palette).toEqual({ light: { color_primary_500: "#draft" } });
+
+      setDraft({ palette: null });
+      expect(theme.value?.palette).toBeUndefined();
+    });
+  });
 });
