@@ -7,8 +7,48 @@ writes outside a layer beats all of them.
 
 The storefront ships two designs from one markup: `classic` (default) and `soft`. The `design`
 setting in `client-app/config/settings_data.json` picks one; `app-runner.ts` writes it to
-`<html data-design="…">` before the app mounts. The design switches styles only: markup and `Vc*`
-props never change, and the design never changes the preset.
+`<html data-design="…">` before the app mounts, and `addPresetToThemeContext`
+(`core/composables/useThemeContext.ts`) writes the active colour preset's file name to
+`<html data-preset="…">`. The design switches styles only: markup and `Vc*` props never change,
+and the design never changes the preset.
+
+## Where does my change go?
+
+Find your change, then read its section below. Paths are under `client-app/`, except `tailwind.config.ts` at the
+repo root.
+
+| Change | For | File | Layer | Token / selector | Check |
+| --- | --- | --- | --- | --- | --- |
+| Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
+| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
+| One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
+| Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
+| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
+| Colour, one block | one design | `designs/<design>/_tokens.scss` or `blocks/` | `theme` / `vc.design` | the public colour token first; preset variables only | `check:designs` |
+| Colour, one block | every preset and design | the component; dark: `assets/styles/dark/**` | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
+| An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
+| A Module Federation remote | anything | the remote's own repository (the pilot, sales-rep: `VirtoCommerce/vc-module-sales-rep`) | — | host kit components, `--vc-*` tokens and preset variables (`--color-*`) only | the remote's docs |
+| Anything | a fork | `assets/styles/_custom.scss` | unlayered | `:root`, `html[data-design]`, `html[data-preset]`, `html.dark` | — |
+
+A colour that belongs to one preset goes in that preset, not in a design: `vc.preset` beats `vc.design`.
+A preset sets a component's colour token on its `html`, where it is inherited, so a block that sets the same token on
+its own element keeps its choice.
+Sections: [Designs](#designs), [Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet),
+[Modules and remote plugins](#modules-and-remote-plugins), [Shape and typography tokens](#shape-and-typography-tokens).
+A fork never edits our components or our designs' folders: [Customise a design](#customise-a-design),
+[Make your own design](#make-your-own-design).
+
+How to verify:
+
+- Storybook (`yarn storybook:dev`): the Design, Theme preset and dark (sun/moon) toolbar switches, or
+  `&globals=design:<design>;themePreset:<preset>;darkMode:dark` appended to a story or Docs URL.
+- `yarn check:designs`: every design folder and preset stylesheet ([Checks](#checks)).
+- `yarn test:unit run scripts/design-token-table.test.ts`: the [token table](#token-table) lists every shape and type
+  token the styles read.
+- A change for one design or one preset leaves classic computing exactly as before: compare computed styles
+  (`getComputedStyle`), not screenshots.
+- One story set per component: the toolbars show it in every design and preset; no per-design story, none pins a design.
+- `yarn build && yarn check:css-layers` after a change to the layer order or an entry stylesheet.
 
 ---
 
@@ -19,7 +59,7 @@ props never change, and the design never changes the preset.
 ```css
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
-@layer vc.vendor, vc.kit, vc.app, vc.design, vc.print;
+@layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
 ```
 
 - The first declaration a page sees fixes the order; an identical re-declaration is a no-op. So
@@ -32,7 +72,8 @@ props never change, and the design never changes the preset.
   Federation plugin CSS: above every host component layer, below the host utilities.
   `plugins-vendor` is reserved for third-party CSS a plugin bundles: above host preflight, below
   every host component layer and below the plugin's own `plugins` rules.
-- **The order is public API for forks: layers are only ever appended**, never reordered or renamed.
+- **The order is public API for forks: a layer is never reordered or renamed**, and a new one keeps the
+  order of every existing pair (`vc.preset` went in between `vc.design` and `vc.print`).
 
 > **Tailwind 3 trap.** A block named exactly `@layer base`, `components` or `utilities` is a
 > Tailwind 3 directive, not a native layer: Tailwind moves its contents to the matching
@@ -42,13 +83,14 @@ props never change, and the design never changes the preset.
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). No colour tokens in a design |
+| `theme` | `_colors.scss`, `_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). A design's colour tokens take colour only from preset variables |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `_dark-kit.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
 | `vc.design` | a design's block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
+| `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
 | `vc.print` | `_print.scss`; every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
@@ -149,6 +191,10 @@ Every design's `index.scss` is this file with its own name and one line per file
 }
 ```
 
+Inside each `html` block, kit component blocks (`vc-*`) load first, then app blocks, the same order as
+`vc.kit` before `vc.app`: at equal specificity the later rule wins, so an app block on a kit
+component's root (`footer-links` on a VcWidget) beats that component's block.
+
 The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet
 keeps one comment line in `index.scss` instead.
 
@@ -165,6 +211,13 @@ overridden on that element's block, not on `html`: in the design's `blocks/<bloc
 (`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
 dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
 and `--vc-dropdown-menu-radius` instead, on `html` as usual.
+Soft's widget block sets three tokens on `.vc-widget` the same way: `--vc-widget-radius` on small,
+collapsed, header-only and footer-only widgets, `--vc-widget-border-width` on `:shadow="false"`
+widgets and `--vc-widget-padding-x` on xs and sm widgets. A widget nested in another takes all three
+back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from its parent, so your
+override on `html[data-design="soft"]` reaches it too. Override them on
+`html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
+short ones too.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -180,7 +233,8 @@ The rules for block files:
 - Dark values go in `dark/<block>.scss`; they win over the component's dark styles.
 - An element a design restyles must be styled with BEM in the template, not utilities: a utility in
   the template always wins.
-- No colours: colours come from the preset.
+- Colour only from preset variables (the [value rule](#recolour-with-a-preset-stylesheet)); a
+  recolour that belongs to one preset goes in that preset's stylesheet.
 - Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
@@ -189,12 +243,18 @@ never restates print. Token values apply in print too.
 ### Make your own design
 
 1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
-   and replace `soft` with your name in the copy's `_tokens.scss`. In the copy, delete the
-   `blocks/` and `dark/` files and the `@layer vc.design` block that loads them in `index.scss`.
+   and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy,
+   delete the `blocks/` and `dark/` files and the lines that load them in `index.scss`, but keep
+   `blocks/vc-widget.scss`, and the `--design-widget-*` lines of `_tokens.scss` it reads, while you
+   keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives short widgets
+   the smaller radius (`--vc-radius`) and shadowless ones an edge, gives a nested widget the plate's
+   tokens instead of its parent's, and sets lg widget titles to `fontSize.base`.
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
 3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
-   values with yours and set only the tokens from the [token table](#token-table) that differ from
-   classic. Point the font-family tokens at your fonts, or delete both to keep classic's Lato:
+   values with yours and set only the tokens that differ from classic: those from the
+   [token table](#token-table) or, like soft's `--vc-widget-padding-x`, another `--vc-*` property a
+   component reads in its `<style>`. Point the font-family tokens at your fonts, or delete both to
+   keep classic's Lato:
    ```scss
    html[data-design="mybrand"] {
      --vc-radius: 0px;
@@ -206,7 +266,9 @@ never restates print. Token values apply in print too.
    the component, loading nothing outside the design's folder; dark values go in `dark/<block>.scss`.
    Add each file to `index.scss` ([Wiring](#wiring)).
 5. Turn it on: `"design": "mybrand"` in `client-app/config/settings_data.json`.
-6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`).
+6. Check: `yarn check:designs`, then pick it in Storybook's Design toolbar (`yarn storybook:dev`); any story or Docs page opens in a design when you append `&globals=design:<name>` to its URL, for example `?path=/docs/components-organisms-vcwidget--docs&globals=design:soft`.
+   A component has one story set: the Design toolbar or the URL global shows it in any design, so no
+   story is written per design and none pins a design.
 
 ### Customise a design
 
@@ -226,6 +288,76 @@ never restates print. Token values apply in print too.
 
 For the core team, customising our own design = editing its folder; prefer adding a token to the
 component (in that component's task) over a block file when several designs will need the same knob.
+
+---
+
+## Recolour with a preset stylesheet
+
+A preset's JSON recolours the whole palette. When one preset needs a block in another colour, it
+gets a stylesheet next to its JSON: `client-app/assets/presets/<name>.scss` (no underscore: it is an
+entry, not a partial). The app downloads it only while that preset is on and mounts after it;
+Storybook loads it on the Theme preset switch. A preset without one loads nothing.
+Only a preset bundled in `client-app/assets/presets/` (with its `<name>.json`) can have a stylesheet;
+a preset fetched at runtime from the platform cannot.
+
+The dark JSON already flips the `--color-*` values (neutral included), so the same `var(--color-*)`
+in the light block is right in dark too. Add an `html.dark[data-preset]` rule only for a
+deliberately different choice, like the title colour below; the light rules match in dark too, and
+the dark rule overrides them. Dark rules live in the same `<name>.scss`, never in a `<name>.dark.scss`.
+
+```scss
+@layer vc.preset {
+  html[data-preset="mercury"] {
+    --vc-widget-bg-color: var(--color-neutral-50);
+  }
+
+  html.dark[data-preset="mercury"] {
+    .vc-widget__title {
+      color: var(--color-primary-200);
+    }
+  }
+}
+```
+
+- **Token first, on the preset's `html`:** set the component's public `--vc-*` colour token on
+  `html[data-preset="<name>"]` (dark: `html.dark[data-preset="<name>"]`). It is inherited as the
+  preset's default, so a block that sets the same token on its own element (an app block, a design's
+  block) wins: the footer keeps its transparent `VcWidget` plate. Never set a component's private variable
+  (`--bg-color`, `--text-color`, …).
+- Target a block or BEM part only for a part with no token, and set the property itself there: the
+  rule sits below the preset's `html` and styles a BEM block, element or modifier, kit (`.vc-*`) or
+  app, like `.vc-widget__title` above.
+- `vc.preset` sits above `vc.design` and below `vc.print`: a preset's token on `html` beats a
+  design's token there (`_tokens.scss`), a preset's block rule beats every design's block, and print
+  still wins.
+- Every rule sits in `@layer vc.preset` and sets colours only: a colour property (`border-color`,
+  not the `border` shorthand, which sets a width too) or a colour token.
+- **The value rule**, for a preset stylesheet and a design alike: a colour comes only from preset
+  variables: `var(--color-*)`, a `_colors.scss` semantic (`--link-color`, …), a public `--vc-*`
+  token, and `color-mix()` or `rgb(from …)` of these; `transparent` (also as a colour function
+  or hex with alpha 0, `rgb(0 0 0 / 0)` as Tailwind writes it or `#fff0`, but not as the origin
+  of `rgb(from …)`), `currentColor` and `inherit` are allowed. No hex, no numeric `rgb()` /
+  `hsl()`, no named colours.
+
+`yarn check:designs` checks every preset stylesheet ([Checks](#checks)).
+
+---
+
+## Modules and remote plugins
+
+- **An in-tree module or app block** (`modules/`, `shared/`, `pages/`) is restyled like any block: in a design's
+  `blocks/<block>.scss` or a preset's `<preset>.scss`. The cost: that file names a block that leaves with the
+  module, so delete it with the module and search both places for the module's block names
+  ([what `check:designs` catches](#checks)).
+- **A Module Federation remote** (a plugin such as sales-rep) styles itself only with host kit components, host
+  `--vc-*` tokens and preset variables (`--color-*`), and it styles only its own blocks. The kit components and the
+  utilities of `@vc-frontend/core/tailwind-preset` read those tokens, so every design and preset reaches the remote.
+  Its CSS belongs in the `plugins` layer; until VCST-5760 moves it there, it is unlayered and beats every layered host
+  rule it matches.
+- Host designs and presets never target a remote's blocks: the remote ships on its own schedule. This is a
+  review rule: `check:designs` knows host blocks only, so a remote's block next to or above a host class passes.
+  The remote's design documentation lives in its own repository; for the pilot remote, sales-rep, that is
+  `VirtoCommerce/vc-module-sales-rep`.
 
 ---
 
@@ -344,6 +476,10 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
 | `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |
+| `--vc-widget-shadow` | VcWidget shadow | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-widget-title-font-weight` | VcWidget title weight | `var(--vc-heading-font-weight, var(--vc-font-weight-bold))`, 700 |
+| `--vc-widget-title-letter-spacing` | VcWidget title letter spacing | `var(--vc-heading-letter-spacing)`, else inherited |
+| `--vc-widget-title-text-transform` | VcWidget title letter case | `var(--vc-heading-text-transform, uppercase)` |
 | `--vc-image-gallery-radius` | Product image gallery: the corners of the images and thumbnails (`shared/catalog/components/image-gallery.vue`) | `var(--vc-radius)` |
 | `--badges-wrapper-radius` | Product badges: the bottom-right corner of their wrapper (`shared/catalog/components/badges-wrapper.vue`) | `calc(var(--vc-radius) + 2px)` |
 
@@ -351,10 +487,11 @@ this table does not list, or the table lists one the code does not read.
 
 - **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
   `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
-  same file. Which token changes what: the [token table](#token-table).
+  same file. Which token changes what: the [token table](#token-table). A value that changes with
+  the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
   Tailwind's defaultTheme), `rgb(from var(--color-additional-950) …)` for the others. A design
-  changes geometry and alpha, never colour.
+  changes geometry and alpha; a colour it sets comes only from preset variables.
 - **Fonts:** a design lists its font stylesheet URLs in its `client-app/designs/<name>/design.ts`;
   they load only while that design is on. The link is not awaited, so fonts never hold back the
   mount. Classic's Lato is linked in `index.html`.
@@ -382,15 +519,16 @@ this table does not list, or the table lists one the code does not read.
 ## Checks
 
 ```bash
-yarn check:designs                    # every folder in client-app/designs/, a fork's too (no build needed)
+yarn check:designs                    # every folder in client-app/designs/, a fork's too, and every preset stylesheet (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
 ```
 
 `scripts/check-designs.ts` compiles every `.scss` file of each design with Sass and Tailwind, as the
 build does, and checks the CSS it emits, so nesting, `$x: &` captures and `@apply` are read as they
 ship. A problem is reported at the source line that wrote it, except a file `index.scss` loads out
-of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. The tests
-are in `scripts/check-designs.test.ts`.
+of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. A missing
+`client-app/designs/` or `client-app/assets/presets/` folder fails the check. The tests are in
+`scripts/check-designs.test.ts`.
 
 | Rule | Rejected |
 | --- | --- |
@@ -399,8 +537,8 @@ are in `scripts/check-designs.test.ts`.
 | `blocks/` and `dark/` hold `.scss` files directly, each named after a block of a component | `blocks/layout/footer-links.scss`, `blocks/notes.md`, `blocks/nothing.scss` |
 | `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
 | `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
-| No colour tokens: no custom property whose name contains `color` or `bg` or ends in `-text`, `-border` or `-icon` (Tailwind's `--tw-shadow-colored` excepted) | `--vc-x-bg`, `--vc-button-solid-primary-text`, `@apply ring-primary-500` |
-| Block and dark files set no colour. In `color`, `fill`, `stroke` and every `…-color` property the only values are `transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, `revert-layer`, `none`, `auto` and `#0000`. The shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow` and `-webkit-text-stroke` hold no named, hex (except `#0000`) or functional colour (`rgb()`, `oklch()`, `color-mix()`, …) and no `var()` of a colour token. No property but a custom one holds a gradient with a colour in it (a direction-only `@apply bg-gradient-to-r` is not one). Tailwind's gradient stops and colour opacities (`--tw-gradient-from`, `--tw-gradient-to`, `--tw-{bg,text,border,divide,placeholder,ring}-opacity`) count as colours; its shadow and ring geometry (`@apply shadow-md`, `@apply ring-2`) does not | `color: red`, `border-top-color: red`, `background: red`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `background: var(--color-primary-500)`, `background-image: linear-gradient(red, blue)`, `@apply text-primary-500`, `@apply bg-opacity-50`, `@apply from-primary-500` |
+| A colour comes only from preset variables, in every design file. A colour is `color`, `fill`, `stroke` and every `…-color` property; the shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow`, `-webkit-text-stroke`, `filter` and `backdrop-filter`, also with a `-webkit-` or `-moz-` prefix (`-webkit-box-shadow`, `-webkit-border-before`), when they hold one; a gradient with a colour in it; Tailwind's gradient stops and colour opacities; a custom property named as a colour token (its name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`; Tailwind's `--tw-shadow-colored` excepted); a `--vc-*` or `--tw-*` custom property whose value holds a colour, whatever its name (`--vc-brand`, the `--tw-shadow` of `@apply shadow-[…]`); and a shadow token (`--vc-widget-shadow`, `--vc-shadow-<key>-<n>`), where the default step's parts may keep Tailwind's black `rgb(0 0 0 / …)`, also in a `var(--vc-shadow-default-<n>, …)` fallback (`@apply shadow`, `theme("boxShadow.DEFAULT")`), and so may the theme's `drop-shadow-*` steps (`--tw-drop-shadow`; an arbitrary `drop-shadow-[…]` may not). Its value reads only `--color-*`, the `_colors.scss` semantics and `--vc-*` (Tailwind's `--tw-*` too), mixed by `color-mix()` or `rgb(from …)`, besides the keywords and a colour with alpha 0 (`transparent`, `rgb(0 0 0 / 0)`, `#fff0`, `#ffffff00`, Tailwind's `#0000`), except as a relative colour's origin, also through a `var()` fallback, as the relative colour sets its own alpha. A custom property named as a colour token whose value holds no colour (`--title-text: 1rem`) is not one, and a function named like a colour (`tan()`) holds none | `color: red`, `border-top-color: red`, `background: #fff`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `text-shadow: 0 0 2px rgb(0 0 0)`, `fill: var(--x)`, `color: color-mix(in srgb, var(--color-primary-500), white)`, `--vc-x-bg: red`, `--vc-widget-shadow: 0 6px 20px red`, `--vc-brand: #e30613`, `@apply shadow-[0_2px_10px_rgba(0,0,0,0.1)]`, `filter: drop-shadow(0 0 4px red)`, `-webkit-box-shadow: 0 0 4px red`, `-webkit-border-before: 1px solid red`, `@apply drop-shadow-[0_0_40px_rgb(0_0_0/1)]`, `color: rgb(from rgb(227 6 19 / 0) r g b / 1)`, `color: rgb(from transparent r g b / 1)` |
+| No private variable carries a colour, whatever its name: a custom property other than `--vc-*` and `--tw-*` | `--text-color: var(--color-primary-500)`, `--shadow: 0 0 4px #f00` |
 | A block or dark file names no `html` and no `[data-design]` | `html .footer-links` |
 | A block or dark file names no `.dark`: it is on `<html>`, so below the design's `html` it never matches; dark rules go in `dark/<block>.scss`, where `index.scss` adds `.dark` | `.dark .footer-links`, `.dark &` |
 | No `@apply` variant that styles an ancestor or sibling (`group-*`, `peer-*`): it puts a selector before `html[data-design]` and never matches; write the rule out | `@apply group-hover:underline`, `@apply peer-checked:underline` |
@@ -409,15 +547,36 @@ are in `scripts/check-designs.test.ts`.
 | It matches no `[class]` by presence, prefix or substring | `[class]`, `[class^="x"]`, `[class*="x"]` |
 | A design file loads only `.scss` files of its own folder and `sass:` modules | `@use "@/ui-kit/styles/focus-ring"`, `@use "../../x"`, a path that matches several files |
 | Its CSS holds no at-rule but `@media`, `@supports`, `@container` and `@starting-style` (and, in `index.scss`, the top-level `@layer` blocks) | `@keyframes`, `@layer`, `@import`, `@scope`, `@property` |
+| No `@media` on `prefers-color-scheme`: it follows the OS theme, not the storefront's dark mode (`html.dark`); dark rules go in `dark/<block>.scss`, dark tokens on `html.dark[data-design="<name>"]` | `@apply dark:underline`, `@media (prefers-color-scheme: dark) { … }` |
+| No print-only `@media` (one whose every comma-separated query starts with `print` or `only print`, as the build reads it): print rules live in `vc.print` (`print/`), which wins in print over every design; `@media screen, print` stays allowed (the check misses `@media not screen`, which applies only in print) | `@media print { … }`, `@apply print:hidden`, `@media only print and (min-width: 1px)` |
 | `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix |
+
+Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same way:
+
+| Rule | Rejected |
+| --- | --- |
+| It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
+| Every rule is inside a top-level `@layer vc.preset { … }` block; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, the layer inside `@media`, a bare `@layer vc.preset;`, `@keyframes` |
+| No separate dark stylesheet: dark rules go in `<name>.scss` under `html.dark[data-preset="<name>"]` | `mercury.dark.scss` |
+| No `@media` on `prefers-color-scheme`, which follows the OS theme: dark rules go under `html.dark[data-preset="<name>"]` | `@apply dark:text-primary`, `@media (prefers-color-scheme: dark) { … }` |
+| No print-only `@media` (every comma-separated query starts with `print` or `only print`): print rules live in `vc.print` (`print/`); `@media screen, print` stays allowed (the check misses `@media not screen`, which applies only in print) | `@media print { … }`, `@apply print:text-primary` |
+| Every selector is the preset's `html`, `html[data-preset="<name>"]` or `html.dark[data-preset="<name>"]`, alone or followed by a block: then it names `html`, `.dark`, `[data-preset]` and `[data-design]` nowhere else, and its last compound has a class of a component's block | `.vc-button`, `html[data-preset="red"]` and `html[data-preset="red"] .vc-button` in `mercury.scss`, `html[data-preset="mercury"]:hover`, `… .dark .vc-button`, `… .vc-button svg` |
+| On the preset's `html` alone, only public `--vc-*` tokens | `color: var(--color-primary-500)`, `--color-primary-500: …` on `html[data-preset="mercury"]` |
+| Colours only, by the value rule above: a colour property (`border-color`) or a colour token; a shorthand (`border`, `outline`, `background`, `box-shadow`) and a shadow token set geometry too, so a preset sets none; set the shorthand's colour longhand instead (`border-color` for `border`; a shadow or filter has none) | `margin: 0`, `--vc-button-radius: 0`, `--vc-widget-shadow: …`, `border: 2px dashed var(--color-neutral-300)`, `color: #fff` |
+| No private variable | `--bg-color: var(--color-primary-500)` |
+
+`check:designs` knows only host components' blocks, in designs and presets alike. A removed, renamed or
+remote block fails as a block file's name, and when a selector's last compound is left with no class of a
+host block (in a design, of the file's own block); next to or above such a class it passes.
 
 Vue transition classes (`*-enter-from`, `*-enter-active`, `*-enter-to`, the same for `leave`, and
 `*-move`) and state classes (`is-*`, `has-*`) are not blocks, so a block file may use them on its own
 elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 
-`scripts/check-css-layers.ts` (built CSS in `dist/`): every layer name is declared in
-`_layers.scss`; the first linked stylesheet that declares layers starts with `theme`, places every
-declared layer, and its names follow the declared order per parent.
+`scripts/check-css-layers.ts` (built CSS in `dist/`): every layer has a name, declared in
+`_layers.scss`; at least one stylesheet that `index.html` links declares layers, and the first one
+that does starts with `theme`, places every declared layer, and its names follow the declared order
+per parent. The tests are in `scripts/check-css-layers.test.ts`.
 
 Both run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 

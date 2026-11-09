@@ -20,6 +20,11 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn("[VcExpansionPanels] This component is deprecated. Use VcWidget with `collapsible` instead.");
+}
+
 const providedKey = `panels_${getCurrentInstance()?.uid}`;
 const panels: TProvidedObjectOfExpansionPanels["panels"] = ref({});
 
