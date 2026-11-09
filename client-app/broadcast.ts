@@ -23,6 +23,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useFieldErrors } from "@/shared/common";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -47,6 +48,7 @@ export function setupBroadcastGlobalListeners() {
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
   const { getErrorNotification } = useFieldErrors();
+  const { closeAllModals } = useModal();
 
   function createReportButton(error: unknown): NotificationCustomButtonType {
     return {
@@ -106,6 +108,7 @@ export function setupBroadcastGlobalListeners() {
     const query = buildRedirectUrl(router.currentRoute.value);
     if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query });
+      closeAllModals();
     }
   });
   on(graphqlErrorEvent, (errors) => {
@@ -158,6 +161,7 @@ export function setupBroadcastGlobalListeners() {
 
   on(forbiddenEvent, () => {
     void router.push({ name: "NoAccess" });
+    closeAllModals();
   });
 
   on(passwordExpiredEvent, () => {
@@ -165,6 +169,7 @@ export function setupBroadcastGlobalListeners() {
 
     if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
       void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
+      closeAllModals();
     }
   });
 

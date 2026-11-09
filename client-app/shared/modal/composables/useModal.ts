@@ -44,9 +44,15 @@ export function useModal() {
     triggerElements.value.delete(id);
   }
 
+  function closeAllModals() {
+    stack.value = [];
+    triggerElements.value.clear();
+  }
+
   return {
     openModal,
     closeModal,
+    closeAllModals,
     modalStack: computed(() => stack.value),
   };
 }
