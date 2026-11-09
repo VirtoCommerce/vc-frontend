@@ -58,6 +58,21 @@ describe("VcDatePicker — button names", () => {
   });
 });
 
+describe("VcDatePicker — required", () => {
+  it("exposes aria-required on its input", () => {
+    const wrapper = mountPicker({ label: "Due date", required: true });
+
+    expect(wrapper.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it("leaves aria-required off an optional picker", () => {
+    const wrapper = mountPicker({ label: "Due date" });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBeUndefined();
+  });
+});
+
 describe("VcDatePicker — preventDeselect", () => {
   // A lone field carries no clear control of its own, so the re-click is the only pointer route out.
   it("clears the value on a re-click by default", async () => {
@@ -227,6 +242,36 @@ describe("VcDatePicker — the field clear cross touches only the value", () => 
     expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
 
     wrapper.unmount();
+  });
+});
+
+describe("VcDatePicker — consumer aria", () => {
+  it("merges the consumer's attributes under the combobox wiring", () => {
+    const input = mountPicker({ aria: { "aria-describedby": "range-details", role: "textbox" } }).get("input");
+
+    expect(input.attributes("aria-describedby")).toBe("range-details");
+    expect(input.attributes("role")).toBe("combobox");
+    expect(input.attributes("aria-expanded")).toBe("false");
+  });
+
+  it("sets aria-controls only while the calendar is open, whatever the consumer passes", async () => {
+    const wrapper = mountPicker({ aria: { "aria-controls": "consumer-id" } }, { attachTo: document.body });
+    const calendarButton = wrapper.get('button[aria-label="ui_kit.accessibility.open_calendar"]');
+
+    expect(wrapper.get("input").attributes("aria-controls")).toBeUndefined();
+
+    await calendarButton.trigger("click");
+    await flushPromises();
+    const controls = wrapper.get("input").attributes("aria-controls");
+
+    expect(controls).toBeTruthy();
+    expect(controls).not.toBe("consumer-id");
+    expect(document.querySelector(`[id="${controls}"]`)).not.toBeNull();
+
+    await calendarButton.trigger("click");
+    await flushPromises();
+
+    expect(wrapper.get("input").attributes("aria-controls")).toBeUndefined();
   });
 });
 

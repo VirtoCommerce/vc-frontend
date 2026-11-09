@@ -141,7 +141,10 @@ watchEffect(() => {
   --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
 
-  @apply relative border-[length:--border-width] border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-[shadow:var(--shadow)] bg-center;
+  @apply relative border-[length:--border-width] border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
+
+  // shadow-md keeps `--tw-shadow-colored`, so a `shadow-<colour>` class still tints; only the value is ours.
+  --tw-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
     .vc-container & {

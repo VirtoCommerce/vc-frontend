@@ -414,7 +414,9 @@
             "navigation": "Navigationsleiste",
             "main_navigation": "Hauptnavigation"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Keine Artikel | {n} Artikel | {n} Artikel"
       },
       "footer": {
         "version": "Ver.",
@@ -1185,6 +1187,80 @@
           "unpin_label": "„{label}“ anheften aufheben"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Ø Bestellwert im Zeitraum: {aov}",
+        "title": "Durchschnittlicher Bestellwert"
+      },
+      "axis": {
+        "aov": "Ø Bestellwert, {currency}"
+      },
+      "cancelled_excluded": "Ohne stornierte Bestellungen",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "letzte 6 Monate",
+        "twelve_months": "letzte 12 Monate",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, laufender Monat bis {today}. Umsatz netto nach Bestelldatum; stornierte Bestellungen sind ausgeschlossen.",
+      "footnote_closed": "{from} – {to}. Umsatz netto nach Bestelldatum; stornierte Bestellungen sind ausgeschlossen.",
+      "footnote_upcoming": "Dieser Zeitraum hat noch nicht begonnen.",
+      "kpi": {
+        "aov": "Durchschnittlicher Bestellwert · {period}",
+        "month_to_date": "{month} bis heute · Tag {day} von {days}",
+        "orders": "Bestellungen · {period}",
+        "projected": "{share} des Monats · Prognose {value}",
+        "sales": "Umsatz · {period}",
+        "vs_last_year": "{change} ggü. Vorjahr"
+      },
+      "last_year": "Vorjahr",
+      "last_year_toggle": "Vorjahr im Diagramm „{chart}“ anzeigen",
+      "legend": {
+        "aov_closed": "Ø Bestellwert, abgeschlossene Monate",
+        "current": "Dieser Monat, bis heute",
+        "down": "Rückgang",
+        "last_year": "Vorjahr",
+        "projection": "Prognose zum Monatsende",
+        "sales_closed": "Umsatz, abgeschlossene Monate",
+        "up": "Anstieg",
+        "vs_last_year": "ggü. Vorjahresmonat"
+      },
+      "load_failed": "Der Bericht konnte nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "period_label": "Zeitraum",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6 Monate",
+        "twelve_months": "12 Monate",
+        "year": "Laufendes Jahr"
+      },
+      "sales_chart": {
+        "subtitle": "Durchschnittlich {value} pro abgeschlossenem Monat",
+        "title": "Monatsumsatz · {period}"
+      },
+      "table": {
+        "aov": "Ø Bestellwert",
+        "change": "ggü. Vorjahr",
+        "description": "Umsatz, Bestellungen und durchschnittlicher Bestellwert pro Monat",
+        "last_year": "Vorjahresmonat",
+        "month": "Monat",
+        "orders": "Bestellungen",
+        "sales": "Umsatz",
+        "toggle": "Als Tabelle anzeigen"
+      },
+      "tooltip": {
+        "aov": "Ø Bestellwert",
+        "last_year_aov": "Ø Bestellwert, {month}",
+        "last_year_revenue": "Umsatz, {month}",
+        "projection": "Prognose zum Monatsende",
+        "revenue": "Umsatz",
+        "revenue_to_date": "Umsatz bis heute",
+        "vs_month": "ggü. {month}"
+      },
+      "upcoming": "Anstehend"
     }
   },
   "pages": {
@@ -1499,6 +1575,8 @@
         "title": "@:common.links.security",
         "no_keys": "Keine Schlüssel",
         "unnamed_key": "Unbenannter Schlüssel",
+        "rename_key_label": "{name} umbenennen",
+        "delete_key_label": "{name} löschen",
         "created": "Erstellt am {date}",
         "changed": "Geändert am {date}",
         "rename_modal": {
