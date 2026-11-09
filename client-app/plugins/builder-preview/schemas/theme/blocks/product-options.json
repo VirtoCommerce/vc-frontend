@@ -6,7 +6,8 @@
     {
       "id": "title",
       "label": "Title",
-      "type": "string"
+      "type": "string",
+      "translatable": true
     }
   ]
 }

@@ -3,6 +3,7 @@
     {
       "id": "caption",
       "type": "string",
+      "translatable": true,
       "label": "Caption"
     },
     {

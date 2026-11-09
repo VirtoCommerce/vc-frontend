@@ -8,6 +8,7 @@
       "id": "text",
       "label": "Content",
       "type": "markdown",
+      "translatable": true,
       "default": "Hello, markdown!"
     }
   ]

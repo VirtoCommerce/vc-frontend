@@ -8,12 +8,14 @@
       "id": "title",
       "label": "Title",
       "type": "string",
+      "translatable": true,
       "tab": "Content"
     },
     {
       "id": "subtitle",
       "label": "Subtitle",
       "type": "string",
+      "translatable": true,
       "multiline": true,
       "tab": "Content"
     },
@@ -29,6 +31,7 @@
       "label": "Image description",
       "info": "Transforms to the \"alt\" attribute for images. Which is crucial for accessibility, aiding the visually impaired, and enhancing SEO",
       "type": "string",
+      "translatable": true,
       "multiline": true,
       "tab": "Content"
     },
