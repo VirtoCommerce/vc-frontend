@@ -2,13 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { design as softDesign } from "@/designs/soft/design";
 import {
   byDesignName,
+  byFileName,
   DESIGN_NAMES,
   getDesign,
   getDesignFonts,
   loadDesignFonts,
   loadDesignStyles,
+  loadPresetStyles,
   resolveDesign,
   setDesignAttribute,
+  setPresetAttribute,
 } from "./index";
 
 const settings = vi.hoisted((): { value: Record<string, unknown> } => ({ value: {} }));
@@ -45,6 +48,7 @@ describe("design", () => {
   afterEach(() => {
     settings.value = {};
     delete document.documentElement.dataset.design;
+    delete document.documentElement.dataset.preset;
     vi.doUnmock("@/core/constants/environment");
     vi.doUnmock("@/designs/soft/index.scss");
   });
@@ -138,6 +142,13 @@ describe("design", () => {
       setDesignAttribute(design);
 
       expect(document.documentElement.getAttribute("data-design")).toBe(design);
+    });
+
+    it("writes data-preset on <html> and replaces the previous value", () => {
+      setPresetAttribute("coffee");
+      setPresetAttribute("mercury");
+
+      expect(document.documentElement.getAttribute("data-preset")).toBe("mercury");
     });
   });
 
@@ -254,6 +265,34 @@ describe("design", () => {
       await loadDesignStyles("ghost", { mybrand: load });
 
       expect(load).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("loadPresetStyles", () => {
+    it("loads the preset's own stylesheet", async () => {
+      const load = vi.fn(async () => ({}));
+
+      await loadPresetStyles("mercury", { mercury: load });
+
+      expect(load).toHaveBeenCalledOnce();
+    });
+
+    it("loads nothing for a preset without a stylesheet", async () => {
+      const load = vi.fn();
+
+      await loadPresetStyles("default", { mercury: load });
+
+      expect(load).not.toHaveBeenCalled();
+    });
+
+    it("resolves when the stylesheet fails to load", async () => {
+      const load = vi.fn(async () => Promise.reject(new Error("offline")));
+
+      await expect(loadPresetStyles("mercury", { mercury: load })).resolves.toBeUndefined();
+    });
+
+    it("keys the preset stylesheets by file name", () => {
+      expect(byFileName({ "/client-app/assets/presets/black-gold.scss": 1 })).toEqual({ "black-gold": 1 });
     });
   });
 });
