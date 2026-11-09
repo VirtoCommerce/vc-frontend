@@ -24,7 +24,21 @@ export function byDesignName<T>(modules: Record<string, T>): Record<string, T> {
   return named;
 }
 
+/** Keys modules by file name: `/client-app/assets/presets/mercury.scss` gives `mercury`. */
+export function byFileName<T>(modules: Record<string, T>): Record<string, T> {
+  const named: Record<string, T> = {};
+
+  for (const [file, module] of Object.entries(modules)) {
+    named[file.slice(file.lastIndexOf("/") + 1, file.lastIndexOf("."))] = module;
+  }
+
+  return named;
+}
+
 const DESIGN_STYLES: DesignStylesType = byDesignName(import.meta.glob("@/designs/*/index.scss"));
+
+/** A preset's optional stylesheet, `client-app/assets/presets/<name>.scss`, next to its JSON. */
+const PRESET_STYLES: DesignStylesType = byFileName(import.meta.glob("@/assets/presets/*.scss"));
 
 const DESIGN_CONFIGS: Record<string, IDesignConfig> = byDesignName(
   import.meta.glob<IDesignConfig>("@/designs/*/design.ts", { eager: true, import: "design" }),
@@ -55,6 +69,11 @@ export function setDesignAttribute(design: string): void {
   document.documentElement.dataset.design = design;
 }
 
+/** The active preset's file name; a preset stylesheet applies only under `html[data-preset="<name>"]`. */
+export function setPresetAttribute(preset: string): void {
+  document.documentElement.dataset.preset = preset;
+}
+
 function ownValue<T>(record: Record<string, T>, key: string): T | undefined {
   return Object.hasOwn(record, key) ? record[key] : undefined;
 }
@@ -82,9 +101,23 @@ export function loadDesignFonts(design: string, fonts: string[] = getDesignFonts
   }
 }
 
-function reportStylesFailure(error: unknown): void {
+function reportStylesFailure(error: unknown, owner: "design" | "preset"): void {
   ignoreChunkLoadFailure(error);
-  Logger.error("Failed to load the design styles.", error);
+  Logger.error(`Failed to load the ${owner} styles.`, error);
+}
+
+async function loadStyles(styles: DesignStylesType, name: string, owner: "design" | "preset"): Promise<void> {
+  const load = ownValue(styles, name);
+
+  if (!load) {
+    return;
+  }
+
+  try {
+    await load();
+  } catch (error) {
+    reportStylesFailure(error, owner);
+  }
 }
 
 /**
@@ -94,13 +127,17 @@ function reportStylesFailure(error: unknown): void {
 export async function loadDesignStyles(design: string, styles: DesignStylesType = DESIGN_STYLES): Promise<void> {
   loadDesignFonts(design);
 
-  if (design === CLASSIC_DESIGN || !Object.hasOwn(styles, design)) {
+  if (design === CLASSIC_DESIGN) {
     return;
   }
 
-  try {
-    await styles[design]();
-  } catch (error) {
-    reportStylesFailure(error);
-  }
+  await loadStyles(styles, design, "design");
+}
+
+/**
+ * A preset with a stylesheet downloads it as a lazy chunk; a preset without one loads nothing.
+ * Never rejects: if the chunk fails to load, the app boots with the preset's colours only.
+ */
+export async function loadPresetStyles(preset: string, styles: DesignStylesType = PRESET_STYLES): Promise<void> {
+  await loadStyles(styles, preset, "preset");
 }
