@@ -65,4 +65,27 @@ describe("useWhiteLabeling", () => {
       expect(useWhiteLabeling().darkLogoUrl.value).toBe("acme-white.svg");
     });
   });
+
+  describe("themeFieldsSetByWhiteLabeling", () => {
+    it("names nothing without white-labeling", () => {
+      expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual([]);
+    });
+
+    it("names the header's menus for a main menu and the footer's for footer links", () => {
+      const link = { title: "Shop", url: "/shop", priority: 0, childItems: [] };
+      setWhiteLabeling({ logoUrl: "store.svg", mainMenuLinks: [link], footerLinks: [link] });
+
+      expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual([
+        "brand.logoUrl",
+        "menus.header",
+        "menus.footer",
+      ]);
+    });
+
+    it("does not name a menu white-labeling leaves empty", () => {
+      setWhiteLabeling({ mainMenuLinks: [], footerLinks: [] });
+
+      expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual([]);
+    });
+  });
 });

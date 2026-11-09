@@ -125,7 +125,9 @@ function _useWhiteLabeling() {
         ["brand.secondaryLogoUrl", settings?.secondaryLogoUrl],
         ["brand.faviconUrl", settings?.favicons?.length],
         ["palette", settings?.themePresetName],
+        // The main menu replaces the header's category menu (`catalog_menu`) only; the icons menu stays the theme's.
         ["menus.header", settings?.mainMenuLinks?.length],
+        // The footer links replace the footer's columns.
         ["menus.footer", settings?.footerLinks?.length],
       ];
       return fields.filter(([, value]) => !!value).map(([field]) => field);
