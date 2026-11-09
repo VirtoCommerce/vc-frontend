@@ -15,7 +15,8 @@ const meta: Meta<typeof VcLabel> = {
     },
     forId: {
       control: "text",
-      description: "ID of the input element to associate with",
+      description:
+        "ID of the input element to associate with. A bound label hides the required asterisk from assistive tech, so the control must expose required itself",
     },
     size: {
       control: "select",

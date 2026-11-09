@@ -106,6 +106,20 @@ function reportStylesFailure(error: unknown, owner: "design" | "preset"): void {
   Logger.error(`Failed to load the ${owner} styles.`, error);
 }
 
+async function loadStyles(styles: DesignStylesType, name: string, owner: "design" | "preset"): Promise<void> {
+  const load = ownValue(styles, name);
+
+  if (!load) {
+    return;
+  }
+
+  try {
+    await load();
+  } catch (error) {
+    reportStylesFailure(error, owner);
+  }
+}
+
 /**
  * Classic ships with the app; any other design's styles are a lazy chunk it alone downloads.
  * Never rejects: if the chunk fails to load, the app boots without the design's styles.
@@ -113,15 +127,11 @@ function reportStylesFailure(error: unknown, owner: "design" | "preset"): void {
 export async function loadDesignStyles(design: string, styles: DesignStylesType = DESIGN_STYLES): Promise<void> {
   loadDesignFonts(design);
 
-  if (design === CLASSIC_DESIGN || !Object.hasOwn(styles, design)) {
+  if (design === CLASSIC_DESIGN) {
     return;
   }
 
-  try {
-    await styles[design]();
-  } catch (error) {
-    reportStylesFailure(error, "design");
-  }
+  await loadStyles(styles, design, "design");
 }
 
 /**
@@ -129,13 +139,5 @@ export async function loadDesignStyles(design: string, styles: DesignStylesType 
  * Never rejects: if the chunk fails to load, the app boots with the preset's colours only.
  */
 export async function loadPresetStyles(preset: string, styles: DesignStylesType = PRESET_STYLES): Promise<void> {
-  if (!Object.hasOwn(styles, preset)) {
-    return;
-  }
-
-  try {
-    await styles[preset]();
-  } catch (error) {
-    reportStylesFailure(error, "preset");
-  }
+  await loadStyles(styles, preset, "preset");
 }

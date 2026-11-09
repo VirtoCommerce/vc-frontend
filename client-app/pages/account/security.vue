@@ -14,10 +14,12 @@
         <VcWidget :title="getTitle(signInMethod, extensionProps)" size="lg">
           <template v-if="signInMethod.canCreateKey && extensionProps?.createKey" #append>
             <VcButton
+              :ref="createKeyButtonRef(signInMethod.name)"
               prepend-icon="plus"
               size="sm"
               :loading="toValue(extensionProps.creating)"
-              @click="createKey(extensionProps)"
+              :data-test-id="`${signInMethod.name}-create-key-button`"
+              @click="createKey(signInMethod, extensionProps)"
             >
               {{ toValue(extensionProps.createKeyText) }}
             </VcButton>
@@ -27,13 +29,18 @@
             {{ toValue(extensionProps.description) }}
           </p>
 
-          <ul v-if="signInMethod.keys?.length" class="security__keys">
+          <ul
+            v-if="signInMethod.keys?.length"
+            :ref="keysAreaRef(signInMethod.name)"
+            class="security__keys"
+            tabindex="-1"
+          >
             <li v-for="key in signInMethod.keys" :key="key.id" class="security__key">
               <VcIcon class="security__key-icon" :name="extensionProps?.getKeyIcon?.(key) ?? 'key'" />
 
               <div class="security__key-info">
                 <div class="security__key-name">
-                  {{ key.name || $t("pages.account.security.unnamed_key") }}
+                  {{ getKeyName(key) }}
                 </div>
 
                 <div class="security__key-details">
@@ -47,7 +54,7 @@
                 variant="ghost"
                 color="neutral"
                 size="sm"
-                :aria-label="$t('common.buttons.edit')"
+                :aria-label="$t('pages.account.security.rename_key_label', { name: getKeyName(key) })"
                 @click="openRenameModal(signInMethod, key)"
               />
 
@@ -57,23 +64,31 @@
                 variant="ghost"
                 color="neutral"
                 size="sm"
-                :aria-label="$t('common.buttons.delete')"
+                :aria-label="$t('pages.account.security.delete_key_label', { name: getKeyName(key) })"
                 @click="openDeleteModal(signInMethod, key)"
               />
             </li>
           </ul>
 
-          <p v-else-if="!loading" class="security__empty">
+          <p
+            v-else-if="!loading"
+            :ref="keysAreaRef(signInMethod.name)"
+            class="security__empty"
+            tabindex="-1"
+            :data-test-id="`${signInMethod.name}-no-keys-label`"
+          >
             {{ toValue(extensionProps?.noKeysText) || $t("pages.account.security.no_keys") }}
           </p>
         </VcWidget>
       </template>
     </ExtensionPoint>
+
+    <ExtensionPointList :category="EXTENSION_CATEGORIES.accountSecurity" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, toValue } from "vue";
+import { computed, nextTick, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -84,6 +99,8 @@ import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
 import type { GetSignInMethodsQuery, SignInKeyType } from "@/core/api/graphql/types";
 import type { SignInMethodContributionType } from "@/shared/account/types";
+import type { VcButton } from "@/ui-kit/components";
+import type { ComponentPublicInstance } from "vue";
 import RenameSignInKeyModal from "@/shared/account/components/rename-sign-in-key-modal.vue";
 
 type SignInMethodType = NonNullable<GetSignInMethodsQuery["signInMethods"]>[number];
@@ -95,6 +112,9 @@ const { getContribution } = useExtensionRegistry();
 const { signInMethods, loading, renaming, deleting, refetch, renameKey, deleteKey } = useSignInMethods();
 
 usePageHead({ title: computed(() => t("pages.account.security.title")) });
+
+const createKeyButtons = new Map<string, InstanceType<typeof VcButton>>();
+const keysAreas = new Map<string, HTMLElement>();
 
 const extendedSignInMethods = computed(() =>
   signInMethods.value.filter(
@@ -108,9 +128,48 @@ function getTitle(signInMethod: SignInMethodType, contribution?: SignInMethodCon
   return toValue(contribution?.title) || signInMethod.displayName || signInMethod.name;
 }
 
-async function createKey(contribution: SignInMethodContributionType): Promise<void> {
+function createKeyButtonRef(name: string): (el: Element | ComponentPublicInstance | null) => void {
+  return (el) => {
+    if (el) {
+      createKeyButtons.set(name, el as InstanceType<typeof VcButton>);
+    } else {
+      createKeyButtons.delete(name);
+    }
+  };
+}
+
+function keysAreaRef(name: string): (el: Element | ComponentPublicInstance | null) => void {
+  return (el) => {
+    if (el instanceof HTMLElement) {
+      keysAreas.set(name, el);
+    } else {
+      keysAreas.delete(name);
+    }
+  };
+}
+
+// A loading VcButton is disabled, so the browser moves focus off it; the dialog can't return focus to a deleted
+// key's Delete button. Waiting for the next render also lets the dialog's own focus return run first.
+async function focusSignInMethod(name: string): Promise<void> {
+  await nextTick();
+  (createKeyButtons.get(name) ?? keysAreas.get(name))?.focus();
+}
+
+function isFocusLost(): boolean {
+  return !document.activeElement || document.activeElement === document.body;
+}
+
+async function createKey(signInMethod: SignInMethodType, contribution: SignInMethodContributionType): Promise<void> {
   await contribution.createKey?.();
   await refetch();
+
+  if (isFocusLost()) {
+    await focusSignInMethod(signInMethod.name);
+  }
+}
+
+function getKeyName(key: SignInKeyType): string {
+  return key.name || t("pages.account.security.unnamed_key");
 }
 
 function getKeyDetails(key: SignInKeyType, contribution?: SignInMethodContributionType): string {
@@ -156,8 +215,12 @@ function openDeleteModal(signInMethod: SignInMethodType, key: SignInKeyType): vo
       title: t("pages.account.security.delete_modal.title"),
       text: t("pages.account.security.delete_modal.message"),
       async onConfirm() {
-        await deleteKey(signInMethod.name, key.id);
+        const deleted = await deleteKey(signInMethod.name, key.id);
         closeDeleteModal();
+
+        if (deleted) {
+          await focusSignInMethod(signInMethod.name);
+        }
       },
     },
   });

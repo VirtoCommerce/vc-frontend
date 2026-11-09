@@ -24,6 +24,10 @@ html[data-design="soft"] {
   --vc-widget-title-font-weight: 600;
   --vc-widget-title-text-transform: none;
   --vc-widget-title-letter-spacing: -0.02em;
+  // The plate as html computes it, a fork's override included: blocks/vc-widget.scss gives it to nested widgets.
+  --design-widget-radius: var(--vc-widget-radius);
+  --design-widget-border-width: var(--vc-widget-border-width);
+  --design-widget-padding-x: var(--vc-widget-padding-x);
 
   @media (width >= theme("screens.lg")) {
     --vc-widget-radius: 1.75rem;
