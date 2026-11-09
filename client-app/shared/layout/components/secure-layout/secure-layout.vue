@@ -9,13 +9,7 @@
         </router-link>
 
         <div class="secure-layout__status">
-          <div class="secure-layout__lock">
-            <VcIcon size="xs" name="lock-closed" />
-
-            <span class="secure-layout__lock-label" data-test-id="checkout-layout.secure-checkout-label">
-              {{ $t("common.labels.secure_checkout") }}
-            </span>
-          </div>
+          <SecureCheckoutBadge />
 
           <Created />
         </div>
@@ -35,6 +29,7 @@ import { useWhiteLabeling } from "@/core/composables";
 import VcFooter from "../footer/vc-footer.vue";
 import Created from "../print/created.vue";
 import SkipToLinks from "../skip-to-links/skip-to-links.vue";
+import SecureCheckoutBadge from "./_internal/secure-checkout-badge.vue";
 
 const { logoUrl } = useWhiteLabeling();
 </script>
@@ -67,26 +62,6 @@ const { logoUrl } = useWhiteLabeling();
 
   &__status {
     @apply flex;
-  }
-
-  &__lock {
-    @apply flex items-center gap-x-1.5 text-neutral;
-
-    @media print {
-      @apply -me-px border px-2;
-    }
-  }
-
-  &__lock-label {
-    @apply hidden text-sm font-bold;
-
-    @media (width >= theme("screens.xs")) {
-      @apply inline;
-    }
-
-    @media print {
-      @apply inline;
-    }
   }
 }
 </style>
