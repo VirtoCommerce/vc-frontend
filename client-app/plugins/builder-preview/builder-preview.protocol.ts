@@ -1,6 +1,6 @@
 import { isRecord, Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
-import type { IThemeDraft, IThemePageDocument } from "@/core/theme-snapshot";
+import type { IThemeDraft, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
 
@@ -52,7 +52,7 @@ export type PreviewV2MessageType =
 export interface IResolvedData {
   /** The route the choice was made for. */
   url: string;
-  pageType: string;
+  pageType: ThemePageType;
   /** The template rendered: the one the designer has open, else the rules' pick. */
   template: string;
   /** The rule that chose it; `null` for an open template, the page's own template, the page type's or a built-in one. */
