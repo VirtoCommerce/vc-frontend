@@ -36,7 +36,7 @@ export interface ITemplateRule {
 
 export interface ITemplateRules {
   version: 2;
-  /** The condition names the rules use. */
+  /** The condition names the rules use: writers always write it, readers never need it, so a file may lack it. */
   conditions?: string[];
   product?: ITemplateRule[];
   category?: ITemplateRule[];

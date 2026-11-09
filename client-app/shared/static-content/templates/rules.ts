@@ -102,7 +102,7 @@ export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceT
 
 /**
  * Reads a rules file: `version` 2 as it is, `version` 1 (no ids) with `{pageType}-{index}` as the ids. Anything else is
- * not a rules file.
+ * not a rules file. `conditions` is read when it is there and never needed.
  */
 export function normalizeTemplateRules(value: unknown): ITemplateRules | undefined {
   if (!isRecord(value)) {
@@ -120,14 +120,41 @@ export function normalizeTemplateRules(value: unknown): ITemplateRules | undefin
     const list = value[pageType];
 
     if (Array.isArray(list)) {
-      rules[pageType] = list.filter(isRuleLike).map((rule, index) => ({
-        ...rule,
-        id: typeof rule.id === "string" && rule.id ? rule.id : `${pageType}-${index}`,
-      }));
+      rules[pageType] = withUniqueIds(list.filter(isRuleLike), pageType);
     }
   }
 
   return rules;
+}
+
+/**
+ * Gives a rule without an id, or with the id of a rule before it, `{pageType}-{index}` (its index among the rules
+ * read), else `{pageType}-{index}-{n}` with the first `n` from 2 that no rule before it has, as the module's snapshot
+ * builder does: `resolved.ruleId` names the same rule on both sides.
+ */
+function withUniqueIds(
+  list: (Omit<ITemplateRule, "id"> & { id?: unknown })[],
+  pageType: ThemePageType,
+): ITemplateRule[] {
+  const ids = new Set<string>();
+
+  return list.map((rule, index) => {
+    let id = typeof rule.id === "string" ? rule.id : "";
+
+    if (!id || ids.has(id)) {
+      const base = `${pageType}-${index}`;
+      let n = 2;
+      id = base;
+
+      while (ids.has(id)) {
+        id = `${base}-${n}`;
+        n++;
+      }
+    }
+
+    ids.add(id);
+    return { ...rule, id };
+  });
 }
 
 function isRuleLike(value: unknown): value is Omit<ITemplateRule, "id"> & { id?: unknown } {

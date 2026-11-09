@@ -150,6 +150,46 @@ describe("normalizeTemplateRules", () => {
     expect(rules?.category).toBeUndefined();
   });
 
+  it("renames a duplicate id as the module's snapshot builder does", () => {
+    const rules = normalizeTemplateRules({
+      version: 2,
+      conditions: [],
+      product: [
+        { id: "a", template: "product" },
+        { id: "a", template: "product" },
+        { id: "product-3", template: "product" },
+        { template: "product" },
+        { id: "", template: "product" },
+        { id: "product-4", template: "product" },
+      ],
+    });
+
+    expect(rules?.product?.map((rule) => rule.id)).toEqual([
+      "a",
+      "product-1",
+      "product-3",
+      "product-3-2",
+      "product-4",
+      "product-5",
+    ]);
+  });
+
+  it("numbers the rules it reads, not the entries it drops", () => {
+    const rules = normalizeTemplateRules({
+      version: 2,
+      page: [{ bad: true }, { template: "page" }, { id: 7, template: "page" }],
+    });
+
+    expect(rules?.page?.map((rule) => rule.id)).toEqual(["page-0", "page-1"]);
+  });
+
+  it("reads a file without conditions", () => {
+    const rules = normalizeTemplateRules({ version: 2, category: [{ id: "sale", template: "category" }] });
+
+    expect(rules?.conditions).toBeUndefined();
+    expect(rules?.category).toEqual([{ id: "sale", template: "category" }]);
+  });
+
   it("is not a rules file when the value is not an object", () => {
     expect(normalizeTemplateRules([])).toBeUndefined();
   });
