@@ -29,7 +29,7 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
-import { getDesign, loadDesignStyles, setDesignAttribute } from "@/core/utilities/design";
+import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
@@ -255,6 +255,8 @@ export default async () => {
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
   setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  // Awaited before mount with the design styles, so a preset's stylesheet never paints late.
+  const presetStylesReady = loadPresetStyles(themeContext.value.activePresetName ?? "");
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
@@ -346,7 +348,7 @@ export default async () => {
     Logger.warn(message, traceDetails);
   };
 
-  await designStylesReady;
+  await Promise.all([designStylesReady, presetStylesReady]);
 
   app.mount(appElement);
 
