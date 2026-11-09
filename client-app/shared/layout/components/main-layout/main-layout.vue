@@ -1,16 +1,17 @@
 <template>
-  <div class="main-layout">
-    <SkipToLinks />
+  <VcFrame class="main-layout">
+    <template #header>
+      <SkipToLinks />
 
-    <VcHeader />
+      <VcHeader />
+    </template>
 
-    <!-- Main Content -->
-    <main id="main-content" class="main-layout__content">
-      <slot />
-    </main>
+    <slot />
 
-    <VcFooter />
-  </div>
+    <template #footer>
+      <VcFooter />
+    </template>
+  </VcFrame>
 </template>
 
 <script setup lang="ts">
@@ -21,10 +22,6 @@ import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.
 
 <style lang="scss">
 .main-layout {
-  @apply flex min-h-screen flex-col;
-
-  &__content {
-    @apply relative flex grow flex-col min-h-[60vh];
-  }
+  --vc-frame-main-min-height: 60vh;
 }
 </style>
