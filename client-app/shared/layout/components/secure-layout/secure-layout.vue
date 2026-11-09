@@ -1,6 +1,8 @@
 <template>
   <VcFrame class="secure-layout">
     <template #header>
+      <SkipToLinks />
+
       <div class="secure-layout__header">
         <router-link to="/" replace>
           <VcImage :src="logoUrl" :alt="$context.storeName" class="secure-layout__logo" lazy />
@@ -32,6 +34,7 @@
 import { useWhiteLabeling } from "@/core/composables";
 import VcFooter from "../footer/vc-footer.vue";
 import Created from "../print/created.vue";
+import SkipToLinks from "../skip-to-links/skip-to-links.vue";
 
 const { logoUrl } = useWhiteLabeling();
 </script>
