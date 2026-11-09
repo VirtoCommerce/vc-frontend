@@ -195,6 +195,19 @@ describe("normalizeTemplateRules", () => {
   });
 });
 
+describe("getTemplateConditionDescriptors", () => {
+  it("describes the fields of an object value under element, as schema fields do", () => {
+    const descriptors = useTemplateConditions().getTemplateConditionDescriptors();
+
+    for (const name of ["property", "setting"]) {
+      const { value } = descriptors.find((descriptor) => descriptor.name === name) ?? { value: {} };
+
+      expect(value).toMatchObject({ type: "object", element: [{ id: "name" }, { id: "equals" }] });
+      expect(value).not.toHaveProperty("settings");
+    }
+  });
+});
+
 describe("matchesPath", () => {
   it.each([
     ["/landing/*", "/landing/spring", true],

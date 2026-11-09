@@ -26,7 +26,7 @@ export interface ITemplateCondition {
   name: string;
   pageTypes: ThemePageType[];
   label?: string;
-  /** The condition's value as a schema field: the designer builds the condition's form from it. */
+  /** The condition's value as a schema field (an object's fields in `element`): the designer builds its form from it. */
   value: Record<string, unknown>;
   evaluate(subject: ITemplateSubject, value: unknown): boolean;
 }
@@ -59,7 +59,7 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     label: "Property",
     value: {
       type: "object",
-      settings: [
+      element: [
         { id: "name", type: "string", label: "Name" },
         { id: "equals", type: "string", label: "Value" },
       ],
@@ -110,7 +110,7 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     label: "Page setting",
     value: {
       type: "object",
-      settings: [
+      element: [
         { id: "name", type: "string", label: "Name" },
         { id: "equals", type: "string", label: "Value" },
       ],
