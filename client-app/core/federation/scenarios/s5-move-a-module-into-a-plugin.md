@@ -23,9 +23,7 @@ Pick the scaffold flags the module needs: `--with-i18n`, `--with-apollo`, `--wit
 3. **Move the code** into `StorefrontApp/src/`: components, composables, pages, locales, GraphQL documents. Change
    each `@/…` import to `@vc-frontend/core`. Test helpers come from `@vc-frontend/core/testing`. A spec that mocks
    several host paths needs one `vi.mock("@vc-frontend/core", …)` holding them all: two mocks of the same path
-   override each other. A moved template's utility classes become `@apply` rules on a class of the component's own,
-   in its `<style scoped>`: the plugin generates no utilities, so a bare utility class is styled only while the
-   storefront's own CSS has it.
+   override each other.
 4. **Rewrite `init`.** The host called `init(router, i18n)`; a plugin's `init()` takes nothing:
    - router and i18n come from `globals` (`@vc-frontend/core`);
    - locales: load the module's messages for the current locale yourself, and register the same loader with

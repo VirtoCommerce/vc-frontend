@@ -125,6 +125,7 @@ const ANY_SCAFFOLD_FILE = [
   ...HOST_LOCALES.map((locale) => `src/locales/${locale}.json`),
   "src/pages/my-page.vue",
   "src/pages/my-page.test.ts",
+  "src/styles.css",
   "src/shims-vue.d.ts",
   "src/mocks/vc-frontend-core.ts",
   "src/api/graphql/queries/ping/pingQuery.graphql",
@@ -204,7 +205,7 @@ const GROUPS = [
     key: "tailwind",
     flag: "--with-tailwind",
     defaultOn: false,
-    prompt: "Tailwind CSS (host design tokens, @apply in component styles)",
+    prompt: "Tailwind CSS (host design tokens, plugin-local utility pass)",
     packages: [],
   },
 ];
@@ -445,7 +446,8 @@ export default defineConfig({
 const tailwindConfig = `const path = require("path");
 const hostPreset = require("@vc-frontend/core/tailwind-preset");
 
-// The HOST's design system (colors via CSS custom properties, spacing, breakpoints) for @apply in component styles.
+// The HOST's design system (colors via CSS custom properties, spacing, breakpoints),
+// scanning ONLY this plugin's sources - utilities match the host 1:1.
 const preset = hostPreset.default ?? hostPreset;
 
 module.exports = {
@@ -456,8 +458,8 @@ module.exports = {
 
 const postcssConfig = `const path = require("path");
 
-// Same pipeline as the host, with Tailwind pinned to THIS plugin's config so @apply resolves against the
-// storefront's preset.
+// Same pipeline as the host, with Tailwind pinned to THIS plugin's config so it scans
+// the plugin's own sources and generates the utilities its templates use.
 module.exports = {
   plugins: {
     "postcss-import": {},
@@ -466,6 +468,19 @@ module.exports = {
     autoprefixer: {},
   },
 };
+`;
+
+const stylesCss = `/*
+ * The plugin's Tailwind output, in the storefront's \`plugins\` cascade layer: below the storefront's own
+ * utilities, so the plugin's copy of .flex-col cannot override the storefront's lg:flex-row on its pages.
+ * \`variants\` must stay inside the layer, or Tailwind 3 appends md:, lg: and hover: rules after it, unlayered.
+ * No \`@tailwind base\`: the storefront already applies its reset.
+ */
+@layer plugins {
+  @tailwind components;
+  @tailwind utilities;
+  @tailwind variants;
+}
 `;
 
 const tsconfig = {
@@ -489,10 +504,11 @@ const tsconfig = {
   vueCompilerOptions: { strictTemplates: true },
 };
 
+const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
 const i18nImport = selected.i18n ? 'import { loadLocales } from "./i18n";\n' : "";
 const i18nCall = selected.i18n ? "  loadLocales();\n" : "";
 const indexTs = selected.router
-  ? `import { globals } from "@vc-frontend/core";
+  ? `${stylesImport}import { globals } from "@vc-frontend/core";
 ${i18nImport}import type { RouteRecordRaw } from "vue-router";
 
 const MyPage = () => import("./pages/my-page.vue");
@@ -503,7 +519,7 @@ export function init(): void {
   globals.router.addRoute(route);
 ${i18nCall}}
 `
-  : `${i18nImport}export function init(): void {
+  : `${stylesImport}${i18nImport}export function init(): void {
 ${i18nCall}  // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
 `;
@@ -575,18 +591,7 @@ export default definePluginManifest({
 });
 `;
 
-const pageClass = selected.tailwind ? ' class="my-page"' : "";
-// Tailwind only through @apply in a scoped block: a global copy of a plain utility (.flex-col) loads after
-// the storefront's CSS and overrides its responsive ones (lg:flex-row) on every page.
-const pageStyle = selected.tailwind
-  ? `
-<style scoped>
-.my-page {
-  @apply p-6 text-primary-700;
-}
-</style>
-`
-  : "";
+const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
 const myPageVue = selected.i18n
   ? `<template>
   <div${pageClass}>
@@ -594,14 +599,14 @@ const myPageVue = selected.i18n
     <p>{{ $t("${messagesNamespace}.description") }}</p>
   </div>
 </template>
-${pageStyle}`
+`
   : `<template>
   <div${pageClass}>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
   </div>
 </template>
-${pageStyle}`;
+`;
 
 const shimsVue = `declare module "*.vue" {
   import type { DefineComponent } from "vue";
@@ -679,8 +684,7 @@ More setups (hot reload, a deployed module, an unreleased facade): [S2](${SCENAR
 | \`CLAUDE.md\` | for AI agents: this README, plus what to run and never do |`,
   webDir && `| \`${TARGETS_FILE}\` | the module build: builds this plugin and puts it in the module package |`,
   selected.apollo && "| `codegen.ts`, `src/api/graphql/` | your GraphQL documents and their generated types |",
-  selected.tailwind &&
-    "| `tailwind.config.cjs`, `postcss.config.cjs` | Tailwind with the storefront's design tokens, for `@apply` in components |",
+  selected.tailwind && "| `tailwind.config.cjs`, `src/styles.css` | Tailwind with the storefront's design tokens |",
   `
 ## Rules
 
@@ -753,10 +757,11 @@ Plugin CSS applies to the whole storefront page: nothing fences it yet. Prefer \
 the storefront's CSS variables (\`var(--color-…)\`), not fixed values, so dark mode and the theme presets work.`,
   selected.tailwind &&
     `
-Tailwind here uses the storefront's preset through \`@apply\` in a component's \`<style scoped>\`. Don't add a global
-stylesheet with \`@tailwind utilities\`: the plugin's copy of a plain utility (\`.flex-col\`) loads after the
-storefront's CSS and overrides its responsive ones (\`lg:flex-row\`) on every page. Don't style with utility classes
-in templates either: nothing here generates them, so such a class works only while the storefront's own CSS has it.`,
+Tailwind here uses the storefront's preset. \`src/styles.css\` puts the plugin's utilities into the storefront's
+\`plugins\` cascade layer, below the storefront's own utilities: unlayered, the plugin's copy of \`.flex-col\` would
+override the storefront's \`lg:flex-row\` on every page. Keep every \`@tailwind\` directive inside that layer. A
+responsive class the storefront never uses loses there to a base class it does use (\`hidden 2xl:block\` stays
+hidden): give such an element a class of its own and \`@apply\` the utilities in its style block.`,
   webDir
     ? `
 ## Shipping
@@ -815,8 +820,8 @@ How it plugs in, its files, rules and commands: @README.md
    ([S3](${SCENARIOS_URL}/s3-extend-the-facade.md)) or copied here, small.
 2. Edit \`@vc-frontend/core\` types, or commit its pin as \`portal:\`, \`link:\` or a yalc path.`,
   selected.tailwind &&
-    `3. Ship a global stylesheet with \`@tailwind utilities\`: its plain utilities override the storefront's responsive
-   ones on every page. Style with \`@apply\` in \`<style scoped>\`.`,
+    `3. Move a \`@tailwind\` directive out of \`@layer plugins\` in \`src/styles.css\`: unlayered, the plugin's
+   utilities override the storefront's responsive ones on every page.`,
   selected.apollo &&
     `${selected.tailwind ? 4 : 3}. Edit \`src/api/graphql/types.ts\` by hand: run \`yarn generate:graphql-types\`.`,
   `
@@ -1036,6 +1041,7 @@ const outputs = [
   ...(selected.i18n ? HOST_LOCALES.map((locale) => [`src/locales/${locale}.json`, json(localeMessages)]) : []),
   selected.tailwind && ["tailwind.config.cjs", tailwindConfig],
   selected.tailwind && ["postcss.config.cjs", postcssConfig],
+  selected.tailwind && ["src/styles.css", stylesCss],
   ["public/plugin.json", json(pluginJson)],
   ["src/shims-vue.d.ts", shimsVue],
   ["README.md", readme],
