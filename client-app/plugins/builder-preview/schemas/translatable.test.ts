@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import { useThemeGroups, useThemeSnapshot } from "@/core/theme-snapshot";
+import { resolveTranslatableValues, useThemeGroups, useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeTemplates } from "@/shared/static-content";
+import { findEditableTexts } from "../inline-text-editor";
 import { findSchemaField } from "../preview-v2";
 import { getRegisteredComponents } from "../register-components";
 import type { PageBuilderSchemaType } from "../models/PageBuilderSchemaType";
@@ -168,6 +169,19 @@ describe("translatable texts of the theme's sections and blocks", () => {
     expect(findSchemaField(schemas, "call-to-action", ["buttons", 1, "label"])?.translatable).toBe(true);
     expect(findSchemaField(schemas, "text", ["title"])?.translatable).toBe(true);
     expect(findSchemaField(schemas, "slider", ["slides", 0, "url"])?.translatable).toBeUndefined();
+  });
+
+  it("offers a list's translatable text for inline editing in the current language", () => {
+    const slider = {
+      id: "s1",
+      type: "slider",
+      slides: [{ title: { "en-US": "Sale", "de-DE": "Angebote" }, url: "/sale" }],
+    };
+    const shown = resolveTranslatableValues(slider, "de-DE", "en-US");
+
+    expect(
+      findEditableTexts(shown, (type, path) => findSchemaField(schemas, type, path)?.type === "string"),
+    ).toContainEqual({ itemId: "s1", path: ["slides", 0, "title"], value: "Angebote" });
   });
 
   it("shows every translatable text of a draft template in the current language, in lists, objects and blocks", () => {
