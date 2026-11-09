@@ -24,7 +24,7 @@ const record = (name: string) =>
 
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
-const { getStorePluginsMock, loaderOptions, previewBoot, loader, designStyles } = vi.hoisted(() => {
+const { getStorePluginsMock, loaderOptions, previewBoot, loader, designStyles, presetStyles } = vi.hoisted(() => {
   // The options app-runner hands the loader, so the discovery wiring itself is assertable.
   const captured: { current?: { fetchPlugins?: () => Promise<unknown> } } = {};
   return {
@@ -34,6 +34,7 @@ const { getStorePluginsMock, loaderOptions, previewBoot, loader, designStyles } 
     // Only the mount case lets the run continue past the loader.
     loader: { stopsTheRun: true },
     designStyles: { ready: Promise.resolve() },
+    presetStyles: { ready: Promise.resolve() },
   };
 });
 
@@ -100,6 +101,7 @@ vi.mock("@/core/utilities/design", () => ({
   getDesign: () => "soft",
   setDesignAttribute: record("setDesignAttribute"),
   loadDesignStyles: vi.fn(() => designStyles.ready),
+  loadPresetStyles: vi.fn(async () => presetStyles.ready),
 }));
 vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
 vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
@@ -146,6 +148,7 @@ vi.mock("@/modules/back-in-stock", () => ({ init: vi.fn() }));
 vi.mock("@/modules/customer-reviews", () => ({ init: vi.fn() }));
 vi.mock("@/modules/google-analytics", () => ({ init: vi.fn() }));
 vi.mock("@/modules/loyalty", () => ({ init: vi.fn() }));
+vi.mock("@/modules/mfa", () => ({ init: vi.fn() }));
 vi.mock("@/modules/news", () => ({ init: vi.fn() }));
 vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
@@ -221,6 +224,7 @@ describe("app-runner boot order", () => {
     previewBoot.isActive = false;
     loader.stopsTheRun = true;
     designStyles.ready = Promise.resolve();
+    presetStyles.ready = Promise.resolve();
     getStorePluginsMock.mockResolvedValue([]);
   });
 
@@ -354,5 +358,28 @@ describe("app-runner boot order", () => {
     expect(design.loadDesignStyles).toHaveBeenCalledWith("soft");
     expect(order.indexOf("design styles settled")).toBeGreaterThan(-1);
     expect(order.indexOf("design styles settled")).toBeLessThan(order.indexOf("mount"));
+  });
+  it("mounts only after the preset styles settle", async () => {
+    loader.stopsTheRun = false;
+    let settle = () => {};
+    presetStyles.ready = new Promise<void>((resolve) => {
+      settle = () => {
+        order.push("preset styles settled");
+        resolve();
+      };
+    });
+    document.body.innerHTML = '<div id="app"></div>';
+    const run = (await import("@/app-runner")).default();
+
+    await vi.waitFor(() => expect(order).toContain("app.use(router)"));
+    expect(order, `order was ${order.join(" -> ")}`).not.toContain("mount");
+
+    settle();
+    await run;
+
+    const design = await import("@/core/utilities/design");
+    expect(design.loadPresetStyles).toHaveBeenCalledWith("a");
+    expect(order.indexOf("preset styles settled")).toBeGreaterThan(-1);
+    expect(order.indexOf("preset styles settled")).toBeLessThan(order.indexOf("mount"));
   });
 });

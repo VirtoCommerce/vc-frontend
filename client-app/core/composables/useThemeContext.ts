@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 import { darkPresets, presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { presetNameToFileName } from "@/core/utilities";
-import { resolveDesign } from "@/core/utilities/design";
+import { resolveDesign, setPresetAttribute } from "@/core/utilities/design";
 import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
@@ -110,6 +110,7 @@ function _useThemeContext() {
       themeContext.value.darkPreset = darkPresets[resolvedName];
       themeContext.value.activePresetName = resolvedName;
       presetPalette = { light: preset, dark: darkPresets[resolvedName] };
+      setPresetAttribute(resolvedName);
     } else {
       throw new Error("Missing preset");
     }

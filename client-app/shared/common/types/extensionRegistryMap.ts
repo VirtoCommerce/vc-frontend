@@ -97,6 +97,10 @@ export type ExtensionCategoryMapType = {
    * re-renders the pages that show the type.
    */
   pageBuilderSection: ExtensionEntryType;
+  /** Widgets on Account › Security, below the sign-in methods. */
+  accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+  /** Widgets on Company › Info, between the company name and the addresses. */
+  companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 
 /** The parameter a category's `condition` accepts. */

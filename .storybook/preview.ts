@@ -7,8 +7,10 @@ import {
   CLASSIC_DESIGN,
   DESIGN_NAMES,
   loadDesignFonts,
+  loadPresetStyles,
   resolveDesign,
   setDesignAttribute,
+  setPresetAttribute,
 } from "../client-app/core/utilities/design";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
@@ -180,6 +182,8 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
       currentStyleElement.textContent = css;
       document.head.prepend(currentStyleElement);
       currentPresetName = presetName;
+      setPresetAttribute(presetName);
+      await loadPresetStyles(presetName);
     }
   } catch (error) {
     // eslint-disable-next-line no-console

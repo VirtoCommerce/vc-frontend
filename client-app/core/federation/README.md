@@ -229,7 +229,9 @@ What the host does **not** do:
    so it beats every layered host rule it matches except a layered `!important`
    ([`assets/styles/README.md`](../../assets/styles/README.md)). The host reserves a `plugins` layer
    (before its utilities) and a `plugins-vendor` layer (after its preflight) for plugin and bundled
-   third-party CSS; VCST-5760 moves plugin sheets into them. Prefer `<style scoped>`.
+   third-party CSS; VCST-5760 moves plugin sheets into them. A plugin styles itself only with host kit components
+   and host tokens, and host designs and presets never target its blocks:
+   [Modules and remote plugins](../../assets/styles/README.md#modules-and-remote-plugins).
 4. **No integrity check** of plugin files. Deferred while plugins come from our own backend.
 
 What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything

@@ -221,6 +221,14 @@ export default defineConfigWithVueTs(
         },
         { element: "VcItemPriceCatalog", message: "VcItemPriceCatalog is deprecated. Use VcProductPrice instead." },
         {
+          element: "VcExpansionPanel",
+          message: "VcExpansionPanel is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
+          element: "VcExpansionPanels",
+          message: "VcExpansionPanels is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
           element: "VcDateSelector",
           message:
             "VcDateSelector is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",

@@ -51,4 +51,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   identityProviders: {},
   signInMethods: {},
   pageBuilderSection: {},
+  accountSecurity: {},
+  companyInfo: {},
 };
