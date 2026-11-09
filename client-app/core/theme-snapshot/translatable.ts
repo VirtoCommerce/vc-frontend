@@ -1,5 +1,8 @@
-/** A language key of a translatable dictionary: `en`, `en-US`. */
-const CULTURE_KEY_REGEX = /^[a-z]{2}(?:-[A-Za-z]{2,4})?$/;
+/** A language key of a translatable dictionary: a BCP-47-shaped culture name (`en`, `en-US`, `sr-Latn-RS`). */
+const CULTURE_KEY_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
+
+/** A culture name with a subtag: a dictionary has at least one, so a row such as `{ "sku": "X1" }` stays a row. */
+const CULTURE_WITH_SUBTAG_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})+$/i;
 
 /**
  * Whether a setting value is a translatable dictionary ("language → text"), as the designer's draft may hold one.
@@ -12,16 +15,37 @@ export function isTranslatableDictionary(value: unknown): value is Record<string
 
   const entries = Object.entries(value);
 
-  return entries.length > 0 && entries.every(([key, text]) => CULTURE_KEY_REGEX.test(key) && typeof text === "string");
+  return (
+    entries.some(([key]) => CULTURE_WITH_SUBTAG_REGEX.test(key)) &&
+    entries.every(([key, text]) => CULTURE_KEY_REGEX.test(key) && typeof text === "string")
+  );
 }
 
-/** The text of a dictionary in the language: else in the store default language, else its first text. */
+/**
+ * The text of a dictionary in the language, culture names compared ignoring case: the exact culture, else one of the
+ * same language (`de` before `de-DE` for `de-AT`), else the store default language, else its first text.
+ */
 export function pickTranslation(
   dictionary: Record<string, string>,
   cultureName: string,
   defaultCultureName: string,
 ): string {
-  return dictionary[cultureName] ?? dictionary[defaultCultureName] ?? Object.values(dictionary)[0] ?? "";
+  const entries = Object.entries(dictionary);
+  const language = languageOf(cultureName);
+  const find = (matches: (key: string) => boolean) => entries.find(([key]) => matches(key.toLowerCase()))?.[1];
+
+  return (
+    find((key) => key === cultureName.toLowerCase()) ??
+    find((key) => key === language) ??
+    find((key) => languageOf(key) === language) ??
+    find((key) => key === defaultCultureName.toLowerCase()) ??
+    entries[0]?.[1] ??
+    ""
+  );
+}
+
+function languageOf(cultureName: string): string {
+  return cultureName.split("-")[0].toLowerCase();
 }
 
 /** Replaces every translatable dictionary inside the value with its text in the language. */
