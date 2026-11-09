@@ -151,6 +151,7 @@ describe("preview protocol 2", () => {
       template: "page.landing",
       ruleId: "landing",
       document: DOCUMENT,
+      rules: { template: "page.landing", ruleId: "landing" },
     });
     await flushPromises();
 
@@ -159,7 +160,33 @@ describe("preview protocol 2", () => {
       pageType: "page",
       template: "page.landing",
       ruleId: "landing",
+      rules: { template: "page.landing", ruleId: "landing" },
       overriddenByWhiteLabeling: ["brand.logoUrl"],
+    });
+  });
+
+  it("reports what the draft's rules pick for the page while another template is open", async () => {
+    const { preview, post } = createPreview();
+    useThemeSnapshot().setDraft({ rules: { version: 2, product: [{ id: "all", template: "product.b2c" }] } });
+    await preview.handleRender(render({ templateKey: "product", url: "/printers/x1" }));
+
+    useThemeTemplates().setLastResolution(useThemeTemplates().resolveTemplate("product", {}));
+    await flushPromises();
+
+    const [, data] = post.mock.calls.filter(([type]) => type === "resolved").at(-1) ?? [];
+    expect(data).toMatchObject({
+      url: "/printers/x1",
+      template: "product",
+      ruleId: null,
+      rules: { template: "product.b2c", ruleId: "all" },
+    });
+    expect(() => structuredClone(data)).not.toThrow();
+
+    useThemeTemplates().setOpenTemplate(undefined);
+    expect(useThemeTemplates().resolveTemplate("product", {})).toMatchObject({
+      template: "product.b2c",
+      ruleId: "all",
+      rules: { template: "product.b2c", ruleId: "all" },
     });
   });
 
@@ -180,6 +207,7 @@ describe("preview protocol 2", () => {
       template: "product.b2c",
       ruleId: "b2c",
       document: DOCUMENT,
+      rules: { template: "product.b2c", ruleId: "b2c" },
     });
     await flushPromises();
     post.mockClear();

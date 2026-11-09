@@ -48,6 +48,21 @@ export type PreviewV2MessageType =
   | { type: "inspector"; enabled: boolean }
   | { type: "colorScheme"; scheme: "light" | "dark" };
 
+/** Protocol 2: the template a page shows, sent after every render and when the page's data changes the choice. */
+export interface IResolvedData {
+  /** The route the choice was made for. */
+  url: string;
+  pageType: string;
+  /** The template rendered: the one the designer has open, else the rules' pick. */
+  template: string;
+  /** The rule that chose it; `null` for an open template, the page's own template, the page type's or a built-in one. */
+  ruleId: string | null;
+  /** What the store's rules (the draft's, else the snapshot's) pick for the page, whichever template is open. */
+  rules: { template: string; ruleId: string | null };
+  /** The theme fields white-labeling set for this visitor, which the theme does not change. */
+  overriddenByWhiteLabeling: string[];
+}
+
 const PREVIEW_V2_TYPES = new Set(["render", "draft", "inspector", "colorScheme"]);
 
 /** Whether a designer message, already validated, is of protocol 2: its types are not protocol 1's. */

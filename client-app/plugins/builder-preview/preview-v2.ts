@@ -18,7 +18,7 @@ import { Logger } from "@/core/utilities";
 import { getTemplatePageType, useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
-import type { IRenderMessage } from "./builder-preview.protocol";
+import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
@@ -240,13 +240,17 @@ export function createPreviewV2(options: IPreviewV2Options) {
       return;
     }
 
-    post("resolved", {
+    const data: IResolvedData = {
       url: render.templateKey ? router.currentRoute.value.fullPath : (render.url ?? router.currentRoute.value.fullPath),
       pageType: resolution.pageType,
       template: resolution.template,
       ruleId: resolution.ruleId,
+      // A copy: the resolution is a readonly proxy, which postMessage cannot clone.
+      rules: { template: resolution.rules.template, ruleId: resolution.rules.ruleId },
       overriddenByWhiteLabeling: themeFieldsSetByWhiteLabeling.value,
-    });
+    };
+
+    post("resolved", data);
   }
 
   function startEditing(itemId: string, event: MouseEvent): void {

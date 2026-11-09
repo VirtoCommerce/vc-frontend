@@ -6,7 +6,7 @@ import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
 import { useTemplateConditions } from "./conditions";
 import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "./rules";
 import type { ITemplateSubject } from "./conditions";
-import type { ITemplateResolution } from "./rules";
+import type { ITemplateResolution, TemplateChoiceType } from "./rules";
 import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -40,19 +40,24 @@ export const useThemeTemplates = createGlobalState(() => {
     ownTemplate?: unknown,
   ): ITemplateResolution {
     const open = openTemplate.value;
-    const resolution: ITemplateResolution =
+    const choice: TemplateChoiceType = chooseTemplate({
+      pageType,
+      subject,
+      rules: rules.value,
+      templates: templates.value,
+      getCondition: getTemplateCondition,
+      ownTemplate,
+    }) ?? { pageType, template: pageType, ruleId: null, document: BUILT_IN_TEMPLATES[pageType] };
+    const shown: TemplateChoiceType =
       open && getTemplatePageType(open.key) === pageType
         ? { pageType, template: open.key, ruleId: null, document: open.document }
-        : (chooseTemplate({
-            pageType,
-            subject,
-            rules: rules.value,
-            templates: templates.value,
-            getCondition: getTemplateCondition,
-            ownTemplate,
-          }) ?? { pageType, template: pageType, ruleId: null, document: BUILT_IN_TEMPLATES[pageType] });
+        : choice;
 
-    return { ...resolution, document: withMainSection(localize(resolution.document), pageType, resolution.template) };
+    return {
+      ...shown,
+      document: withMainSection(localize(shown.document), pageType, shown.template),
+      rules: { template: choice.template, ruleId: choice.ruleId },
+    };
   }
 
   function setOpenTemplate(key: string | undefined, document?: IThemePageDocument): void {

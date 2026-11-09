@@ -26,14 +26,26 @@ export const DEFAULT_TEMPLATE_RULES: Readonly<Record<ThemePageType, ITemplateRul
   page: [],
 };
 
+/** A template the page's rules pick, and the rule that picks it. */
+export interface ITemplatePick {
+  template: string;
+  /** `null` for the page's own template, the page type's template or a built-in one. */
+  ruleId: string | null;
+}
+
 export interface ITemplateResolution {
   pageType: ThemePageType;
-  /** The template key rendered. */
+  /** The template key rendered: the template the designer has open, else the rules' pick. */
   template: string;
-  /** The rule that chose it; `null` for the page's own template, the page type's template or a built-in one. */
+  /** The rule that chose it; `null` for an open template, the page's own template, the page type's or a built-in one. */
   ruleId: string | null;
   document: IThemePageDocument;
+  /** What the rules pick for the page, whichever template the designer has open. */
+  rules: ITemplatePick;
 }
+
+/** A choice of the rules alone: the template it picks is the one rendered. */
+export type TemplateChoiceType = Omit<ITemplateResolution, "rules">;
 
 export interface ITemplateChoiceOptions {
   pageType: ThemePageType;
@@ -56,7 +68,7 @@ export function getTemplatePageType(key: string): string {
  * enabled rule whose every condition holds, else the template keyed by the page type. A rule naming a template that
  * does not exist is skipped; a condition the storefront does not know never holds.
  */
-export function chooseTemplate(options: ITemplateChoiceOptions): ITemplateResolution | undefined {
+export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceType | undefined {
   const { pageType, subject, rules, templates, getCondition, ownTemplate } = options;
 
   if (
