@@ -7,7 +7,7 @@
     >
       <!-- Logo column -->
       <div class="mb-5 flex-none">
-        <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="h-11" lazy />
+        <VcImage :src="footerLogoUrl" :alt="$context.storeName" class="h-11" lazy />
       </div>
 
       <nav class="grid sm:grow sm:grid-cols-2 sm:gap-12 md:grid-cols-3 lg:grid-cols-4 xl:gap-19 2xl:grid-cols-5">
@@ -60,6 +60,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
+import { useFooterLogo } from "@/shared/layout/composables/useFooterLogo";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import pkg from "../../../../../package.json";
@@ -71,7 +72,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
+const { footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
+const { footerLogoUrl } = useFooterLogo();
 const { footerLinks, fetchFooterLinks } = useNavigations();
 const { footerColumns: themeFooterColumns, copyright, isCreditShown, siteFooter } = useThemeChrome();
 

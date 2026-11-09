@@ -90,7 +90,7 @@ describe("useWhiteLabeling", () => {
         { logoUrl: "org.svg", secondaryLogoUrl: "store-white.svg", isOrganizationLogoUploaded: true },
       ],
     ])(
-      "names the logo for dark backgrounds for %s light logo, as the header then never shows the theme's",
+      "names the logo for dark backgrounds for %s light logo, as the header and the footer then never show the theme's",
       (_, settings) => {
         useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });
         setWhiteLabeling(settings);
@@ -101,13 +101,10 @@ describe("useWhiteLabeling", () => {
       },
     );
 
-    it("names the logo for dark backgrounds for white-labeling's own, which the footer shows over the theme's", () => {
-      useThemeSnapshot().setDraft({ brand: { secondaryLogoUrl: "acme-white.svg" } });
+    it("names the logo for dark backgrounds for white-labeling's own logo for dark backgrounds", () => {
       setWhiteLabeling({ secondaryLogoUrl: "store-white.svg" });
-      const { secondaryLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
 
-      expect(secondaryLogoUrl.value).toBe("store-white.svg");
-      expect(themeFieldsSetByWhiteLabeling.value).toEqual(["brand.secondaryLogoUrl"]);
+      expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual(["brand.secondaryLogoUrl"]);
     });
 
     it("does not name the logo for dark backgrounds without a white-labeling logo", () => {

@@ -122,8 +122,7 @@ function _useWhiteLabeling() {
       const settings = whiteLabelingSettings.value;
       const fields: [string, unknown][] = [
         ["brand.logoUrl", settings?.logoUrl],
-        // The header pairs its dark logo with the light one's source, so white-labeling's light logo hides the theme's
-        // dark logo there; the footer shows white-labeling's dark logo whenever it is set.
+        // The header and the footer take the dark logo from the light logo's source.
         ["brand.secondaryLogoUrl", settings?.secondaryLogoUrl || settings?.logoUrl],
         ["brand.faviconUrl", settings?.favicons?.length],
         ["palette", settings?.themePresetName],
