@@ -3,7 +3,7 @@
     <template #header>
       <SkipToLinks />
 
-      <div class="secure-layout__header">
+      <div ref="headerElement" class="secure-layout__header">
         <router-link to="/" replace>
           <VcImage :src="logoUrl" :alt="$context.storeName" class="secure-layout__logo" lazy />
         </router-link>
@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { useCssVar, useElementBounding } from "@vueuse/core";
+import { ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import VcFooter from "../footer/vc-footer.vue";
 import Created from "../print/created.vue";
@@ -32,6 +34,19 @@ import SkipToLinks from "../skip-to-links/skip-to-links.vue";
 import SecureCheckoutBadge from "./_internal/secure-checkout-badge.vue";
 
 const { logoUrl } = useWhiteLabeling();
+
+const headerElement = ref<HTMLElement | null>(null);
+const { height: headerHeight } = useElementBounding(headerElement);
+// The sticky header's height, so a skip link or anchor jump stops below it (`html { scroll-padding-top }`).
+const appHeaderHeightVar = useCssVar("--vc-app-header-height");
+
+watch(
+  headerHeight,
+  (value) => {
+    appHeaderHeightVar.value = `${value}px`;
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
