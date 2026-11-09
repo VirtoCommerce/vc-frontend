@@ -231,7 +231,7 @@ What the host does **not** do:
    (before its utilities) and a `plugins-vendor` layer (after its preflight) for plugin and bundled
    third-party CSS; VCST-5760 moves plugin sheets into them. Prefer `<style scoped>`. A plugin that ships
    `@tailwind utilities` globally breaks host pages: its plain `.flex-col` loads after the host's CSS and beats the
-   host's `lg:flex-row` by source order, so the generator styles with `@apply` in scoped blocks instead.
+   host's `lg:flex-row` by source order, so the scaffold styles with `@apply` in scoped blocks instead.
 4. **No integrity check** of plugin files. Deferred while plugins come from our own backend.
 
 What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything

@@ -233,6 +233,21 @@ describe("create-plugin scaffolder", () => {
     expect(page).toContain("@apply p-6 text-primary-700;");
   });
 
+  it("gives the CLAUDE.md styling rule only to a Tailwind scaffold and numbers the Never list by position", () => {
+    const readClaudeMd = (name: string, flags: string[]) =>
+      readFileSync(join(scaffoldExpectingSuccess(name, ["--yes", ...flags]), "CLAUDE.md"), "utf8");
+
+    expect(readClaudeMd("bare-plugin", [])).not.toContain("@apply");
+
+    const apollo = readClaudeMd("apollo-plugin", ["--with-apollo"]);
+    expect(apollo).not.toContain("@apply");
+    expect(apollo).toContain("3. Edit `src/api/graphql/types.ts` by hand");
+
+    const both = readClaudeMd("tw-apollo-plugin", ["--with-tailwind", "--with-apollo"]);
+    expect(both).toContain("3. Ship a global stylesheet with `@tailwind utilities`");
+    expect(both).toContain("4. Edit `src/api/graphql/types.ts` by hand");
+  });
+
   it("rejects unknown flags instead of silently ignoring them", () => {
     // "--tailwind" is the natural typo for "--with-tailwind"; silently ignoring it would
     // scaffold WITHOUT tailwind in CI/non-TTY runs where no prompt can catch the mistake.

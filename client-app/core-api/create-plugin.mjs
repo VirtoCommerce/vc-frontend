@@ -204,7 +204,7 @@ const GROUPS = [
     key: "tailwind",
     flag: "--with-tailwind",
     defaultOn: false,
-    prompt: "Tailwind CSS (host design tokens, plugin-local utility pass)",
+    prompt: "Tailwind CSS (host design tokens, @apply in component styles)",
     packages: [],
   },
 ];
@@ -445,8 +445,7 @@ export default defineConfig({
 const tailwindConfig = `const path = require("path");
 const hostPreset = require("@vc-frontend/core/tailwind-preset");
 
-// The HOST's design system (colors via CSS custom properties, spacing, breakpoints),
-// scanning ONLY this plugin's sources - utilities match the host 1:1.
+// The HOST's design system (colors via CSS custom properties, spacing, breakpoints) for @apply in component styles.
 const preset = hostPreset.default ?? hostPreset;
 
 module.exports = {
@@ -457,8 +456,8 @@ module.exports = {
 
 const postcssConfig = `const path = require("path");
 
-// Same pipeline as the host, with Tailwind pinned to THIS plugin's config so it scans
-// the plugin's own sources and generates the utilities its templates use.
+// Same pipeline as the host, with Tailwind pinned to THIS plugin's config so @apply resolves against the
+// storefront's preset.
 module.exports = {
   plugins: {
     "postcss-import": {},
@@ -755,9 +754,9 @@ the storefront's CSS variables (\`var(--color-…)\`), not fixed values, so dark
   selected.tailwind &&
     `
 Tailwind here uses the storefront's preset through \`@apply\` in a component's \`<style scoped>\`. Don't add a global
-stylesheet with \`@tailwind utilities\`, and don't style with utility classes in templates: the plugin's copy of a
-plain utility (\`.flex-col\`) loads after the storefront's CSS and overrides its responsive ones (\`lg:flex-row\`) on
-every page.`,
+stylesheet with \`@tailwind utilities\`: the plugin's copy of a plain utility (\`.flex-col\`) loads after the
+storefront's CSS and overrides its responsive ones (\`lg:flex-row\`) on every page. Don't style with utility classes
+in templates either: nothing here generates them, so such a class works only while the storefront's own CSS has it.`,
   webDir
     ? `
 ## Shipping
@@ -814,10 +813,12 @@ How it plugs in, its files, rules and commands: @README.md
 
 1. Import from a storefront path (\`@/…\`). A symbol the facade lacks is either added to it in vc-frontend
    ([S3](${SCENARIOS_URL}/s3-extend-the-facade.md)) or copied here, small.
-2. Edit \`@vc-frontend/core\` types, or commit its pin as \`portal:\`, \`link:\` or a yalc path.
-3. Ship a global stylesheet with \`@tailwind utilities\`: its plain utilities override the storefront's responsive
+2. Edit \`@vc-frontend/core\` types, or commit its pin as \`portal:\`, \`link:\` or a yalc path.`,
+  selected.tailwind &&
+    `3. Ship a global stylesheet with \`@tailwind utilities\`: its plain utilities override the storefront's responsive
    ones on every page. Style with \`@apply\` in \`<style scoped>\`.`,
-  selected.apollo && "4. Edit `src/api/graphql/types.ts` by hand: run `yarn generate:graphql-types`.",
+  selected.apollo &&
+    `${selected.tailwind ? 4 : 3}. Edit \`src/api/graphql/types.ts\` by hand: run \`yarn generate:graphql-types\`.`,
   `
 ## Where each task is described
 
