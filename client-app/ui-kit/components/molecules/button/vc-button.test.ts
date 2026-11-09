@@ -37,6 +37,7 @@ const LAYOUT_PROPERTIES = new Set([
 const LAYOUT_PREFIX = /^(?:inset|margin|padding|flex|grid)(?:-|$)/;
 
 const tailwind = tailwindcss({
+  // Not `new URL("…", import.meta.url)`: Vite rewrites that literal form into an http:// dev-server URL.
   ...loadConfig(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../../../tailwind.config.ts")),
   content: [{ raw: "" }],
 });
@@ -69,16 +70,16 @@ function compiledRules(scss: string): CompiledRuleType[] {
   return rules;
 }
 
-function hasRootSubject(selector: string): boolean {
+function hasRootSubject(ruleSelector: string): boolean {
   let found = false;
 
-  selectorParser((selectors) => {
-    selectors.each((compound) => {
-      const subject = compound.nodes.slice(compound.nodes.map((node) => node.type).lastIndexOf("combinator") + 1);
+  selectorParser((root) => {
+    root.each((selector) => {
+      const subject = selector.nodes.slice(selector.nodes.map((node) => node.type).lastIndexOf("combinator") + 1);
 
       found ||= subject.some((node) => node.type === "class" && ROOT_CLASS.test(node.value));
     });
-  }).processSync(selector);
+  }).processSync(ruleSelector);
 
   return found;
 }
