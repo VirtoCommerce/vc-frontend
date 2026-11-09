@@ -25,4 +25,10 @@ describe("ProductInfo", () => {
       "properties",
     ]);
   });
+
+  it.each(["text", "toString", "constructor"])("renders nothing for the block type %s", (type) => {
+    const wrapper = mountProductInfo([{ id: "unknown", type }]);
+
+    expect(wrapper.findAllComponents(PageBuilderSection)).toHaveLength(0);
+  });
 });

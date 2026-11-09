@@ -1,7 +1,7 @@
 <template>
   <component
     :is="component"
-    v-if="component && isMounted"
+    v-if="isReady && isMounted"
     v-bind="{ ...declaredProps, ...$attrs, ...getPreviewSectionAttrs(item.id) }"
   />
 
@@ -12,7 +12,6 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from "@vueuse/core";
 import { computed, ref, shallowRef, useTemplateRef, watch } from "vue";
-import { Logger } from "@/core/utilities";
 import {
   getLoadedSectionComponent,
   getPageBuilderSection,
@@ -50,9 +49,12 @@ const component = computed(() => props.component ?? getPageBuilderSection(props.
 
 /**
  * Read for its props only: rendering goes through the async wrapper, which retries a failed load on the next mount.
- * Until it loads, no item keys pass.
+ * The wrapper renders once the props are known, so a section never starts with its defaults.
  */
 const propsSource = shallowRef<Component>();
+const loadFailed = ref(false);
+
+const isReady = computed(() => !!component.value && (!!propsSource.value || loadFailed.value));
 
 const declaredProps = computed(() =>
   propsSource.value
@@ -83,6 +85,7 @@ watch(
   component,
   async (value) => {
     propsSource.value = value ? getLoadedSectionComponent(value) : undefined;
+    loadFailed.value = false;
 
     if (!value || propsSource.value) {
       return;
@@ -94,8 +97,11 @@ watch(
       if (component.value === value) {
         propsSource.value = loaded;
       }
-    } catch (error) {
-      Logger.error("[page-builder-section] Failed to load a section", error);
+    } catch {
+      // The async wrapper reports the error when it mounts, and resets the load for the next mount.
+      if (component.value === value) {
+        loadFailed.value = true;
+      }
     }
   },
   { immediate: true },

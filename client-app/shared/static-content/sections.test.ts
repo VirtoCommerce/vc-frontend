@@ -3,6 +3,7 @@ import { defineAsyncComponent, defineComponent } from "vue";
 import {
   getLoadedSectionComponent,
   getRegisteredSection,
+  getSectionLinkAttr,
   loadSectionComponent,
   pickDeclaredProps,
   sanitizeSectionHtml,
@@ -19,7 +20,11 @@ describe("toHeadingTag", () => {
     expect(toHeadingTag(tag)).toBe(tag);
   });
 
-  it.each(["script", "iframe", "a", "H2", "", undefined, 2])("falls back to h2 for %j", (value) => {
+  it("ignores the case of the tag", () => {
+    expect(toHeadingTag("H3")).toBe("h3");
+  });
+
+  it.each(["script", "iframe", "a", "", undefined, 2])("falls back to h2 for %j", (value) => {
     expect(toHeadingTag(value)).toBe("h2");
   });
 });
@@ -63,6 +68,28 @@ describe("sanitizeSectionHtml", () => {
     expect(sanitizeSectionHtml(html)).toBe(html);
   });
 
+  it.each(["whatsapp://send?phone=1", "skype:user?call", "tg://resolve?domain=shop", "sms:+15550100", "/catalog"])(
+    "keeps the link %s",
+    (url) => {
+      const html = `<a href="${url}">x</a>`;
+
+      expect(sanitizeSectionHtml(html)).toBe(html);
+    },
+  );
+
+  it.each(["javascript:alert(1)", "java\tscript:alert(1)", "VBScript:msgbox(1)", "data:text/html,<p>x</p>"])(
+    "drops the link %j",
+    (url) => {
+      expect(sanitizeSectionHtml(`<a href="${url}">x</a>`)).toBe("<a>x</a>");
+    },
+  );
+
+  it("keeps an inline data: image", () => {
+    const html = '<img src="data:image/png;base64,iVBORw0KGgo=">';
+
+    expect(sanitizeSectionHtml(html)).toBe(html);
+  });
+
   it("returns an empty string for no content", () => {
     expect(sanitizeSectionHtml(undefined)).toBe("");
   });
@@ -98,6 +125,20 @@ describe("pickDeclaredProps", () => {
   it("passes nothing to a component without props", () => {
     expect(pickDeclaredProps(defineComponent({ template: "<div />" }), { title: "Title" })).toEqual({});
   });
+});
+
+describe("getSectionLinkAttr", () => {
+  it("links a relative and an app URL", () => {
+    expect(getSectionLinkAttr("/catalog")).toEqual({ to: "/catalog" });
+    expect(getSectionLinkAttr("whatsapp://send?phone=1")).toEqual({ externalLink: "whatsapp://send?phone=1" });
+  });
+
+  it.each(["javascript:alert(1)", "data:text/html,<p>x</p>", "https://a b.com", undefined])(
+    "renders no link for %j",
+    (link) => {
+      expect(getSectionLinkAttr(link)).toEqual({});
+    },
+  );
 });
 
 describe("getRegisteredSection", () => {

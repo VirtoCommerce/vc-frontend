@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
 import { FIELD_ATTRIBUTE, isDesignerPreview, SECTION_ATTRIBUTE } from "@/plugins/builder-preview/utils";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
@@ -12,6 +13,12 @@ export type HeadingTagType = (typeof HEADING_TAGS)[number];
 const DEFAULT_HEADING_TAG: HeadingTagType = "h2";
 
 type DeclaredPropsType = string[] | Record<string, unknown>;
+
+/**
+ * The `isSafeLinkUrl` policy for URLs inside section HTML. DOMPurify tests it after stripping whitespace, so
+ * `java\tscript:` is caught; its default list would also drop app schemes such as `whatsapp:`.
+ */
+const ALLOWED_URI_REGEXP = /^(?!(?:javascript|vbscript|data):)/i;
 
 const SAME_CONTEXT_TARGETS = new Set(["", "_self", "_parent", "_top"]);
 
@@ -93,11 +100,20 @@ export function getRegisteredSection(
 }
 
 export function toHeadingTag(value: unknown): HeadingTagType {
-  return HEADING_TAGS.find((tag) => tag === value) ?? DEFAULT_HEADING_TAG;
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `value` is a string here
+  const tagName = typeof value === "string" ? value.toLowerCase() : value;
+  return HEADING_TAGS.find((tag) => tag === tagName) ?? DEFAULT_HEADING_TAG;
+}
+
+/** `getLinkAttr` for a link from section settings: a link `isSafeLinkUrl` rejects renders as no link. */
+export function getSectionLinkAttr(link: string | undefined): ReturnType<typeof getLinkAttr> {
+  return getLinkAttr(link && isSafeLinkUrl(link) ? link : undefined);
 }
 
 export function sanitizeSectionHtml(html: string | undefined): string {
-  return html ? htmlPurifier.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ["target"] }) : "";
+  return html
+    ? htmlPurifier.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ["target"], ALLOWED_URI_REGEXP })
+    : "";
 }
 
 export function getLoadedSectionComponent(component: Component): Component | undefined {

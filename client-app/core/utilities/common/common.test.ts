@@ -26,23 +26,6 @@ describe("getLinkAttr", () => {
     const link = "https://external-link.com";
     expect(getLinkAttr(link)).toEqual({ externalLink: link });
   });
-
-  it.each(["mailto:sales@example.com", "tel:+15550100", "whatsapp://send?phone=15550100", "contact-us", "#section"])(
-    'returns "externalLink" for the allowed link %s',
-    (link) => {
-      expect(getLinkAttr(link)).toEqual({ externalLink: link });
-    },
-  );
-
-  it.each([
-    "javascript:alert(1)",
-    " JavaScript:alert(1)",
-    "java\tscript:alert(1)",
-    "vbscript:msgbox(1)",
-    "data:text/html,<p>x</p>",
-  ])("returns an empty object for the link %j", (link) => {
-    expect(getLinkAttr(link)).toEqual({});
-  });
 });
 
 describe("isSafeLinkUrl", () => {
@@ -54,6 +37,7 @@ describe("isSafeLinkUrl", () => {
     "tel:123",
     "sms:+15550100",
     "skype:user?call",
+    "whatsapp://send?phone=15550100",
     "page",
   ])("accepts %s", (url) => {
     expect(isSafeLinkUrl(url)).toBe(true);
@@ -62,9 +46,14 @@ describe("isSafeLinkUrl", () => {
   it.each([
     "javascript:void(0)",
     "JAVASCRIPT:void(0)",
+    " JavaScript:void(0)",
+    "java\tscript:void(0)",
     "\njavascript:void(0)",
     "vbscript:msgbox(1)",
+    "data:text/html,<p>x</p>",
     "data:image/svg+xml,<svg/>",
+    "http://",
+    "https://a b.com/page",
   ])("rejects %j", (url) => {
     expect(isSafeLinkUrl(url)).toBe(false);
   });

@@ -136,6 +136,7 @@ function getLinkTag(item: SlideType) {
     return "div";
   }
 
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `url` is checked above
   return url.startsWith("/") ? "router-link" : "a";
 }
 
@@ -145,6 +146,7 @@ function getLinkAttr(item: SlideType) {
   if (!url) {
     return {};
   }
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `url` is checked above
   if (url.startsWith("/")) {
     return { to: url, title: item.title };
   } else {

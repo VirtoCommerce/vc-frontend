@@ -1,5 +1,12 @@
 <template>
-  <Slider class="image-carousel" :slides="slides" :title="title" :subtitle="subtitle" :height="height" />
+  <Slider
+    class="image-carousel"
+    :slides="slides"
+    :title="title"
+    :subtitle="subtitle"
+    :height="height"
+    :background="background"
+  />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +22,7 @@ interface IProps {
   title?: string;
   subtitle?: string;
   height?: "small" | "medium" | "large" | "auto";
+  background?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
