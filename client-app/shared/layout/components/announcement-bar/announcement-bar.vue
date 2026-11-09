@@ -24,7 +24,6 @@ import { useStaticPage } from "@/shared/static-content/composables/useStaticPage
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import type { StyleValue } from "vue";
 
-/** A palette token name, as a `color-token` setting holds it: `color_primary_500`. */
 const TOKEN_REGEX = /^[a-z][a-z0-9_]*$/;
 
 const HOME_PERMALINK_REGEX = /^\/*$/;
@@ -33,7 +32,6 @@ const route = useRoute();
 const { announcementBar } = useThemeChrome();
 const { staticPagePreviewSubject } = useStaticPage();
 
-/** The home page; on the designer's preview route, the page the designer shows there. */
 const isHomePage = computed(() => {
   if (route.path === DESIGNER_PREVIEW_PATH) {
     const permalink = staticPagePreviewSubject.value?.permalink;
@@ -59,7 +57,6 @@ const announcements = computed(() => {
     }));
 });
 
-/** The bar's colors are palette tokens, so the bar follows the light and dark theme. */
 const colors = computed<StyleValue>(() => ({
   "--bg-color": toTokenVariable(announcementBar.value?.background),
   "--text-color": toTokenVariable(announcementBar.value?.color),

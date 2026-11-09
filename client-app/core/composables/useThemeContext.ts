@@ -73,7 +73,6 @@ function getThemeConfig() {
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
-  /** The preset `addPresetToThemeContext` loaded, which the theme's palette replaces while it has one. */
   let presetPalette: { light: IThemeConfigPreset; dark?: IThemeConfigPreset } | undefined;
 
   function setThemeContext(store: StoreResponseType) {
@@ -116,11 +115,7 @@ function _useThemeContext() {
     }
   }
 
-  /**
-   * Puts the Page Builder theme's palette over the preset, or the preset back without one; a token the palette lacks
-   * keeps the preset's value. Call it only when white-labeling chose no preset: its preset replaces the whole palette,
-   * and the two are never mixed.
-   */
+  /** Call only when white-labeling chose no preset: its preset replaces the whole palette. */
   function setThemePalette(palette: IThemePalette | undefined): void {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");

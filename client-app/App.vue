@@ -40,13 +40,12 @@ const { favIcons } = useWhiteLabeling();
 const { initRouteGuard } = useQueuedMutations();
 const i18n = useI18n();
 
-// If favIcons.value is an empty array, the default favicon from index.html will be used. Computed, so a favicon of
-// the Page Builder theme that arrives later (a late snapshot, the designer's draft) is applied too.
+// An empty favIcons.value keeps the favicon from index.html. Computed because a theme favicon can arrive after boot.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({
   link: computed(() =>
     favIcons.value?.length
-      ? // Skip malformed favicons (schema allows null entries / missing href); normalize the rest for unhead.
+      ? // The schema allows null entries and a missing href.
         favIcons.value
           .filter((icon) => icon?.href)
           .map((icon) =>

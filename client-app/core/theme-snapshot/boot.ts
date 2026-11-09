@@ -12,26 +12,18 @@ import type { IThemeSnapshotRequest } from "./request";
 import type { IPublishedTheme } from "./types";
 import type { Router } from "vue-router";
 
-/** The store and language `pageContext` resolved: a snapshot is used only for them. */
 export interface IThemeSnapshotContext {
   storeId: string;
   cultureName: string;
 }
 
 export interface IThemeSnapshotBoot {
-  /**
-   * Asks again in the store and language `pageContext` resolved as soon as the boot snapshot turns out to be for
-   * another one, so the second request runs alongside the rest of boot rather than after it.
-   */
+  /** Starts early when the boot snapshot is for another context, so the second request runs alongside boot. */
   prepare(context: IThemeSnapshotContext): void;
-  /**
-   * Accepts the boot snapshot for the store and language `pageContext` resolved. A snapshot that has not arrived yet
-   * is not waited for: it takes over on the next navigation inside the site. Never throws.
-   */
+  /** A snapshot still in flight is not waited for: it takes over on the next navigation. Never throws. */
   settle(context: IThemeSnapshotContext): Promise<void>;
 }
 
-/** How long boot waits for a second request when the first one answered for another store or language. */
 export const THEME_SNAPSHOT_REFETCH_TIMEOUT_MS = 1500;
 
 const LOG_SCOPE = "[theme-snapshot]";
@@ -40,10 +32,6 @@ type OutcomeType = { result: IPublishedTheme | null } | { error: unknown };
 
 type RefetchType = () => Promise<OutcomeType>;
 
-/**
- * Picks up the request the inline script in `index.html` sent, or sends it when the script did not run. Returns
- * nothing when the storefront is built without `new_page_builder_enabled`: then no request is sent at all.
- */
 export function startThemeSnapshot(fallback: { domain: string; cultureName?: string }): IThemeSnapshotBoot | undefined {
   if (!isNewPageBuilderEnabled()) {
     return undefined;
@@ -82,9 +70,8 @@ export function startThemeSnapshot(fallback: { domain: string; cultureName?: str
 }
 
 /**
- * Lets a snapshot that arrived late, or the retry of a failed request, take over once a navigation inside the site is
- * done: the next page renders with it, and neither the page being left nor a cancelled navigation is re-rendered.
- * The first navigation does not retry, as the request failed only moments before.
+ * A late snapshot takes over after a navigation, so the page being left is never re-rendered.
+ * The first navigation does not retry: the request failed only moments before.
  */
 export function installThemeSnapshotNavigation(router: Router, getContext: () => IThemeSnapshotContext): void {
   if (!isNewPageBuilderEnabled()) {
@@ -149,7 +136,6 @@ function failBoot(error: unknown): void {
   useThemeSnapshot().setFailed();
 }
 
-/** Without `refetch`, a snapshot for another store or language is kept as it is: the request is not repeated. */
 async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, refetch?: RefetchType): Promise<void> {
   const { setLate, setFailed } = useThemeSnapshot();
 
@@ -166,11 +152,7 @@ async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, 
   await acceptLate(await refetch(), context);
 }
 
-/**
- * A theme is for the context when its store is the one `pageContext` resolved and the request asked for its language:
- * a language the publication has no file for is served in the store default language, and asking again would get the
- * same.
- */
+/** A language the publication has no file for is served in the store default: asking again would get the same. */
 function isForOtherContext(
   outcome: OutcomeType,
   context: IThemeSnapshotContext,

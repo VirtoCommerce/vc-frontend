@@ -28,7 +28,6 @@ export type TransferDataType = {
 
 const PREVIEW_UPDATE_TYPES = new Set(["changed", "update", "remove", "add", "reload", "page", "swap", "preview"]);
 
-/** Protocol 2: one message renders the page or template on the page at `url`. */
 export interface IRenderMessage {
   type: "render";
   document: IThemePageDocument;
@@ -48,24 +47,21 @@ export type PreviewV2MessageType =
   | { type: "inspector"; enabled: boolean }
   | { type: "colorScheme"; scheme: "light" | "dark" };
 
-/** Protocol 2: the template a page shows, sent after every render and when the page's data changes the choice. */
+/** Sent after every render and whenever the page's data changes the template choice. */
 export interface IResolvedData {
-  /** The route the choice was made for. */
   url: string;
   pageType: ThemePageType;
-  /** The template rendered: the one the designer has open, else the rules' pick. */
   template: string;
-  /** The rule that chose it; `null` for an open template, the page's own template, the page type's or a built-in one. */
+  /** `null` when no rule chose it: an open template, the page's own, the page type's or a built-in one. */
   ruleId: string | null;
-  /** What the store's rules (the draft's, else the snapshot's) pick for the page, whichever template is open. */
+  /** What the rules pick for the page, whichever template is open in `template`. */
   rules: { template: string; ruleId: string | null };
-  /** The theme fields white-labeling set for this visitor, which the theme does not change. */
+  /** Theme fields white-labeling sets for this visitor: the theme's values for them have no effect. */
   overriddenByWhiteLabeling: string[];
 }
 
 const PREVIEW_V2_TYPES = new Set(["render", "draft", "inspector", "colorScheme"]);
 
-/** Whether a designer message, already validated, is of protocol 2: its types are not protocol 1's. */
 export function isPreviewV2Type(type: string): boolean {
   return PREVIEW_V2_TYPES.has(type);
 }

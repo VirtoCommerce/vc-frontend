@@ -6,5 +6,4 @@ export const MAX_RATING = 5;
 
 export const DEFAULT_REVIEW_IMAGES_SCOPE: string = "review-images";
 
-/** The type product templates store the reviews section under. */
 export const PRODUCT_REVIEWS_SECTION_TYPE = "product-reviews";

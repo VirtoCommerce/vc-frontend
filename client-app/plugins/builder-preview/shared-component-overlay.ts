@@ -146,7 +146,6 @@ export class SharedComponentOverlay {
     return true;
   }
 
-  /** Shows the placements and takes the pointer in them; protocol 2 does so only while the inspector is on. */
   setEnabled(isEnabled: boolean): void {
     this.isEnabled = isEnabled;
     this.layer.style.display = isEnabled ? "" : "none";
@@ -157,7 +156,6 @@ export class SharedComponentOverlay {
     }
   }
 
-  /** The placement of a shared component under the pointer, if the overlay is on. */
   findPlacementAt(clientX: number, clientY: number): string | null {
     if (!this.isEnabled) {
       return null;

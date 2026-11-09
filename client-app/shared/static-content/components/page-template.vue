@@ -35,10 +35,8 @@ import {
 import PageBuilderSection from "./page-builder-section.vue";
 
 interface IProps {
-  /** The page's own settings: its `template` and `layout` choose over its template's. */
   pageSettings?: Record<string, unknown>;
   permalink?: string;
-  /** The slug's `objectType`: `Pages` for a page from the database, `ContentFile` for a file page. */
   objectType?: string;
 }
 
@@ -58,20 +56,17 @@ const templateResolution = useTemplateResolution(
   () => props.pageSettings?.template,
 );
 
-/** The page template's sections around the page, which stands where the template's `page-content` section is. */
 const templateParts = computed(() =>
   splitTemplate(templateResolution.value?.document.content ?? [], MAIN_SECTION_TYPES.page),
 );
 
 const settings = computed(() => mergePageSettings(templateResolution.value?.document.settings, props.pageSettings));
 
-/** The page's settings, for the template's sections that declare them. */
 const sectionContext = computed(() => ({ settings: settings.value }));
 
 watchEffect(() => {
   setPageLayout(getSettingsLayout(settings.value));
 });
 
-// With the new Page Builder the page's address for search engines comes from its permalink, never the visited URL.
 usePermalinkSeo(() => props.permalink, isNewPageBuilderEnabled);
 </script>

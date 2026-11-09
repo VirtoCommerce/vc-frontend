@@ -20,9 +20,7 @@ import RecommendedProducts from "./recommended-products.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
-  /** The product of the page the section is on. */
   product?: Product;
-  /** One recommendation list per block, by its model (`related-products`, `bought-together`). */
   blocks?: { id: string; model?: string; hidden?: boolean }[];
 }
 

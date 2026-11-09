@@ -165,7 +165,6 @@ export function measureElement(element: HTMLElement): {
 }
 
 let templateUrl: string | undefined;
-/** A storefront page the Vue designer renders a template on: the preview route lets the router go there. */
 let allowedNavigation: string | undefined;
 let previewToken: string | null | undefined;
 let originalUserId: string | undefined;
@@ -265,9 +264,7 @@ interface IPreviewContext {
   sharedComponentOverlay: SharedComponentOverlay | null;
   loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>;
   schemas?: PageBuilderSchemaType;
-  /** The Vue designer's side, once it connects with protocol 2; only with the new Page Builder. */
   previewV2?: PreviewV2Type;
-  /** Runs a task after the designer's messages that came before it. */
   enqueue: (task: () => Promise<void>) => void;
 }
 
@@ -300,7 +297,6 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
   return context.previewV2;
 }
 
-/** A protocol 2 page render, as protocol 1's page message: the preview route renders both alike. */
 function toTransferData(message: IRenderMessage): TransferDataType {
   return {
     source: "builder",
@@ -357,8 +353,7 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
   // so a non-default-language page never flashes in the store default language.
   await applyPreviewLocale(message.cultureName);
 
-  // The Vue designer shows the page after its first render; its other messages come before it. `auth` shows nothing
-  // either: it comes first when `connect` came before this listener and only the unasked `loaded` reached the designer.
+  // Protocol 2 reveals the page on first render; `auth` can precede `previewV2` when this listener missed `connect`.
   if (bodyEl && !context.previewV2 && message.type !== "auth") {
     bodyEl.style.visibility = "visible";
   }
@@ -420,11 +415,7 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   await context.previewV2?.reload();
 }
 
-/**
- * Builder messages arrive as independent tasks, and each handler awaits (locale switch, router navigation), so
- * unqueued handlers would interleave: an older message could apply its template after a newer one. Chaining them
- * keeps preview state in the order the builder sent it.
- */
+/** Handlers await (locale switch, navigation), so without a queue an older message could apply after a newer one. */
 function createMessageQueue(): (task: () => Promise<void>) => void {
   let messageQueue: Promise<void> = Promise.resolve();
 

@@ -26,10 +26,7 @@ const ProductsBlock = defineAsyncComponent(() => import("./products-block.vue"))
 const ProductsCarousel = defineAsyncComponent(() => import("./products-carousel.vue"));
 const Category = defineAsyncComponent(() => import("./../../catalog/components/category.vue"));
 
-/**
- * Product template sections that load their own data for the page's product. The global components of the same types
- * keep taking their lists from the host.
- */
+/** These fetch their own data for the product; the same types in `templateBlocks` get their lists from the host. */
 export const productTemplateSections: { [key: string]: Component } = {
   "recommended-products": RecommendedProductsSection,
   "related-products": RelatedProductsSection,

@@ -8,7 +8,6 @@ export type PageLayoutType = "full" | "minimal" | "blank";
 
 export const PAGE_LAYOUTS: readonly PageLayoutType[] = ["full", "minimal", "blank"];
 
-/** The routes that resolve a slug: their page reports its layout once it knows what it shows. */
 const SLUG_ROUTE_NAMES = new Set<string>([ROUTES.MATCHER.NAME, ROUTES.LOYALTY_CATALOG_MATCHER.NAME]);
 
 const PAGES_OBJECT_TYPE = "Pages";
@@ -17,7 +16,6 @@ const PAGE_BUILDER_SOURCE = "page-builder";
 
 export interface ISlugPage {
   objectType?: string;
-  /** A page from the database's document, once it is there. */
   document?: { source?: string } | null;
   isMarkdown: boolean;
 }
@@ -26,7 +24,6 @@ export function isPageLayout(value: unknown): value is PageLayoutType {
   return PAGE_LAYOUTS.includes(value as PageLayoutType);
 }
 
-/** The path a slug route's page looks its slug up by: the route's segments joined, without empty ones. */
 export function joinSlugPath(pathMatch: string | string[] | undefined): string {
   if (!pathMatch) {
     return "/";
@@ -36,7 +33,6 @@ export function joinSlugPath(pathMatch: string | string[] | undefined): string {
   return (Array.isArray(pathMatch) ? pathMatch : [pathMatch]).filter(Boolean).join("/");
 }
 
-/** The permalink the page of a slug route looks up (`useSlugInfo`); `undefined` for any other route. */
 export function getSlugRoutePermalink(route: {
   name?: RouteRecordNameGeneric | null;
   params: RouteLocationNormalized["params"];
@@ -44,11 +40,7 @@ export function getSlugRoutePermalink(route: {
   return SLUG_ROUTE_NAMES.has(String(route.name)) ? joinSlugPath(route.params.pathMatch) || "/" : undefined;
 }
 
-/**
- * Whether a slug's page reports its own layout once its document is there: a Page Builder page, or a file page that
- * is not markdown. A document that does not come makes the slug content empty, and the matcher shows another page in
- * the full layout.
- */
+/** A document still missing counts as own layout: if none comes, the matcher shows another page in the full layout. */
 export function isOwnLayoutSlugPage(page: ISlugPage): boolean {
   switch (page.objectType) {
     case PAGES_OBJECT_TYPE:
@@ -60,12 +52,7 @@ export function isOwnLayoutSlugPage(page: ISlugPage): boolean {
   }
 }
 
-/**
- * The layout of the page on screen, which the main layout draws its header and footer by. Product, category, cart,
- * checkout and account pages keep `full`; a content page sets its own once its document is there. Until a page of a
- * slug route reports, the layout of the previous page stays, and on the first page there is none yet: the header and
- * footer wait, so a landing on the minimal layout never shows the full header first.
- */
+/** `undefined` until the first page reports, so a landing on the minimal layout never shows the full header first. */
 export const usePageLayout = createGlobalState(() => {
   const pageLayout = shallowRef<PageLayoutType>();
 

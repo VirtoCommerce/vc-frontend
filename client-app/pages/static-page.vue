@@ -46,7 +46,6 @@ const route = useRoute();
 
 const { staticPage: template, staticPagePreviewSubject: previewSubject } = useStaticPage();
 
-/** The page's settings, for the sections that declare them. */
 const sectionContext = computed(() => ({ settings: template.value?.settings }));
 
 // VCST-5274: the live page name is injected into `settings.name` upstream (useSlugInfo), so the

@@ -55,13 +55,12 @@ import Category from "@/shared/catalog/components/category.vue";
 
 interface IProps {
   categoryId?: string;
-  /** The category's outline from its slug: the template is chosen before the category loads. */
+  /** From the slug, so the template is chosen before the category loads. */
   outline?: string;
 }
 
 const props = defineProps<IProps>();
 
-/** The settings of the `category-listing` section the product listing takes, as the `category` section does. */
 const LISTING_SETTINGS = [
   "hideSidebar",
   "hideControls",
@@ -90,13 +89,9 @@ const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
 const lazySections = isLazySectionsEnabled();
 
-/** The category whose request has finished, whether it found the category or not. */
 const settledCategoryId = ref<string>();
 
-/**
- * Without the slug's outline, where the category sits is known once it has loaded, and a theme rule may ask for it:
- * the page waits for it rather than render one template and switch to another.
- */
+/** Without the slug's outline, a theme rule can depend on the loaded category, so waiting avoids a template switch. */
 const isWaitingForCategory = computed(
   () =>
     isNewPageBuilderEnabled() && !!props.categoryId && !props.outline && settledCategoryId.value !== props.categoryId,

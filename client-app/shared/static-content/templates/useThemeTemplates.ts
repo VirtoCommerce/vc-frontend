@@ -10,18 +10,12 @@ import type { ITemplateResolution, TemplateChoiceType } from "./rules";
 import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { MaybeRefOrGetter } from "vue";
 
-/**
- * The theme's templates for product, category and content pages, chosen synchronously from the snapshot in memory
- * (or the designer's draft over it), with the storefront's built-in templates under them.
- */
 export const useThemeTemplates = createGlobalState(() => {
   const { theme } = useThemeSnapshot();
   const { getTemplateCondition } = useTemplateConditions();
   const { currentLanguage, defaultStoreCulture } = useLanguages();
 
-  /** The template the designer has open: pages of its type show it in its place. */
   const openTemplate = shallowRef<{ key: string; document: IThemePageDocument }>();
-  /** The last choice a page made, which the preview reports to the designer. */
   const lastResolution = shallowRef<ITemplateResolution>();
 
   const templates = computed(() => ({ ...BUILT_IN_TEMPLATES, ...theme.value?.templates }));
@@ -64,7 +58,6 @@ export const useThemeTemplates = createGlobalState(() => {
     openTemplate.value = key && document ? { key, document } : undefined;
   }
 
-  /** `undefined` while the page the preview went to has not chosen yet. */
   function setLastResolution(resolution: ITemplateResolution | undefined): void {
     lastResolution.value = resolution;
   }
@@ -77,11 +70,6 @@ export const useThemeTemplates = createGlobalState(() => {
   };
 });
 
-/**
- * The template of the page being shown, recomputed when its data, the theme or the designer's draft change. The
- * choice is reported for the designer's `resolved` message. Without a subject yet (the entity is still loading), no
- * template is chosen.
- */
 export function useTemplateResolution(
   pageType: ThemePageType,
   subject: MaybeRefOrGetter<ITemplateSubject | undefined>,

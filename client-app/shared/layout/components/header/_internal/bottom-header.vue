@@ -113,10 +113,6 @@ const logoStyle = computed<StyleValue | undefined>(() =>
   logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
 );
 
-/**
- * The theme header's icons menu, in its order: a link to a page a built-in link opens keeps that link's icon and
- * count. Without the menu, the built-in links.
- */
 const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   iconsMenuLinks.value
     ? iconsMenuLinks.value.map((link) => {

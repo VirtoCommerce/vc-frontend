@@ -30,10 +30,6 @@ function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
   }
 }
 
-/**
- * White-labeling (the organization's, then the store's, merged in pageContext) wins over the Page Builder theme field
- * by field; the theme fills only what white-labeling left empty, and the storefront's own settings come last.
- */
 function pickBrandField(
   whiteLabelingValue: string | null | undefined,
   themeValue: string | undefined,
@@ -50,10 +46,7 @@ function pickBrandField(
   return whiteLabelingValue ?? fallback;
 }
 
-/**
- * The logo for dark backgrounds that belongs with `logoUrl`: from the same source (white-labeling, the Page Builder
- * theme, the storefront's settings), so a light logo of one source never gets the dark logo of another.
- */
+/** Follows the source of `logoUrl`, so a light logo never pairs with the dark logo of another source. */
 function pickDarkLogo(): string | undefined {
   const settings = whiteLabelingSettings.value;
 
@@ -117,19 +110,16 @@ function _useWhiteLabeling() {
     setWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
     isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
-    /** The Page Builder theme's fields white-labeling sets for this visitor, which the theme therefore does not change. */
     themeFieldsSetByWhiteLabeling: computed(() => {
       const settings = whiteLabelingSettings.value;
       const fields: [string, unknown][] = [
         ["brand.logoUrl", settings?.logoUrl],
-        // The header and the footer take the dark logo from the light logo's source: white-labeling's dark logo without
-        // its light logo never shows, and the theme's dark logo shows unless white-labeling sets the light one.
+        // The dark logo follows the light logo's source, so white-labeling's light logo is what overrides this field.
         ["brand.secondaryLogoUrl", settings?.logoUrl],
         ["brand.faviconUrl", settings?.favicons?.length],
         ["palette", settings?.themePresetName],
         // The main menu replaces the header's category menu (`catalog_menu`) only; the icons menu stays the theme's.
         ["menus.header", settings?.mainMenuLinks?.length],
-        // The footer links replace the footer's columns.
         ["menus.footer", settings?.footerLinks?.length],
       ];
       return fields.filter(([, value]) => !!value).map(([field]) => field);

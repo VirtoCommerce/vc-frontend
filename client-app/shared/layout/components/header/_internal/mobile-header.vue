@@ -160,7 +160,6 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 // this var on desktop (see vc-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
-/** False while the main layout keeps the header alive under a page on another layout, which has no header. */
 const isShown = ref(true);
 
 watch(

@@ -305,7 +305,6 @@ async function onRemoveFiles(items: FileType[]): Promise<void> {
   await removeFiles(items);
 }
 
-/** The reviews of the product shown and whether the visitor can leave one, from its first page. */
 async function loadReviews(): Promise<void> {
   productReviewsPayload.value.entityId = productId.value;
   productReviewsPayload.value.page = 1;

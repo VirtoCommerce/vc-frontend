@@ -1,13 +1,8 @@
-/** A language key of a translatable dictionary: a BCP-47-shaped culture name (`en`, `en-US`, `sr-Latn-RS`). */
 const CULTURE_KEY_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
 
-/** A culture name with a subtag: a dictionary has at least one, so a row such as `{ "sku": "X1" }` stays a row. */
+/** A dictionary has at least one culture name with a subtag, so a row such as `{ "sku": "X1" }` stays a row. */
 const CULTURE_WITH_SUBTAG_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})+$/i;
 
-/**
- * Whether a setting value is a translatable dictionary ("language → text"), as the designer's draft may hold one.
- * A published snapshot never does: the module resolves the texts of each language when it publishes.
- */
 export function isTranslatableDictionary(value: unknown): value is Record<string, string> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
@@ -21,10 +16,6 @@ export function isTranslatableDictionary(value: unknown): value is Record<string
   );
 }
 
-/**
- * The text of a dictionary in the language, culture names compared ignoring case: the exact culture, else one of the
- * same language (`de` before `de-DE` for `de-AT`), else the store default language, else its first text.
- */
 export function pickTranslation(
   dictionary: Record<string, string>,
   cultureName: string,
@@ -48,7 +39,6 @@ function languageOf(cultureName: string): string {
   return cultureName.split("-")[0].toLowerCase();
 }
 
-/** Replaces every translatable dictionary inside the value with its text in the language. */
 export function resolveTranslatableValues<T>(value: T, cultureName: string, defaultCultureName: string): T {
   if (isTranslatableDictionary(value)) {
     return pickTranslation(value, cultureName, defaultCultureName) as T;

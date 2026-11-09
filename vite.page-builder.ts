@@ -4,7 +4,6 @@ import { isNewPageBuilderSwitchOn } from "./client-app/core/theme-snapshot/switc
 import type { PluginOption } from "vite";
 
 const require = createRequire(import.meta.url);
-/** The theme's settings; the runtime reads the same key through the same predicate (client-app/core/theme-snapshot/enabled.ts). */
 const themeSettings = (require("./client-app/config/settings_data.json") as { settings: Record<string, unknown> })
   .settings;
 
@@ -17,11 +16,7 @@ export interface IThemeSnapshotPluginOptions {
   devDomain?: string;
 }
 
-/**
- * Adds the theme snapshot request to `index.html` when the theme sets `new_page_builder_enabled: true`; otherwise
- * `index.html` stays as it is. The script comes right after the charset declaration, before every stylesheet and
- * script; `data-cfasync="false"` keeps Cloudflare Rocket Loader from deferring it.
- */
+/** `data-cfasync="false"` keeps Cloudflare Rocket Loader from deferring the script. */
 export function themeSnapshotPlugin(
   options: IThemeSnapshotPluginOptions = {},
   settings: Record<string, unknown> = themeSettings,

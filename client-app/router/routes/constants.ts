@@ -41,11 +41,9 @@ export const ROUTES = {
   ORDER_DETAILS: {
     NAME: "OrderDetails",
   },
-  /** The catch-all route that resolves a slug: SEO URLs and content pages. */
   MATCHER: {
     NAME: "Matcher",
   },
-  /** The loyalty catalog's route that resolves a slug under it. */
   LOYALTY_CATALOG_MATCHER: {
     NAME: "LoyaltyCatalogMatcher",
   },

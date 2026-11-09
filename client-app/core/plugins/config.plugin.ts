@@ -15,10 +15,6 @@ function addPresetRule(sheet: CSSStyleSheet, selector: string, preset: IThemeCon
   });
 }
 
-/**
- * Writes the palette into `<style id="vc-theme-variables">`: with a dark variant each part is scoped to its mode,
- * without one the light part applies unconditionally. A later call replaces what an earlier one wrote.
- */
 export function writeThemeVariables(preset: IThemeConfigPreset, darkPreset?: IThemeConfigPreset): void {
   let styleElement = document.getElementById(THEME_VARIABLES_ID) as HTMLStyleElement | null;
 

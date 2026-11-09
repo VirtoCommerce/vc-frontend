@@ -1,14 +1,10 @@
-/**
- * The theme snapshot, as the Page Builder module publishes it (`docs/contracts/theme-snapshot.md` in
- * vc-module-pagebuilder).
- */
+/** The contract is `docs/contracts/theme-snapshot.md` in vc-module-pagebuilder. */
 
 export type ThemePageType = "product" | "category" | "page";
 
-/** A section, or a block of a section. */
 export interface IThemeItem {
   id: string;
-  /** The schema type; never renamed once it is stored. */
+  /** Never renamed once it is stored. */
   type: string;
   hidden?: boolean;
   blocks?: IThemeItem[];
@@ -36,7 +32,7 @@ export interface ITemplateRule {
 
 export interface ITemplateRules {
   version: 2;
-  /** The condition names the rules use: writers always write it, readers never need it, so a file may lack it. */
+  /** Writers always write it, but readers never need it, so a file may lack it. */
   conditions?: string[];
   product?: ITemplateRule[];
   category?: ITemplateRule[];
@@ -85,7 +81,7 @@ export interface IThemeMenu {
   items: IThemeMenuLink[];
 }
 
-/** The parts of the theme the designer sends as its unsaved draft; a part it leaves out comes from the snapshot. */
+/** A part the draft leaves out comes from the snapshot. */
 export interface IThemeDraft {
   rules?: ITemplateRules;
   templates?: Record<string, IThemePageDocument>;
@@ -96,44 +92,35 @@ export interface IThemeDraft {
   palette?: IThemePalette | null;
 }
 
-/** A content page at the snapshot request's permalink, as the server read it. */
 export interface IThemeSlugPage {
   /** A page from the database: its document's source (`page-builder`, `builder.io`). Absent for a file page. */
   source?: string;
   permalink?: string;
-  /**
-   * The page's settings that choose its template and layout: `layout`, `template` and those the page rules' `setting`
-   * conditions name. Absent when its content is not a page with settings (a markdown file, another source).
-   */
+  /** Only `layout`, `template` and what the rules' `setting` conditions name; absent for a page without settings. */
   settings?: Record<string, unknown>;
 }
 
-/** What is at the permalink the snapshot request asked for, as the slug lookup finds it for an anonymous visitor. */
+/** As the slug lookup finds it for an anonymous visitor. */
 export interface IThemeSlug {
-  /** The permalink the request asked for. */
   permalink: string;
-  /** The slug's `objectType`: `Pages`, `ContentFile`, `CatalogProduct`, `Category`… */
   objectType: string;
   objectId: string;
-  /** A content page as it was read; absent for other object types and a page the server could not read. */
+  /** Absent for other object types and a page the server could not read. */
   page?: IThemeSlugPage;
 }
 
-/** A published snapshot the storefront accepted, with the links of the menus it names. */
 export interface IPublishedTheme {
   storeId: string;
-  /** The language the snapshot is in: the store default when the publication has no file in the requested one. */
+  /** The store default when the publication has no file in the requested language. */
   cultureName: string;
-  /** The language the request asked for. */
   requestedCultureName?: string;
   publication: number;
   snapshot: IThemeSnapshot;
   menus: IThemeMenu[];
-  /** What is at the permalink the request asked for: the layout of the page the visitor lands on is chosen by it. */
+  /** Chooses the layout of the page the visitor lands on. */
   slug?: IThemeSlug;
 }
 
-/** What the storefront renders with: the draft over the published snapshot. */
 export interface IThemeView {
   rules?: ITemplateRules;
   templates: Record<string, IThemePageDocument>;
@@ -142,6 +129,5 @@ export interface IThemeView {
   brand: IThemeBrand;
   palette?: IThemePalette;
   menus: IThemeMenu[];
-  /** Whether a part comes from the designer's draft, which may hold translatable dictionaries. */
   isDraft: boolean;
 }

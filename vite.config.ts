@@ -105,7 +105,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       vue(),
       // Module Federation host — empty when the theme's module_federation_enabled is false (see vite.federation.ts).
       ...federatedHostPlugin(),
-      // Theme snapshot request in index.html — empty when the theme's new_page_builder_enabled is false (see vite.page-builder.ts).
       ...themeSnapshotPlugin({ devDomain: mode === "development" ? getBackendHostname() : undefined }),
       graphql() as PluginOption,
       isServe

@@ -32,10 +32,7 @@ import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.
 const { pageLayout } = usePageLayout();
 const { hasNoTheme } = useThemeSnapshot();
 
-/**
- * The header and footer around the page, switched here so the page under them is never remounted. Without the new
- * Page Builder, and for a store without a theme, every page keeps the full layout at once.
- */
+/** Switched here so the page under the header and footer is never remounted. */
 const chrome = computed(() => (isNewPageBuilderEnabled() && !hasNoTheme.value ? pageLayout.value : "full"));
 </script>
 

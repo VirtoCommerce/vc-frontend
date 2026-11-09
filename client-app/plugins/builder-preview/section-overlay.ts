@@ -5,18 +5,12 @@ const LABEL_TEXT_COLOR = "#ffffff";
 /** Above every storefront element, under the click blocker. */
 const OVERLAY_Z_INDEX = "2147483646";
 
-/** The element a section with this id is rendered as, on the page. */
 export function findSectionElement(sectionId: string): HTMLElement | undefined {
   return [...document.querySelectorAll<HTMLElement>(`[${SECTION_ATTRIBUTE}]`)].find(
     (element) => element.getAttribute(SECTION_ATTRIBUTE) === sectionId,
   );
 }
 
-/**
- * Outlines sections in the designer preview, as a theme editor does: the section under the pointer gets a dashed
- * outline and its name, the selected one a solid outline; a click selects it. A section is the element marked with
- * its id, so the page's sections, the template's and the header and footer groups' take part alike.
- */
 export class SectionOverlay {
   private readonly layer: HTMLDivElement;
   private readonly hoverBox: HTMLDivElement;
@@ -34,10 +28,9 @@ export class SectionOverlay {
   constructor(
     body: HTMLElement,
     private readonly blocker: HTMLElement,
-    /** A click selected a section, or a block inside one (its innermost marked element). */
     private readonly onSelect: (selection: { sectionId: string; blockId?: string }, event: MouseEvent) => void,
     private readonly onHover: (sectionId: string | null) => void,
-    /** A point another overlay takes, as a shared component's placement: its sections are not the page's. */
+    /** A shared component's placement has its own overlay, and its sections are not the page's. */
     private readonly isPointTaken: (clientX: number, clientY: number) => boolean = () => false,
   ) {
     this.layer = document.createElement("div");
@@ -59,30 +52,23 @@ export class SectionOverlay {
     window.addEventListener("resize", this.scheduleRender);
     window.addEventListener("scroll", this.scheduleRender, { passive: true });
 
-    // Sections render, load and move after the message that selected them. The layer is positioned absolutely, so
-    // placing its boxes does not resize the body again.
+    // Sections load and move after selection; the layer is absolute, so placing boxes cannot resize the body and loop.
     if (typeof ResizeObserver !== "undefined") {
       new ResizeObserver(this.scheduleRender).observe(body);
     }
   }
 
-  /** Turns the outlines and section selection on or off. */
   setEnabled(isEnabled: boolean): void {
     this.isEnabled = isEnabled;
     this.layer.style.display = isEnabled ? "block" : "none";
     this.scheduleRender();
   }
 
-  /** The names of the outlines, by section id. */
   setLabels(labels: Record<string, string>): void {
     this.labels = labels;
     this.scheduleRender();
   }
 
-  /**
-   * Selects a section or block; `fallbackId`, its section, is outlined while the block has no element of its own.
-   * With `scroll`, the first of them to have an element is scrolled to.
-   */
   select(sectionId: string | null, fallbackId: string | null = null, scroll = false): void {
     this.selected = sectionId;
     this.selectedFallback = fallbackId;
@@ -95,7 +81,7 @@ export class SectionOverlay {
     this.scheduleRender();
   }
 
-  /** The page changed under the outlines: place them again once it has rendered. */
+  /** Two frames, so the outlines are measured after the page has rendered. */
   readonly scheduleRender = (): void => {
     if (this.frame !== undefined) {
       cancelAnimationFrame(this.frame);
@@ -140,7 +126,6 @@ export class SectionOverlay {
     (box.firstChild as HTMLElement).textContent = this.labels[sectionId] ?? "";
   }
 
-  /** The innermost marked section under the pointer: a block's section inside a section is the block. */
   sectionAt(clientX: number, clientY: number): string | null {
     const marked = document
       .elementsFromPoint(clientX, clientY)

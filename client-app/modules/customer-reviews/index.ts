@@ -11,7 +11,6 @@ export function init(i18n: I18n) {
   if (isEnabled(ENABLED_KEY)) {
     void loadModuleLocale(i18n, "customer-reviews");
 
-    // The reviews are a section of the product template: the product page renders it without knowing the module.
     useExtensionRegistry().register("pageBuilderSection", PRODUCT_REVIEWS_SECTION_TYPE, {
       component: defineAsyncComponent(() => import("./components/product-reviews-section.vue")),
     });

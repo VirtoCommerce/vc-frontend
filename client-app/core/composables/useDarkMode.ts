@@ -19,7 +19,6 @@ function _useDarkMode() {
   }
 
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
-  /** A scheme shown without saving it as the visitor's choice: the designer's preview sets it. */
   const colorModeOverride = ref<"light" | "dark">();
   const activePresetName = ref<string>();
   const hasDarkPreset = ref(false);
@@ -49,7 +48,6 @@ function _useDarkMode() {
     { immediate: true },
   );
 
-  /** `withDarkPreset`: whether the palette has a dark variant. */
   function setActivePreset(presetName: string, withDarkPreset: boolean) {
     activePresetName.value = presetName;
     hasDarkPreset.value = withDarkPreset;

@@ -1,19 +1,14 @@
 import { OUTLINE_COLOR } from "./section-overlay";
 import { FIELD_ATTRIBUTE, SECTION_ATTRIBUTE } from "./utils";
 
-/** A plain-text setting of a section or block: the item, the setting's path in it and the text it shows. */
 export interface IEditableText {
   itemId: string;
   path: (string | number)[];
   value: string;
 }
 
-/** Item keys that never hold a text the page shows. */
 const NOT_TEXT = new Set(["id", "type", "hidden", "blocks", "componentRef"]);
-/**
- * Without a schema, a text that looks like markup, markdown or a link: shown differently from how it is stored, so it
- * is edited in the designer's panel.
- */
+/** Without a schema, markup, markdown or a link renders unlike its stored value, so it stays out of inline editing. */
 const NOT_PLAIN = /[<>*_#`[\]]|^\s*(https?:|\/|#)/;
 /** A plain-text setting that is an address as a whole: a link's target, not a text the page shows. */
 const ADDRESS = /^\s*(https?:\/\/|\/)\S*\s*$/;
@@ -23,10 +18,9 @@ function normalize(text: string): string {
   return text.replaceAll(/\s+/g, " ").trim();
 }
 
-/** Whether a setting of an item of the type is plain text by its schema; `undefined` when there is no schema. */
+/** `undefined` means there is no schema for the setting. */
 export type PlainTextFieldPredicateType = (itemType: string, path: (string | number)[]) => boolean | undefined;
 
-/** The plain-text settings of a section and of its blocks, nested ones (objects, lists) too. */
 export function findEditableTexts(
   item: Record<string, unknown>,
   isPlainTextField: PlainTextFieldPredicateType = () => undefined,
@@ -71,11 +65,6 @@ function isEditableText(value: string, isPlainText: boolean | undefined): boolea
   return isPlainText ? !ADDRESS.test(value) : !NOT_PLAIN.test(value);
 }
 
-/**
- * The element a click edits and the setting it shows. Inside a `data-pb-field` element it is that setting of the
- * section or block the element is in, edited in the innermost element that shows its text as is, else in the marked
- * element. Elsewhere it is the innermost element whose text exactly one setting has, of those no element names.
- */
 export function findEditableElement(
   start: Element | null,
   texts: IEditableText[],
@@ -119,7 +108,6 @@ export function findEditableElement(
   return null;
 }
 
-/** The id of the section or block an element is in. */
 function getOwnerId(element: Element): string | null {
   return element.closest(`[${SECTION_ATTRIBUTE}]`)?.getAttribute(SECTION_ATTRIBUTE) ?? null;
 }
@@ -132,7 +120,6 @@ function toFieldKey(itemId: string | null, path: string | null): string {
   return `${itemId ?? ""}|${path ?? ""}`;
 }
 
-/** The innermost element from `start` up to `last` whose text is the value as is. */
 function findElementShowing(start: Element, last: HTMLElement, value: string): HTMLElement | undefined {
   for (let element: Element | null = start; element && element !== last; element = element.parentElement) {
     if (element instanceof HTMLElement && normalize(element.textContent ?? "") === normalize(value)) {
@@ -143,24 +130,17 @@ function findElementShowing(start: Element, last: HTMLElement, value: string): H
   return normalize(last.textContent ?? "") === normalize(value) ? last : undefined;
 }
 
-/**
- * Edits a section's text right on the page: a click on a text the section has as a plain setting makes that element
- * editable, and every change goes to the designer as the setting's new value. A press outside, Enter (single line)
- * or Esc ends editing.
- */
 export class InlineTextEditor {
   private editing: {
     element: HTMLElement;
     text: IEditableText;
     textTransform: string;
-    /** The nodes the page rendered the text into: the page updates the text through them later. */
     nodes: ChildNode[];
   } | null = null;
 
   constructor(
     private readonly blocker: HTMLElement,
     private readonly onEdit: (edit: IEditableText) => void,
-    /** Editing ended: the preview applies the render it held back. */
     private readonly onEnd: () => void,
   ) {}
 
@@ -168,7 +148,6 @@ export class InlineTextEditor {
     return this.editing !== null;
   }
 
-  /** Starts editing the text under the pointer when it is one of the section's settings. */
   start(texts: IEditableText[], clientX: number, clientY: number): boolean {
     this.end();
 
@@ -186,7 +165,7 @@ export class InlineTextEditor {
       element.setAttribute("contenteditable", "true");
     }
     element.style.outline = OUTLINE;
-    // The text as stored: `innerText` applies `text-transform`, so an uppercase heading would be saved uppercased.
+    // `innerText` applies `text-transform`, so an uppercase heading would otherwise be saved uppercased.
     element.style.textTransform = "none";
     this.blocker.style.pointerEvents = "none";
     element.focus({ preventScroll: true });
@@ -227,8 +206,7 @@ export class InlineTextEditor {
     }
 
     const { element, text } = this.editing;
-    // The editor writes a no-break space for a trailing space; the setting holds a plain one. An emptied element keeps
-    // only the browser's line break placeholder, which is no text.
+    // Browsers write a no-break space for a trailing space and leave a line break placeholder in an emptied element.
     const value = element.textContent ? (element.innerText || element.textContent).replaceAll(" ", " ") : "";
     this.onEdit({ ...text, value: text.value.includes("\n") ? value : value.replaceAll("\n", " ") });
   };
@@ -249,7 +227,7 @@ export class InlineTextEditor {
     }
   };
 
-  /** Focus leaving the text, as a click in the designer's panel does, ends editing like a press outside. */
+  /** A click in the designer's panel is outside this frame, so only the blur reports it. */
   private readonly handleBlur = (): void => {
     this.end();
   };
@@ -263,10 +241,7 @@ export class InlineTextEditor {
   };
 }
 
-/**
- * Puts back the nodes the page rendered the text into when editing replaced them, as deleting the whole text does:
- * the page would otherwise update nodes that are no longer shown. A single text node keeps the text as typed.
- */
+/** Deleting the whole text replaces the nodes Vue rendered, and Vue would keep patching nodes no longer shown. */
 function restoreNodes(element: HTMLElement, nodes: ChildNode[]): void {
   const current = element.childNodes;
   const isReplaced = nodes.length !== current.length || nodes.some((node, index) => current[index] !== node);
@@ -282,7 +257,6 @@ function restoreNodes(element: HTMLElement, nodes: ChildNode[]): void {
   element.replaceChildren(...nodes);
 }
 
-/** Puts the caret where the pointer is; without browser support it stays where focus put it. */
 function placeCaret(clientX: number, clientY: number): void {
   const position =
     typeof document.caretPositionFromPoint === "function" ? document.caretPositionFromPoint(clientX, clientY) : null;

@@ -7,7 +7,6 @@ import ProductReviews from "./product-reviews.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
-  /** The product of the page the section is on. */
   product?: Product;
 }
 

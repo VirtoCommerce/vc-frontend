@@ -15,7 +15,7 @@ export interface IThemeContext {
   availableCurrencies: ICurrency[];
   settings: IThemeConfigSettings;
   preset?: IThemeConfigPreset;
-  /** The dark variant of `preset`; without one the storefront has no dark theme. */
+  /** Without it the storefront has no dark theme. */
   darkPreset?: IThemeConfigPreset;
   defaultPresetName: string;
   activePresetName?: string;

@@ -22,19 +22,10 @@ import {
 import type { Component } from "vue";
 
 interface IProps {
-  /** The section component; without one, the section registered for the item's type. Nothing renders without either. */
   component?: Component;
-  /**
-   * Undeclared keys are dropped: they would otherwise land as attributes on the section's root. A section that declares
-   * `model` gets the whole item there, as older sections read it.
-   */
+  /** Undeclared keys are dropped so they do not land as root attributes; a declared `model` gets the whole item. */
   item: Record<string, unknown>;
-  /**
-   * The host's data for the section (the product, the category, the page's settings): passed only when declared, over
-   * the item's keys.
-   */
   context?: Record<string, unknown>;
-  /** Mounts the section only when it comes near the viewport, so a section below the fold loads its data late. */
   lazy?: boolean;
 }
 
@@ -42,7 +33,6 @@ defineOptions({ inheritAttrs: false });
 
 const props = defineProps<IProps>();
 
-/** How far below the viewport a lazy section starts to mount. */
 const LAZY_ROOT_MARGIN = "400px";
 
 const component = computed(() => props.component ?? getPageBuilderSection(props.item.type));

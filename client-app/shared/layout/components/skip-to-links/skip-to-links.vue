@@ -19,7 +19,6 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 interface IProps {
-  /** Whether the page has the site footer to skip to. */
   withFooter?: boolean;
 }
 

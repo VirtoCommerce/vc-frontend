@@ -8,7 +8,6 @@ import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
-/** The category the page's request answers with; without one, the request leaves the loaded category as it is. */
 const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
 const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
 

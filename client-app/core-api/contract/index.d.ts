@@ -3749,7 +3749,7 @@ interface IThemeContext {
     availableCurrencies: ICurrency[];
     settings: IThemeConfigSettings;
     preset?: IThemeConfigPreset;
-    /** The dark variant of `preset`; without one the storefront has no dark theme. */
+    /** Without it the storefront has no dark theme. */
     darkPreset?: IThemeConfigPreset;
     defaultPresetName: string;
     activePresetName?: string;
@@ -4864,10 +4864,7 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
-    /**
-     * Page Builder sections and blocks, keyed by the type stored in page and template content. A late registration
-     * re-renders the pages that show the type.
-     */
+    /** Keyed by the type stored in page and template content. A late registration re-renders the pages showing it. */
     pageBuilderSection: ExtensionEntryType;
     /** Widgets on Account › Security, below the sign-in methods. */
     accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
@@ -5059,11 +5056,9 @@ declare const ROUTES: {
     readonly ORDER_DETAILS: {
         readonly NAME: "OrderDetails";
     };
-    /** The catch-all route that resolves a slug: SEO URLs and content pages. */
     readonly MATCHER: {
         readonly NAME: "Matcher";
     };
-    /** The loyalty catalog's route that resolves a slug under it. */
     readonly LOYALTY_CATALOG_MATCHER: {
         readonly NAME: "LoyaltyCatalogMatcher";
     };

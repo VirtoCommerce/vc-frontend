@@ -20,7 +20,6 @@ function createOverlay(isPointTaken?: (clientX: number, clientY: number) => bool
   return { overlay, blocker, onSelect, onHover };
 }
 
-/** The label of the solid outline, or nothing while no outline is shown. */
 function selectedLabel(): string | undefined {
   const box = [...document.querySelectorAll<HTMLElement>("[aria-hidden='true'] > div")].find((element) =>
     element.style.border.startsWith("2px solid"),

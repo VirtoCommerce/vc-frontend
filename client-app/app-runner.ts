@@ -147,7 +147,6 @@ export default async () => {
     : globalThis.location.hostname;
   const userId = savedUserId.value;
 
-  // Picks up the request index.html sent before this script loaded; nothing without new_page_builder_enabled.
   const themeSnapshotBoot = startThemeSnapshot({ domain, cultureName: possibleCultureName });
 
   try {
@@ -349,7 +348,6 @@ export default async () => {
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
-  // The section renderer finds a stored section type through the extension registry, where modules add theirs.
   registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks, ...productTemplateSections });
 
   await router.isReady();

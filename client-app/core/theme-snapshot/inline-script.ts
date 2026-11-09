@@ -8,17 +8,12 @@ import {
 } from "./query.js";
 
 export interface IThemeSnapshotScriptOptions {
-  /** The domain the store is resolved by; the page's host name when absent. Development passes the backend's. */
   domain?: string;
 }
 
 /**
- * The inline script `index.html` carries when the storefront is built with `new_page_builder_enabled`: it sends the
- * theme snapshot request before the application JavaScript loads and leaves the request on `window`, so the snapshot
- * is usually there before the first render. Written for every browser the storefront supports, without a bundler.
- *
- * Outside the designer preview it asks for what is at the page's permalink too: the path without its language prefix,
- * its segments decoded and joined as the slug route joins them (`/` for none), so the page's layout is known at boot.
+ * Runs before the application loads, unbundled, so it must work as written in every browser the storefront supports.
+ * Its permalink must match the slug route's: segments decoded and joined, `/` for none.
  */
 export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = {}): string {
   const constants = JSON.stringify({

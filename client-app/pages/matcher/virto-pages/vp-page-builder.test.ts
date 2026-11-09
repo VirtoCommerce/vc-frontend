@@ -39,7 +39,6 @@ vi.mock("@/shared/static-content", async () => {
   const { registerPageBuilderSections } = await import("@/shared/static-content/sections");
   const { defineComponent, h } = await import("vue");
   const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
-  // The page template is tested on its own; here it only frames the page.
   const PageTemplate = defineComponent({
     setup:
       (_props, { slots }) =>

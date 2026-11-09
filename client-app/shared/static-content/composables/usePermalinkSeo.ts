@@ -4,10 +4,7 @@ import { useBrandProfile } from "@/core/composables/useBrandProfile";
 import { useLanguages } from "@/core/composables/useLanguages";
 import type { MaybeRefOrGetter } from "vue";
 
-/**
- * The address search engines and link previews get for a content page: the store's host and the page's permalink in
- * the current language, without the query the visitor came with (`utm_*`, the designer's `?ep=`).
- */
+/** Canonical and `og:url` use the permalink, so the visitor's query (`utm_*`, the designer's `?ep=`) stays out. */
 export function usePermalinkSeo(permalink: MaybeRefOrGetter<string | undefined>, isActive: MaybeRefOrGetter<boolean>) {
   const { currentLanguage, getLocalizedPath } = useLanguages();
   const { storeUrl } = useBrandProfile();

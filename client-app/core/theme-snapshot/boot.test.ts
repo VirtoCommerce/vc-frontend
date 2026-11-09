@@ -37,7 +37,6 @@ function leaveBootRequest(response: Promise<unknown>, cultureName?: string, perm
   };
 }
 
-/** A router whose first navigation, the application's own, is done. */
 async function startRouter() {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/:path(.*)", component: {} }] });
   installThemeSnapshotNavigation(router, () => ({ storeId: STORE_ID, cultureName: "en-US" }));
@@ -45,7 +44,6 @@ async function startRouter() {
   return router;
 }
 
-/** Lets the boot request's chain settle, as it does long before pageContext returns. */
 function flushRequests(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve));
 }

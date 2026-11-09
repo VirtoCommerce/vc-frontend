@@ -6,22 +6,19 @@ export interface IThemeSnapshotVariables {
   domain?: string;
   storeId?: string;
   cultureName?: string;
-  /** The page the visitor landed on, without its language prefix: the response says what is there. */
+  /** Without its language prefix. */
   permalink?: string;
 }
 
-/** The request the inline script in `index.html` left on `window`. */
 export interface IThemeSnapshotRequest {
   variables: IThemeSnapshotVariables;
   response: Promise<unknown>;
 }
 
-/** The only snapshot format this storefront reads. */
 const SUPPORTED_FORMAT = 1;
 
 const LOG_SCOPE = "[theme-snapshot]";
 
-/** Takes the request the inline script sent, once: a second call returns nothing. */
 export function takeBootThemeSnapshotRequest(): IThemeSnapshotRequest | undefined {
   const holder = globalThis as unknown as Record<string, unknown>;
   const request = holder[THEME_SNAPSHOT_GLOBAL];
@@ -32,10 +29,7 @@ export function takeBootThemeSnapshotRequest(): IThemeSnapshotRequest | undefine
     : undefined;
 }
 
-/**
- * Sends the snapshot request the inline script sends. It is a plain `fetch` rather than an Apollo query: the snapshot
- * is the same for every visitor, so the request carries no token, as the one sent before the application loaded.
- */
+/** Skips the Apollo client: the snapshot is the same for every visitor, so the request carries no token. */
 export function requestThemeSnapshot(variables: IThemeSnapshotVariables): IThemeSnapshotRequest {
   const response = fetch("/graphql", {
     method: "POST",
@@ -52,10 +46,7 @@ export function requestThemeSnapshot(variables: IThemeSnapshotVariables): ITheme
   return { variables, response };
 }
 
-/**
- * Reads a GraphQL response of the snapshot request: `null` when the store has no theme (the New Page Builder store
- * setting is off, or the snapshot is in a format this storefront does not read). Throws on a GraphQL error.
- */
+/** `null` means no usable theme: the store setting is off or the format is unsupported. Throws on a GraphQL error. */
 export function readThemeSnapshotResponse(
   body: unknown,
   requestedCultureName?: string,
@@ -93,9 +84,8 @@ export function readThemeSnapshotResponse(
 }
 
 /**
- * Whether the theme answers for the language: it is in that language, or it was asked for it and the server served
- * its default language because the publication has no file in that one. A language part (`fr`, a URL prefix) stands
- * for the store's only language of it, as the storefront's short locales do.
+ * The server answers a language with no file in its default language, which still counts as that language.
+ * A language part (`fr`, a URL prefix) stands for the store's only language of it.
  */
 export function isThemeForLanguage(
   theme: Pick<IPublishedTheme, "cultureName" | "requestedCultureName">,

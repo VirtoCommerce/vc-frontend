@@ -8,7 +8,6 @@ function _useStaticPage() {
   const { currentLanguage, defaultStoreCulture } = useLanguages();
 
   const staticPagePreview = ref<IPageTemplate>();
-  /** What the previewed page's template rules see, when the designer previews it away from its own address. */
   const staticPagePreviewSubject = ref<{ permalink?: string; objectType?: string }>();
 
   const _staticPage = ref<IPageTemplate | undefined>();

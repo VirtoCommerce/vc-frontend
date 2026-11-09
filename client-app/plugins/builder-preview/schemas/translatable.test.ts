@@ -32,7 +32,6 @@ interface ISchema {
 
 const TEXT_TYPES = ["string", "text", "markdown"];
 
-/** The paths of a schema's translatable settings, a list's or object's rows as `[]`. */
 function translatablePaths(fields: IField[] = [], prefix = ""): string[] {
   return fields.flatMap((field) => [
     ...(field.translatable ? [`${prefix}${field.id}`] : []),
@@ -49,7 +48,6 @@ function settingsOf(schemas: PageBuilderSchemaType, schema: ISchema): IField[] {
   return [...(schema.settings ?? []), ...shared];
 }
 
-/** An item's values: a text per language in every translatable setting, in a row of every list and object. */
 function withTexts(fields: IField[], path: string): Record<string, unknown> {
   const values: [string, unknown][] = fields.flatMap((field): [string, unknown][] => {
     const fieldPath = `${path}.${field.id}`;
@@ -69,7 +67,6 @@ function withTexts(fields: IField[], path: string): Record<string, unknown> {
   return Object.fromEntries(values);
 }
 
-/** Every translatable value of the item, with the text it shows. */
 function shownTexts(fields: IField[], value: unknown, path: string): [string, unknown][] {
   return fields.flatMap((field): [string, unknown][] => {
     const fieldValue = (value as Record<string, unknown>)[field.id!];

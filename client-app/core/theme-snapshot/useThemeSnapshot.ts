@@ -2,18 +2,12 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
 import type { IPublishedTheme, IThemeDraft, IThemeView } from "./types";
 
-/**
- * The store's Page Builder theme: the published snapshot the storefront accepted, and the designer's unsaved draft
- * over it in the preview. `theme` is `undefined` while the storefront renders its built-in templates.
- */
+/** `theme` is `undefined` while the storefront renders its built-in templates. */
 function _useThemeSnapshot() {
   const published = shallowRef<IPublishedTheme>();
-  /** A snapshot that arrived after the first render: it takes over on the next navigation inside the site. */
   const late = shallowRef<IPublishedTheme | null>();
   const draft = shallowRef<IThemeDraft>();
-  /** The last request failed: the next navigation inside the site asks again. */
   const hasFailed = ref(false);
-  /** The snapshot accepted is `null`: the store has no theme (the New Page Builder store setting is off). */
   const isNull = ref(false);
 
   const theme = computed<IThemeView | undefined>(() => {
@@ -48,7 +42,6 @@ function _useThemeSnapshot() {
     hasFailed.value = false;
   }
 
-  /** Puts a snapshot that arrived late in place; returns whether there was one. */
   function promoteLate(): boolean {
     if (late.value === undefined) {
       return false;
@@ -71,10 +64,7 @@ function _useThemeSnapshot() {
     published: readonly(published),
     draft: readonly(draft),
     hasFailed: readonly(hasFailed),
-    /**
-     * The store has no theme, as without the new Page Builder: the snapshot accepted is `null` and the designer sends
-     * no draft. `false` until a snapshot is accepted, and after a failed request.
-     */
+    /** `false` until a snapshot is accepted, and after a failed request. */
     hasNoTheme: computed(() => isNull.value && !draft.value),
     setPublished,
     setLate,

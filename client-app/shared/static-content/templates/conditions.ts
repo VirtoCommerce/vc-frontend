@@ -3,35 +3,29 @@ import { escapeRegExp, trim } from "lodash-es";
 import { shallowReactive } from "vue";
 import type { ThemePageType } from "@/core/theme-snapshot";
 
-/** What the template rules are checked against: data the storefront already has for the page. */
 export interface ITemplateSubject {
-  /** Product: every outline of the product, as category ids. Category: its own outline. */
+  /** A product's every outline or a category's own, as category ids. */
   categoryPaths?: string[][];
-  /** Category: the category itself. */
   categoryId?: string;
   productType?: string;
   properties?: { name?: string; value?: unknown }[];
-  /** Content page: its permalink. */
   permalink?: string;
-  /** Content page: its language. */
   language?: string;
-  /** Content page: its own settings. */
   settings?: Record<string, unknown>;
-  /** Content page: the slug's `objectType` (`Pages`, `ContentFile`). */
+  /** The slug's `objectType`: `Pages` from the database, `ContentFile` for a file page. */
   objectType?: string;
 }
 
 export interface ITemplateCondition {
-  /** As in the rules; a plugin uses its own prefix (`loyalty.tier`). */
+  /** The key in a rule's `when`; a plugin prefixes its own (`loyalty.tier`). */
   name: string;
   pageTypes: ThemePageType[];
   label?: string;
-  /** The condition's value as a schema field (an object's fields in `element`): the designer builds its form from it. */
+  /** A schema field: the designer builds the condition's form from it. */
   value: Record<string, unknown>;
   evaluate(subject: ITemplateSubject, value: unknown): boolean;
 }
 
-/** The descriptor the preview handshake announces: a condition without its code. */
 export type TemplateConditionDescriptorType = Omit<ITemplateCondition, "evaluate">;
 
 const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
@@ -123,10 +117,7 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
   },
 ];
 
-/**
- * The conditions template rules can use. Values compare exactly, case and spaces included (except `path`), so a
- * product whose `VirtoFrontend_UI_Layout` is `b2c` does not match the default B2C rule, as in production.
- */
+/** Values compare exactly (except `path`): a `VirtoFrontend_UI_Layout` of `b2c` does not match the default B2C rule. */
 export const useTemplateConditions = createGlobalState(() => {
   const conditions = shallowReactive(new Map(BUILT_IN_CONDITIONS.map((condition) => [condition.name, condition])));
 
@@ -145,7 +136,6 @@ export const useTemplateConditions = createGlobalState(() => {
   return { registerTemplateCondition, getTemplateCondition, getTemplateConditionDescriptors };
 });
 
-/** A permalink glob: `*` matches any characters; case and the leading and trailing `/` are ignored. */
 export function matchesPath(permalink: string | undefined, glob: string): boolean {
   if (permalink === undefined) {
     return false;

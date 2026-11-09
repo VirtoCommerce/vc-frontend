@@ -12,14 +12,10 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 export type ThemeGroupType = "header" | "footer";
 
-/**
- * The theme's header and footer groups: settings sections the storefront's own header and footer read. A theme
- * without them, or a hidden section, leaves that part of the header or footer as it always was.
- */
 export const useThemeGroups = createGlobalState(() => {
   const { theme } = useThemeSnapshot();
   const { currentLanguage, defaultStoreCulture } = useLanguages();
-  /** Menus a draft names that the published snapshot does not carry, read once per language. */
+  /** A draft can name menus the published snapshot does not carry. */
   const draftMenus = shallowReactive(new Map<string, ExtendedMenuLinkType[]>());
   const requestedDraftMenus = new Set<string>();
 
@@ -32,12 +28,10 @@ export const useThemeGroups = createGlobalState(() => {
       : content;
   });
 
-  /** The group's first shown section of the type. */
   function getGroupSection(group: ThemeGroupType, type: string): IThemeItem | undefined {
     return groups.value[group].find((item) => item.type === type && !item.hidden);
   }
 
-  /** The links of a store link list a `menu` setting names, matched by name ignoring case. */
   function getMenuLinks(name: unknown, isCatalogItem = false): ExtendedMenuLinkType[] | undefined {
     if (typeof name !== "string" || !name) {
       return undefined;
@@ -50,7 +44,7 @@ export const useThemeGroups = createGlobalState(() => {
       return menu.items.map((item) => toMenuLink(item, isCatalogItem));
     }
 
-    // Undefined until it is read: the part showing it keeps what it shows without the menu meanwhile.
+    // Undefined until it is read, so the part showing it keeps its own content meanwhile.
     const draftKey = `${currentLanguage.value?.cultureName ?? ""}:${key}`;
 
     if (theme.value?.isDraft && !requestedDraftMenus.has(draftKey)) {
@@ -68,13 +62,11 @@ export const useThemeGroups = createGlobalState(() => {
         (await getMenu(name)).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false)),
       );
     } catch (error) {
-      // Asked for again the next time the menu is read.
       requestedDraftMenus.delete(draftKey);
       Logger.error(`${useThemeGroups.name}.${loadDraftMenu.name}`, error);
     }
   }
 
-  /** The header group's `site-header` section: the settings of the storefront's own header. */
   const siteHeader = computed(() => getGroupSection("header", "site-header"));
 
   return { groups, siteHeader, getGroupSection, getMenuLinks };

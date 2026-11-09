@@ -55,7 +55,6 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
-/** False while the main layout keeps the header alive under a page on another layout, which has no header. */
 const isShown = ref(true);
 
 watch(headerHeight, (value) => {
