@@ -22,7 +22,7 @@
         :key="method.code"
         class="flex items-center justify-between space-x-4 px-5 py-6 lg:py-4"
       >
-        <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
+        <VcImage :src="method.logoUrl" class="size-10" lazy />
 
         <div class="grow overflow-hidden text-ellipsis">
           {{ method.name }}
