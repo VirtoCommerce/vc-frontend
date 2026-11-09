@@ -12,7 +12,7 @@ export const USER_PROPERTY_NAMES = {
 } as const;
 
 /**
- * Mirrors the sales-rep module's `SALES_REP_ACCESS_PERMISSION`, duplicated so tagging depends on no feature module.
+ * Mirrors the SalesRep plugin's `SALES_REP_ACCESS_PERMISSION`, duplicated so tagging depends on no feature module.
  * Read as raw membership: `checkPermissions` grants an administrator everything.
  */
 const SALES_REP_PERMISSION = "sales-rep:access";

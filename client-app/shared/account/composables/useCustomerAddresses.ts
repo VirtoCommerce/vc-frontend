@@ -7,7 +7,8 @@ import {
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
-import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
+import type { InputMemberAddressType, MemberAddressFieldsFragment, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
@@ -35,23 +36,26 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables, queryEnabled);
+  const { result, loading } = useGetCurrentCustomerAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);
   const termFacets = computed(() => result.value?.currentCustomerAddresses?.term_facets ?? []);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
 
-  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+  async function addOrUpdateAddresses(
+    items: MemberAddressFieldsFragment[],
+    context?: ErrorNotificationsContextType,
+  ): Promise<MemberAddressType[]> {
     if (!items.length || !user.value.memberId) {
-      return;
+      return [];
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId, inputAddresses);
-      void refetch();
+      const updatedAddresses = await updateMemberAddresses(user.value.memberId, inputAddresses, context);
+      return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
@@ -67,7 +71,6 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
 
     try {
       await deleteMemberAddresses(inputAddresses, user.value.memberId);
-      void refetch();
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${removeAddresses.name}`, e);
       throw e;

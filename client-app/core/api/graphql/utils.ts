@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ServerError } from "@/core/api/common";
 import { AbortReason } from "@/core/api/common/enums";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
+import type { FieldValidationErrorType } from "@/core/types";
 import type { ApolloClient } from "@apollo/client/core";
 import type { NetworkError } from "@apollo/client/errors";
 import type { GraphQLFormattedError } from "graphql";
@@ -13,6 +14,21 @@ export function hasErrorCode(
   errorCode: GraphQLErrorCode,
 ) {
   return graphQLErrors?.some((graphQLError) => graphQLError.extensions?.code === errorCode);
+}
+
+// A rejected input is a VALIDATION error that names its field; a bare VALIDATION (older backends) is not one.
+export function getFieldValidationErrors(
+  graphQLErrors: ReadonlyArray<GraphQLFormattedError> | undefined,
+): FieldValidationErrorType[] {
+  return (graphQLErrors ?? []).flatMap(({ extensions }) => {
+    const { code, field, errorCode } = extensions ?? {};
+
+    if (code !== GraphQLErrorCode.Validation || typeof field !== "string" || !field) {
+      return [];
+    }
+
+    return [{ field, errorCode: typeof errorCode === "string" ? errorCode : undefined }];
+  });
 }
 
 export function toServerError(

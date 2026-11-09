@@ -12,6 +12,7 @@
         :model-value="editableAddress"
         :countries="countries"
         :disabled="loading"
+        :server-errors="serverErrors"
         with-personal-info
         required-email
         required-city
@@ -55,6 +56,7 @@ interface IEmits {
 interface IProps {
   address?: MemberAddressType;
   loading?: boolean;
+  serverErrors?: Partial<Record<keyof MemberAddressType, string>>;
 }
 
 const emit = defineEmits<IEmits>();

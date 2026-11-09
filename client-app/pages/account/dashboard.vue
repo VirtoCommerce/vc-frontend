@@ -8,7 +8,7 @@
 
     <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
       <template #append>
-        <VcButton class="lg:!hidden" :to="{ name: 'Orders' }" variant="outline" size="xs">
+        <VcButton class="lg:hidden" :to="{ name: 'Orders' }" variant="outline" size="xs">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
         </VcButton>
 

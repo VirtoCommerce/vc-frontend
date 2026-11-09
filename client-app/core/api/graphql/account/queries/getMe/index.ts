@@ -6,7 +6,7 @@ import type { GetMeQuery } from "@/core/api/graphql/types";
 export type UserType = GetMeQuery["me"];
 
 export function useGetMeQuery() {
-  return useLazyQuery(GetMeDocument);
+  return useLazyQuery(GetMeDocument, {}, { fetchPolicy: "network-only", errorPolicy: "all" });
 }
 
 export async function getMe(userId: string): Promise<UserType> {

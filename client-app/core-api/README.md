@@ -9,7 +9,8 @@
 > - `index.ts` is the facade: a list of re-exports. It is **the only API plugins may use**.
 > - `yarn build:core-types` turns it into one committed type file and bumps the version when the API grew.
 > - Removing or renaming anything breaks every plugin: bump by hand (`yarn bump:core`).
-> - Releases are tarballs on GitHub (`core-v<version>`), never npm. Never delete one.
+> - Releases are tarballs on GitHub (`core-v<version>`), never npm. Never delete a stable one; alpha pre-releases
+>   are temporary.
 
 _Source-checked against `dev` @ `4b7a22d23` plus the plugin tooling (VCST-6320), facade 0.2.3,
 on 2026-10-14._
@@ -77,14 +78,20 @@ Never edit `contract/` by hand. The output is deterministic, so its diff in a PR
 
 ## 5. Releasing
 
-1. Run the **Core Facade Release** workflow from `dev`. It validates, packs this folder and publishes the tarball
+1. Run the **Core Facade Release** workflow from `dev`, the default branch. It validates, packs this folder and publishes the tarball
    as a GitHub Release on tag `core-v<version>`. Plugins pin its URL:
    `https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<version>/vc-frontend-core-<version>.tgz`.
 2. It refuses a version whose release or tag already exists: a new contract needs a new version. It runs only in
    `VirtoCommerce/vc-frontend`, or in a fork with the `VC_RELEASE=true` repository variable.
-3. **Never delete a `core-v*` release or tag.** Plugins pin the tarball URL, and their lockfiles its checksum.
+3. **Never delete a stable `core-v*` release or tag.** Plugins pin the tarball URL, and their lockfiles its checksum.
 4. Before a release exists, plugins link the local facade with yalc: `yarn core:yalc-push`
    ([S2.3](../core/federation/scenarios/s2-develop-locally.md#23-the-facade-is-extended-but-not-released)).
+5. **A plugin PR that must build or deploy before the facade reaches `dev`** (its CI, a QA environment): run the
+   workflow from the facade branch. From any branch but the default one it publishes a GitHub pre-release
+   `core-v<version>-alpha.<run>.<branch>`, never a stable release; pin its tarball URL and set `requiredHostVersion` to `^<that version>`. The
+   host has to be a theme build of the same branch. The branch's version must not be released yet.
+6. **Alphas are temporary.** The stable release of `<version>`, or of any later one, deletes every alpha below it.
+   Move the plugin to a stable pin before it merges.
 
 ## 6. How the contract is built
 

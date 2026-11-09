@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
       "invalid_value": "Virheellinen arvo",
+      "invalid_characters": "Sisältää virheellisiä merkkejä",
+      "html_tags_not_allowed": "HTML-tunnisteet eivät ole sallittuja",
+      "unsafe_content": "Sisältää kiellettyä sisältöä",
+      "invalid_addresses": "Osa osoitteista on virheellisiä",
+      "invalid_data": "Osa syötetyistä tiedoista on virheellisiä",
       "invalid_user_id_or_token": "Käyttäjätunnus tai token on virheellinen.",
       "product_no_longer_available": "Ei enää saatavilla",
       "item_quantity_required_field": "Tuotteen määrä ei saa olla tyhjä",
@@ -285,7 +290,8 @@
       "company_members": "Yrityksen jäsenet",
       "contact_administrator": "ota yhteyttä sivuston ylläpitäjään",
       "skip_to_main_content": "Siirry pääsisältöön",
-      "skip_to_footer": "Siirry alatunnisteeseen"
+      "skip_to_footer": "Siirry alatunnisteeseen",
+      "security": "Turvallisuus"
     },
     "titles": {
       "all_actions": "Kaikki toiminnot",
@@ -378,7 +384,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -494,7 +501,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +533,12 @@
           "duplicate_email_login_attempt": "Useat tilit käyttävät tätä sähköpostiosoitetta.",
           "lockout_disabled": "Tällä tilillä ei voi kirjautua sisään koodilla.",
           "invalid_code": "Tämä koodi ei toiminut.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Kirjautumisistuntosi on vanhentunut. Kirjaudu uudelleen.",
+          "code_attempts_exceeded": "Liian monta virheellistä koodia. Odota muutama minuutti ja kirjaudu uudelleen.",
+          "mfa_provider_not_available": "Tälle tilille ei voi lähettää kirjautumiskoodia. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_unavailable": "Tämä tili vaatii toisen kirjautumisvaiheen, mutta se ei ole käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +558,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
-          "generic": "Jotain meni pieleen. Yritä uudelleen."
+          "generic": "Jotain meni pieleen. Yritä uudelleen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -632,12 +654,7 @@
         "verify": {
           "header": "Tarkista sähköpostisi",
           "subtitle": "Lähetimme koodin osoitteeseen {email}.",
-          "code_label": "Koodi",
-          "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
-          "submit_button": "Kirjaudu sisään",
-          "resend_button": "Lähetä koodi uudelleen",
-          "use_different_email_link": "Käytä toista sähköpostiosoitetta",
-          "live_resent": "Uusi koodi lähetetty."
+          "use_different_email_link": "Käytä toista sähköpostiosoitetta"
         },
         "locked": {
           "title": "Liian monta epäonnistunutta yritystä",
@@ -653,6 +670,19 @@
           "password_button": "Kirjaudu salasanalla",
           "back_link": "Takaisin kirjautumiseen"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Syötä kirjautumiskoodi",
+        "subtitle": "Lähetimme koodin osoitteeseen {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Koodi",
+        "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
+        "submit_button": "Kirjaudu sisään",
+        "resend_button": "Lähetä koodi uudelleen",
+        "resend_countdown": "Lähetä koodi uudelleen {seconds} s kuluttua",
+        "live_resent": "Uusi koodi lähetetty."
       }
     },
     "company": {
@@ -1155,6 +1185,80 @@
           "unpin_label": "Irrota “{label}”"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Keskim. tilausarvo ajanjaksolla: {aov}",
+        "title": "Keskimääräinen tilausarvo"
+      },
+      "axis": {
+        "aov": "Keskim. tilausarvo, {currency}"
+      },
+      "cancelled_excluded": "Ei sisällä peruutettuja tilauksia",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "viimeiset 6 kuukautta",
+        "twelve_months": "viimeiset 12 kuukautta",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, kuluva kuu {today} asti. Myynti on nettomyyntiä tilauspäivän mukaan; peruutetut tilaukset eivät sisälly lukuihin.",
+      "footnote_closed": "{from} – {to}. Myynti on nettomyyntiä tilauspäivän mukaan; peruutetut tilaukset eivät sisälly lukuihin.",
+      "footnote_upcoming": "Tämä ajanjakso ei ole vielä alkanut.",
+      "kpi": {
+        "aov": "Keskimääräinen tilausarvo · {period}",
+        "month_to_date": "{month} tähän mennessä · päivä {day}/{days}",
+        "orders": "Tilaukset · {period}",
+        "projected": "{share} kuukaudesta · ennuste {value}",
+        "sales": "Myynti · {period}",
+        "vs_last_year": "{change} vs viime vuosi"
+      },
+      "last_year": "Viime vuosi",
+      "last_year_toggle": "Näytä viime vuosi kaaviossa ”{chart}”",
+      "legend": {
+        "aov_closed": "Keskim. tilausarvo, päättyneet kuukaudet",
+        "current": "Tämä kuukausi, tähän mennessä",
+        "down": "lasku",
+        "last_year": "Viime vuosi",
+        "projection": "Ennuste kuun loppuun",
+        "sales_closed": "Myynti, päättyneet kuukaudet",
+        "up": "nousu",
+        "vs_last_year": "vs sama kuukausi viime vuonna"
+      },
+      "load_failed": "Raporttia ei voitu ladata. Yritä myöhemmin uudelleen.",
+      "period_label": "Ajanjakso",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6 kuukautta",
+        "twelve_months": "12 kuukautta",
+        "year": "Kuluva vuosi"
+      },
+      "sales_chart": {
+        "subtitle": "Keskimäärin {value} / päättynyt kuukausi",
+        "title": "Kuukausimyynti · {period}"
+      },
+      "table": {
+        "aov": "Keskim. tilausarvo",
+        "change": "vs viime vuosi",
+        "description": "Myynti, tilaukset ja keskimääräinen tilausarvo kuukausittain",
+        "last_year": "Sama kuukausi viime vuonna",
+        "month": "Kuukausi",
+        "orders": "Tilaukset",
+        "sales": "Myynti",
+        "toggle": "Näytä taulukkona"
+      },
+      "tooltip": {
+        "aov": "Keskim. tilausarvo",
+        "last_year_aov": "Keskim. tilausarvo, {month}",
+        "last_year_revenue": "Tuotto, {month}",
+        "projection": "Ennuste kuun loppuun",
+        "revenue": "Tuotto",
+        "revenue_to_date": "Tuotto tähän mennessä",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Tulossa"
     }
   },
   "pages": {
@@ -1464,6 +1568,23 @@
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",
         "no_lists": "Sinulla ei ole kuponkeja tai tarjouksia"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ei avaimia",
+        "unnamed_key": "Nimetön avain",
+        "rename_key_label": "Nimeä {name} uudelleen",
+        "delete_key_label": "Poista {name}",
+        "created": "Luotu {date}",
+        "changed": "Muutettu {date}",
+        "rename_modal": {
+          "title": "Nimeä avain uudelleen",
+          "name_label": "Nimi"
+        },
+        "delete_modal": {
+          "title": "Poista avain",
+          "message": "Et voi enää kirjautua sisään tällä avaimella."
+        }
       }
     },
     "company": {
@@ -1803,7 +1924,11 @@
     "PasswordRequiresNonAlphanumeric": "Salasanassa on oltava vähintään yksi ei-alfanumeerinen merkki",
     "PasswordRequiresUpper": "Salasanassa on oltava vähintään yksi iso kirjain ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Salasanassa on käytettävä erilaisia merkkejä",
-    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana."
+    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana.",
+    "user_not_editable": "Tätä käyttäjää ei voi muokata",
+    "sign_in_key_not_found": "Kirjautumisavainta ei löytynyt",
+    "last_sign_in_key": "Viimeistä kirjautumisavainta ei voi poistaa",
+    "operation_not_supported": "Tätä toimintoa ei tueta"
   },
   "password_tips": {
     "title": "Vinkkejä vahvan salasanan luomiseen:",

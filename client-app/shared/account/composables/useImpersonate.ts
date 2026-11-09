@@ -7,12 +7,21 @@ import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcas
 import { useNotifications } from "@/shared/notification";
 import { useUser } from "./useUser";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
-import type { ConnectTokenResponseType } from "@/core/types";
+import type { ConnectTokenResponseType, TwoFactorChallengeType } from "@/core/types";
 
 type StepType = "idle" | "verify" | "impersonate" | "success";
 
 export function useImpersonate() {
-  const { authorize, errors: authErrors, setTokenType, setAccessToken, setExpiresAt, setRefreshToken } = useAuth();
+  const {
+    authorize,
+    errors: authErrors,
+    resetErrors: resetAuthErrors,
+    twoFactorChallenge: authTwoFactorChallenge,
+    setTokenType,
+    setAccessToken,
+    setExpiresAt,
+    setRefreshToken,
+  } = useAuth();
   const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { t } = useI18n();
@@ -20,11 +29,20 @@ export function useImpersonate() {
   const step = ref<StepType>("idle");
   const errors = ref<IdentityErrorType[]>([]);
 
+  const twoFactorChallenge = ref<TwoFactorChallengeType>();
+
   const loading = computed<boolean>(() => step.value === "verify" || step.value === "impersonate");
 
   function resetState(): void {
     step.value = "idle";
     errors.value = [];
+    twoFactorChallenge.value = undefined;
+  }
+
+  function failTwoFactor(error: IdentityErrorType): void {
+    const impersonationErrors = errors.value;
+    resetState();
+    errors.value = impersonationErrors.length > 0 ? impersonationErrors : [error];
   }
 
   async function requestImpersonateToken(userId: string, redirectTo: string = "/"): Promise<void> {
@@ -117,6 +135,13 @@ export function useImpersonate() {
       return;
     }
 
+    twoFactorChallenge.value = authTwoFactorChallenge.value;
+    if (twoFactorChallenge.value) {
+      resetAuthErrors();
+      step.value = "idle";
+      return;
+    }
+
     if (hasAuthErrors) {
       errors.value = verifyErrors;
       step.value = "idle";
@@ -127,7 +152,7 @@ export function useImpersonate() {
   }
 
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
-    resetState();
+    errors.value = [];
     await requestImpersonateToken(targetUserId);
   }
 
@@ -168,6 +193,8 @@ export function useImpersonate() {
     loading,
     step,
     errors,
+    twoFactorChallenge,
     resetState,
+    failTwoFactor,
   };
 }

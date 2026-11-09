@@ -49,7 +49,7 @@
             {{ $t("pages.account.order_payment.back_to_order_button") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'Orders', replace: true }" class="sm:min-w-40">
+          <VcButton :to="{ name: 'Orders', replace: true }">
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 
@@ -158,7 +158,7 @@
                   :loading="changeAddressLoading"
                   size="sm"
                   variant="outline"
-                  class="hidden self-start md:inline-flex"
+                  class="hidden self-start md:inline-flex print:hidden"
                   @click="showEditAddressModal"
                 >
                   {{ $t("pages.account.order_payment.edit_button") }}
@@ -187,21 +187,13 @@
               <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-md md:p-6">
                 <div class="min-w-0 truncate">
                   <template v-if="isPaymentAvailable && payment?.paymentMethod">
-                    <VcImage
-                      :src="payment.paymentMethod.logoUrl"
-                      class="mr-3.5 inline-block size-8 object-center md:size-9"
-                      lazy
-                    />
+                    <VcImage :src="payment.paymentMethod.logoUrl" class="mr-3.5 inline-block size-8 md:size-9" lazy />
 
                     <span>{{ payment.paymentMethod.name }}</span>
                   </template>
 
                   <template v-else>
-                    <VcImage
-                      src="select-payment.svg"
-                      class="mr-3.5 inline-block size-10 object-center md:size-12"
-                      lazy
-                    />
+                    <VcImage src="select-payment.svg" class="mr-3.5 inline-block size-10 md:size-12" lazy />
 
                     <span>{{ $t("common.placeholders.select_payment_method") }}</span>
                   </template>
@@ -213,7 +205,7 @@
                     :loading="changeMethodLoading"
                     size="sm"
                     variant="outline"
-                    class="hidden self-start md:inline-flex"
+                    class="hidden self-start md:inline-flex print:hidden"
                     @click="showChangePaymentMethodModal"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}

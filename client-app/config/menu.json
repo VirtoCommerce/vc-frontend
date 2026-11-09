@@ -138,6 +138,15 @@
             "title": "shared.account.navigation.links.change_password",
             "icon": "pass",
             "priority": 30
+          },
+          {
+            "id": "security",
+            "route": {
+              "name": "Security"
+            },
+            "title": "shared.account.navigation.links.security",
+            "icon": "shield-check",
+            "priority": 40
           }
         ],
         "priority": 40
@@ -291,6 +300,14 @@
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "pass",
             "priority": 30
+          },
+          {
+            "route": {
+              "name": "Security"
+            },
+            "title": "shared.layout.header.mobile.account_menu.security",
+            "icon": "shield-check",
+            "priority": 40
           }
         ]
       },

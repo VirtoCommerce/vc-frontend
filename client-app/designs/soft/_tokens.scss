@@ -1,0 +1,33 @@
+html[data-design="soft"] {
+  --vc-radius: 1rem;
+  --vc-base-font-family: Inter, sans-serif;
+  --vc-heading-font-family: Geologica, sans-serif;
+
+  // VcShape
+  --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
+
+  // VcWidget
+  --vc-widget-radius: 1.375rem;
+  --vc-widget-border-width: 0px;
+  // One line: Sass keeps a wrapped value's line breaks, and check:designs then cannot match this rule.
+  // prettier-ignore
+  --vc-widget-shadow: 0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05), 0 6px 20px 0 rgb(from var(--color-additional-950) r g b / 0.06);
+  --vc-widget-padding-x: 1.5rem;
+  --vc-widget-title-font-weight: 600;
+  --vc-widget-title-text-transform: none;
+  --vc-widget-title-letter-spacing: -0.02em;
+  // The plate as html computes it, a fork's override included: blocks/vc-widget.scss gives it to nested widgets.
+  --design-widget-radius: var(--vc-widget-radius);
+  --design-widget-border-width: var(--vc-widget-border-width);
+  --design-widget-padding-x: var(--vc-widget-padding-x);
+
+  @media (width >= theme("screens.lg")) {
+    --vc-widget-radius: 1.75rem;
+    --vc-widget-padding-x: 2rem;
+  }
+
+  // Forced colours drop the shadow, so the plate keeps an edge.
+  @media (forced-colors: active) {
+    --vc-widget-border-width: 1px;
+  }
+}

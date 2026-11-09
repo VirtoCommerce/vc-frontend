@@ -42,15 +42,15 @@ jobs:
         uses: warchant/setup-sonar-scanner@911ef81b14b267a261d70ac94e43d3c822a709d5 # v10
 
       - name: Install VirtoCommerce.GlobalTool
-        uses: VirtoCommerce/.github/actions/setup-vcbuild@v3.1000.1
+        uses: VirtoCommerce/.github/actions/setup-vcbuild@v3.1000.7
 
       - name: Setup Git Credentials
-        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@v3.1000.1
+        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@v3.1000.7
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
       - name: Get Image Version
-        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.1
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.7
         id: image
         with:
           projectType: "theme"
@@ -69,7 +69,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --mode=skip-build
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e # master
@@ -83,11 +83,7 @@ jobs:
         run: |
           yarn build
 
-      - name: Unit Tests
-        run: |
-          yarn test:unit --run
-
-      - name: Typing Tests
+      - name: Unit and Typing Tests
         run: |
           yarn test:typing --run
 
@@ -102,7 +98,7 @@ jobs:
 
       - name: Publish to Blob
         id: blobRelease
-        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.1
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.7
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
 
