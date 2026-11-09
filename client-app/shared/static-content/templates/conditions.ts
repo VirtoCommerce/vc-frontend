@@ -39,7 +39,8 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     name: "inCategory",
     pageTypes: ["product", "category"],
     label: "In category",
-    value: { type: "string", label: "Category ids, comma-separated" },
+    // A list of strings; a legacy comma-separated string still evaluates.
+    value: { type: "list", label: "Category ids" },
     evaluate: (subject, value) => {
       const ids = toList(value);
       const segments = new Set([subject.categoryId, ...(subject.categoryPaths ?? []).flat()]);
