@@ -9,6 +9,10 @@ import type { PageBuilderSchemaType } from "../models/PageBuilderSchemaType";
 import type { IThemeItem } from "@/core/theme-snapshot";
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => true }));
+vi.mock("../utils", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils")>()),
+  isOpenedWithPreviewProtocol: () => true,
+}));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "de-DE" }), defaultStoreCulture: ref("en-US") }),
 }));

@@ -7,7 +7,8 @@ import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
-import { buildPreviewCatalog, createPreviewV2, findSchemaField, PREVIEW_PROTOCOL } from "./preview-v2";
+import { buildPreviewCatalog, createPreviewV2, findSchemaField } from "./preview-v2";
+import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 

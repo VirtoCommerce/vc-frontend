@@ -42,6 +42,39 @@ describe("getBuilderOrigin", () => {
   );
 });
 
+describe("isOpenedWithPreviewProtocol", () => {
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+    vi.resetModules();
+  });
+
+  it("is true for the protocol the storefront speaks", async () => {
+    window.history.replaceState(null, "", "/?protocol=2");
+
+    const { isOpenedWithPreviewProtocol } = await import("./utils");
+
+    expect(isOpenedWithPreviewProtocol()).toBe(true);
+  });
+
+  it.each(["/", "/?protocol=1", "/?protocol=2x"])("is false for %s", async (url) => {
+    window.history.replaceState(null, "", url);
+
+    const { isOpenedWithPreviewProtocol } = await import("./utils");
+
+    expect(isOpenedWithPreviewProtocol()).toBe(false);
+  });
+
+  it("keeps its answer after the preview route drops the query", async () => {
+    window.history.replaceState(null, "", "/?protocol=2");
+
+    const { isOpenedWithPreviewProtocol } = await import("./utils");
+    isOpenedWithPreviewProtocol();
+    window.history.replaceState(null, "", "/designer-preview");
+
+    expect(isOpenedWithPreviewProtocol()).toBe(true);
+  });
+});
+
 describe("guardPreviewNavigation", () => {
   function route(fullPath: string) {
     const url = new URL(fullPath, "https://store.example");

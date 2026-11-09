@@ -4,8 +4,10 @@ import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 export const SECTION_ATTRIBUTE = "data-pb-section";
 export const FIELD_ATTRIBUTE = "data-pb-field";
+export const PREVIEW_PROTOCOL = 2;
 
 let cachedBuilderOrigin: string | undefined;
+let cachedIsPreviewProtocol: boolean | undefined;
 
 /** `undefined` outside a frame: only the designer that frames the preview may drive it. */
 export function getBuilderOrigin() {
@@ -22,6 +24,14 @@ export function getBuilderOrigin() {
   }
 
   return cachedBuilderOrigin || undefined;
+}
+
+/** Read once, as the preview route drops the query. The Angular designer never asks for it. */
+export function isOpenedWithPreviewProtocol(): boolean {
+  cachedIsPreviewProtocol ??=
+    new URLSearchParams(globalThis.location.search).get("protocol") === String(PREVIEW_PROTOCOL);
+
+  return cachedIsPreviewProtocol;
 }
 
 export function getPreviewPageId(): string | undefined {

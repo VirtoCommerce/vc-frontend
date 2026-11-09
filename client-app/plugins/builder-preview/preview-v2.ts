@@ -18,14 +18,13 @@ import { Logger } from "@/core/utilities";
 import { getTemplatePageType, useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
+import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
 import type { Router } from "vue-router";
-
-export const PREVIEW_PROTOCOL = 2;
 
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
 

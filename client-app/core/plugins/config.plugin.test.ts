@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { writeThemeVariables } from "./config.plugin";
+import { getThemeVariablesCss, writeThemeVariables } from "./config.plugin";
 import type { IThemeConfigPreset } from "../types";
 
 function rules(): CSSStyleRule[] {
@@ -42,5 +42,26 @@ describe("writeThemeVariables", () => {
 
     expect(rules()).toHaveLength(1);
     expect(rules()[0].style.getPropertyValue("--color-primary-600")).toBe("#666");
+  });
+});
+
+describe("getThemeVariablesCss", () => {
+  afterEach(() => {
+    document.head.innerHTML = "";
+  });
+
+  it("returns every rule that was written", () => {
+    writeThemeVariables(preset({ color_primary_500: "#111" }), preset({ color_primary_500: "#eee" }));
+
+    const css = getThemeVariablesCss();
+
+    expect(css).toContain(":root:not(.dark)");
+    expect(css).toContain("#111");
+    expect(css).toContain("html.dark");
+    expect(css).toContain("#eee");
+  });
+
+  it("returns nothing before the variables are written", () => {
+    expect(getThemeVariablesCss()).toBe("");
   });
 });

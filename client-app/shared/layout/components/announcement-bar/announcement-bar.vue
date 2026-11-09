@@ -19,6 +19,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
+import { isSafeLinkUrl } from "@/core/utilities/common";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { useStaticPage } from "@/shared/static-content/composables/useStaticPage";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
@@ -53,7 +54,7 @@ const announcements = computed(() => {
     .map((block) => ({
       id: block.id,
       text: block.text as string,
-      link: typeof block.link === "string" && block.link ? block.link : undefined,
+      link: typeof block.link === "string" && block.link && isSafeLinkUrl(block.link) ? block.link : undefined,
     }));
 });
 

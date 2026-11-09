@@ -589,51 +589,6 @@ describe("useThemeContext - preset loading functions", () => {
     });
   });
 
-  describe("setThemePalette", () => {
-    it("puts the theme's palette in place of the preset, and the preset back without one", async () => {
-      const { useThemeContext } = await importComposable();
-      const { setThemeContext, addPresetToThemeContext, setThemePalette, themeContext } = useThemeContext();
-      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
-      await addPresetToThemeContext("coffee");
-
-      setThemePalette({ light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } });
-
-      expect(themeContext.value.preset?.color_primary_50).toBe("#theme");
-      expect(themeContext.value.darkPreset?.color_primary_50).toBe("#theme-dark");
-
-      setThemePalette({ light: { color_primary_50: "#light-only" } });
-
-      expect(themeContext.value.darkPreset).toBeUndefined();
-
-      setThemePalette(undefined);
-
-      expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
-    });
-
-    it("keeps the preset's value of a token the theme's palette lacks", async () => {
-      const { useThemeContext } = await importComposable();
-      const { setThemeContext, addPresetToThemeContext, setThemePalette, themeContext } = useThemeContext();
-      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
-      await addPresetToThemeContext("coffee");
-
-      setThemePalette({ light: { color_primary_50: "#theme" } });
-
-      expect(themeContext.value.preset?.color_primary_50).toBe("#theme");
-      expect(themeContext.value.preset?.color_primary_100).toBe("#coffee");
-    });
-
-    it("keeps the preset's stylesheet scope on <html> under the theme's palette", async () => {
-      const { useThemeContext } = await importComposable();
-      const { setThemeContext, addPresetToThemeContext, setThemePalette } = useThemeContext();
-      setThemeContext({ id: "test-store", name: "Test Store", settings: {} } as unknown as StoreResponseType);
-      await addPresetToThemeContext("coffee");
-
-      setThemePalette({ light: { color_primary_50: "#theme" } });
-
-      expect(document.documentElement.getAttribute("data-preset")).toBe("coffee");
-    });
-  });
-
   describe("integration", () => {
     it("prioritizes predefined presets over dynamic loading", async () => {
       const { getPredefinedPreset, getPreset } = await importComposable();

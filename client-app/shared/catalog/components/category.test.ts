@@ -670,6 +670,22 @@ describe("category page view mode", () => {
 
     expect(wrapper!.get('[data-testid="category-products"]').attributes("data-view-mode")).toBe("list");
   });
+
+  it("leaves the customer's saved view mode alone when the view is pinned", async () => {
+    localStorage.setItem("viewMode", "grid");
+
+    await mountAt("/catalog", { viewMode: "list" });
+
+    expect(localStorage.getItem("viewMode")).toBe("grid");
+  });
+
+  it("shows the customer's saved view mode when the view is not pinned", async () => {
+    localStorage.setItem("viewMode", "list");
+
+    await mountAt("/catalog");
+
+    expect(wrapper!.get('[data-testid="category-products"]').attributes("data-view-mode")).toBe("list");
+  });
 });
 
 describe("search results list in analytics", () => {

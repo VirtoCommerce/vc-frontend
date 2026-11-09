@@ -147,7 +147,9 @@ async function loadCategory(id: string): Promise<void> {
   try {
     await fetchCategory({ categoryId: id, maxLevel: 0, currencyCode: loyaltyCurrencyOverride.value });
   } finally {
-    settledCategoryId.value = id;
+    if (id === props.categoryId) {
+      settledCategoryId.value = id;
+    }
   }
 }
 </script>

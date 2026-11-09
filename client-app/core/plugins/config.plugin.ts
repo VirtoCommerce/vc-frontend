@@ -2,7 +2,7 @@ import { configInjectionKey } from "../injection-keys";
 import type { IThemeConfigPreset, IThemeContext } from "../types";
 import type { App, Plugin } from "vue";
 
-const THEME_VARIABLES_ID = "vc-theme-variables";
+export const THEME_VARIABLES_ID = "vc-theme-variables";
 
 // A theme's palette comes from the backend, so its values are set one by one and never parsed as stylesheet text.
 function addPresetRule(sheet: CSSStyleSheet, selector: string, preset: IThemeConfigPreset): void {
@@ -40,6 +40,12 @@ export function writeThemeVariables(preset: IThemeConfigPreset, darkPreset?: ITh
   } else {
     addPresetRule(sheet, ":root", preset);
   }
+}
+
+export function getThemeVariablesCss(): string {
+  const styleElement = document.getElementById(THEME_VARIABLES_ID) as HTMLStyleElement | null;
+
+  return Array.from(styleElement?.sheet?.cssRules ?? [], (rule) => rule.cssText).join("\n");
 }
 
 export const configPlugin: Plugin<IThemeContext> = {

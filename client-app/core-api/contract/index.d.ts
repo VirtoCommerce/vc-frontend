@@ -5756,16 +5756,9 @@ declare function _useWishlistSharingScopes(): {
 };
 declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
 
-interface IThemePalette {
-    light: Record<string, string>;
-    /** Without it, the storefront has no dark theme. */
-    dark?: Record<string, string>;
-}
-
 declare function _useThemeContext(): {
     setThemeContext: (store: StoreResponseType) => void;
     addPresetToThemeContext: (presetName: string) => Promise<void>;
-    setThemePalette: (palette: IThemePalette | undefined) => void;
     themeContext: vue.WritableComputedRef<IThemeContext, IThemeContext>;
     modulesSettings: vue.ComputedRef<{
         moduleId: string;

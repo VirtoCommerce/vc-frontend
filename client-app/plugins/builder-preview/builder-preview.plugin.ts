@@ -10,14 +10,21 @@ import { templateBlocks } from "@/shared/static-content/components";
 import { addBuilderMessageListener, createPreviewLoadedNotifier, isPreviewV2Type } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
-import { buildPreviewCatalog, createPreviewV2, PREVIEW_PROTOCOL } from "./preview-v2";
+import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
 import { getRegisteredComponents } from "./register-components";
 import {
   SHARED_COMPONENT_END_ANCHOR_ID,
   SharedComponentOverlay,
   normalizeSharedComponentBoundaries,
 } from "./shared-component-overlay";
-import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId, guardPreviewNavigation } from "./utils";
+import {
+  getBuilderOrigin,
+  getPreviewCultureName,
+  getPreviewPageId,
+  guardPreviewNavigation,
+  isOpenedWithPreviewProtocol,
+  PREVIEW_PROTOCOL,
+} from "./utils";
 import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -482,8 +489,11 @@ export default {
 
       const customComponents = await getRegisteredComponents();
       context.schemas = customComponents;
-      // Both designers get the same `loaded`: the Angular one reads the schemas and ignores the rest.
-      loadedNotifier.setData(isNewPageBuilderEnabled() ? buildPreviewCatalog(customComponents) : customComponents);
+      loadedNotifier.setData(
+        isNewPageBuilderEnabled() && isOpenedWithPreviewProtocol()
+          ? buildPreviewCatalog(customComponents)
+          : customComponents,
+      );
       await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps

@@ -71,6 +71,18 @@ describe("useThemeChrome", () => {
     ]);
   });
 
+  it.each(["javascript:alert(1)", "data:text/html,x"])("treats an unsafe footer link as a missing one: %s", (link) => {
+    publish({
+      footer: {
+        content: [
+          { id: "f", type: "site-footer", blocks: [{ id: "b", type: "footer-menu", links: [{ label: "Bad", link }] }] },
+        ],
+      },
+    });
+
+    expect(useThemeChrome().footerColumns.value?.[0].children).toEqual([{ title: "Bad", route: "" }]);
+  });
+
   it("lets white-labeling's footer links replace the theme's footer menus", () => {
     whiteLabeling.footerLinks = [{ title: "Company" }];
     publish({ footer: { content: [{ id: "f", type: "site-footer", blocks: [{ id: "b", type: "footer-menu" }] }] } });

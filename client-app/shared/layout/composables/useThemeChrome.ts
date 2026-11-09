@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { useThemeGroups } from "@/core/theme-snapshot/groups";
+import { isSafeLinkUrl } from "@/core/utilities/common";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IFooterMenuBlock {
@@ -41,7 +42,10 @@ export function useThemeChrome() {
           title: block.heading ?? "",
           children:
             getMenuLinks(block.menu) ??
-            (block.links ?? []).map((link) => ({ title: link.label ?? "", route: link.link ?? "" })),
+            (block.links ?? []).map((link) => ({
+              title: link.label ?? "",
+              route: link.link && isSafeLinkUrl(link.link) ? link.link : "",
+            })),
         }))
       : undefined;
   });

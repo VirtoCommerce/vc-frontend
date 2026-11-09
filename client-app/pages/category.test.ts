@@ -10,6 +10,7 @@ const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ val
 const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
 const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
+const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
 
@@ -23,8 +24,14 @@ vi.mock("@/shared/catalog/composables/useCategory", () => ({
 
     return {
       category,
-      fetchCategory: vi.fn(async () => {
-        await Promise.resolve();
+      fetchCategory: vi.fn(async ({ categoryId }: { categoryId: string }) => {
+        await new Promise<void>((resolve) => {
+          if (heldFetches.value) {
+            heldFetches.value.set(categoryId, resolve);
+          } else {
+            resolve();
+          }
+        });
         category.value = fetchedCategory.value ?? category.value;
       }),
     };
@@ -35,13 +42,13 @@ vi.mock("@/shared/layout/composables/useSearchScore", () => ({
   useSearchScore: () => ({ isCategoryScope: ref(false), isScopePending: ref(false), holdScope: vi.fn() }),
 }));
 vi.mock("@/shared/catalog/components/category.vue", async () => {
-  const { defineComponent: define } = await import("vue");
+  const { defineComponent: define, h: render } = await import("vue");
   return {
     default: define({
       inheritAttrs: false,
       setup: (_props, { attrs }) => {
         listingProps.value = attrs;
-        return () => null;
+        return () => render("section", { "data-test-id": "category-listing-section" });
       },
     }),
   };
@@ -82,6 +89,7 @@ describe("category page", () => {
     loadedCategory.value = { breadcrumbs: [{ title: "Toner" }] };
     fetchedCategory.value = undefined;
     pageBuilder.isEnabled = false;
+    heldFetches.value = undefined;
   });
 
   afterEach(() => {
@@ -183,5 +191,21 @@ describe("category page", () => {
     await flushPromises();
 
     expect(listingProps.value).toMatchObject({ "category-id": "missing" });
+  });
+
+  it("keeps the listing when the previous category's request finishes after the current one's", async () => {
+    pageBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    await wrapper.setProps({ categoryId: "paper" });
+
+    heldFetches.value.get("paper")?.();
+    await flushPromises();
+    heldFetches.value.get("toner")?.();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
+    expect(listingProps.value).toMatchObject({ "category-id": "paper" });
   });
 });
