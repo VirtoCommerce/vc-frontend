@@ -122,8 +122,9 @@ function _useWhiteLabeling() {
       const settings = whiteLabelingSettings.value;
       const fields: [string, unknown][] = [
         ["brand.logoUrl", settings?.logoUrl],
-        // The header and the footer take the dark logo from the light logo's source.
-        ["brand.secondaryLogoUrl", settings?.secondaryLogoUrl || settings?.logoUrl],
+        // The header and the footer take the dark logo from the light logo's source: white-labeling's dark logo without
+        // its light logo never shows, and the theme's dark logo shows unless white-labeling sets the light one.
+        ["brand.secondaryLogoUrl", settings?.logoUrl],
         ["brand.faviconUrl", settings?.favicons?.length],
         ["palette", settings?.themePresetName],
         // The main menu replaces the header's category menu (`catalog_menu`) only; the icons menu stays the theme's.

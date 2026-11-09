@@ -101,10 +101,13 @@ describe("useWhiteLabeling", () => {
       },
     );
 
-    it("names the logo for dark backgrounds for white-labeling's own logo for dark backgrounds", () => {
+    it("does not name the logo for dark backgrounds for white-labeling's logo for dark backgrounds alone, which never shows", () => {
+      useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });
       setWhiteLabeling({ secondaryLogoUrl: "store-white.svg" });
+      const { darkLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
 
-      expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual(["brand.secondaryLogoUrl"]);
+      expect(darkLogoUrl.value).toBe("acme-white.svg");
+      expect(themeFieldsSetByWhiteLabeling.value).toEqual([]);
     });
 
     it("does not name the logo for dark backgrounds without a white-labeling logo", () => {
