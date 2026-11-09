@@ -77,9 +77,46 @@ describe("useWhiteLabeling", () => {
 
       expect(useWhiteLabeling().themeFieldsSetByWhiteLabeling.value).toEqual([
         "brand.logoUrl",
+        "brand.secondaryLogoUrl",
         "menus.header",
         "menus.footer",
       ]);
+    });
+
+    it.each([
+      ["a store's", { logoUrl: "store.svg" }],
+      [
+        "an organization's",
+        { logoUrl: "org.svg", secondaryLogoUrl: "store-white.svg", isOrganizationLogoUploaded: true },
+      ],
+    ])(
+      "names the logo for dark backgrounds for %s light logo, as the header then never shows the theme's",
+      (_, settings) => {
+        useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });
+        setWhiteLabeling(settings);
+        const { darkLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
+
+        expect(darkLogoUrl.value).not.toBe("acme-white.svg");
+        expect(themeFieldsSetByWhiteLabeling.value).toEqual(["brand.logoUrl", "brand.secondaryLogoUrl"]);
+      },
+    );
+
+    it("names the logo for dark backgrounds for white-labeling's own, which the footer shows over the theme's", () => {
+      useThemeSnapshot().setDraft({ brand: { secondaryLogoUrl: "acme-white.svg" } });
+      setWhiteLabeling({ secondaryLogoUrl: "store-white.svg" });
+      const { secondaryLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
+
+      expect(secondaryLogoUrl.value).toBe("store-white.svg");
+      expect(themeFieldsSetByWhiteLabeling.value).toEqual(["brand.secondaryLogoUrl"]);
+    });
+
+    it("does not name the logo for dark backgrounds without a white-labeling logo", () => {
+      useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });
+      setWhiteLabeling({ favicons: [{ rel: "icon", href: "store.ico" }] });
+      const { darkLogoUrl, secondaryLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
+
+      expect([darkLogoUrl.value, secondaryLogoUrl.value]).toEqual(["acme-white.svg", "acme-white.svg"]);
+      expect(themeFieldsSetByWhiteLabeling.value).toEqual(["brand.faviconUrl"]);
     });
 
     it("does not name a menu white-labeling leaves empty", () => {
