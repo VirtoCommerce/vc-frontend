@@ -2,6 +2,7 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
+import { darkPresets, presets } from "@/assets/presets";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
@@ -89,9 +90,23 @@ describe("preview protocol 2", () => {
     expect(catalog).toMatchObject({ protocol: PREVIEW_PROTOCOL, sections: SCHEMAS.sections });
     expect(catalog.capabilities).toEqual(expect.arrayContaining(["templates", "inline-edit", "inspector"]));
     expect((catalog.conditions as { name: string }[]).map(({ name }) => name)).toContain("inCategory");
-    expect(catalog.paletteTokens).toMatchObject({ light: expect.arrayContaining(["color_primary_500"]) });
     expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS).hash);
     expect(changed.hash).not.toBe(catalog.hash);
+  });
+
+  it("announces every token a built-in light or dark preset sets, sorted", () => {
+    const { light, dark } = buildPreviewCatalog(SCHEMAS).paletteTokens as { light: string[]; dark: string[] };
+
+    expect(light).toEqual(expect.arrayContaining(["color_primary_500", "color_body_bg", "color_empty_list_icon"]));
+    expect(dark).toEqual(expect.arrayContaining(["color_footer_bottom_bg", "color_vc_icon_surface_primary"]));
+
+    for (const [tokens, presetsByName] of [
+      [light, presets],
+      [dark, darkPresets],
+    ] as const) {
+      expect(new Set(tokens)).toEqual(new Set(Object.values(presetsByName).flatMap((preset) => Object.keys(preset))));
+      expect(tokens.every((token, index) => index === 0 || tokens[index - 1].localeCompare(token) < 0)).toBe(true);
+    }
   });
 
   it.each([

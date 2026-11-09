@@ -22,6 +22,7 @@ import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
+import type { IThemeConfigPreset } from "@/core/types";
 import type { Router } from "vue-router";
 
 export const PREVIEW_PROTOCOL = 2;
@@ -49,7 +50,7 @@ interface ISchemaWithSettings {
 export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
   const catalog = {
     ...schemas,
-    paletteTokens: { light: Object.keys(presets.default ?? {}), dark: Object.keys(darkPresets.default ?? {}) },
+    paletteTokens: { light: tokensOf(presets), dark: tokensOf(darkPresets) },
   };
 
   return {
@@ -59,6 +60,13 @@ export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<stri
     capabilities: PREVIEW_CAPABILITIES,
     conditions: useTemplateConditions().getTemplateConditionDescriptors(),
   };
+}
+
+/** Every token any built-in preset sets: the styles read each of them, so a palette may set any of them. */
+function tokensOf(presetsByName: Record<string, IThemeConfigPreset>): string[] {
+  return [...new Set(Object.values(presetsByName).flatMap((preset) => Object.keys(preset)))].sort((a, b) =>
+    a.localeCompare(b),
+  );
 }
 
 /** FNV-1a: a catalog changes its hash whenever anything in it changes. Not a security boundary. */
