@@ -70,6 +70,15 @@ function hasContent(nodes: VNode[] | undefined): boolean {
 
   @apply flex min-h-screen flex-col;
 
+  // Paper gets the classic frame in every design.
+  @media print {
+    --vc-frame-padding-x: initial;
+    --vc-frame-max-width: initial;
+    --vc-frame-gap: initial;
+    --vc-frame-main-offset-top: initial;
+    --vc-frame-main-offset-bottom: initial;
+  }
+
   &__main {
     // Every VcContainer in the page takes the frame's side space and column, and leaves the space above and below
     // the page to the frame: `calc(<offset> * 0)` is 0 when a design sets the offset, invalid (the container's own
