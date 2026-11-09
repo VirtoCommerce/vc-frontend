@@ -95,6 +95,29 @@ export interface IThemeDraft {
   palette?: IThemePalette;
 }
 
+/** A content page at the snapshot request's permalink, as the server read it. */
+export interface IThemeSlugPage {
+  /** A page from the database: its document's source (`page-builder`, `builder.io`). Absent for a file page. */
+  source?: string;
+  permalink?: string;
+  /**
+   * The page's settings that choose its template and layout: `layout`, `template` and those the page rules' `setting`
+   * conditions name. Absent when its content is not a page with settings (a markdown file, another source).
+   */
+  settings?: Record<string, unknown>;
+}
+
+/** What is at the permalink the snapshot request asked for, as the slug lookup finds it for an anonymous visitor. */
+export interface IThemeSlug {
+  /** The permalink the request asked for. */
+  permalink: string;
+  /** The slug's `objectType`: `Pages`, `ContentFile`, `CatalogProduct`, `Category`… */
+  objectType: string;
+  objectId: string;
+  /** A content page as it was read; absent for other object types and a page the server could not read. */
+  page?: IThemeSlugPage;
+}
+
 /** A published snapshot the storefront accepted, with the links of the menus it names. */
 export interface IPublishedTheme {
   storeId: string;
@@ -105,6 +128,8 @@ export interface IPublishedTheme {
   publication: number;
   snapshot: IThemeSnapshot;
   menus: IThemeMenu[];
+  /** What is at the permalink the request asked for: the layout of the page the visitor lands on is chosen by it. */
+  slug?: IThemeSlug;
 }
 
 /** What the storefront renders with: the draft over the published snapshot. */

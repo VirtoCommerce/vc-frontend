@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isNewPageBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
 import VcHeader from "@/shared/layout/components/header/vc-header.vue";
@@ -30,12 +30,13 @@ import MinimalHeader from "@/shared/layout/components/minimal-header/minimal-hea
 import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
 
 const { pageLayout } = usePageLayout();
+const { hasNoTheme } = useThemeSnapshot();
 
 /**
  * The header and footer around the page, switched here so the page under them is never remounted. Without the new
- * Page Builder every page keeps the full layout.
+ * Page Builder, and for a store without a theme, every page keeps the full layout at once.
  */
-const chrome = computed(() => (isNewPageBuilderEnabled() ? pageLayout.value : "full"));
+const chrome = computed(() => (isNewPageBuilderEnabled() && !hasNoTheme.value ? pageLayout.value : "full"));
 </script>
 
 <style lang="scss">

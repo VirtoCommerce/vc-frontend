@@ -2,7 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildThemeSnapshotScript } from "./inline-script";
 import { THEME_SNAPSHOT_GLOBAL } from "./query";
 
-type SentRequestType = { variables: { domain: string; cultureName?: string }; response: Promise<unknown> };
+type SentRequestType = {
+  variables: { domain: string; cultureName?: string; permalink?: string };
+  response: Promise<unknown>;
+};
 
 function runScript(path: string, options?: { domain?: string }): SentRequestType {
   window.history.replaceState(null, "", path);
@@ -27,14 +30,18 @@ describe("buildThemeSnapshotScript", () => {
     delete (window as unknown as Record<string, unknown>)[THEME_SNAPSHOT_GLOBAL];
   });
 
-  it("sends the language prefix of the URL and the page's host", async () => {
+  it("sends the language prefix of the URL, the page's host and its permalink", async () => {
     const request = runScript("/de/catalog/shoes");
 
-    expect(request.variables).toEqual({ domain: window.location.hostname, cultureName: "de" });
+    expect(request.variables).toEqual({
+      domain: window.location.hostname,
+      cultureName: "de",
+      permalink: "catalog/shoes",
+    });
     expect(fetchMock).toHaveBeenCalledWith("/graphql", expect.objectContaining({ method: "POST" }));
     const body = JSON.parse((fetchMock.mock.calls[0][1] as { body: string }).body) as Record<string, unknown>;
     expect(body.operationName).toBe("ThemeSnapshot");
-    expect(body.variables).toEqual({ domain: window.location.hostname, cultureName: "de" });
+    expect(body.variables).toEqual({ domain: window.location.hostname, cultureName: "de", permalink: "catalog/shoes" });
     await expect(request.response).resolves.toEqual({ data: { themeSnapshot: null } });
   });
 
@@ -49,6 +56,23 @@ describe("buildThemeSnapshotScript", () => {
   it("takes the previewed page's language on the designer preview route", () => {
     expect(runScript("/designer-preview?cultureName=es-ES").variables.cultureName).toBe("es-ES");
     expect(runScript("/designer-preview?cultureName=%3Cscript%3E").variables.cultureName).toBeUndefined();
+  });
+
+  it.each([
+    ["/", "/"],
+    ["/de", "/"],
+    ["/de-DE/", "/"],
+    ["/printers/", "printers"],
+    ["/printers//laser?sort=price#top", "printers/laser"],
+    ["/destinations", "destinations"],
+    ["/fr/caf%C3%A9", "café"],
+    ["/bad%E0%A4%A", "bad%E0%A4%A"],
+  ])("sends the permalink of %s as the slug route looks it up: %s", (path, permalink) => {
+    expect(runScript(path).variables.permalink).toBe(permalink);
+  });
+
+  it("sends no permalink on the designer preview route", () => {
+    expect(runScript("/designer-preview?cultureName=es-ES").variables.permalink).toBeUndefined();
   });
 
   it("uses the domain it was built with", () => {

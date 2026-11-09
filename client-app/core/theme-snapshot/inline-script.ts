@@ -16,6 +16,9 @@ export interface IThemeSnapshotScriptOptions {
  * The inline script `index.html` carries when the storefront is built with `new_page_builder_enabled`: it sends the
  * theme snapshot request before the application JavaScript loads and leaves the request on `window`, so the snapshot
  * is usually there before the first render. Written for every browser the storefront supports, without a bundler.
+ *
+ * Outside the designer preview it asks for what is at the page's permalink too: the path without its language prefix,
+ * its segments decoded and joined as the slug route joins them (`/` for none), so the page's layout is known at boot.
  */
 export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = {}): string {
   const constants = JSON.stringify({
@@ -30,6 +33,13 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
 
   return `(function () {
   var c = ${constants};
+  function decodeSegment(segment) {
+    try {
+      return decodeURIComponent(segment);
+    } catch (e) {
+      return segment;
+    }
+  }
   function readPinnedLocale() {
     try {
       return localStorage.getItem(c.pinnedLocaleKey) || undefined;
@@ -40,16 +50,19 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
   try {
     var path = location.pathname;
     var cultureName;
+    var permalink;
     if (path === c.previewPath) {
       cultureName = new URLSearchParams(location.search).get("cultureName") || undefined;
     } else {
       var match = new RegExp(c.localePattern, "i").exec(path);
       cultureName = match ? match[1] : readPinnedLocale();
+      var segments = path.slice(match ? match[0].length : 0).split("/").filter(Boolean).map(decodeSegment);
+      permalink = segments.join("/") || "/";
     }
     if (cultureName && !/^[a-zA-Z0-9-]+$/.test(cultureName)) {
       cultureName = undefined;
     }
-    var variables = { domain: c.domain || location.hostname, cultureName: cultureName };
+    var variables = { domain: c.domain || location.hostname, cultureName: cultureName, permalink: permalink };
     var response = fetch("/graphql", {
       method: "POST",
       headers: { "content-type": "application/json" },

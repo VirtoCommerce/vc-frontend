@@ -8,8 +8,8 @@ export const THEME_SNAPSHOT_GLOBAL = "__vcThemeSnapshot";
 
 export const THEME_SNAPSHOT_OPERATION = "ThemeSnapshot";
 
-export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $storeId: String, $cultureName: String) {
-  themeSnapshot(domain: $domain, storeId: $storeId, cultureName: $cultureName) {
+export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $storeId: String, $cultureName: String, $permalink: String) {
+  themeSnapshot(domain: $domain, storeId: $storeId, cultureName: $cultureName, permalink: $permalink) {
     storeId
     cultureName
     publication
@@ -25,6 +25,15 @@ export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $store
           url
           priority
         }
+      }
+    }
+    slug {
+      objectType
+      objectId
+      page {
+        source
+        permalink
+        settings
       }
     }
   }

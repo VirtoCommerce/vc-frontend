@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { readonly, shallowRef } from "vue";
 import { ROUTES } from "@/router/routes/constants";
-import type { Router } from "vue-router";
+import type { RouteLocationNormalized, RouteRecordNameGeneric, Router } from "vue-router";
 
 /** What surrounds a content page: the site's header and footer, the logo only, or nothing. */
 export type PageLayoutType = "full" | "minimal" | "blank";
@@ -24,6 +24,24 @@ export interface ISlugPage {
 
 export function isPageLayout(value: unknown): value is PageLayoutType {
   return PAGE_LAYOUTS.includes(value as PageLayoutType);
+}
+
+/** The path a slug route's page looks its slug up by: the route's segments joined, without empty ones. */
+export function joinSlugPath(pathMatch: string | string[] | undefined): string {
+  if (!pathMatch) {
+    return "/";
+  }
+
+  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
+  return (Array.isArray(pathMatch) ? pathMatch : [pathMatch]).filter(Boolean).join("/");
+}
+
+/** The permalink the page of a slug route looks up (`useSlugInfo`); `undefined` for any other route. */
+export function getSlugRoutePermalink(route: {
+  name?: RouteRecordNameGeneric | null;
+  params: RouteLocationNormalized["params"];
+}): string | undefined {
+  return SLUG_ROUTE_NAMES.has(String(route.name)) ? joinSlugPath(route.params.pathMatch) || "/" : undefined;
 }
 
 /**

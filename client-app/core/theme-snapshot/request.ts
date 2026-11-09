@@ -1,11 +1,13 @@
 import { isRecord, Logger } from "@/core/utilities";
 import { THEME_SNAPSHOT_GLOBAL, THEME_SNAPSHOT_OPERATION, THEME_SNAPSHOT_QUERY } from "./query";
-import type { IPublishedTheme, IThemeMenu, IThemeSnapshot } from "./types";
+import type { IPublishedTheme, IThemeMenu, IThemeSlug, IThemeSlugPage, IThemeSnapshot } from "./types";
 
 export interface IThemeSnapshotVariables {
   domain?: string;
   storeId?: string;
   cultureName?: string;
+  /** The page the visitor landed on, without its language prefix: the response says what is there. */
+  permalink?: string;
 }
 
 /** The request the inline script in `index.html` left on `window`. */
@@ -54,7 +56,11 @@ export function requestThemeSnapshot(variables: IThemeSnapshotVariables): ITheme
  * Reads a GraphQL response of the snapshot request: `null` when the store has no theme (the New Page Builder store
  * setting is off, or the snapshot is in a format this storefront does not read). Throws on a GraphQL error.
  */
-export function readThemeSnapshotResponse(body: unknown, requestedCultureName?: string): IPublishedTheme | null {
+export function readThemeSnapshotResponse(
+  body: unknown,
+  requestedCultureName?: string,
+  requestedPermalink?: string,
+): IPublishedTheme | null {
   if (!isRecord(body)) {
     throw new Error("The theme snapshot response is not an object");
   }
@@ -82,6 +88,7 @@ export function readThemeSnapshotResponse(body: unknown, requestedCultureName?: 
     publication: typeof field.publication === "number" ? field.publication : snapshot.publication,
     snapshot,
     menus: Array.isArray(field.menus) ? field.menus.filter(isMenu) : [],
+    slug: requestedPermalink === undefined ? undefined : readSlug(field.slug, requestedPermalink),
   };
 }
 
@@ -135,4 +142,38 @@ function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {
 
 function isMenu(value: unknown): value is IThemeMenu {
   return isRecord(value) && typeof value.name === "string" && Array.isArray(value.items);
+}
+
+function readSlug(value: unknown, permalink: string): IThemeSlug | undefined {
+  if (!isRecord(value) || typeof value.objectType !== "string" || typeof value.objectId !== "string") {
+    return undefined;
+  }
+
+  return {
+    permalink,
+    objectType: value.objectType,
+    objectId: value.objectId,
+    page: isRecord(value.page) ? readSlugPage(value.page) : undefined,
+  };
+}
+
+function readSlugPage(value: Record<string, unknown>): IThemeSlugPage {
+  return {
+    source: typeof value.source === "string" ? value.source : undefined,
+    permalink: typeof value.permalink === "string" ? value.permalink : undefined,
+    settings: parseSettings(value.settings),
+  };
+}
+
+function parseSettings(value: unknown): Record<string, unknown> | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  try {
+    const settings: unknown = JSON.parse(value);
+    return isRecord(settings) ? settings : undefined;
+  } catch {
+    return undefined;
+  }
 }

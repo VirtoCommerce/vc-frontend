@@ -13,6 +13,8 @@ function _useThemeSnapshot() {
   const draft = shallowRef<IThemeDraft>();
   /** The last request failed: the next navigation inside the site asks again. */
   const hasFailed = ref(false);
+  /** The snapshot accepted is `null`: the store has no theme (the New Page Builder store setting is off). */
+  const isNull = ref(false);
 
   const theme = computed<IThemeView | undefined>(() => {
     const snapshot = published.value?.snapshot;
@@ -36,6 +38,7 @@ function _useThemeSnapshot() {
 
   function setPublished(value: IPublishedTheme | null): void {
     published.value = value ?? undefined;
+    isNull.value = value === null;
     late.value = undefined;
     hasFailed.value = false;
   }
@@ -68,6 +71,11 @@ function _useThemeSnapshot() {
     published: readonly(published),
     draft: readonly(draft),
     hasFailed: readonly(hasFailed),
+    /**
+     * The store has no theme, as without the new Page Builder: the snapshot accepted is `null` and the designer sends
+     * no draft. `false` until a snapshot is accepted, and after a failed request.
+     */
+    hasNoTheme: computed(() => isNull.value && !draft.value),
     setPublished,
     setLate,
     promoteLate,

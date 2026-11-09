@@ -58,7 +58,8 @@ export function startThemeSnapshot(fallback: { domain: string; cultureName?: str
   });
 
   function getRefetch(context: IThemeSnapshotContext): RefetchType {
-    return () => (refetch ??= readOutcome(requestThemeSnapshot(context)));
+    return () =>
+      (refetch ??= readOutcome(requestThemeSnapshot({ ...context, permalink: request.variables.permalink })));
   }
 
   return {
@@ -183,7 +184,8 @@ function isForOtherContext(
 
 async function readOutcome(request: IThemeSnapshotRequest): Promise<OutcomeType> {
   try {
-    return { result: readThemeSnapshotResponse(await request.response, request.variables.cultureName) };
+    const { cultureName, permalink } = request.variables;
+    return { result: readThemeSnapshotResponse(await request.response, cultureName, permalink) };
   } catch (error) {
     return { error };
   }

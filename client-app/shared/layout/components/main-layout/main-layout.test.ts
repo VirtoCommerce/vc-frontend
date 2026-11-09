@@ -4,7 +4,7 @@ import { defineComponent, h, nextTick, onMounted } from "vue";
 import type { Component } from "vue";
 
 const { flag, stub, headerMounted } = vi.hoisted(() => ({
-  flag: { enabled: true },
+  flag: { enabled: true, hasNoTheme: false },
   headerMounted: vi.fn(),
   stub: async (testId: string, onMount?: () => void) => {
     const { defineComponent: define, h: render, onMounted: mounted } = await import("vue");
@@ -22,7 +22,13 @@ const { flag, stub, headerMounted } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/core/theme-snapshot", () => ({ isNewPageBuilderEnabled: () => flag.enabled }));
+vi.mock("@/core/theme-snapshot", async () => {
+  const { computed } = await import("vue");
+  return {
+    isNewPageBuilderEnabled: () => flag.enabled,
+    useThemeSnapshot: () => ({ hasNoTheme: computed(() => flag.hasNoTheme) }),
+  };
+});
 vi.mock("@/shared/layout/components/header/vc-header.vue", () => stub("full-header", headerMounted));
 vi.mock("@/shared/layout/components/footer/vc-footer.vue", () => stub("full-footer"));
 vi.mock("@/shared/layout/components/minimal-header/minimal-header.vue", () => stub("minimal-header"));
@@ -58,6 +64,7 @@ function chrome(wrapper: ReturnType<typeof mount>): string[] {
 describe("MainLayout", () => {
   beforeEach(() => {
     flag.enabled = true;
+    flag.hasNoTheme = false;
     pageMounted.mockClear();
     headerMounted.mockClear();
   });
@@ -99,6 +106,19 @@ describe("MainLayout", () => {
 
     expect(chrome(wrapper)).toEqual(["full-header", "full-footer"]);
     expect(headerMounted).toHaveBeenCalledOnce();
+  });
+
+  it("draws the full layout at once for a store without a theme, whatever the page says", async () => {
+    flag.hasNoTheme = true;
+    const { setPageLayout, mountLayout } = await loadLayout();
+
+    const wrapper = mountLayout();
+    await nextTick();
+    expect(chrome(wrapper)).toEqual(["full-header", "full-footer"]);
+
+    setPageLayout("minimal");
+    await nextTick();
+    expect(chrome(wrapper)).toEqual(["full-header", "full-footer"]);
   });
 
   it("keeps the full layout without the new Page Builder", async () => {

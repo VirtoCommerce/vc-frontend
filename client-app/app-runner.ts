@@ -45,7 +45,12 @@ import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
-import { productTemplateSections, registerPageBuilderSections, templateBlocks } from "@/shared/static-content";
+import {
+  productTemplateSections,
+  registerPageBuilderSections,
+  setLandingPageLayout,
+  templateBlocks,
+} from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -248,6 +253,7 @@ export default async () => {
 
   await themeSnapshotBoot?.settle(themeSnapshotContext);
   usePageLayout().installPageLayoutRouting(router);
+  setLandingPageLayout(router, pageContext.slugInfo?.entityInfo);
   installThemeSnapshotNavigation(router, () => ({
     storeId: themeContext.value.storeId,
     cultureName: currentLanguage.value.cultureName,

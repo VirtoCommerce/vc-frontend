@@ -22,10 +22,16 @@
 import { computed, watchEffect } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
-import { isPageLayout, usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { getAnchorId } from "../anchors";
 import { usePermalinkSeo } from "../composables/usePermalinkSeo";
-import { MAIN_SECTION_TYPES, splitTemplate, useTemplateResolution } from "../templates";
+import {
+  getSettingsLayout,
+  MAIN_SECTION_TYPES,
+  mergePageSettings,
+  splitTemplate,
+  useTemplateResolution,
+} from "../templates";
 import PageBuilderSection from "./page-builder-section.vue";
 
 interface IProps {
@@ -37,8 +43,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-
-const DEFAULT_LAYOUT = "full";
 
 const { currentLanguage } = useLanguages();
 const { setPageLayout } = usePageLayout();
@@ -59,18 +63,13 @@ const templateParts = computed(() =>
   splitTemplate(templateResolution.value?.document.content ?? [], MAIN_SECTION_TYPES.page),
 );
 
-/** The page's settings over its template's; one the page left empty (the designer's "Empty") keeps the template's. */
-const settings = computed(() => ({
-  ...templateResolution.value?.document.settings,
-  ...Object.fromEntries(Object.entries(props.pageSettings ?? {}).filter(([, value]) => value != null)),
-}));
+const settings = computed(() => mergePageSettings(templateResolution.value?.document.settings, props.pageSettings));
 
 /** The page's settings, for the template's sections that declare them. */
 const sectionContext = computed(() => ({ settings: settings.value }));
 
 watchEffect(() => {
-  const { layout } = settings.value;
-  setPageLayout(isPageLayout(layout) ? layout : DEFAULT_LAYOUT);
+  setPageLayout(getSettingsLayout(settings.value));
 });
 
 // With the new Page Builder the page's address for search engines comes from its permalink, never the visited URL.

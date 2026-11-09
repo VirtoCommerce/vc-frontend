@@ -10,7 +10,9 @@ vi.mock("./enabled", () => ({ isNewPageBuilderEnabled: () => enabled.value }));
 
 const STORE_ID = "B2B-store";
 
-function snapshotResponse(overrides: { storeId?: string; cultureName?: string; publication?: number } = {}) {
+function snapshotResponse(
+  overrides: { storeId?: string; cultureName?: string; publication?: number; slug?: unknown } = {},
+) {
   const cultureName = overrides.cultureName ?? "en-US";
   const publication = overrides.publication ?? 3;
 
@@ -22,14 +24,15 @@ function snapshotResponse(overrides: { storeId?: string; cultureName?: string; p
         publication,
         content: JSON.stringify({ format: 1, publication, cultureName, templates: {}, brand: {} }),
         menus: [{ name: "main", items: [{ title: "Shoes", url: "/shoes" }] }],
+        slug: overrides.slug ?? null,
       },
     },
   };
 }
 
-function leaveBootRequest(response: Promise<unknown>, cultureName?: string): void {
+function leaveBootRequest(response: Promise<unknown>, cultureName?: string, permalink?: string): void {
   (window as unknown as Record<string, unknown>)[THEME_SNAPSHOT_GLOBAL] = {
-    variables: { domain: "localhost", cultureName },
+    variables: { domain: "localhost", cultureName, permalink },
     response,
   };
 }
@@ -85,6 +88,72 @@ describe("startThemeSnapshot", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(useThemeSnapshot().published.value?.publication).toBe(3);
     expect(useThemeSnapshot().theme.value?.menus[0].name).toBe("main");
+  });
+
+  it("keeps what the response says is at the permalink the inline script asked for", async () => {
+    mockFetch();
+    const slug = {
+      objectType: "Pages",
+      objectId: "page-1",
+      page: { source: "page-builder", permalink: "/spring", settings: '{"layout":"minimal"}' },
+    };
+    leaveBootRequest(Promise.resolve(snapshotResponse({ slug })), undefined, "spring");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+
+    expect(useThemeSnapshot().published.value?.slug).toEqual({
+      permalink: "spring",
+      objectType: "Pages",
+      objectId: "page-1",
+      page: { source: "page-builder", permalink: "/spring", settings: { layout: "minimal" } },
+    });
+  });
+
+  it.each([
+    ["nothing at it", null, undefined],
+    ["a page that was not read", { objectType: "Pages", objectId: "page-1", page: null }, { page: undefined }],
+    [
+      "settings that are not JSON",
+      { objectType: "Pages", objectId: "page-1", page: { source: "page-builder", settings: "{" } },
+      { page: { source: "page-builder", permalink: undefined, settings: undefined } },
+    ],
+  ])("reads a response with %s", async (_, slug, expected) => {
+    mockFetch();
+    leaveBootRequest(Promise.resolve(snapshotResponse({ slug })), undefined, "spring");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+
+    const read = useThemeSnapshot().published.value?.slug;
+    expect(read && { page: read.page }).toEqual(expected);
+  });
+
+  it("asks for the same permalink when it asks again in the language pageContext resolved", async () => {
+    const slug = { objectType: "CatalogProduct", objectId: "product-1" };
+    const fetchMock = mockFetch(snapshotResponse({ cultureName: "de-DE", slug }));
+    leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })), undefined, "printers/laser");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "de-DE" });
+
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as { body: string }).body) as { variables: unknown };
+    expect(body.variables).toEqual({ storeId: STORE_ID, cultureName: "de-DE", permalink: "printers/laser" });
+    expect(useThemeSnapshot().published.value?.slug).toEqual({ permalink: "printers/laser", ...slug, page: undefined });
+  });
+
+  it("keeps no slug when the request asked for no permalink", async () => {
+    mockFetch();
+    leaveBootRequest(Promise.resolve(snapshotResponse({ slug: { objectType: "Pages", objectId: "page-1" } })));
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+
+    expect(useThemeSnapshot().published.value?.slug).toBeUndefined();
   });
 
   it("sends the request itself when the inline script did not", async () => {
@@ -156,6 +225,7 @@ describe("startThemeSnapshot", () => {
     await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
 
     expect(useThemeSnapshot().theme.value).toBeUndefined();
+    expect(useThemeSnapshot().hasNoTheme.value).toBe(true);
     expect(useThemeSnapshot().hasFailed.value).toBe(false);
   });
 

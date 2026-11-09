@@ -39,7 +39,7 @@
 import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
-import { isOwnLayoutSlugPage, usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { isOwnLayoutSlugPage, joinSlugPath, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
@@ -71,14 +71,7 @@ const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const seoUrl = computed(() => {
-  if (!props.pathMatch) {
-    return "/";
-  }
-  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
-  const paths = props.pathMatch.filter(Boolean);
-  return paths.join("/");
-});
+const seoUrl = computed(() => joinSlugPath(props.pathMatch));
 
 const {
   loading,

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { isOwnLayoutSlugPage, usePageLayout } from "./usePageLayout";
+import { getSlugRoutePermalink, isOwnLayoutSlugPage, joinSlugPath, usePageLayout } from "./usePageLayout";
 
 describe("isOwnLayoutSlugPage", () => {
   it.each([
@@ -14,6 +14,29 @@ describe("isOwnLayoutSlugPage", () => {
     ["a page of another source", { objectType: "Pages", document: { source: "builder.io" }, isMarkdown: false }, false],
   ])("tells whether %s reports its own layout", (_, page, expected) => {
     expect(isOwnLayoutSlugPage(page)).toBe(expected);
+  });
+});
+
+describe("joinSlugPath", () => {
+  it.each([
+    [undefined, "/"],
+    [[], ""],
+    [["printers", ""], "printers"],
+    [["printers", "laser"], "printers/laser"],
+    ["printers", "printers"],
+  ])("joins %j as the slug content looks it up: %j", (pathMatch, expected) => {
+    expect(joinSlugPath(pathMatch)).toBe(expected);
+  });
+});
+
+describe("getSlugRoutePermalink", () => {
+  it.each([
+    ["Matcher", { pathMatch: ["printers", "laser", ""] }, "printers/laser"],
+    ["Matcher", { pathMatch: [] }, "/"],
+    ["LoyaltyCatalogMatcher", { pathMatch: ["gifts"] }, "gifts"],
+    ["Cart", {}, undefined],
+  ])("gives the %s route with %j the permalink %j", (name, params, expected) => {
+    expect(getSlugRoutePermalink({ name, params })).toBe(expected);
   });
 });
 
