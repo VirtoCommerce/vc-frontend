@@ -4,22 +4,22 @@
 [[IgnoredVulns]]
 id = "GHSA-5gmw-xhrv-c9v3"
 ignoreUntil = 2027-02-09
-reason = "tinypool 1.x via vitest 3 (unit tests only, never shipped). Needs a polluted Object.prototype inside the test process. Fixed in tinypool 2, which needs vitest 4."
+reason = "tinypool 1.x via vitest 3 (unit tests only, never shipped). Needs a polluted Object.prototype inside the test process. Fixed in tinypool 2.1.1; vitest 4 no longer depends on tinypool."
 
 [[IgnoredVulns]]
 id = "GHSA-85c8-ppgw-ccpr"
 ignoreUntil = 2027-02-09
-reason = "tinypool 1.x via vitest 3 (unit tests only, never shipped). Needs a polluted Object.prototype inside the test process. Fixed in tinypool 2, which needs vitest 4."
+reason = "tinypool 1.x via vitest 3 (unit tests only, never shipped). Needs a polluted Object.prototype inside the test process. Fixed in tinypool 2.1.2; vitest 4 no longer depends on tinypool."
 
 [[IgnoredVulns]]
 id = "GHSA-82fw-gwwq-j7x9"
 ignoreUntil = 2027-02-09
-reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed only in @vitest/mocker 4, which needs vitest 4 and Storybook 10."
+reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed in @vitest/mocker 4.1.11. vitest 4 closes the vitest path; Storybook pins 3.2.4 through 10.x, and only Storybook 11 has a fixed copy."
 
 [[IgnoredVulns]]
 id = "GHSA-qxg6-89mg-rqv8"
 ignoreUntil = 2027-02-09
-reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed only in @vitest/mocker 4, which needs vitest 4 and Storybook 10."
+reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed in @vitest/mocker 4.1.12. vitest 4 closes the vitest path; Storybook pins 3.2.4 through 10.x, and only Storybook 11 has a fixed copy."
 
 [[IgnoredVulns]]
 id = "GHSA-7mx3-vvmw-hjmv"
@@ -39,7 +39,7 @@ reason = "glob 10 and 13 in build, lint and test scripts (never shipped). Only a
 [[IgnoredVulns]]
 id = "GHSA-g3hv-75wg-m249"
 ignoreUntil = 2027-02-09
-reason = "minimatch 9 and 10 in lint and type-check tooling (never shipped). Needs attacker-controlled glob patterns with optimizationLevel >= 2. Fixed only in minimatch 11, which the transitive users do not accept yet."
+reason = "minimatch 9 and 10 in lint, test, codegen, Storybook and script tooling (never shipped). Needs attacker-controlled glob patterns with optimizationLevel >= 2; every pattern here is a literal or comes from repo config. Fixed only in minimatch 11, which the transitive users do not accept yet."
 
 [[IgnoredVulns]]
 id = "GHSA-gcqx-w48m-w2h4"
