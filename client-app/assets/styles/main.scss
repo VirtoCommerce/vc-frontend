@@ -23,7 +23,7 @@
     scroll-padding-top: var(--vc-app-header-height, 0px);
   }
 
-  // VcFrame's canvas. On body, not inside the frame: it also fills the overscroll area and the browser's top-bar tint.
+  // VcFrame's canvas, on body so it also fills the overscroll area.
   @media screen {
     body {
       background-color: var(--vc-frame-bg-color, transparent);

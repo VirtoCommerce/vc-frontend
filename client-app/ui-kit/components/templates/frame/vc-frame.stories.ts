@@ -1,7 +1,6 @@
 import { VcFrame } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-// The stand-ins each story renders; the docs snippets show exactly these.
 const HEADER = `<div class="sticky top-0 z-10 bg-additional-50 p-4 shadow-md">Header: one sticky piece</div>`;
 
 const SPLIT_HEADER = `<div class="bg-secondary-900 px-4 py-2 text-additional-50">Top row: scrolls away</div>
@@ -40,7 +39,8 @@ const meta: Meta<typeof VcFrame> = {
           "the whole page; one block element around the pieces kills sticky. VcFrame is the page frame of a layout,",
           'one per page: the header, `<main id="main-content">` with the page, and the footer. A design sets its',
           "side space, column and the spaces between header, page and footer with the `--vc-frame-*` tokens on `:root`",
-          "or `html` (client-app/assets/styles/README.md, Page frame).",
+          "or `html` (client-app/assets/styles/README.md, Page frame). Put the app's skip links first in the header",
+          "slot: they target `#main-content`. The side space and column reach the page through VcContainer.",
         ].join(" "),
       },
     },
