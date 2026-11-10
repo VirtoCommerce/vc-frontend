@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeGroups } from "@/core/theme-snapshot/groups";
 import { isSafeLinkUrl } from "@/core/utilities/common";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -14,6 +15,7 @@ interface IFooterMenuBlock {
 /** Each part is `undefined` while the theme leaves it to the storefront's own header and footer. */
 export function useThemeChrome() {
   const { siteHeader, getGroupSection, getMenuLinks } = useThemeGroups();
+  const { theme } = useThemeSnapshot();
   const { footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 
   const siteFooter = computed(() => getGroupSection("footer", "site-footer"));
@@ -36,18 +38,23 @@ export function useThemeChrome() {
       (block) => block.type === "footer-menu" && !block.hidden,
     ) as IFooterMenuBlock[];
 
-    return blocks.length
-      ? blocks.map((block) => ({
-          id: block.id,
-          title: block.heading ?? "",
-          children:
-            getMenuLinks(block.menu) ??
-            (block.links ?? []).map((link) => ({
-              title: link.label ?? "",
-              route: link.link && isSafeLinkUrl(link.link) ? link.link : "",
-            })),
-        }))
-      : undefined;
+    if (!blocks.length) {
+      return undefined;
+    }
+
+    const columns = blocks.map((block) => ({
+      id: block.id,
+      title: block.heading ?? "",
+      children:
+        getMenuLinks(block.menu) ??
+        (block.links ?? []).map((link) => ({
+          title: link.label ?? "",
+          route: link.link && isSafeLinkUrl(link.link) ? link.link : undefined,
+        })),
+    }));
+
+    // The designer still shows a column without links, so the editor can fill it in.
+    return theme.value?.isDraft ? columns : columns.filter((column) => column.children.length);
   });
 
   const copyright = computed(() =>

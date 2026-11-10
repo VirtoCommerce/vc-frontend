@@ -80,7 +80,27 @@ describe("useThemeChrome", () => {
       },
     });
 
-    expect(useThemeChrome().footerColumns.value?.[0].children).toEqual([{ title: "Bad", route: "" }]);
+    expect(useThemeChrome().footerColumns.value?.[0].children).toEqual([{ title: "Bad", route: undefined }]);
+  });
+
+  it("hides a published column that has no links, such as a menu missing in this language", () => {
+    publish({
+      footer: {
+        content: [
+          {
+            id: "f",
+            type: "site-footer",
+            blocks: [
+              { id: "help", type: "footer-menu", heading: "Help", menu: "Footer-Help" },
+              { id: "news", type: "footer-menu", heading: "News", menu: "Footer-News" },
+              { id: "empty", type: "footer-menu", heading: "Empty", links: [] },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(useThemeChrome().footerColumns.value?.map((column) => column.id)).toEqual(["help"]);
   });
 
   it("lets white-labeling's footer links replace the theme's footer menus", () => {
