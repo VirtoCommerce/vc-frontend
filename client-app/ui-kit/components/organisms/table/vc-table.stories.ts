@@ -868,7 +868,7 @@ export const RowClick: StoryType = {
     docs: {
       description: {
         story:
-          'Row click using `@row-click` on VcTable. Automatically adds `cursor-pointer` and `role="button"` to each row.',
+          'Row click using `@row-click` on VcTable. Each row gets a pointer cursor (the `vc-table__row--clickable` modifier) and `role="button"`.',
       },
       source: {
         code: `

@@ -635,7 +635,7 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
   };
 }
 
-// Detect if @row-click listener is bound (for auto cursor-pointer).
+// Detect if @row-click listener is bound (for the clickable row modifier).
 // instance.vnode is non-reactive, so we manually refresh on mount/update to track parent re-renders
 // (covers the case where parent dynamically adds/removes the listener).
 const instance = getCurrentInstance();
