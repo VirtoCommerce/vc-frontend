@@ -12,11 +12,16 @@
     <template #default-container>
       <div class="recent-orders-widget__body">
         <!-- One chip per status the user's orders carry, from the list's own facets, so every chip has orders behind
-             it. No count on a chip, as in the Sales Rep Hub: the widget lists a few orders, not the status's total. -->
+             it. No count on a chip: the widget lists a few orders, not the status's total. -->
         <div v-if="statuses.length" class="recent-orders-widget__filter">
-          <!-- In edit mode the chip row becomes its own configuration: checked = offered as a chip, as in the Sales Rep
-               Hub. Replacing rather than adding, so the header row does not grow. -->
-          <div v-if="editingTabs" class="recent-orders-widget__toggles">
+          <!-- In edit mode the chip row becomes its own configuration: checked = offered as a chip. Replacing rather
+               than adding, so the header row does not grow. -->
+          <div
+            v-if="editingTabs"
+            role="group"
+            :aria-label="$t('shared.account.dashboard.recent_orders.statuses_label')"
+            class="recent-orders-widget__toggles"
+          >
             <VcCheckbox
               v-for="rule in statusRules"
               :key="rule.name"

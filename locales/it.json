@@ -658,7 +658,8 @@
           "filter_all": "Tutti",
           "empty": "Non ci sono ancora ordini",
           "no_results": "Nessun ordine con questo stato",
-          "load_failed": "Impossibile caricare gli ordini"
+          "load_failed": "Impossibile caricare gli ordini",
+          "statuses_label": "Stati da mostrare"
         }
       }
     },

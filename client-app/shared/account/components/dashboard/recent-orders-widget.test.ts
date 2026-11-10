@@ -1,4 +1,4 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
@@ -54,7 +54,12 @@ const savedRows = ref<number | undefined>(undefined);
 const editing = ref(false);
 const draftHiddenTabs = ref<string[]>([]);
 const savedHiddenTabs = ref<string[]>([]);
-const updateSettings = vi.fn();
+// Writes into the draft as the layout does, so a toggle round-trips to the checkboxes.
+const updateSettings = vi.fn((patch: { hiddenTabs?: readonly string[] }) => {
+  if (patch.hiddenTabs) {
+    draftHiddenTabs.value = [...patch.hiddenTabs];
+  }
+});
 
 function chrome(): ILayoutBlockChromeType {
   return {
@@ -112,6 +117,9 @@ const toggles = (wrapper: ReturnType<typeof mountWidget>) =>
   wrapper
     .findAll(".recent-orders-widget__toggles .vc-checkbox")
     .map((box) => [box.text(), box.classes("vc-checkbox--checked")]);
+
+// Every mounted widget shares the chrome refs and the spy below, so a widget left mounted would answer the next test.
+enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   savedRows.value = 5;
@@ -208,6 +216,68 @@ describe("RecentOrdersWidget", () => {
 
     await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
     expect(updateSettings).toHaveBeenLastCalledWith({ hiddenTabs: ["Processing", "New"] });
+  });
+
+  it("names the status checkboxes as a group", async () => {
+    editing.value = true;
+
+    const wrapper = mountWidget();
+    await flushPromises();
+
+    const group = wrapper.find(".recent-orders-widget__toggles");
+    expect(group.attributes("role")).toBe("group");
+    expect(group.attributes("aria-label")).toBe("shared.account.dashboard.recent_orders.statuses_label");
+  });
+
+  // The draft drives the checkboxes only: the list keeps its query, and the chips come back from the saved layout.
+  it("keeps an unsaved toggle in the draft", async () => {
+    editing.value = true;
+
+    const wrapper = mountWidget();
+    await flushPromises();
+    const requests = getOrders.mock.calls.length;
+
+    await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
+    await flushPromises();
+
+    expect(toggles(wrapper)).toEqual([
+      ["New", false],
+      ["Processing", true],
+    ]);
+    expect(getOrders).toHaveBeenCalledTimes(requests);
+
+    editing.value = false;
+    await flushPromises();
+
+    expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "New", "Processing"]);
+  });
+
+  // With no statuses known yet nothing can be called retired, so the draft is left alone.
+  it("leaves the draft alone while the orders carry no status", async () => {
+    getOrders.mockResolvedValue(response([], []));
+    editing.value = true;
+    draftHiddenTabs.value = ["New"];
+
+    mountWidget();
+    await flushPromises();
+
+    expect(updateSettings).not.toHaveBeenCalled();
+  });
+
+  it("drops a retired status once the statuses arrive after edit mode began", async () => {
+    getOrders.mockResolvedValue(response([], []));
+    editing.value = true;
+    draftHiddenTabs.value = ["Retired"];
+
+    mountWidget();
+    await flushPromises();
+    expect(updateSettings).not.toHaveBeenCalled();
+
+    getOrders.mockResolvedValue(response([order("1")]));
+    savedRows.value = 7;
+    await flushPromises();
+
+    expect(updateSettings).toHaveBeenCalledWith({ hiddenTabs: [] });
   });
 
   it("drops a status the orders no longer carry from the draft while editing", async () => {

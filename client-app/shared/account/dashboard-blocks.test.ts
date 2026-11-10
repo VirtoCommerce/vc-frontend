@@ -44,7 +44,7 @@ describe("account dashboard blocks", () => {
     });
   });
 
-  it("puts the recent orders in the wide column, with a row cap of 5 between 1 and 20 and a choice of status chips", () => {
+  it("puts the recent orders in the wide column, with a row cap of 5 between 1 and 20 and status tabs", () => {
     const recentOrders = getBlock(SCOPE, RECENT_ORDERS_BLOCK_ID);
 
     expect(recentOrders?.region).toBe("mainLeft");

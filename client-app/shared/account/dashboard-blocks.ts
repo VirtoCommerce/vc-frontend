@@ -64,7 +64,7 @@ const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
     component: RecentOrdersWidget,
     settings: [
       { kind: "maxRows", default: RECENT_ORDERS_DEFAULT_ROWS, min: MIN_ROWS, max: RECENT_ORDERS_MAX_ROWS },
-      // Which status chips to offer, as in the Sales Rep Hub's orders widget.
+      // Which status chips to offer.
       { kind: "ruleTabs" },
     ],
   },
