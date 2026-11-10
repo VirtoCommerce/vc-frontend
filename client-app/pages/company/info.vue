@@ -560,8 +560,12 @@ async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: str
 }
 
 watch(
-  () => organization.value!.name!,
-  (name) => resetOrganizationField({ value: name }),
+  () => organization.value?.name,
+  (name) => {
+    if (name) {
+      resetOrganizationField({ value: name });
+    }
+  },
   { immediate: true },
 );
 

@@ -25,6 +25,8 @@
         :checked="isChecked"
         :indeterminate="indeterminate"
         :aria-checked="ariaCheckedValue"
+        :aria-invalid="error ? 'true' : undefined"
+        :aria-describedby="describedById"
         :data-test-id="testId"
         :tabindex="tabindex"
         @change="handleChange"
@@ -48,6 +50,7 @@
     </component>
 
     <VcInputDetails
+      :id="detailsId"
       class="vc-checkbox__details"
       :show-empty="showEmptyDetails"
       :message="message"
@@ -61,6 +64,7 @@
 import { includes } from "lodash-es";
 import { computed, inject, ref, useSlots } from "vue";
 import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "update:modelValue", value: boolean): void;
@@ -108,6 +112,8 @@ const props = withDefaults(defineProps<IProps>(), {
   }),
 });
 
+const detailsId = useComponentId("checkbox") + "-details";
+
 const inputRef = ref<HTMLInputElement | null>(null);
 
 let forwardExpected = false;
@@ -133,6 +139,8 @@ const isChecked = computed(() => {
 });
 
 const ariaCheckedValue = computed(() => (props.indeterminate ? "mixed" : isChecked.value));
+
+const describedById = computed(() => (props.message ? detailsId : undefined));
 
 const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label"));
 
