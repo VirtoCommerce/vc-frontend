@@ -1395,14 +1395,7 @@ watch(
   }
 
   &__footer {
-    --padding: theme("spacing.10") theme("spacing.3");
-
-    // One token for the whole box: a table set inside a widget needs other padding on every side.
-    @apply p-[var(--vc-table-footer-padding,var(--padding))] empty:hidden;
-
-    @media (width >= theme("screens.md")) {
-      --padding: theme("spacing.10") theme("spacing.5") theme("spacing.5");
-    }
+    @apply px-3 py-10 empty:hidden md:px-5 md:pb-5;
   }
 
   &__page-limit-message {

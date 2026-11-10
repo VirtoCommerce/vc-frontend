@@ -11,6 +11,8 @@ html[data-design="soft"] {
   --vc-table-title-color: var(--color-neutral-700);
   --vc-table-body-color: var(--color-neutral-800);
   --vc-table-cell-strong-color: var(--color-neutral-950);
+  // The kit hovers a row on neutral-200. Across a whole row that reads as a selected row, so soft goes a step lighter.
+  --vc-table-row-hover-bg-color: var(--color-neutral-100);
 
   // VcWidget
   --vc-widget-radius: 1.375rem;
@@ -36,4 +38,10 @@ html[data-design="soft"] {
   @media (forced-colors: active) {
     --vc-widget-border-width: 1px;
   }
+}
+
+// The light rule matches in dark too.
+html.dark[data-design="soft"] {
+  // VcTable
+  --vc-table-row-hover-bg-color: var(--color-neutral-200);
 }

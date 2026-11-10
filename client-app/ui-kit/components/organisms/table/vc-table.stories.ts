@@ -475,7 +475,6 @@ export const InWidget: StoryType = {
           :pages="args.pages"
           :page="page"
           bordered
-          class="[--vc-table-footer-padding:1.25rem_0.25rem_0.25rem]"
           @page-changed="page = $event"
         >
           <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
@@ -488,8 +487,7 @@ export const InWidget: StoryType = {
   parameters: {
     docs: {
       description: {
-        story:
-          "A table inside a widget keeps the widget's padding and its own border. The pager sits below the border, so `--vc-table-footer-padding` brings it closer.",
+        story: "A table inside a widget keeps the widget's padding and its own border.",
       },
     },
   },
