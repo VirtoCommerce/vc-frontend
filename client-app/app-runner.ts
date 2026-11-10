@@ -29,13 +29,14 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
-import { getDesign, loadDesignStyles, setDesignAttribute } from "@/core/utilities/design";
+import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
+import { init as initMfa } from "@/modules/mfa";
 import { init as initNews } from "@/modules/news";
 import { init as initPunchout } from "@/modules/punchout";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
@@ -254,6 +255,8 @@ export default async () => {
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
   setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  // Awaited before mount with the design styles, so a preset's stylesheet never paints late.
+  const presetStylesReady = loadPresetStyles(themeContext.value.activePresetName ?? "");
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
@@ -265,6 +268,7 @@ export default async () => {
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initModuleBackInStock(router, i18n);
+  initMfa(i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
@@ -344,7 +348,7 @@ export default async () => {
     Logger.warn(message, traceDetails);
   };
 
-  await designStylesReady;
+  await Promise.all([designStylesReady, presetStylesReady]);
 
   app.mount(appElement);
 
