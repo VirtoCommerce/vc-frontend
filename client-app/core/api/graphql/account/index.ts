@@ -30,7 +30,6 @@ export * from "./queries/checkUsernameUniqueness";
 export * from "./queries/getCurrentCustomerAddresses";
 export * from "./queries/getLayout";
 export * from "./queries/getMe";
-export * from "./queries/getMyAddresses";
 export * from "./queries/getOrganizations";
 export * from "./queries/getPendingOrganizationInvites";
 export * from "./queries/getPromotionCoupons";

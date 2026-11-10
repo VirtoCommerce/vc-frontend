@@ -1614,6 +1614,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ключей нет",
         "unnamed_key": "Ключ без названия",
+        "rename_key_label": "Переименовать {name}",
+        "delete_key_label": "Удалить {name}",
         "created": "Создан {date}",
         "changed": "Изменён {date}",
         "rename_modal": {

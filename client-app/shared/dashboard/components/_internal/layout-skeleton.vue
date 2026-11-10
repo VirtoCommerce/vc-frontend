@@ -105,7 +105,7 @@ const columns = computed(() =>
 
   // Wraps like layout-region--horizontal; VcStatWidget draws its own loading state.
   &__card {
-    @apply min-w-0 grow basis-44;
+    @apply grow basis-44;
   }
 }
 </style>

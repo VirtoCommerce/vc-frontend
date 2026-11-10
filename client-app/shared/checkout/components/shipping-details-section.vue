@@ -78,6 +78,7 @@
               <VcImage
                 class="shipping-details-section__method-image shipping-details-section__method-image--placeholder"
                 src="select-shipping.svg"
+                alt=""
               />
 
               {{ $t("common.placeholders.select_delivery_method") }}
@@ -86,14 +87,14 @@
 
           <template #selected="{ item }">
             <div class="shipping-details-section__method-item" :data-selected-shipping-method-id="item.id">
-              <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
+              <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" alt="" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
+            <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" alt="" />
 
             <span :data-shipping-method-id="item.id">{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</span>
           </template>

@@ -1614,6 +1614,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ei avaimia",
         "unnamed_key": "Nimetön avain",
+        "rename_key_label": "Nimeä {name} uudelleen",
+        "delete_key_label": "Poista {name}",
         "created": "Luotu {date}",
         "changed": "Muutettu {date}",
         "rename_modal": {

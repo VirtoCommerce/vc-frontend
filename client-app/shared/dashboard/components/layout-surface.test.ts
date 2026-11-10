@@ -32,12 +32,14 @@ const SCOPE = "surfaceSpec";
 // Registered on top of the synthetic dashboard: all that matters here is what the surface hands a block.
 const PROBE_ID = "probe";
 let seen: Record<string, unknown> = {};
+let probeSetups = 0;
 
 const Probe = defineComponent({
   inheritAttrs: false,
 
   setup(_props, { attrs }) {
     seen = { ...attrs };
+    probeSetups++;
     return () => h("div", { class: "probe" });
   },
 });
@@ -57,6 +59,7 @@ enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   seen = {};
+  probeSetups = 0;
 });
 
 function mountSurface(layout: LayoutControllerType, props: Record<string, unknown> = {}) {
@@ -341,6 +344,26 @@ describe("LayoutSurface with an emptied rail", () => {
 
     expect(wrapper.find(".layout-surface__aside").exists()).toBe(true);
     expect(wrapper.find(".layout-surface__aside .probe").exists()).toBe(true);
+  });
+});
+
+// A hidden block never mounts, in view or edit mode (the tray lists it by title), so none of its queries can run.
+// Plugins rely on it: the Sales Rep Hub's documents widget must send no request while hidden (VCST-5730 §4.5).
+describe("LayoutSurface with one widget hidden", () => {
+  it("never mounts it, in view or edit mode, so it sends no request", async () => {
+    const saved: SavedLayoutType = { regions: [{ blocks: [{ type: PROBE_ID, hidden: true }] }] };
+    const wrapper = mountSurface(createFakeLayout(SCOPE, { saved }));
+    await flushPromises();
+
+    // The rail still renders its other widgets.
+    expect(wrapper.find(".layout-surface__aside").exists()).toBe(true);
+    expect(probeSetups).toBe(0);
+
+    await wrapper.find("[data-layout-edit-toggle]").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find(`[data-restore-id="${PROBE_ID}"]`).exists()).toBe(true);
+    expect(probeSetups).toBe(0);
   });
 });
 
