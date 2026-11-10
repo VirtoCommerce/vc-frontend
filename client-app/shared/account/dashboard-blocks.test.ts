@@ -44,13 +44,14 @@ describe("account dashboard blocks", () => {
     });
   });
 
-  it("puts the recent orders in the wide column, with a row cap of 5 between 1 and 20", () => {
+  it("puts the recent orders in the wide column, with a row cap of 5 between 1 and 20 and a choice of status chips", () => {
     const recentOrders = getBlock(SCOPE, RECENT_ORDERS_BLOCK_ID);
 
     expect(recentOrders?.region).toBe("mainLeft");
     expect(recentOrders && "component" in recentOrders && Boolean(recentOrders.component)).toBe(true);
     expect(recentOrders && "settings" in recentOrders && recentOrders.settings).toEqual([
       { kind: "maxRows", default: 5, min: 1, max: 20 },
+      { kind: "ruleTabs" },
     ]);
   });
 

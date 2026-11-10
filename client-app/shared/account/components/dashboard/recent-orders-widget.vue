@@ -12,32 +12,42 @@
     <template #default-container>
       <div class="recent-orders-widget__body">
         <!-- One chip per status the user's orders carry, from the list's own facets, so every chip has orders behind
-             it. The facets are multi-select, so their counts stay put while a chip is selected. -->
+             it. No count on a chip, as in the Sales Rep Hub: the widget lists a few orders, not the status's total. -->
         <div v-if="statuses.length" class="recent-orders-widget__filter">
-          <!-- Baseline chip, active when no status is chosen. A boolean value, so no status can collide with it;
-               `Boolean(true)` because `:value="true"` trips vue/prefer-true-attribute-shorthand. -->
-          <VcTabSwitch size="sm" :value="Boolean(true)" :model-value="!status" @change="status = undefined">
-            <span class="recent-orders-widget__label">
-              {{ $t("shared.account.dashboard.recent_orders.filter_all") }}
-            </span>
-          </VcTabSwitch>
-
-          <VcTabSwitch
-            v-for="item in statuses"
-            :key="item.term"
-            size="sm"
-            :value="item.term"
-            :model-value="status"
-            @change="status = $event"
-          >
-            <span class="recent-orders-widget__label">{{ item.label }}</span>
-
-            <span
-              :class="['recent-orders-widget__count', { 'recent-orders-widget__count--checked': status === item.term }]"
+          <!-- In edit mode the chip row becomes its own configuration: checked = offered as a chip, as in the Sales Rep
+               Hub. Replacing rather than adding, so the header row does not grow. -->
+          <div v-if="editingTabs" class="recent-orders-widget__toggles">
+            <VcCheckbox
+              v-for="rule in statusRules"
+              :key="rule.name"
+              size="sm"
+              :model-value="!effectiveHiddenTabs.includes(rule.name)"
+              @update:model-value="toggleTab(rule.name)"
             >
-              {{ formatStatCount(item.count) }}
-            </span>
-          </VcTabSwitch>
+              {{ rule.label }}
+            </VcCheckbox>
+          </div>
+
+          <template v-else>
+            <!-- Baseline chip, active when no status is chosen. A boolean value, so no status can collide with it;
+                 `Boolean(true)` because `:value="true"` trips vue/prefer-true-attribute-shorthand. -->
+            <VcTabSwitch size="sm" :value="Boolean(true)" :model-value="!status" @change="status = undefined">
+              <span class="recent-orders-widget__label">
+                {{ $t("shared.account.dashboard.recent_orders.filter_all") }}
+              </span>
+            </VcTabSwitch>
+
+            <VcTabSwitch
+              v-for="rule in visibleStatuses"
+              :key="rule.name"
+              size="sm"
+              :value="rule.name"
+              :model-value="status"
+              @change="status = $event"
+            >
+              <span class="recent-orders-widget__label">{{ rule.label }}</span>
+            </VcTabSwitch>
+          </template>
         </div>
 
         <div class="recent-orders-widget__content">
@@ -100,7 +110,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { escapeFilterSyntaxValue, Logger } from "@/core/utilities";
-import { formatStatCount, useBlockChrome } from "@/shared/dashboard";
+import { knownHiddenTabs, toggleTabRule, useBlockChrome, visibleTabRules } from "@/shared/dashboard";
 import { useOrderNavigation } from "../../composables/useOrderNavigation";
 // The pure filter builder only: the composable in the same file keeps the Orders page's filter state.
 import { getFilterExpression } from "../../composables/useUserOrdersFilter";
@@ -140,6 +150,41 @@ const orders = shallowRef<CustomerOrderType[]>([]);
 const statuses = shallowRef<StatusTermType[]>([]);
 const loading = ref(false);
 const failed = ref(false);
+
+// The statuses as the shared tab settings read them: `name` is the facet term the filter uses.
+const statusRules = computed(() => statuses.value.map((item) => ({ name: item.term, label: item.label })));
+
+const editingTabs = computed(() => Boolean(chrome?.editing.value));
+const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
+// The saved selection, not the draft: chips apply on save, like the row cap.
+const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
+
+// The chips on offer, in facet order. Unchecking every status is allowed: the baseline chip stays.
+const visibleStatuses = computed(() => visibleTabRules(statusRules.value, savedHiddenTabs.value));
+// What the checkboxes read: the stored list minus any status the user's orders no longer carry.
+const effectiveHiddenTabs = computed(() => knownHiddenTabs(statusRules.value, hiddenTabs.value));
+
+// Edit mode is where the live statuses are known, so a retired name is cleared from the draft there.
+watch(
+  [editingTabs, statusRules],
+  () => {
+    if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
+      chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
+    }
+  },
+  { immediate: true },
+);
+
+function toggleTab(name: string): void {
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
+}
+
+// A save can hide the status being filtered by, which the user could then neither see nor clear.
+watch(visibleStatuses, (rules) => {
+  if (status.value && !rules.some((rule) => rule.name === status.value)) {
+    status.value = undefined;
+  }
+});
 
 let latest = 0;
 
@@ -203,14 +248,8 @@ watch([rowLimit, status], load, { immediate: true });
     --vc-tab-switch-hover-color: var(--color-neutral-900);
   }
 
-  // Bold like the label beside it; only the selected chip's count is accented, so the others do not compete with it.
-  // The widget's own selection drives the accent, not the kit's `--checked` class: the kit's classes are not ours.
-  &__count {
-    @apply font-bold text-neutral-600;
-
-    &--checked {
-      @apply text-primary-500;
-    }
+  &__toggles {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-2;
   }
 
   &__content {
