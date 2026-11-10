@@ -1,11 +1,10 @@
 <template>
-  <PageTemplate
-    v-if="template"
-    :page-settings="template.settings"
-    :permalink="previewSubject?.permalink ?? route.path"
-    :object-type="previewSubject?.objectType ?? 'ContentFile'"
-  >
-    <div ref="staticPageAnchor">
+  <div v-if="template" ref="staticPageAnchor">
+    <PageTemplate
+      :page-settings="template.settings"
+      :permalink="previewSubject?.permalink ?? route.path"
+      :object-type="previewSubject?.objectType ?? 'ContentFile'"
+    >
       <div
         v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
         class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
@@ -26,8 +25,8 @@
           :context="sectionContext"
         />
       </template>
-    </div>
-  </PageTemplate>
+    </PageTemplate>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,11 +35,16 @@ import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
-import { usePageTitle } from "@/core/composables/usePageTitle";
-import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
-import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll, useStaticPage } from "@/shared/static-content";
+import {
+  getAnchorId,
+  PageBuilderSection,
+  PageTemplate,
+  useAnchorScroll,
+  usePageSeoInfo,
+  useStaticPage,
+} from "@/shared/static-content";
 
 const route = useRoute();
 
@@ -59,22 +63,18 @@ const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBre
 
 useAnchorScroll(() => template.value);
 
+// Wraps the template's sections too, so the page keeps its meta while any part of it is on screen.
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
 
-const { title: pageTitle } = usePageTitle(
-  template.value?.settings?.seoInfo?.pageTitle || template.value?.settings?.name,
+usePageSeoInfo(
+  () => template.value?.settings?.seoInfo,
+  () => template.value?.settings?.name,
+  staticPageAnchorVisible,
 );
 
 useSeoMeta({
-  title: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
-  description: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
   // With the new Page Builder the page template sets it from the permalink, without the visited URL's query.
   ogUrl: () => (staticPageAnchorVisible.value && !isNewPageBuilderEnabled() ? window.location.toString() : undefined),
-  ogTitle: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
-  ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
-  ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
 });
-
-useSeoKeywords(() => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaKeywords : undefined));
 </script>

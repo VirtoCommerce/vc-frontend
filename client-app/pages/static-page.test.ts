@@ -1,29 +1,33 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { defineComponent, h, ref, toValue } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import StaticPage from "./static-page.vue";
 
 const staticPage = ref<{ settings: Record<string, unknown>; content: Array<Record<string, unknown>> }>();
 
+const { useElementVisibility, usePageSeoInfo } = vi.hoisted(() => ({
+  useElementVisibility: vi.fn(),
+  usePageSeoInfo: vi.fn(),
+}));
+
 vi.mock("@unhead/vue", () => ({ useSeoMeta: vi.fn() }));
 
-vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
-
-vi.mock("@/core/composables/usePageTitle", async () => {
+vi.mock("@vueuse/core", async (importOriginal) => {
   const { ref: vueRef } = await import("vue");
-  return { usePageTitle: () => ({ title: vueRef("") }) };
+  useElementVisibility.mockImplementation(() => vueRef(true));
+  return { ...(await importOriginal<typeof import("@vueuse/core")>()), useElementVisibility };
 });
 
-vi.mock("@/core/composables/useSeoKeywords", () => ({ useSeoKeywords: vi.fn() }));
+vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
 
 vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/page" }) }));
 
 vi.mock("@/shared/static-content", async () => {
   const anchors = await import("@/shared/static-content/anchors");
   const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
-  const { defineComponent: define, ref: vueRef } = await import("vue");
+  const { defineComponent: define, h: render, ref: vueRef } = await import("vue");
 
   return {
     ...anchors,
@@ -31,10 +35,14 @@ vi.mock("@/shared/static-content", async () => {
     PageTemplate: define({
       setup:
         (_, { slots }) =>
-        () =>
+        () => [
+          render("section", { "data-test-id": "template-before-section" }),
           slots.default?.(),
+          render("section", { "data-test-id": "template-after-section" }),
+        ],
     }),
     useAnchorScroll: vi.fn(),
+    usePageSeoInfo,
     useStaticPage: () => ({ staticPage, staticPagePreviewSubject: vueRef() }),
   };
 });
@@ -51,6 +59,8 @@ function mountStaticPage(content: Array<Record<string, unknown>>) {
 
 describe("StaticPage", () => {
   beforeEach(() => {
+    useElementVisibility.mockClear();
+    usePageSeoInfo.mockClear();
     registerPageBuilderSections({ "test-block": TestSection });
   });
 
@@ -66,6 +76,19 @@ describe("StaticPage", () => {
     expect(section.text()).toBe("Title");
     expect(section.attributes("onmouseover")).toBeUndefined();
     expect(section.attributes("style")).toBeUndefined();
+  });
+
+  it("keeps the page's meta on while any of its template's sections is on screen", () => {
+    const wrapper = mountStaticPage([{ id: "known", type: "test-block", title: "Title" }]);
+    const anchor = toValue(useElementVisibility.mock.calls[0][0] as HTMLElement | null);
+
+    expect(anchor?.contains(wrapper.find('[data-test-id="template-before-section"]').element)).toBe(true);
+    expect(anchor?.contains(wrapper.find('[data-test-id="template-after-section"]').element)).toBe(true);
+    expect(usePageSeoInfo).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.any(Function),
+      useElementVisibility.mock.results[0].value,
+    );
   });
 
   it.each(["iframe", "toString", "constructor"])("renders nothing for the section type %s", (type) => {

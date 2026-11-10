@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VPPageBuilder from "./vp-page-builder.vue";
+import type { Ref } from "vue";
 
 const routePath = ref("/page-a");
 const routeHash = ref("#text2");
@@ -22,7 +23,10 @@ vi.mock("@/core/composables", () => ({
   useBreadcrumbs: () => [],
 }));
 
-const { scrollToAnchor } = vi.hoisted(() => ({ scrollToAnchor: vi.fn(() => Promise.resolve(true)) }));
+const { scrollToAnchor, usePageSeoInfo } = vi.hoisted(() => ({
+  scrollToAnchor: vi.fn(() => Promise.resolve(true)),
+  usePageSeoInfo: vi.fn(),
+}));
 
 vi.mock("@/shared/static-content/anchors", async () => {
   const actual = await vi.importActual<typeof import("@/shared/static-content/anchors")>(
@@ -47,7 +51,7 @@ vi.mock("@/shared/static-content", async () => {
   });
   registerPageBuilderSections({ "test-block": section });
 
-  return { ...anchors, useAnchorScroll, PageBuilderSection, PageTemplate };
+  return { ...anchors, useAnchorScroll, usePageSeoInfo, PageBuilderSection, PageTemplate };
 });
 
 const mountedWrappers: Array<{ unmount: () => void }> = [];
@@ -165,11 +169,26 @@ describe("VPPageBuilder", () => {
 
     expect(usePageLayout().pageLayout.value).toBe("full");
   });
+
+  it("gives the head the page's SEO info, named by its live name", async () => {
+    const wrapper = mountPageBuilder(
+      pageContent("seo", { name: "Old name", seoInfo: { pageTitle: "Spring sale" } }),
+      "spring-sale",
+    );
+    const [seoInfo, fallbackTitle] = usePageSeoInfo.mock.calls[0] as [() => unknown, Ref<string>];
+
+    expect(seoInfo()).toEqual({ pageTitle: "Spring sale" });
+    expect(fallbackTitle.value).toBe("Spring sale");
+
+    await wrapper.setProps({ content: pageContent("seo", { seoInfo: { metaDescription: "Next page" } }) });
+
+    expect(seoInfo()).toEqual({ metaDescription: "Next page" });
+  });
 });
 
-function mountPageBuilder(content?: string) {
+function mountPageBuilder(content?: string, name?: string) {
   const wrapper = mount(VPPageBuilder, {
-    props: { content },
+    props: { content, name },
     global: {
       stubs: {
         VcBreadcrumbs: true,

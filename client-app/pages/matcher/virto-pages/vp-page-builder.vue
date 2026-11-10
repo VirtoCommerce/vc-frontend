@@ -35,7 +35,13 @@ import { useBreadcrumbs } from "@/core/composables";
 import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
-import { getAnchorId, PageBuilderSection, PageTemplate, useAnchorScroll } from "@/shared/static-content";
+import {
+  getAnchorId,
+  PageBuilderSection,
+  PageTemplate,
+  useAnchorScroll,
+  usePageSeoInfo,
+} from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -86,6 +92,8 @@ watch(
 );
 
 useAnchorScroll(() => pageBuilderContent.value);
+
+usePageSeoInfo(() => pageBuilderContent.value?.settings.seoInfo, templateName);
 
 function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
   let parsedContent: IPageBuilderContent | null = null;
