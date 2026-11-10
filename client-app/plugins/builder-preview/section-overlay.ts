@@ -30,8 +30,8 @@ export class SectionOverlay {
     private readonly blocker: HTMLElement,
     private readonly onSelect: (selection: { sectionId: string; blockId?: string }, event: MouseEvent) => void,
     private readonly onHover: (sectionId: string | null) => void,
-    /** A shared component's placement has its own overlay, and its sections are not the page's. */
-    private readonly isPointTaken: (clientX: number, clientY: number) => boolean = () => false,
+    /** The shared component placement at a point: hovered as a whole, as its sections are not the page's. */
+    private readonly placementAt: (clientX: number, clientY: number) => string | null = () => null,
   ) {
     this.layer = document.createElement("div");
     this.layer.setAttribute("aria-hidden", "true");
@@ -140,13 +140,11 @@ export class SectionOverlay {
       return;
     }
 
-    const sectionId = this.isPointTaken(event.clientX, event.clientY)
-      ? null
-      : this.sectionAt(event.clientX, event.clientY);
+    const hoveredId = this.placementAt(event.clientX, event.clientY) ?? this.sectionAt(event.clientX, event.clientY);
 
-    if (sectionId !== this.hovered) {
-      this.hover(sectionId);
-      this.onHover(sectionId);
+    if (hoveredId !== this.hovered) {
+      this.hover(hoveredId);
+      this.onHover(hoveredId);
     }
   };
 
@@ -158,7 +156,7 @@ export class SectionOverlay {
   };
 
   private readonly handleClick = (event: MouseEvent): void => {
-    const isAvailable = this.isEnabled && !this.isPointTaken(event.clientX, event.clientY);
+    const isAvailable = this.isEnabled && !this.placementAt(event.clientX, event.clientY);
     const innermost = isAvailable ? this.sectionAt(event.clientX, event.clientY) : null;
 
     if (!innermost) {

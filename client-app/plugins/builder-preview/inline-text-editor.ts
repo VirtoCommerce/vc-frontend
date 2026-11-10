@@ -5,6 +5,8 @@ export interface IEditableText {
   itemId: string;
   path: (string | number)[];
   value: string;
+  /** Whether the setting's schema lets it hold line breaks. */
+  multiline?: boolean;
 }
 
 const NOT_TEXT = new Set(["id", "type", "hidden", "blocks", "componentRef"]);
@@ -24,13 +26,14 @@ export type PlainTextFieldPredicateType = (itemType: string, path: (string | num
 export function findEditableTexts(
   item: Record<string, unknown>,
   isPlainTextField: PlainTextFieldPredicateType = () => undefined,
+  isMultilineField: PlainTextFieldPredicateType = () => undefined,
 ): IEditableText[] {
   const found: IEditableText[] = [];
 
   function walk(owner: { id: string; type: string }, value: unknown, path: (string | number)[]): void {
     if (typeof value === "string") {
       if (isEditableText(value, isPlainTextField(owner.type, path))) {
-        found.push({ itemId: owner.id, path, value });
+        found.push({ itemId: owner.id, path, value, multiline: isMultilineField(owner.type, path) });
       }
     } else if (Array.isArray(value)) {
       value.forEach((child, index) => walk(owner, child, [...path, index]));
@@ -208,13 +211,13 @@ export class InlineTextEditor {
     const { element, text } = this.editing;
     // Browsers write a no-break space for a trailing space and leave a line break placeholder in an emptied element.
     const value = element.textContent ? (element.innerText || element.textContent).replaceAll(" ", " ") : "";
-    this.onEdit({ ...text, value: text.value.includes("\n") ? value : toSingleLine(value) });
+    this.onEdit({ itemId: text.itemId, path: text.path, value: isMultiline(text) ? value : toSingleLine(value) });
   };
 
   private readonly handleKeydown = (event: KeyboardEvent): void => {
-    const isMultiline = this.editing?.text.value.includes("\n");
+    const isMultilineText = !!this.editing && isMultiline(this.editing.text);
 
-    if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey && !isMultiline)) {
+    if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey && !isMultilineText)) {
       event.preventDefault();
       this.end();
     }
@@ -239,6 +242,11 @@ export class InlineTextEditor {
       event.stopPropagation();
     }
   };
+}
+
+/** Without a schema, only a text that already has a line break takes more. */
+function isMultiline(text: IEditableText): boolean {
+  return text.multiline ?? text.value.includes("\n");
 }
 
 /** Lines pasted into a single-line text: one space between them, blank lines dropped. */

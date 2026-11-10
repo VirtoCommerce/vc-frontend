@@ -41,6 +41,7 @@ interface ISchemaField {
   type?: string;
   format?: string;
   translatable?: boolean;
+  multiline?: boolean;
   element?: ISchemaField[];
 }
 
@@ -91,7 +92,7 @@ interface IPreviewV2Options {
   schemas: () => PageBuilderSchemaType | undefined;
   post: (type: string, data: unknown) => void;
   renderPage: (message: IRenderMessage) => Promise<void>;
-  allowNavigation: (url: string) => void;
+  allowNavigation: (url: string | undefined) => void;
   applyLocale: (cultureName?: string) => Promise<void>;
   hasPreviewToken: () => boolean;
   sharedComponents?: Pick<SharedComponentOverlay, "setEnabled" | "findPlacementAt">;
@@ -120,7 +121,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
       startEditing(selection.blockId ?? selection.sectionId, event);
     },
     (sectionId) => post("hover", { sectionId }),
-    (clientX, clientY) => !!options.sharedComponents?.findPlacementAt(clientX, clientY),
+    (clientX, clientY) => options.sharedComponents?.findPlacementAt(clientX, clientY) ?? null,
   );
 
   const editor = new InlineTextEditor(
@@ -202,6 +203,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
       setOpenTemplate(undefined);
       // On the preview route the template rules must see the real page, else the address the designer named.
       staticPagePreviewSubject.value = message.page ?? (message.url ? { permalink: message.url } : undefined);
+      options.allowNavigation(undefined);
       await options.renderPage(message);
     }
 
@@ -260,7 +262,11 @@ export function createPreviewV2(options: IPreviewV2Options) {
     if (item) {
       const shown = resolveTranslatableValues(item, globals.cultureName, defaultStoreCulture.value);
       editor.start(
-        findEditableTexts(shown, (itemType, path) => isPlainTextSetting(options.schemas(), itemType, path)),
+        findEditableTexts(
+          shown,
+          (itemType, path) => isPlainTextSetting(options.schemas(), itemType, path),
+          (itemType, path) => !!findSchemaField(options.schemas(), itemType, path)?.multiline,
+        ),
         event.clientX,
         event.clientY,
       );

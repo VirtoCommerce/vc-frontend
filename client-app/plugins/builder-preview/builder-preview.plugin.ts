@@ -228,7 +228,10 @@ function modifyRequests() {
 /** Largest value a CSS `z-index` accepts (2^31 - 1) — keeps the blocker above every storefront element. */
 const MAX_Z_INDEX = 2147483647;
 
-function createOverlay(builderOrigin: string): {
+function createOverlay(
+  builderOrigin: string,
+  isHoverReportedByPreviewV2: () => boolean,
+): {
   bodyEl: HTMLElement | null;
   blocker: HTMLElement | null;
   sharedComponentOverlay: SharedComponentOverlay | null;
@@ -260,7 +263,12 @@ function createOverlay(builderOrigin: string): {
     bodyEl,
     interactiveBlocker,
     (placementId) => postSectionMessage("select", placementId),
-    (placementId) => postSectionMessage("hover", placementId),
+    (placementId) => {
+      // Protocol 2 reports placements with the sections from one listener, so a late report cannot undo a newer one.
+      if (!isHoverReportedByPreviewV2()) {
+        postSectionMessage("hover", placementId);
+      }
+    },
   );
 
   return { bodyEl, blocker: interactiveBlocker, sharedComponentOverlay };
@@ -521,7 +529,7 @@ export default {
         builderOrigin,
         loadedNotifier,
         enqueue: createMessageQueue(),
-        ...createOverlay(builderOrigin),
+        ...createOverlay(builderOrigin, () => !!context.previewV2),
       };
       handleMessages(context);
 

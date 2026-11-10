@@ -16,7 +16,7 @@ export const useThemeGroups = createGlobalState(() => {
   const { theme } = useThemeSnapshot();
   const { currentLanguage, defaultStoreCulture } = useLanguages();
   /** A draft can name menus the published snapshot does not carry. */
-  const draftMenus = shallowReactive(new Map<string, ExtendedMenuLinkType[]>());
+  const draftMenus = shallowReactive(new Map<string, MenuLinkType[]>());
   const requestedDraftMenus = new Set<string>();
 
   const groups = computed<Record<ThemeGroupType, IThemeItem[]>>(() => {
@@ -52,15 +52,12 @@ export const useThemeGroups = createGlobalState(() => {
       void loadDraftMenu(name, draftKey);
     }
 
-    return draftMenus.get(draftKey);
+    return draftMenus.get(draftKey)?.map((item) => convertToExtendedMenuLink(item, isCatalogItem));
   }
 
   async function loadDraftMenu(name: string, draftKey: string): Promise<void> {
     try {
-      draftMenus.set(
-        draftKey,
-        (await getMenu(name)).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false)),
-      );
+      draftMenus.set(draftKey, (await getMenu(name)) as MenuLinkType[]);
     } catch (error) {
       requestedDraftMenus.delete(draftKey);
       Logger.error(`${useThemeGroups.name}.${loadDraftMenu.name}`, error);

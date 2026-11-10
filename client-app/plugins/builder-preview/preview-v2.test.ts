@@ -8,7 +8,7 @@ import { useTemplateResolution, useThemeTemplates } from "@/shared/static-conten
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetting } from "./preview-v2";
-import { PREVIEW_PROTOCOL } from "./utils";
+import { guardPreviewNavigation, PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { VueWrapper } from "@vue/test-utils";
@@ -26,7 +26,12 @@ vi.mock("@/core/composables/useWhiteLabeling", async () => {
 
 const SCHEMAS = {
   sections: {
-    banner: { settings: [{ id: "title", type: "string", translatable: true }] },
+    banner: {
+      settings: [
+        { id: "title", type: "string", translatable: true },
+        { id: "subtitle", type: "string", multiline: true },
+      ],
+    },
     title: { includeShared: ["title"], settings: [{ id: "subtitle", type: "string" }] },
   },
   blocks: {
@@ -170,6 +175,24 @@ describe("preview protocol 2", () => {
     expect(allowNavigation).toHaveBeenCalledWith("/printers/x1");
     expect(router.currentRoute.value.fullPath).toBe("/printers/x1");
     expect(useThemeTemplates().resolveTemplate("product", {}).template).toBe("product.b2c");
+  });
+
+  it("keeps a page it renders after a template on the preview route when a link there names the template's page", async () => {
+    const { preview, router, renderPage, allowNavigation } = createPreview();
+    let allowedNavigation: string | undefined;
+    allowNavigation.mockImplementation((url?: string) => {
+      allowedNavigation = url;
+    });
+    router.beforeEach((to, from, next) => guardPreviewNavigation(to, from, next, allowedNavigation));
+    renderPage.mockImplementation(async () => {
+      await router.push("/designer-preview");
+    });
+
+    await preview.handleRender(render({ templateKey: "product", url: "/printers" }));
+    await preview.handleRender(render());
+    await router.push("/printers");
+
+    expect(router.currentRoute.value.path).toBe("/designer-preview");
   });
 
   it("reports the template a page chose with the fields white-labeling set", async () => {
@@ -365,6 +388,30 @@ describe("inline editing", () => {
     title.dispatchEvent(new Event("input"));
 
     expect(onEdit).toHaveBeenLastCalledWith({ itemId: "s1", path: ["title"], value: "Line A Line B Line C" });
+  });
+
+  it("takes a line break in a multiline setting that holds one line", async () => {
+    const { preview, blocker, post } = createPreview();
+    preview.setInspector(true);
+    await preview.handleRender(
+      render({ document: { settings: {}, content: [{ id: "s1", type: "banner", subtitle: "One line" }] } }),
+    );
+    document.body.innerHTML = `<section data-pb-section="s1"><p id="subtitle">One line</p></section>`;
+    const subtitle = document.getElementById("subtitle") as HTMLElement;
+    document.elementsFromPoint = () => [subtitle];
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 0, clientY: 0 }));
+
+    const enter = new KeyboardEvent("keydown", { key: "Enter", cancelable: true });
+    subtitle.dispatchEvent(enter);
+    subtitle.textContent = "One line\nTwo lines";
+    subtitle.dispatchEvent(new Event("input"));
+    subtitle.dispatchEvent(new FocusEvent("blur"));
+
+    expect(enter.defaultPrevented).toBe(false);
+    expect(post).toHaveBeenCalledWith(
+      "edit",
+      expect.objectContaining({ itemId: "s1", path: ["subtitle"], value: "One line\nTwo lines" }),
+    );
   });
 
   it("gives the page back the text node it renders into when editing replaced it", () => {

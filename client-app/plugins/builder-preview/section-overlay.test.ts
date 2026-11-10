@@ -10,11 +10,11 @@ function addSection(id: string, parent: HTMLElement = document.body): HTMLElemen
   return element;
 }
 
-function createOverlay(isPointTaken?: (clientX: number, clientY: number) => boolean) {
+function createOverlay(placementAt?: (clientX: number, clientY: number) => string | null) {
   const blocker = document.createElement("div");
   const onSelect = vi.fn();
   const onHover = vi.fn();
-  const overlay = new SectionOverlay(document.body, blocker, onSelect, onHover, isPointTaken);
+  const overlay = new SectionOverlay(document.body, blocker, onSelect, onHover, placementAt);
   overlay.setEnabled(true);
   overlay.setLabels({ section: "Section", block: "Block" });
   return { overlay, blocker, onSelect, onHover };
@@ -80,8 +80,8 @@ describe("SectionOverlay", () => {
     expect(section.scrollIntoView).toHaveBeenCalledOnce();
   });
 
-  it("leaves a point another overlay takes to it", () => {
-    const { blocker, onSelect, onHover } = createOverlay(() => true);
+  it("hovers a shared component's placement as a whole and leaves its click to the placement's overlay", () => {
+    const { blocker, onSelect, onHover } = createOverlay(() => "placement");
     addSection("section");
     document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
 
@@ -89,7 +89,20 @@ describe("SectionOverlay", () => {
     blocker.dispatchEvent(new MouseEvent("click", { clientX: 10, clientY: 10 }));
     delete (document as Partial<Document>).elementsFromPoint;
 
-    expect(onHover).not.toHaveBeenCalled();
+    expect(onHover).toHaveBeenCalledExactlyOnceWith("placement");
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("reports the section the pointer moves to from a placement, and nothing after it", () => {
+    const { blocker, onHover } = createOverlay((clientX) => (clientX < 100 ? "placement" : null));
+    addSection("section");
+    document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
+
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 200, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 210, clientY: 10 }));
+    delete (document as Partial<Document>).elementsFromPoint;
+
+    expect(onHover.mock.calls).toEqual([["placement"], ["section"]]);
   });
 });
