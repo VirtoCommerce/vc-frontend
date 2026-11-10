@@ -66,7 +66,11 @@ const { t } = useI18n();
 
 <style lang="scss">
 .layout-empty-state {
-  @apply mx-auto max-w-xl;
+  @apply mx-auto w-full max-w-xl;
+
+  &__art {
+    @apply w-[14.75rem] max-w-full;
+  }
 
   &__title {
     @apply pt-3 [word-break:break-word];
