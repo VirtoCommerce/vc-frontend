@@ -2146,7 +2146,7 @@ export const SlotsApiDefault: StoryType = {
           <tr
             v-for="item in args.items"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2185,7 +2185,7 @@ const items = ref([
       <tr
         v-for="item in items"
         :key="item.id"
-        class="even:bg-neutral-50 hover:bg-neutral-200"
+        class="even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
       >
         <td class="p-5">{{ item.name }}</td>
         <td class="p-5">{{ item.email }}</td>
@@ -2241,7 +2241,7 @@ export const SlotsApiDesktopItem: StoryType = {
         </template>
 
         <template #desktop-item="{ item }">
-          <tr class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200">
+          <tr class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]">
             <td class="p-5">
               <div class="flex items-center gap-2">
                 <div class="size-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-bold">
@@ -2308,7 +2308,7 @@ export const SlotsApiDesktopItem: StoryType = {
 
   <!-- Desktop: component iterates, you render one row -->
   <template #desktop-item="{ item }">
-    <tr class="even:bg-neutral-50 hover:bg-neutral-200">
+    <tr class="even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]">
       <td class="p-5">
         <div class="flex items-center gap-2">
           <div class="size-8 rounded-full bg-primary-100">
@@ -2372,7 +2372,7 @@ export const SlotsApiResponsive: StoryType = {
           <tr
             v-for="item in args.items"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2481,7 +2481,7 @@ export const SlotsApiSorting: StoryType = {
           <tr
             v-for="item in sortedItems"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2623,7 +2623,7 @@ export const SlotsApiCustomHeader: StoryType = {
           <tr
             v-for="item in args.items"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2691,7 +2691,7 @@ export const SlotsApiWithoutHeader: StoryType = {
           <tr
             v-for="item in args.items"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2766,7 +2766,7 @@ export const SlotsApiScrollable: StoryType = {
             <tr
               v-for="item in args.items"
               :key="item.id"
-              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+              class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
             >
               <td class="p-5 min-w-52">{{ item.name }}</td>
               <td class="p-5 min-w-64">{{ item.email }}</td>
@@ -2878,7 +2878,7 @@ export const SlotsApiFull: StoryType = {
           <tr
             v-for="item in sortedItems"
             :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
           >
             <td class="p-5">{{ item.name }}</td>
             <td class="p-5">{{ item.email }}</td>
@@ -2970,7 +2970,7 @@ async function onHeaderClick(sortInfo: VcTableSortInfoType) {
       <tr
         v-for="item in items"
         :key="item.id"
-        class="even:bg-neutral-50 hover:bg-neutral-200"
+        class="even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
       >
         <td class="p-5">{{ item.name }}</td>
         <td class="p-5">{{ item.email }}</td>
