@@ -1,16 +1,17 @@
-import { flushPromises } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { darkPresets, presets } from "@/assets/presets";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { useThemeTemplates } from "@/shared/static-content";
+import { useTemplateResolution, useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetting } from "./preview-v2";
 import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { VueWrapper } from "@vue/test-utils";
 
 const setColorModeOverride = vi.hoisted(() => vi.fn());
 
@@ -81,6 +82,8 @@ function render(message: Partial<IRenderMessage> = {}): IRenderMessage {
 }
 
 describe("preview protocol 2", () => {
+  let previousPage: VueWrapper | undefined;
+
   beforeEach(() => {
     useThemeSnapshot().setPublished(null);
     useThemeSnapshot().setDraft(undefined);
@@ -88,6 +91,9 @@ describe("preview protocol 2", () => {
   });
 
   afterEach(() => {
+    previousPage?.unmount();
+    previousPage = undefined;
+    delete (document as Partial<Document>).elementsFromPoint;
     document.body.innerHTML = "";
   });
 
@@ -226,14 +232,17 @@ describe("preview protocol 2", () => {
   it("does not report the previous product's template for a product that has not chosen yet", async () => {
     const { preview, post } = createPreview();
     await preview.handleRender(render({ templateKey: "product", url: "/printers/x1" }));
-    useThemeTemplates().setLastResolution({
-      pageType: "product",
-      template: "product.b2c",
-      ruleId: "b2c",
-      document: DOCUMENT,
-      rules: { template: "product.b2c", ruleId: "b2c" },
-    });
+    // The previous product's page stays mounted, still choosing for its own product, until the next one loads.
+    previousPage = mount(
+      defineComponent({
+        setup() {
+          useTemplateResolution("product", {});
+          return () => null;
+        },
+      }),
+    );
     await flushPromises();
+    expect(post).toHaveBeenCalledWith("resolved", expect.objectContaining({ url: "/printers/x1" }));
     post.mockClear();
 
     await preview.handleRender(render({ templateKey: "product", url: "/printers/x2" }));
@@ -251,6 +260,29 @@ describe("preview protocol 2", () => {
     await preview.reload();
 
     expect(visited).toEqual(["/designer-preview", "/printers/x1"]);
+  });
+
+  it("shows the newest render after an inline edit during which the designer switched the user", async () => {
+    const { preview, blocker, renderPage } = createPreview();
+    preview.setInspector(true);
+    await preview.handleRender(render());
+    const section = document.createElement("section");
+    section.dataset.pbSection = "s1";
+    const title = section.appendChild(document.createElement("h2"));
+    title.textContent = "Hello";
+    document.body.append(section);
+    document.elementsFromPoint = () => [title];
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 0, clientY: 0 }));
+    const typed = { settings: {}, content: [{ id: "s1", type: "banner", title: "Hello there" }] };
+
+    await preview.handleRender(render({ document: typed }));
+    await preview.reload();
+    expect(renderPage).toHaveBeenCalledOnce();
+
+    title.dispatchEvent(new FocusEvent("blur"));
+    await flushPromises();
+
+    expect(renderPage).toHaveBeenLastCalledWith(expect.objectContaining({ document: typed }));
   });
 
   it("switches between light and dark", () => {

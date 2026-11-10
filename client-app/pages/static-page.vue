@@ -2,7 +2,7 @@
   <div v-if="template" ref="staticPageAnchor">
     <PageTemplate
       :page-settings="template.settings"
-      :permalink="previewSubject?.permalink ?? route.path"
+      :permalink="previewSubject?.permalink ?? permalink ?? route.path"
       :object-type="previewSubject?.objectType ?? 'ContentFile'"
     >
       <div
@@ -45,6 +45,13 @@ import {
   usePageSeoInfo,
   useStaticPage,
 } from "@/shared/static-content";
+
+interface IProps {
+  /** The page's own permalink; without it, the visited path, which can differ from it in case or a trailing slash. */
+  permalink?: string;
+}
+
+defineProps<IProps>();
 
 const route = useRoute();
 

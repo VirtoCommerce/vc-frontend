@@ -176,6 +176,7 @@ export function measureElement(element: HTMLElement): {
 let templateUrl: string | undefined;
 let allowedNavigation: string | undefined;
 let previewToken: string | null | undefined;
+let previewUserId: string | null | undefined;
 let originalUserId: string | undefined;
 let originalOrganizationId: string | undefined;
 let pendingScrollRestore = false;
@@ -411,7 +412,17 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
 }
 
 async function applyAuth(context: IPreviewContext, message: TransferDataType): Promise<void> {
-  previewToken = message.token?.access_token || null;
+  const token = message.token?.access_token || null;
+  const userId = message.userId || null;
+
+  // A renewed token of the user shown: their organization, branding and loaded data stay right.
+  if (userId === previewUserId && !!token === !!previewToken) {
+    previewToken = token;
+    return;
+  }
+
+  previewToken = token;
+  previewUserId = userId;
   if (!originalUserId) {
     originalUserId = globals.userId;
     originalOrganizationId = globals.organizationId;

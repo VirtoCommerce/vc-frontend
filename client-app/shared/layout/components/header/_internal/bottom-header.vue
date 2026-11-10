@@ -120,7 +120,9 @@ const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() =>
         const builtIn = desktopMainMenuItems.value.find(
           (item) => typeof item.route === "object" && "name" in item.route && item.route.name === routeName,
         );
-        return builtIn ?? { ...link, id: typeof link.route === "string" ? link.route : link.title };
+        return builtIn
+          ? { ...builtIn, title: link.title }
+          : { ...link, id: typeof link.route === "string" ? link.route : link.title };
       })
     : desktopMainMenuItems.value,
 );

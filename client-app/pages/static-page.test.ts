@@ -33,6 +33,8 @@ vi.mock("@/shared/static-content", async () => {
     ...anchors,
     PageBuilderSection,
     PageTemplate: define({
+      name: "PageTemplate",
+      props: ["pageSettings", "permalink", "objectType"],
       setup:
         (_, { slots }) =>
         () => [
@@ -52,9 +54,9 @@ const TestSection = defineComponent({
   setup: (props) => () => h("section", { "data-test-id": "static-page-test-section" }, props.title),
 });
 
-function mountStaticPage(content: Array<Record<string, unknown>>) {
+function mountStaticPage(content: Array<Record<string, unknown>>, props: { permalink?: string } = {}) {
   staticPage.value = { settings: { hideBreadcrumbs: true }, content };
-  return mount(StaticPage);
+  return mount(StaticPage, { props });
 }
 
 describe("StaticPage", () => {
@@ -89,6 +91,18 @@ describe("StaticPage", () => {
       expect.any(Function),
       useElementVisibility.mock.results[0].value,
     );
+  });
+
+  it("gives its template the page's permalink, which the canonical URL is built from, not the visited path", () => {
+    const template = mountStaticPage([], { permalink: "/about" }).findComponent({ name: "PageTemplate" });
+
+    expect(template.props("permalink")).toBe("/about");
+  });
+
+  it("gives its template the visited path when it has no permalink", () => {
+    const template = mountStaticPage([]).findComponent({ name: "PageTemplate" });
+
+    expect(template.props("permalink")).toBe("/page");
   });
 
   it.each(["iframe", "toString", "constructor"])("renders nothing for the section type %s", (type) => {

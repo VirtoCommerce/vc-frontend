@@ -89,7 +89,8 @@ export function useTemplateResolution(
         setLastResolution(value);
       }
     },
-    { immediate: true },
+    // Synchronous, so a choice this page makes for a change cannot land after the caller has cleared it.
+    { immediate: true, flush: "sync" },
   );
 
   return resolution;

@@ -303,7 +303,8 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
   /** Re-renders so data loaded as the previous preview user (prices, availability) loads again as the current one. */
   async function reload(): Promise<void> {
-    const render = lastRender;
+    // During an inline edit the newest render is the held one; the last shown predates the typed text.
+    const render = heldRender ?? lastRender;
 
     if (!render) {
       return;

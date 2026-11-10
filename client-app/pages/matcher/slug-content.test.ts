@@ -9,13 +9,17 @@ import type { VueWrapper } from "@vue/test-utils";
 const loading = ref(false);
 const objectType = ref<string | undefined>();
 const objectId = ref<string | undefined>("category-1");
+const hasContent = ref(false);
+const semanticUrl = ref<string | null>(null);
 
 vi.mock("@/shared/common", () => ({
   useSlugInfo: () => ({
     loading,
-    slugInfo: computed(() => ({ entityInfo: { objectType: objectType.value, objectId: objectId.value } })),
+    slugInfo: computed(() => ({
+      entityInfo: { objectType: objectType.value, objectId: objectId.value, semanticUrl: semanticUrl.value },
+    })),
     objectType,
-    hasContent: ref(false),
+    hasContent,
     hasPageDocumentContent: ref(false),
     pageDocumentContent: ref(),
     pageContent: ref(),
@@ -52,6 +56,15 @@ vi.mock("@/pages/category.vue", () => ({
   }),
 }));
 
+vi.mock("@/pages/static-page.vue", () => ({
+  __esModule: true,
+  default: defineComponent({
+    name: "StaticPage",
+    props: { permalink: { type: String, default: undefined } },
+    setup: () => () => h("div"),
+  }),
+}));
+
 const { isScopePending, preparingScope } = useSearchScore();
 
 let wrapper: VueWrapper | undefined;
@@ -67,6 +80,8 @@ afterEach(() => {
   loading.value = false;
   objectType.value = undefined;
   objectId.value = "category-1";
+  hasContent.value = false;
+  semanticUrl.value = null;
   categoryPage.failsToSetUp = false;
   categoryPage.finishPreparing = undefined;
   preparingScope.value = false;
@@ -201,5 +216,18 @@ describe("SlugContent page layout", () => {
     await flushPromises();
 
     expect(pageLayout.value).toBe("minimal");
+  });
+});
+
+describe("SlugContent file page", () => {
+  it("gives the page its own permalink, not the path it was visited at", async () => {
+    objectType.value = "ContentFile";
+    hasContent.value = true;
+    semanticUrl.value = "/about";
+
+    const slugContent = mountSlugContent(true);
+    await flushPromises();
+
+    expect(slugContent.findComponent({ name: "StaticPage" }).props("permalink")).toBe("/about");
   });
 });

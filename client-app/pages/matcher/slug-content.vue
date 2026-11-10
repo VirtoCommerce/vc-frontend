@@ -31,7 +31,7 @@
 
     <VPMarkdown v-else-if="isMarkdownContent" :content="markdownContent" />
 
-    <StaticPage v-else-if="hasContent" />
+    <StaticPage v-else-if="hasContent" :permalink="slugInfo?.entityInfo?.semanticUrl || undefined" />
   </div>
 </template>
 
