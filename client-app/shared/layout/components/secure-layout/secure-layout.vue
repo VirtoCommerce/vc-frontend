@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { useCssVar, useElementBounding } from "@vueuse/core";
-import { ref, watch } from "vue";
+import { useTemplateRef, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import VcFooter from "../footer/vc-footer.vue";
 import Created from "../print/created.vue";
@@ -35,9 +35,10 @@ import SecureCheckoutBadge from "./_internal/secure-checkout-badge.vue";
 
 const { logoUrl } = useWhiteLabeling();
 
-const headerElement = ref<HTMLElement | null>(null);
+const headerElement = useTemplateRef<HTMLElement>("headerElement");
 const { height: headerHeight } = useElementBounding(headerElement);
-// The sticky header's height, so a skip link or anchor jump stops below it (`html { scroll-padding-top }`).
+// The sticky header's height for `html { scroll-padding-top }`; VcHeader (desktop) and MobileHeader write it on
+// Main pages.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 watch(
