@@ -1,5 +1,4 @@
 .vc-widget {
-  // Elevation in dark = lighter surface + the widget's own hairline; the drop shadow adds nothing.
-  // Only the default goes: a design's or a fork's `--vc-widget-shadow` still applies.
+  // No default shadow in dark (the lighter surface lifts the widget); `--vc-widget-shadow` still applies.
   --shadow: var(--vc-widget-shadow, 0 0 #0000);
 }
