@@ -67,4 +67,6 @@ export const EXTENSION_CATEGORIES = {
   checkout: "checkout",
   identityProviders: "identityProviders",
   signInMethods: "signInMethods",
+  accountSecurity: "accountSecurity",
+  companyInfo: "companyInfo",
 } as const satisfies { [C in ExtensionCategoryType]: C };

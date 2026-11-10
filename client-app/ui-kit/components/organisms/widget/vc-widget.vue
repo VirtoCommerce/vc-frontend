@@ -8,6 +8,7 @@
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
+        'vc-widget--seamless': seamless,
       },
     ]"
   >
@@ -84,6 +85,12 @@ interface IProps {
   shadow?: boolean;
   border?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
+  /**
+   * Draws no plate (border, background, shadow, radius, dividers) and no inline padding, so the shell around it
+   * (another widget, a sidebar card) owns them; header and vertical spacing stay. Below `md` it also stays inside
+   * VcContainer's padding.
+   */
+  seamless?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -120,14 +127,24 @@ watchEffect(() => {
   $collapsible: "";
   $collapsed: "";
 
-  --p-x: theme("padding.4");
+  --p-x: var(--vc-widget-padding-x, theme("padding.4"));
+  --border-width: var(--vc-widget-border-width, 1px);
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+  --inner-radius: calc(
+    var(--vc-widget-radius, calc(theme("borderRadius.DEFAULT") + var(--border-width))) - var(--border-width)
+  );
+  // No fallback: without a design's radius token the body keeps classic's square corners.
+  --body-radius: calc(var(--vc-widget-radius) - var(--border-width));
+  --shadow: var(--vc-widget-shadow, theme("boxShadow.md"));
   --header-gap: theme("gap.2");
 
-  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
+  @apply relative border-[length:--border-width] border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
+
+  // shadow-md keeps `--tw-shadow-colored`, so a `shadow-<colour>` class still tints; only the value is ours.
+  --tw-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
     .vc-container & {
@@ -165,7 +182,7 @@ watchEffect(() => {
       --shape-size: 2.25rem;
 
       @media (min-width: theme("screens.sm")) {
-        --p-x: theme("padding.6");
+        --p-x: var(--vc-widget-padding-x, theme("padding.6"));
       }
     }
 
@@ -177,7 +194,7 @@ watchEffect(() => {
       --shape-size: 2.5rem;
 
       @media (min-width: theme("screens.lg")) {
-        --p-x: theme("padding.7");
+        --p-x: var(--vc-widget-padding-x, theme("padding.7"));
       }
 
       &:not(#{$collapsible}) {
@@ -198,15 +215,32 @@ watchEffect(() => {
     @apply border-none shadow-none;
   }
 
+  &--seamless {
+    --p-x: 0;
+    --border-width: 0;
+    --bg-color: transparent;
+    --radius: 0;
+    --inner-radius: 0;
+    --body-radius: 0;
+
+    @apply divide-none shadow-none;
+
+    @media (width < theme("screens.md")) {
+      .vc-container & {
+        @apply mx-0;
+      }
+    }
+  }
+
   &__header-container {
     @apply w-full text-start empty:hidden;
 
     &,
     & > * {
-      @apply rounded-t;
+      @apply rounded-t-[--inner-radius];
 
       #{$collapsed} & {
-        @apply rounded-b;
+        @apply rounded-b-[--inner-radius];
       }
     }
   }
@@ -223,7 +257,21 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
+    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-heading break-words;
+
+    font-weight: var(--vc-widget-title-font-weight, var(--vc-heading-font-weight, theme("fontWeight.bold")));
+    text-transform: var(--vc-widget-title-text-transform, var(--vc-heading-text-transform, uppercase));
+    letter-spacing: var(--vc-widget-title-letter-spacing, var(--vc-heading-letter-spacing, inherit));
+  }
+
+  &__slot-container {
+    &:first-child {
+      @apply rounded-t-[--body-radius];
+    }
+
+    &:last-child {
+      @apply rounded-b-[--body-radius];
+    }
   }
 
   &__slot {
@@ -239,10 +287,10 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b empty:hidden;
+    @apply rounded-b-[--inner-radius] empty:hidden;
 
     & > * {
-      @apply rounded-b;
+      @apply rounded-b-[--inner-radius];
     }
   }
 
