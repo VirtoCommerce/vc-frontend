@@ -53,4 +53,11 @@ describe("useHeaderLogo", () => {
 
     expect(useHeaderLogo().headerLogoUrl.value).toBe("acme.svg");
   });
+
+  it("shows the light logo in the dark theme for a store without a theme", () => {
+    useThemeSnapshot().setDraft(undefined);
+    useThemeSnapshot().setPublished(null);
+
+    expect(useHeaderLogo().headerLogoUrl.value).toBe("logo.svg");
+  });
 });

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { useGlobalInterceptors } from "@/core/api/common";
 import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -9,7 +8,12 @@ import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
-import { addBuilderMessageListener, createPreviewLoadedNotifier, isPreviewV2Type } from "./builder-preview.protocol";
+import {
+  addBuilderMessageListener,
+  createPreviewLoadedNotifier,
+  isPreviewV2Type,
+  withPreviewId,
+} from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
 import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
@@ -85,10 +89,7 @@ async function updatePreview(
     return;
   }
 
-  // Add-block models have no persisted id yet. Give only the preview copy an id for rendering and anchors.
-  const model: IPageContent | undefined = data.model
-    ? { ...data.model, id: data.model.id ?? `__preview__${uuidv4()}` }
-    : undefined;
+  const model: IPageContent | undefined = data.model ? withPreviewId(data.model) : undefined;
   const content = model ? [...template.content, model] : template.content;
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
@@ -331,7 +332,9 @@ async function handlePreviewV2Message(context: IPreviewContext, data: PreviewV2M
   const previewV2 = getPreviewV2(context);
 
   if (!previewV2) {
-    Logger.warn(`The preview protocol ${PREVIEW_PROTOCOL} needs new_page_builder_enabled: ignored "${data.type}"`);
+    Logger.warn(
+      `[builder-preview] The preview protocol ${PREVIEW_PROTOCOL} needs new_page_builder_enabled: ignored "${data.type}"`,
+    );
     return;
   }
 
@@ -454,7 +457,7 @@ async function getPreviewUserOrganizationId(userId: string): Promise<string | un
   try {
     return (await getMe(userId))?.contact?.organizationId ?? undefined;
   } catch (error) {
-    Logger.error("Failed to read the previewed user's organization", error);
+    Logger.error("[builder-preview] Failed to read the previewed user's organization", error);
     return undefined;
   }
 }
@@ -553,7 +556,7 @@ export default {
       if (cultureName) {
         query.set("cultureName", cultureName);
       }
-      await options.router.push(`/designer-preview?${query.toString()}`);
+      await options.router.push(`${DESIGNER_PREVIEW_PATH}?${query.toString()}`);
     }
   },
 };

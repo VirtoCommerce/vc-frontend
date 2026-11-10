@@ -1,6 +1,8 @@
 import { createGlobalState } from "@vueuse/core";
 import { escapeRegExp, trim } from "lodash-es";
 import { shallowReactive } from "vue";
+import { isRecord } from "@/core/utilities";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/layout/composables/usePageLayout";
 import type { ThemePageType } from "@/core/theme-snapshot";
 
 export interface ITemplateSubject {
@@ -93,8 +95,8 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     value: {
       type: "select",
       options: [
-        { label: "Page", value: "Pages" },
-        { label: "File page", value: "ContentFile" },
+        { label: "Page", value: PAGES_OBJECT_TYPE },
+        { label: "File page", value: CONTENT_FILE_OBJECT_TYPE },
       ],
     },
     evaluate: (subject, value) => typeof value === "string" && subject.objectType === value,
@@ -159,7 +161,5 @@ function toList(value: unknown): string[] {
 }
 
 function toNamedValue(value: unknown): { name: string; equals: unknown } | undefined {
-  return typeof value === "object" && value !== null && typeof (value as { name?: unknown }).name === "string"
-    ? (value as { name: string; equals: unknown })
-    : undefined;
+  return isRecord(value) && typeof value.name === "string" ? { name: value.name, equals: value.equals } : undefined;
 }

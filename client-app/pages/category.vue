@@ -49,6 +49,7 @@ import {
   MAIN_SECTION_TYPES,
   PageBuilderSection,
   splitTemplate,
+  useAnchorScroll,
   useTemplateResolution,
 } from "@/shared/static-content";
 import Category from "@/shared/catalog/components/category.vue";
@@ -125,6 +126,8 @@ const listingSettings = computed(() =>
 );
 
 const sectionContext = computed(() => ({ category: currentCategory.value }));
+
+useAnchorScroll(() => templateResolution.value);
 
 // Runs before the child drops its scope or preparation; held a tick for a matcher mounting in its place.
 onBeforeUnmount(() => {

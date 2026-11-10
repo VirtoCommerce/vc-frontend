@@ -11,8 +11,14 @@ const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ v
 const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
 const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
 const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
+const scrollToAnchor = vi.hoisted(() => vi.fn(() => Promise.resolve(true)));
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
+vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/printers", hash: "#promo" }) }));
+vi.mock("@/shared/static-content/anchors", async () => ({
+  ...(await vi.importActual<typeof import("@/shared/static-content/anchors")>("@/shared/static-content/anchors")),
+  scrollToAnchor,
+}));
 
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
@@ -90,6 +96,7 @@ describe("category page", () => {
     fetchedCategory.value = undefined;
     pageBuilder.isEnabled = false;
     heldFetches.value = undefined;
+    scrollToAnchor.mockClear();
   });
 
   afterEach(() => {
@@ -207,5 +214,11 @@ describe("category page", () => {
 
     expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
     expect(listingProps.value).toMatchObject({ "category-id": "paper" });
+  });
+
+  it("scrolls to the section the address names", () => {
+    mountCategory({ categoryId: "toner" });
+
+    expect(scrollToAnchor).toHaveBeenCalledWith("#promo");
   });
 });

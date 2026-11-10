@@ -106,12 +106,8 @@ defineProps<IProps>();
 const router = useRouter();
 const { organization } = useUser();
 const { headerLogoUrl } = useHeaderLogo();
-const { logoWidth, iconsMenuLinks, siteHeader } = useThemeChrome();
+const { logoWidth, logoStyle, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
-
-const logoStyle = computed<StyleValue | undefined>(() =>
-  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
-);
 
 const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   iconsMenuLinks.value

@@ -144,12 +144,8 @@ const { getCountLabel } = useHeaderCountLabel();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { headerLogoUrl } = useHeaderLogo();
-const { logoWidth, siteHeader } = useThemeChrome();
-
 // The theme's logo width is the desktop header's; in the phone's bar the logo shrinks to fit, keeping its proportions.
-const logoStyle = computed<StyleValue | undefined>(() =>
-  logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
-);
+const { logoWidth, logoStyle, siteHeader } = useThemeChrome();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

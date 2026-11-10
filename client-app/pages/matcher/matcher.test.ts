@@ -53,6 +53,7 @@ vi.mock("@/pages/404.vue", () => ({
 
 vi.mock("vue-router", () => ({
   useRouter: () => ({ replace: vi.fn() }),
+  useRoute: () => ({ path: "/", hash: "" }),
 }));
 
 vi.mock("@/core/composables", () => ({

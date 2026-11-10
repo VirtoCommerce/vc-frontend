@@ -63,6 +63,7 @@ describe("useThemeChrome", () => {
     const chrome = useThemeChrome();
 
     expect(chrome.logoWidth.value).toBe(160);
+    expect(chrome.logoStyle.value).toEqual({ "--header-logo-width": "160px" });
     expect(chrome.copyright.value).toBe("© Acme");
     expect(chrome.isCreditShown.value).toBe(false);
     expect(chrome.footerColumns.value).toEqual([

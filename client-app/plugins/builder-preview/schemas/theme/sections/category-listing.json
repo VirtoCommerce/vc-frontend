@@ -44,8 +44,7 @@
           "value": "list"
         }
       ],
-      "info": "Switching the View Mode",
-      "visibility": "this.model.hideViewModeSelector !== false"
+      "info": "Switching the View Mode"
     },
     {
       "id": "filtersOrientation",
@@ -143,9 +142,7 @@
     {
       "id": "hideTotal",
       "label": "Hide total products count",
-      "type": "checkbox",
-      "visibility": "this.model.countLimitation !== false",
-      "info": "Hidden if Count Limitation is active"
+      "type": "checkbox"
     },
     {
       "id": "showButtonToDefaultView",

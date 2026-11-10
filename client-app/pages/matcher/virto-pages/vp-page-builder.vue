@@ -3,7 +3,7 @@
     v-if="pageBuilderContent"
     :page-settings="pageBuilderContent.settings"
     :permalink="permalink"
-    object-type="Pages"
+    :object-type="PAGES_OBJECT_TYPE"
   >
     <div
       v-if="!pageBuilderContent.settings?.hideBreadcrumbs || pageBuilderContent.settings?.header"
@@ -34,7 +34,7 @@ import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
-import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { PAGES_OBJECT_TYPE, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import {
   getAnchorId,
   PageBuilderSection,

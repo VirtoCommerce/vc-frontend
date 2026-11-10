@@ -79,4 +79,15 @@ describe("useFooterLogo", () => {
 
     expect(useFooterLogo().footerLogoUrl.value).toBe("store-white.svg");
   });
+
+  it("keeps white-labeling's logo for dark backgrounds for a store without a theme", () => {
+    useThemeSnapshot().setPublished(null);
+    useWhiteLabeling().setWhiteLabelingSettings({
+      logoUrl: "org.svg",
+      secondaryLogoUrl: "store-white.svg",
+      isOrganizationLogoUploaded: true,
+    });
+
+    expect(useFooterLogo().footerLogoUrl.value).toBe("store-white.svg");
+  });
 });

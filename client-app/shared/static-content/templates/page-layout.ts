@@ -4,6 +4,7 @@ import {
   getSlugRoutePermalink,
   isOwnLayoutSlugPage,
   isPageLayout,
+  PAGES_OBJECT_TYPE,
   usePageLayout,
 } from "@/shared/layout/composables/usePageLayout";
 import { useThemeTemplates } from "./useThemeTemplates";
@@ -58,7 +59,7 @@ export function chooseLandingPageLayout(options: ILandingLayoutOptions): PageLay
     return undefined;
   }
 
-  const isPage = slug.objectType === "Pages";
+  const isPage = slug.objectType === PAGES_OBJECT_TYPE;
 
   if (isPage && !slug.page) {
     return undefined;

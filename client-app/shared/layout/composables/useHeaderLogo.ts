@@ -1,13 +1,14 @@
 import { computed } from "vue";
 import { useDarkMode, useWhiteLabeling } from "@/core/composables";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
 
 export function useHeaderLogo() {
   const { logoUrl, darkLogoUrl } = useWhiteLabeling();
   const { isDark } = useDarkMode();
+  const { isNewPageBuilderOn } = useThemeSnapshot();
 
   const headerLogoUrl = computed(() =>
-    isNewPageBuilderEnabled() && isDark.value && darkLogoUrl.value ? darkLogoUrl.value : logoUrl.value,
+    isNewPageBuilderOn() && isDark.value && darkLogoUrl.value ? darkLogoUrl.value : logoUrl.value,
   );
 
   return { headerLogoUrl };

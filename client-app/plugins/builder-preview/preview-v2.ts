@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { nextTick, watch } from "vue";
 import { darkPresets, presets } from "@/assets/presets";
 import { useDarkMode } from "@/core/composables/useDarkMode";
@@ -22,6 +21,7 @@ import {
   useTemplateConditions,
   useThemeTemplates,
 } from "@/shared/static-content";
+import { withPreviewId } from "./builder-preview.protocol";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
 import { PREVIEW_PROTOCOL } from "./utils";
@@ -376,8 +376,7 @@ function withHoverModel(document: IThemePageDocument, model: IRenderMessage["mod
     return document;
   }
 
-  // A model the designer offers has no id yet: only this preview copy gets one, for rendering and anchors.
-  const item = { ...model, id: model.id ?? `__preview__${uuidv4()}` } as IThemeItem;
+  const item = withPreviewId(model) as IThemeItem;
 
   return { ...document, content: [...document.content, item] };
 }

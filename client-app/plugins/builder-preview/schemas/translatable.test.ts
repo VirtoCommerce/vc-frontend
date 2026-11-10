@@ -181,8 +181,12 @@ describe("translatable texts of the theme's sections and blocks", () => {
     const shown = resolveTranslatableValues(slider, "de-DE", "en-US");
 
     expect(
-      findEditableTexts(shown, (type, path) => findSchemaField(schemas, type, path)?.type === "string"),
-    ).toContainEqual({ itemId: "s1", path: ["slides", 0, "title"], value: "Angebote" });
+      findEditableTexts(
+        shown,
+        (type, path) => findSchemaField(schemas, type, path)?.type === "string",
+        () => false,
+      ),
+    ).toContainEqual({ itemId: "s1", path: ["slides", 0, "title"], value: "Angebote", multiline: false });
   });
 
   it("shows every translatable text of a draft template in the current language, in lists, objects and blocks", () => {

@@ -113,9 +113,9 @@ describe("useWhiteLabeling", () => {
     it("does not name the logo for dark backgrounds without a white-labeling logo", () => {
       useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });
       setWhiteLabeling({ favicons: [{ rel: "icon", href: "store.ico" }] });
-      const { darkLogoUrl, secondaryLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
+      const { darkLogoUrl, themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
 
-      expect([darkLogoUrl.value, secondaryLogoUrl.value]).toEqual(["acme-white.svg", "acme-white.svg"]);
+      expect(darkLogoUrl.value).toBe("acme-white.svg");
       expect(themeFieldsSetByWhiteLabeling.value).toEqual(["brand.faviconUrl"]);
     });
 

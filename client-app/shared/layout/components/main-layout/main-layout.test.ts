@@ -22,13 +22,9 @@ const { flag, stub, headerMounted } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/core/theme-snapshot", async () => {
-  const { computed } = await import("vue");
-  return {
-    isNewPageBuilderEnabled: () => flag.enabled,
-    useThemeSnapshot: () => ({ hasNoTheme: computed(() => flag.hasNoTheme) }),
-  };
-});
+vi.mock("@/core/theme-snapshot", () => ({
+  useThemeSnapshot: () => ({ isNewPageBuilderOn: () => flag.enabled && !flag.hasNoTheme }),
+}));
 vi.mock("@/shared/layout/components/header/vc-header.vue", () => stub("full-header", headerMounted));
 vi.mock("@/shared/layout/components/footer/vc-footer.vue", () => stub("full-footer"));
 vi.mock("@/shared/layout/components/minimal-header/minimal-header.vue", () => stub("minimal-header"));

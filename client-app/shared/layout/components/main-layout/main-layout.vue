@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { isNewPageBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
 import VcHeader from "@/shared/layout/components/header/vc-header.vue";
@@ -30,10 +30,10 @@ import MinimalHeader from "@/shared/layout/components/minimal-header/minimal-hea
 import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
 
 const { pageLayout } = usePageLayout();
-const { hasNoTheme } = useThemeSnapshot();
+const { isNewPageBuilderOn } = useThemeSnapshot();
 
 /** Switched here so the page under the header and footer is never remounted. */
-const chrome = computed(() => (isNewPageBuilderEnabled() && !hasNoTheme.value ? pageLayout.value : "full"));
+const chrome = computed(() => (isNewPageBuilderOn() ? pageLayout.value : "full"));
 </script>
 
 <style lang="scss">

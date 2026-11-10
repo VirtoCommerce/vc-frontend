@@ -4,6 +4,7 @@ import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeGroups } from "@/core/theme-snapshot/groups";
 import { isSafeLinkUrl } from "@/core/utilities/common";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import type { StyleValue } from "vue";
 
 interface IFooterMenuBlock {
   id?: string;
@@ -26,6 +27,10 @@ export function useThemeChrome() {
     const value = Number(siteHeader.value?.logo_width);
     return Number.isFinite(value) && value > 0 ? value : undefined;
   });
+
+  const logoStyle = computed<StyleValue | undefined>(() =>
+    logoWidth.value ? { "--header-logo-width": `${logoWidth.value}px` } : undefined,
+  );
 
   const iconsMenuLinks = computed(() => getMenuLinks(siteHeader.value?.icons_menu));
 
@@ -70,6 +75,7 @@ export function useThemeChrome() {
     siteFooter,
     announcementBar,
     logoWidth,
+    logoStyle,
     iconsMenuLinks,
     footerColumns,
     copyright,

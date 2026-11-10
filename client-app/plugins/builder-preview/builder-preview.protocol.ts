@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { isRecord, Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { IThemeDraft, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
@@ -77,7 +78,6 @@ export function isPreviewV2Message(value: unknown): value is PreviewV2MessageTyp
         isPageTemplate(value.document) &&
         typeof value.cultureName === "string" &&
         isOptionalString(value.templateKey) &&
-        isOptionalString(value.url) &&
         (value.url === undefined || (typeof value.url === "string" && value.url.startsWith("/"))) &&
         (value.page === undefined || (isRecord(value.page) && typeof value.page.permalink === "string")) &&
         (value.selection === undefined || (isRecord(value.selection) && isNonEmptyString(value.selection.sectionId))) &&
@@ -171,6 +171,11 @@ export function createPreviewLoadedNotifier(targetWindow: Window, targetOrigin: 
       announce();
     },
   };
+}
+
+/** A model the designer offers has no id yet: only the preview copy gets one, for rendering and anchors. */
+export function withPreviewId(model: PreviewModelType): PreviewModelType & { id: string } {
+  return { ...model, id: model.id ?? `__preview__${uuidv4()}` };
 }
 
 function isPageTemplate(value: unknown): value is IPageTemplate {

@@ -85,12 +85,8 @@ function _useWhiteLabeling() {
         themeContext.value?.settings?.logo_image,
       ),
     ),
-    secondaryLogoUrl: computed(() =>
-      pickBrandField(
-        whiteLabelingSettings.value?.secondaryLogoUrl,
-        theme.value?.brand.secondaryLogoUrl,
-        themeContext.value?.settings?.logo_inverted_image,
-      ),
+    secondaryLogoUrl: computed(
+      () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
     ),
     darkLogoUrl: computed(pickDarkLogo),
     footerLinks: computed(() =>

@@ -24,7 +24,7 @@ vi.mock("@/core/composables", () => ({
 vi.mock("@/shared/account/composables/useUser", () => ({ useUser: () => ({ organization: ref() }) }));
 vi.mock("@/shared/layout/composables/useHeaderLogo", () => ({ useHeaderLogo: () => ({ headerLogoUrl: ref("") }) }));
 vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
-  useThemeChrome: () => ({ logoWidth: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
+  useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
 }));
 vi.mock("@/shared/static-content/sections", () => ({ getPreviewSectionAttrs: () => ({}) }));
 vi.mock("@/shared/layout/composables/useHeaderCountLabel", () => ({

@@ -5,7 +5,7 @@ const LABEL_TEXT_COLOR = "#ffffff";
 /** Above every storefront element, under the click blocker. */
 const OVERLAY_Z_INDEX = "2147483646";
 
-export function findSectionElement(sectionId: string): HTMLElement | undefined {
+function findSectionElement(sectionId: string): HTMLElement | undefined {
   return [...document.querySelectorAll<HTMLElement>(`[${SECTION_ATTRIBUTE}]`)].find(
     (element) => element.getAttribute(SECTION_ATTRIBUTE) === sectionId,
   );
@@ -126,7 +126,7 @@ export class SectionOverlay {
     (box.firstChild as HTMLElement).textContent = this.labels[sectionId] ?? "";
   }
 
-  sectionAt(clientX: number, clientY: number): string | null {
+  private sectionAt(clientX: number, clientY: number): string | null {
     const marked = document
       .elementsFromPoint(clientX, clientY)
       .find((element) => element !== this.blocker && element.closest(`[${SECTION_ATTRIBUTE}]`))

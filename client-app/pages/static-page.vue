@@ -3,7 +3,7 @@
     <PageTemplate
       :page-settings="template.settings"
       :permalink="previewSubject?.permalink ?? permalink ?? route.path"
-      :object-type="previewSubject?.objectType ?? 'ContentFile'"
+      :object-type="previewSubject?.objectType ?? CONTENT_FILE_OBJECT_TYPE"
     >
       <div
         v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
@@ -37,6 +37,7 @@ import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
+import { CONTENT_FILE_OBJECT_TYPE } from "@/shared/layout/composables/usePageLayout";
 import {
   getAnchorId,
   PageBuilderSection,

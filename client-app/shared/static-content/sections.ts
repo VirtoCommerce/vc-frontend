@@ -73,12 +73,12 @@ export function getPreviewFieldAttrs(path: string): Record<string, string> {
   return isDesignerPreview() ? { [FIELD_ATTRIBUTE]: path } : {};
 }
 
-/** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */
 /** Off in the designer preview, which shows every section at once. */
 export function isLazySectionsEnabled(): boolean {
   return isNewPageBuilderEnabled() && !isDesignerPreview();
 }
 
+/** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */
 export function getRegisteredSection(
   registry: Record<string, Component>,
   type: string | undefined,

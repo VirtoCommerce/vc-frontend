@@ -10,8 +10,6 @@ export interface IEditableText {
 }
 
 const NOT_TEXT = new Set(["id", "type", "hidden", "blocks", "componentRef"]);
-/** Without a schema, markup, markdown or a link renders unlike its stored value, so it stays out of inline editing. */
-const NOT_PLAIN = /[<>*_#`[\]]|^\s*(https?:|\/|#)/;
 /** A plain-text setting that is an address as a whole: a link's target, not a text the page shows. */
 const ADDRESS = /^\s*(https?:\/\/|\/)\S*\s*$/;
 const OUTLINE = `2px solid ${OUTLINE_COLOR}`;
@@ -20,13 +18,12 @@ function normalize(text: string): string {
   return text.replaceAll(/\s+/g, " ").trim();
 }
 
-/** `undefined` means there is no schema for the setting. */
-export type PlainTextFieldPredicateType = (itemType: string, path: (string | number)[]) => boolean | undefined;
+type FieldPredicateType = (itemType: string, path: (string | number)[]) => boolean;
 
 export function findEditableTexts(
   item: Record<string, unknown>,
-  isPlainTextField: PlainTextFieldPredicateType = () => undefined,
-  isMultilineField: PlainTextFieldPredicateType = () => undefined,
+  isPlainTextField: FieldPredicateType,
+  isMultilineField: FieldPredicateType,
 ): IEditableText[] {
   const found: IEditableText[] = [];
 
@@ -60,12 +57,8 @@ export function findEditableTexts(
   return found;
 }
 
-function isEditableText(value: string, isPlainText: boolean | undefined): boolean {
-  if (!normalize(value) || isPlainText === false) {
-    return false;
-  }
-
-  return isPlainText ? !ADDRESS.test(value) : !NOT_PLAIN.test(value);
+function isEditableText(value: string, isPlainText: boolean): boolean {
+  return isPlainText && !!normalize(value) && !ADDRESS.test(value);
 }
 
 export function findEditableElement(
@@ -210,12 +203,12 @@ export class InlineTextEditor {
 
     const { element, text } = this.editing;
     // Browsers write a no-break space for a trailing space and leave a line break placeholder in an emptied element.
-    const value = element.textContent ? (element.innerText || element.textContent).replaceAll(" ", " ") : "";
-    this.onEdit({ itemId: text.itemId, path: text.path, value: isMultiline(text) ? value : toSingleLine(value) });
+    const value = element.textContent ? (element.innerText || element.textContent).replaceAll("\u00a0", " ") : "";
+    this.onEdit({ itemId: text.itemId, path: text.path, value: text.multiline ? value : toSingleLine(value) });
   };
 
   private readonly handleKeydown = (event: KeyboardEvent): void => {
-    const isMultilineText = !!this.editing && isMultiline(this.editing.text);
+    const isMultilineText = !!this.editing?.text.multiline;
 
     if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey && !isMultilineText)) {
       event.preventDefault();
@@ -242,11 +235,6 @@ export class InlineTextEditor {
       event.stopPropagation();
     }
   };
-}
-
-/** Without a schema, only a text that already has a line break takes more. */
-function isMultiline(text: IEditableText): boolean {
-  return text.multiline ?? text.value.includes("\n");
 }
 
 /** Lines pasted into a single-line text: one space between them, blank lines dropped. */

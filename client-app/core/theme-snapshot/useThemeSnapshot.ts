@@ -1,5 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
+import { isNewPageBuilderEnabled } from "./enabled";
 import type { IPublishedTheme, IThemeDraft, IThemeView } from "./types";
 
 /** `theme` is `undefined` while the storefront renders its built-in templates. */
@@ -59,13 +60,21 @@ function _useThemeSnapshot() {
     draft.value = value;
   }
 
+  const hasNoTheme = computed(() => isNull.value && !draft.value);
+
+  /** Off for a store without a theme too: its storefront looks as without the new Page Builder. */
+  function isNewPageBuilderOn(): boolean {
+    return isNewPageBuilderEnabled() && !hasNoTheme.value;
+  }
+
   return {
     theme,
     published: readonly(published),
     draft: readonly(draft),
     hasFailed: readonly(hasFailed),
     /** `false` until a snapshot is accepted, and after a failed request. */
-    hasNoTheme: computed(() => isNull.value && !draft.value),
+    hasNoTheme,
+    isNewPageBuilderOn,
     setPublished,
     setLate,
     promoteLate,

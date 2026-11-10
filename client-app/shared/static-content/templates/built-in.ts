@@ -15,7 +15,7 @@ export const BUILT_IN_TEMPLATES: Readonly<Record<string, IThemePageDocument>> = 
   page: { settings: {}, content: [{ id: "page-content", type: MAIN_SECTION_TYPES.page }] },
 };
 
-export const ADDED_MAIN_SECTION_ID = "__main__";
+const ADDED_MAIN_SECTION_ID = "__main__";
 
 /** A template that lost its main section gets the built-in one, so the product or listing never goes missing. */
 export function withMainSection(

@@ -321,18 +321,22 @@ describe("inline editing", () => {
   });
 
   it("finds the plain-text settings of a section and its blocks, not links or markup", () => {
-    const texts = findEditableTexts({
-      id: "s1",
-      type: "banner",
-      title: "Hello",
-      link: "/sale",
-      html: "<b>x</b>",
-      blocks: [{ id: "b1", type: "item", links: [{ label: "Sale" }] }],
-    });
+    const texts = findEditableTexts(
+      {
+        id: "s1",
+        type: "banner",
+        title: "Hello",
+        link: "/sale",
+        html: "<b>x</b>",
+        blocks: [{ id: "b1", type: "footer-menu", links: [{ label: "Sale" }] }],
+      },
+      (itemType, path) => isPlainTextSetting(SCHEMAS, itemType, path),
+      () => false,
+    );
 
     expect(texts).toEqual([
-      { itemId: "s1", path: ["title"], value: "Hello" },
-      { itemId: "b1", path: ["links", 0, "label"], value: "Sale" },
+      { itemId: "s1", path: ["title"], value: "Hello", multiline: false },
+      { itemId: "b1", path: ["links", 0, "label"], value: "Sale", multiline: false },
     ]);
   });
 
@@ -340,6 +344,7 @@ describe("inline editing", () => {
     const texts = findEditableTexts(
       { id: "b1", type: "footer-menu", heading: "Shop", columns: "3", links: [{ label: "Sale", link: "sale" }] },
       (itemType, path) => isPlainTextSetting(SCHEMAS, itemType, path),
+      () => false,
     );
 
     expect(texts.map(({ path }) => path)).toEqual([["heading"], ["links", 0, "label"]]);
@@ -507,12 +512,12 @@ describe("inline editing", () => {
       link: "https://a.io/b",
     };
 
-    expect(findEditableTexts(item, () => true).map(({ path }) => path)).toEqual([["title"], ["code"]]);
-  });
+    const texts = findEditableTexts(
+      item,
+      () => true,
+      () => false,
+    );
 
-  it("without a schema, leaves a text that looks like markup or a link to the designer's panel", () => {
-    const item = { id: "s1", type: "promo", title: "Hit #1", name: "Plain", url: "/catalog" };
-
-    expect(findEditableTexts(item).map(({ path }) => path)).toEqual([["name"]]);
+    expect(texts.map(({ path }) => path)).toEqual([["title"], ["code"]]);
   });
 });

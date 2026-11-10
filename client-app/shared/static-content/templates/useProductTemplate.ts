@@ -8,7 +8,7 @@ import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
-export const PRODUCT_COLUMN_SECTION_TYPES: ReadonlySet<string> = new Set(["product-description", "product-reviews"]);
+const PRODUCT_COLUMN_SECTION_TYPES: ReadonlySet<string> = new Set(["product-description", "product-reviews"]);
 
 const B2C_VARIATIONS_LAYOUT = "b2c";
 

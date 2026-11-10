@@ -10,8 +10,8 @@ export const PAGE_LAYOUTS: readonly PageLayoutType[] = ["full", "minimal", "blan
 
 const SLUG_ROUTE_NAMES = new Set<string>([ROUTES.MATCHER.NAME, ROUTES.LOYALTY_CATALOG_MATCHER.NAME]);
 
-const PAGES_OBJECT_TYPE = "Pages";
-const CONTENT_FILE_OBJECT_TYPE = "ContentFile";
+export const PAGES_OBJECT_TYPE = "Pages";
+export const CONTENT_FILE_OBJECT_TYPE = "ContentFile";
 const PAGE_BUILDER_SOURCE = "page-builder";
 
 export interface ISlugPage {

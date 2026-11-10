@@ -6,9 +6,9 @@ import {
 import type { ITemplateCondition, ITemplateSubject } from "./conditions";
 import type { ITemplateRule, ITemplateRules, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 
-export const PAGE_TYPES: readonly ThemePageType[] = ["product", "category", "page"];
+const PAGE_TYPES: readonly ThemePageType[] = ["product", "category", "page"];
 
-export const DEFAULT_TEMPLATE_RULES: Readonly<Record<ThemePageType, ITemplateRule[]>> = {
+const DEFAULT_TEMPLATE_RULES: Readonly<Record<ThemePageType, ITemplateRule[]>> = {
   product: [
     {
       id: "default-b2c",
@@ -45,6 +45,7 @@ export interface ITemplateChoiceOptions {
   pageType: ThemePageType;
   subject: ITemplateSubject;
   rules: ITemplateRules | undefined;
+  /** Holds the page type's own template: the built-in ones are always among them. */
   templates: Readonly<Record<string, IThemePageDocument>>;
   getCondition: (name: string) => ITemplateCondition | undefined;
   ownTemplate?: unknown;
@@ -54,7 +55,7 @@ export function getTemplatePageType(key: string): string {
   return key.split(".")[0];
 }
 
-export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceType | undefined {
+export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceType {
   const { pageType, subject, rules, templates, getCondition, ownTemplate } = options;
 
   if (
@@ -81,9 +82,7 @@ export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceT
     return { pageType, template: rule.template, ruleId: rule.id, document: templates[rule.template] };
   }
 
-  return Object.hasOwn(templates, pageType)
-    ? { pageType, template: pageType, ruleId: null, document: templates[pageType] }
-    : undefined;
+  return { pageType, template: pageType, ruleId: null, document: templates[pageType] };
 }
 
 export function normalizeTemplateRules(value: unknown): ITemplateRules | undefined {

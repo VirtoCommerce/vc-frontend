@@ -41,7 +41,7 @@ export const useThemeTemplates = createGlobalState(() => {
       templates: templates.value,
       getCondition: getTemplateCondition,
       ownTemplate,
-    }) ?? { pageType, template: pageType, ruleId: null, document: BUILT_IN_TEMPLATES[pageType] };
+    });
     const shown: TemplateChoiceType =
       open && getTemplatePageType(open.key) === pageType
         ? { pageType, template: open.key, ruleId: null, document: open.document }
