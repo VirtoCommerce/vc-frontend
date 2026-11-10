@@ -17,6 +17,7 @@ import { Logger } from "@/core/utilities";
 import {
   BUILT_IN_TEMPLATES,
   getTemplatePageType,
+  opensNewWindow,
   useStaticPage,
   useTemplateConditions,
   useThemeTemplates,
@@ -35,6 +36,8 @@ import type { Router } from "vue-router";
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
 
 const LOG_SCOPE = "[builder-preview]";
+
+const PAGE_INPUT_EVENTS = ["keydown", "keyup", "click", "submit"] as const;
 
 interface ISchemaField {
   id?: string;
@@ -148,11 +151,56 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
   watch(lastResolution, () => reportResolved());
 
+  function isBlocking(): boolean {
+    return isInspectorEnabled || options.hasPreviewToken() || lastRender === undefined;
+  }
+
   function applyInteraction(): void {
-    const isBlocking = isInspectorEnabled || options.hasPreviewToken() || lastRender === undefined;
-    blocker.style.pointerEvents = isBlocking ? "auto" : "none";
+    blocker.style.pointerEvents = isBlocking() ? "auto" : "none";
     overlay.setEnabled(isInspectorEnabled);
     options.sharedComponents?.setEnabled(isInspectorEnabled);
+  }
+
+  // The blocker stops the pointer only. Tab still moves through the page so the keyboard can leave the frame;
+  // a key, click or submit on a page element does not act.
+  function stopPageInput(event: Event): void {
+    const { target } = event;
+    const isPageTarget =
+      target instanceof Element && target !== blocker && target !== body && target !== document.documentElement;
+    const isTab = event instanceof KeyboardEvent && event.key === "Tab";
+
+    if (!blocker.isConnected || !isBlocking() || editor.isEditing || !isPageTarget || isTab) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
+  // With the inspector off, clicks reach the page: a link the router does not take would load another document.
+  function stopLeavingLink(event: MouseEvent): void {
+    const anchor = event.target instanceof Element ? event.target.closest("a[href]") : null;
+
+    if (
+      !blocker.isConnected ||
+      event.defaultPrevented ||
+      !(anchor instanceof HTMLAnchorElement) ||
+      opensNewWindow(anchor.getAttribute("target"))
+    ) {
+      return;
+    }
+
+    const url = new URL(anchor.href);
+    const { location } = globalThis;
+    const isFragmentOnly =
+      !!url.hash &&
+      url.origin === location.origin &&
+      url.pathname === location.pathname &&
+      url.search === location.search;
+
+    if ((url.protocol === "http:" || url.protocol === "https:") && !isFragmentOnly) {
+      event.preventDefault();
+    }
   }
 
   function setInspector(isEnabled: boolean): void {
@@ -323,6 +371,12 @@ export function createPreviewV2(options: IPreviewV2Options) {
     // The page renders anew from its top, so the selection is brought back into view.
     await handleRender(render.selection ? { ...render, selection: { ...render.selection, scroll: true } } : render);
   }
+
+  for (const type of PAGE_INPUT_EVENTS) {
+    document.addEventListener(type, stopPageInput, true);
+  }
+
+  document.addEventListener("click", stopLeavingLink);
 
   applyInteraction();
 

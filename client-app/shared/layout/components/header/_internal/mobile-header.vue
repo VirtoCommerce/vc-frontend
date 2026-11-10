@@ -36,7 +36,7 @@
                 :alt="$context.storeName"
                 :class="
                   logoWidth
-                    ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw] [--vc-image-object-fit:contain]'
+                    ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw] [--vc-image-object-fit:contain] [--vc-image-object-position:left_center] rtl:[--vc-image-object-position:right_center]'
                     : 'h-8'
                 "
                 lazy

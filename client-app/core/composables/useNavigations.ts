@@ -230,11 +230,14 @@ export function _useNavigations() {
   const { siteHeader, getMenuLinks } = useThemeGroups();
   const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
 
-  const themeCatalogMenuItems = computed(() =>
-    whiteLabelingMainMenuLinks.value?.length ? undefined : getMenuLinks(siteHeader.value?.catalog_menu, true),
-  );
+  const themeCatalogMenuItems = computed(() => getMenuLinks(siteHeader.value?.catalog_menu, true));
 
-  const shownCatalogMenuItems = computed(() => themeCatalogMenuItems.value ?? catalogMenuItems.value);
+  // Read live, not from the copy boot made: the designer's "Preview as" replaces white-labeling with the user's.
+  const shownCatalogMenuItems = computed(() =>
+    whiteLabelingMainMenuLinks.value?.length
+      ? whiteLabelingMainMenuLinks.value
+      : (themeCatalogMenuItems.value ?? catalogMenuItems.value),
+  );
 
   const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
 

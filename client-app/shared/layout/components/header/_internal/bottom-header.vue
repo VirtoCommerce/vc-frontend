@@ -12,7 +12,11 @@
         <VcImage
           :src="headerLogoUrl"
           :alt="$context.storeName"
-          :class="logoWidth ? 'h-auto w-[--header-logo-width]' : 'h-8 xl:h-[2.8rem]'"
+          :class="
+            logoWidth
+              ? 'h-auto max-h-16 w-[--header-logo-width] [--vc-image-object-fit:contain] [--vc-image-object-position:left_center] rtl:[--vc-image-object-position:right_center]'
+              : 'h-8 xl:h-[2.8rem]'
+          "
           lazy
         />
       </router-link>

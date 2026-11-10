@@ -115,6 +115,14 @@ vi.mock("@/core/composables/useCurrency", () => ({
 vi.mock("@/core/composables/useThemeContext", () => ({
   useThemeContext: () => ({
     themeContext: { value: { catalogId: "test", settings: {} } },
+    modulesSettings: {
+      value: [
+        {
+          moduleId: "VirtoCommerce.WhiteLabeling",
+          settings: [{ name: "WhiteLabeling.WhiteLabelingEnabled", value: true }],
+        },
+      ],
+    },
   }),
 }));
 
@@ -310,6 +318,18 @@ describe("useNavigations - theme header", () => {
 
     expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Shoes"]);
     expect(navigations.mobileCatalogMenuItem.value?.children).toEqual(navigations.catalogMenuItems.value);
+  });
+
+  it("shows the white-labeling main menu read after boot in place of the theme's category menu", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { useWhiteLabeling } = await import("@/core/composables/useWhiteLabeling");
+
+    useWhiteLabeling().setWhiteLabelingSettings({
+      mainMenuLinks: [{ title: "Organization", url: "/organization", priority: 0, childItems: [] }],
+    });
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
   });
 
   it("leaves the category menu out of the mobile menu when the theme hides it", async () => {

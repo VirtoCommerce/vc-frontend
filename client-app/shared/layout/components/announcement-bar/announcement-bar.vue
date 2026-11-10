@@ -59,8 +59,8 @@ const announcements = computed(() => {
 });
 
 const colors = computed<StyleValue>(() => ({
-  "--bg-color": toTokenVariable(announcementBar.value?.background),
-  "--text-color": toTokenVariable(announcementBar.value?.color),
+  "--bg-token": toTokenVariable(announcementBar.value?.background),
+  "--text-token": toTokenVariable(announcementBar.value?.color),
 }));
 
 function toTokenVariable(token: unknown): string | undefined {
@@ -70,8 +70,9 @@ function toTokenVariable(token: unknown): string | undefined {
 
 <style lang="scss">
 .announcement-bar {
-  --bg-color: theme("colors.neutral.900");
-  --text-color: theme("colors.additional.50");
+  // A token the active preset does not define leaves its variable invalid, so the bar keeps these colours.
+  --bg-color: var(--bg-token, theme("colors.neutral.900"));
+  --text-color: var(--text-token, theme("colors.additional.50"));
 
   @apply flex flex-wrap items-center justify-center gap-x-6 gap-y-1 bg-[--bg-color] px-5 py-2 text-center text-sm text-[--text-color];
 

@@ -165,6 +165,73 @@ describe("preview protocol 2", () => {
     expect(blocker.style.pointerEvents).toBe("auto");
   });
 
+  it("keeps keys, the clicks they make and submits off the page while impersonating, but lets Tab move on", async () => {
+    const { preview, blocker } = createPreview({ hasPreviewToken: true });
+    document.body.innerHTML = `<form id="form"><button id="add" type="button">Add to cart</button></form>`;
+    document.body.append(blocker);
+    const button = document.getElementById("add") as HTMLButtonElement;
+    const onClick = vi.fn();
+    button.addEventListener("click", onClick);
+    await preview.handleRender(render());
+    preview.setInspector(false);
+
+    const enter = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    const tab = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+    const submit = new Event("submit", { bubbles: true, cancelable: true });
+    button.dispatchEvent(enter);
+    button.dispatchEvent(tab);
+    button.click();
+    document.getElementById("form")?.dispatchEvent(submit);
+
+    expect(enter.defaultPrevented).toBe(true);
+    expect(tab.defaultPrevented).toBe(false);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(submit.defaultPrevented).toBe(true);
+  });
+
+  it("leaves keys and clicks to the page with the inspector off", async () => {
+    const { preview, blocker } = createPreview();
+    document.body.innerHTML = `<button id="add" type="button">Add to cart</button>`;
+    document.body.append(blocker);
+    const button = document.getElementById("add") as HTMLButtonElement;
+    const onClick = vi.fn();
+    button.addEventListener("click", onClick);
+    await preview.handleRender(render());
+    preview.setInspector(false);
+
+    const enter = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    button.dispatchEvent(enter);
+    button.click();
+
+    expect(enter.defaultPrevented).toBe(false);
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("keeps a link the router does not take from loading another document, with the inspector off", async () => {
+    const { preview, blocker } = createPreview();
+    document.body.innerHTML = `
+      <a id="external" href="https://example.com/">Out</a>
+      <a id="same">Here</a>
+      <a id="fragment" href="#reviews">Reviews</a>
+      <a id="window" href="https://example.com/" target="_blank" rel="noopener noreferrer">New tab</a>
+    `;
+    document.getElementById("same")?.setAttribute("href", globalThis.location.pathname);
+    document.body.append(blocker);
+    await preview.handleRender(render());
+    preview.setInspector(false);
+
+    function isFollowed(id: string): boolean {
+      const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+      document.getElementById(id)?.dispatchEvent(click);
+      return !click.defaultPrevented;
+    }
+
+    expect(isFollowed("external")).toBe(false);
+    expect(isFollowed("same")).toBe(false);
+    expect(isFollowed("fragment")).toBe(true);
+    expect(isFollowed("window")).toBe(true);
+  });
+
   it("renders a page on the preview route, and a template on the storefront page it names", async () => {
     const { preview, renderPage, router, allowNavigation } = createPreview();
 

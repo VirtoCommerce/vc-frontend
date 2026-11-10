@@ -83,15 +83,34 @@ export function readThemeSnapshotResponse(
   };
 }
 
+type LanguageCheckedThemeType = Pick<IPublishedTheme, "cultureName" | "requestedCultureName">;
+
 /**
  * The server answers a language with no file in its default language, which still counts as that language.
- * A language part (`fr`, a URL prefix) stands for the store's only language of it.
+ * A language part (`fr`, a URL prefix) counts only when another language was served: a culture of that language
+ * served for it may not be the one pageContext resolved.
  */
-export function isThemeForLanguage(
-  theme: Pick<IPublishedTheme, "cultureName" | "requestedCultureName">,
-  cultureName: string,
-): boolean {
-  return [theme.cultureName, theme.requestedCultureName].some((name) => isSameLanguage(name, cultureName));
+export function isThemeForLanguage(theme: LanguageCheckedThemeType, cultureName: string): boolean {
+  return isSameLanguage(theme.cultureName, cultureName) || isAskedLanguage(theme, cultureName);
+}
+
+function isAskedLanguage(theme: LanguageCheckedThemeType, cultureName: string): boolean {
+  const requested = theme.requestedCultureName?.toLowerCase();
+  const expected = cultureName.toLowerCase();
+
+  if (!requested) {
+    return false;
+  }
+
+  if (requested === expected) {
+    return true;
+  }
+
+  return (
+    !requested.includes("-") &&
+    expected.split("-")[0] === requested &&
+    theme.cultureName.toLowerCase().split("-")[0] !== requested
+  );
 }
 
 function isSameLanguage(name: string | undefined, cultureName: string): boolean {

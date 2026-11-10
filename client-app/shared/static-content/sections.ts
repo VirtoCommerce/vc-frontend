@@ -131,7 +131,7 @@ function getDeclaredPropNames(component: Component): Set<string> {
   return new Set(names.map((name) => camelize(name)));
 }
 
-function opensNewWindow(target: string | null): boolean {
+export function opensNewWindow(target: string | null): boolean {
   // eslint-disable-next-line sonarjs/null-dereference -- false positive: `target` is checked for null first
   return target !== null && !SAME_CONTEXT_TARGETS.has(target.toLowerCase());
 }

@@ -433,6 +433,8 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   }
 
   previewToken = token;
+  // An impersonation token keeps clicks blocked even with the inspector off, from before the user's data loads.
+  context.previewV2?.refreshInteraction();
   previewUserId = userId;
   if (!originalUserId) {
     originalUserId = globals.userId;
@@ -448,8 +450,6 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   pendingScrollRestore = !context.previewV2;
   staticPagePreview.value = undefined;
   context.sharedComponentOverlay?.update([], []);
-  // An impersonation token keeps clicks blocked even with the inspector off.
-  context.previewV2?.refreshInteraction();
   await context.previewV2?.reload();
 }
 

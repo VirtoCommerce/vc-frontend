@@ -178,6 +178,19 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().published.value?.cultureName).toBe("de-DE");
   });
 
+  it("asks once more when a URL language part was served in another culture of that language", async () => {
+    const fetchMock = mockFetch(snapshotResponse({ cultureName: "de-AT", publication: 4 }));
+    leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "de-DE" })), "de");
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "de-AT" });
+
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as { body: string }).body) as { variables: unknown };
+    expect(body.variables).toEqual({ storeId: STORE_ID, cultureName: "de-AT" });
+    expect(useThemeSnapshot().published.value?.cultureName).toBe("de-AT");
+  });
+
   it("asks once more as soon as the context is known, and only once", async () => {
     const fetchMock = mockFetch(snapshotResponse({ cultureName: "de-DE", publication: 4 }));
     leaveBootRequest(Promise.resolve(snapshotResponse({ cultureName: "en-US" })));

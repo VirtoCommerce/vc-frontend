@@ -21,6 +21,7 @@ const SNAPSHOT: Partial<IThemeSnapshot> = {
     page: [
       { id: "campaign", template: "page.campaign", when: { setting: { name: "campaign", equals: "spring" } } },
       { id: "docs", template: "page.docs", when: { path: "docs/*", source: "ContentFile" } },
+      { id: "about", template: "page.bare", when: { path: "über-uns", source: "ContentFile" } },
     ],
   },
   templates: {
@@ -150,6 +151,23 @@ describe("setLandingPageLayout", () => {
     setLandingPageLayout(createLandingRouter("/spring/"), { objectType: "Pages", objectId: "page-1" });
 
     expect(usePageLayout().pageLayout.value).toBe("minimal");
+  });
+
+  it("matches a file page's path rule by its SEO URL, not by the percent-encoded address", () => {
+    publish({
+      permalink: "über-uns",
+      objectType: "ContentFile",
+      objectId: "file-1",
+      page: { permalink: "über-uns", settings: {} },
+    });
+
+    setLandingPageLayout(createLandingRouter("/%C3%BCber-uns"), {
+      objectType: "ContentFile",
+      objectId: "file-1",
+      semanticUrl: "über-uns",
+    });
+
+    expect(usePageLayout().pageLayout.value).toBe("blank");
   });
 
   it.each([

@@ -19,6 +19,7 @@ const DEFAULT_LAYOUT: PageLayoutType = "full";
 export interface ISlugEntity {
   objectType?: string;
   objectId?: string;
+  semanticUrl?: string;
 }
 
 export interface ILandingLayoutOptions {
@@ -103,7 +104,8 @@ export function setLandingPageLayout(router: Router, entity: ISlugEntity | null 
     slug,
     permalink: getSlugRoutePermalink(route),
     entity,
-    path: route.path,
+    // As the file page matches its rules once loaded: `route.path` is percent-encoded, the SEO URL is not.
+    path: entity?.semanticUrl || route.path,
     language: useLanguages().currentLanguage.value?.cultureName,
     resolveTemplate: useThemeTemplates().resolveTemplate,
   });
