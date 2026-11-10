@@ -23,7 +23,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useFieldErrors } from "@/shared/common";
-import { useModal } from "@/shared/modal";
+import { closeAllModals } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -48,7 +48,6 @@ export function setupBroadcastGlobalListeners() {
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
   const { getErrorNotification } = useFieldErrors();
-  const { closeAllModals } = useModal();
 
   function createReportButton(error: unknown): NotificationCustomButtonType {
     return {
@@ -87,6 +86,7 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
+      closeAllModals();
       await router.replace({
         name: route.params.cartId ? "SharedCart" : "Cart",
         params: { cartId: route.params.cartId },
@@ -160,8 +160,10 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(forbiddenEvent, () => {
-    void router.push({ name: "NoAccess" });
-    closeAllModals();
+    if (router.currentRoute.value.name !== "NoAccess") {
+      void router.push({ name: "NoAccess" });
+      closeAllModals();
+    }
   });
 
   on(passwordExpiredEvent, () => {

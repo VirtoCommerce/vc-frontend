@@ -5,7 +5,7 @@ import type { CloseModalHandleType, IModal } from "..";
 const stack = ref<IModal[]>([]);
 const triggerElements = ref<Map<string, HTMLElement>>(new Map());
 
-function closeAllModals() {
+export function closeAllModals() {
   stack.value = [];
   triggerElements.value.clear();
 }
@@ -52,7 +52,6 @@ export function useModal() {
   return {
     openModal,
     closeModal,
-    closeAllModals,
     modalStack: computed(() => stack.value),
   };
 }

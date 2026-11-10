@@ -1,6 +1,12 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ROUTES } from "@/router/routes/constants";
-import { forbiddenEvent, graphqlErrorEvent, passwordExpiredEvent, unauthorizedErrorEvent } from "@/shared/broadcast";
+import {
+  cartReloadEvent,
+  forbiddenEvent,
+  graphqlErrorEvent,
+  passwordExpiredEvent,
+  unauthorizedErrorEvent,
+} from "@/shared/broadcast";
 import { setupBroadcastGlobalListeners } from "./broadcast";
 import type { INotification } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -9,12 +15,13 @@ const h = vi.hoisted(() => ({
   listeners: new Map<string, (data?: unknown) => unknown>(),
   notifyError: vi.fn(),
   report: vi.fn(),
-  router: { currentRoute: { value: {} }, push: vi.fn() },
+  router: { currentRoute: { value: {} }, push: vi.fn(), replace: vi.fn() },
+  client: { refetchQueries: vi.fn(), cache: { gc: vi.fn() } },
   user: { value: {} },
   closeAllModals: vi.fn(),
 }));
 
-vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: {} }) }));
+vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: h.client }) }));
 vi.mock("vue-router", async (importOriginal) => ({
   ...(await importOriginal<typeof import("vue-router")>()),
   useRouter: () => h.router,
@@ -48,7 +55,7 @@ vi.mock("@/shared/broadcast", async (importOriginal) => ({
 vi.mock("@/shared/common", async () => ({
   useFieldErrors: (await import("@/shared/common/composables/useFieldErrors")).useFieldErrors,
 }));
-vi.mock("@/shared/modal", () => ({ useModal: () => ({ closeAllModals: h.closeAllModals }) }));
+vi.mock("@/shared/modal", () => ({ closeAllModals: h.closeAllModals }));
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: h.notifyError, update: vi.fn() }) }));
 
 beforeAll(() => {
@@ -120,6 +127,8 @@ describe("forced redirects", () => {
     h.router.currentRoute.value = PAGE;
     // The navigation never settles, so the modals must close without waiting for it
     h.router.push.mockReset().mockReturnValue(new Promise(() => {}));
+    h.router.replace.mockReset().mockReturnValue(new Promise(() => {}));
+    h.client.refetchQueries.mockReset();
     h.user.value = {};
     h.closeAllModals.mockReset();
   });
@@ -157,6 +166,32 @@ describe("forced redirects", () => {
 
     expect(h.router.push).toHaveBeenCalledWith({ name: "NoAccess" });
     expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the modals when access is forbidden and NoAccess is already open", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: "NoAccess", fullPath: "/403" };
+
+    await emit(forbiddenEvent);
+
+    expect(h.router.push).not.toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
+  });
+
+  it("closes the modals when a cart change sends the user from Checkout to Cart", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: "Shipping", params: {}, matched: [{ name: "Checkout" }] };
+
+    // Not awaited: the handler awaits the navigation, which never settles here
+    void emit(cartReloadEvent);
+
+    expect(h.router.replace).toHaveBeenCalledWith(expect.objectContaining({ name: "Cart" }));
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the modals when the cart changes outside Checkout", async () => {
+    await emit(cartReloadEvent);
+
+    expect(h.client.refetchQueries).toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
   });
 
   it("closes the modals when an expired password sends the user to Change Password", async () => {

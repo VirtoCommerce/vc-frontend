@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { useModal } from "./useModal";
+import { closeAllModals, useModal } from "./useModal";
 
 describe("closeAllModals", () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe("closeAllModals", () => {
   });
 
   it("closes every open modal", () => {
-    const { openModal, closeAllModals, modalStack } = useModal();
+    const { openModal, modalStack } = useModal();
     openModal({ component: "VcConfirmationModal" });
     openModal({ component: "VcConfirmationModal" });
 
@@ -22,7 +22,7 @@ describe("closeAllModals", () => {
   });
 
   it("does not return focus to the element that opened a modal", async () => {
-    const { openModal, closeAllModals } = useModal();
+    const { openModal } = useModal();
     const trigger = document.createElement("button");
     document.body.append(trigger);
     const focus = vi.spyOn(trigger, "focus");
