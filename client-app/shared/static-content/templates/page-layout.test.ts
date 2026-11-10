@@ -3,8 +3,8 @@ import { ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { useThemeTemplates } from "../composables/useThemeTemplates";
 import { chooseLandingPageLayout, mergePageSettings, setLandingPageLayout } from "./page-layout";
-import { useThemeTemplates } from "./useThemeTemplates";
 import type { ILandingLayoutOptions } from "./page-layout";
 import type { IThemeSlug, IThemeSnapshot } from "@/core/theme-snapshot";
 

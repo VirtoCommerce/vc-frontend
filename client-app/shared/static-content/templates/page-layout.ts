@@ -7,7 +7,7 @@ import {
   PAGES_OBJECT_TYPE,
   usePageLayout,
 } from "@/shared/layout/composables/usePageLayout";
-import { useThemeTemplates } from "./useThemeTemplates";
+import { useThemeTemplates } from "../composables/useThemeTemplates";
 import type { ITemplateSubject } from "./conditions";
 import type { ITemplateResolution } from "./rules";
 import type { IThemeSlug, ThemePageType } from "@/core/theme-snapshot";

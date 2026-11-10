@@ -1,6 +1,4 @@
-import { createGlobalState } from "@vueuse/core";
 import { escapeRegExp, trim } from "lodash-es";
-import { shallowReactive } from "vue";
 import { isRecord } from "@/core/utilities";
 import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/layout/composables/usePageLayout";
 import type { ThemePageType } from "@/core/theme-snapshot";
@@ -30,7 +28,7 @@ export interface ITemplateCondition {
 
 export type TemplateConditionDescriptorType = Omit<ITemplateCondition, "evaluate">;
 
-const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
+export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
   {
     name: "inCategory",
     pageTypes: ["product", "category"],
@@ -118,25 +116,6 @@ const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     },
   },
 ];
-
-/** Values compare exactly (except `path`): a `VirtoFrontend_UI_Layout` of `b2c` does not match the default B2C rule. */
-export const useTemplateConditions = createGlobalState(() => {
-  const conditions = shallowReactive(new Map(BUILT_IN_CONDITIONS.map((condition) => [condition.name, condition])));
-
-  function registerTemplateCondition(condition: ITemplateCondition): void {
-    conditions.set(condition.name, condition);
-  }
-
-  function getTemplateCondition(name: string): ITemplateCondition | undefined {
-    return conditions.get(name);
-  }
-
-  function getTemplateConditionDescriptors(): TemplateConditionDescriptorType[] {
-    return [...conditions.values()].map(({ name, pageTypes, label, value }) => ({ name, pageTypes, label, value }));
-  }
-
-  return { registerTemplateCondition, getTemplateCondition, getTemplateConditionDescriptors };
-});
 
 export function matchesPath(permalink: string | undefined, glob: string): boolean {
   if (permalink === undefined) {

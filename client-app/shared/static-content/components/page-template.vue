@@ -25,13 +25,8 @@ import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { getAnchorId } from "../anchors";
 import { usePermalinkSeo } from "../composables/usePermalinkSeo";
-import {
-  getSettingsLayout,
-  MAIN_SECTION_TYPES,
-  mergePageSettings,
-  splitTemplate,
-  useTemplateResolution,
-} from "../templates";
+import { useTemplateResolution } from "../composables/useThemeTemplates";
+import { getSettingsLayout, MAIN_SECTION_TYPES, mergePageSettings, splitTemplate } from "../templates";
 import PageBuilderSection from "./page-builder-section.vue";
 
 interface IProps {

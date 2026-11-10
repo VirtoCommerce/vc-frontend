@@ -1,9 +1,9 @@
 import { computed, toValue } from "vue";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
-import { MAIN_SECTION_TYPES } from "./built-in";
-import { splitTemplate } from "./split";
+import { MAIN_SECTION_TYPES } from "../templates/built-in";
+import { splitTemplate } from "../templates/split";
 import { useTemplateResolution } from "./useThemeTemplates";
-import type { ITemplateSubject } from "./conditions";
+import type { ITemplateSubject } from "../templates/conditions";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";

@@ -2,11 +2,11 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, shallowRef, toValue, watch } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { resolveTranslatableValues, useThemeSnapshot } from "@/core/theme-snapshot";
-import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
-import { useTemplateConditions } from "./conditions";
-import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "./rules";
-import type { ITemplateSubject } from "./conditions";
-import type { ITemplateResolution, TemplateChoiceType } from "./rules";
+import { BUILT_IN_TEMPLATES, withMainSection } from "../templates/built-in";
+import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "../templates/rules";
+import { useTemplateConditions } from "./useTemplateConditions";
+import type { ITemplateSubject } from "../templates/conditions";
+import type { ITemplateResolution, TemplateChoiceType } from "../templates/rules";
 import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { MaybeRefOrGetter } from "vue";
 

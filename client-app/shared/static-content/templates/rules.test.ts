@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { useTemplateConditions } from "../composables/useTemplateConditions";
 import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
-import { matchesPath, useTemplateConditions } from "./conditions";
+import { matchesPath } from "./conditions";
 import { chooseTemplate, normalizeTemplateRules } from "./rules";
 import type { ITemplateChoiceOptions } from "./rules";
 import type { IThemePageDocument } from "@/core/theme-snapshot";
@@ -192,28 +193,6 @@ describe("normalizeTemplateRules", () => {
 
   it("is not a rules file when the value is not an object", () => {
     expect(normalizeTemplateRules([])).toBeUndefined();
-  });
-});
-
-describe("getTemplateConditionDescriptors", () => {
-  it("declares category ids as a list of strings: a list without element", () => {
-    const inCategory = useTemplateConditions()
-      .getTemplateConditionDescriptors()
-      .find((descriptor) => descriptor.name === "inCategory");
-
-    expect(inCategory?.value).toMatchObject({ type: "list" });
-    expect(inCategory?.value).not.toHaveProperty("element");
-  });
-
-  it("describes the fields of an object value under element, as schema fields do", () => {
-    const descriptors = useTemplateConditions().getTemplateConditionDescriptors();
-
-    for (const name of ["property", "setting"]) {
-      const { value } = descriptors.find((descriptor) => descriptor.name === name) ?? { value: {} };
-
-      expect(value).toMatchObject({ type: "object", element: [{ id: "name" }, { id: "equals" }] });
-      expect(value).not.toHaveProperty("settings");
-    }
   });
 });
 
