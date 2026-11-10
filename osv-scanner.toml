@@ -1,5 +1,6 @@
-# Accepted advisories for yarn.lock. Each entry expires on its ignoreUntil date,
+# Accepted advisories for yarn.lock. An entry with ignoreUntil expires on that date,
 # after which osv-scanner reports it again and the reason has to be re-checked.
+# An entry without ignoreUntil stays accepted for as long as its reason holds.
 
 [[IgnoredVulns]]
 id = "GHSA-5gmw-xhrv-c9v3"
@@ -23,13 +24,11 @@ reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test to
 
 [[IgnoredVulns]]
 id = "GHSA-7mx3-vvmw-hjmv"
-ignoreUntil = 2026-12-09
-reason = "@graphql-tools/utils 9-11 via @graphql-codegen (type generation against our own schema, never shipped). Fixed only in @graphql-tools/utils 12, which needs a @graphql-codegen major upgrade."
+reason = "@graphql-tools/utils 9-11 via @graphql-codegen, which only generates types from our own backend schema and is never shipped. The flaw is in mergeDeep when it merges GraphQL responses an attacker controls; no such response reaches codegen."
 
 [[IgnoredVulns]]
 id = "GHSA-c4qx-w738-7hr3"
-ignoreUntil = 2026-12-09
-reason = "@graphql-tools/utils 10-11 via @graphql-codegen (type generation against our own schema, never shipped). Fixed only in @graphql-tools/utils 12, which needs a @graphql-codegen major upgrade."
+reason = "@graphql-tools/utils 10-11 via @graphql-codegen, which only generates types from our own backend schema and is never shipped. The flaw is in mergeIncrementalResult when it merges @defer/@stream responses an attacker controls; no such response reaches codegen."
 
 [[IgnoredVulns]]
 id = "GHSA-3g3m-2fjr-6pw4"
