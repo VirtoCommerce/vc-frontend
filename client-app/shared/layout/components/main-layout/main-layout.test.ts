@@ -8,7 +8,10 @@ import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
 vi.mock("vue-router", () => ({ useRoute: () => reactive({ path: "/" }) }));
 
 vi.mock("@/shared/layout/components/header/vc-header.vue", () => ({
-  default: defineComponent({ name: "VcHeader", setup: () => () => h("header", { class: "header-stub" }) }),
+  default: defineComponent({
+    name: "VcHeader",
+    setup: () => () => h("header", { class: "header-stub" }, [h("a", { href: "/" }, "Home")]),
+  }),
 }));
 
 vi.mock("@/shared/layout/components/footer/vc-footer.vue", () => ({
@@ -39,5 +42,15 @@ describe("MainLayout", () => {
 
     expect(main.element.tagName).toBe("MAIN");
     expect(link.element.compareDocumentPosition(main.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("puts the skip link first in the header, before the header's own links", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll("a[href]").map((link) => link.attributes("href"))).toEqual([
+      "#main-content",
+      "#footer",
+      "/",
+    ]);
   });
 });

@@ -1,18 +1,22 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, reactive, ref } from "vue";
+import { defineComponent, h, nextTick, reactive, ref, toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import SecureLayout from "./secure-layout.vue";
 import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
 
-const { headerHeight } = await vi.hoisted(async () => {
+const { headerHeight, measured } = await vi.hoisted(async () => {
   const vue = await import("vue");
-  return { headerHeight: vue.ref(56) };
+  const measuredTarget: { target?: unknown } = {};
+  return { headerHeight: vue.ref(0), measured: measuredTarget };
 });
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@vueuse/core")>()),
-  useElementBounding: () => ({ height: headerHeight }),
+  useElementBounding: (target: unknown) => {
+    measured.target = target;
+    return { height: headerHeight };
+  },
 }));
 
 vi.mock("vue-router", () => ({ useRoute: () => reactive({ path: "/cart" }) }));
@@ -27,20 +31,31 @@ vi.mock("../print/created.vue", () => ({
   default: defineComponent({ name: "Created", setup: () => () => null }),
 }));
 
+const RouterLink = defineComponent({
+  name: "RouterLink",
+
+  setup(_props, { slots }) {
+    return () => h("a", { href: "/" }, slots.default?.());
+  },
+});
+
 const createWrapper = createWrapperFactory(mount, SecureLayout, {
   global: {
     components: { VcFrame },
-    stubs: { VcImage: true, VcIcon: true },
+    stubs: { VcImage: true, VcIcon: true, "router-link": RouterLink },
     mocks: { $context: { storeName: "Store" } },
   },
   slots: { default: '<p class="page">page</p>' },
 });
 
+const appHeaderHeight = () => document.documentElement.style.getPropertyValue("--vc-app-header-height");
+
 enableAutoUnmount(afterEach);
 
 describe("SecureLayout", () => {
   afterEach(() => {
-    headerHeight.value = 56;
+    headerHeight.value = 0;
+    measured.target = undefined;
     document.documentElement.style.removeProperty("--vc-app-header-height");
   });
 
@@ -62,14 +77,41 @@ describe("SecureLayout", () => {
     expect(link.element.compareDocumentPosition(main.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it("puts the skip link first in the header, before the logo link", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll("a[href]").map((link) => link.attributes("href"))).toEqual([
+      "#main-content",
+      "#footer",
+      "/",
+    ]);
+  });
+
+  it("renders the secure checkout badge", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find('[data-test-id="checkout-layout.secure-checkout-label"]').exists()).toBe(true);
+  });
+
+  it("measures the sticky header element", () => {
+    const wrapper = createWrapper();
+
+    expect(toValue(measured.target)).toBe(wrapper.get(".secure-layout__header").element);
+  });
+
   it("publishes its sticky header's height as --vc-app-header-height and keeps it current", async () => {
     createWrapper();
 
-    expect(document.documentElement.style.getPropertyValue("--vc-app-header-height")).toBe("56px");
+    expect(appHeaderHeight()).toBe("0px");
+
+    headerHeight.value = 56;
+    await nextTick();
+
+    expect(appHeaderHeight()).toBe("56px");
 
     headerHeight.value = 88;
     await nextTick();
 
-    expect(document.documentElement.style.getPropertyValue("--vc-app-header-height")).toBe("88px");
+    expect(appHeaderHeight()).toBe("88px");
   });
 });
