@@ -46,6 +46,7 @@ describe("VcFrame", () => {
     ["a fragment with content", { footer: () => [h(Fragment, [h("footer")])] }],
     ["a fragment with a text string", { footer: () => [h(Fragment, ["© 2026"])] }],
     ["a fragment with a nested array", { footer: () => [h(Fragment, [[h("footer")]])] }],
+    ["a fragment with a number", { footer: () => [h(Fragment, [0])] }],
   ])("renders the vc-frame__footer div for %s", (_name, slots) => {
     const wrapper = mount(VcFrame, { slots });
 

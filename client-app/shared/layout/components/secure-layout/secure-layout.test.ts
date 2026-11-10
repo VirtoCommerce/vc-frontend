@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive, ref, toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import SecureLayout from "./secure-layout.vue";
+import type { VueWrapper } from "@vue/test-utils";
 import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
 
 const { headerHeight, measured } = await vi.hoisted(async () => {
@@ -50,6 +51,16 @@ const createWrapper = createWrapperFactory(mount, SecureLayout, {
 
 const appHeaderHeight = () => document.documentElement.style.getPropertyValue("--vc-app-header-height");
 
+const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+// Every focusable element in document order; the skip links are named as part of their block.
+const focusOrder = (wrapper: VueWrapper) =>
+  wrapper
+    .findAll(FOCUSABLE)
+    .map((el) =>
+      `${el.element.closest(".skip-to-links") ? "skip-to-links" : el.element.tagName.toLowerCase()} ${el.attributes("href") ?? ""}`.trim(),
+    );
+
 enableAutoUnmount(afterEach);
 
 describe("SecureLayout", () => {
@@ -80,11 +91,7 @@ describe("SecureLayout", () => {
   it("puts the skip link first in the header, before the logo link", () => {
     const wrapper = createWrapper();
 
-    expect(wrapper.findAll("a[href]").map((link) => link.attributes("href"))).toEqual([
-      "#main-content",
-      "#footer",
-      "/",
-    ]);
+    expect(focusOrder(wrapper)).toEqual(["skip-to-links #main-content", "skip-to-links #footer", "a /"]);
   });
 
   it("renders the secure checkout badge", () => {
