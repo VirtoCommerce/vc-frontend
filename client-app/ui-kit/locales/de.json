@@ -37,7 +37,9 @@
       "nav_previous": "Zurück",
       "nav_next": "Weiter",
       "nav_up": "Nach oben",
-      "nav_down": "Nach unten"
+      "nav_down": "Nach unten",
+      "select_item": "{name} auswählen",
+      "select_all_items": "Alle Artikel auswählen"
     },
     "calendar": {
       "aria_label": "Kalender",
