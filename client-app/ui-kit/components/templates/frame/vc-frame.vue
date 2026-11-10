@@ -105,6 +105,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
 
     margin-block: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px))
       var(--vc-frame-main-offset-bottom, var(--vc-frame-gap, 0px));
+    // A jump to main (the skip link) keeps the frame's space above the page.
+    scroll-margin-block-start: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px));
   }
 }
 </style>
