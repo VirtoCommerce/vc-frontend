@@ -240,7 +240,7 @@ The rules for block files:
 - Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
-never restates print. Token values apply in print too.
+never restates print. Token values apply in print too, except the page-frame tokens ([Page frame](#page-frame)).
 
 ### Make your own design
 
@@ -522,7 +522,10 @@ this table does not list, or the table lists one the code does not read.
 
 `VcFrame` (`ui-kit/components/templates/frame/`) is the page frame of both app layouts, `main-layout` and
 `secure-layout`: the header slot, `<main id="main-content">` with the page, and the footer. The header slot has no
-wrapper, so a sticky header piece sticks for the whole page. The skip-to-content link targets `#main-content`.
+wrapper, so a sticky header piece sticks for the whole page. The skip links target `#main-content` and VcFooter's
+`#footer`. In each layout the sticky header's height is published as `--vc-app-header-height` (by VcHeader and
+MobileHeader in the main layout, by the secure layout itself) and read by `html { scroll-padding-top }` (`main.scss`),
+so a jump stops below the header.
 
 The frame owns the space around the page through the `--vc-frame-*` tokens. Classic sets none: each token falls back
 to its Classic value in the table below; soft sets them in `designs/soft/_tokens.scss`. Set them on `:root` or `html`
@@ -549,8 +552,10 @@ frame does not style the header or the footer: they keep their own width and loo
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
-- Print gets the classic frame in every design: VcFrame resets the side space, column, gap and main offsets in
-  `@media print`.
+- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap and main
+  offsets in `@media print`, a fork's values included; a container token set above the frame still applies (on paper
+  the containers' padding is 0 anyway: `print/atoms/vc-container.scss`). A fork keeps its own print frame with a
+  `.vc-frame` rule inside `@media print` in `_custom.scss`.
 
 ---
 
