@@ -240,7 +240,9 @@ The rules for block files:
 - Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
-never restates print. Token values apply in print too, except the page-frame tokens ([Page frame](#page-frame)).
+never restates print. Token values apply in print too, except the frame's side space, column, gap and main offsets,
+which VcFrame resets (`--vc-frame-main-min-height` still applies), and its canvas, which is screen only
+([Page frame](#page-frame)).
 
 ### Make your own design
 
@@ -542,20 +544,25 @@ frame does not style the header or the footer: they keep their own width and loo
 | `--vc-frame-main-offset-bottom` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |
 
-- VcContainer does not change: VcFrame sets the container's own tokens on its `main`, so a design that sets the side
-  space or the column moves every VcContainer in the page, nested ones included; a container's `no-padding` or
-  `max-width` prop still wins.
-- When a design sets a main offset (or the gap), VcContainers in the page drop their own top and bottom padding
-  (24px; bottom 36px from `md`): the frame's space replaces it. A page that sets its container's padding itself keeps
-  it (cart and shared lists below `lg`, the brand page's top container).
+- VcContainer does not change: VcFrame sets the container's own tokens on its `main`, so a design or a fork that sets
+  the side space or the column moves every VcContainer in the page, nested ones included; a container's `no-padding`
+  or `max-width` prop still wins.
+- When a design or a fork sets a main offset (or the gap), VcContainers in the page drop their own top and bottom
+  padding (24px; bottom 36px from `md`): the frame's space replaces it. A page that sets its container's padding
+  itself keeps it (cart and shared lists below `lg`, the brand page's top container).
 - A container token set above the frame (`:root { --vc-container-px: … }` in `_custom.scss`, or a design's) keeps
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
 - Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap and main
   offsets in `@media print`, a fork's values included; a container token set above the frame still applies (on paper
-  the containers' padding is 0 anyway: `print/atoms/vc-container.scss`). A fork keeps its own print frame with a
-  `.vc-frame` rule inside `@media print` in `_custom.scss`.
+  `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's padding utility, such as the
+  cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
+  `_custom.scss`.
+- VcContainer paints its own background over the canvas (its `bg-color` prop, else `--vc-container-bg-color`, which
+  defaults to `--body-bg-color`; nothing when `has-bg-image` is false). Soft's canvas is that same colour. A fork that
+  sets `--vc-frame-bg-color` alone sees it only around the containers: for one colour everywhere, set
+  `--vc-container-bg-color` to the same value.
 
 ---
 
