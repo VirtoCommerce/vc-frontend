@@ -5,6 +5,11 @@ import type { CloseModalHandleType, IModal } from "..";
 const stack = ref<IModal[]>([]);
 const triggerElements = ref<Map<string, HTMLElement>>(new Map());
 
+function closeAllModals() {
+  stack.value = [];
+  triggerElements.value.clear();
+}
+
 export function useModal() {
   function openModal(options: IModal): CloseModalHandleType {
     const id = options.id ?? uniqueId();
@@ -42,11 +47,6 @@ export function useModal() {
     await nextTick();
     triggerElement?.focus();
     triggerElements.value.delete(id);
-  }
-
-  function closeAllModals() {
-    stack.value = [];
-    triggerElements.value.clear();
   }
 
   return {
