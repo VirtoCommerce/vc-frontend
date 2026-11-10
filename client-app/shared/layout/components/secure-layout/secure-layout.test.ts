@@ -103,7 +103,7 @@ describe("SecureLayout", () => {
   it("measures the sticky header element", () => {
     const wrapper = createWrapper();
 
-    expect(toValue(measured.target)).toBe(wrapper.get(".secure-layout__header").element);
+    expect(toValue(measured.target)).toBe(wrapper.get(".secure-header").element);
   });
 
   it("publishes its sticky header's height as --vc-app-header-height and keeps it current", async () => {
