@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createCommentVNode, createTextVNode, Fragment, h } from "vue";
 import VcFrame from "./vc-frame.vue";
 
+const NESTED_FRAME = { slots: { default: () => h(VcFrame) } };
+
 enableAutoUnmount(afterEach);
 
 describe("VcFrame", () => {
@@ -11,14 +13,17 @@ describe("VcFrame", () => {
     vi.unstubAllEnvs();
   });
 
-  it("renders the header slot's root elements as the frame's own children, before main", () => {
+  it("renders the header slot's root elements as the frame's own children, then main, then the footer", () => {
     const wrapper = mount(VcFrame, {
-      slots: { header: '<div class="top-row">top</div><div class="sticky-row">bar</div>' },
+      slots: {
+        header: '<div class="top-row">top</div><div class="sticky-row">bar</div>',
+        footer: "<footer>footer</footer>",
+      },
     });
 
     const childClasses = [...wrapper.element.children].map((child) => child.className);
 
-    expect(childClasses.slice(0, 3)).toEqual(["top-row", "sticky-row", "vc-frame__main"]);
+    expect(childClasses).toEqual(["top-row", "sticky-row", "vc-frame__main", "vc-frame__footer"]);
   });
 
   it("renders the page inside <main id='main-content'>", () => {
@@ -39,6 +44,8 @@ describe("VcFrame", () => {
   it.each([
     ["text", { footer: () => [createTextVNode("© 2026")] }],
     ["a fragment with content", { footer: () => [h(Fragment, [h("footer")])] }],
+    ["a fragment with a text string", { footer: () => [h(Fragment, ["© 2026"])] }],
+    ["a fragment with a nested array", { footer: () => [h(Fragment, [[h("footer")]])] }],
   ])("renders the vc-frame__footer div for %s", (_name, slots) => {
     const wrapper = mount(VcFrame, { slots });
 
@@ -54,6 +61,7 @@ describe("VcFrame", () => {
       { footer: () => [h(Fragment, [createCommentVNode("v-for", true)])] },
     ],
     ["a footer slot whose fragment holds only null", { footer: () => [h(Fragment, [null])] }],
+    ["a footer slot whose fragment holds a blank string", { footer: () => [h(Fragment, ["  "])] }],
   ])("renders no vc-frame__footer div for %s", (_name, slots) => {
     const wrapper = mount(VcFrame, { slots });
 
@@ -63,7 +71,7 @@ describe("VcFrame", () => {
   it("warns in development when rendered inside another frame", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-    mount(VcFrame, { slots: { default: () => h(VcFrame) } });
+    mount(VcFrame, NESTED_FRAME);
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy.mock.calls[0][0]).toContain("VcFrame: rendered inside another VcFrame");
@@ -73,7 +81,7 @@ describe("VcFrame", () => {
     vi.stubEnv("DEV", false);
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-    mount(VcFrame, { slots: { default: () => h(VcFrame) } });
+    mount(VcFrame, NESTED_FRAME);
 
     expect(warnSpy).not.toHaveBeenCalled();
   });

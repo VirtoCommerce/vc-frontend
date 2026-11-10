@@ -41,6 +41,10 @@ if (import.meta.env.DEV && inject(vcFrameKey, false)) {
 
 provide(vcFrameKey, true);
 
+function isBlank(value: unknown): boolean {
+  return String(value).trim() === "";
+}
+
 function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   return (nodes ?? []).some((node) => {
     if (Array.isArray(node)) {
@@ -48,7 +52,7 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
     }
 
     if (!isVNode(node)) {
-      return (typeof node === "string" || typeof node === "number") && String(node).trim() !== "";
+      return (typeof node === "string" || typeof node === "number") && !isBlank(node);
     }
 
     if (node.type === Comment) {
@@ -60,7 +64,7 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
     }
 
     if (node.type === Text) {
-      return String(node.children).trim() !== "";
+      return !isBlank(node.children);
     }
 
     return true;
@@ -90,8 +94,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
 
   &__main {
     // VcContainers in the page take the frame's side space and column and leave the space above and below to the
-    // frame; their props and page-set padding still win. `calc(<offset> * 0)` is 0 when a design sets the offset,
-    // invalid (the container's own value) when not.
+    // frame; their props and page-set padding still win. `calc(<offset> * 0)` is 0 when a design sets the offset or
+    // the gap, invalid (the container's own value) when neither.
     --vc-container-px: var(--inherited-container-px, var(--vc-frame-padding-x));
     --vc-container-max-width: var(--inherited-container-max-width, var(--vc-frame-max-width));
     --vc-container-pt: var(--inherited-container-pt, calc(var(--vc-frame-main-offset-top, var(--vc-frame-gap)) * 0));
