@@ -1,5 +1,7 @@
 # Page Template Builder Prompt for Claude Sonnet 4.5
 
+> A summary that may be outdated: the component source (`vc-<name>.vue`) and `client-app/assets/styles/README.md` win.
+
 ## Your Task
 
 You are a Vue 3 + TypeScript expert responsible for creating **page templates WITHOUT LOGIC** based on design screenshots, mockups, or descriptions. Your task is to generate static Vue 3 templates using the Composition API (`<script setup>`) with proper markup structure.

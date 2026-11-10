@@ -245,6 +245,36 @@ describe("VcDatePicker — the field clear cross touches only the value", () => 
   });
 });
 
+describe("VcDatePicker — consumer aria", () => {
+  it("merges the consumer's attributes under the combobox wiring", () => {
+    const input = mountPicker({ aria: { "aria-describedby": "range-details", role: "textbox" } }).get("input");
+
+    expect(input.attributes("aria-describedby")).toBe("range-details");
+    expect(input.attributes("role")).toBe("combobox");
+    expect(input.attributes("aria-expanded")).toBe("false");
+  });
+
+  it("sets aria-controls only while the calendar is open, whatever the consumer passes", async () => {
+    const wrapper = mountPicker({ aria: { "aria-controls": "consumer-id" } }, { attachTo: document.body });
+    const calendarButton = wrapper.get('button[aria-label="ui_kit.accessibility.open_calendar"]');
+
+    expect(wrapper.get("input").attributes("aria-controls")).toBeUndefined();
+
+    await calendarButton.trigger("click");
+    await flushPromises();
+    const controls = wrapper.get("input").attributes("aria-controls");
+
+    expect(controls).toBeTruthy();
+    expect(controls).not.toBe("consumer-id");
+    expect(document.querySelector(`[id="${controls}"]`)).not.toBeNull();
+
+    await calendarButton.trigger("click");
+    await flushPromises();
+
+    expect(wrapper.get("input").attributes("aria-controls")).toBeUndefined();
+  });
+});
+
 // The shape both filter drawers ship: a picker inside a dialog popover, so Escape really travels from
 // the date field up to the dialog (VCST-5869).
 const DialogHost = defineComponent({

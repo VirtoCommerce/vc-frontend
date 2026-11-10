@@ -21,6 +21,8 @@
       v-bind="listeners"
       :name="name"
       :aria-label="ariaLabel"
+      :aria-invalid="error ? 'true' : undefined"
+      :aria-describedby="describedById"
       :placeholder="placeholder"
       :readonly="readonly"
       :disabled="disabled"
@@ -32,6 +34,7 @@
     />
 
     <VcInputDetails
+      :id="detailsId"
       :show-empty="showEmptyDetails"
       :counter="counter"
       :message="message"
@@ -45,6 +48,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
+import { computed } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 interface IEmits {
@@ -84,9 +88,12 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const componentId = useComponentId("textarea");
+const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 const text = useVModel(props, "modelValue", emit);
+
+const describedById = computed(() => (props.message || props.counter ? detailsId : undefined));
 </script>
 
 <style lang="scss">
