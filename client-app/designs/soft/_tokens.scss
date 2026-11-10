@@ -6,6 +6,12 @@ html[data-design="soft"] {
   // VcShape
   --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
 
+  // VcTabSwitchGroup: a segmented track; blocks/vc-tab-switch-group.scss styles its switches.
+  --vc-tab-switch-group-gap: 0px;
+  --vc-tab-switch-group-padding: 0.1875rem;
+  --vc-tab-switch-group-radius: 9999px;
+  --vc-tab-switch-group-bg-color: color-mix(in srgb, var(--color-neutral-950) 5%, transparent);
+
   // VcWidget
   --vc-widget-radius: 1.375rem;
   --vc-widget-border-width: 0px;
@@ -30,4 +36,9 @@ html[data-design="soft"] {
   @media (forced-colors: active) {
     --vc-widget-border-width: 1px;
   }
+}
+
+html.dark[data-design="soft"] {
+  // neutral-950 turns light in dark, so the track is a tint of the dark neutral-50 instead.
+  --vc-tab-switch-group-bg-color: color-mix(in srgb, var(--color-neutral-50) 60%, transparent);
 }

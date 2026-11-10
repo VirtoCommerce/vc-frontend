@@ -6,7 +6,12 @@
 
 @layer vc.design {
   html[data-design="soft"] {
+    @include meta.load-css("blocks/vc-tab-switch-group");
     @include meta.load-css("blocks/vc-widget");
     @include meta.load-css("blocks/footer-links");
+  }
+
+  html.dark[data-design="soft"] {
+    @include meta.load-css("dark/vc-tab-switch-group");
   }
 }

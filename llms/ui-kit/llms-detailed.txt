@@ -605,10 +605,18 @@
 
 
 **VcTabSwitch** (`client-app/ui-kit/components/molecules/tab-switch/vc-tab-switch.vue`)
-- Props: modelValue, tabs (array: {key, label, icon, disabled})
-- Emits: update:modelValue
-- Features: animated indicator, responsive, icon support
-- Types: vc-tab-switch.types.d.ts
+- Props: value (required), modelValue, label, name, icon, color, hoverColor, disabled, size (sm/md), labelPosition (start/end), ariaLabel
+- Emits: change, input (v-model does not update on click: use :model-value + @change, or put it in VcTabSwitchGroup)
+- Tokens: --vc-tab-switch-color, -hover-color, -radius, -border-color, -checked-border-color, -text-color, -checked-text-color, -padding-x, -font-weight, -checked-font-weight, -checked-bg-color, -checked-shadow
+- Features: one option of a segmented choice; the label keeps its width when the checked weight differs
+
+**VcTabSwitchGroup** (`client-app/ui-kit/components/molecules/tab-switch-group/vc-tab-switch-group.vue`)
+- v-model: the checked VcTabSwitch value
+- Emits: change
+- Slots: default (VcTabSwitch items); name the group with aria-label or aria-labelledby
+- Tokens: --vc-tab-switch-group-gap, -padding, -radius, -bg-color
+- Features: one radiogroup with one tab stop; arrows (RTL-aware) move and select, Home/End, disabled items skipped
+- Types: vc-tab-switch-group.types.d.ts
 
 **VcSteps** (`client-app/ui-kit/components/molecules/steps/vc-steps.vue`)
 - Props: steps (array), current, direction (horizontal/vertical), clickable
