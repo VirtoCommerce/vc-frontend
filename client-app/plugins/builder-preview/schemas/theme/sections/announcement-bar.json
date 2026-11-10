@@ -2,6 +2,7 @@
   "name": "Announcement bar",
   "icon": "lucide-megaphone",
   "groups": ["header"],
+  "limit": 1,
   "blocks": ["announcement"],
   "settings": [
     {

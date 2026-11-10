@@ -15,7 +15,13 @@ import {
 } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
-import { getTemplatePageType, useStaticPage, useTemplateConditions, useThemeTemplates } from "@/shared/static-content";
+import {
+  BUILT_IN_TEMPLATES,
+  getTemplatePageType,
+  useStaticPage,
+  useTemplateConditions,
+  useThemeTemplates,
+} from "@/shared/static-content";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
 import { PREVIEW_PROTOCOL } from "./utils";
@@ -33,6 +39,7 @@ const LOG_SCOPE = "[builder-preview]";
 interface ISchemaField {
   id?: string;
   type?: string;
+  format?: string;
   translatable?: boolean;
   element?: ISchemaField[];
 }
@@ -54,6 +61,7 @@ export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<stri
     protocol: PREVIEW_PROTOCOL,
     capabilities: PREVIEW_CAPABILITIES,
     conditions: useTemplateConditions().getTemplateConditionDescriptors(),
+    builtInTemplates: Object.keys(BUILT_IN_TEMPLATES),
   };
 }
 
@@ -251,7 +259,11 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
     if (item) {
       const shown = resolveTranslatableValues(item, globals.cultureName, defaultStoreCulture.value);
-      editor.start(findEditableTexts(shown, isPlainTextField), event.clientX, event.clientY);
+      editor.start(
+        findEditableTexts(shown, (itemType, path) => isPlainTextSetting(options.schemas(), itemType, path)),
+        event.clientX,
+        event.clientY,
+      );
     }
   }
 
@@ -289,11 +301,6 @@ export function createPreviewV2(options: IPreviewV2Options) {
     );
   }
 
-  /** The preview protocol accepts inline edits only for settings of schema type `string`. */
-  function isPlainTextField(itemType: string, path: (string | number)[]): boolean {
-    return findSchemaField(options.schemas(), itemType, path)?.type === "string";
-  }
-
   /** Re-renders so data loaded as the previous preview user (prices, availability) loads again as the current one. */
   async function reload(): Promise<void> {
     const render = lastRender;
@@ -321,6 +328,16 @@ export function createPreviewV2(options: IPreviewV2Options) {
     hover: (sectionId: string | null) => overlay.hover(sectionId),
     refreshInteraction: applyInteraction,
   };
+}
+
+/** The preview protocol accepts inline edits only for settings of schema type `string` that are not links. */
+export function isPlainTextSetting(
+  schemas: PageBuilderSchemaType | undefined,
+  itemType: string,
+  path: (string | number)[],
+): boolean {
+  const field = findSchemaField(schemas, itemType, path);
+  return field?.type === "string" && field.format !== "url";
 }
 
 export function findSchemaField(

@@ -7,7 +7,7 @@ import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
-import { buildPreviewCatalog, createPreviewV2, findSchemaField } from "./preview-v2";
+import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetting } from "./preview-v2";
 import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -32,7 +32,14 @@ const SCHEMAS = {
     "footer-menu": {
       settings: [
         { id: "heading", type: "string", translatable: true },
-        { id: "links", type: "list", element: [{ id: "label", type: "string", translatable: true }] },
+        {
+          id: "links",
+          type: "list",
+          element: [
+            { id: "label", type: "string", translatable: true },
+            { id: "link", type: "string", format: "url" },
+          ],
+        },
         { id: "columns", type: "select" },
       ],
     },
@@ -84,12 +91,13 @@ describe("preview protocol 2", () => {
     document.body.innerHTML = "";
   });
 
-  it("announces the protocol, the capabilities, the conditions and a catalog hash", () => {
+  it("announces the protocol, the capabilities, the conditions, the built-in templates and a catalog hash", () => {
     const catalog = buildPreviewCatalog(SCHEMAS);
     const changed = buildPreviewCatalog({ ...SCHEMAS, sections: {} });
 
     expect(catalog).toMatchObject({ protocol: PREVIEW_PROTOCOL, sections: SCHEMAS.sections });
     expect(catalog.capabilities).toEqual(expect.arrayContaining(["templates", "inline-edit", "inspector"]));
+    expect(catalog.builtInTemplates).toEqual(expect.arrayContaining(["product", "product.b2c"]));
     expect((catalog.conditions as { name: string }[]).map(({ name }) => name)).toContain("inCategory");
     expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS).hash);
     expect(changed.hash).not.toBe(catalog.hash);
@@ -273,10 +281,10 @@ describe("inline editing", () => {
     ]);
   });
 
-  it("finds only the settings the schema has as plain text", () => {
+  it("finds only the settings the schema has as plain text, not links", () => {
     const texts = findEditableTexts(
-      { id: "b1", type: "footer-menu", heading: "Shop", columns: "3", links: [{ label: "Sale" }] },
-      (itemType, path) => findSchemaField(SCHEMAS, itemType, path)?.type === "string",
+      { id: "b1", type: "footer-menu", heading: "Shop", columns: "3", links: [{ label: "Sale", link: "sale" }] },
+      (itemType, path) => isPlainTextSetting(SCHEMAS, itemType, path),
     );
 
     expect(texts.map(({ path }) => path)).toEqual([["heading"], ["links", 0, "label"]]);
@@ -311,6 +319,20 @@ describe("inline editing", () => {
     expect(editor.isEditing).toBe(false);
     expect(onEnd).toHaveBeenCalledOnce();
     expect(title.style.textTransform).toBe("uppercase");
+  });
+
+  it("joins pasted lines of a single-line text with one space each", () => {
+    document.body.innerHTML = `<section data-pb-section="s1"><h2 id="title">Hello</h2></section>`;
+    const title = document.getElementById("title") as HTMLElement;
+    document.elementsFromPoint = () => [title];
+    const onEdit = vi.fn();
+    const editor = new InlineTextEditor(document.createElement("div"), onEdit, vi.fn());
+
+    editor.start([{ itemId: "s1", path: ["title"], value: "Hello" }], 0, 0);
+    title.textContent = "Line A\nLine B\n\n  Line C";
+    title.dispatchEvent(new Event("input"));
+
+    expect(onEdit).toHaveBeenLastCalledWith({ itemId: "s1", path: ["title"], value: "Line A Line B Line C" });
   });
 
   it("gives the page back the text node it renders into when editing replaced it", () => {

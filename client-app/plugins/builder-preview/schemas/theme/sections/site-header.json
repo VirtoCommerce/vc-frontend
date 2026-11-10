@@ -2,6 +2,7 @@
   "name": "Header",
   "icon": "lucide-panel-top",
   "groups": ["header"],
+  "limit": 1,
   "info": "The logos come from the theme's brand, or from white-labeling when it sets them.",
   "settings": [
     {

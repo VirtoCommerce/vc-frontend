@@ -30,7 +30,8 @@
         {
           "id": "link",
           "label": "URL",
-          "type": "string"
+          "type": "string",
+          "format": "url"
         }
       ]
     }

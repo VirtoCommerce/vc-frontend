@@ -2,6 +2,7 @@
   "name": "Footer",
   "icon": "lucide-panel-bottom",
   "groups": ["footer"],
+  "limit": 1,
   "blocks": ["footer-menu"],
   "info": "The logo is the theme's logo for dark backgrounds, or white-labeling's when it sets one.",
   "settings": [

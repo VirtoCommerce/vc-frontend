@@ -25,6 +25,7 @@
     {
       "id": "url",
       "type": "string",
+      "format": "url",
       "label": "Enter link",
       "visibility": "!!this.item && this.item.action === 'url'"
     }

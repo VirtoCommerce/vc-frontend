@@ -208,7 +208,7 @@ export class InlineTextEditor {
     const { element, text } = this.editing;
     // Browsers write a no-break space for a trailing space and leave a line break placeholder in an emptied element.
     const value = element.textContent ? (element.innerText || element.textContent).replaceAll(" ", " ") : "";
-    this.onEdit({ ...text, value: text.value.includes("\n") ? value : value.replaceAll("\n", " ") });
+    this.onEdit({ ...text, value: text.value.includes("\n") ? value : toSingleLine(value) });
   };
 
   private readonly handleKeydown = (event: KeyboardEvent): void => {
@@ -239,6 +239,19 @@ export class InlineTextEditor {
       event.stopPropagation();
     }
   };
+}
+
+/** Lines pasted into a single-line text: one space between them, blank lines dropped. */
+function toSingleLine(value: string): string {
+  if (!value.includes("\n")) {
+    return value;
+  }
+
+  return value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join(" ");
 }
 
 /** Deleting the whole text replaces the nodes Vue rendered, and Vue would keep patching nodes no longer shown. */

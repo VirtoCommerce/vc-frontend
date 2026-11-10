@@ -47,7 +47,8 @@
         {
           "id": "url",
           "label": "Url",
-          "type": "string"
+          "type": "string",
+          "format": "url"
         }
       ]
     },

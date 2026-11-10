@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalInterceptors } from "@/core/api/common";
+import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals, setGlobals } from "@/core/globals";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
@@ -175,6 +177,7 @@ let templateUrl: string | undefined;
 let allowedNavigation: string | undefined;
 let previewToken: string | null | undefined;
 let originalUserId: string | undefined;
+let originalOrganizationId: string | undefined;
 let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
 
@@ -411,8 +414,14 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   previewToken = message.token?.access_token || null;
   if (!originalUserId) {
     originalUserId = globals.userId;
+    originalOrganizationId = globals.organizationId;
   }
-  setGlobals({ userId: message.userId || originalUserId });
+  const organizationId = message.userId ? await getPreviewUserOrganizationId(message.userId) : originalOrganizationId;
+  const isOrganizationChanged = organizationId !== globals.organizationId;
+  setGlobals({ userId: message.userId || originalUserId, organizationId });
+  if (isOrganizationChanged) {
+    await loadOrganizationBranding();
+  }
   // Force remount of all blocks with new token and restore scroll afterward; protocol 2 scrolls on its own reload.
   pendingScrollRestore = !context.previewV2;
   staticPagePreview.value = undefined;
@@ -420,6 +429,24 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   // An impersonation token keeps clicks blocked even with the inspector off.
   context.previewV2?.refreshInteraction();
   await context.previewV2?.reload();
+}
+
+async function getPreviewUserOrganizationId(userId: string): Promise<string | undefined> {
+  try {
+    return (await getMe(userId))?.contact?.organizationId ?? undefined;
+  } catch (error) {
+    Logger.error("Failed to read the previewed user's organization", error);
+    return undefined;
+  }
+}
+
+/** An organization's white-labeling (logo, favicons, footer links) replaces the store's for its members. */
+async function loadOrganizationBranding(): Promise<void> {
+  try {
+    await useWhiteLabeling().fetchWhiteLabelingSettings();
+  } catch {
+    // Already logged; the preview keeps the branding it has.
+  }
 }
 
 /** Handlers await (locale switch, navigation), so without a queue an older message could apply after a newer one. */
