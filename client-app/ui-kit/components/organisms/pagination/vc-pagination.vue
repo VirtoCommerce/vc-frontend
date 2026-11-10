@@ -168,9 +168,6 @@ const setPage = (page: number) => {
   // Override the two knobs as a pair: the ink default follows the palette and flips in dark.
   --page-active-bg: var(--vc-pagination-page-active-bg, theme("colors.primary.500"));
   --page-active-text: var(--vc-pagination-page-active-text, theme("colors.additional.50"));
-  // No ring colour of its own: the ring has no width unless a design gives it one, along with its colours.
-  --page-border-color: var(--vc-pagination-page-border-color, theme("borderColor.DEFAULT"));
-  --page-hover-border-color: var(--vc-pagination-page-hover-border-color, var(--page-border-color));
 
   @apply flex max-w-full;
 
@@ -200,7 +197,9 @@ const setPage = (page: number) => {
 
   &__page {
     --radius: var(--vc-pagination-page-radius, theme("borderRadius.DEFAULT"));
-    --border-color: var(--page-border-color);
+    // No ring colour of its own: the ring has no width unless a design gives it one, along with its colours.
+    --border-color: var(--vc-pagination-page-border-color, theme("borderColor.DEFAULT"));
+    --hover-border-color: var(--vc-pagination-page-hover-border-color, var(--border-color));
 
     @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded-[--radius] text-xs font-bold
       border-[length:var(--vc-pagination-page-border-width,0)] border-solid border-[color:var(--border-color)];
@@ -215,24 +214,18 @@ const setPage = (page: number) => {
     }
 
     &:hover {
-      --border-color: var(--page-hover-border-color);
-
-      @apply bg-primary-50;
+      @apply border-[color:var(--hover-border-color)] bg-primary-50;
     }
 
     &--active {
-      --border-color: var(--page-active-bg);
-
-      @apply pointer-events-none;
+      @apply pointer-events-none border-[color:var(--page-active-bg)];
 
       background-color: var(--page-active-bg);
       color: var(--page-active-text);
     }
 
     &--ellipsis {
-      @apply pointer-events-none border-0;
-
-      color: var(--vc-pagination-ellipsis-color, currentColor);
+      @apply pointer-events-none border-0 text-[color:var(--vc-pagination-ellipsis-color,currentColor)];
     }
   }
 
