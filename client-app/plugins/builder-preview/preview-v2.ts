@@ -27,6 +27,7 @@ import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
 import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
+import type { IEditableText, IEndedEdit } from "./inline-text-editor";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
@@ -37,7 +38,7 @@ export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-e
 
 const LOG_SCOPE = "[builder-preview]";
 
-const PAGE_INPUT_EVENTS = ["keydown", "keyup", "click", "submit"] as const;
+type AnswerKindType = "render" | "draft";
 
 interface ISchemaField {
   id?: string;
@@ -115,6 +116,10 @@ export function createPreviewV2(options: IPreviewV2Options) {
   let lastRender: IRenderMessage | undefined;
   let heldRender: IRenderMessage | undefined;
   let heldDraft: IThemeDraft | undefined;
+  /** The message that answers an edit of the item: the render for the page, the draft for the header and footer. */
+  let awaitedAnswer: AnswerKindType | undefined;
+  /** An ended edit keeps its text until the designer answers it. */
+  let endedEdit: (IEndedEdit & { answer: AnswerKindType }) | undefined;
 
   const overlay = new SectionOverlay(
     body,
@@ -130,21 +135,23 @@ export function createPreviewV2(options: IPreviewV2Options) {
   const editor = new InlineTextEditor(
     blocker,
     (edit) => {
+      awaitedAnswer = getAnswerKind(edit.itemId);
       const cultureName = isTranslatable(edit.itemId, edit.path) ? globals.cultureName : undefined;
       post("edit", { ...edit, cultureName });
     },
-    () => {
+    (ended) => {
       const theme = heldDraft;
       const render = heldRender;
       heldDraft = undefined;
       heldRender = undefined;
+      endedEdit = { ...ended, answer: getAnswerKind(ended.text.itemId) };
 
       if (theme) {
-        applyDraft(theme);
+        showDraft(theme);
       }
 
       if (render) {
-        options.enqueue(() => handleRender(render));
+        options.enqueue(() => showRender(render));
       }
     },
   );
@@ -161,20 +168,9 @@ export function createPreviewV2(options: IPreviewV2Options) {
     options.sharedComponents?.setEnabled(isInspectorEnabled);
   }
 
-  // The blocker stops the pointer only. Tab still moves through the page so the keyboard can leave the frame;
-  // a key, click or submit on a page element does not act.
-  function stopPageInput(event: Event): void {
-    const { target } = event;
-    const isPageTarget =
-      target instanceof Element && target !== blocker && target !== body && target !== document.documentElement;
-    const isTab = event instanceof KeyboardEvent && event.key === "Tab";
-
-    if (!blocker.isConnected || !isBlocking() || editor.isEditing || !isPageTarget || isTab) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
+  /** The text being edited takes keys and clicks; otherwise only an unblocked page does. */
+  function isPageInputAllowed(): boolean {
+    return editor.isEditing || !isBlocking();
   }
 
   // With the inspector off, clicks reach the page: a link the router does not take would load another document.
@@ -216,6 +212,11 @@ export function createPreviewV2(options: IPreviewV2Options) {
   }
 
   function applyDraft(theme: IThemeDraft): void {
+    markAnswered("draft");
+    showDraft(theme);
+  }
+
+  function showDraft(theme: IThemeDraft): void {
     // The echo of the text being edited would re-render it under the caret, so it waits for the edit like a render.
     if (editor.isEditing) {
       heldDraft = theme;
@@ -224,9 +225,54 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
     setDraft(theme);
     overlay.scheduleRender();
+    settleEndedEdit("draft");
   }
 
   async function handleRender(message: IRenderMessage): Promise<void> {
+    markAnswered("render");
+    await showRender(message);
+  }
+
+  function markAnswered(kind: AnswerKindType): void {
+    if (awaitedAnswer === kind) {
+      awaitedAnswer = undefined;
+    }
+  }
+
+  /** A refused edit is answered with the setting's old value, which renders as before, so the typed text is taken back. */
+  function settleEndedEdit(kind: AnswerKindType): void {
+    const ended = endedEdit;
+
+    if (!ended || ended.answer !== kind || awaitedAnswer === kind) {
+      return;
+    }
+
+    endedEdit = undefined;
+
+    if (readShownSetting(ended.text) === ended.text.value) {
+      ended.revert();
+    }
+  }
+
+  function getAnswerKind(itemId: string): AnswerKindType {
+    const isPageItem = (lastRender?.document.content ?? []).some(
+      (item) => item.id === itemId || !!item.blocks?.some((block) => block.id === itemId),
+    );
+
+    return isPageItem ? "render" : "draft";
+  }
+
+  function readShownSetting({ itemId, path }: IEditableText): unknown {
+    const item = findItem(itemId);
+    const shown = item ? resolveTranslatableValues(item, globals.cultureName, defaultStoreCulture.value) : undefined;
+
+    return path.reduce<unknown>(
+      (current, key) => (current as Record<string | number, unknown> | undefined)?.[key],
+      shown,
+    );
+  }
+
+  async function showRender(message: IRenderMessage): Promise<void> {
     if (editor.isEditing) {
       heldRender = message;
       return;
@@ -263,6 +309,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     const { sectionId, blockId, scroll } = message.selection ?? {};
     overlay.select(blockId ?? sectionId ?? null, blockId ? (sectionId ?? null) : null, !!scroll);
     reportResolved();
+    settleEndedEdit("render");
   }
 
   async function ensureSnapshotLanguage(cultureName: string): Promise<void> {
@@ -369,11 +416,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     }
 
     // The page renders anew from its top, so the selection is brought back into view.
-    await handleRender(render.selection ? { ...render, selection: { ...render.selection, scroll: true } } : render);
-  }
-
-  for (const type of PAGE_INPUT_EVENTS) {
-    document.addEventListener(type, stopPageInput, true);
+    await showRender(render.selection ? { ...render, selection: { ...render.selection, scroll: true } } : render);
   }
 
   document.addEventListener("click", stopLeavingLink);
@@ -388,6 +431,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     reload,
     hover: (sectionId: string | null) => overlay.hover(sectionId),
     refreshInteraction: applyInteraction,
+    isPageInputAllowed,
   };
 }
 

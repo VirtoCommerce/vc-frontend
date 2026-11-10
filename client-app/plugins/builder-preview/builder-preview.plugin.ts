@@ -28,6 +28,7 @@ import {
   getPreviewCultureName,
   getPreviewPageId,
   guardPreviewNavigation,
+  installPageInputGuard,
   isOpenedWithPreviewProtocol,
   PREVIEW_PROTOCOL,
 } from "./utils";
@@ -232,6 +233,7 @@ const MAX_Z_INDEX = 2147483647;
 function createOverlay(
   builderOrigin: string,
   isHoverReportedByPreviewV2: () => boolean,
+  isPageInputAllowed: () => boolean,
 ): {
   bodyEl: HTMLElement | null;
   blocker: HTMLElement | null;
@@ -256,6 +258,7 @@ function createOverlay(
   interactiveBlocker.style.background = "transparent";
   interactiveBlocker.style.pointerEvents = "auto";
   bodyEl.appendChild(interactiveBlocker);
+  installPageInputGuard(interactiveBlocker, isPageInputAllowed);
 
   const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
     window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
@@ -532,7 +535,12 @@ export default {
         builderOrigin,
         loadedNotifier,
         enqueue: createMessageQueue(),
-        ...createOverlay(builderOrigin, () => !!context.previewV2),
+        // Protocol 1 never lets the page take input; protocol 2 does with the inspector off.
+        ...createOverlay(
+          builderOrigin,
+          () => !!context.previewV2,
+          () => !!context.previewV2?.isPageInputAllowed(),
+        ),
       };
       handleMessages(context);
 

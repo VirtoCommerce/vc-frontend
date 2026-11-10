@@ -8,7 +8,7 @@ import { useTemplateResolution, useThemeTemplates } from "@/shared/static-conten
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetting } from "./preview-v2";
-import { guardPreviewNavigation, PREVIEW_PROTOCOL } from "./utils";
+import { guardPreviewNavigation, installPageInputGuard, PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { VueWrapper } from "@vue/test-utils";
@@ -169,6 +169,7 @@ describe("preview protocol 2", () => {
     const { preview, blocker } = createPreview({ hasPreviewToken: true });
     document.body.innerHTML = `<form id="form"><button id="add" type="button">Add to cart</button></form>`;
     document.body.append(blocker);
+    installPageInputGuard(blocker, preview.isPageInputAllowed);
     const button = document.getElementById("add") as HTMLButtonElement;
     const onClick = vi.fn();
     button.addEventListener("click", onClick);
@@ -193,6 +194,7 @@ describe("preview protocol 2", () => {
     const { preview, blocker } = createPreview();
     document.body.innerHTML = `<button id="add" type="button">Add to cart</button>`;
     document.body.append(blocker);
+    installPageInputGuard(blocker, preview.isPageInputAllowed);
     const button = document.getElementById("add") as HTMLButtonElement;
     const onClick = vi.fn();
     button.addEventListener("click", onClick);
@@ -460,6 +462,41 @@ describe("inline editing", () => {
     title.dispatchEvent(new Event("input"));
 
     expect(onEdit).toHaveBeenLastCalledWith({ itemId: "s1", path: ["title"], value: "Line A Line B Line C" });
+  });
+
+  async function editTitle(typed: string) {
+    const preview = createPreview();
+    preview.preview.setInspector(true);
+    await preview.preview.handleRender(render());
+    document.body.innerHTML = `<section data-pb-section="s1"><h2 id="title">Hello</h2></section>`;
+    const title = document.getElementById("title") as HTMLElement;
+    document.elementsFromPoint = () => [title];
+    preview.blocker.dispatchEvent(new MouseEvent("click", { clientX: 0, clientY: 0 }));
+    (title.firstChild as Text).nodeValue = typed;
+    title.dispatchEvent(new Event("input"));
+    title.dispatchEvent(new FocusEvent("blur"));
+
+    return { ...preview, title };
+  }
+
+  it("takes a refused edit's text back when the designer answers with the old value", async () => {
+    const { preview, title } = await editTitle("Hello there");
+    expect(title.textContent).toBe("Hello there");
+
+    await preview.handleRender(render());
+
+    expect(title.textContent).toBe("Hello");
+  });
+
+  it("keeps an accepted edit's text until and after the designer's answer", async () => {
+    const { preview, title } = await editTitle("Hello there");
+    const typed = { settings: {}, content: [{ id: "s1", type: "banner", title: "Hello there" }] };
+
+    preview.applyDraft({});
+    expect(title.textContent).toBe("Hello there");
+
+    await preview.handleRender(render({ document: typed }));
+    expect(title.textContent).toBe("Hello there");
   });
 
   it("takes a line break in a multiline setting that holds one line", async () => {

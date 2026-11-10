@@ -18,7 +18,7 @@ vi.mock("@/shared/static-content/components", () => ({ templateBlocks: {} }));
 vi.mock("./components/preview-page.vue", () => ({ default: {} }));
 vi.mock("./components/scroll-to-element.vue", () => ({ default: {} }));
 vi.mock("@/pages/static-page.vue", () => ({ default: {} }));
-vi.mock("./utils", () => ({ getBuilderOrigin: () => "https://builder.example" }));
+vi.mock("./utils", () => ({ getBuilderOrigin: () => "https://builder.example", installPageInputGuard: vi.fn() }));
 vi.mock("./register-components", () => ({ getRegisteredComponents: async () => ({}) }));
 vi.mock("./shared-component-overlay", () => ({
   SHARED_COMPONENT_END_ANCHOR_ID: "preview-end",

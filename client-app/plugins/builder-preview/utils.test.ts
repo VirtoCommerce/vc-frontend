@@ -102,3 +102,38 @@ describe("guardPreviewNavigation", () => {
     expect(await guard("/printers?sort=price", "/printers", "/printers")).toBe(true);
   });
 });
+
+describe("installPageInputGuard", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  async function guardPage(isPageInputAllowed: () => boolean) {
+    const { installPageInputGuard } = await import("./utils");
+    document.body.innerHTML = `<a id="link" href="/sale">Sale</a>`;
+    const blocker = document.body.appendChild(document.createElement("div"));
+    installPageInputGuard(blocker, isPageInputAllowed);
+
+    return { link: document.getElementById("link") as HTMLElement, blocker };
+  }
+
+  function dispatch(target: EventTarget, event: Event): boolean {
+    target.dispatchEvent(event);
+    return event.defaultPrevented;
+  }
+
+  it("keeps keys and clicks off a page that takes no input, as protocol 1, and lets Tab and the blocker through", async () => {
+    const { link, blocker } = await guardPage(() => false);
+
+    expect(dispatch(link, new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))).toBe(true);
+    expect(dispatch(link, new MouseEvent("click", { bubbles: true, cancelable: true }))).toBe(true);
+    expect(dispatch(link, new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }))).toBe(false);
+    expect(dispatch(blocker, new MouseEvent("click", { bubbles: true, cancelable: true }))).toBe(false);
+  });
+
+  it("leaves input to a page that takes it", async () => {
+    const { link } = await guardPage(() => true);
+
+    expect(dispatch(link, new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))).toBe(false);
+  });
+});

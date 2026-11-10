@@ -126,18 +126,25 @@ function findElementShowing(start: Element, last: HTMLElement, value: string): H
   return normalize(last.textContent ?? "") === normalize(value) ? last : undefined;
 }
 
+export interface IEndedEdit {
+  text: IEditableText;
+  /** Gives the element back the text it showed when the edit started. */
+  revert: () => void;
+}
+
 export class InlineTextEditor {
   private editing: {
     element: HTMLElement;
     text: IEditableText;
     textTransform: string;
     nodes: ChildNode[];
+    values: (string | null)[];
   } | null = null;
 
   constructor(
     private readonly blocker: HTMLElement,
     private readonly onEdit: (edit: IEditableText) => void,
-    private readonly onEnd: () => void,
+    private readonly onEnd: (ended: IEndedEdit) => void,
   ) {}
 
   get isEditing(): boolean {
@@ -155,7 +162,13 @@ export class InlineTextEditor {
     }
 
     const { element } = found;
-    this.editing = { ...found, textTransform: element.style.textTransform, nodes: [...element.childNodes] };
+    const nodes = [...element.childNodes];
+    this.editing = {
+      ...found,
+      textTransform: element.style.textTransform,
+      nodes,
+      values: nodes.map((node) => node.nodeValue),
+    };
     element.setAttribute("contenteditable", "plaintext-only");
     if (element.contentEditable !== "plaintext-only") {
       element.setAttribute("contenteditable", "true");
@@ -180,7 +193,7 @@ export class InlineTextEditor {
       return;
     }
 
-    const { element, textTransform, nodes } = this.editing;
+    const { element, text, textTransform, nodes, values } = this.editing;
     this.editing = null;
     element.removeEventListener("input", this.handleInput);
     element.removeEventListener("keydown", this.handleKeydown);
@@ -193,7 +206,15 @@ export class InlineTextEditor {
     restoreNodes(element, nodes);
     element.blur();
     this.blocker.style.pointerEvents = "auto";
-    this.onEnd();
+    this.onEnd({
+      text,
+      revert: () =>
+        nodes.forEach((node, index) => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            node.nodeValue = values[index];
+          }
+        }),
+    });
   }
 
   private readonly handleInput = (): void => {

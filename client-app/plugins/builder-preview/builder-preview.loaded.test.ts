@@ -31,6 +31,7 @@ vi.mock("./shared-component-overlay", () => ({
 vi.mock("./utils", () => ({
   getBuilderOrigin: () => "https://builder.example",
   guardPreviewNavigation: vi.fn(),
+  installPageInputGuard: vi.fn(),
   isOpenedWithPreviewProtocol: () => state.isProtocolRequested,
 }));
 

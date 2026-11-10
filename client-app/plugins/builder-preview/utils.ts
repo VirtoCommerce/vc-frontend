@@ -75,6 +75,35 @@ export function isDesignerPreview(): boolean {
   return isPreviewMode() || !!getBuilderOrigin();
 }
 
+const PAGE_INPUT_EVENTS = ["keydown", "keyup", "click", "submit"] as const;
+
+/**
+ * The blocker stops the pointer only: keys, and the clicks and submits they make, would reach the focused element.
+ * Tab still moves through the page, so the keyboard can leave the frame.
+ */
+export function installPageInputGuard(blocker: HTMLElement, isPageInputAllowed: () => boolean): void {
+  function stopPageInput(event: Event): void {
+    const { target } = event;
+    const isPageTarget =
+      target instanceof Element &&
+      target !== blocker &&
+      target !== target.ownerDocument.body &&
+      target !== target.ownerDocument.documentElement;
+    const isTab = event instanceof KeyboardEvent && event.key === "Tab";
+
+    if (!blocker.isConnected || isPageInputAllowed() || !isPageTarget || isTab) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
+  for (const type of PAGE_INPUT_EVENTS) {
+    blocker.ownerDocument.addEventListener(type, stopPageInput, true);
+  }
+}
+
 export type PreviewBootOptionsType = {
   /** Whether this document is the Page Builder designer / standalone preview. */
   isActive: boolean;
