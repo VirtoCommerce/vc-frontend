@@ -79,6 +79,13 @@ test("allows .vc-* in a design's block and dark files, nowhere else in designs",
   assert.ok(write("client-app/shared/x.vue", style("  .vc-button {")));
 });
 
+test("allows .vc-* in a preset's stylesheet, nowhere else in presets", () => {
+  assert.equal(edit("client-app/assets/presets/mercury.scss", '  html[data-preset="mercury"] .vc-button {'), null);
+  assert.ok(edit("client-app/assets/presets/mercury.scss", "  color: red !important;"));
+  assert.ok(edit("client-app/assets/presets/nested/mercury.scss", ".vc-button {"));
+  assert.ok(edit("client-app/assets/presets/mercury.css", ".vc-button {"));
+});
+
 test("blocks !important in a design's block file", () => {
   assert.ok(edit("client-app/designs/soft/blocks/vc-button.scss", "  color: red !important;"));
   assert.ok(edit("client-app/designs/soft/dark/vc-button.scss", "  @apply flex !mt-4;"));

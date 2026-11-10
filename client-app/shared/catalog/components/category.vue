@@ -669,6 +669,15 @@ function trackViewSearchResults(): void {
 }
 
 function getCategoryListProperties(page: number): Record<string, string | undefined> {
+  // The search page loads no category; elsewhere a keyword list can render before its category loads.
+  if (route.name === ROUTES.SEARCH.NAME || (!currentCategory.value && searchTerm.value)) {
+    return {
+      item_list_id: `search_results_page_${page}`,
+      item_list_name: `Search results (page ${page})`,
+      related_type: "search",
+    };
+  }
+
   return {
     item_list_id: `category_${currentCategory.value?.slug}_page_${page}`,
     item_list_name: `Category "${currentCategory.value?.name}" (page ${page})`,

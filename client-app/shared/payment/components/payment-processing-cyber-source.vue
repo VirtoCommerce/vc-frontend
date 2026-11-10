@@ -3,7 +3,7 @@
     <div class="flex flex-col xl:flex-row">
       <div class="xl:w-2/3">
         <div>
-          <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+          <VcLabel required>{{ labels.number }}</VcLabel>
 
           <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
         </div>
@@ -38,7 +38,7 @@
           />
 
           <div class="min-w-32 basis-1/4">
-            <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
+            <VcLabel required>{{ labels.securityCode }}</VcLabel>
 
             <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
           </div>

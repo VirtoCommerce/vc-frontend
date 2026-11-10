@@ -6,31 +6,34 @@ paths:
 
 # Styles (BEM, SCSS, Tailwind, theming)
 
-vc-frontend is a white-label theme. Client projects fork it and restyle it through presets (palette JSON),
-public `--vc-*` tokens, `_custom.scss` and their own BEM overrides, and they pull our updates regularly. So every
+vc-frontend is a white-label theme. Client projects fork it and restyle it through presets (palette JSON and an
+optional stylesheet), designs (`client-app/designs/`), public `--vc-*` tokens, `_custom.scss` and their own BEM
+overrides, and they pull our updates regularly. So every
 style is judged by four questions: does it survive **a preset switch**, **dark mode**, **RTL**, and **a client
 override**? A style that only looks right in the default light preset is a bug. What our habits cost a client:
 
-| Our habit | What the client gets |
-|---|---|
-| A literal colour | They switch the preset; this screen keeps our colour |
-| `!important` | Their `!important` in `_custom.scss` or any unlayered CSS loses to it |
-| Long selectors (nesting over other blocks, `:has()`, tag/id chains) | Their one-class override loses |
-| A hardcoded value where a token exists | They can't reach it without editing our file |
-| A kit component restyled locally | Their `--vc-<component>-…` change doesn't reach this screen |
-| A renamed / removed BEM class or `--vc-*` token | Their override silently stops matching after an upgrade |
-| A changed kit default | Every screen of theirs shifts at once |
+| Our habit                                                           | What the client gets                                                  |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| A literal colour                                                    | They switch the preset; this screen keeps our colour                  |
+| `!important`                                                        | Their `!important` in `_custom.scss` or any unlayered CSS loses to it |
+| Long selectors (nesting over other blocks, `:has()`, tag/id chains) | Their one-class override loses                                        |
+| A hardcoded value where a token exists                              | They can't reach it without editing our file                          |
+| A kit component restyled locally                                    | Their `--vc-<component>-…` change doesn't reach this screen           |
+| A renamed / removed BEM class or `--vc-*` token                     | Their override silently stops matching after an upgrade               |
+| A changed kit default                                               | Every screen of theirs shifts at once                                 |
 
 Hence: colours only from the palette and semantic tokens; low specificity — one class must be enough to override
 us; renaming or removing a BEM class or token is a breaking change (alias the token per `ui-kit/DEPRECATION.md`,
-list it under Breaking changes in the PR). Check visual changes in Storybook's preset + dark toolbar
-(`client-app/assets/presets/index.ts`: 7 presets, each with a `.dark.json`).
+list it under Breaking changes in the PR). Where a change goes (the component, a design, a preset, `_custom.scss`):
+the table at the top of `client-app/assets/styles/README.md`. Check visual changes in Storybook's Design, Theme
+preset and dark toolbars (presets: `client-app/assets/presets/index.ts`, each with a `.dark.json`).
 
 `yarn lint` does not parse SCSS; `yarn check:designs`, `yarn check:css-layers` and `yarn check:css-important` check
-design folders, layer names and `!important` (§18) (`client-app/assets/styles/README.md`, "Checks"). Beyond them,
-only the Sass/Tailwind compile in `yarn build` catches anything, so everything else below is review-only. Severity
-guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, print) → `major`; convention violation →
-`minor`; polish → `nit`.
+design folders, preset stylesheets (`assets/presets/<name>.scss`), layer names and `!important` (§18)
+(`client-app/assets/styles/README.md`, "Checks"), and `scripts/design-token-table.test.ts` checks the README's token
+table against the shape and type tokens the styles read. Beyond them, only the Sass/Tailwind compile in `yarn build`
+catches anything, so everything else below is review-only. Severity guide: breaks the build or renders visibly wrong
+(in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
 
 ## 1. Where styles live
 
@@ -44,8 +47,15 @@ guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, prin
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
+   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
+     token on the preset root `html[data-preset]` (inherited, so a block's own setting wins), a block or BEM part
+     only for a part with no token; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
-   - New global tokens go to `:root` in `assets/styles/_ui-kit-tokens.scss` (UI-kit tokens) or `main.scss`.
+   - Variant colour tokens (the `--vc-<comp>-<variant>-<color>-<part>` matrix, `ui-kit-internals.md` §5) go to `:root`
+     in `assets/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
+     colour as its fallback (`--bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"))`). Shape and
+     typography tokens follow the styles README ("Shape and typography tokens"), where classic sets none but
+     `--vc-radius`.
    - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
      Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
      `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
@@ -64,7 +74,7 @@ guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, prin
    its own component. Vue `<transition>` classes (`.x-enter-from`) are fine. Also extract a component when an
    element needs elements of its own (`&__select-all-text`, `&__select-all-icon` → `select-all.vue`), when the root
    switches (`v-if`/`v-else`) between two roots whose modifiers barely overlap, or when a template region has its
-   own props/state/events you could name a file after. The file name says what the *whole* file is for — the block
+   own props/state/events you could name a file after. The file name says what the _whole_ file is for — the block
    inherits it.
 7. **The root element carries the bare block class**, even if all rules are on elements: it is the hook client
    projects restyle. When the root is a component (`<VcModal>`, `<VcWidget>`), put the block class on it via
@@ -84,7 +94,7 @@ guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, prin
 11. Modifiers: boolean `&--active`; enum-like `&--{value}` (`product-card--list`). A modifier bound in the
     template but styled nowhere is dead (`nit`); an element class with no rule is fine (it's a hook).
 12. Class binding: static block/element class + object for modifiers —
-    `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (`` :class="`x--${tone}`" ``)
+    `class="x__item" :class="{ 'x__item--active': isActive }"`. A template literal (``:class="`x--${tone}`"``)
     only for enum-like modifiers. Never build Tailwind classes dynamically (`` `bg-${color}-500` ``): Tailwind
     can't see them and they silently do nothing.
 13. **States through Sass variables — capture, don't repeat** (kit and app alike; reference `vc-button.vue`,
@@ -184,9 +194,15 @@ guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, prin
 
 ## 6. Typography
 
-33. Font is Lato only, loaded with weights **400, 700, 900** (+ italic 400). Use `font-normal`, `font-bold`,
-    `font-black`. `font-thin|extralight|light|medium|semibold|extrabold` fall back to a synthesized or neighbouring
-    weight → finding (the 12 existing `font-medium` are legacy).
+33. Classic's font is Lato only, loaded with weights **400, 700, 900** (+ italic 400). Components render in classic
+    too, so their styles use `font-normal`, `font-bold`, `font-black`.
+    `font-thin|extralight|light|medium|semibold|extrabold` fall back to a synthesized or neighbouring weight → finding
+    (the existing `font-medium` uses are legacy). This weight set is classic's only: a design's own files
+    (`_tokens.scss`, `blocks/`) may use any weight its `design.ts` fonts load (soft loads 400–900 and sets
+    `--vc-widget-title-font-weight: 600`). Never name a family in a component (print styles may use `font-lato`, as
+    the styles README allows): the page font comes from the `base` role, headings from `heading` (`font-heading`).
+    A design's font stylesheets are listed in its `client-app/designs/<name>/design.ts` (a fork's replacement list:
+    `client-app/designs/custom-fonts.ts`).
 34. Sizes from the theme scale only: `xxs` 10 · `xs` 12 · `sm` 14 · `base` 16 · `lg` 18 · `xl` 20 · `2xl` 24 ·
     `3xl` 30 · `4xl` 36 · `5xl` 48 … Each size carries its line-height; override with `text-sm/[1rem]` or
     `leading-*` when needed. `text-[13px]`, `text-[0.8rem]` and other off-scale sizes are findings.
@@ -237,7 +253,7 @@ guide: breaks the build or renders visibly wrong (in any preset, dark, RTL, prin
 
 ## 10. Comments in styles
 
-49. Comment the non-obvious *why* (a containing block for `absolute`, `min-w-0` for truncation, a specificity
+49. Comment the non-obvious _why_ (a containing block for `absolute`, `min-w-0` for truncation, a specificity
     fight with a TODO ticket). One or two lines. No narration of the edit, no QA/ticket histories, no essays —
     `// TODO(VCST-NNNN)` when deferring.
 
