@@ -18,13 +18,15 @@
         ref="inputRef"
         type="checkbox"
         class="vc-checkbox__input"
-        :aria-label="ariaLabel || name"
+        :aria-label="ariaLabel || ($slots.default ? undefined : name)"
         :name="name"
         :value="value"
         :disabled="disabled"
         :checked="isChecked"
         :indeterminate="indeterminate"
         :aria-checked="ariaCheckedValue"
+        :aria-invalid="error ? 'true' : undefined"
+        :aria-describedby="describedById"
         :data-test-id="testId"
         :tabindex="tabindex"
         @change="handleChange"
@@ -48,6 +50,7 @@
     </component>
 
     <VcInputDetails
+      :id="detailsId"
       class="vc-checkbox__details"
       :show-empty="showEmptyDetails"
       :message="message"
@@ -61,6 +64,7 @@
 import { includes } from "lodash-es";
 import { computed, inject, ref, useSlots } from "vue";
 import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "update:modelValue", value: boolean): void;
@@ -69,6 +73,10 @@ interface IEmits {
 
 interface IProps {
   modelValue?: boolean;
+  /**
+   * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
+   * Ignored inside a clickable or linked `VcMenuItem`, where no input renders.
+   */
   name?: string;
   value?: string | number | object;
   disabled?: boolean;
@@ -82,6 +90,7 @@ interface IProps {
   testId?: string;
   preventDefault?: boolean;
   tabindex?: string;
+  /** Accessible name; overrides the slot label. Ignored inside a clickable or linked `VcMenuItem`, where no input renders. */
   ariaLabel?: string;
   tooltip?: {
     placement?: VcPopoverPlacementType;
@@ -102,6 +111,8 @@ const props = withDefaults(defineProps<IProps>(), {
     disabled: false,
   }),
 });
+
+const detailsId = useComponentId("checkbox") + "-details";
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
@@ -128,6 +139,8 @@ const isChecked = computed(() => {
 });
 
 const ariaCheckedValue = computed(() => (props.indeterminate ? "mixed" : isChecked.value));
+
+const describedById = computed(() => (props.message ? detailsId : undefined));
 
 const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label"));
 
