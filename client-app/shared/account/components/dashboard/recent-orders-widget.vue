@@ -16,9 +16,8 @@
         <div v-if="statuses.length" class="recent-orders-widget__filter">
           <!-- In edit mode the chip row becomes its own configuration: checked = offered as a chip. Replacing rather
                than adding, so the header row does not grow. -->
-          <div
+          <fieldset
             v-if="editingTabs"
-            role="group"
             :aria-label="$t('shared.account.dashboard.recent_orders.statuses_label')"
             class="recent-orders-widget__toggles"
           >
@@ -31,7 +30,7 @@
             >
               {{ rule.label }}
             </VcCheckbox>
-          </div>
+          </fieldset>
 
           <template v-else>
             <!-- Baseline chip, active when no status is chosen. A boolean value, so no status can collide with it;
@@ -253,8 +252,9 @@ watch([rowLimit, status], load, { immediate: true });
     --vc-tab-switch-hover-color: var(--color-neutral-900);
   }
 
+  // `min-w-0`: a fieldset is min-content wide by default, which would stop the checkboxes from wrapping.
   &__toggles {
-    @apply flex flex-wrap items-center gap-x-4 gap-y-2;
+    @apply m-0 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-0 p-0;
   }
 
   &__content {

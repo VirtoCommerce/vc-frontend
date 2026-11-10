@@ -225,7 +225,7 @@ describe("RecentOrdersWidget", () => {
     await flushPromises();
 
     const group = wrapper.find(".recent-orders-widget__toggles");
-    expect(group.attributes("role")).toBe("group");
+    expect(group.element.tagName).toBe("FIELDSET");
     expect(group.attributes("aria-label")).toBe("shared.account.dashboard.recent_orders.statuses_label");
   });
 
