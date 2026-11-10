@@ -37,9 +37,10 @@ const meta: Meta<typeof VcFrame> = {
         component: [
           "The header slot has no wrapper: put each header piece in it as a direct child, so a sticky piece sticks for",
           "the whole page; one block element around the pieces kills sticky. VcFrame is the page frame of a layout,",
-          'one per page: the header, `<main id="main-content">` with the page, and the footer. A design sets its',
-          "side space, column and the spaces between header, page and footer with the `--vc-frame-*` tokens on `:root`",
-          "or `html` (client-app/assets/styles/README.md, Page frame). Put the app's skip links first in the header",
+          'one per page: the header, `<main id="main-content">` with the page, and the footer. The `--vc-frame-*`',
+          "tokens set the side space, column and the spaces between header, page and footer: a design sets them on",
+          '`html[data-design="<design>"]`, a fork on `:root` in `_custom.scss` (client-app/assets/styles/README.md,',
+          "Page frame). Put the app's skip links first in the header",
           "slot: they target `#main-content` (the frame's main) and `#footer` (VcFooter renders it). A sticky header",
           "publishes its height as `--vc-app-header-height`, as both app layouts do, so the jump stops below it. The",
           "side space and column reach the page through VcContainer.",

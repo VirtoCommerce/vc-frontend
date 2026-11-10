@@ -526,8 +526,9 @@ this table does not list, or the table lists one the code does not read.
 `secure-layout`: the header slot, `<main id="main-content">` with the page, and the footer. The header slot has no
 wrapper, so a sticky header piece sticks for the whole page. The skip links target `#main-content` and VcFooter's
 `#footer`. In each layout the sticky header's height is published as `--vc-app-header-height` (by VcHeader and
-MobileHeader in the main layout, by the secure layout itself) and read by `html { scroll-padding-top }` (`main.scss`),
-so a jump stops below the header.
+MobileHeader in the main layout, by the secure header in the secure layout) and read by `html { scroll-padding-top }`
+(`main.scss`), so a jump stops below the header; `main`'s `scroll-margin-block-start` keeps the frame's space above
+the page.
 
 The frame owns the space around the page through the `--vc-frame-*` tokens. Classic sets none: each token falls back
 to its Classic value in the table below; soft sets them in `designs/soft/_tokens.scss`. Set them on `:root` or `html`
@@ -544,12 +545,13 @@ frame does not style the header or the footer: they keep their own width and loo
 | `--vc-frame-main-offset-bottom` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |
 
-- VcContainer does not change: VcFrame sets the container's own tokens on its `main`, so a design or a fork that sets
-  the side space or the column moves every VcContainer in the page, nested ones included; a container's `no-padding`
-  or `max-width` prop still wins.
-- When a design or a fork sets a main offset (or the gap), VcContainers in the page drop their own top and bottom
-  padding (24px; bottom 36px from `md`): the frame's space replaces it. A page that sets its container's padding
-  itself keeps it (cart and shared lists below `lg`, the brand page's top container).
+- VcFrame sets the container's own tokens on its `main`, so a design or a fork that sets the side space or the column
+  moves every VcContainer in the page, nested ones included; a container's `no-padding` or `max-width` prop still
+  wins.
+- When a design or a fork sets the gap, VcContainers in the page drop their own top and bottom padding (24px; bottom
+  36px from `md`); a main offset set alone drops only the padding on its side. The frame's space replaces it. A page
+  that sets its container's padding itself keeps it (cart and shared lists below `lg`, the brand page's top
+  container).
 - A container token set above the frame (`:root { --vc-container-px: … }` in `_custom.scss`, or a design's) keeps
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
@@ -558,7 +560,8 @@ frame does not style the header or the footer: they keep their own width and loo
   offsets in `@media print`, a fork's values included; a container token set above the frame still applies (on paper
   `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's padding utility, such as the
   cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
-  `_custom.scss`.
+  `_custom.scss`: its column and gaps apply on paper; its side space does not, because print sets the containers'
+  padding to 0.
 - VcContainer paints its own background over the canvas (its `bg-color` prop, else `--vc-container-bg-color`, which
   defaults to `--body-bg-color`; nothing when `has-bg-image` is false). Soft's canvas is that same colour. A fork that
   sets `--vc-frame-bg-color` alone sees it only around the containers: for one colour everywhere, set
