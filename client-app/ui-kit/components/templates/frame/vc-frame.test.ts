@@ -62,6 +62,7 @@ describe("VcFrame", () => {
       { footer: () => [h(Fragment, [createCommentVNode("v-for", true)])] },
     ],
     ["a footer slot whose fragment holds only null", { footer: () => [h(Fragment, [null])] }],
+    ["a footer slot whose fragment holds an empty nested array", { footer: () => [h(Fragment, [[null]])] }],
     ["a footer slot whose fragment holds a blank string", { footer: () => [h(Fragment, ["  "])] }],
   ])("renders no vc-frame__footer div for %s", (_name, slots) => {
     const wrapper = mount(VcFrame, { slots });

@@ -2,8 +2,8 @@ import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, reactive } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { focusOrder } from "../layout-test-utils";
 import MainLayout from "./main-layout.vue";
-import type { VueWrapper } from "@vue/test-utils";
 import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
 
 vi.mock("vue-router", () => ({ useRoute: () => reactive({ path: "/" }) }));
@@ -23,16 +23,6 @@ const createWrapper = createWrapperFactory(mount, MainLayout, {
   global: { components: { VcFrame } },
   slots: { default: '<p class="page">page</p>' },
 });
-
-const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-// Every focusable element in document order; the skip links are named as part of their block.
-const focusOrder = (wrapper: VueWrapper) =>
-  wrapper
-    .findAll(FOCUSABLE)
-    .map((el) =>
-      `${el.element.closest(".skip-to-links") ? "skip-to-links" : el.element.tagName.toLowerCase()} ${el.attributes("href") ?? ""}`.trim(),
-    );
 
 enableAutoUnmount(afterEach);
 
@@ -59,5 +49,15 @@ describe("MainLayout", () => {
     const wrapper = createWrapper();
 
     expect(focusOrder(wrapper)).toEqual(["skip-to-links #main-content", "skip-to-links #footer", "a /"]);
+  });
+
+  it("puts the footer in the frame's footer element and keeps the header out of main", () => {
+    const wrapper = createWrapper();
+    const main = wrapper.get("main");
+
+    expect(wrapper.get(".vc-frame__footer").find("#footer").exists()).toBe(true);
+    expect(main.find("#footer").exists()).toBe(false);
+    expect(wrapper.find(".header-stub").exists()).toBe(true);
+    expect(main.find(".header-stub").exists()).toBe(false);
   });
 });
