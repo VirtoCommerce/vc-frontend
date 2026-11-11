@@ -101,28 +101,28 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
     --vc-frame-gap: initial;
     --vc-frame-header-offset-top: initial;
     --vc-frame-header-offset-x: initial;
-    --vc-frame-main-offset-top: initial;
-    --vc-frame-main-offset-bottom: initial;
+    --vc-frame-header-offset-bottom: initial;
+    --vc-frame-footer-offset-top: initial;
     --vc-frame-footer-offset-x: initial;
     --vc-frame-footer-offset-bottom: initial;
   }
 
   &__main {
-    $offset-top: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px));
+    $header-offset-bottom: var(--vc-frame-header-offset-bottom, var(--vc-frame-gap, 0px));
 
     // VcContainers in the page take the frame's side space and column and leave the space above and below to the
     // frame; their props and page-set padding still win. `calc(<offset> * 0)` is 0 when the offset or the gap is set
     // (by a design or a fork), invalid (the container's own value) when neither.
     --vc-container-px: var(--inherited-container-px, var(--vc-frame-padding-x));
     --vc-container-max-width: var(--inherited-container-max-width, var(--vc-frame-max-width));
-    --vc-container-pt: var(--inherited-container-pt, calc(var(--vc-frame-main-offset-top, var(--vc-frame-gap)) * 0));
-    --vc-container-pb: var(--inherited-container-pb, calc(var(--vc-frame-main-offset-bottom, var(--vc-frame-gap)) * 0));
+    --vc-container-pt: var(--inherited-container-pt, calc(var(--vc-frame-header-offset-bottom, var(--vc-frame-gap)) * 0));
+    --vc-container-pb: var(--inherited-container-pb, calc(var(--vc-frame-footer-offset-top, var(--vc-frame-gap)) * 0));
 
     @apply relative flex grow flex-col min-h-[var(--vc-frame-main-min-height,auto)];
 
-    margin-block: $offset-top var(--vc-frame-main-offset-bottom, var(--vc-frame-gap, 0px));
+    margin-block: $header-offset-bottom var(--vc-frame-footer-offset-top, var(--vc-frame-gap, 0px));
     // A jump to main (the skip link) keeps the frame's space above the page.
-    scroll-margin-block-start: $offset-top;
+    scroll-margin-block-start: $header-offset-bottom;
   }
 
   &__footer {

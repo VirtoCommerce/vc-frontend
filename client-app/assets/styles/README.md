@@ -241,8 +241,8 @@ The rules for block files:
 - Don't set `opacity`, `transform` or `transition` on elements that carry a Vue `<Transition>` class.
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
-never restates print. Token values apply in print too, except the frame's side space, column, gap and main offsets,
-which VcFrame resets (`--vc-frame-main-min-height` still applies), and its canvas, which is screen only
+never restates print. Token values apply in print too, except the frame's side space, column, gap and header and footer
+offsets, which VcFrame resets (`--vc-frame-main-min-height` still applies), and its canvas, which is screen only
 ([Page frame](#page-frame)).
 
 ### Make your own design
@@ -544,12 +544,12 @@ the header slot has no wrapper.
 | `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | `body`, on screen (`main.scss`); set it on `:root` or `html` only: a value on a layout class or `.vc-frame` never reaches `body` | Not set: transparent | `var(--body-bg-color)` |
 | `--vc-frame-padding-x` | The page's side space: `--vc-container-px` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 24px, `lg` 32px, `2xl` 48px | 12px · `sm` 24px · `lg` 32px |
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
-| `--vc-frame-gap` | The value of the four vertical spaces below (above the header, both main offsets, below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
+| `--vc-frame-gap` | The value of the four vertical spaces below (above and below the header, above and below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
 | `--vc-frame-header-offset-top` | The space above the header | VcFrame's `::before`; the mobile header's `inset-block-start` (it is fixed) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-header-offset-x` | The header's distance from the window's sides | The desktop header rows (`app-header.vue`), the mobile header, the secure header | Not set: 0 | The side space: `var(--vc-frame-padding-x)` (12px, `sm` 24px, `lg` 32px) |
-| `--vc-frame-main-offset-top` | The space between the header and the page | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
-| `--vc-frame-main-offset-bottom` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
+| `--vc-frame-header-offset-bottom` | The space between the header and the page | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |
+| `--vc-frame-footer-offset-top` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-footer-offset-x` | The footer's distance from the window's sides | VcFrame's footer wrapper (`padding-inline`) | Not set: 0 | As the header |
 | `--vc-frame-footer-offset-bottom` | The space below the footer | VcFrame's root (`padding-block-end`) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 
@@ -557,15 +557,15 @@ the header slot has no wrapper.
   moves every VcContainer in the page, nested ones included; a container's `no-padding` or `max-width` prop still
   wins.
 - When a design or a fork sets the gap, VcContainers in the page drop their own top and bottom padding (24px; bottom
-  36px from `md`); a main offset set alone drops only the padding on its side. The frame's space replaces it. A page
-  that sets its container's padding itself keeps it (cart and shared lists below `lg`, the brand page's top
-  container).
+  36px from `md`); `--vc-frame-header-offset-bottom` or `--vc-frame-footer-offset-top` set alone drops only the
+  padding on its side. The frame's space replaces it. A page that sets its container's padding itself keeps it (cart
+  and shared lists below `lg`, the brand page's top container).
 - A container token set above the frame (`:root { --vc-container-px: … }` in `_custom.scss`, or a design's) keeps
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
-- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap, main
-  offsets and header and footer offsets in `@media print`, a fork's values included; a container token set above the
+- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap and
+  header and footer offsets in `@media print`, a fork's values included; a container token set above the
   frame still applies (on paper `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's
   padding utility, such as the cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
   `_custom.scss`: its column and gaps apply on paper; its side space does not, because print sets the containers'
