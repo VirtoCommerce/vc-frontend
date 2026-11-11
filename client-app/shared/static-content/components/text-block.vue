@@ -1,7 +1,7 @@
 <template>
   <div class="text-block pb-16 pt-6" :class="background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <component :is="headingTag" class="mb-3 text-2xl">{{ title }}</component>
+      <component v-if="title?.trim()" :is="headingTag" class="mb-3 text-2xl">{{ title }}</component>
 
       <!-- eslint-disable-next-line vue/no-v-html -- the value is sanitized -->
       <div v-html="contentValue" class="block-content text-lg"></div>
@@ -15,7 +15,7 @@ import { sanitizeSectionHtml, toHeadingTag } from "../sections";
 
 export interface IProps {
   heading: string;
-  title: string;
+  title?: string;
   background?: string;
   text: string | { html: string };
 }

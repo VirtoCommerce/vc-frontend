@@ -17,4 +17,10 @@ describe("TitleBlock", () => {
     expect(wrapper.find("iframe").exists()).toBe(false);
     expect(wrapper.find("h2").text()).toBe("Title");
   });
+
+  it.each([undefined, "", "   "])("renders no heading for the title %j", (title) => {
+    const wrapper = mount(TitleBlock, { props: { title, heading: "h2" } });
+
+    expect(wrapper.find("h1, h2, h3, h4, h5, h6").exists()).toBe(false);
+  });
 });

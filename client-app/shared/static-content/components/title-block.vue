@@ -1,7 +1,7 @@
 <template>
   <div class="title-block pb-16 pt-6 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <component :is="headingTag" class="text-2xl">{{ title }}</component>
+      <component v-if="title?.trim()" :is="headingTag" class="text-2xl">{{ title }}</component>
 
       <p>{{ subtitle }}</p>
     </div>
@@ -14,7 +14,7 @@ import { toHeadingTag } from "../sections";
 
 export interface IProps {
   heading: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   background?: string;
 }
