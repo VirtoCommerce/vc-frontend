@@ -37,7 +37,9 @@
       "nav_previous": "上一个",
       "nav_next": "下一个",
       "nav_up": "向上",
-      "nav_down": "向下"
+      "nav_down": "向下",
+      "select_item": "选择{name}",
+      "select_all_items": "选择所有商品"
     },
     "calendar": {
       "aria_label": "日历",
