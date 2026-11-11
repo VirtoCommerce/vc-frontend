@@ -24,7 +24,9 @@ declare module "vue" {
     VcDialogHeader: typeof Components.VcDialogHeader;
     VcDropdownMenu: typeof Components.VcDropdownMenu;
     VcEmptyView: typeof Components.VcEmptyView;
+    /** @deprecated Use VcWidget with `collapsible` instead. */
     VcExpansionPanel: typeof Components.VcExpansionPanel;
+    /** @deprecated Use VcWidget with `collapsible` instead. */
     VcExpansionPanels: typeof Components.VcExpansionPanels;
     VcFileUploader: typeof Components.VcFileUploader;
     VcFile: typeof Components.VcFile;

@@ -143,7 +143,7 @@ export const TooltipSlotWithImage: StoryType = {
       <VcVariantPicker v-bind="args">
         <template #tooltip>
           <div class="flex items-center gap-2 max-w-64 font-normal">
-            <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md object-cover" />
+            <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md [--vc-image-object-fit:cover]" />
             <div>
               <div class="font-bold">Variant preview</div>
               <div class="text-xs text-neutral-600">This tooltip content comes from the slot and can include any markup.</div>
@@ -160,7 +160,7 @@ export const TooltipSlotWithImage: StoryType = {
           <VcVariantPicker type="image" :value="product-example-1.webp" is-available>
             <template #tooltip>
               <div class="flex items-center gap-2 max-w-64 font-normal">
-                <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md object-cover" />
+                <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md [--vc-image-object-fit:cover]" />
                 <div>
                   <div class="font-bold">Variant preview</div>
                   <div class="text-xs text-neutral-600">This tooltip content comes from the slot and can include any markup.</div>

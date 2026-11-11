@@ -23,17 +23,17 @@
   "color_secondary_900": "#ebe5e5",
   "color_secondary_950": "#f6f4f4",
 
-  "color_accent_50": "#4d0909",
-  "color_accent_100": "#660d0c",
-  "color_accent_200": "#981312",
-  "color_accent_300": "#ca1918",
-  "color_accent_400": "#e73433",
-  "color_accent_500": "#ed6665",
-  "color_accent_600": "#f18685",
-  "color_accent_700": "#f4a6a5",
-  "color_accent_800": "#f8c5c5",
-  "color_accent_900": "#fce5e5",
-  "color_accent_950": "#fef5f5",
+  "color_accent_50": "#081c2e",
+  "color_accent_100": "#112c41",
+  "color_accent_200": "#1a3d54",
+  "color_accent_300": "#224d67",
+  "color_accent_400": "#2b5e79",
+  "color_accent_500": "#346e8c",
+  "color_accent_600": "#588aa3",
+  "color_accent_700": "#7da5ba",
+  "color_accent_800": "#a1c1d1",
+  "color_accent_900": "#c6dce8",
+  "color_accent_950": "#eaf8ff",
 
   "color_neutral_50": "#1c1c1c",
   "color_neutral_100": "#313131",
@@ -101,12 +101,12 @@
   "color_body_bg": "#040303",
   "color_body_text": "#ebe5e5",
 
-  "color_link": "#f4a6a5",
-  "color_link_hover": "#f8c5c5",
+  "color_link": "#7da5ba",
+  "color_link_hover": "#a1c1d1",
 
   "color_price": "#eeeeec",
 
-  "color_shape_icon_bg": "#e73433",
+  "color_shape_icon_bg": "#d32a28",
   "color_shape_icon": "#fef5f5",
 
   "color_empty_list_icon": "#cbd198",
@@ -115,16 +115,16 @@
   "color_mobile_menu_text": "#f6f4f4",
   "color_mobile_menu_link": "#d4c9c9",
   "color_mobile_menu_link_active": "#f6f4f4",
-  "color_mobile_menu_icon": "#ed6665",
+  "color_mobile_menu_icon": "#346e8c",
   "color_mobile_menu_icon_active": "#f6f4f4",
   "color_mobile_menu_navigation": "#cbd198",
   "color_mobile_menu_control": "#bcc57b",
 
   "color_header_top_bg": "#141010",
   "color_header_top_text": "#d4c9c9",
-  "color_header_top_link": "#f4a6a5",
-  "color_header_top_link_hover": "#fce5e5",
-  "color_header_top_link_active": "#f8c5c5",
+  "color_header_top_link": "#7da5ba",
+  "color_header_top_link_hover": "#c6dce8",
+  "color_header_top_link_active": "#a1c1d1",
 
   "color_header_bottom_bg": "#332829",
   "color_header_bottom_text": "#ebe5e5",
@@ -140,7 +140,7 @@
 
   "color_footer_bottom_bg": "#332829",
   "color_footer_bottom_text": "#d4c9c9",
-  "color_footer_bottom_link": "#f4a6a5",
-  "color_footer_bottom_link_hover": "#fce5e5",
-  "color_footer_bottom_link_active": "#fce5e5"
+  "color_footer_bottom_link": "#7da5ba",
+  "color_footer_bottom_link_hover": "#c6dce8",
+  "color_footer_bottom_link_active": "#c6dce8"
 }

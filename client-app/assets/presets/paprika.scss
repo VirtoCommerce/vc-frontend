@@ -1,0 +1,13 @@
+// Paprika's widget colours, from vc-frontend-next's paprika theme: plates sit on a warm cream, not white.
+// Tokens on the preset's html are inherited, so a block that sets the same token on its own element wins.
+@layer vc.preset {
+  html[data-preset="paprika"] {
+    --vc-widget-bg-color: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
+  }
+
+  // The light rule matches in dark too, so dark sets the plate back to additional-50.
+  html.dark[data-preset="paprika"] {
+    --vc-widget-bg-color: var(--color-additional-50);
+    --vc-widget-divide-color: var(--color-neutral-300);
+  }
+}

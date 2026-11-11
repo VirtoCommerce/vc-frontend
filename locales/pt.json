@@ -414,7 +414,9 @@
             "navigation": "Navegação",
             "main_navigation": "Navegação principal"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Nenhum item | {n} item | {n} itens"
       },
       "footer": {
         "version": "Ver.",
@@ -1185,6 +1187,80 @@
           "unpin_label": "Desafixar “{label}”"
         }
       }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Ticket médio de {aov} no período",
+        "title": "Valor médio do pedido"
+      },
+      "axis": {
+        "aov": "Ticket médio, {currency}"
+      },
+      "cancelled_excluded": "Exceto pedidos cancelados",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "últimos 6 meses",
+        "twelve_months": "últimos 12 meses",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mês atual até {today}. As vendas são líquidas, por data do pedido; os pedidos cancelados são excluídos.",
+      "footnote_closed": "{from} – {to}. As vendas são líquidas, por data do pedido; os pedidos cancelados são excluídos.",
+      "footnote_upcoming": "Este período ainda não começou.",
+      "kpi": {
+        "aov": "Valor médio do pedido · {period}",
+        "month_to_date": "Acumulado de {month} · dia {day} de {days}",
+        "orders": "Pedidos · {period}",
+        "projected": "{share} do mês · projeção de {value}",
+        "sales": "Vendas · {period}",
+        "vs_last_year": "{change} vs ano passado"
+      },
+      "last_year": "Ano passado",
+      "last_year_toggle": "Mostrar o ano passado no gráfico «{chart}»",
+      "legend": {
+        "aov_closed": "Ticket médio, meses fechados",
+        "current": "Mês atual, até hoje",
+        "down": "queda",
+        "last_year": "Ano passado",
+        "projection": "Projeção para o fim do mês",
+        "sales_closed": "Vendas, meses fechados",
+        "up": "alta",
+        "vs_last_year": "vs mesmo mês do ano passado"
+      },
+      "load_failed": "Não foi possível carregar o relatório. Tente novamente mais tarde.",
+      "period_label": "Período",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 meses",
+        "twelve_months": "12 meses",
+        "year": "Ano atual"
+      },
+      "sales_chart": {
+        "subtitle": "Média de {value} por mês fechado",
+        "title": "Vendas mensais · {period}"
+      },
+      "table": {
+        "aov": "Ticket médio",
+        "change": "vs ano passado",
+        "description": "Vendas, pedidos e valor médio do pedido por mês",
+        "last_year": "Mesmo mês do ano passado",
+        "month": "Mês",
+        "orders": "Pedidos",
+        "sales": "Vendas",
+        "toggle": "Mostrar como tabela"
+      },
+      "tooltip": {
+        "aov": "Ticket médio",
+        "last_year_aov": "Ticket médio, {month}",
+        "last_year_revenue": "Receita, {month}",
+        "projection": "Projeção para o fim do mês",
+        "revenue": "Receita",
+        "revenue_to_date": "Receita até hoje",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Por vir"
     }
   },
   "pages": {
@@ -1499,6 +1575,8 @@
         "title": "@:common.links.security",
         "no_keys": "Nenhuma chave",
         "unnamed_key": "Chave sem nome",
+        "rename_key_label": "Renomear {name}",
+        "delete_key_label": "Excluir {name}",
         "created": "Criada em {date}",
         "changed": "Alterada em {date}",
         "rename_modal": {

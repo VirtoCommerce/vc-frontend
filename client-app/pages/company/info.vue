@@ -98,6 +98,8 @@
         </VcWidget>
       </div>
 
+      <ExtensionPointList :category="EXTENSION_CATEGORIES.companyInfo" />
+
       <!-- Content block -->
       <VcWidget size="lg">
         <div v-if="addresses.length || loadingAddresses" class="mb-4 flex flex-row items-center justify-between gap-3">
@@ -301,6 +303,7 @@ import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 import {
   AddOrUpdateCompanyAddressModal,
   useCurrentOrganizationAddresses,
@@ -557,8 +560,12 @@ async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: str
 }
 
 watch(
-  () => organization.value!.name!,
-  (name) => resetOrganizationField({ value: name }),
+  () => organization.value?.name,
+  (name) => {
+    if (name) {
+      resetOrganizationField({ value: name });
+    }
+  },
   { immediate: true },
 );
 
