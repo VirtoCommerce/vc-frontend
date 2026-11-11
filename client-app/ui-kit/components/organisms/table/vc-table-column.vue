@@ -76,7 +76,7 @@ const columnData = computed<VcTableColumnType>(() => ({
   title: props.title,
   sortable: props.sortable,
   align: props.align,
-  strong: props.strong,
+  rowHeader: props.rowHeader,
   classes: attrs.class ? normalizeClass(attrs.class) : undefined,
   width: props.width,
   fixed: props.fixed,

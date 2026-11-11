@@ -258,7 +258,7 @@
               :class="[
                 'vc-table__cell',
                 `vc-table__cell--align--${column.align ?? 'left'}`,
-                { 'vc-table__cell--strong': column.strong },
+                { 'vc-table__cell--row-header': column.rowHeader },
                 getColumnFixedClasses(column, 'vc-table__cell'),
                 column.classes,
               ]"
@@ -635,7 +635,7 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
   };
 }
 
-// Detect if @row-click listener is bound (for the clickable row modifier).
+// Detect if @row-click listener is bound.
 // instance.vnode is non-reactive, so we manually refresh on mount/update to track parent re-renders
 // (covers the case where parent dynamically adds/removes the listener).
 const instance = getCurrentInstance();
@@ -715,9 +715,35 @@ function warnOnCustomHeaderIssues(): void {
   );
 }
 
+let rowHeaderWarned = false;
+
+// `rowHeader` styles only the cells VcTable renders itself, from VcTableColumn slots.
+function warnOnUnrenderedRowHeader(): void {
+  if (rowHeaderWarned || !mergedColumns.value.some((column) => column.rowHeader)) {
+    return;
+  }
+
+  // `#desktop-body` wins over column slots, and without a column slot `#desktop-item` renders the rows.
+  if (!slots["desktop-body"] && hasColumnSlots.value) {
+    return;
+  }
+
+  rowHeaderWarned = true;
+
+  // eslint-disable-next-line no-console
+  console.warn(
+    "VcTable: a column is marked `rowHeader`, but VcTable does not render its cells: `#desktop-body` and `#desktop-item` render their own, so the column is not emphasised. `rowHeader` applies only to VcTableColumn slots.",
+  );
+}
+
 onMounted(() => {
   syncRowClickListener();
   syncRetryListener();
+
+  if (import.meta.env.DEV) {
+    // columns register on child mount, so they are known a tick later
+    void nextTick(warnOnUnrenderedRowHeader);
+  }
 
   if (import.meta.env.DEV && selectionEnabled.value && slots["desktop-body"]) {
     // eslint-disable-next-line no-console
@@ -739,6 +765,10 @@ onUpdated(() => {
   // Columns, selection and the desktop table itself can all appear after mount.
   if (import.meta.env.DEV && slots.header) {
     warnOnCustomHeaderIssues();
+  }
+
+  if (import.meta.env.DEV) {
+    warnOnUnrenderedRowHeader();
   }
 });
 
@@ -1214,11 +1244,8 @@ watch(
 
   &__title {
     --font-size: var(--vc-table-title-font-size, theme("fontSize.sm[0]"));
-    --line-height: var(--vc-table-title-line-height, theme("fontSize.sm[1].lineHeight"));
 
-    @apply px-4 py-1 h-10 font-bold text-[length:var(--font-size)] leading-[var(--line-height)];
-
-    color: var(--vc-table-title-color, currentColor);
+    @apply px-4 py-1 h-10 font-bold text-[length:var(--font-size)] text-[color:var(--vc-table-title-color,currentColor)];
 
     @include column-align;
 
@@ -1237,7 +1264,7 @@ watch(
     word-break: break-word;
     // On the body rather than the cells, so rows rendered by `#desktop-item` / `#desktop-body` take it too and a
     // colour set on a row still reaches its cells.
-    color: var(--vc-table-body-color, currentColor);
+    @apply text-[color:var(--vc-table-body-color,currentColor)];
 
     &:first-child {
       tr:first-child {
@@ -1319,11 +1346,9 @@ watch(
 
     @include column-align;
 
-    &--strong {
-      @apply font-bold;
-
+    &--row-header {
       // Keeps the row's colour by default; a design that mutes the body lifts the identifying cell back with this token.
-      color: var(--vc-table-cell-strong-color, currentColor);
+      @apply font-bold text-[color:var(--vc-table-row-header-color,currentColor)];
     }
 
     &--fixed {

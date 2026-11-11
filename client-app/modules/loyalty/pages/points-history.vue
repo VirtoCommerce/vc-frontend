@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="flex items-center justify-between gap-2">
+  <div class="points-history">
+    <div class="points-history__header">
       <VcTypography tag="h1">
         {{ $t("loyalty.points-history.meta.title") }}
       </VcTypography>
@@ -24,39 +24,37 @@
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
-            <div
-              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
-            >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+            <div class="points-history__card">
+              <div class="points-history__field">
+                <span class="points-history__label">
                   {{ $t("loyalty.points-history.operation") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                <span class="points-history__operation">
                   {{ getOperation(itemData.item) }}
                 </span>
               </div>
 
-              <div class="flex flex-col items-end justify-center">
+              <div class="points-history__field points-history__field--type">
                 {{ getOperationType(itemData.item) }}
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+              <div class="points-history__field">
+                <span class="points-history__label">
                   {{ $t("loyalty.points-history.date") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis">
+                <span class="points-history__value">
                   {{ $d(itemData.item?.createdDate) }}
                 </span>
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+              <div class="points-history__field">
+                <span class="points-history__label">
                   {{ $t("loyalty.points-history.amount") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis font-black">
+                <span class="points-history__value points-history__value--strong">
                   {{ itemData.item?.amount }}
                 </span>
               </div>
@@ -64,24 +62,20 @@
           </template>
 
           <template #desktop-body>
-            <tr
-              v-for="log in historyLogs"
-              :key="log.id"
-              class="cursor-default even:bg-neutral-50 hover:bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))]"
-            >
-              <td class="overflow-hidden text-ellipsis p-5">
+            <tr v-for="log in historyLogs" :key="log.id" class="points-history__row">
+              <td class="points-history__cell">
                 {{ getOperation(log) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5">
+              <td class="points-history__cell">
                 {{ getOperationType(log) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5">
+              <td class="points-history__cell">
                 {{ $d(log?.createdDate) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5 text-right">
+              <td class="points-history__cell points-history__cell--amount">
                 {{ log.amount }}
               </td>
             </tr>
@@ -161,3 +155,60 @@ onMounted(async () => {
   await Promise.all([fetchHistory(), fetchLoyaltyBalance()]);
 });
 </script>
+
+<style lang="scss">
+.points-history {
+  &__header {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  &__card {
+    @apply grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
+  }
+
+  &__field {
+    @apply flex flex-col;
+
+    &--type {
+      @apply items-end justify-center;
+    }
+  }
+
+  &__label {
+    @apply text-sm text-neutral-400;
+  }
+
+  &__operation {
+    @apply overflow-hidden text-ellipsis pr-4 font-black;
+  }
+
+  &__value {
+    @apply overflow-hidden text-ellipsis;
+
+    &--strong {
+      @apply font-black;
+    }
+  }
+
+  &__row {
+    @apply cursor-default;
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    // After the zebra: a hovered even row takes the hover colour.
+    &:hover {
+      @apply bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))];
+    }
+  }
+
+  &__cell {
+    @apply overflow-hidden text-ellipsis p-5;
+
+    &--amount {
+      @apply text-right;
+    }
+  }
+}
+</style>

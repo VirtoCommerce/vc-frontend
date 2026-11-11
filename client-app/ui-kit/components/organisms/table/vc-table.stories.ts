@@ -430,8 +430,8 @@ async function onPageChange(newPage: number) {
   },
 };
 
-// 4b. StrongColumn
-export const StrongColumn: StoryType = {
+// 4b. RowHeaderColumn
+export const RowHeaderColumn: StoryType = {
   args: {
     items: sampleItems,
   },
@@ -440,7 +440,7 @@ export const StrongColumn: StoryType = {
     setup: () => ({ args }),
     template: `
       <VcTable :items="args.items">
-        <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
+        <VcTableColumn id="name" title="Name" row-header v-slot="{ item }">{{ item.name }}</VcTableColumn>
         <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
         <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
       </VcTable>
@@ -449,7 +449,8 @@ export const StrongColumn: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "`strong` marks the column that identifies the row, such as an order number: its cells are bold.",
+        story:
+          "`row-header` marks the column that identifies the row, such as an order number: its cells are bold. It applies to the cells VcTable renders from `VcTableColumn` slots only.",
       },
     },
   },
@@ -477,7 +478,7 @@ export const InWidget: StoryType = {
           bordered
           @page-changed="page = $event"
         >
-          <VcTableColumn id="name" title="Name" strong v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="name" title="Name" row-header v-slot="{ item }">{{ item.name }}</VcTableColumn>
           <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
           <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
         </VcTable>
