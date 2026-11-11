@@ -38,9 +38,8 @@ const LAZY_ROOT_MARGIN = "400px";
 const component = computed(() => props.component ?? getPageBuilderSection(props.item.type));
 
 /**
- * Read for its props only: rendering goes through the async wrapper, which calls the loader again on the next mount;
- * a browser that cached the failed chunk keeps failing until the page reloads.
- * The wrapper renders once the props are known, so a section never starts with its defaults.
+ * Gives the prop names only: the async wrapper still renders the section and reports a failed load.
+ * The section waits for them so it never starts with its default props.
  */
 const propsSource = shallowRef<Component>();
 const loadFailed = ref(false);
@@ -89,7 +88,7 @@ watch(
         propsSource.value = loaded;
       }
     } catch {
-      // The async wrapper reports the error when it mounts, and resets the load for the next mount.
+      // The async wrapper reports the error when it mounts.
       if (component.value === value) {
         loadFailed.value = true;
       }
