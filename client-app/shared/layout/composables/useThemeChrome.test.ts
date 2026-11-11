@@ -15,12 +15,14 @@ vi.mock("@/core/composables/useWhiteLabeling", async () => {
 });
 vi.mock("@/core/api/graphql", () => ({ getMenu: vi.fn(async () => []) }));
 
-function publish(snapshot: Partial<IThemeSnapshot>): void {
+const helpMenu = { name: "Footer-Help", items: [{ title: "Contact", url: "/contact" }] };
+
+function publish(snapshot: Partial<IThemeSnapshot>, menus = [helpMenu]): void {
   useThemeSnapshot().setPublished({
     storeId: "store",
     cultureName: "en-US",
     publication: 1,
-    menus: [{ name: "Footer-Help", items: [{ title: "Contact", url: "/contact" }] }],
+    menus,
     snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
   });
 }
@@ -83,6 +85,43 @@ describe("useThemeChrome", () => {
 
     expect(useThemeChrome().footerColumns.value?.[0].children).toEqual([{ title: "Bad", route: undefined }]);
   });
+
+  it.each(["javascript:alert(1)", "vbscript:msgbox(1)", "data:text/html,x"])(
+    "treats an unsafe link of a store menu as a missing one: %s",
+    (url) => {
+      const menu = {
+        name: "Footer-Help",
+        items: [
+          { title: "Bad", url, childItems: [{ title: "Worse", url }] },
+          { title: "Contact", url: "/contact" },
+        ],
+      };
+      publish(
+        {
+          header: { content: [{ id: "h", type: "site-header", icons_menu: "footer-help" }] },
+          footer: {
+            content: [
+              { id: "f", type: "site-footer", blocks: [{ id: "b", type: "footer-menu", menu: "footer-help" }] },
+            ],
+          },
+        },
+        [menu],
+      );
+
+      const chrome = useThemeChrome();
+
+      for (const links of [chrome.footerColumns.value?.[0].children, chrome.iconsMenuLinks.value]) {
+        expect(links).toEqual([
+          expect.objectContaining({
+            title: "Bad",
+            route: undefined,
+            children: [expect.objectContaining({ route: undefined })],
+          }),
+          expect.objectContaining({ title: "Contact", route: "/contact" }),
+        ]);
+      }
+    },
+  );
 
   it("hides a published column that has no links, such as a menu missing in this language", () => {
     publish({

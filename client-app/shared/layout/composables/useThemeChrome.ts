@@ -15,9 +15,13 @@ interface IFooterMenuBlock {
 
 /** Each part is `undefined` while the theme leaves it to the storefront's own header and footer. */
 export function useThemeChrome() {
-  const { siteHeader, getGroupSection, getMenuLinks } = useThemeGroups();
+  const { siteHeader, getGroupSection, getMenuLinks: getStoreMenuLinks } = useThemeGroups();
   const { theme } = useThemeSnapshot();
   const { footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
+
+  function getMenuLinks(name: unknown): ExtendedMenuLinkType[] | undefined {
+    return withSafeRoutes(getStoreMenuLinks(name));
+  }
 
   const siteFooter = computed(() => getGroupSection("footer", "site-footer"));
   const announcementBar = computed(() => getGroupSection("header", "announcement-bar"));
@@ -81,4 +85,13 @@ export function useThemeChrome() {
     copyright,
     isCreditShown,
   };
+}
+
+/** A store menu is content too: an unsafe link opens nothing, like a link the editor typed in. */
+function withSafeRoutes(links: ExtendedMenuLinkType[] | undefined): ExtendedMenuLinkType[] | undefined {
+  return links?.map((link) => ({
+    ...link,
+    route: typeof link.route === "string" && !isSafeLinkUrl(link.route) ? undefined : link.route,
+    children: withSafeRoutes(link.children),
+  }));
 }
