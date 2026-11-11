@@ -25,7 +25,7 @@
               v-for="rule in statusRules"
               :key="rule.name"
               size="sm"
-              :model-value="!effectiveHiddenTabs.includes(rule.name)"
+              :model-value="!hiddenTabs.includes(rule.name)"
               @update:model-value="toggleTab(rule.name)"
             >
               {{ rule.label }}
@@ -114,7 +114,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { escapeFilterSyntaxValue, Logger } from "@/core/utilities";
-import { knownHiddenTabs, toggleTabRule, useBlockChrome, visibleTabRules } from "@/shared/dashboard";
+import { toggleTabRule, useBlockChrome, visibleTabRules } from "@/shared/dashboard";
 import { useOrderNavigation } from "../../composables/useOrderNavigation";
 // The pure filter builder only: the composable in the same file keeps the Orders page's filter state.
 import { getFilterExpression } from "../../composables/useUserOrdersFilter";
@@ -159,28 +159,16 @@ const failed = ref(false);
 const statusRules = computed(() => statuses.value.map((item) => ({ name: item.term, label: item.label })));
 
 const editingTabs = computed(() => Boolean(chrome?.editing.value));
+// Never pruned against `statusRules`: the facet lists only the statuses the user's orders carry right now, so a
+// status missing from it is one with no orders at the moment, not a retired one. `visibleTabRules` skips the rest.
 const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
 // The saved selection, not the draft: chips apply on save, like the row cap.
 const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
 
 // The chips on offer, in facet order. Unchecking every status is allowed: the baseline chip stays.
 const visibleStatuses = computed(() => visibleTabRules(statusRules.value, savedHiddenTabs.value));
-// What the checkboxes read: the stored list minus any status the user's orders no longer carry.
-const effectiveHiddenTabs = computed(() => knownHiddenTabs(statusRules.value, hiddenTabs.value));
-
-// Edit mode is where the live statuses are known, so a retired name is cleared from the draft there.
-watch(
-  [editingTabs, statusRules],
-  () => {
-    if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
-      chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
-    }
-  },
-  { immediate: true },
-);
-
 function toggleTab(name: string): void {
-  chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(hiddenTabs.value, name) });
 }
 
 // A save can hide the status being filtered by, which the user could then neither see nor clear.

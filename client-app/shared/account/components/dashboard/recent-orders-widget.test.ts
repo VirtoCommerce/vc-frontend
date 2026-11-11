@@ -252,42 +252,35 @@ describe("RecentOrdersWidget", () => {
     expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "New", "Processing"]);
   });
 
-  // With no statuses known yet nothing can be called retired, so the draft is left alone.
-  it("leaves the draft alone while the orders carry no status", async () => {
+  // The facet lists only the statuses the orders carry right now, so a hidden status missing from it has no orders
+  // at the moment and must survive the save: neither entering edit mode nor the statuses arriving later touches the
+  // draft.
+  it("keeps a hidden status the orders do not carry now when edit mode begins and when the statuses arrive", async () => {
     getOrders.mockResolvedValue(response([], []));
     editing.value = true;
-    draftHiddenTabs.value = ["New"];
+    draftHiddenTabs.value = ["Cancelled"];
 
     mountWidget();
     await flushPromises();
-
-    expect(updateSettings).not.toHaveBeenCalled();
-  });
-
-  it("drops a retired status once the statuses arrive after edit mode began", async () => {
-    getOrders.mockResolvedValue(response([], []));
-    editing.value = true;
-    draftHiddenTabs.value = ["Retired"];
-
-    mountWidget();
-    await flushPromises();
-    expect(updateSettings).not.toHaveBeenCalled();
 
     getOrders.mockResolvedValue(response([order("1")]));
     savedRows.value = 7;
     await flushPromises();
 
-    expect(updateSettings).toHaveBeenCalledWith({ hiddenTabs: [] });
+    expect(updateSettings).not.toHaveBeenCalled();
+    expect(draftHiddenTabs.value).toEqual(["Cancelled"]);
   });
 
-  it("drops a status the orders no longer carry from the draft while editing", async () => {
+  it("keeps a hidden status the orders do not carry now when another status is toggled", async () => {
     editing.value = true;
-    draftHiddenTabs.value = ["Retired", "New"];
+    draftHiddenTabs.value = ["Cancelled"];
 
-    mountWidget();
+    const wrapper = mountWidget();
     await flushPromises();
 
-    expect(updateSettings).toHaveBeenCalledWith({ hiddenTabs: ["New"] });
+    await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
+
+    expect(updateSettings).toHaveBeenLastCalledWith({ hiddenTabs: ["Cancelled", "New"] });
   });
 
   // A saved layout can hide the chosen status, which the user could then neither see nor clear.
