@@ -80,7 +80,7 @@ function click(navigate: () => Promise<void | NavigationFailure>) {
     emit("select");
   } else {
     if (isExternalLink.value) {
-      window.open(props.link.route as string, "_blank")?.focus();
+      window.open(props.link.route as string, "_blank", "noopener,noreferrer");
     } else {
       void navigate();
     }
