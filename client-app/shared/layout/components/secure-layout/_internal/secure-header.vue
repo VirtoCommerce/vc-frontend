@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="secure-header">
+  <header ref="headerElement" class="secure-header">
     <router-link to="/" replace>
       <VcImage :src="logoUrl" :alt="$context.storeName" class="secure-header__logo" lazy />
     </router-link>
@@ -9,7 +9,7 @@
 
       <Created />
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">

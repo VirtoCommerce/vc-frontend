@@ -1,3 +1,4 @@
+import { within } from "@testing-library/vue";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive, ref, toValue } from "vue";
@@ -88,6 +89,12 @@ describe("SecureLayout", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.find('[data-test-id="checkout-layout.secure-checkout-label"]').exists()).toBe(true);
+  });
+
+  it("renders the secure header as the page's banner landmark", () => {
+    const wrapper = createWrapper();
+
+    expect(within(wrapper.element as HTMLElement).getByRole("banner")).toBe(wrapper.get(".secure-header").element);
   });
 
   it("measures the sticky header element", () => {
