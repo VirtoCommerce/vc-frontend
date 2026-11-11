@@ -1,4 +1,4 @@
 .vc-widget {
-  // No default shadow in dark (the lighter surface lifts the widget); `--vc-widget-shadow` still applies.
+  // No default shadow in dark; `--vc-widget-shadow` still applies.
   --shadow: var(--vc-widget-shadow, 0 0 #0000);
 }
