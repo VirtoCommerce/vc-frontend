@@ -450,6 +450,20 @@ describe("inline editing", () => {
     expect(title.style.textTransform).toBe("uppercase");
   });
 
+  it("keeps a middle click on the text from opening the link around it", () => {
+    document.body.innerHTML = `<section data-pb-section="s1"><a href="/sale"><span id="title">Hello</span></a></section>`;
+    const title = document.getElementById("title") as HTMLElement;
+    document.elementsFromPoint = () => [title];
+    const editor = new InlineTextEditor(document.createElement("div"), vi.fn(), vi.fn());
+
+    editor.start([{ itemId: "s1", path: ["title"], value: "Hello" }], 0, 0);
+
+    const middleClick = new MouseEvent("auxclick", { button: 1, bubbles: true, cancelable: true });
+    title.dispatchEvent(middleClick);
+    expect(middleClick.defaultPrevented).toBe(true);
+    expect(editor.isEditing).toBe(true);
+  });
+
   it("joins pasted lines of a single-line text with one space each", () => {
     document.body.innerHTML = `<section data-pb-section="s1"><h2 id="title">Hello</h2></section>`;
     const title = document.getElementById("title") as HTMLElement;

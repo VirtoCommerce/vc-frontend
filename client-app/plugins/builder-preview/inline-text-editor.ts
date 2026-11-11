@@ -184,6 +184,7 @@ export class InlineTextEditor {
     element.addEventListener("blur", this.handleBlur);
     document.addEventListener("mousedown", this.handleOutsidePress, true);
     document.addEventListener("click", this.handleClickInside, true);
+    document.addEventListener("auxclick", this.handleClickInside, true);
 
     return true;
   }
@@ -200,6 +201,7 @@ export class InlineTextEditor {
     element.removeEventListener("blur", this.handleBlur);
     document.removeEventListener("mousedown", this.handleOutsidePress, true);
     document.removeEventListener("click", this.handleClickInside, true);
+    document.removeEventListener("auxclick", this.handleClickInside, true);
     element.removeAttribute("contenteditable");
     element.style.outline = "";
     element.style.textTransform = textTransform;
@@ -249,7 +251,7 @@ export class InlineTextEditor {
     this.end();
   };
 
-  /** A click inside the text only places the caret: a link or button around it does not act. */
+  /** A click inside the text, also with the middle button, only places the caret: a link or button around it does not act. */
   private readonly handleClickInside = (event: MouseEvent): void => {
     if (this.editing?.element.contains(event.target as Node)) {
       event.preventDefault();
