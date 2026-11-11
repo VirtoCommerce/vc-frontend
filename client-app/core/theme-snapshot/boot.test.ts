@@ -10,6 +10,15 @@ vi.mock("./enabled", () => ({ isNewPageBuilderEnabled: () => enabled.value }));
 
 const STORE_ID = "B2B-store";
 
+const UNKNOWN_FIELD_RESPONSE = {
+  errors: [
+    {
+      message: "Cannot query field 'themeSnapshot' on type 'Query'.",
+      extensions: { code: "FIELDS_ON_CORRECT_TYPE" },
+    },
+  ],
+};
+
 function snapshotResponse(
   overrides: { storeId?: string; cultureName?: string; publication?: number; slug?: unknown } = {},
 ) {
@@ -273,6 +282,93 @@ describe("startThemeSnapshot", () => {
     await router.push("/b");
 
     expect(useThemeSnapshot().published.value?.publication).toBe(9);
+  });
+
+  it("does not ask again on navigations when the store has no theme", async () => {
+    leaveBootRequest(Promise.resolve({ data: { themeSnapshot: null } }));
+    const fetchMock = mockFetch();
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    const router = await startRouter();
+    await router.push("/a");
+    await flushRequests();
+    await router.push("/b");
+    await flushRequests();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["answers HTTP 400", () => Promise.reject(new Error("HTTP 400"))],
+    ["does not know the query", () => Promise.resolve(UNKNOWN_FIELD_RESPONSE)],
+  ])("does not ask again on navigations when the backend %s", async (_, bootResponse) => {
+    leaveBootRequest(bootResponse());
+    const fetchMock = mockFetch();
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    const router = await startRouter();
+    await router.push("/a");
+    await flushRequests();
+    await router.push("/b");
+    await flushRequests();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(useThemeSnapshot().hasFailed.value).toBe(true);
+    expect(useThemeSnapshot().theme.value).toBeUndefined();
+  });
+
+  it.each([
+    ["answers HTTP 400", { ok: false, status: 400 }],
+    ["does not know the query", { ok: true, status: 200, json: () => Promise.resolve(UNKNOWN_FIELD_RESPONSE) }],
+  ])("stops asking on navigations once a retry finds the backend %s", async (_, response) => {
+    leaveBootRequest(Promise.reject(new Error("offline")));
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    const router = await startRouter();
+    await router.push("/a");
+    await flushRequests();
+    await router.push("/b");
+    await flushRequests();
+    await router.push("/c");
+    await flushRequests();
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ["a server error", { ok: false, status: 502 }],
+    [
+      "a GraphQL error with data",
+      {
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ errors: [{ message: "timeout" }], data: { themeSnapshot: null } }),
+      },
+    ],
+  ])("keeps asking once per navigation after %s", async (_, response) => {
+    leaveBootRequest(Promise.reject(new Error("offline")));
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const boot = startThemeSnapshot({ domain: "localhost" });
+    await flushRequests();
+    await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
+    const router = await startRouter();
+    await router.push("/a");
+    await flushRequests();
+    await router.push("/b");
+    await flushRequests();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(useThemeSnapshot().hasFailed.value).toBe(true);
   });
 
   it("does not re-render the page when a navigation is cancelled", async () => {

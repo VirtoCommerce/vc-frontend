@@ -59,6 +59,19 @@ describe("useThemeSnapshot", () => {
     });
   });
 
+  describe("isRejected", () => {
+    it("stays after a later failure of another kind, until a snapshot is accepted", async () => {
+      const { isRejected, setFailed, setLate } = await loadThemeSnapshot();
+
+      setFailed(true);
+      setFailed();
+      expect(isRejected.value).toBe(true);
+
+      setLate(null);
+      expect(isRejected.value).toBe(false);
+    });
+  });
+
   describe("theme palette", () => {
     const PUBLISHED_PALETTE = { light: { color_primary_500: "#published" } };
 

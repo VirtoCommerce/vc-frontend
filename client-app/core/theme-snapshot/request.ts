@@ -19,6 +19,10 @@ const SUPPORTED_FORMAT = 1;
 
 const LOG_SCOPE = "[theme-snapshot]";
 
+const REJECTED_REQUEST_MESSAGE = "HTTP 400";
+
+class ThemeSnapshotRejectedError extends Error {}
+
 export function takeBootThemeSnapshotRequest(): IThemeSnapshotRequest | undefined {
   const holder = globalThis as unknown as Record<string, unknown>;
   const request = holder[THEME_SNAPSHOT_GLOBAL];
@@ -57,7 +61,8 @@ export function readThemeSnapshotResponse(
   }
 
   if (Array.isArray(body.errors) && body.errors.length) {
-    throw new Error(`The theme snapshot request failed: ${JSON.stringify(body.errors)}`);
+    const message = `The theme snapshot request failed: ${JSON.stringify(body.errors)}`;
+    throw isRecord(body.data) ? new Error(message) : new ThemeSnapshotRejectedError(message);
   }
 
   const field = isRecord(body.data) ? body.data.themeSnapshot : undefined;
@@ -81,6 +86,17 @@ export function readThemeSnapshotResponse(
     menus: Array.isArray(field.menus) ? field.menus.filter(isMenu) : [],
     slug: requestedPermalink === undefined ? undefined : readSlug(field.slug, requestedPermalink),
   };
+}
+
+/**
+ * The backend refused the query itself, as one whose x-cms has no `themeSnapshot` field does: asking again gets the
+ * same. The inline script and `requestThemeSnapshot` both reject an HTTP error with `HTTP <status>`.
+ */
+export function isThemeSnapshotRejected(error: unknown): boolean {
+  return (
+    error instanceof ThemeSnapshotRejectedError ||
+    (error instanceof Error && error.message === REJECTED_REQUEST_MESSAGE)
+  );
 }
 
 type LanguageCheckedThemeType = Pick<IPublishedTheme, "cultureName" | "requestedCultureName">;

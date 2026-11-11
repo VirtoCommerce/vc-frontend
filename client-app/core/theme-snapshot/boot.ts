@@ -3,6 +3,7 @@ import { Logger } from "@/core/utilities";
 import { isNewPageBuilderEnabled } from "./enabled";
 import {
   isThemeForLanguage,
+  isThemeSnapshotRejected,
   readThemeSnapshotResponse,
   requestThemeSnapshot,
   takeBootThemeSnapshotRequest,
@@ -78,7 +79,7 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
     return;
   }
 
-  const { promoteLate, hasFailed } = useThemeSnapshot();
+  const { promoteLate, hasFailed, isRejected } = useThemeSnapshot();
   let isRetrying = false;
 
   async function retry(context: IThemeSnapshotContext): Promise<void> {
@@ -96,7 +97,15 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
     // A query or hash change (sorting, filters, an anchor) keeps the page, which must not change its theme under it.
     const isSamePage = from !== START_LOCATION && to.path === from.path;
 
-    if (failure || isSamePage || promoteLate() || from === START_LOCATION || !hasFailed.value || isRetrying) {
+    if (
+      failure ||
+      isSamePage ||
+      promoteLate() ||
+      from === START_LOCATION ||
+      !hasFailed.value ||
+      isRejected.value ||
+      isRetrying
+    ) {
       return;
     }
 
@@ -133,14 +142,14 @@ async function accept(outcome: OutcomeType, context: IThemeSnapshotContext, refe
 
 function failBoot(error: unknown): void {
   Logger.warn(`${LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, error);
-  useThemeSnapshot().setFailed();
+  useThemeSnapshot().setFailed(isThemeSnapshotRejected(error));
 }
 
 async function acceptLate(outcome: OutcomeType, context: IThemeSnapshotContext, refetch?: RefetchType): Promise<void> {
   const { setLate, setFailed } = useThemeSnapshot();
 
   if ("error" in outcome) {
-    setFailed();
+    setFailed(isThemeSnapshotRejected(outcome.error));
     return;
   }
 

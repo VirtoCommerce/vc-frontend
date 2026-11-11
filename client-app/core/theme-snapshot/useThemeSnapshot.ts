@@ -9,6 +9,7 @@ function _useThemeSnapshot() {
   const late = shallowRef<IPublishedTheme | null>();
   const draft = shallowRef<IThemeDraft>();
   const hasFailed = ref(false);
+  const isRejected = ref(false);
   const isNull = ref(false);
 
   const theme = computed<IThemeView | undefined>(() => {
@@ -36,11 +37,13 @@ function _useThemeSnapshot() {
     isNull.value = value === null;
     late.value = undefined;
     hasFailed.value = false;
+    isRejected.value = false;
   }
 
   function setLate(value: IPublishedTheme | null): void {
     late.value = value;
     hasFailed.value = false;
+    isRejected.value = false;
   }
 
   function promoteLate(): boolean {
@@ -52,8 +55,9 @@ function _useThemeSnapshot() {
     return true;
   }
 
-  function setFailed(): void {
+  function setFailed(isRequestRejected = false): void {
     hasFailed.value = true;
+    isRejected.value ||= isRequestRejected;
   }
 
   function setDraft(value: IThemeDraft | undefined): void {
@@ -72,6 +76,8 @@ function _useThemeSnapshot() {
     published: readonly(published),
     draft: readonly(draft),
     hasFailed: readonly(hasFailed),
+    /** The backend refused the request itself, so it is not asked again until a snapshot is accepted. */
+    isRejected: readonly(isRejected),
     /** `false` until a snapshot is accepted, and after a failed request. */
     hasNoTheme,
     isNewPageBuilderOn,
