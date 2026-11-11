@@ -8,9 +8,15 @@ export const SECTION_ATTRIBUTE = "data-pb-section";
 export const FIELD_ATTRIBUTE = "data-pb-field";
 export const PREVIEW_PROTOCOL = 2;
 
-const BUILDER_ORIGIN_STORAGE_KEY = "builderPreviewOrigin";
+const DESIGNER_FRAME_STORAGE_KEY = "builderPreviewFrame";
 
-let cachedBuilderOrigin: string | undefined;
+/** What the designer passes in the frame's first URL: `?ep=` as its origin and `?protocol=`. */
+interface IDesignerFrame {
+  origin: string;
+  protocol?: string;
+}
+
+let cachedDesignerFrame: IDesignerFrame | undefined;
 let cachedIsPreviewProtocol: boolean | undefined;
 
 /**
@@ -19,24 +25,40 @@ let cachedIsPreviewProtocol: boolean | undefined;
  * switch, chunk-load recovery) comes back as the designer's preview and answers its `connect`.
  */
 export function getBuilderOrigin() {
-  cachedBuilderOrigin ??= globalThis.parent === globalThis.window ? "" : resolveFramedBuilderOrigin();
-
-  return cachedBuilderOrigin || undefined;
+  return getDesignerFrame().origin || undefined;
 }
 
-function resolveFramedBuilderOrigin(): string {
-  const endpoint = new URLSearchParams(globalThis.location.search).get("ep");
+/** Read once, as the preview route drops the query; a reloaded frame takes the protocol its designer opened it with. */
+export function isOpenedWithPreviewProtocol(): boolean {
+  cachedIsPreviewProtocol ??=
+    (new URLSearchParams(globalThis.location.search).get("protocol") ?? getDesignerFrame().protocol) ===
+    String(PREVIEW_PROTOCOL);
+
+  return cachedIsPreviewProtocol;
+}
+
+function getDesignerFrame(): IDesignerFrame {
+  cachedDesignerFrame ??= globalThis.parent === globalThis.window ? { origin: "" } : resolveDesignerFrame();
+
+  return cachedDesignerFrame;
+}
+
+function resolveDesignerFrame(): IDesignerFrame {
+  const urlParams = new URLSearchParams(globalThis.location.search);
+  const endpoint = urlParams.get("ep");
 
   if (endpoint === null) {
-    return toHttpOrigin(readStoredBuilderOrigin());
+    const kept = readKeptDesignerFrame();
+    const origin = toHttpOrigin(kept.origin);
+    return origin ? { origin, protocol: kept.protocol } : { origin };
   }
 
-  const origin = toHttpOrigin(endpoint);
-  storeBuilderOrigin(origin);
-  return origin;
+  const frame: IDesignerFrame = { origin: toHttpOrigin(endpoint), protocol: urlParams.get("protocol") ?? undefined };
+  keepDesignerFrame(frame);
+  return frame;
 }
 
-function toHttpOrigin(endpoint: string | null): string {
+function toHttpOrigin(endpoint: string): string {
   try {
     const url = endpoint ? new URL(endpoint) : null;
     return url && (url.protocol === "http:" || url.protocol === "https:") ? url.origin : "";
@@ -46,34 +68,35 @@ function toHttpOrigin(endpoint: string | null): string {
   }
 }
 
-function readStoredBuilderOrigin(): string | null {
+function isDesignerFrame(value: unknown): value is IDesignerFrame {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const { origin, protocol } = value as Record<string, unknown>;
+  return typeof origin === "string" && (protocol === undefined || typeof protocol === "string");
+}
+
+function readKeptDesignerFrame(): IDesignerFrame {
   try {
-    return sessionStorage.getItem(BUILDER_ORIGIN_STORAGE_KEY);
+    const kept: unknown = JSON.parse(sessionStorage.getItem(DESIGNER_FRAME_STORAGE_KEY) ?? "null");
+    return isDesignerFrame(kept) ? kept : { origin: "" };
   } catch (error) {
-    Logger.warn("[builder-preview] Reading the designer origin failed", error);
-    return null;
+    Logger.warn("[builder-preview] Reading the designer frame failed", error);
+    return { origin: "" };
   }
 }
 
-/** An empty origin forgets the kept one: the frame was loaded with an endpoint that is not the designer's. */
-function storeBuilderOrigin(origin: string): void {
+/** An empty origin forgets the kept frame: it was loaded with an endpoint that is not the designer's. */
+function keepDesignerFrame(frame: IDesignerFrame): void {
   try {
-    if (origin) {
-      sessionStorage.setItem(BUILDER_ORIGIN_STORAGE_KEY, origin);
+    if (frame.origin) {
+      sessionStorage.setItem(DESIGNER_FRAME_STORAGE_KEY, JSON.stringify(frame));
     } else {
-      sessionStorage.removeItem(BUILDER_ORIGIN_STORAGE_KEY);
+      sessionStorage.removeItem(DESIGNER_FRAME_STORAGE_KEY);
     }
   } catch (error) {
-    Logger.warn("[builder-preview] Keeping the designer origin failed", error);
+    Logger.warn("[builder-preview] Keeping the designer frame failed", error);
   }
-}
-
-/** Read once, as the preview route drops the query. The Angular designer never asks for it. */
-export function isOpenedWithPreviewProtocol(): boolean {
-  cachedIsPreviewProtocol ??=
-    new URLSearchParams(globalThis.location.search).get("protocol") === String(PREVIEW_PROTOCOL);
-
-  return cachedIsPreviewProtocol;
 }
 
 export function getPreviewPageId(): string | undefined {

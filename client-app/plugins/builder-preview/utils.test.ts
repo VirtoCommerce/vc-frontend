@@ -174,6 +174,72 @@ describe("isPreviewV2Frame", () => {
   });
 });
 
+describe("the preview protocol of a reloaded frame", () => {
+  const PROTOCOL_2_DESIGNER_URL = `${DESIGNER_URL}&protocol=2`;
+
+  beforeEach(() => {
+    newPageBuilder.isEnabled = true;
+    vi.stubGlobal("parent", {});
+  });
+
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+    sessionStorage.clear();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  it("keeps the protocol when the frame reloads without it", async () => {
+    expect((await boot(PROTOCOL_2_DESIGNER_URL)).isPreviewV2Frame()).toBe(true);
+
+    for (const url of ["/printers?sort=price", "/designer-preview"]) {
+      const reloaded = await boot(url);
+
+      expect(reloaded.isOpenedWithPreviewProtocol()).toBe(true);
+      expect(reloaded.isPreviewV2Frame()).toBe(true);
+    }
+  });
+
+  it("takes the protocol of the reloaded URL over the kept one", async () => {
+    await boot(PROTOCOL_2_DESIGNER_URL);
+
+    expect((await boot("/designer-preview?protocol=1")).isOpenedWithPreviewProtocol()).toBe(false);
+  });
+
+  it("takes the kept protocol only in a frame", async () => {
+    await boot(PROTOCOL_2_DESIGNER_URL);
+    vi.unstubAllGlobals();
+
+    expect((await boot("/printers")).isOpenedWithPreviewProtocol()).toBe(false);
+  });
+
+  it("forgets the kept protocol when the designer loads the frame without it", async () => {
+    await boot(PROTOCOL_2_DESIGNER_URL);
+
+    expect((await boot(DESIGNER_URL)).isOpenedWithPreviewProtocol()).toBe(false);
+    expect((await boot("/printers")).isOpenedWithPreviewProtocol()).toBe(false);
+  });
+
+  it("forgets the kept protocol when the frame loads an endpoint that is not the designer's", async () => {
+    await boot(PROTOCOL_2_DESIGNER_URL);
+
+    const invalid = await boot(`/?ep=${encodeURIComponent("javascript:alert(1)")}&protocol=2`);
+    expect(invalid.isPreviewV2Frame()).toBe(false);
+
+    expect((await boot("/printers")).isOpenedWithPreviewProtocol()).toBe(false);
+  });
+
+  it("does not speak the preview protocol when the frame cannot read its storage", async () => {
+    await boot(PROTOCOL_2_DESIGNER_URL);
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new DOMException("The operation is insecure.", "SecurityError");
+    });
+
+    expect((await boot("/printers")).isOpenedWithPreviewProtocol()).toBe(false);
+  });
+});
+
 describe("guardPreviewNavigation", () => {
   function route(fullPath: string) {
     const url = new URL(fullPath, "https://store.example");
