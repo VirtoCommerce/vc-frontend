@@ -108,10 +108,8 @@ provideBlockChrome({
       @apply cursor-grabbing;
     }
 
-    // `:focus-visible`: `--editing`'s dashed outline would otherwise replace the ring of a card reached with Tab.
-    // `[aria-pressed]`: useKeyboardSort moves the card and restores focus a tick later, so the grabbed card's ring
-    // must not depend on `:focus-visible`. The grab itself reads from `--grabbed` (opacity + shadow), which is why
-    // no second ring is needed here.
+    // Overrides the dashed `--editing` outline. `[aria-pressed]`: useKeyboardSort restores focus a tick after a move,
+    // so the grabbed card can't rely on `:focus-visible`.
     &:focus-visible,
     &[aria-pressed="true"] {
       @include focus-ring;

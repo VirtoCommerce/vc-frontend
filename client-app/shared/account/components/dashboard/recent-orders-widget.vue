@@ -11,11 +11,8 @@
     <!-- VcWidget has no padding prop; #default-container is the seam for the inset. -->
     <template #default-container>
       <div class="recent-orders-widget__body">
-        <!-- One chip per status the user's orders carry, from the list's own facets, so every chip has orders behind
-             it. No count on a chip: the widget lists a few orders, not the status's total. -->
+        <!-- Statuses come from the list's facets, so every chip has orders. -->
         <div v-if="statuses.length" class="recent-orders-widget__filter">
-          <!-- In edit mode the chip row becomes its own configuration: checked = offered as a chip. Replacing rather
-               than adding, so the header row does not grow. -->
           <fieldset
             v-if="editingTabs"
             :aria-label="$t('shared.account.dashboard.recent_orders.statuses_label')"
@@ -33,7 +30,7 @@
           </fieldset>
 
           <template v-else>
-            <!-- Baseline chip, active when no status is chosen. A boolean value, so no status can collide with it;
+            <!-- "All": a boolean value never collides with a status.
                  `Boolean(true)` because `:value="true"` trips vue/prefer-true-attribute-shorthand. -->
             <VcTabSwitch size="sm" :value="Boolean(true)" :model-value="!status" @change="status = undefined">
               <span class="recent-orders-widget__label">
@@ -155,23 +152,20 @@ const statuses = shallowRef<StatusTermType[]>([]);
 const loading = ref(false);
 const failed = ref(false);
 
-// The statuses as the shared tab settings read them: `name` is the facet term the filter uses.
 const statusRules = computed(() => statuses.value.map((item) => ({ name: item.term, label: item.label })));
 
 const editingTabs = computed(() => Boolean(chrome?.editing.value));
-// Never pruned against `statusRules`: the facet lists only the statuses the user's orders carry right now, so a
-// status missing from it is one with no orders at the moment, not a retired one. `visibleTabRules` skips the rest.
+// Not pruned: the facet omits statuses that have no orders right now.
 const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
-// The saved selection, not the draft: chips apply on save, like the row cap.
+// Chips change only on Save.
 const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
 
-// The chips on offer, in facet order. Unchecking every status is allowed: the baseline chip stays.
 const visibleStatuses = computed(() => visibleTabRules(statusRules.value, savedHiddenTabs.value));
 function toggleTab(name: string): void {
   chrome?.updateSettings({ hiddenTabs: toggleTabRule(hiddenTabs.value, name) });
 }
 
-// A save can hide the status being filtered by, which the user could then neither see nor clear.
+// A save may hide the active status: fall back to "All".
 watch(visibleStatuses, (rules) => {
   if (status.value && !rules.some((rule) => rule.name === status.value)) {
     status.value = undefined;
@@ -240,7 +234,7 @@ watch([rowLimit, status], load, { immediate: true });
     --vc-tab-switch-hover-color: var(--color-neutral-900);
   }
 
-  // `min-w-0`: a fieldset is min-content wide by default, which would stop the checkboxes from wrapping.
+  // A fieldset is min-content wide by default; `min-w-0` lets the checkboxes wrap.
   &__toggles {
     @apply m-0 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-0 p-0;
   }

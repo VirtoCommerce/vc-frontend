@@ -50,11 +50,9 @@ function response(items: unknown[], facets = [STATUS_FACET]) {
 
 /** The saved row cap a layout hands its blocks; `undefined` renders the widget outside any layout. */
 const savedRows = ref<number | undefined>(undefined);
-/** Edit mode, the draft's unchecked statuses and the saved ones. */
 const editing = ref(false);
 const draftHiddenTabs = ref<string[]>([]);
 const savedHiddenTabs = ref<string[]>([]);
-// Writes into the draft as the layout does, so a toggle round-trips to the checkboxes.
 const updateSettings = vi.fn((patch: { hiddenTabs?: readonly string[] }) => {
   if (patch.hiddenTabs) {
     draftHiddenTabs.value = [...patch.hiddenTabs];
@@ -100,7 +98,7 @@ function mountWidget(inLayout = true) {
         VcLink: true,
         VcIcon: true,
         VcButton: { template: '<button class="cta"><slot /></button>' },
-        // The checkbox label renders in the tooltip's trigger.
+        // VcCheckbox renders its label in the tooltip trigger.
         VcTooltip: { template: '<span><slot name="trigger" /></span>' },
       },
       mocks: { $t: (key: string) => key },
@@ -108,17 +106,16 @@ function mountWidget(inLayout = true) {
   });
 }
 
-// The label of every chip, the baseline one first.
 const chips = (wrapper: ReturnType<typeof mountWidget>) =>
   wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button").map((chip) => chip.text());
 
-// [label, checked] per status checkbox in edit mode.
+// [label, checked]
 const toggles = (wrapper: ReturnType<typeof mountWidget>) =>
   wrapper
     .findAll(".recent-orders-widget__toggles .vc-checkbox")
     .map((box) => [box.text(), box.classes("vc-checkbox--checked")]);
 
-// Every mounted widget shares the chrome refs and the spy below, so a widget left mounted would answer the next test.
+// The chrome refs and the spy are shared: unmount after each test.
 enableAutoUnmount(afterEach);
 
 beforeEach(() => {
@@ -183,7 +180,6 @@ describe("RecentOrdersWidget", () => {
     expect(wrapper.findComponent(OrdersTable).props()).toMatchObject({ loading: true, skeletonRows: 3 });
   });
 
-  // No count on a chip, as in the Sales Rep Hub: the widget lists a few orders, not the status's total.
   it("offers a chip per status the orders carry, after the baseline, without counts", async () => {
     const wrapper = mountWidget();
     await flushPromises();
@@ -200,7 +196,6 @@ describe("RecentOrdersWidget", () => {
     expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "Processing"]);
   });
 
-  // The draft is the editor's: unchecking a status changes nothing on the list until the layout is saved.
   it("turns the chips into a checkbox per status in edit mode, checked = offered", async () => {
     editing.value = true;
     draftHiddenTabs.value = ["Processing"];
@@ -229,7 +224,6 @@ describe("RecentOrdersWidget", () => {
     expect(group.attributes("aria-label")).toBe("shared.account.dashboard.recent_orders.statuses_label");
   });
 
-  // The draft drives the checkboxes only: the list keeps its query, and the chips come back from the saved layout.
   it("keeps an unsaved toggle in the draft", async () => {
     editing.value = true;
 
@@ -252,9 +246,6 @@ describe("RecentOrdersWidget", () => {
     expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "New", "Processing"]);
   });
 
-  // The facet lists only the statuses the orders carry right now, so a hidden status missing from it has no orders
-  // at the moment and must survive the save: neither entering edit mode nor the statuses arriving later touches the
-  // draft.
   it("keeps a hidden status the orders do not carry now when edit mode begins and when the statuses arrive", async () => {
     getOrders.mockResolvedValue(response([], []));
     editing.value = true;
@@ -283,7 +274,6 @@ describe("RecentOrdersWidget", () => {
     expect(updateSettings).toHaveBeenLastCalledWith({ hiddenTabs: ["Cancelled", "New"] });
   });
 
-  // A saved layout can hide the chosen status, which the user could then neither see nor clear.
   it("falls back to every status when the chosen one is hidden by a save", async () => {
     const wrapper = mountWidget();
     await flushPromises();
