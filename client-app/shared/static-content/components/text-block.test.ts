@@ -18,6 +18,10 @@ describe("TextBlock", () => {
     expect(wrapper.find("h2").text()).toBe("Title");
   });
 
+  it.each([undefined, "", "   "])("renders no heading for the title %j", (title) => {
+    expect(mountTextBlock({ title }).find("h1, h2, h3, h4, h5, h6").exists()).toBe(false);
+  });
+
   it("sanitizes the text HTML", () => {
     const wrapper = mountTextBlock({
       text: { html: '<p>Hi</p><img src="x.png" onerror="alert(1)"><iframe></iframe>' },
