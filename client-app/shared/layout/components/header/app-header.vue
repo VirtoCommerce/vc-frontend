@@ -81,13 +81,15 @@ const isMegamenuShown = computed(() => {
   &__top {
     @apply relative z-[21] border-b border-neutral-300;
 
-    margin-inline: var(--vc-frame-header-offset-x, 0px);
+    inline-size: min(100% - 2 * var(--vc-frame-header-offset-x, 0px), var(--vc-frame-max-width, 100%));
+    margin-inline: auto;
   }
 
   &__sticky {
     @apply sticky top-0 z-20 shadow-md;
 
-    margin-inline: var(--vc-frame-header-offset-x, 0px);
+    inline-size: min(100% - 2 * var(--vc-frame-header-offset-x, 0px), var(--vc-frame-max-width, 100%));
+    margin-inline: auto;
 
     @media print {
       @apply hidden;

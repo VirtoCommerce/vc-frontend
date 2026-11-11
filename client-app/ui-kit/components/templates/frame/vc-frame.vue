@@ -126,7 +126,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   }
 
   &__footer {
-    padding-inline: var(--vc-frame-footer-offset-x, 0px);
+    inline-size: min(100% - 2 * var(--vc-frame-footer-offset-x, 0px), var(--vc-frame-max-width, 100%));
+    margin-inline: auto;
   }
 }
 </style>
