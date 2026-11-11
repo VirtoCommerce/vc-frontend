@@ -537,7 +537,7 @@ frame does not style the header or the footer: they keep their own width and loo
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |
-| `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | `body`, on screen (`main.scss`) | Not set: transparent | `var(--body-bg-color)` |
+| `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | `body`, on screen (`main.scss`); set it on `:root` or `html` only: a value on a layout class or `.vc-frame` never reaches `body` | Not set: transparent | `var(--body-bg-color)` |
 | `--vc-frame-padding-x` | The page's side space: `--vc-container-px` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 24px, `lg` 32px, `2xl` 48px | 12px · `sm` 24px · `lg` 32px |
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
 | `--vc-frame-gap` | The value of both main offsets below when they are not set | VcFrame's `main` | Not set: 0 | 13px · `sm` 26px |
