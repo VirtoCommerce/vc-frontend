@@ -8,7 +8,7 @@ const SHORT_INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS / 2;
 const SIMULATED_REQUEST_DURATION_MS = DEFAULT_DEBOUNCE_IN_MS;
 const TOTAL_PROCESSING_DELAY_MS = INITIAL_DELAY_MS + SIMULATED_REQUEST_DURATION_MS;
 const MUTATION_OVERRIDE_OPTIONS = {
-  context: { fetchOptions: { signal: new AbortController().signal } },
+  context: { fetchOptions: { signal: expect.any(AbortSignal) } },
 };
 
 const mutationMock = (value: unknown) =>
@@ -47,9 +47,9 @@ describe("useMutationBatcher", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
     void add(DUMMY_TEXT_ARGUMENTS);
-    expect(mutation).not.toBeCalled();
+    expect(mutation).not.toHaveBeenCalled();
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation).toBeCalledWith(DUMMY_TEXT_ARGUMENTS, MUTATION_OVERRIDE_OPTIONS);
+    expect(mutation).toHaveBeenCalledWith(DUMMY_TEXT_ARGUMENTS, MUTATION_OVERRIDE_OPTIONS);
   });
 
   it("should return value from mutation", () => {
@@ -64,9 +64,9 @@ describe("useMutationBatcher", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, { debounce: SHORT_INITIAL_DELAY_MS });
     void add(DUMMY_TEXT_ARGUMENTS);
-    expect(mutation).not.toBeCalled();
+    expect(mutation).not.toHaveBeenCalled();
     vi.advanceTimersByTime(SHORT_INITIAL_DELAY_MS);
-    expect(mutation).toBeCalled();
+    expect(mutation).toHaveBeenCalled();
   });
 
   it("should abort previous pending mutation when add new", async () => {
@@ -78,7 +78,7 @@ describe("useMutationBatcher", () => {
     void add(DUMMY_TEXT_ARGUMENTS);
     await vi.advanceTimersByTimeAsync(INITIAL_DELAY_MS);
     void add(DUMMY_TEXT_ARGUMENTS);
-    expect(abortSpy).toBeCalledTimes(2);
+    expect(abortSpy).toHaveBeenCalledTimes(2);
   });
 
   it("should abort previous mutation if batch is overflowed", async () => {
@@ -89,7 +89,7 @@ describe("useMutationBatcher", () => {
     await vi.advanceTimersByTimeAsync(INITIAL_DELAY_MS);
     void add(DUMMY_TEXT_ARGUMENTS);
     expect(overflowed.value).toBe(true);
-    expect(abortSpy).toBeCalled();
+    expect(abortSpy).toHaveBeenCalled();
   });
 
   it("should set correct overflowed state", async () => {
@@ -108,7 +108,7 @@ describe("useMutationBatcher", () => {
     void add(getTestArguments("product_id_1"));
     void add(getTestArguments("product_id_1"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation).toBeCalledWith(
+    expect(mutation).toHaveBeenCalledWith(
       {
         command: {
           cartItems: [
@@ -135,7 +135,7 @@ describe("useMutationBatcher", () => {
     void add(getTestArguments("product_id_1"));
     void add(getTestArguments("product_id_1"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation).toBeCalledWith(
+    expect(mutation).toHaveBeenCalledWith(
       {
         command: {
           cartItems: [{ productId: "product_id_1", quantity: 3 }],
@@ -157,11 +157,11 @@ describe("useMutationBatcher", () => {
     expect(overflowed1.value).toBe(true);
     expect(overflowed2.value).toBe(false);
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation1).toBeCalled();
-    expect(mutation2).not.toBeCalled();
+    expect(mutation1).toHaveBeenCalled();
+    expect(mutation2).not.toHaveBeenCalled();
     void add2(getTestArguments("product_id_2"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation2).toBeCalled();
+    expect(mutation2).toHaveBeenCalled();
   });
 
   it("should set loading to true when mutation starts and to false after mutation is done", async () => {
@@ -236,7 +236,7 @@ describe("useMutationBatcher", () => {
 
     abort();
 
-    expect(abortSpy).toBeCalled();
+    expect(abortSpy).toHaveBeenCalled();
   });
 
   it("should update the arguments ref after adding a mutation", () => {
@@ -259,7 +259,7 @@ describe("useMutationBatcher", () => {
     const testArgs = getTestArguments("product_id_1");
     void add(testArgs);
 
-    expect(onAddHandlerMock).toBeCalledWith(expect.any(String), testArgs);
+    expect(onAddHandlerMock).toHaveBeenCalledWith(expect.any(String), testArgs);
   });
 });
 

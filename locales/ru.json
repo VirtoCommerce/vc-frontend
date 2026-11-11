@@ -414,7 +414,9 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"
       },
       "footer": {
         "version": "Версия",

@@ -656,3 +656,37 @@ describe("category page with infinite scroll", () => {
     ]);
   });
 });
+
+describe("search results list in analytics", () => {
+  function viewItemListProperties(): Record<string, unknown> | undefined {
+    return mocks.analytics.mock.calls.find(([event]) => event === "viewItemList")?.[2] as
+      Record<string, unknown> | undefined;
+  }
+
+  it("reports a search list, not a category named undefined, for a keyword search", async () => {
+    await mountAt("/search?q=tablet");
+
+    const properties = viewItemListProperties();
+
+    expect(properties).toEqual(
+      expect.objectContaining({
+        item_list_id: "search_results_page_1",
+        item_list_name: "Search results (page 1)",
+        related_type: "search",
+      }),
+    );
+    expect(JSON.stringify(properties)).not.toContain("undefined");
+  });
+
+  it.each([
+    ["a barcode lookup", "/search?barcode=4101"],
+    ["the search page without a search term", "/search"],
+    ["a keyword search outside the search page while no category is loaded", "/catalog?q=tablet"],
+  ])("reports a search list for %s", async (_case, url) => {
+    await mountAt(url);
+
+    expect(viewItemListProperties()).toEqual(
+      expect.objectContaining({ item_list_id: "search_results_page_1", item_list_name: "Search results (page 1)" }),
+    );
+  });
+});

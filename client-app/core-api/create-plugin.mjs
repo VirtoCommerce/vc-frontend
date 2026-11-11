@@ -471,12 +471,16 @@ module.exports = {
 `;
 
 const stylesCss = `/*
- * Plugin utility layer: only components + utilities - NOT base, so the host's
- * Tailwind preflight/reset is not re-injected (it is already applied globally).
- * The CSS custom properties these utilities reference are defined by the host.
+ * The plugin's Tailwind output, in the storefront's \`plugins\` cascade layer: below the storefront's own
+ * utilities, so the plugin's copy of .flex-col cannot override the storefront's lg:flex-row on its pages.
+ * \`variants\` must stay inside the layer, or Tailwind 3 appends md:, lg: and hover: rules after it, unlayered.
+ * No \`@tailwind base\`: the storefront already applies its reset.
  */
-@tailwind components;
-@tailwind utilities;
+@layer plugins {
+  @tailwind components;
+  @tailwind utilities;
+  @tailwind variants;
+}
 `;
 
 const tsconfig = {
@@ -752,7 +756,12 @@ a declared menu title in \`plugin.config.ts\` is such a key too.`,
 Plugin CSS applies to the whole storefront page: nothing fences it yet. Prefer \`<style scoped>\`, and colour with
 the storefront's CSS variables (\`var(--color-…)\`), not fixed values, so dark mode and the theme presets work.`,
   selected.tailwind &&
-    "\nTailwind here uses the storefront's preset and emits only components and utilities, never its base reset.",
+    `
+Tailwind here uses the storefront's preset. \`src/styles.css\` puts the plugin's utilities into the storefront's
+\`plugins\` cascade layer, below the storefront's own utilities: unlayered, the plugin's copy of \`.flex-col\` would
+override the storefront's \`lg:flex-row\` on every page. Keep every \`@tailwind\` directive inside that layer. A
+responsive class the storefront never uses loses there to a base class it does use (\`hidden 2xl:block\` stays
+hidden): give such an element a class of its own and \`@apply\` the utilities in its style block.`,
   webDir
     ? `
 ## Shipping
@@ -810,7 +819,11 @@ How it plugs in, its files, rules and commands: @README.md
 1. Import from a storefront path (\`@/…\`). A symbol the facade lacks is either added to it in vc-frontend
    ([S3](${SCENARIOS_URL}/s3-extend-the-facade.md)) or copied here, small.
 2. Edit \`@vc-frontend/core\` types, or commit its pin as \`portal:\`, \`link:\` or a yalc path.`,
-  selected.apollo && "3. Edit `src/api/graphql/types.ts` by hand: run `yarn generate:graphql-types`.",
+  selected.tailwind &&
+    `3. Move a \`@tailwind\` directive out of \`@layer plugins\` in \`src/styles.css\`: unlayered, the plugin's
+   utilities override the storefront's responsive ones on every page.`,
+  selected.apollo &&
+    `${selected.tailwind ? 4 : 3}. Edit \`src/api/graphql/types.ts\` by hand: run \`yarn generate:graphql-types\`.`,
   `
 ## Where each task is described
 
