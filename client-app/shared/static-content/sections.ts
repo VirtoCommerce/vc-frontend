@@ -2,7 +2,12 @@ import DOMPurify from "dompurify";
 import { camelize } from "vue";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
-import { FIELD_ATTRIBUTE, isDesignerPreview, SECTION_ATTRIBUTE } from "@/plugins/builder-preview/utils";
+import {
+  FIELD_ATTRIBUTE,
+  isDesignerPreview,
+  isPreviewV2Frame,
+  SECTION_ATTRIBUTE,
+} from "@/plugins/builder-preview/utils";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
@@ -65,12 +70,12 @@ export function getPageBuilderSection(type: unknown): Component | undefined {
 }
 
 export function getPreviewSectionAttrs(id: unknown): Record<string, string> {
-  return isDesignerPreview() && typeof id === "string" ? { [SECTION_ATTRIBUTE]: id } : {};
+  return isPreviewV2Frame() && typeof id === "string" ? { [SECTION_ATTRIBUTE]: id } : {};
 }
 
 /** Names the setting by its path (`buttons.1.label`), so the preview can tell two settings with the same text apart. */
 export function getPreviewFieldAttrs(path: string): Record<string, string> {
-  return isDesignerPreview() ? { [FIELD_ATTRIBUTE]: path } : {};
+  return isPreviewV2Frame() ? { [FIELD_ATTRIBUTE]: path } : {};
 }
 
 /** Off in the designer preview, which shows every section at once. */

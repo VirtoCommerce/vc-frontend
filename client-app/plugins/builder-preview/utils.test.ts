@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RouteLocationNormalized } from "vue-router";
 
+const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
+
 describe("getBuilderOrigin", () => {
   beforeEach(() => {
     vi.stubGlobal("parent", {});
@@ -72,6 +76,53 @@ describe("isOpenedWithPreviewProtocol", () => {
     window.history.replaceState(null, "", "/designer-preview");
 
     expect(isOpenedWithPreviewProtocol()).toBe(true);
+  });
+});
+
+describe("isPreviewV2Frame", () => {
+  beforeEach(() => {
+    newPageBuilder.isEnabled = true;
+    vi.stubGlobal("parent", {});
+  });
+
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  it("is true in a frame of the designer that speaks the preview protocol", async () => {
+    window.history.replaceState(null, "", "/designer-preview?ep=https%3A%2F%2Fbuilder.example&protocol=2");
+
+    const { isPreviewV2Frame } = await import("./utils");
+
+    expect(isPreviewV2Frame()).toBe(true);
+  });
+
+  it("is false in the standalone preview, which is not in a frame", async () => {
+    vi.unstubAllGlobals();
+    window.history.replaceState(null, "", "/designer-preview?ep=https%3A%2F%2Fbuilder.example&protocol=2");
+
+    const { isPreviewV2Frame } = await import("./utils");
+
+    expect(isPreviewV2Frame()).toBe(false);
+  });
+
+  it("is false in a frame opened without the preview protocol, as the Angular designer opens it", async () => {
+    window.history.replaceState(null, "", "/designer-preview?ep=https%3A%2F%2Fbuilder.example");
+
+    const { isPreviewV2Frame } = await import("./utils");
+
+    expect(isPreviewV2Frame()).toBe(false);
+  });
+
+  it("is false when the New Page Builder is off", async () => {
+    newPageBuilder.isEnabled = false;
+    window.history.replaceState(null, "", "/designer-preview?ep=https%3A%2F%2Fbuilder.example&protocol=2");
+
+    const { isPreviewV2Frame } = await import("./utils");
+
+    expect(isPreviewV2Frame()).toBe(false);
   });
 });
 

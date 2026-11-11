@@ -1,4 +1,5 @@
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot/enabled";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
@@ -73,6 +74,11 @@ export function isPreviewMode(): boolean {
 /** The designer also renders templates on storefront pages, away from the preview route. */
 export function isDesignerPreview(): boolean {
   return isPreviewMode() || !!getBuilderOrigin();
+}
+
+/** Only the designer that speaks the preview protocol reads the `data-pb-*` markup; elsewhere the page is unchanged. */
+export function isPreviewV2Frame(): boolean {
+  return !!getBuilderOrigin() && isOpenedWithPreviewProtocol() && isNewPageBuilderEnabled();
 }
 
 const PAGE_INPUT_EVENTS = ["keydown", "keyup", "click", "submit"] as const;
