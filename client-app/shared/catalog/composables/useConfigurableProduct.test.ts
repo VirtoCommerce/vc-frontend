@@ -220,7 +220,7 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
       vi.advanceTimersByTime(TIMER_DELAY);
 
-      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+      expect(createConfiguredLineItemMutationMock).toHaveBeenCalledTimes(2);
       const [firstCall] = createConfiguredLineItemMutationMock.mock.calls[0] as [
         CreateConfiguredLineItemMutationVariables,
       ];
@@ -287,7 +287,7 @@ describe("useConfigurableProduct", () => {
       });
       await flushPromises();
 
-      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(1);
+      expect(createConfiguredLineItemMutationMock).toHaveBeenCalledTimes(1);
     });
 
     it("handles product type configuration with predefined values", async () => {
@@ -558,7 +558,7 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
       vi.advanceTimersByTime(TIMER_DELAY);
 
-      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+      expect(createConfiguredLineItemMutationMock).toHaveBeenCalledTimes(2);
       const [secondCall] = createConfiguredLineItemMutationMock.mock.calls[1] as [
         CreateConfiguredLineItemMutationVariables,
       ];
@@ -628,7 +628,7 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
       vi.advanceTimersByTime(TIMER_DELAY);
 
-      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+      expect(createConfiguredLineItemMutationMock).toHaveBeenCalledTimes(2);
       const [secondCall] = createConfiguredLineItemMutationMock.mock.calls[1] as [
         CreateConfiguredLineItemMutationVariables,
       ];
@@ -844,7 +844,7 @@ describe("useConfigurableProduct", () => {
       });
       await flushPromises();
 
-      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(1);
+      expect(createConfiguredLineItemMutationMock).toHaveBeenCalledTimes(1);
     });
 
     describe("isConfigurationChanged", () => {
