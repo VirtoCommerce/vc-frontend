@@ -39,9 +39,3 @@ html[data-design="soft"] {
     --vc-widget-border-width: 1px;
   }
 }
-
-// The light rule matches in dark too.
-html.dark[data-design="soft"] {
-  // VcTable
-  --vc-table-row-hover-bg-color: var(--color-neutral-200);
-}

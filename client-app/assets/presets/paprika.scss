@@ -9,5 +9,7 @@
   html.dark[data-preset="paprika"] {
     --vc-widget-bg-color: var(--color-additional-50);
     --vc-widget-divide-color: var(--color-neutral-300);
+    // Dark neutral-100 is the plate's own colour, so the kit's dark row hover would not show on a widget.
+    --vc-table-row-hover-bg-color: var(--color-neutral-200);
   }
 }
