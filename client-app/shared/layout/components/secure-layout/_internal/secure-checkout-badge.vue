@@ -17,14 +17,11 @@
   }
 
   &__label {
-    @apply hidden text-sm font-bold;
+    @apply text-sm font-bold;
 
-    @media (width >= theme("screens.xs")) {
-      @apply inline;
-    }
-
-    @media print {
-      @apply inline;
+    // Below xs only the lock shows; screen readers keep the label.
+    @media screen and (width < theme("screens.xs")) {
+      @apply sr-only;
     }
   }
 }
