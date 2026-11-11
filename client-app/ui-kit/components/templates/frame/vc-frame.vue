@@ -93,6 +93,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   }
 
   &__main {
+    $offset-top: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px));
+
     // VcContainers in the page take the frame's side space and column and leave the space above and below to the
     // frame; their props and page-set padding still win. `calc(<offset> * 0)` is 0 when the offset or the gap is set
     // (by a design or a fork), invalid (the container's own value) when neither.
@@ -103,10 +105,9 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
 
     @apply relative flex grow flex-col min-h-[var(--vc-frame-main-min-height,auto)];
 
-    margin-block: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px))
-      var(--vc-frame-main-offset-bottom, var(--vc-frame-gap, 0px));
+    margin-block: $offset-top var(--vc-frame-main-offset-bottom, var(--vc-frame-gap, 0px));
     // A jump to main (the skip link) keeps the frame's space above the page.
-    scroll-margin-block-start: var(--vc-frame-main-offset-top, var(--vc-frame-gap, 0px));
+    scroll-margin-block-start: $offset-top;
   }
 }
 </style>
