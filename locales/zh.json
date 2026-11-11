@@ -658,7 +658,8 @@
           "filter_all": "全部",
           "empty": "尚无订单",
           "no_results": "没有此状态的订单",
-          "load_failed": "无法加载订单"
+          "load_failed": "无法加载订单",
+          "statuses_label": "要显示的状态"
         }
       }
     },

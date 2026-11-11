@@ -658,7 +658,8 @@
           "filter_all": "Alle",
           "empty": "Es liegen noch keine Bestellungen vor",
           "no_results": "Keine Bestellungen mit diesem Status",
-          "load_failed": "Bestellungen konnten nicht geladen werden"
+          "load_failed": "Bestellungen konnten nicht geladen werden",
+          "statuses_label": "Anzuzeigende Status"
         }
       }
     },

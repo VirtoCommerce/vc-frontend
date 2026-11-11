@@ -658,7 +658,8 @@
           "filter_all": "Todos",
           "empty": "Ainda não há pedidos",
           "no_results": "Nenhum pedido com este status",
-          "load_failed": "Falha ao carregar os pedidos"
+          "load_failed": "Falha ao carregar os pedidos",
+          "statuses_label": "Status a exibir"
         }
       }
     },

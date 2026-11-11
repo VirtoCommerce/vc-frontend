@@ -658,7 +658,8 @@
           "filter_all": "All",
           "empty": "There are no orders yet",
           "no_results": "No orders with this status",
-          "load_failed": "Couldn't load orders"
+          "load_failed": "Couldn't load orders",
+          "statuses_label": "Statuses to show"
         }
       }
     },

@@ -658,7 +658,8 @@
           "filter_all": "Wszystkie",
           "empty": "Nie ma jeszcze zamówień",
           "no_results": "Brak zamówień o tym statusie",
-          "load_failed": "Nie udało się wczytać zamówień"
+          "load_failed": "Nie udało się wczytać zamówień",
+          "statuses_label": "Statusy do wyświetlenia"
         }
       }
     },

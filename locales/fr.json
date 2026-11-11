@@ -658,7 +658,8 @@
           "filter_all": "Toutes",
           "empty": "Aucune commande pour le moment",
           "no_results": "Aucune commande avec ce statut",
-          "load_failed": "Impossible de charger les commandes"
+          "load_failed": "Impossible de charger les commandes",
+          "statuses_label": "Statuts à afficher"
         }
       }
     },
