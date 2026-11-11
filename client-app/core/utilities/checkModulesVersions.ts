@@ -28,8 +28,17 @@ export function compareVersions(a: string, b: string): number {
   return 0;
 }
 
+/**
+ * Modules the backend package list cannot name: CI installs every module listed there,
+ * and Site Builder refuses to run next to Page Builder.
+ */
+const EXTRA_EXPECTED_MODULES: ManifestModuleType[] = [{ Id: "VirtoCommerce.SiteBuilder", Version: "3.1000.0" }];
+
 function getManifestModules(): ManifestModuleType[] {
-  return backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]);
+  return [
+    ...backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]),
+    ...EXTRA_EXPECTED_MODULES,
+  ];
 }
 
 export function getOutdatedModules(
