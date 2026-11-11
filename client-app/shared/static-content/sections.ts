@@ -12,8 +12,8 @@ const DEFAULT_HEADING_TAG: HeadingTagType = "h2";
 type DeclaredPropsType = string[] | Record<string, unknown>;
 
 /**
- * The `isSafeLinkUrl` policy for URLs inside section HTML. DOMPurify tests it after stripping whitespace, so
- * `java\tscript:` is caught; its default list would also drop app schemes such as `whatsapp:`.
+ * Same scheme denylist as for links in section settings; DOMPurify's default would also drop app schemes.
+ * DOMPurify strips whitespace before testing, so `java\tscript:` is still caught.
  */
 const ALLOWED_URI_REGEXP = /^(?!(?:javascript|vbscript|data):)/i;
 
@@ -53,7 +53,6 @@ export function toHeadingTag(value: unknown): HeadingTagType {
   return HEADING_TAGS.find((tag) => tag === tagName) ?? DEFAULT_HEADING_TAG;
 }
 
-/** `getLinkAttr` for a link from section settings: a link `isSafeLinkUrl` rejects renders as no link. */
 export function getSectionLinkAttr(link: string | undefined): ReturnType<typeof getLinkAttr> {
   return getLinkAttr(link && isSafeLinkUrl(link) ? link : undefined);
 }
