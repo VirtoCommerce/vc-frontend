@@ -8,6 +8,7 @@ fragment fullOrderFields on CustomerOrderType {
   comment
   purchaseOrderNumber
   cancelReason
+  shoppingCartId
   currency {
     ...currency
   }

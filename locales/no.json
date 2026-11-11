@@ -385,6 +385,7 @@
             "orders": "@:common.links.orders",
             "saved_for_later": "Lagret til senere",
             "lists": "@:common.links.lists",
+            "payment_methods": "Betalingsmåter",
             "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -504,6 +505,7 @@
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
+          "payment_methods": "Betalingsmåter",
           "security": "@:common.links.security"
         }
       },
@@ -1050,6 +1052,40 @@
           "missing_link": "Omdirigeringslenke mangler",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Betal med",
+        "new_card": "Bruk et nytt kort",
+        "save_card": "Lagre dette kortet for fremtidige betalinger",
+        "save_card_required": "Dette kjøpet krever at kortet lagres for fremtidige betalinger, så det lagres sikkert. Du kan endre det når som helst.",
+        "default": "Standard",
+        "expired": "Utløpt",
+        "needs_update": "Må oppdateres",
+        "expires": "Utløper {date}",
+        "page_title": "Betalingsmåter",
+        "page_subtitle": "Kort lagret for raskere betaling. Vi lagrer aldri hele kortnummeret ditt.",
+        "empty": "Ingen lagrede kort ennå.",
+        "make_default": "Gjør til standard",
+        "remove": "Fjern",
+        "remove_title": "Fjerne dette kortet?",
+        "remove_text": "Kortet slettes fra kontoen din og hos betalingsleverandøren.",
+        "removed": "Kortet er fjernet.",
+        "add_title": "Legg til et kort",
+        "add": "Lagre kort",
+        "added": "Kortet er lagret.",
+        "set_default": "Bruk som mitt standardkort",
+        "billing_title": "Kortets fakturaadresse",
+        "billing_hint": "Banken din sjekker den når kortet lagres.",
+        "address": "Gateadresse",
+        "city": "By",
+        "state": "Delstat",
+        "zip": "Postnummer",
+        "form_unavailable": "Kort kan ikke lagres akkurat nå. Prøv igjen senere.",
+        "error": "Noe gikk galt. Prøv igjen.",
+        "card": "Kort",
+        "load_failed": "Kunne ikke laste inn de lagrede kortene.",
+        "forms_load_failed": "Kunne ikke laste inn kortskjemaene.",
+        "retry": "Prøv igjen"
       }
     },
     "wishlists": {

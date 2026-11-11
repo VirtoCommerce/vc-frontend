@@ -1,0 +1,24 @@
+#import "../../fragments/renewalFields.graphql"
+
+query GetSubscriptionRenewals(
+  $storeId: String!
+  $onlyOpen: Boolean
+  $subscriptionId: String
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  subscriptionRenewals(
+    storeId: $storeId
+    onlyOpen: $onlyOpen
+    subscriptionId: $subscriptionId
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      ...renewalFields
+    }
+  }
+}

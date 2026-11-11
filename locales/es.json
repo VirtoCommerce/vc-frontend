@@ -385,6 +385,7 @@
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardado para más tarde",
             "lists": "@:common.links.lists",
+            "payment_methods": "Métodos de pago",
             "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -504,6 +505,7 @@
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
+          "payment_methods": "Métodos de pago",
           "security": "@:common.links.security"
         }
       },
@@ -1050,6 +1052,40 @@
           "missing_link": "Falta el enlace de redirección",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Pagar con",
+        "new_card": "Usar una tarjeta nueva",
+        "save_card": "Guardar esta tarjeta para pagos futuros",
+        "save_card_required": "Esta compra requiere guardar la tarjeta para pagos futuros, por lo que se guarda de forma segura. Puede cambiarla en cualquier momento.",
+        "default": "Predeterminada",
+        "expired": "Caducada",
+        "needs_update": "Requiere actualización",
+        "expires": "Caduca {date}",
+        "page_title": "Métodos de pago",
+        "page_subtitle": "Tarjetas guardadas para pagar más rápido. Nunca guardamos el número completo de su tarjeta.",
+        "empty": "Aún no hay tarjetas guardadas.",
+        "make_default": "Establecer como predeterminada",
+        "remove": "Eliminar",
+        "remove_title": "¿Eliminar esta tarjeta?",
+        "remove_text": "La tarjeta se elimina de su cuenta y del proveedor de pagos.",
+        "removed": "Tarjeta eliminada.",
+        "add_title": "Añadir una tarjeta",
+        "add": "Guardar tarjeta",
+        "added": "Tarjeta guardada.",
+        "set_default": "Usar como mi tarjeta predeterminada",
+        "billing_title": "Dirección de facturación de la tarjeta",
+        "billing_hint": "Su banco la verifica al guardar la tarjeta.",
+        "address": "Dirección",
+        "city": "Ciudad",
+        "state": "Provincia",
+        "zip": "Código postal",
+        "form_unavailable": "No se pueden guardar tarjetas en este momento. Inténtelo más tarde.",
+        "error": "Algo salió mal. Inténtelo de nuevo.",
+        "card": "Tarjeta",
+        "load_failed": "No se pudieron cargar sus tarjetas guardadas.",
+        "forms_load_failed": "No se pudieron cargar los formularios de tarjeta.",
+        "retry": "Intentar de nuevo"
       }
     },
     "wishlists": {

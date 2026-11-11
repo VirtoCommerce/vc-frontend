@@ -1,0 +1,24 @@
+#import "../../fragments/productSubscriptionFields.graphql"
+
+query GetProductSubscriptions(
+  $storeId: String!
+  $statuses: [String]
+  $first: Int
+  $after: String
+  $sort: String
+  $keyword: String
+) {
+  productSubscriptions(
+    storeId: $storeId
+    statuses: $statuses
+    first: $first
+    after: $after
+    sort: $sort
+    keyword: $keyword
+  ) {
+    totalCount
+    items {
+      ...productSubscriptionFields
+    }
+  }
+}

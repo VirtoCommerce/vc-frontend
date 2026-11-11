@@ -1,0 +1,15 @@
+#import "../../fragments/productSubscriptionFields.graphql"
+#import "../../fragments/renewalFields.graphql"
+#import "../../fragments/subscriptionIntervalFields.graphql"
+
+query GetProductSubscription($id: String!) {
+  productSubscription(id: $id) {
+    ...productSubscriptionFields
+    availableIntervals {
+      ...subscriptionIntervalFields
+    }
+    currentRenewal {
+      ...renewalFields
+    }
+  }
+}

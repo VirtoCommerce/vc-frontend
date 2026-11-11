@@ -1,0 +1,15 @@
+#import "../../fragments/subscriptionIntervalFields.graphql"
+
+query GetSubscriptionOffers($storeId: String!, $productIds: [String!]!) {
+  subscriptionOffers(storeId: $storeId, productIds: $productIds) {
+    productId
+    planId
+    planName
+    description
+    discountType
+    discountValue
+    intervals {
+      ...subscriptionIntervalFields
+    }
+  }
+}

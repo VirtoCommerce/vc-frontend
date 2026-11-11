@@ -1,0 +1,40 @@
+fragment renewalFields on SubscriptionRenewal {
+  id
+  number
+  state
+  scheduledDate
+  cutoffDate
+  isManual
+  currency
+  previewTotal
+  notifiedTotal
+  orderTotal
+  discountTotal
+  shippingTotal
+  taxTotal
+  orderId
+  storedPaymentMethodId
+  orderNumber
+  attemptCount
+  nextAttemptDate
+  lastErrorMessage
+  reviewReason
+  canSkip
+  canAcceptReview
+  canRetryPayment
+  requiresPaymentAction
+  items {
+    subscriptionId
+    productId
+    sku
+    productName
+    imageUrl
+    quantity
+    listPrice
+    discountAmount
+    total
+    isAvailable
+    isExcluded
+    message
+  }
+}

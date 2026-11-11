@@ -3171,6 +3171,46 @@ type CurrencyGroupType<T> = {
     currencyCode: string;
     items: T[];
 };
+type PreparedLineItemType = {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    inStockQuantity?: number;
+    listPrice?: MoneyType;
+    actualPrice?: MoneyType;
+    extendedPrice?: MoneyType;
+    quantity?: number;
+    deleted?: boolean;
+    route?: RouteLocationRaw;
+    properties?: Property[];
+    minQuantity?: number;
+    maxQuantity?: number;
+    packSize?: number;
+    availabilityData?: AvailabilityData;
+    productType?: string;
+    sku?: string;
+    productId?: string;
+    countInCart?: number;
+    isConfigurable?: boolean;
+    hasVariations?: boolean;
+    variations?: VariationType[];
+    configurationItems?: {
+        id: string;
+        name?: string;
+        customText?: string;
+        type: string;
+        extendedPrice?: MoneyType;
+        files?: Array<{
+            name: string;
+        } | null> | null;
+        configurationSection?: {
+            name?: string | null;
+        } | null;
+    }[];
+    showPlacedPrice?: boolean;
+    listTotal?: MoneyType;
+    product?: Product;
+};
 
 type AccountNavigationSectionType = {
     id: string;
@@ -4851,6 +4891,26 @@ type ExtensionCategoryMapType = {
     cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
+    /**
+     * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+     * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+     */
+    addCardForm: ExtensionEntryType<{
+        paymentMethodCode: string;
+        setDefault: boolean;
+    }, never, (paymentMethodCode: string) => boolean>;
+    /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
+    cartLineItem: ExtensionEntryType<{
+        lineItem: PreparedLineItemType;
+        readonly?: boolean;
+    }, never, (lineItem: PreparedLineItemType) => boolean>;
+    /**
+     * Before placing the order: on the multi-step checkout's review step, above the order summary
+     * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+     */
+    checkoutReview: ExtensionEntryType<{
+        cart?: CartType;
+    }, never, (cart?: CartType) => boolean>;
     /** The order details page. A provider decides from the order whether it has anything to offer. */
     orderDetails: ExtensionEntryType<{
         order?: CustomerOrderType;
@@ -4934,6 +4994,8 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly productPage: {
         readonly sidebarButton: "sidebar-button";
+        /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+        readonly purchaseOptions: "purchase-options";
         readonly variationItemButton: "variation-item-button";
     };
     readonly paymentPage: {
@@ -4947,6 +5009,12 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
+    };
+    readonly cartLineItem: {
+        readonly details: "details";
+    };
+    readonly checkoutReview: {
+        readonly beforePlaceOrder: "before-place-order";
     };
     readonly checkout: {
         readonly placeOrder: "place-order";
@@ -4966,7 +5034,10 @@ declare const EXTENSION_CATEGORIES: {
     readonly cartPayment: "cartPayment";
     readonly orderDetails: "orderDetails";
     readonly sharedList: "sharedList";
+    readonly cartLineItem: "cartLineItem";
+    readonly checkoutReview: "checkoutReview";
     readonly checkout: "checkout";
+    readonly addCardForm: "addCardForm";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
     readonly accountSecurity: "accountSecurity";
@@ -5057,6 +5128,10 @@ declare const ROUTES: {
     readonly PROMOTION_COUPONS: {
         readonly NAME: "PromotionCoupons";
         readonly PATH: "coupons";
+    };
+    readonly PAYMENT_METHODS: {
+        readonly NAME: "PaymentMethods";
+        readonly PATH: "payment-methods";
     };
     readonly ACCOUNT: {
         readonly NAME: "Account";
@@ -5747,6 +5822,18 @@ declare function _useWishlistSharingScopes(): {
 };
 declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
 
+type CheckoutGuardType = {
+    /** True when the order can be placed as far as this guard is concerned. */
+    canPlaceOrder: MaybeRefOrGetter<boolean>;
+};
+declare function unregisterGuard(id: string): void;
+declare function registerGuard(id: string, guard: CheckoutGuardType): () => void;
+declare function useCheckoutGuards(): {
+    registerGuard: typeof registerGuard;
+    unregisterGuard: typeof unregisterGuard;
+    canPlaceOrder: vue.ComputedRef<boolean>;
+};
+
 declare function _useThemeContext(): {
     setThemeContext: (store: StoreResponseType) => void;
     addPresetToThemeContext: (presetName: string) => Promise<void>;
@@ -6344,8 +6431,8 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$7 as AcceptedGifts, _default$4 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$2 as CouponItem, _default as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$9 as IdentityProvider, Logger, _default$6 as OrderCommentSection, _default$8 as OrderLineItems, _default$a as OrderStatus, _default$5 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$1 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$B as VcAlert, _default$M as VcBadge, _default$L as VcBreadcrumbs, _default$A as VcButton, _default$z as VcCalendar, _default$K as VcCheckbox, _default$J as VcCheckboxGroup, _default$y as VcChip, _default$j as VcDatePicker, _default$i as VcDateRangePicker, _default$x as VcDialog, _default$w as VcDialogContent, _default$v as VcDialogFooter, _default$u as VcDialogHeader, _default$t as VcEmptyView, _default$I as VcIcon, _default$H as VcImage, _default$s as VcInput, _default$G as VcInputDetails, _default$F as VcLabel, _default$b as VcLayout, _default$E as VcLink, _default$r as VcLoaderOverlay, _default$D as VcMarkdownRender, _default$q as VcMenuItem, _default$h as VcModal, _default$g as VcPagination, _default$p as VcPopover, _default$o as VcRating, _default$n as VcSelect, _default$m as VcTabSwitch, _default$f as VcTable, _default$e as VcTableColumn, _default$l as VcTextarea, _default$C as VcTooltip, _default$k as VcTypography, _default$d as VcWidget, _default$c as VcWidgetSkeleton, _default$3 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
-export type { ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$7 as AcceptedGifts, _default$4 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$2 as CouponItem, _default as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$9 as IdentityProvider, Logger, _default$6 as OrderCommentSection, _default$8 as OrderLineItems, _default$a as OrderStatus, _default$5 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$1 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$B as VcAlert, _default$M as VcBadge, _default$L as VcBreadcrumbs, _default$A as VcButton, _default$z as VcCalendar, _default$K as VcCheckbox, _default$J as VcCheckboxGroup, _default$y as VcChip, _default$j as VcDatePicker, _default$i as VcDateRangePicker, _default$x as VcDialog, _default$w as VcDialogContent, _default$v as VcDialogFooter, _default$u as VcDialogHeader, _default$t as VcEmptyView, _default$I as VcIcon, _default$H as VcImage, _default$s as VcInput, _default$G as VcInputDetails, _default$F as VcLabel, _default$b as VcLayout, _default$E as VcLink, _default$r as VcLoaderOverlay, _default$D as VcMarkdownRender, _default$q as VcMenuItem, _default$h as VcModal, _default$g as VcPagination, _default$p as VcPopover, _default$o as VcRating, _default$n as VcSelect, _default$m as VcTabSwitch, _default$f as VcTable, _default$e as VcTableColumn, _default$l as VcTextarea, _default$C as VcTooltip, _default$k as VcTypography, _default$d as VcWidget, _default$c as VcWidgetSkeleton, _default$3 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, downloadFile, formatDateLocale, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, tryParseDate, uiKit, useAnalytics, useAuth, useBreadcrumbs, useCheckoutGuards, useErrorsTranslator, useExtensionRegistry, useFetch, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useThemeContext, useUser, useWishlistSharingScopes };
+export type { CheckoutGuardType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IThemeConfigSettings, IThemeContext, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LocaleLoaderType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;

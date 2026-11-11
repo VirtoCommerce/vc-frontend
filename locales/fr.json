@@ -385,6 +385,7 @@
             "orders": "@:common.links.orders",
             "saved_for_later": "Enregistré pour plus tard",
             "lists": "@:common.links.lists",
+            "payment_methods": "Moyens de paiement",
             "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -504,6 +505,7 @@
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
+          "payment_methods": "Moyens de paiement",
           "security": "@:common.links.security"
         }
       },
@@ -1050,6 +1052,40 @@
           "missing_link": "Le lien de redirection est manquant",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Payer avec",
+        "new_card": "Utiliser une nouvelle carte",
+        "save_card": "Enregistrer cette carte pour les prochains paiements",
+        "save_card_required": "Cet achat nécessite d'enregistrer la carte pour de futurs paiements : elle est donc enregistrée en toute sécurité. Vous pouvez la changer à tout moment.",
+        "default": "Par défaut",
+        "expired": "Expirée",
+        "needs_update": "À mettre à jour",
+        "expires": "Expire le {date}",
+        "page_title": "Moyens de paiement",
+        "page_subtitle": "Cartes enregistrées pour payer plus vite. Nous n'enregistrons jamais le numéro complet de votre carte.",
+        "empty": "Aucune carte enregistrée pour l'instant.",
+        "make_default": "Définir par défaut",
+        "remove": "Supprimer",
+        "remove_title": "Supprimer cette carte ?",
+        "remove_text": "La carte est supprimée de votre compte et chez le prestataire de paiement.",
+        "removed": "Carte supprimée.",
+        "add_title": "Ajouter une carte",
+        "add": "Enregistrer la carte",
+        "added": "Carte enregistrée.",
+        "set_default": "Utiliser comme carte par défaut",
+        "billing_title": "Adresse de facturation de la carte",
+        "billing_hint": "Votre banque la vérifie lors de l'enregistrement de la carte.",
+        "address": "Adresse",
+        "city": "Ville",
+        "state": "État",
+        "zip": "Code postal",
+        "form_unavailable": "Les cartes ne peuvent pas être enregistrées pour le moment. Veuillez réessayer plus tard.",
+        "error": "Une erreur s'est produite. Veuillez réessayer.",
+        "card": "Carte",
+        "load_failed": "Impossible de charger vos cartes enregistrées.",
+        "forms_load_failed": "Impossible de charger les formulaires de carte.",
+        "retry": "Réessayer"
       }
     },
     "wishlists": {

@@ -104,6 +104,13 @@
           :product="product"
         />
 
+        <ExtensionPoint
+          v-else-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, product)"
+          :name="EXTENSION_NAMES.productPage.purchaseOptions"
+          category="productPage"
+          :product="product"
+        />
+
         <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
           <InStock
             :is-in-stock="product.availabilityData?.isInStock"

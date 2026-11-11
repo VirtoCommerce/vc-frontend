@@ -647,6 +647,14 @@ export function _useCheckout(cartId?: string) {
   };
 }
 
+/**
+ * Whether the checkout is busy placing an order, read-only and without the rest of `useCheckout`. It stays `true` from
+ * the order request until the shopper is sent to the payment or completion page (and while the checkout initializes).
+ */
+export function useOrderPlacement() {
+  return { placingOrder: readonly(useGlobalCheckout().loading) };
+}
+
 const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
 
 export function useCheckout() {

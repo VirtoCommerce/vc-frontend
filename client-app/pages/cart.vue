@@ -115,6 +115,8 @@
 
           <BillingDetailsSection v-if="isPaymentSectionVisible" :cart="cart" />
 
+          <ExtensionPointList category="checkoutReview" :condition-params="cart" :cart="cart" class="mt-5" />
+
           <OrderCommentSection v-if="isCommentSectionVisible" v-model:comment="comment" class="mt-5" />
         </template>
 
