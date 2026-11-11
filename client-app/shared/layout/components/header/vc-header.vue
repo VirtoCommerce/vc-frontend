@@ -4,9 +4,14 @@
 
   <!-- Desktop header -->
   <template v-else>
-    <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
+    <TopHeader
+      class="relative z-[21] me-[var(--vc-frame-header-offset-x,0px)] ms-[var(--vc-frame-header-offset-x,0px)] border-b border-neutral-300 print:hidden"
+    />
 
-    <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
+    <div
+      ref="stickyHeader"
+      class="sticky top-0 z-20 me-[var(--vc-frame-header-offset-x,0px)] ms-[var(--vc-frame-header-offset-x,0px)] shadow-md print:hidden"
+    >
       <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
       <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />

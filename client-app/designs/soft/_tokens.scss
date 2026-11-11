@@ -26,6 +26,9 @@ html[data-design="soft"] {
   --vc-frame-padding-x: 0.75rem;
   --vc-frame-max-width: 96.875rem;
   --vc-frame-gap: 0.8125rem;
+  // The header and footer keep the side space from the window's edges; the gap above and below them is VcFrame's.
+  --vc-frame-header-offset-x: var(--vc-frame-padding-x);
+  --vc-frame-footer-offset-x: var(--vc-frame-padding-x);
 
   @media (width >= theme("screens.sm")) {
     --vc-frame-padding-x: 1.5rem;

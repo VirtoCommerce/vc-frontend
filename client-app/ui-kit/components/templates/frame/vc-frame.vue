@@ -20,7 +20,8 @@ import type { VNode, VNodeArrayChildren } from "vue";
 defineSlots<{
   /**
    * The page header. Rendered with no wrapper: each root element of this slot is a direct child of the frame, so a
-   * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky.
+   * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky. Each
+   * piece reads `--vc-frame-header-offset-x` for its side insets itself.
    */
   header?: () => VNode[];
   /** The page content, inside the frame's `<main id="main-content">`, the skip-to-content target. */
@@ -83,13 +84,27 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
 
   @apply flex min-h-screen flex-col;
 
+  padding-block-end: var(--vc-frame-footer-offset-bottom, var(--vc-frame-gap, 0px));
+
+  // The space above the header is a flex item, not padding: a fixed child with auto insets (the mobile menu) stays
+  // at the top edge.
+  &::before {
+    content: "";
+    flex: none;
+    block-size: var(--vc-frame-header-offset-top, var(--vc-frame-gap, 0px));
+  }
+
   // Paper gets the classic frame in every design.
   @media print {
     --vc-frame-padding-x: initial;
     --vc-frame-max-width: initial;
     --vc-frame-gap: initial;
+    --vc-frame-header-offset-top: initial;
+    --vc-frame-header-offset-x: initial;
     --vc-frame-main-offset-top: initial;
     --vc-frame-main-offset-bottom: initial;
+    --vc-frame-footer-offset-x: initial;
+    --vc-frame-footer-offset-bottom: initial;
   }
 
   &__main {
@@ -108,6 +123,10 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
     margin-block: $offset-top var(--vc-frame-main-offset-bottom, var(--vc-frame-gap, 0px));
     // A jump to main (the skip link) keeps the frame's space above the page.
     scroll-margin-block-start: $offset-top;
+  }
+
+  &__footer {
+    padding-inline: var(--vc-frame-footer-offset-x, 0px);
   }
 }
 </style>

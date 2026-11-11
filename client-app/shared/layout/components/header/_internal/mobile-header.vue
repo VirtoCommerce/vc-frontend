@@ -1,5 +1,8 @@
 <template>
-  <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+  <header
+    ref="headerElement"
+    class="fixed end-[var(--vc-frame-header-offset-x,0px)] start-[var(--vc-frame-header-offset-x,0px)] top-[var(--vc-frame-header-offset-top,var(--vc-frame-gap,0px))] z-40 shadow-md print:hidden"
+  >
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
@@ -101,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { syncRefs, useCssVar, useElementBounding, useElementSize, useScrollLock } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -128,6 +131,7 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);
+const { bottom } = useElementBounding(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 
@@ -137,11 +141,11 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 
 // Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
 // header row) can sit flush below this fixed mobile header instead of under it. VcHeader owns
-// this var on desktop (see vc-header.vue).
+// this var on desktop (see vc-header.vue). The bottom edge, so the frame's space above the header counts too.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 watch(
-  height,
+  bottom,
   (value) => {
     appHeaderHeightVar.value = `${value}px`;
   },
