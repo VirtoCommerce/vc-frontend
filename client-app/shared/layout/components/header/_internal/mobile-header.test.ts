@@ -3,10 +3,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import MobileHeader from "./mobile-header.vue";
 
-const { headerBottom, headerHeight, Empty } = await vi.hoisted(async () => {
+const { headerHeight, Empty } = await vi.hoisted(async () => {
   const vue = await import("vue");
   return {
-    headerBottom: vue.ref(0),
     headerHeight: vue.ref(0),
     Empty: (name: string) => ({ default: vue.defineComponent({ name, setup: () => () => null }) }),
   };
@@ -14,7 +13,6 @@ const { headerBottom, headerHeight, Empty } = await vi.hoisted(async () => {
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@vueuse/core")>()),
-  useElementBounding: () => ({ bottom: headerBottom }),
   useElementSize: () => ({ height: headerHeight }),
 }));
 
@@ -55,28 +53,21 @@ enableAutoUnmount(afterEach);
 
 describe("MobileHeader", () => {
   afterEach(() => {
-    headerBottom.value = 0;
     headerHeight.value = 0;
     document.documentElement.style.removeProperty("--vc-app-header-height");
   });
 
-  it("publishes the fixed header's bottom edge, the frame's space above it included, as --vc-app-header-height", async () => {
+  it("publishes the sticky header's height as --vc-app-header-height and keeps it current", async () => {
     createWrapper();
 
     headerHeight.value = 90;
-    headerBottom.value = 103;
     await nextTick();
 
-    expect(appHeaderHeight()).toBe("103px");
-  });
+    expect(appHeaderHeight()).toBe("90px");
 
-  it("keeps the in-flow placeholder at the header's own height", async () => {
-    const wrapper = createWrapper();
-
-    headerHeight.value = 90;
-    headerBottom.value = 103;
+    headerHeight.value = 146;
     await nextTick();
 
-    expect((wrapper.get("header + div").element as HTMLElement).style.height).toBe("90px");
+    expect(appHeaderHeight()).toBe("146px");
   });
 });

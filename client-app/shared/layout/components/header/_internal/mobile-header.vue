@@ -78,9 +78,6 @@
     </div>
   </header>
 
-  <!-- Height placeholder for mobile header due to fixed position -->
-  <div :style="placeholderStyle" class="mobile-header__placeholder"></div>
-
   <!-- Mobile menu -->
   <transition
     enter-from-class="mobile-header__menu--offscreen"
@@ -98,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useCssVar, useElementBounding, useElementSize, useScrollLock } from "@vueuse/core";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -111,7 +108,6 @@ import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
-import type { StyleValue } from "vue";
 import HeaderBadge from "@/shared/layout/components/header-badge/header-badge.vue";
 
 const mobileMenuVisible = ref(false);
@@ -125,21 +121,16 @@ const { searchBarVisible, toggleSearchBar } = useSearchBar();
 const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);
-const { bottom } = useElementBounding(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 
-const placeholderStyle = computed<StyleValue | undefined>(() =>
-  height.value ? { height: height.value + "px" } : undefined,
-);
-
 // Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
-// header row) can sit flush below this fixed mobile header instead of under it. AppHeader owns
-// this var on desktop (see app-header.vue). The bottom edge, so the frame's space above the header counts too.
+// header row) can sit flush below this sticky mobile header instead of under it. AppHeader owns
+// this var on desktop (see app-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 watch(
-  bottom,
+  height,
   (value) => {
     appHeaderHeightVar.value = `${value}px`;
   },
@@ -153,12 +144,11 @@ syncRefs(isScrollLocked, scrollLock);
 </script>
 
 <style lang="scss">
-// Three roots: the fixed header, its placeholder in the page flow, and the menu.
+// Two roots: the header and the menu.
 .mobile-header {
-  @apply fixed z-40 shadow-md;
+  @apply sticky top-0 z-40 shadow-md;
 
-  inset-inline: var(--vc-frame-header-offset-x, 0px);
-  inset-block-start: var(--vc-frame-header-offset-top, var(--vc-frame-gap, 0px));
+  margin-inline: var(--vc-frame-header-offset-x, 0px);
 
   @media print {
     @apply hidden;
@@ -218,14 +208,6 @@ syncRefs(isScrollLocked, scrollLock);
 
   &__cart {
     @apply relative block;
-  }
-
-  &__placeholder {
-    @apply h-14;
-
-    @media print {
-      @apply hidden;
-    }
   }
 
   // The menu hides itself on paper (its root's own `flex` utility would beat a rule here).
