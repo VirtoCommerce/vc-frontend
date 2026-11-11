@@ -9,7 +9,7 @@ html[data-design="soft"] {
   --vc-pagination-page-border-width: 1px;
   --vc-pagination-page-border-color: var(--color-neutral-200);
   --vc-pagination-page-hover-border-color: var(--color-primary-200);
-  --vc-pagination-ellipsis-color: var(--color-neutral-400);
+  --vc-pagination-page-active-border-color: transparent;
 
   // VcShape
   --vc-shape-mask-image: url("@/ui-kit/icons/solid/circle-mask.svg");
@@ -41,8 +41,8 @@ html[data-design="soft"] {
 }
 
 html.dark[data-design="soft"] {
-  // The inverted neutral-200 ring is about 1.1:1 on a dark surface, so the ring is the light ink at 16% instead;
-  // primary-200 inverts to a dull dark step, so the hover ring would fade instead of light up.
+  // The inverted neutral-200 ring can sit at 1.1:1 on a dark surface (paprika), so the ring is the light ink at 16%
+  // instead; primary-200 is a dark step in most dark presets, so the hover ring is primary-500.
   --vc-pagination-page-border-color: rgb(from var(--color-additional-950) r g b / 0.16);
   --vc-pagination-page-hover-border-color: var(--color-primary-500);
 }

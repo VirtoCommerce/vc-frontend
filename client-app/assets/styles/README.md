@@ -487,7 +487,7 @@ this table does not list, or the table lists one the code does not read.
 ### Where a design's value goes
 
 - **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
-  `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
+  `html[data-design="<name>"]`; dark values (shadows, colours) on `html.dark[data-design="<name>"]` in the
   same file. Which token changes what: the [token table](#token-table). A value that changes with
   the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
