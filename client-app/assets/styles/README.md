@@ -20,7 +20,7 @@ repo root.
 | Change | For | File | Layer | Token / selector | Check |
 | --- | --- | --- | --- | --- | --- |
 | Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
-| Page frame: canvas, side space, column, the space between header, page and footer | one design | `designs/<design>/_tokens.scss` | `theme` | the `--vc-frame-*` tokens ([Page frame](#page-frame)) on `html[data-design="<design>"]` | `check:designs`; Storybook VcFrame (side space, column, gaps); the canvas: the app |
+| Page frame: canvas, side space, column, the space around header, page and footer | one design | `designs/<design>/_tokens.scss` | `theme` | the `--vc-frame-*` tokens ([Page frame](#page-frame)) on `html[data-design="<design>"]` | `check:designs`; Storybook VcFrame (side space, column, gaps); the canvas: the app |
 | The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
 | One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
 | Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
@@ -526,24 +526,31 @@ this table does not list, or the table lists one the code does not read.
 `secure-layout`: the header slot, `<main id="main-content">` with the page, and the footer. The header slot has no
 wrapper, so a sticky header piece sticks for the whole page. The skip links target `#main-content` and VcFooter's
 `#footer`. In each layout the sticky header's height is published as `--vc-app-header-height` (by VcHeader and
-MobileHeader in the main layout, by the secure header in the secure layout) and read by `html { scroll-padding-top }`
+MobileHeader in the main layout, by the secure header in the secure layout; the mobile header is fixed, so it publishes
+its bottom edge, the space above it included) and read by `html { scroll-padding-top }`
 (`main.scss`), so a jump stops below the header; `main`'s `scroll-margin-block-start` keeps the frame's space above
 the page.
 
 The frame owns the space around the page through the `--vc-frame-*` tokens. Classic sets none: each token falls back
 to its Classic value in the table below; soft sets them in `designs/soft/_tokens.scss`. Set them on `:root` or `html`
 (a design: `html[data-design="<design>"]`); a fork sets them in `_custom.scss`, which beats a design's values. The
-frame does not style the header or the footer: they keep their own width and look.
+frame does not style the header or the footer: they keep their own look. VcFrame sets the space above the header and
+below the footer and the footer's side insets; the header pieces read `--vc-frame-header-offset-x` themselves, because
+the header slot has no wrapper.
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |
 | `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | `body`, on screen (`main.scss`); set it on `:root` or `html` only: a value on a layout class or `.vc-frame` never reaches `body` | Not set: transparent | `var(--body-bg-color)` |
 | `--vc-frame-padding-x` | The page's side space: `--vc-container-px` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 24px, `lg` 32px, `2xl` 48px | 12px · `sm` 24px · `lg` 32px |
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
-| `--vc-frame-gap` | The value of both main offsets below when they are not set | VcFrame's `main` | Not set: 0 | 13px · `sm` 26px |
+| `--vc-frame-gap` | The value of the four vertical spaces below (above the header, both main offsets, below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
+| `--vc-frame-header-offset-top` | The space above the header | VcFrame's `::before`; the mobile header's `top` (it is fixed) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
+| `--vc-frame-header-offset-x` | The header's distance from the window's sides | The desktop header rows (`vc-header.vue`), the mobile header, the secure header | Not set: 0 | `var(--vc-frame-padding-x)` |
 | `--vc-frame-main-offset-top` | The space between the header and the page | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-offset-bottom` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |
+| `--vc-frame-footer-offset-x` | The footer's distance from the window's sides | VcFrame's footer wrapper (`padding-inline`) | Not set: 0 | `var(--vc-frame-padding-x)` |
+| `--vc-frame-footer-offset-bottom` | The space below the footer | VcFrame's root (`padding-block-end`) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 
 - VcFrame sets the container's own tokens on its `main`, so a design or a fork that sets the side space or the column
   moves every VcContainer in the page, nested ones included; a container's `no-padding` or `max-width` prop still
@@ -556,10 +563,10 @@ frame does not style the header or the footer: they keep their own width and loo
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
-- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap and main
-  offsets in `@media print`, a fork's values included; a container token set above the frame still applies (on paper
-  `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's padding utility, such as the
-  cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
+- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap, main
+  offsets and header and footer offsets in `@media print`, a fork's values included; a container token set above the
+  frame still applies (on paper `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's
+  padding utility, such as the cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
   `_custom.scss`: its column and gaps apply on paper; its side space does not, because print sets the containers'
   padding to 0.
 - VcContainer paints its own background over the canvas (its `bg-color` prop, else `--vc-container-bg-color`, which
