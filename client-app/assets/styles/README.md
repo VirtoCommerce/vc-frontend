@@ -221,7 +221,8 @@ override on `html[data-design="soft"]` reaches it too. Override them on
 short ones too.
 Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
 spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
-them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`.
+them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
+then applies at every width, soft's `lg` step for `h1`–`h3` included.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -477,7 +478,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |
 | `--vc-typography-font-size` | VcTypography font size | Not set: each `variant` sets its own |
 | `--vc-typography-font-weight` | VcTypography weight | Not set: 700 for `h1`–`h6`, 400 for `base` |
-| `--vc-typography-letter-spacing` | VcTypography heading letter spacing | Not set: `var(--vc-letter-spacing-wide)` (0.025em) for `h1`–`h3`, `var(--vc-heading-letter-spacing)` for `h4`–`h6` |
+| `--vc-typography-letter-spacing` | VcTypography heading letter spacing | Not set: `var(--vc-letter-spacing-wide)` (0.025em) for `h1`–`h3`, `var(--vc-heading-letter-spacing)`, else inherited, for `h4`–`h6` |
 | `--vc-typography-line-height` | VcTypography line height | Not set: inherited |
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |

@@ -64,9 +64,7 @@ const _color = computed(() => getColorValue(props.color));
   --line-height: var(--vc-typography-line-height);
   --letter-spacing: var(--vc-typography-letter-spacing);
 
-  @apply empty:hidden;
-
-  line-height: var(--line-height);
+  @apply empty:hidden leading-[--line-height];
 
   &--variant {
     &--h1,
