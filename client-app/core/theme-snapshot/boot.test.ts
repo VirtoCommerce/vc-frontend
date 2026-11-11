@@ -19,6 +19,8 @@ const UNKNOWN_FIELD_RESPONSE = {
   ],
 };
 
+const EXECUTION_ERROR_RESPONSE = { errors: [{ message: "timeout" }], data: null };
+
 function snapshotResponse(
   overrides: { storeId?: string; cultureName?: string; publication?: number; slug?: unknown } = {},
 ) {
@@ -265,8 +267,11 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().published.value?.publication).toBe(7);
   });
 
-  it("asks again on the next navigation after a failure", async () => {
-    leaveBootRequest(Promise.reject(new Error("offline")));
+  it.each([
+    ["the request did not reach the backend", () => Promise.reject(new Error("offline"))],
+    ["the query failed while running", () => Promise.resolve(EXECUTION_ERROR_RESPONSE)],
+  ])("asks again on the next navigation after a failure where %s", async (_, bootResponse) => {
+    leaveBootRequest(bootResponse());
     const fetchMock = mockFetch(snapshotResponse({ publication: 9 }));
 
     const boot = startThemeSnapshot({ domain: "localhost" });
@@ -352,6 +357,10 @@ describe("startThemeSnapshot", () => {
         status: 200,
         json: () => Promise.resolve({ errors: [{ message: "timeout" }], data: { themeSnapshot: null } }),
       },
+    ],
+    [
+      "a GraphQL error with null data",
+      { ok: true, status: 200, json: () => Promise.resolve(EXECUTION_ERROR_RESPONSE) },
     ],
   ])("keeps asking once per navigation after %s", async (_, response) => {
     leaveBootRequest(Promise.reject(new Error("offline")));

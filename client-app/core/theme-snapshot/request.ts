@@ -62,7 +62,9 @@ export function readThemeSnapshotResponse(
 
   if (Array.isArray(body.errors) && body.errors.length) {
     const message = `The theme snapshot request failed: ${JSON.stringify(body.errors)}`;
-    throw isRecord(body.data) ? new Error(message) : new ThemeSnapshotRejectedError(message);
+    // A request error (the query itself is invalid here) comes without `data`; one raised while running it,
+    // which may pass, keeps the key, if only as `data: null`.
+    throw "data" in body ? new Error(message) : new ThemeSnapshotRejectedError(message);
   }
 
   const field = isRecord(body.data) ? body.data.themeSnapshot : undefined;
