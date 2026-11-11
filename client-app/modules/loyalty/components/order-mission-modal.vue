@@ -35,7 +35,14 @@
         </div>
 
         <div class="order-mission-modal__progress">
-          <div class="order-mission-modal__track">
+          <progress
+            class="order-mission-modal__native-progress"
+            :value="view.percent"
+            max="100"
+            :aria-label="view.title"
+          />
+
+          <div class="order-mission-modal__track" data-test-id="order-mission-modal-progress-track" aria-hidden="true">
             <div
               class="order-mission-modal__bar"
               :class="{ 'order-mission-modal__bar--completed': view.isCompleted }"
@@ -43,7 +50,7 @@
             ></div>
           </div>
 
-          <span class="order-mission-modal__percent">{{ view.percent }}%</span>
+          <span class="order-mission-modal__percent" aria-hidden="true">{{ view.percent }}%</span>
         </div>
       </div>
     </div>
@@ -123,6 +130,10 @@ const requirementLabel = computed(() => {
 
   &__progress {
     @apply flex items-center gap-2.5;
+  }
+
+  &__native-progress {
+    @apply sr-only;
   }
 
   &__track {

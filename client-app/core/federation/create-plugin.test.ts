@@ -219,13 +219,38 @@ describe("create-plugin scaffolder", () => {
     expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
   });
 
-  it("scaffolds the tailwind variant with the config/styles files", () => {
+  it("scaffolds the tailwind variant with every Tailwind directive inside the plugins layer", () => {
     const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 
     for (const file of ["tailwind.config.cjs", "postcss.config.cjs", "src/styles.css"]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
+    // Unlayered, the plugin's copy of .flex-col would override the storefront's lg:flex-row; without
+    // `variants` inside the layer, Tailwind 3 appends the md:/lg: rules after it, unlayered.
+    const styles = readFileSync(join(dir, "src", "styles.css"), "utf8");
+    expect(styles.slice(styles.indexOf("*/") + 2).trim()).toBe(
+      "@layer plugins {\n  @tailwind components;\n  @tailwind utilities;\n  @tailwind variants;\n}",
+    );
+    const filesWithTailwindDirective = readdirSync(dir, { recursive: true, encoding: "utf8" }).filter(
+      (file) => /\.(css|scss|vue)$/.test(file) && readFileSync(join(dir, file), "utf8").includes("@tailwind"),
+    );
+    expect(filesWithTailwindDirective).toEqual([join("src", "styles.css")]);
+  });
+
+  it("gives the CLAUDE.md layer rule only to a Tailwind scaffold and numbers the Never list by position", () => {
+    const readClaudeMd = (name: string, flags: string[]) =>
+      readFileSync(join(scaffoldExpectingSuccess(name, ["--yes", ...flags]), "CLAUDE.md"), "utf8");
+
+    expect(readClaudeMd("bare-plugin", [])).not.toContain("@layer plugins");
+
+    const apollo = readClaudeMd("apollo-plugin", ["--with-apollo"]);
+    expect(apollo).not.toContain("@layer plugins");
+    expect(apollo).toContain("3. Edit `src/api/graphql/types.ts` by hand");
+
+    const both = readClaudeMd("tw-apollo-plugin", ["--with-tailwind", "--with-apollo"]);
+    expect(both).toContain("3. Move a `@tailwind` directive out of `@layer plugins`");
+    expect(both).toContain("4. Edit `src/api/graphql/types.ts` by hand");
   });
 
   it("rejects unknown flags instead of silently ignoring them", () => {
