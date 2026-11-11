@@ -3,7 +3,7 @@
     <template #header>
       <SkipToLinks />
 
-      <VcHeader />
+      <AppHeader />
     </template>
 
     <slot />
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
-import VcHeader from "@/shared/layout/components/header/vc-header.vue";
+import AppHeader from "@/shared/layout/components/header/app-header.vue";
 import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
 </script>
 

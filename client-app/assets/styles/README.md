@@ -525,7 +525,7 @@ this table does not list, or the table lists one the code does not read.
 `VcFrame` (`ui-kit/components/templates/frame/`) is the page frame of both app layouts, `main-layout` and
 `secure-layout`: the header slot, `<main id="main-content">` with the page, and the footer. The header slot has no
 wrapper, so a sticky header piece sticks for the whole page. The skip links target `#main-content` and VcFooter's
-`#footer`. In each layout the sticky header's height is published as `--vc-app-header-height` (by VcHeader and
+`#footer`. In each layout the sticky header's height is published as `--vc-app-header-height` (by AppHeader and
 MobileHeader in the main layout, by the secure header in the secure layout; the mobile header is fixed, so it publishes
 its bottom edge, the space above it included) and read by `html { scroll-padding-top }`
 (`main.scss`), so a jump stops below the header; `main`'s `scroll-margin-block-start` keeps the frame's space above
@@ -544,8 +544,8 @@ the header slot has no wrapper.
 | `--vc-frame-padding-x` | The page's side space: `--vc-container-px` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 24px, `lg` 32px, `2xl` 48px | 12px · `sm` 24px · `lg` 32px |
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
 | `--vc-frame-gap` | The value of the four vertical spaces below (above the header, both main offsets, below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
-| `--vc-frame-header-offset-top` | The space above the header | VcFrame's `::before`; the mobile header's `top` (it is fixed) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
-| `--vc-frame-header-offset-x` | The header's distance from the window's sides | The desktop header rows (`vc-header.vue`), the mobile header, the secure header | Not set: 0 | `var(--vc-frame-padding-x)` |
+| `--vc-frame-header-offset-top` | The space above the header | VcFrame's `::before`; the mobile header's `inset-block-start` (it is fixed) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
+| `--vc-frame-header-offset-x` | The header's distance from the window's sides | The desktop header rows (`app-header.vue`), the mobile header, the secure header | Not set: 0 | `var(--vc-frame-padding-x)` |
 | `--vc-frame-main-offset-top` | The space between the header and the page | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-offset-bottom` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |

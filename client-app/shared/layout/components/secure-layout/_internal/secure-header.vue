@@ -23,7 +23,7 @@ const { logoUrl } = useWhiteLabeling();
 
 const headerElement = useTemplateRef<HTMLElement>("headerElement");
 const { height: headerHeight } = useElementBounding(headerElement);
-// The sticky header's height for `html { scroll-padding-top }`; VcHeader (desktop) and MobileHeader write it on
+// The sticky header's height for `html { scroll-padding-top }`; AppHeader (desktop) and MobileHeader write it on
 // Main pages.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 

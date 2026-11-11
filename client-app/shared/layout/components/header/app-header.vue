@@ -4,21 +4,16 @@
 
   <!-- Desktop header -->
   <template v-else>
-    <TopHeader
-      class="relative z-[21] me-[var(--vc-frame-header-offset-x,0px)] ms-[var(--vc-frame-header-offset-x,0px)] border-b border-neutral-300 print:hidden"
-    />
+    <TopHeader class="app-header__top" />
 
-    <div
-      ref="stickyHeader"
-      class="sticky top-0 z-20 me-[var(--vc-frame-header-offset-x,0px)] ms-[var(--vc-frame-header-offset-x,0px)] shadow-md print:hidden"
-    >
+    <div ref="stickyHeader" class="app-header__sticky">
       <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
-      <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />
+      <MegaMenu v-if="isMegamenuShown" class="app-header__mega-menu" />
     </div>
 
-    <div class="hidden items-start justify-between print:flex">
-      <VcImage :src="logoUrl" :alt="$context.storeName" class="h-12" />
+    <div class="app-header__print">
+      <VcImage :src="logoUrl" :alt="$context.storeName" class="app-header__print-logo" />
 
       <Created />
     </div>
@@ -78,3 +73,41 @@ const isMegamenuShown = computed(() => {
   );
 });
 </script>
+
+<style lang="scss">
+// A fragment: each piece is a direct child of the page frame, where the sticky part sticks (a wrapper would end it),
+// so the block has no root element of its own. TopHeader hides itself on paper.
+.app-header {
+  &__top {
+    @apply relative z-[21] border-b border-neutral-300;
+
+    margin-inline: var(--vc-frame-header-offset-x, 0px);
+  }
+
+  &__sticky {
+    @apply sticky top-0 z-20 shadow-md;
+
+    margin-inline: var(--vc-frame-header-offset-x, 0px);
+
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__mega-menu {
+    @apply border-y border-neutral-200;
+  }
+
+  &__print {
+    @apply hidden items-start justify-between;
+
+    @media print {
+      @apply flex;
+    }
+  }
+
+  &__print-logo {
+    @apply h-12;
+  }
+}
+</style>

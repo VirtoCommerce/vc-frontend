@@ -8,9 +8,9 @@ import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
 
 vi.mock("vue-router", () => ({ useRoute: () => reactive({ path: "/" }) }));
 
-vi.mock("@/shared/layout/components/header/vc-header.vue", () => ({
+vi.mock("@/shared/layout/components/header/app-header.vue", () => ({
   default: defineComponent({
-    name: "VcHeader",
+    name: "AppHeader",
     setup: () => () => h("header", { class: "header-stub" }, [h("a", { href: "/" }, "Home")]),
   }),
 }));
