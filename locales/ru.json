@@ -414,7 +414,9 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"
       },
       "footer": {
         "version": "Версия",
@@ -640,6 +642,27 @@
         "click_to_copy": "Нажмите, чтобы скопировать",
         "clipboard_success": "Купон успешно скопирован",
         "tap_to_copy": "Нажмите, чтобы скопировать"
+      },
+      "dashboard": {
+        "orders_placed_week": "Заказы за эту неделю",
+        "orders_placed_mtd": "Заказы с начала месяца",
+        "orders_placed_ytd": "Заказы с начала года",
+        "avg_order_value": "Средняя сумма заказа",
+        "per_order": "Среднее за заказ (за год)",
+        "vs_last_week": "{delta} к прошлой неделе",
+        "vs_last_month": "{delta} к прошлому месяцу",
+        "vs_last_year": "{delta} к прошлому году",
+        "excluded_orders": "Не учтено {count} заказов в других валютах | Не учтён {count} заказ в другой валюте | Не учтены {count} заказа в других валютах | Не учтено {count} заказов в других валютах",
+        "sub_with_excluded": "{sub} · {note}",
+        "recent_orders": {
+          "title": "Мои последние заказы",
+          "view_all": "Все заказы",
+          "filter_all": "Все",
+          "empty": "Еще нет заказов",
+          "no_results": "Нет заказов с этим статусом",
+          "load_failed": "Не удалось загрузить заказы",
+          "statuses_label": "Отображаемые статусы"
+        }
       }
     },
     "sign_in": {
@@ -1185,6 +1208,122 @@
           "unpin_label": "Открепить “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Настроить расположение",
+      "editing": "Настройка расположения",
+      "hint": "— перетащите блок за маркер, чтобы изменить порядок, или скройте его кнопкой ✕.",
+      "hint_keyboard": "Клавиатура: пробел берёт блок, стрелки перемещают его, пробел отпускает, Esc отменяет.",
+      "save": "Сохранить расположение",
+      "cancel": "Отмена",
+      "reset": "Сбросить",
+      "save_failed": "Не удалось сохранить расположение. Ваши изменения сохранены на странице — попробуйте ещё раз.",
+      "load_failed": "Не удалось загрузить сохранённое расположение, поэтому показано расположение по умолчанию. Редактирование недоступно до загрузки — обновите страницу.",
+      "hidden_widgets": "Скрытые виджеты",
+      "visible_stats": "Показатели на виду",
+      "hidden_stats": "Скрытые показатели",
+      "empty_visible": "Перетащите сюда показатель, чтобы отобразить его",
+      "empty_hidden": "Перетащите сюда показатель, чтобы скрыть его",
+      "max_rows": "Макс. строк",
+      "restored": "Расположение по умолчанию восстановлено.",
+      "empty": {
+        "title": "Все блоки скрыты",
+        "text": "Все показатели и виджеты на этой странице перенесены в раздел {hidden} в настройках расположения. Восстановите расположение по умолчанию, чтобы вернуть всё, или нажмите {edit}, чтобы выбрать, что именно показывать.",
+        "hidden": "Скрытые",
+        "restore": "Восстановить расположение по умолчанию"
+      },
+      "a11y": {
+        "reorder": "Изменить порядок: {title}",
+        "hide": "Скрыть {title}",
+        "show": "Показать {title}",
+        "editing": "Настройка расположения. Клавиатура: пробел берёт блок, стрелки перемещают его, пробел отпускает, Esc отменяет.",
+        "grabbed": "Блок «{title}» взят. Позиция {position} из {total}. Перемещайте стрелками, пробел — отпустить, Escape — отменить.",
+        "grabbed_parkable": "Блок «{title}» взят. Позиция {position} из {total}. Стрелки влево и вправо — переместить, вверх и вниз — скрыть или показать, пробел — отпустить, Escape — отменить.",
+        "moved": "«{title}» перемещён на позицию {position} из {total}.",
+        "dropped": "«{title}» размещён на позиции {position} из {total}.",
+        "edge": "{title} уже на позиции {position} из {total}.",
+        "cancelled": "Перемещение «{title}» отменено.",
+        "parked": "«{title}» скрыт.",
+        "restored": "«{title}» показан.",
+        "max_rows": "Макс. строк для {title}, от {min} до {max}"
+      },
+      "stats": {
+        "load_failed": "Не удалось загрузить"
+      }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Средний чек за период: {aov}",
+        "title": "Средний чек"
+      },
+      "axis": {
+        "aov": "Средний чек, {currency}"
+      },
+      "cancelled_excluded": "Отменённые заказы не учитываются",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "последние 6 месяцев",
+        "twelve_months": "последние 12 месяцев",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, текущий месяц по {today}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_closed": "{from} – {to}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_upcoming": "Этот период ещё не начался.",
+      "kpi": {
+        "aov": "Средний чек · {period}",
+        "month_to_date": "{month} на сегодня · день {day} из {days}",
+        "orders": "Заказы · {period}",
+        "projected": "{share} месяца · прогноз {value}",
+        "sales": "Продажи · {period}",
+        "vs_last_year": "{change} к прошлому году"
+      },
+      "last_year": "Прошлый год",
+      "last_year_toggle": "Показать прошлый год на графике «{chart}»",
+      "legend": {
+        "aov_closed": "Средний чек, закрытые месяцы",
+        "current": "Текущий месяц, на сегодня",
+        "down": "спад",
+        "last_year": "Прошлый год",
+        "projection": "Прогноз на конец месяца",
+        "sales_closed": "Продажи, закрытые месяцы",
+        "up": "рост",
+        "vs_last_year": "к тому же месяцу прошлого года"
+      },
+      "load_failed": "Не удалось загрузить отчёт. Попробуйте позже.",
+      "period_label": "Период",
+      "periods": {
+        "q1": "I кв.",
+        "q2": "II кв.",
+        "q3": "III кв.",
+        "q4": "IV кв.",
+        "six_months": "6 месяцев",
+        "twelve_months": "12 месяцев",
+        "year": "Текущий год"
+      },
+      "sales_chart": {
+        "subtitle": "В среднем {value} за закрытый месяц",
+        "title": "Продажи по месяцам · {period}"
+      },
+      "table": {
+        "aov": "Средний чек",
+        "change": "К прошлому году",
+        "description": "Продажи, заказы и средний чек по месяцам",
+        "last_year": "Тот же месяц прошлого года",
+        "month": "Месяц",
+        "orders": "Заказы",
+        "sales": "Продажи",
+        "toggle": "Показать таблицей"
+      },
+      "tooltip": {
+        "aov": "Средний чек",
+        "last_year_aov": "Средний чек, {month}",
+        "last_year_revenue": "Выручка, {month}",
+        "projection": "Прогноз на конец месяца",
+        "revenue": "Выручка",
+        "revenue_to_date": "Выручка на сегодня",
+        "vs_month": "К {month}"
+      },
+      "upcoming": "Впереди"
     }
   },
   "pages": {
@@ -1337,31 +1476,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Панель управления",
-        "last_orders_card": {
-          "title": "Последние заказы",
-          "all_orders_link": "Все заказы",
-          "order_number_label": "Номер заказа",
-          "purchase_number_label": "Номер закупки",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Счет",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Нет заказов",
-          "no_orders_message": "Еще нет заказов"
-        },
-        "monthly_report_card": {
-          "title": "Отчет о расходах за месяц",
-          "budget_title": "Бюджет",
-          "total_spend_label": "Всего потрачено",
-          "spend_chart_alt": "Диаграмма расходов"
-        },
-        "orders_status_card": {
-          "title": "Статус заказов"
-        },
-        "bulk_order_card": {
-          "title": "Мультизаказ"
-        }
+        "title": "Панель управления"
       },
       "change_password": {
         "meta": {
@@ -1499,6 +1614,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ключей нет",
         "unnamed_key": "Ключ без названия",
+        "rename_key_label": "Переименовать {name}",
+        "delete_key_label": "Удалить {name}",
         "created": "Создан {date}",
         "changed": "Изменён {date}",
         "rename_modal": {

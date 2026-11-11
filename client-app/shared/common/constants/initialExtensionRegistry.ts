@@ -50,4 +50,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   checkout: {},
   identityProviders: {},
   signInMethods: {},
+  accountSecurity: {},
+  companyInfo: {},
 };
