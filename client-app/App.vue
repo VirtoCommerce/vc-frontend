@@ -40,7 +40,7 @@ const { favIcons } = useWhiteLabeling();
 const { initRouteGuard } = useQueuedMutations();
 const i18n = useI18n();
 
-// An empty favIcons.value keeps the favicon from index.html. Computed because a theme favicon can arrive after boot.
+// Computed because a theme favicon can arrive after boot.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({
   link: computed(() =>

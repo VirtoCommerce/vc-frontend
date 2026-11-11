@@ -76,7 +76,7 @@ const LISTING_SETTINGS = [
   "showButtonToDefaultView",
 ] as const;
 
-/** A setting the schema offers as "<unset>" keeps the listing's own default. */
+/** A setting the schema offers as unset keeps the listing's own default. */
 const UNSET_VALUE = "<unset>";
 
 const { categoryId } = toRefs(props);

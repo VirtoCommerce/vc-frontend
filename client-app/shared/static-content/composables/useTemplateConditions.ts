@@ -3,7 +3,7 @@ import { shallowReactive } from "vue";
 import { BUILT_IN_CONDITIONS } from "../templates/conditions";
 import type { ITemplateCondition, TemplateConditionDescriptorType } from "../templates/conditions";
 
-/** Values compare exactly (except `path`): a `VirtoFrontend_UI_Layout` of `b2c` does not match the default B2C rule. */
+/** Values compare exactly, path and language aside: a product layout of `b2c` does not match the default B2C rule. */
 export const useTemplateConditions = createGlobalState(() => {
   const conditions = shallowReactive(new Map(BUILT_IN_CONDITIONS.map((condition) => [condition.name, condition])));
 

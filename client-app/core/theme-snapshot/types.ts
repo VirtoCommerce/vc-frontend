@@ -1,4 +1,4 @@
-/** The contract is `docs/contracts/theme-snapshot.md` in vc-module-pagebuilder. */
+/** Mirrors the theme snapshot contract of the Page Builder backend module. */
 
 export type ThemePageType = "product" | "category" | "page";
 

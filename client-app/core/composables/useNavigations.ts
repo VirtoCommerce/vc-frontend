@@ -232,7 +232,7 @@ export function _useNavigations() {
 
   const themeCatalogMenuItems = computed(() => getMenuLinks(siteHeader.value?.catalog_menu, true));
 
-  // Read live, not from the copy boot made: the designer's "Preview as" replaces white-labeling with the user's.
+  // Read live: the designer's "Preview as" swaps in the previewed user's white-labeling after boot.
   const shownCatalogMenuItems = computed(() =>
     whiteLabelingMainMenuLinks.value?.length
       ? whiteLabelingMainMenuLinks.value

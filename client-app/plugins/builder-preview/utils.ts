@@ -10,7 +10,6 @@ export const PREVIEW_PROTOCOL = 2;
 
 const DESIGNER_FRAME_STORAGE_KEY = "builderPreviewFrame";
 
-/** What the designer passes in the frame's first URL: `?ep=` as its origin and `?protocol=`. */
 interface IDesignerFrame {
   origin: string;
   protocol?: string;
@@ -20,9 +19,9 @@ let cachedDesignerFrame: IDesignerFrame | undefined;
 let cachedIsPreviewProtocol: boolean | undefined;
 
 /**
- * `undefined` outside a frame: only the designer that frames the preview may drive it. The designer passes `?ep=` in
- * the frame's first URL only, so the frame keeps the origin for its session: a full reload inside the frame (language
- * switch, chunk-load recovery) comes back as the designer's preview and answers its `connect`.
+ * `undefined` outside a frame: only the designer that frames the preview may drive it. Only the frame's first URL
+ * carries the designer's endpoint, so the frame keeps its origin for the session: a full reload inside the frame
+ * (language switch, chunk-load recovery) comes back as the designer's preview and answers its `connect`.
  */
 export function getBuilderOrigin() {
   return getDesignerFrame().origin || undefined;
@@ -140,7 +139,7 @@ export function isDesignerPreview(): boolean {
   return isPreviewMode() || !!getBuilderOrigin();
 }
 
-/** Only the designer that speaks the preview protocol reads the `data-pb-*` markup; elsewhere the page is unchanged. */
+/** Only the designer that speaks the preview protocol reads the preview markup; elsewhere the page is unchanged. */
 export function isPreviewV2Frame(): boolean {
   return !!getBuilderOrigin() && isOpenedWithPreviewProtocol() && isNewPageBuilderEnabled();
 }
@@ -190,12 +189,8 @@ export type PreviewBootOptionsType = {
 };
 
 /**
- * Everything storefront boot needs to know about a Page Builder preview, resolved from the URL and
- * the designer origin the frame keeps, before the preview plugin is installed. Boot has to decide
- * the locale and the router base up front, so it can't wait for the plugin — this keeps the
- * reasoning here instead of scattering Page Builder branches across `app-runner` (VCST-5219).
- * A designer frame reloaded on a storefront page is still the preview: the plugin takes it back
- * to the preview route.
+ * Boot decides the locale and the router base before the preview plugin is installed, so it cannot wait for it.
+ * A designer frame reloaded on a storefront page is still the preview: the plugin takes it back to the preview route.
  */
 export function getPreviewBootOptions(): PreviewBootOptionsType {
   const isActive = isDesignerPreview();

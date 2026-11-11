@@ -449,7 +449,7 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   if (isOrganizationChanged) {
     await loadOrganizationBranding();
   }
-  // Force remount of all blocks with new token and restore scroll afterward; protocol 2 scrolls on its own reload.
+  // Remounts every block under the new token; protocol 2 restores the scroll on its own reload.
   pendingScrollRestore = !context.previewV2;
   staticPagePreview.value = undefined;
   context.sharedComponentOverlay?.update([], []);
@@ -465,7 +465,7 @@ async function getPreviewUserOrganizationId(userId: string): Promise<string | un
   }
 }
 
-/** An organization's white-labeling (logo, favicons, footer links) replaces the store's for its members. */
+/** An organization's white-labeling replaces the store's branding for its members. */
 async function loadOrganizationBranding(): Promise<void> {
   try {
     await useWhiteLabeling().fetchWhiteLabelingSettings();

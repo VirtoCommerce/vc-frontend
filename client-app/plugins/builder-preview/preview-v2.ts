@@ -168,7 +168,6 @@ export function createPreviewV2(options: IPreviewV2Options) {
     options.sharedComponents?.setEnabled(isInspectorEnabled);
   }
 
-  /** The text being edited takes keys and clicks; otherwise only an unblocked page does. */
   function isPageInputAllowed(): boolean {
     return editor.isEditing || !isBlocking();
   }
@@ -435,7 +434,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   };
 }
 
-/** The preview protocol accepts inline edits only for settings of schema type `string` that are not links. */
+/** Mirrors which settings the preview protocol accepts inline edits for. */
 export function isPlainTextSetting(
   schemas: PageBuilderSchemaType | undefined,
   itemType: string,

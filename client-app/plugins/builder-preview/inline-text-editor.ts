@@ -260,7 +260,6 @@ export class InlineTextEditor {
   };
 }
 
-/** Lines pasted into a single-line text: one space between them, blank lines dropped. */
 function toSingleLine(value: string): string {
   if (!value.includes("\n")) {
     return value;

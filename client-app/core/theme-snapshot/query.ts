@@ -37,8 +37,8 @@ export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $store
 
 export const DESIGNER_PREVIEW_PATH = "/designer-preview";
 
-/** Keep in line with `possibleLocaleRegex` in `useLanguages`: this file cannot import it. */
+/** Must match the app's URL locale pattern, which this file cannot import. */
 export const URL_LOCALE_PATTERN = String.raw`^\/?([a-z]{2}(?:-[A-Z]{2})?)(\/|$)`;
 
-/** Keep in line with `pinnedLocale` in `useLanguages`: this file cannot import it. */
+/** Must match the key the app pins the locale under, which this file cannot import. */
 export const PINNED_LOCALE_KEY = "pinnedLocale";

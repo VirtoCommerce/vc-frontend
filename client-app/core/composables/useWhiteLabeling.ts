@@ -46,7 +46,7 @@ function pickBrandField(
   return whiteLabelingValue ?? fallback;
 }
 
-/** Follows the source of `logoUrl`, so a light logo never pairs with the dark logo of another source. */
+/** Follows the light logo's source, so a light logo never pairs with the dark logo of another source. */
 function pickDarkLogo(): string | undefined {
   const settings = whiteLabelingSettings.value;
 
@@ -114,7 +114,7 @@ function _useWhiteLabeling() {
         ["brand.secondaryLogoUrl", settings?.logoUrl],
         ["brand.faviconUrl", settings?.favicons?.length],
         ["palette", settings?.themePresetName],
-        // The main menu replaces the header's category menu (`catalog_menu`) only; the icons menu stays the theme's.
+        // The main menu replaces only the header's category menu; the icons menu stays the theme's.
         ["menus.header", settings?.mainMenuLinks?.length],
         ["menus.footer", settings?.footerLinks?.length],
       ];

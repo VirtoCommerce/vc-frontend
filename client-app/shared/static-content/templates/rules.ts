@@ -108,7 +108,7 @@ export function normalizeTemplateRules(value: unknown): ITemplateRules | undefin
   return rules;
 }
 
-/** Matches the ids of the module's snapshot builder, so `resolved.ruleId` names the same rule on both sides. */
+/** Matches the ids the backend's snapshot builder gives, so a reported rule id names the same rule on both sides. */
 function withUniqueIds(
   list: (Omit<ITemplateRule, "id"> & { id?: unknown })[],
   pageType: ThemePageType,

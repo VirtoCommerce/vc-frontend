@@ -117,7 +117,7 @@ const visibleComponent = computed(() => {
 
 const { setPageLayout } = usePageLayout();
 
-// Builder.io, internal pages and "not found" keep the full layout; the slug content reports its own.
+// The slug content reports its own layout; the other pages keep the full one.
 watch(
   visibleComponent,
   (value) => {

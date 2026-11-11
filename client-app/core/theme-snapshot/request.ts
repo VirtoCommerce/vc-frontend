@@ -91,8 +91,8 @@ export function readThemeSnapshotResponse(
 }
 
 /**
- * The backend refused the query itself, as one whose x-cms has no `themeSnapshot` field does: asking again gets the
- * same. The inline script and `requestThemeSnapshot` both reject an HTTP error with `HTTP <status>`.
+ * The backend refused the query itself, as one without the snapshot in its schema does: asking again gets the same.
+ * Both request paths reject an HTTP error with its status alone, so the message identifies a refused request.
  */
 export function isThemeSnapshotRejected(error: unknown): boolean {
   return (
@@ -106,7 +106,7 @@ type LanguageCheckedThemeType = Pick<IPublishedTheme, "cultureName" | "requested
 /**
  * The server answers a language with no file in its default language, which still counts as that language.
  * A language part (`fr`, a URL prefix) counts only when another language was served: a culture of that language
- * served for it may not be the one pageContext resolved.
+ * served for it may not be the one the storefront resolved.
  */
 export function isThemeForLanguage(theme: LanguageCheckedThemeType, cultureName: string): boolean {
   return isSameLanguage(theme.cultureName, cultureName) || isAskedLanguage(theme, cultureName);

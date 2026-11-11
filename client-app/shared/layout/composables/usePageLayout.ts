@@ -29,7 +29,7 @@ export function joinSlugPath(pathMatch: string | string[] | undefined): string {
     return "/";
   }
 
-  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
+  // A trailing slash leaves an empty segment.
   return (Array.isArray(pathMatch) ? pathMatch : [pathMatch]).filter(Boolean).join("/");
 }
 
