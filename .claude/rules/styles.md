@@ -28,11 +28,11 @@ list it under Breaking changes in the PR). Where a change goes (the component, a
 the table at the top of `client-app/assets/styles/README.md`. Check visual changes in Storybook's Design, Theme
 preset and dark toolbars (presets: `client-app/assets/presets/index.ts`, each with a `.dark.json`).
 
-`yarn lint` does not parse SCSS; `yarn check:designs` and `yarn check:css-layers` check design folders, preset
-stylesheets (`assets/presets/<name>.scss`) and layer names (`client-app/assets/styles/README.md`, "Checks"), and
-`scripts/design-token-table.test.ts` checks the README's token table against the shape and type tokens the styles
-read. Beyond them, only the Sass/Tailwind compile in `yarn build` catches anything, so everything below is
-review-only. Severity guide: breaks the build or renders visibly wrong
+`yarn lint` does not parse SCSS; `yarn check:designs`, `yarn check:css-layers` and `yarn check:css-important` check
+design folders, preset stylesheets (`assets/presets/<name>.scss`), layer names and `!important` (§18)
+(`client-app/assets/styles/README.md`, "Checks"), and `scripts/design-token-table.test.ts` checks the README's token
+table against the shape and type tokens the styles read. Beyond them, only the Sass/Tailwind compile in `yarn build`
+catches anything, so everything else below is review-only. Severity guide: breaks the build or renders visibly wrong
 (in any preset, dark, RTL, print) → `major`; convention violation → `minor`; polish → `nit`.
 
 ## 1. Where styles live
@@ -136,6 +136,7 @@ review-only. Severity guide: breaks the build or renders visibly wrong
     in a template class, inline style) and everywhere, UI kit, `dark/` and `print/` included. Fix the conflict at its
     cause: a UI-kit component → its props or `--vc-<component>-…` tokens (see `ui-kit.md`); your own rules →
     selector order or structure. If that isn't possible, raise it — don't ship the `!important`.
+    `yarn check:css-important` enforces this in pre-commit (staged files) and CI.
 
 ## 4. Responsive
 
