@@ -22,6 +22,27 @@ vi.mock("@/core/globals", () => ({
 
 describe("Menu Utilities", () => {
   describe("convertToExtendedMenuLink", () => {
+    it("drops a link that would run script, at every level", () => {
+      const item = {
+        title: "Catalog",
+        url: "javascript:alert(1)",
+        priority: 0,
+        childItems: [{ title: "Child", url: " JAVAscript:alert(2)", priority: 0, childItems: [] }],
+      } as unknown as MenuLinkType;
+
+      const result = convertToExtendedMenuLink(item);
+
+      expect(result.route).toBeUndefined();
+      expect(result.children?.[0].route).toBeUndefined();
+    });
+
+    it("keeps relative, http(s) and app links", () => {
+      for (const url of ["/catalog", "https://example.com/a", "mailto:a@example.com", ""]) {
+        const item = { title: "x", url, priority: 0, childItems: [] } as unknown as MenuLinkType;
+        expect(convertToExtendedMenuLink(item).route).toBe(url);
+      }
+    });
+
     it("should convert a simple MenuLinkType to ExtendedMenuLinkType", () => {
       const menuLink: MenuLinkType = {
         title: "Test Link",
