@@ -237,13 +237,13 @@ watchEffect(async () => {
     $hideButton: &;
   }
 
-  &__icon-button.vc-button {
+  &__icon-button {
     @container (width > theme("containers.xxs")) {
       @apply hidden;
     }
   }
 
-  &__text-button.vc-button {
+  &__text-button {
     @apply hidden;
 
     @container (width > theme("containers.xxs")) {
