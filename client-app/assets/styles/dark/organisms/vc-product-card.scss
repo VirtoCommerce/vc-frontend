@@ -1,5 +1,7 @@
 .vc-product-card {
-  // A drop shadow is black on near-black here and separates nothing: the hairline carries the edge.
+  // Shadows are built on additional-950. Where a dark preset keeps it black (Default and Mercury), the
+  // shadow is black on near-black and separates nothing; where it is light, the shadow turns into a
+  // glow. Either way the hairline carries the edge.
   &--border {
     @apply border-neutral-200 shadow-none;
 

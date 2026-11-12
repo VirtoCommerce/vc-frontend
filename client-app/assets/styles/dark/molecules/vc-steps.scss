@@ -12,12 +12,15 @@
     }
   }
 
-  // The pending disc (neutral-400) is a mid surface step in dark; the panel-coloured digit on it is ~2.6:1.
+  // The pending disc (neutral-400) is a mid step in dark: neither the panel colour nor the text colour
+  // reaches 4.5:1 on it in every preset. The disc drops to a surface step and the digit takes the text colour.
   &__icon {
-    @apply text-neutral-950;
+    @apply bg-neutral-300 text-neutral-950;
 
+    // The active disc is a solid primary fill: its digit takes the preset's solid primary label. The panel
+    // colour reads 3.8:1 on the Coffee and Red discs.
     #{$itemActive}:not(#{$itemDisabled}) & {
-      @apply text-additional-950;
+      @apply text-[color:var(--color-vc-text-solid-primary,var(--color-additional-50))];
     }
   }
 }

@@ -35,11 +35,11 @@
   "color_accent_900": "#0a333d",
   "color_accent_950": "#05202a",
 
-  "color_neutral_50": "#17181c",
-  "color_neutral_100": "#1e2025",
+  "color_neutral_50": "#202227",
+  "color_neutral_100": "#262930",
   "color_neutral_200": "#2b2d34",
   "color_neutral_300": "#3d4048",
-  "color_neutral_400": "#5a5e68",
+  "color_neutral_400": "#6e737f",
   "color_neutral_500": "#9ba0ac",
   "color_neutral_600": "#b4b8c2",
   "color_neutral_700": "#c9ccd5",
@@ -95,6 +95,11 @@
   "color_info_900": "#c2ddea",
   "color_info_950": "#26343f",
 
+  "color_vc_popover_background": "#2b2d34",
+  "color_vc_popover_border": "#3d4048",
+  "color_vc_solid_hover_mix": "#ffffff",
+  "color_vc_table_row_stripe": "#262930",
+  "color_vc_table_row_hover": "#2b2d34",
   "color_additional_50": "#1c1e23",
   "color_additional_950": "#000000",
 
@@ -245,13 +250,13 @@
   "color_header_bottom_link_hover": "#f7f8fa",
   "color_header_bottom_link_active": "#f7f8fa",
 
-  "color_footer_top_bg": "#0d1013",
+  "color_footer_top_bg": "#0e0e11",
   "color_footer_top_text": "#ffffff",
   "color_footer_top_link": "#a3a3a3",
   "color_footer_top_link_hover": "#ffffff",
   "color_footer_top_link_active": "#ffffff",
 
-  "color_footer_bottom_bg": "#010202",
+  "color_footer_bottom_bg": "#0a0a0c",
   "color_footer_bottom_text": "#ffffff",
   "color_footer_bottom_link": "#56bce1",
   "color_footer_bottom_link_hover": "#ffffff",

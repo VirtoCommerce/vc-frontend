@@ -158,6 +158,14 @@ onMounted(() => {
 
 <style lang="scss">
 .mobile-search-bar {
+  &__button.vc-button--soft--secondary {
+    --search-chip-bg: var(--color-search-chip-bg, var(--color-neutral-200));
+    --vc-button-soft-secondary-bg: var(--search-chip-bg);
+    --vc-button-soft-secondary-border: var(--search-chip-bg);
+    --vc-button-soft-secondary-text: var(--color-neutral-900);
+    --vc-button-soft-secondary-icon: currentColor;
+  }
+
   &__backdrop {
     @apply fixed inset-0 z-10 cursor-pointer;
 

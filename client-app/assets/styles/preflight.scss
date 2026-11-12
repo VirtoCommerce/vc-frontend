@@ -10,7 +10,8 @@
     @include typography-roles;
 
     body {
-      @apply text-[--body-text-color];
+      // Pages without a VcContainer (the home page blocks) sit on the page color, not on the browser default.
+      @apply bg-[--body-bg-color] text-[--body-text-color];
 
       // Keyboard only, by design decision. Browsers keep `:focus-visible` on
       // editable text fields even when clicked, so typing targets still ring.

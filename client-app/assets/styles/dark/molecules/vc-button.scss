@@ -43,12 +43,12 @@
 
   @each $color, $shade in $solid-bg {
     &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      // Lift the rest colour toward white: on a dark panel a darker hover reads as a dip,
-      // and mixing from the rest key keeps hover in step with any preset override.
+      // Presets with dark labels set --color-vc-solid-hover-mix to white (a lift); the default
+      // darkens, which keeps light labels readable.
       --bg-color: color-mix(
         in srgb,
         var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
-        white 14%
+        var(--color-vc-solid-hover-mix, black) 14%
       );
       --border-color: var(--bg-color);
     }
@@ -127,7 +127,7 @@
       --bg-color: color-mix(
         in srgb,
         var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
-        black 20%
+        black 10%
       );
       --border-color: var(--bg-color);
     }

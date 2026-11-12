@@ -68,15 +68,15 @@
     </section>
 
     <!-- CTA -->
-    <section class="bg-primary py-6 lg:py-10">
+    <section class="home__cta bg-primary py-6 lg:py-10">
       <div class="container mx-auto flex flex-col items-center space-y-2 px-6 md:px-12 lg:flex-row lg:space-x-10">
-        <h2 class="whitespace-nowrap text-3xl font-black uppercase text-additional-50">
+        <h2 class="home__cta-title whitespace-nowrap text-3xl font-black uppercase text-additional-50">
           {{ $t("pages.home.subscription_block.subscribe_now") }}
         </h2>
 
         <div
           v-html-safe="$t('pages.home.subscription_block.info_message')"
-          class="max-w-max text-base leading-tight text-additional-50 lg:max-w-min"
+          class="home__cta-text max-w-max text-base leading-tight text-additional-50 lg:max-w-min"
         />
 
         <div class="flex w-full grow space-x-6">

@@ -1,0 +1,9 @@
+// The light veil is the dark text colour at 30%: over a photo it washes out and the panel-coloured
+// icon sinks into it. A veil of the panel colour with a light icon holds over any photo in every dark preset.
+.product-reviews {
+  &__photo-overlay {
+    @apply text-neutral-950;
+
+    background-color: rgb(from var(--color-additional-50) r g b / 0.7);
+  }
+}

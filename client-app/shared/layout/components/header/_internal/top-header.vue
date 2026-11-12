@@ -125,7 +125,7 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            class="top-header__account-menu absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
             data-test-id="account-menu"
           >
             <div class="flex max-w-full items-center justify-between p-3">

@@ -108,6 +108,12 @@ export interface IThemeConfigPreset {
   color_additional_950: string;
 
   color_vc_focus_ring?: string;
+  color_vc_popover_background?: string;
+  color_vc_popover_border?: string;
+  color_search_chip_bg?: string;
+  color_vc_solid_hover_mix?: string;
+  color_vc_table_row_stripe?: string;
+  color_vc_table_row_hover?: string;
 
   color_vc_background_solid_primary?: string;
   color_vc_background_solid_secondary?: string;

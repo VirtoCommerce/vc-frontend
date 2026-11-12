@@ -13,13 +13,28 @@ html.dark {
   // 3:1 on every dark surface a ring lands on, in all 7 presets.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-600));
 
+  // Raised layer (menus, popovers): the panel colour lifted, unless the preset names its own pair.
+  --vc-raised-bg: var(--color-vc-popover-background, color-mix(in srgb, var(--color-additional-50), white 7%));
+  --vc-raised-border: var(--color-vc-popover-border, color-mix(in srgb, var(--color-additional-50), white 16%));
+
+  // Status colours as text: -500 is tuned as a fill and reads 2.4-3.7:1 on dark panels.
+  // text-danger, text-success, text-info and text-warning resolve through these (tailwind.config.ts).
+  --vc-fg-danger: var(--color-danger-700);
+  --vc-fg-success: var(--color-success-700);
+  --vc-fg-info: var(--color-info-700);
+  --vc-fg-warning: var(--color-warning-700);
+
   @include meta.load-css("dark/atoms/vc-badge");
+  @include meta.load-css("dark/atoms/vc-container");
   @include meta.load-css("dark/molecules/vc-input");
   @include meta.load-css("dark/molecules/vc-button");
   @include meta.load-css("dark/molecules/vc-chip");
   @include meta.load-css("dark/molecules/vc-alert");
+  @include meta.load-css("dark/molecules/vc-loader-overlay");
   @include meta.load-css("dark/molecules/vc-menu-item");
+  @include meta.load-css("dark/molecules/vc-popover");
   @include meta.load-css("dark/molecules/vc-range-calendar");
+  @include meta.load-css("dark/molecules/vc-select");
   @include meta.load-css("dark/molecules/vc-steps");
   @include meta.load-css("dark/molecules/vc-tile-button");
   @include meta.load-css("dark/organisms/vc-pagination");
