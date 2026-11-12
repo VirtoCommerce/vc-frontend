@@ -3709,7 +3709,10 @@ declare const __VLS_export$j: <T, V = T, M extends boolean = false>(__VLS_props:
          * Capped at `total`, never below the selected matches that are loaded.
          */
         selectedCount?: number;
-        /** Shows a loading indicator inside the list. */
+        /**
+         * Shows the list's loading indicator: for the first page, a next one, or a `server-filter` answer.
+         * It does not say which query `items` answer — `answered-query` does.
+         */
         loading?: boolean;
         /**
          * More options exist beyond `items`. While it is set, the list asks for the next page with
@@ -3720,13 +3723,21 @@ declare const __VLS_export$j: <T, V = T, M extends boolean = false>(__VLS_props:
          */
         hasNextPage?: boolean;
         /**
-         * Turns off client-side filtering — the consumer filters and re-supplies `items`. Raise `loading`
-         * in the `search` handler and keep it until the new `items` are in: while `loading` is on, Select all
-         * is disabled and no result count is announced. A query the consumer skips (too short, the same
-         * once trimmed) needs nothing — the `items` on screen are taken as its answer. An answer to an
-         * older query must not end `loading` early: cancel it, as Apollo does for changed variables.
+         * Turns off client-side filtering: answer each `search` with new `items` (and `total`) and echo the
+         * query they answer in `answered-query`. Needs `autocomplete`.
          */
         serverFilter?: boolean;
+        /**
+         * With `server-filter`: the query the current `items` and `total` answer, echoed back. Until it
+         * matches the last `search` (spaces around either ignored), Select all is disabled, keeps counting
+         * the answered query, and no result count is announced. Echo a query you skip (too short) at once.
+         * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, echo the
+         * variables of the result that is in:
+         * `computed<string | undefined>((prev) => !enabled.value ? variables.value.keyword : loading.value || !query.value ? prev : query.value.variables?.keyword)`.
+         * Not `loading.value ? prev : variables.value.keyword`: it names the new query before `loading`
+         * rises and keeps naming it through the load.
+         */
+        answeredQuery?: string;
         testIdDropdown?: string;
         enableTeleport?: boolean;
         /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */

@@ -129,6 +129,16 @@ function warnFiltering<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, v
         "with new `items`, holding `loading` while it fetches.",
     );
   }
+
+  // Present, not truthy: "" answers the unfiltered list, and an echo may start undefined.
+  if (props.serverFilter && !("answeredQuery" in vnodeProps || "answered-query" in vnodeProps)) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcSelect: `server-filter` needs `answered-query`, the query your `items` answer; without it only the " +
+        "unfiltered list counts as answered, so under a typed query Select all stays disabled and no result " +
+        "count is announced.",
+    );
+  }
 }
 
 function warnPaging<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnodeProps: VNodePropsType): void {

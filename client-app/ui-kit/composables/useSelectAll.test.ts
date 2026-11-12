@@ -9,6 +9,7 @@ function setup(overrides: Partial<IUseSelectAllOptions<string>> = {}) {
     activeRows: [false, false, false],
     selectedValues: [],
     filterValue: "",
+    answeredQuery: "",
     serverFilter: false,
     answerPending: false,
     total: undefined,
@@ -62,6 +63,7 @@ describe("useSelectAll counter", () => {
     const { totalCount, selectedCount } = setup({
       serverFilter: true,
       filterValue: "a",
+      answeredQuery: "a",
       total: 20,
       selectedCount: 7,
       activeRows: [true, false, false],
@@ -71,25 +73,21 @@ describe("useSelectAll counter", () => {
     expect(selectedCount.value).toBe(7);
   });
 
-  it("keeps describing the previous query until the server answers", () => {
-    const filterValue = ref("");
-    const answerPending = ref(false);
+  it("counts the answered server-side query, not the typed one", () => {
+    const answeredQuery = ref("");
     const { selectedCount } = setup({
       serverFilter: true,
-      filterValue,
-      answerPending,
+      filterValue: "a",
+      answeredQuery,
       total: 20,
       selectedCount: 7,
       activeRows: [true, false, false],
       selectedValues: ["a", "x"],
     });
 
-    answerPending.value = true;
-    filterValue.value = "a";
-
     expect(selectedCount.value).toBe(2);
 
-    answerPending.value = false;
+    answeredQuery.value = "a";
 
     expect(selectedCount.value).toBe(7);
   });

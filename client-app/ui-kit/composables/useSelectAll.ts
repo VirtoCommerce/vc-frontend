@@ -1,5 +1,5 @@
 import { differenceWith, isEqual, unionWith } from "lodash-es";
-import { computed, ref, toValue, watch } from "vue";
+import { computed, toValue } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseSelectAllOptions<V> {
@@ -9,11 +9,13 @@ export interface IUseSelectAllOptions<V> {
   activeRows: MaybeRefOrGetter<readonly boolean[]>;
   /** The whole selection, including values no option on screen carries. */
   selectedValues: MaybeRefOrGetter<readonly V[]>;
-  /** The typed query narrowing the options. */
+  /** Without `serverFilter`, the typed query narrowing the options. */
   filterValue: MaybeRefOrGetter<string>;
+  /** With `serverFilter`, the query the options and `total` on screen answer, as the consumer echoes it. */
+  answeredQuery: MaybeRefOrGetter<string>;
   /** The consumer filters the options (server-side), so `total` counts the query's matches. */
   serverFilter: MaybeRefOrGetter<boolean | undefined>;
-  /** A server-side answer is on its way: the options and `total` still describe the previous query. */
+  /** The options and `total` on screen answer another query than the one typed. */
   answerPending: MaybeRefOrGetter<boolean>;
   /** The size of the whole set; defaults to the number of options on screen. */
   total: MaybeRefOrGetter<number | undefined>;
@@ -36,22 +38,9 @@ export function isSelectedCountKnown(count: number | undefined): count is number
  */
 export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
   // While a query narrows the list, only the matching options count: a local filter is unknown to
-  // `total`, and with `serverFilter` the consumer's `total` counts the matches. A server-side query
-  // narrows only once answered: until then `total` and the options describe the previous one.
-  const answeredFilterValue = ref(toValue(params.filterValue));
-
-  watch(
-    [() => toValue(params.filterValue), () => toValue(params.answerPending)],
-    ([value, pending]) => {
-      if (!pending) {
-        answeredFilterValue.value = value;
-      }
-    },
-    { flush: "sync" },
-  );
-
+  // `total`, and with `serverFilter` the consumer's `total` counts the matches of the answered query.
   const isNarrowed = computed(
-    () => !!(toValue(params.serverFilter) ? answeredFilterValue.value : toValue(params.filterValue)),
+    () => !!(toValue(params.serverFilter) ? toValue(params.answeredQuery) : toValue(params.filterValue)),
   );
 
   const optionCount = computed(() => toValue(params.values).length);
@@ -104,8 +93,8 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
 
   const isSomeSelected = computed(() => selectedCount.value > 0 && !isAllSelected.value);
 
-  // A server-filtered list that is loading (an answer or a page) or still holds the previous query's
-  // options would have a press misreport it; with no option on screen there is nothing to do.
+  // A server-filtered list whose options answer another query than the typed one would have a press
+  // misreport it; with no option on screen there is nothing to do.
   const isDisabled = computed(() => toValue(params.answerPending) || !optionCount.value);
 
   /**

@@ -1,14 +1,16 @@
+import { ApolloClient, ApolloLink, InMemoryCache, Observable, gql } from "@apollo/client/core";
+import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { defineComponent, h, nextTick, reactive, ref } from "vue";
+import { computed, defineComponent, effectScope, h, nextTick, reactive, ref } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
 import { describeScrollBox } from "@/ui-kit/test-mocks";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
-import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
 
 const ITEMS = ["Albania", "Belgium", "China"];
 
@@ -58,6 +60,8 @@ const countingI18n = createI18n({
   },
 });
 
+const WITH_MESSAGES = { plugins: [countingI18n] };
+
 // attachTo: document.activeElement only tracks attached nodes, and a leftover instance would
 // answer the next test's queries, hence the auto-unmount.
 enableAutoUnmount(afterEach);
@@ -83,7 +87,7 @@ function createWrapper(props: HarnessPropsType, slots?: MountOptionsType["slots"
 }
 
 function createWrapperWithMessages(props: HarnessPropsType) {
-  return mountSelect({ props: props as MountOptionsType["props"], global: { plugins: [countingI18n] } });
+  return mountSelect({ props: props as MountOptionsType["props"], global: WITH_MESSAGES });
 }
 
 function noop() {
@@ -102,10 +106,11 @@ function spyOnWarn() {
 function mountWithReactiveProps(
   props: () => Record<string, unknown>,
   slots?: () => Record<string, unknown> | undefined,
+  global?: MountOptionsType["global"],
 ) {
   const parent = defineComponent({ setup: () => () => h(VcSelect as never, props(), slots?.()) });
 
-  return createWrapperFactory(mount, parent, MOUNT_OPTIONS)();
+  return createWrapperFactory(mount, parent, MOUNT_OPTIONS)({ global });
 }
 
 describe("VcSelect", () => {
@@ -541,11 +546,15 @@ describe("VcSelect", () => {
     const unhandledSelectAllProps = { items: ITEMS, multiple: true, selectAll: true };
     const selectAllProps = { ...unhandledSelectAllProps, onSelectAll: noop };
 
-    // A fixture not holding `loading` takes the sent query as answered.
-    async function typeAnsweredQuery(input: Pick<DOMWrapper<HTMLInputElement>, "setValue">, query: string) {
+    // Albania plus 39 values no option carries.
+    const SELECTED = ["Albania", ...Array.from({ length: 39 }, (_, index) => `x${index}`)];
+
+    // The consumer answers the query with the options it already holds.
+    async function typeAnsweredQuery(wrapper: VueWrapper, query: string) {
       useFakeTimersInTest();
-      await input.setValue(query);
+      await wrapper.get("input").setValue(query);
       await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+      await wrapper.setProps({ answeredQuery: query });
     }
 
     it.each([
@@ -663,6 +672,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 20,
         selectedCount: 3,
         modelValue: [...ITEMS],
@@ -670,7 +680,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
       await wrapper.get(".vc-select-all input").trigger("change");
 
@@ -733,13 +743,14 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 20,
         modelValue: [...ITEMS, ...Array.from({ length: 17 }, (_, index) => `Match ${index}`)],
       });
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 20");
@@ -862,7 +873,13 @@ describe("VcSelect", () => {
         const warn = spyOnWarn();
         const counted = { items: ITEMS, multiple: true, selectAll: true, modelValue: [], selectedCount: 2 };
 
-        const serverSide = { autocomplete: true, serverFilter: true, onSearch: noop, onSelectAll: noop };
+        const serverSide = {
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          answeredQuery: "",
+          onSelectAll: noop,
+        };
 
         createWrapper(counted);
         createWrapper({ ...counted, ...serverSide, multiple: false, modelValue: undefined });
@@ -876,8 +893,16 @@ describe("VcSelect", () => {
         ["a total beyond the loaded options", { total: 30 }, true],
         ["a total and a selected count", { total: 30, selectedCount: 0 }, false],
         ["a total and a selected count that is not a number", { total: 30, selectedCount: Number.NaN }, true],
-        ["a server filter with a total", { autocomplete: true, serverFilter: true, onSearch: noop, total: 3 }, true],
-        ["a server filter without a total", { autocomplete: true, serverFilter: true, onSearch: noop }, false],
+        [
+          "a server filter with a total",
+          { autocomplete: true, serverFilter: true, onSearch: noop, answeredQuery: "", total: 3 },
+          true,
+        ],
+        [
+          "a server filter without a total",
+          { autocomplete: true, serverFilter: true, onSearch: noop, answeredQuery: "" },
+          false,
+        ],
         ["the whole set loaded", { total: ITEMS.length }, false],
         ["a single select", { multiple: false, modelValue: undefined, total: 30 }, false],
       ])("warns about a select-all over %s with nothing counting the set accordingly", (_label, props, warns) => {
@@ -919,6 +944,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         hasNextPage: true,
         loading: false,
         total: 5,
@@ -928,7 +954,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
@@ -941,6 +967,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         hasNextPage: true,
         loading: false,
         total: 5,
@@ -950,7 +977,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("2 of 5");
@@ -963,6 +990,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 5,
         selectedCount: 4,
         modelValue: ["Albania"],
@@ -977,6 +1005,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 5,
         selectedCount: 0,
         modelValue: [...ITEMS],
@@ -984,7 +1013,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 5");
@@ -1033,6 +1062,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 5,
         selectedCount: Number.NaN,
         modelValue: ["Albania"],
@@ -1040,7 +1070,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 5");
@@ -1052,6 +1082,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 1,
         selectedCount: 1,
         modelValue: [...ITEMS],
@@ -1059,7 +1090,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 1");
@@ -1083,8 +1114,9 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 500,
-        modelValue: ["Albania", ...Array.from({ length: 39 }, (_, index) => `x${index}`)],
+        modelValue: SELECTED,
       });
       const input = wrapper.get("input");
 
@@ -1097,12 +1129,413 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select-all__count").text()).toBe("40 of 500");
     });
 
+    describe("a server-side query the consumer answers later", () => {
+      beforeEach(useFakeTimersInTest);
+
+      // Each answer carries the query's selected matches, as `selected-count` asks of a paged consumer.
+      const ANSWERS: Record<string, { items: string[]; total: number; selectedCount?: number }> = {
+        "": { items: ITEMS, total: 500, selectedCount: SELECTED.length },
+        a: { items: ["Albania", "Andorra", "Austria"], total: 10, selectedCount: 1 },
+      };
+
+      // When `loading` rises says nothing about the answer: `late` raises it after a timer, `sync` answers in `@search`.
+      type RaiseType = "in-search" | "late" | "sync";
+
+      function mountServerConsumer({
+        raise = "in-search",
+        answers = ANSWERS,
+      }: { raise?: RaiseType; answers?: typeof ANSWERS } = {}) {
+        const query = ref("");
+        const loading = ref(false);
+        const answered = ref({ query: "", ...answers[""] });
+
+        function land() {
+          answered.value = { query: query.value, ...answers[query.value] };
+          loading.value = false;
+        }
+
+        function onSearch(text: string) {
+          // A trailing space leaves the query the same once trimmed: skipped, and echoed at once.
+          if (/\s$/.test(text)) {
+            answered.value = { ...answered.value, query: text };
+            return;
+          }
+
+          query.value = text;
+
+          if (raise === "sync") {
+            land();
+          } else if (raise === "in-search") {
+            loading.value = true;
+          } else {
+            setTimeout(() => {
+              loading.value = true;
+            }, 30);
+          }
+        }
+
+        const wrapper = mountWithReactiveProps(
+          () => ({
+            ...selectAllProps,
+            items: answered.value.items,
+            total: answered.value.total,
+            selectedCount: answered.value.selectedCount,
+            answeredQuery: answered.value.query,
+            loading: loading.value,
+            autocomplete: true,
+            serverFilter: true,
+            modelValue: SELECTED,
+            onSearch,
+          }),
+          undefined,
+          WITH_MESSAGES,
+        );
+
+        async function answer() {
+          land();
+          await nextTick();
+        }
+
+        return { wrapper, answer };
+      }
+
+      const counted = (wrapper: VueWrapper) => ({
+        count: wrapper.get(".vc-select-all__count").text(),
+        label: wrapper.get(".vc-select-all input").attributes("aria-label"),
+      });
+
+      const isSelectAllDisabled = (wrapper: VueWrapper) =>
+        wrapper.get(".vc-select-all input").attributes("disabled") !== undefined;
+
+      const announced = (wrapper: VueWrapper) => wrapper.get('[aria-live="polite"]').text();
+
+      it("counts the previous query until the answer to a typed one lands", async () => {
+        const { wrapper, answer } = mountServerConsumer();
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+
+        expect(counted(wrapper)).toEqual({ count: "40 of 500", label: "Select all, 40 of 500" });
+
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+      });
+
+      it("counts the previous query of an uncounted consumer until the answer to a typed one lands", async () => {
+        spyOnWarn();
+
+        const uncounted = Object.fromEntries(
+          Object.entries(ANSWERS).map(([query, { items, total }]) => [query, { items, total }]),
+        );
+        const { wrapper, answer } = mountServerConsumer({ answers: uncounted });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+
+        expect(counted(wrapper)).toEqual({ count: "40 of 500", label: "Select all, 40 of 500" });
+
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+      });
+
+      it("counts the answered query until the answer to clearing it lands", async () => {
+        const { wrapper, answer } = mountServerConsumer();
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+
+        await input.setValue("");
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "40 of 500", label: "Select all, 40 of 500" });
+      });
+
+      it("counts the answered query when its answer lands while a newer one is typed", async () => {
+        const { wrapper, answer } = mountServerConsumer();
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await input.setValue("ab");
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+        expect(isSelectAllDisabled(wrapper)).toBe(true);
+        expect(announced(wrapper)).toBe("");
+      });
+
+      it.each<[string, RaiseType]>([
+        ["raised in `@search`", "in-search"],
+        ["raised only after a timer", "late"],
+      ])("waits for the echoed query, not `loading`, with `loading` %s", async (_label, raise) => {
+        const { wrapper, answer } = mountServerConsumer({ raise });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS + 1);
+
+        expect(counted(wrapper)).toEqual({ count: "40 of 500", label: "Select all, 40 of 500" });
+        expect(isSelectAllDisabled(wrapper)).toBe(true);
+        expect(announced(wrapper)).toBe("");
+
+        await vi.advanceTimersByTimeAsync(50);
+        await answer();
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+        expect(isSelectAllDisabled(wrapper)).toBe(false);
+        expect(announced(wrapper)).toBe("3 results available");
+      });
+
+      it("counts an answer given inside `@search` at once", async () => {
+        const { wrapper } = mountServerConsumer({ raise: "sync" });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+        expect(isSelectAllDisabled(wrapper)).toBe(false);
+      });
+
+      it("ignores Select all pressed before a late consumer's answer lands", async () => {
+        const { wrapper, answer } = mountServerConsumer({ raise: "late" });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS + 1);
+        await wrapper.get(".vc-select-all input").trigger("change");
+        // A disabled checkbox fires no change, so the guard behind it is reached through the event itself.
+        wrapper.findComponent({ name: "VcSelectAll" }).vm.$emit("change");
+
+        const select = wrapper.findComponent({ name: "VcSelect" });
+
+        expect(select.emitted("selectAll")).toBeUndefined();
+        expect(select.emitted("update:modelValue")).toBeUndefined();
+
+        await vi.advanceTimersByTimeAsync(50);
+        await answer();
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(select.emitted("selectAll")).toEqual([[{ selected: true, query: "a" }]]);
+      });
+
+      it("takes the options on screen as the answer to a query the consumer skips and echoes", async () => {
+        const { wrapper, answer } = mountServerConsumer();
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await answer();
+        await input.setValue("a ");
+
+        expect(isSelectAllDisabled(wrapper)).toBe(true);
+        expect(announced(wrapper)).toBe("");
+
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+
+        expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
+        expect(isSelectAllDisabled(wrapper)).toBe(false);
+        expect(announced(wrapper)).toBe("3 results available");
+      });
+
+      describe("an Apollo `useQuery` consumer echoing the query its result answers", () => {
+        const SEARCH_DOCUMENT = gql`
+          query Search($keyword: String!) {
+            search(keyword: $keyword) {
+              items
+              total
+              selectedCount
+            }
+          }
+        `;
+
+        type ApolloConsumerOptionsType = {
+          fetchPolicy: "network-only" | "cache-first";
+          debounce?: number;
+          skipShort?: boolean;
+        };
+
+        function mountApolloConsumer({ fetchPolicy, debounce, skipShort }: ApolloConsumerOptionsType) {
+          const requests: { keyword: string; respond: () => void }[] = [];
+          const client = new ApolloClient({
+            cache: new InMemoryCache(),
+            link: new ApolloLink(
+              (operation) =>
+                new Observable((observer) => {
+                  const keyword = operation.variables.keyword as string;
+
+                  requests.push({
+                    keyword,
+                    respond: () => {
+                      observer.next({ data: { search: { __typename: "SearchResult", ...ANSWERS[keyword] } } });
+                      observer.complete();
+                    },
+                  });
+                }),
+            ),
+          });
+          const keyword = ref("");
+          const enabled = computed(() => !skipShort || keyword.value.length !== 1);
+          const scope = effectScope();
+
+          onTestFinished(() => scope.stop());
+
+          const { result, loading, query, variables } = scope.run(() =>
+            provideApolloClient(client)(() =>
+              useQuery<{ search: (typeof ANSWERS)[string] }, { keyword: string }>(
+                SEARCH_DOCUMENT,
+                () => ({ keyword: keyword.value }),
+                () => ({ fetchPolicy, keepPreviousResult: true, debounce, enabled: enabled.value }),
+              ),
+            ),
+          )!;
+          // The `answered-query` recipe: a skipped query is answered at once; otherwise the query whose result is in.
+          const answeredQuery = computed<string | undefined>((previous) => {
+            if (!enabled.value) {
+              return variables.value?.keyword;
+            }
+
+            return loading.value || !query.value ? previous : query.value.variables?.keyword;
+          });
+
+          const wrapper = mountWithReactiveProps(
+            () => ({
+              ...selectAllProps,
+              ...result.value?.search,
+              answeredQuery: answeredQuery.value,
+              loading: loading.value,
+              autocomplete: true,
+              serverFilter: true,
+              modelValue: SELECTED,
+              onSearch: (value: string) => {
+                keyword.value = value;
+              },
+            }),
+            undefined,
+            WITH_MESSAGES,
+          );
+
+          async function respond(expected: string) {
+            const request = requests.shift();
+
+            expect(request?.keyword).toBe(expected);
+            request?.respond();
+            await vi.advanceTimersByTimeAsync(0);
+          }
+
+          return { wrapper, requests, respond };
+        }
+
+        async function typeInto(wrapper: VueWrapper, value: string) {
+          await wrapper.get("input").setValue(value);
+          await vi.advanceTimersByTimeAsync(value ? SEARCH_DEBOUNCE_MS : 0);
+        }
+
+        const state = (wrapper: VueWrapper) => ({
+          count: wrapper.get(".vc-select-all__count").text(),
+          disabled: isSelectAllDisabled(wrapper),
+        });
+
+        it("counts the previous result while every query goes to the network", async () => {
+          const { wrapper, respond } = mountApolloConsumer({ fetchPolicy: "network-only" });
+
+          await respond("");
+          await wrapper.get("input").trigger("click");
+          await typeInto(wrapper, "a");
+
+          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: true });
+
+          await respond("a");
+
+          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
+
+          await typeInto(wrapper, "");
+
+          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: true });
+
+          await respond("");
+
+          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
+        });
+
+        it("counts a cached result at once", async () => {
+          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "cache-first" });
+
+          await respond("");
+          await wrapper.get("input").trigger("click");
+          await typeInto(wrapper, "a");
+          await respond("a");
+          await typeInto(wrapper, "");
+
+          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
+
+          await typeInto(wrapper, "a");
+
+          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
+          expect(requests).toEqual([]);
+        });
+
+        it("counts the previous result while `useQuery` debounces the query", async () => {
+          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "network-only", debounce: 100 });
+
+          await respond("");
+          await wrapper.get("input").trigger("click");
+          await typeInto(wrapper, "a");
+          await vi.advanceTimersByTimeAsync(50);
+
+          expect(requests).toEqual([]);
+          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: true });
+
+          await vi.advanceTimersByTimeAsync(50);
+          await respond("a");
+
+          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
+        });
+
+        it("takes the result on screen as the answer to a query it skips", async () => {
+          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "network-only", skipShort: true });
+
+          await respond("");
+          await wrapper.get("input").trigger("click");
+          await typeInto(wrapper, "a");
+
+          expect(requests).toEqual([]);
+          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
+          expect(announced(wrapper)).toBe("3 results available");
+        });
+      });
+    });
+
     it("never counts more than the matches of a server-side query", async () => {
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 5,
         selectedCount: 7,
         modelValue: [],
@@ -1110,7 +1543,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "a");
+      await typeAnsweredQuery(wrapper, "a");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
@@ -1170,13 +1603,14 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         total: 3000,
         modelValue: ["Albania"],
       });
       const input = wrapper.get("input");
 
       await input.trigger("click");
-      await typeAnsweredQuery(input, "bel");
+      await typeAnsweredQuery(wrapper, "bel");
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("1 of 3000");
@@ -1211,6 +1645,7 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         modelValue: [],
       });
       const input = wrapper.get("input");
@@ -1227,13 +1662,14 @@ describe("VcSelect", () => {
         autocomplete: true,
         serverFilter: true,
         onSearch: noop,
+        answeredQuery: "",
         modelValue: [],
       });
       const input = wrapper.get("input");
 
       await input.trigger("click");
       (wrapper.get(".vc-select-all input").element as HTMLInputElement).focus();
-      await wrapper.setProps({ loading: true });
+      await wrapper.setProps({ items: [] });
 
       expect(document.activeElement).toBe(input.element);
     });
@@ -1412,11 +1848,24 @@ describe("VcSelect", () => {
       expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
     });
 
+    it.each([
+      ["no answered-query", {}, true],
+      ["an answered-query", { answeredQuery: "" }, false],
+      ["an answered-query in kebab case", { "answered-query": "" }, false],
+      ["an answered-query that is not set yet", { answeredQuery: undefined }, false],
+    ])("warns about server-filter with %s accordingly", (_label, props, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, onSearch: noop, ...props });
+
+      expect(warn.mock.calls.some(([message]) => String(message).includes("needs `answered-query`"))).toBe(warns);
+    });
+
     it("warns about server-filter without autocomplete", () => {
       const warn = spyOnWarn();
 
-      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop });
-      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, autocomplete: true });
+      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, answeredQuery: "" });
+      createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, answeredQuery: "", autocomplete: true });
 
       expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
     });
@@ -1450,7 +1899,7 @@ describe("VcSelect", () => {
       ["a total beyond the loaded options", { multiple: true, selectAll: true, onSelectAll: noop, total: 30 }, true],
       [
         "a server filter",
-        { hasNextPage: true, loading: false, onLoadMore: noop, serverFilter: true, onSearch: noop },
+        { hasNextPage: true, loading: false, onLoadMore: noop, serverFilter: true, onSearch: noop, answeredQuery: "" },
         false,
       ],
       ["the whole set loaded", {}, false],
@@ -1737,7 +2186,13 @@ describe("VcSelect", () => {
     });
 
     it("drops the highlight when a server-side query is typed", async () => {
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        answeredQuery: "",
+      });
       const input = wrapper.get("input");
 
       await input.trigger("click");
@@ -1761,6 +2216,7 @@ describe("VcSelect", () => {
         serverFilter: true,
         hasNextPage: true,
         onSearch: noop,
+        answeredQuery: "",
       });
       const input = wrapper.get("input");
 
@@ -1783,7 +2239,13 @@ describe("VcSelect", () => {
       beforeEach(useFakeTimersInTest);
 
       async function typeQueryThenLoad(props: HarnessPropsType = { items: ITEMS }) {
-        const wrapper = createWrapper({ autocomplete: true, serverFilter: true, onSearch: noop, ...props });
+        const wrapper = createWrapper({
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          answeredQuery: "",
+          ...props,
+        });
         const input = wrapper.get("input");
 
         await input.trigger("click");
@@ -1808,6 +2270,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
           hasNextPage: true,
           loading: false,
         });
@@ -1837,6 +2300,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
           hasNextPage: true,
           loading: false,
         });
@@ -1856,13 +2320,14 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
         });
         const input = wrapper.get("input");
 
         await input.trigger("click");
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
-        await wrapper.setProps({ items: ["Belgium"] });
+        await wrapper.setProps({ items: ["Belgium"], answeredQuery: "bel" });
         await input.setValue("belx");
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
@@ -1877,6 +2342,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
           hasNextPage: true,
           loading: false,
         });
@@ -1916,25 +2382,26 @@ describe("VcSelect", () => {
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
       });
 
-      it("stays silent while a server-side list loads, whatever it holds", async () => {
+      it("keeps counting an answered query's options while `loading` is up", async () => {
         const wrapper = createWrapperWithMessages({
           items: ITEMS,
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
         });
         const input = wrapper.get("input");
 
         await input.trigger("click");
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
-        await wrapper.setProps({ items: ["Belgium"] });
+        await wrapper.setProps({ items: ["Belgium"], answeredQuery: "bel" });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("1 results available");
 
         await wrapper.setProps({ loading: true });
 
-        expect(wrapper.get('[aria-live="polite"]').text()).toBe("");
+        expect(wrapper.get('[aria-live="polite"]').text()).toBe("1 results available");
       });
 
       it("says there are no results once an empty answer has loaded", async () => {
@@ -1943,6 +2410,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
         });
         const input = wrapper.get("input");
 
@@ -1950,7 +2418,7 @@ describe("VcSelect", () => {
         await input.setValue("bel");
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
         await wrapper.setProps({ items: [], loading: true });
-        await wrapper.setProps({ loading: false });
+        await wrapper.setProps({ loading: false, answeredQuery: "bel" });
 
         expect(wrapper.get('[aria-live="polite"]').text()).toBe("No results found");
       });
@@ -1961,6 +2429,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
           multiple: true,
           selectAll: true,
           modelValue: [],
@@ -1982,6 +2451,11 @@ describe("VcSelect", () => {
         expect(wrapper.emitted("selectAll")).toBeUndefined();
 
         await wrapper.setProps({ items: ["China"], loading: false });
+        wrapper.findComponent({ name: "VcSelectAll" }).vm.$emit("change");
+
+        expect(wrapper.emitted("selectAll")).toBeUndefined();
+
+        await wrapper.setProps({ answeredQuery: "chi" });
         await wrapper.get(".vc-select-all input").trigger("change");
 
         expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "chi" }]]);
@@ -1993,6 +2467,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
           hasNextPage: true,
           loading: false,
           multiple: true,
@@ -2005,6 +2480,7 @@ describe("VcSelect", () => {
         await input.trigger("click");
         await input.setValue("be");
         await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await wrapper.setProps({ answeredQuery: "be" });
 
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
 
@@ -2016,7 +2492,7 @@ describe("VcSelect", () => {
       it("hands paging back once the answer lands", async () => {
         const wrapper = await typeQueryThenLoad({ items: ITEMS, hasNextPage: true, loading: false });
 
-        await wrapper.setProps({ items: ["Belgium"], loading: false });
+        await wrapper.setProps({ items: ["Belgium"], loading: false, answeredQuery: "bel" });
 
         expect(rows(wrapper)).toEqual(["Belgium"]);
         expect(wrapper.findComponent({ name: "VcLoadMore" }).props("hasNextPage")).toBe(true);
@@ -2042,10 +2518,14 @@ describe("VcSelect", () => {
     describe("result count announced for a server-side query", () => {
       beforeEach(useFakeTimersInTest);
 
-      async function typeQueryInto(
-        wrapper = createWrapperWithMessages({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop }),
-        query = "zzz",
-      ) {
+      async function typeQueryInto(query = "zzz") {
+        const wrapper = createWrapperWithMessages({
+          items: ITEMS,
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          answeredQuery: "",
+        });
         const input = wrapper.get("input");
 
         await input.trigger("click");
@@ -2063,6 +2543,7 @@ describe("VcSelect", () => {
           autocomplete: true,
           serverFilter: true,
           onSearch: noop,
+          answeredQuery: "",
         });
         const input = wrapper.get("input");
 
@@ -2073,54 +2554,64 @@ describe("VcSelect", () => {
         expect(announced(wrapper)).toBe("");
       });
 
-      it("counts the options on screen for a query the consumer skips", async () => {
-        expect(announced(await typeQueryInto())).toBe("3 results available");
-      });
-
-      it("stays silent while the consumer is loading", async () => {
+      it("counts the options on screen for a query the consumer skips and echoes", async () => {
         const wrapper = await typeQueryInto();
 
-        await wrapper.setProps({ loading: true });
+        await wrapper.setProps({ answeredQuery: "zzz" });
+
+        expect(announced(wrapper)).toBe("3 results available");
+      });
+
+      it("stays silent until the consumer echoes the query, however `loading` goes", async () => {
+        const wrapper = await typeQueryInto();
 
         expect(announced(wrapper)).toBe("");
+
+        await wrapper.setProps({ loading: true });
+        await wrapper.setProps({ loading: false });
+
+        expect(announced(wrapper)).toBe("");
+
+        await wrapper.setProps({ answeredQuery: "zzz" });
+
+        expect(announced(wrapper)).toBe("3 results available");
       });
 
       it("counts the items the consumer answered with", async () => {
         const wrapper = await typeQueryInto();
 
-        await wrapper.setProps({ items: ["Albania"] });
+        await wrapper.setProps({ items: ["Albania"], answeredQuery: "zzz" });
 
         expect(announced(wrapper)).toBe("1 results available");
       });
 
-      it("counts the options once loading finishes", async () => {
-        const wrapper = await typeQueryInto();
+      it("takes a trimmed echo as the answer to a query typed with spaces", async () => {
+        const wrapper = await typeQueryInto(" zzz ");
 
-        await wrapper.setProps({ loading: true });
-        await wrapper.setProps({ loading: false });
+        await wrapper.setProps({ answeredQuery: "zzz" });
 
         expect(announced(wrapper)).toBe("3 results available");
       });
 
       it("stays silent for an answer to a query that is no longer on screen", async () => {
-        const wrapper = await typeQueryInto(undefined, "a");
+        const wrapper = await typeQueryInto("a");
 
         await wrapper.setProps({ loading: true });
         await wrapper.get("input").setValue("ab");
-        await wrapper.setProps({ items: ["Albania", "Bahamas"], loading: false });
+        await wrapper.setProps({ items: ["Albania", "Bahamas"], loading: false, answeredQuery: "a" });
 
         expect(announced(wrapper)).toBe("");
       });
 
       it("stays silent for the answer to a cleared query", async () => {
-        const wrapper = await typeQueryInto(undefined, "a");
+        const wrapper = await typeQueryInto("a");
         const input = wrapper.get("input");
 
-        await wrapper.setProps({ items: ["Albania"] });
+        await wrapper.setProps({ items: ["Albania"], answeredQuery: "a" });
         await wrapper.setProps({ loading: true });
         await input.setValue("");
         await input.setValue("a");
-        await wrapper.setProps({ items: [...ITEMS], loading: false });
+        await wrapper.setProps({ items: [...ITEMS], loading: false, answeredQuery: "" });
 
         expect(announced(wrapper)).toBe("");
       });
@@ -2264,7 +2755,13 @@ describe("VcSelect", () => {
     });
 
     it("does not filter locally when the consumer filters server-side", async () => {
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        answeredQuery: "",
+      });
 
       await wrapper.get("input").trigger("focus");
       await wrapper.get("input").setValue("zzz");
@@ -2284,7 +2781,13 @@ describe("VcSelect", () => {
     it("debounces the search text and clears it immediately", async () => {
       useFakeTimersInTest();
 
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        answeredQuery: "",
+      });
 
       await wrapper.get("input").trigger("focus");
       await wrapper.get("input").setValue("bel");
@@ -2303,7 +2806,13 @@ describe("VcSelect", () => {
     it("drops a query that was cleared before it went out", async () => {
       useFakeTimersInTest();
 
-      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true, onSearch: noop });
+      const wrapper = createWrapper({
+        items: ITEMS,
+        autocomplete: true,
+        serverFilter: true,
+        onSearch: noop,
+        answeredQuery: "",
+      });
 
       await wrapper.get("input").trigger("focus");
       await wrapper.get("input").setValue("bel");

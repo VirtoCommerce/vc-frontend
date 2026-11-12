@@ -39,6 +39,7 @@ interface IVcSelectStoryArgs {
   loading?: boolean;
   hasNextPage?: boolean;
   serverFilter?: boolean;
+  answeredQuery?: string;
   clearable?: boolean;
   showEmptyDetails?: boolean;
   singleLineMessage?: boolean;
@@ -809,12 +810,14 @@ export const ServerFilter: StoryType = {
       const items = ref<string[]>([]);
       const matchCount = ref(0);
       const loading = ref(false);
+      const answeredQuery = ref("");
       let query = "";
       let latestRequest = 0;
 
-      // A newer request supersedes an older one, which must not end `loading` early.
+      // A newer request supersedes an older one: only the latest answers, and echoes its query.
       async function fetchPage(append: boolean) {
         const request = ++latestRequest;
+        const requested = query;
         loading.value = true;
         await new Promise((resolve) => setTimeout(resolve, 600));
 
@@ -822,13 +825,14 @@ export const ServerFilter: StoryType = {
           return;
         }
 
-        const pattern = new RegExp(escapeRegExp(query), "i");
+        const pattern = new RegExp(escapeRegExp(requested), "i");
         const matches = ALL.filter((buyer) => pattern.test(buyer));
         const start = append ? items.value.length : 0;
         const page = matches.slice(start, start + PAGE_SIZE);
 
         items.value = append ? [...items.value, ...page] : page;
         matchCount.value = matches.length;
+        answeredQuery.value = requested;
         loading.value = false;
       }
 
@@ -843,6 +847,7 @@ export const ServerFilter: StoryType = {
         args,
         items,
         loading,
+        answeredQuery,
         matchCount,
         hasNextPage: computed(() => items.value.length < matchCount.value),
         loadNextPage: () => fetchPage(true),
@@ -857,6 +862,7 @@ export const ServerFilter: StoryType = {
           :items="items"
           :loading="loading"
           :has-next-page="hasNextPage"
+          :answered-query="answeredQuery"
           autocomplete
           server-filter
           @load-more="loadNextPage"
@@ -872,7 +878,7 @@ export const ServerFilter: StoryType = {
       source: {
         code: `
 <script setup lang="ts">
-const { items, loading, hasNextPage, loadNextPage, search } = useBuyers();
+const { items, loading, answeredQuery, hasNextPage, loadNextPage, search } = useBuyers();
 const selected = ref<string[]>([]);
 </script>
 
@@ -882,6 +888,7 @@ const selected = ref<string[]>([]);
     :items="items"
     :loading="loading"
     :has-next-page="hasNextPage"
+    :answered-query="answeredQuery"
     multiple
     autocomplete
     server-filter
@@ -894,10 +901,11 @@ const selected = ref<string[]>([]);
       description: {
         story:
           "`server-filter` turns the local filter off: answer the typed text from `@search` (debounced " +
-          "300ms) with the first page of its matches, holding `loading` while it fetches, and page on " +
-          "through `@load-more` as before. Filtering only the loaded page instead would report no " +
-          "results for anything below the fold. A query typed while an older one is still loading " +
-          "supersedes it: drop the older answer rather than letting it end `loading` early.",
+          "300ms) with the first page of its matches, and page on through `@load-more` as before. " +
+          "Filtering only the loaded page instead would report no results for anything below the fold. " +
+          "Echo the query the `items` answer in `answered-query`: until it matches the typed one, Select " +
+          "all waits and no result count is announced. `loading` only shows the spinner. A query typed " +
+          "while an older one is still loading supersedes it: drop the older answer.",
       },
     },
   },
