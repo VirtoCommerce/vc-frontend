@@ -1,5 +1,10 @@
 <template>
-  <div v-if="pageBuilderContent">
+  <PageTemplate
+    v-if="pageBuilderContent"
+    :page-settings="pageBuilderContent.settings"
+    :permalink="permalink"
+    :object-type="PAGES_OBJECT_TYPE"
+  >
     <div
       v-if="!pageBuilderContent.settings?.hideBreadcrumbs || pageBuilderContent.settings?.header"
       class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
@@ -16,33 +21,32 @@
       <PageBuilderSection
         v-if="!item.hidden"
         :key="item.id"
-        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
         :item="item"
         :id="getAnchorId(item)"
-        :model="item"
-        :settings="pageBuilderContent.settings"
+        :context="sectionContext"
       />
     </template>
-  </div>
+  </PageTemplate>
 </template>
 
 <script setup lang="ts">
 import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
-import { getBlockType } from "@/plugins/builder-preview/block-mapping";
+import { PAGES_OBJECT_TYPE, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import {
   getAnchorId,
-  getRegisteredSection,
   PageBuilderSection,
-  templateBlocks,
+  PageTemplate,
   useAnchorScroll,
+  usePageSeoInfo,
 } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
   name?: string;
+  permalink?: string;
 }
 
 type BlockType = {
@@ -71,15 +75,25 @@ const templateName = computed(() =>
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 const pageBuilderContent = shallowRef<IPageBuilderContent | null>(null);
 
+const sectionContext = computed(() => ({ settings: pageBuilderContent.value?.settings }));
+const { setPageLayout } = usePageLayout();
+
 watch(
   () => props.content,
   (content) => {
     pageBuilderContent.value = parsePageBuilderContent(content);
+
+    // Nothing renders the page's template then, so the header and footer must not wait for its layout.
+    if (!pageBuilderContent.value) {
+      setPageLayout("full");
+    }
   },
   { immediate: true },
 );
 
 useAnchorScroll(() => pageBuilderContent.value);
+
+usePageSeoInfo(() => pageBuilderContent.value?.settings.seoInfo, templateName);
 
 function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
   let parsedContent: IPageBuilderContent | null = null;
@@ -105,10 +119,6 @@ function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
   }
 
   return parsedContent;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function isPageBuilderBlock(value: unknown): value is BlockType {

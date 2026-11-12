@@ -1,13 +1,51 @@
-import { darkPresets } from "@/assets/presets";
-import { presetNameToFileName } from "@/core/utilities";
 import { configInjectionKey } from "../injection-keys";
 import type { IThemeConfigPreset, IThemeContext } from "../types";
 import type { App, Plugin } from "vue";
 
-function presetToCssVars(preset: IThemeConfigPreset): string {
-  return Object.entries(preset)
-    .map(([key, value]) => `--${key.replaceAll("_", "-")}: ${value};`)
-    .join("");
+export const THEME_VARIABLES_ID = "vc-theme-variables";
+
+// A theme's palette comes from the backend, so its values are set one by one and never parsed as stylesheet text.
+function addPresetRule(sheet: CSSStyleSheet, selector: string, preset: IThemeConfigPreset): void {
+  const rule = sheet.cssRules[sheet.insertRule(`${selector} {}`, sheet.cssRules.length)] as CSSStyleRule;
+
+  Object.entries(preset).forEach(([key, value]) => {
+    if (typeof value === "string") {
+      rule.style.setProperty(`--${key.replaceAll("_", "-")}`, value);
+    }
+  });
+}
+
+export function writeThemeVariables(preset: IThemeConfigPreset, darkPreset?: IThemeConfigPreset): void {
+  let styleElement = document.getElementById(THEME_VARIABLES_ID) as HTMLStyleElement | null;
+
+  if (!styleElement) {
+    styleElement = document.createElement("style");
+    styleElement.id = THEME_VARIABLES_ID;
+    document.head.prepend(styleElement);
+  }
+
+  const { sheet } = styleElement;
+
+  if (!sheet) {
+    return;
+  }
+
+  while (sheet.cssRules.length) {
+    sheet.deleteRule(0);
+  }
+
+  if (darkPreset) {
+    addPresetRule(sheet, ":root:not(.dark)", preset);
+    addPresetRule(sheet, "html.dark", darkPreset);
+  } else {
+    addPresetRule(sheet, ":root", preset);
+  }
+}
+
+export function getThemeVariablesCss(): string {
+  const styleElement = document.getElementById(THEME_VARIABLES_ID) as HTMLStyleElement | null;
+
+  return Array.from(styleElement?.sheet?.cssRules ?? [], (rule) => rule.cssText).join("\n");
 }
 
 export const configPlugin: Plugin<IThemeContext> = {
@@ -16,25 +54,7 @@ export const configPlugin: Plugin<IThemeContext> = {
     app.provide(configInjectionKey, options.settings);
 
     if (options.preset) {
-      const styleElement = document.createElement("style");
-      styleElement.id = "vc-theme-variables";
-
-      // Resolve dark preset
-      const presetName = presetNameToFileName(options.activePresetName || options.defaultPresetName || "default");
-      const darkPreset = darkPresets[presetName];
-
-      let css: string;
-      if (darkPreset) {
-        // Light and dark variants exist — scope each to its mode
-        css = `:root:not(.dark) { ${presetToCssVars(options.preset)} }`;
-        css += ` html.dark { ${presetToCssVars(darkPreset)} }`;
-      } else {
-        // No dark variant — apply light preset unconditionally
-        css = `:root { ${presetToCssVars(options.preset)} }`;
-      }
-
-      styleElement.textContent = css;
-      document.head.prepend(styleElement);
+      writeThemeVariables(options.preset, options.darkPreset);
     }
   },
 };

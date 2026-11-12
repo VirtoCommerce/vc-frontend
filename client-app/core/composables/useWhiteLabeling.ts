@@ -2,12 +2,14 @@ import { createGlobalState, useEventBus } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
+import { useThemeSnapshot } from "@/core/theme-snapshot/useThemeSnapshot";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
 
 const whiteLabelingSettings = shallowRef<WhiteLabelingSettingsType>();
 const { modulesSettings, themeContext } = useThemeContext();
+const { theme } = useThemeSnapshot();
 
 const MODULE_KEYS = {
   ID: "VirtoCommerce.WhiteLabeling",
@@ -28,6 +30,38 @@ function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
   }
 }
 
+function pickBrandField(
+  whiteLabelingValue: string | null | undefined,
+  themeValue: string | undefined,
+  fallback: string | undefined,
+): string | undefined {
+  if (whiteLabelingValue) {
+    return whiteLabelingValue;
+  }
+
+  if (themeValue) {
+    return themeValue;
+  }
+
+  return whiteLabelingValue ?? fallback;
+}
+
+/** Follows the light logo's source, so a light logo never pairs with the dark logo of another source. */
+function pickDarkLogo(): string | undefined {
+  const settings = whiteLabelingSettings.value;
+
+  if (settings?.logoUrl) {
+    // The secondary logo merged with an organization's logo may be the store's: nothing tells whose it is.
+    return settings.isOrganizationLogoUploaded ? undefined : settings.secondaryLogoUrl || undefined;
+  }
+
+  if (theme.value?.brand.logoUrl) {
+    return theme.value.brand.secondaryLogoUrl || undefined;
+  }
+
+  return themeContext.value?.settings?.logo_inverted_image;
+}
+
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (!moduleEnabled.value) {
@@ -44,22 +78,48 @@ function _useWhiteLabeling() {
   }
 
   return {
-    logoUrl: computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
+    logoUrl: computed(() =>
+      pickBrandField(
+        whiteLabelingSettings.value?.logoUrl,
+        theme.value?.brand.logoUrl,
+        themeContext.value?.settings?.logo_image,
+      ),
+    ),
     secondaryLogoUrl: computed(
       () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
     ),
+    darkLogoUrl: computed(pickDarkLogo),
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),
     mainMenuLinks: computed(() =>
       whiteLabelingSettings.value?.mainMenuLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),
-    favIcons: computed(() => whiteLabelingSettings.value?.favicons),
+    favIcons: computed(() => {
+      const favicons = whiteLabelingSettings.value?.favicons;
+      const themeFavicon = theme.value?.brand.faviconUrl;
+
+      return !favicons?.length && themeFavicon ? [{ rel: "icon", href: themeFavicon }] : favicons;
+    }),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,
     setWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
     isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
+    themeFieldsSetByWhiteLabeling: computed(() => {
+      const settings = whiteLabelingSettings.value;
+      const fields: [string, unknown][] = [
+        ["brand.logoUrl", settings?.logoUrl],
+        // The dark logo follows the light logo's source, so white-labeling's light logo is what overrides this field.
+        ["brand.secondaryLogoUrl", settings?.logoUrl],
+        ["brand.faviconUrl", settings?.favicons?.length],
+        ["palette", settings?.themePresetName],
+        // The main menu replaces only the header's category menu; the icons menu stays the theme's.
+        ["menus.header", settings?.mainMenuLinks?.length],
+        ["menus.footer", settings?.footerLinks?.length],
+      ];
+      return fields.filter(([, value]) => !!value).map(([field]) => field);
+    }),
   };
 }
 

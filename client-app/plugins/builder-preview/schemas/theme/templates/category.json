@@ -1,0 +1,10 @@
+{
+  "name": "Category template",
+  "path": "default/templates/category.json",
+  "type": "themes",
+  "previewMessage": {
+    "templateKey": "category"
+  },
+  "default": true,
+  "settings": []
+}

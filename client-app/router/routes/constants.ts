@@ -41,6 +41,12 @@ export const ROUTES = {
   ORDER_DETAILS: {
     NAME: "OrderDetails",
   },
+  MATCHER: {
+    NAME: "Matcher",
+  },
+  LOYALTY_CATALOG_MATCHER: {
+    NAME: "LoyaltyCatalogMatcher",
+  },
   PROMOTION_COUPONS: {
     NAME: "PromotionCoupons",
     PATH: "coupons",

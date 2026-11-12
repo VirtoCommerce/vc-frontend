@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, nextTick, ref, watch } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SlugContent from "./slug-content.vue";
 import type { VueWrapper } from "@vue/test-utils";
@@ -8,13 +9,17 @@ import type { VueWrapper } from "@vue/test-utils";
 const loading = ref(false);
 const objectType = ref<string | undefined>();
 const objectId = ref<string | undefined>("category-1");
+const hasContent = ref(false);
+const semanticUrl = ref<string | null>(null);
 
 vi.mock("@/shared/common", () => ({
   useSlugInfo: () => ({
     loading,
-    slugInfo: computed(() => ({ entityInfo: { objectType: objectType.value, objectId: objectId.value } })),
+    slugInfo: computed(() => ({
+      entityInfo: { objectType: objectType.value, objectId: objectId.value, semanticUrl: semanticUrl.value },
+    })),
     objectType,
-    hasContent: ref(false),
+    hasContent,
     hasPageDocumentContent: ref(false),
     pageDocumentContent: ref(),
     pageContent: ref(),
@@ -51,6 +56,15 @@ vi.mock("@/pages/category.vue", () => ({
   }),
 }));
 
+vi.mock("@/pages/static-page.vue", () => ({
+  __esModule: true,
+  default: defineComponent({
+    name: "StaticPage",
+    props: { permalink: { type: String, default: undefined } },
+    setup: () => () => h("div"),
+  }),
+}));
+
 const { isScopePending, preparingScope } = useSearchScore();
 
 let wrapper: VueWrapper | undefined;
@@ -66,6 +80,8 @@ afterEach(() => {
   loading.value = false;
   objectType.value = undefined;
   objectId.value = "category-1";
+  hasContent.value = false;
+  semanticUrl.value = null;
   categoryPage.failsToSetUp = false;
   categoryPage.finishPreparing = undefined;
   preparingScope.value = false;
@@ -164,5 +180,54 @@ describe("SlugContent search scope", () => {
     wrapper = undefined;
 
     expect(isScopePending.value).toBe(false);
+  });
+});
+
+describe("SlugContent page layout", () => {
+  const { pageLayout, setPageLayout } = usePageLayout();
+
+  it("sets the full layout once a category shows", async () => {
+    setPageLayout("minimal");
+    objectType.value = "Category";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("full");
+    categoryPage.finishPreparing?.();
+  });
+
+  it("leaves the layout to a page from the database", async () => {
+    setPageLayout("minimal");
+    objectType.value = "Pages";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("minimal");
+  });
+
+  it("waits until the slug has loaded", async () => {
+    setPageLayout("minimal");
+    loading.value = true;
+    objectType.value = "Category";
+
+    mountSlugContent(true);
+    await flushPromises();
+
+    expect(pageLayout.value).toBe("minimal");
+  });
+});
+
+describe("SlugContent file page", () => {
+  it("gives the page its own permalink, not the path it was visited at", async () => {
+    objectType.value = "ContentFile";
+    hasContent.value = true;
+    semanticUrl.value = "/about";
+
+    const slugContent = mountSlugContent(true);
+    await flushPromises();
+
+    expect(slugContent.findComponent({ name: "StaticPage" }).props("permalink")).toBe("/about");
   });
 });

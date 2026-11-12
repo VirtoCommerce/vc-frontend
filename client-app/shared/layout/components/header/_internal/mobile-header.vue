@@ -1,10 +1,12 @@
 <template>
   <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+    <AnnouncementBar />
+
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1]">
+    <div class="relative z-[1]" v-bind="getPreviewSectionAttrs(siteHeader?.id)">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
         <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
@@ -28,8 +30,17 @@
               <VcIcon class="text-primary" name="menu" :size="24" />
             </button>
 
-            <router-link :to="$context.settings.default_return_url ?? '/'">
-              <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
+            <router-link :to="$context.settings.default_return_url ?? '/'" :style="logoStyle">
+              <VcImage
+                :src="headerLogoUrl"
+                :alt="$context.storeName"
+                :class="
+                  logoWidth
+                    ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw] [--vc-image-object-fit:contain] [--vc-image-object-position:left_center] rtl:[--vc-image-object-position:right_center]'
+                    : 'h-8'
+                "
+                lazy
+              />
             </router-link>
           </div>
           <!-- endregion Left slot -->
@@ -102,16 +113,19 @@
 
 <script setup lang="ts">
 import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
-import { useWhiteLabeling } from "@/core/composables";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
+import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
+import AnnouncementBar from "../../announcement-bar/announcement-bar.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
@@ -129,7 +143,9 @@ const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
-const { logoUrl } = useWhiteLabeling();
+const { headerLogoUrl } = useHeaderLogo();
+// The theme's logo width is the desktop header's; in the phone's bar the logo shrinks to fit, keeping its proportions.
+const { logoWidth, logoStyle, siteHeader } = useThemeChrome();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
@@ -140,13 +156,29 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 // this var on desktop (see vc-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
+const isShown = ref(true);
+
 watch(
-  height,
-  (value) => {
-    appHeaderHeightVar.value = `${value}px`;
+  [height, isShown],
+  ([value, shown]) => {
+    appHeaderHeightVar.value = shown ? `${value}px` : undefined;
   },
   { immediate: true },
 );
+
+onActivated(() => {
+  isShown.value = true;
+});
+
+// Nothing of a header that is not shown may stay open or keep the page from scrolling.
+onDeactivated(() => {
+  isShown.value = false;
+  mobileMenuVisible.value = false;
+
+  if (searchBarVisible.value) {
+    toggleSearchBar();
+  }
+});
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);

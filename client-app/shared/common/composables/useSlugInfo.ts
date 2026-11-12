@@ -180,6 +180,13 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return null;
   });
 
+  // The lazy content query starts a moment after the slug is known, so "not loading" alone would read as "no content".
+  const isContentAwaited = computed(
+    () =>
+      (hasContent.value && !contentResult.value && !contentError.value) ||
+      (hasPageDocumentContent.value && !pageDocumentContentResult.value && !PageDocumentContentError.value),
+  );
+
   watch(
     slugOutline,
     async (value) => {
@@ -191,7 +198,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
 
   return {
     loading: computed(() => {
-      return slugLoading.value || contentLoading.value || pageDocumentContentLoading.value;
+      return slugLoading.value || contentLoading.value || pageDocumentContentLoading.value || isContentAwaited.value;
     }),
     slugInfo,
     objectType,

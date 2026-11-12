@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { cloneDeep } from "lodash-es";
 import { computed, ref } from "vue";
-import { presets } from "@/assets/presets";
+import { darkPresets, presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { presetNameToFileName } from "@/core/utilities";
 import { resolveDesign, setPresetAttribute } from "@/core/utilities/design";
@@ -104,6 +104,7 @@ function _useThemeContext() {
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.darkPreset = darkPresets[resolvedName];
       themeContext.value.activePresetName = resolvedName;
       setPresetAttribute(resolvedName);
     } else {

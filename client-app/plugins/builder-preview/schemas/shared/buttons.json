@@ -8,12 +8,14 @@
         {
           "id": "label",
           "label": "Label",
-          "type": "string"
+          "type": "string",
+          "translatable": true
         },
         {
           "id": "link",
           "label": "URL",
-          "type": "string"
+          "type": "string",
+          "format": "url"
         }
       ],
       "tab": "Content"

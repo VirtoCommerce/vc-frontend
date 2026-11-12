@@ -3653,6 +3653,8 @@ interface IThemeConfigSettings {
     files_enabled?: boolean;
     /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
     module_federation_enabled?: boolean;
+    /** Reads the store's Page Builder theme: templates, rules, header, footer, brand and palette. Only `true` enables it. */
+    new_page_builder_enabled?: boolean;
     bulk_order_enabled?: boolean;
     product_compare_enabled?: boolean;
     product_compare_limit?: number;
@@ -3752,6 +3754,8 @@ interface IThemeContext {
     availableCurrencies: ICurrency[];
     settings: IThemeConfigSettings;
     preset?: IThemeConfigPreset;
+    /** Without it the storefront has no dark theme. */
+    darkPreset?: IThemeConfigPreset;
     defaultPresetName: string;
     activePresetName?: string;
     storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
@@ -4865,6 +4869,8 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
+    /** Keyed by the type stored in page and template content. A late registration re-renders the pages showing it. */
+    pageBuilderSection: ExtensionEntryType;
     /** Widgets on Account › Security, below the sign-in methods. */
     accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
     /** Widgets on Company › Info, between the company name and the addresses. */
@@ -4969,6 +4975,7 @@ declare const EXTENSION_CATEGORIES: {
     readonly checkout: "checkout";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
+    readonly pageBuilderSection: "pageBuilderSection";
     readonly accountSecurity: "accountSecurity";
     readonly companyInfo: "companyInfo";
 };
@@ -5053,6 +5060,12 @@ declare const ROUTES: {
     };
     readonly ORDER_DETAILS: {
         readonly NAME: "OrderDetails";
+    };
+    readonly MATCHER: {
+        readonly NAME: "Matcher";
+    };
+    readonly LOYALTY_CATALOG_MATCHER: {
+        readonly NAME: "LoyaltyCatalogMatcher";
     };
     readonly PROMOTION_COUPONS: {
         readonly NAME: "PromotionCoupons";
@@ -5281,6 +5294,7 @@ declare function _useNavigations(): {
     matchingRouteName: Readonly<vue.Ref<string, string>>;
     fetchCatalogMenu: () => Promise<void>;
     catalogMenuItems: vue.ComputedRef<ExtendedMenuLinkType[]>;
+    isCatalogMenuShown: vue.ComputedRef<boolean>;
     fetchFooterLinks: () => Promise<void>;
     footerLinks: vue.ComputedRef<ExtendedMenuLinkType[]>;
     fetchPinnedLinks: () => Promise<void>;

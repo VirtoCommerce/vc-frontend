@@ -142,7 +142,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   {
     path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
-    name: "LoyaltyCatalogMatcher",
+    name: ROUTES.LOYALTY_CATALOG_MATCHER.NAME,
     component: Matcher,
     props: true,
     beforeEnter: (_to, _from, next) => {
@@ -159,5 +159,5 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
 
   /** NOTE: Always leave it last. */
-  { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
+  { path: "/:pathMatch(.*)*", name: ROUTES.MATCHER.NAME, component: Matcher, props: true },
 ];

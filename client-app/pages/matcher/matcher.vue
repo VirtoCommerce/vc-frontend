@@ -32,6 +32,7 @@
 import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { PreviewerStateType, UpdateStateEventArgs } from "./priorityManager";
@@ -113,6 +114,19 @@ const visibleComponent = computed(() => {
   }
   return result;
 });
+
+const { setPageLayout } = usePageLayout();
+
+// The slug content reports its own layout; the other pages keep the full one.
+watch(
+  visibleComponent,
+  (value) => {
+    if (value !== "loader" && value !== "slugContent") {
+      setPageLayout("full");
+    }
+  },
+  { immediate: true },
+);
 
 const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 

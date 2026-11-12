@@ -1,28 +1,31 @@
 <template>
   <div v-if="template" ref="staticPageAnchor">
-    <div
-      v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
-      class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+    <PageTemplate
+      :page-settings="template.settings"
+      :permalink="previewSubject?.permalink ?? permalink ?? route.path"
+      :object-type="previewSubject?.objectType ?? CONTENT_FILE_OBJECT_TYPE"
     >
-      <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+      <div
+        v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
+        class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+      >
+        <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
 
-      <VcTypography v-if="template.settings?.header" tag="h1">
-        {{ template.settings.header }}
-      </VcTypography>
-    </div>
+        <VcTypography v-if="template.settings?.header" tag="h1">
+          {{ template.settings.header }}
+        </VcTypography>
+      </div>
 
-    <template v-for="item in template.content">
-      <!-- @deprecated. TODO Keep only the item props. Remove settings and model from all components -->
-      <PageBuilderSection
-        v-if="!item.hidden"
-        :key="item.id"
-        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
-        :item="item"
-        :id="getAnchorId(item)"
-        :model="item"
-        :settings="template.settings"
-      />
-    </template>
+      <template v-for="item in template.content">
+        <PageBuilderSection
+          v-if="!item.hidden"
+          :key="item.id"
+          :item="item"
+          :id="getAnchorId(item)"
+          :context="sectionContext"
+        />
+      </template>
+    </PageTemplate>
   </div>
 </template>
 
@@ -30,21 +33,32 @@
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
+import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
-import { usePageTitle } from "@/core/composables/usePageTitle";
-import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
-import { getBlockType } from "@/plugins/builder-preview/block-mapping";
+import { CONTENT_FILE_OBJECT_TYPE } from "@/shared/layout/composables/usePageLayout";
 import {
   getAnchorId,
-  getRegisteredSection,
   PageBuilderSection,
-  templateBlocks,
+  PageTemplate,
   useAnchorScroll,
+  usePageSeoInfo,
   useStaticPage,
 } from "@/shared/static-content";
 
-const { staticPage: template } = useStaticPage();
+interface IProps {
+  /** The page's own permalink; without it, the visited path, which can differ from it in case or a trailing slash. */
+  permalink?: string;
+}
+
+defineProps<IProps>();
+
+const route = useRoute();
+
+const { staticPage: template, staticPagePreviewSubject: previewSubject } = useStaticPage();
+
+const sectionContext = computed(() => ({ settings: template.value?.settings }));
 
 // VCST-5274: the live page name is injected into `settings.name` upstream (useSlugInfo), so the
 // breadcrumb follows renames. Humanize here as well to keep the leaf friendly for the fallback
@@ -57,21 +71,18 @@ const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBre
 
 useAnchorScroll(() => template.value);
 
+// Wraps the template's sections too, so the page keeps its meta while any part of it is on screen.
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
 
-const { title: pageTitle } = usePageTitle(
-  template.value?.settings?.seoInfo?.pageTitle || template.value?.settings?.name,
+usePageSeoInfo(
+  () => template.value?.settings?.seoInfo,
+  () => template.value?.settings?.name,
+  staticPageAnchorVisible,
 );
 
 useSeoMeta({
-  title: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
-  description: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
-  ogUrl: () => (staticPageAnchorVisible.value ? window.location.toString() : undefined),
-  ogTitle: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
-  ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
-  ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
+  // With the new Page Builder the page template sets it from the permalink, without the visited URL's query.
+  ogUrl: () => (staticPageAnchorVisible.value && !isNewPageBuilderEnabled() ? window.location.toString() : undefined),
 });
-
-useSeoKeywords(() => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaKeywords : undefined));
 </script>

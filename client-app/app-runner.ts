@@ -3,14 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import {
-  useCurrency,
-  useDarkMode,
-  useModules,
-  useThemeContext,
-  useNavigations,
-  useWhiteLabeling,
-} from "@/core/composables";
+import { useCurrency, useModules, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -28,6 +21,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
+import { installThemeSnapshotNavigation, setupThemePalette, startThemeSnapshot } from "@/core/theme-snapshot";
 import { extractHostname, Logger } from "@/core/utilities";
 import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
@@ -51,8 +45,14 @@ import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import { registerAccountDashboardBlocks } from "@/shared/account/dashboard-blocks";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
-import { templateBlocks } from "@/shared/static-content";
+import {
+  productTemplateSections,
+  registerPageBuilderSections,
+  setLandingPageLayout,
+  templateBlocks,
+} from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -126,7 +126,6 @@ export default async () => {
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
-  const { setActivePreset } = useDarkMode();
   const { setModules, outdatedModules } = useModules();
   const notifications = useNotifications();
 
@@ -148,6 +147,8 @@ export default async () => {
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
   const userId = savedUserId.value;
+
+  const themeSnapshotBoot = startThemeSnapshot({ domain, cultureName: possibleCultureName });
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -198,6 +199,8 @@ export default async () => {
   // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
   const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+  const themeSnapshotContext = { storeId: themeContext.value.storeId, cultureName: currentCultureName };
+  themeSnapshotBoot?.prepare(themeSnapshotContext);
 
   // Plural rules must be registered for every locale key messages can resolve under — full
   // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
@@ -249,13 +252,21 @@ export default async () => {
     resolvedCultureName: currentCultureName,
   });
 
+  await themeSnapshotBoot?.settle(themeSnapshotContext);
+  usePageLayout().installPageLayoutRouting(router);
+  setLandingPageLayout(router, pageContext.slugInfo?.entityInfo);
+  installThemeSnapshotNavigation(router, () => ({
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+  }));
+
   /**
    * Other settings
    */
 
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
-  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  setupThemePalette(() => !!themePresetName.value);
   // Awaited before mount with the design styles, so a preset's stylesheet never paints late.
   const presetStylesReady = loadPresetStyles(themeContext.value.activePresetName ?? "");
 
@@ -340,6 +351,8 @@ export default async () => {
 
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
+
+  registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks, ...productTemplateSections });
 
   await router.isReady();
 

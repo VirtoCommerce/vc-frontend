@@ -4,6 +4,7 @@
       "id": "title",
       "label": "Title",
       "type": "string",
+      "translatable": true,
       "sort": 10
     },
     {

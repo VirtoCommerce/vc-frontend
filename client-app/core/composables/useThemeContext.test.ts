@@ -106,6 +106,7 @@ const hoisted = vi.hoisted(() => {
 });
 
 vi.mock("@/assets/presets", () => ({
+  darkPresets: {},
   presets: {
     default: {
       color_primary_50: "#default",

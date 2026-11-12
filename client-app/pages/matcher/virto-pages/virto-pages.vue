@@ -1,6 +1,11 @@
 <template>
   <div>
-    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" :name="liveName" />
+    <VPPageBuilder
+      v-if="isPageBuilderContent"
+      :content="pageDocument?.content"
+      :name="liveName"
+      :permalink="permalink"
+    />
 
     <VPBuilderIO v-if="isBulderIOContent" :content="pageDocument?.content" />
   </div>

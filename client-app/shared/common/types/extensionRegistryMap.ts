@@ -92,6 +92,8 @@ export type ExtensionCategoryMapType = {
   identityProviders: ExtensionEntryType;
   /** The account security page, keyed by the sign-in method name. */
   signInMethods: DecorateEntryType<SignInMethodContributionType>;
+  /** Keyed by the type stored in page and template content. A late registration re-renders the pages showing it. */
+  pageBuilderSection: ExtensionEntryType;
   /** Widgets on Account › Security, below the sign-in methods. */
   accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
   /** Widgets on Company › Info, between the company name and the addresses. */

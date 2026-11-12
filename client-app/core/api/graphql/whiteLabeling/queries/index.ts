@@ -38,6 +38,16 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
           sizes
           href
         }
+        mainMenuLinks {
+          title
+          url
+          priority
+          childItems {
+            title
+            url
+            priority
+          }
+        }
         footerLinks {
           title
           url

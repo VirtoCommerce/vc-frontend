@@ -1,0 +1,27 @@
+{
+  "name": "Announcement bar",
+  "icon": "lucide-megaphone",
+  "groups": ["header"],
+  "limit": 1,
+  "blocks": ["announcement"],
+  "settings": [
+    {
+      "id": "home_only",
+      "label": "Home page only",
+      "type": "checkbox",
+      "default": false
+    },
+    {
+      "id": "background",
+      "label": "Bar",
+      "type": "color-token",
+      "default": "color_neutral_900"
+    },
+    {
+      "id": "color",
+      "label": "Text",
+      "type": "color-token",
+      "default": "color_additional_50"
+    }
+  ]
+}

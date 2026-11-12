@@ -8,7 +8,9 @@ import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
 import ProductInfo from "./product-info.vue";
 import PromoText from "./promo-text.vue";
+import RecommendedProductsSection from "./recommended-products-section.vue";
 import RecommendedProducts from "./recommended-products.vue";
+import RelatedProductsSection from "./related-products-section.vue";
 import RelatedProducts from "./related-products.vue";
 import SubscribeForm from "./subscribe-form.vue";
 import TextBlock from "./text-block.vue";
@@ -16,6 +18,7 @@ import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
 export { default as PageBuilderSection } from "./page-builder-section.vue";
+export { default as PageTemplate } from "./page-template.vue";
 
 const Slider = defineAsyncComponent(() => import("./slider.vue"));
 const ImageCarousel = defineAsyncComponent(() => import("./image-carousel.vue"));
@@ -23,6 +26,11 @@ const ProductsBlock = defineAsyncComponent(() => import("./products-block.vue"))
 const ProductsCarousel = defineAsyncComponent(() => import("./products-carousel.vue"));
 const Category = defineAsyncComponent(() => import("./../../catalog/components/category.vue"));
 
+/** These fetch their own data for the product; the same types among template blocks get their lists from the host. */
+export const productTemplateSections: { [key: string]: Component } = {
+  "recommended-products": RecommendedProductsSection,
+  "related-products": RelatedProductsSection,
+};
 export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,

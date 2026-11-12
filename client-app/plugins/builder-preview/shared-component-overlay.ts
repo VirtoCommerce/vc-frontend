@@ -1,3 +1,4 @@
+import { isRecord } from "@/core/utilities";
 export interface ISharedComponentBoundary {
   placementId: string;
   componentRef: string;
@@ -80,6 +81,7 @@ export class SharedComponentOverlay {
   private pointerFrame: number | undefined;
   private scheduledFrame: number | undefined;
   private disposed = false;
+  private isEnabled = true;
 
   constructor(
     private readonly body: HTMLElement,
@@ -142,6 +144,28 @@ export class SharedComponentOverlay {
     }
 
     return true;
+  }
+
+  setEnabled(isEnabled: boolean): void {
+    this.isEnabled = isEnabled;
+    this.layer.style.display = isEnabled ? "" : "none";
+
+    if (!isEnabled) {
+      this.cancelPendingPointer();
+      this.highlight(null);
+    }
+  }
+
+  findPlacementAt(clientX: number, clientY: number): string | null {
+    if (!this.isEnabled) {
+      return null;
+    }
+
+    const rendered = this.rendered.find(({ element }) => {
+      const rect = element.getBoundingClientRect();
+      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+    });
+    return rendered?.boundary.placementId ?? null;
   }
 
   dispose(): void {
@@ -278,6 +302,10 @@ export class SharedComponentOverlay {
   }
 
   private readonly handlePointerMove = (event: MouseEvent): void => {
+    if (!this.isEnabled) {
+      return;
+    }
+
     this.pendingPointerPosition = { clientX: event.clientX, clientY: event.clientY };
     if (this.pointerFrame !== undefined) {
       return;
@@ -333,17 +361,4 @@ export class SharedComponentOverlay {
     this.highlight(null);
     this.onHover(null);
   }
-
-  private findPlacementAt(clientX: number, clientY: number): string | null {
-    const rendered = this.rendered.find(({ element }) => {
-      const rect = element.getBoundingClientRect();
-      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
-    });
-    return rendered?.boundary.placementId ?? null;
-  }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  // Same shape test the preview protocol applies, arrays included — a boundary is always a plain object.
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

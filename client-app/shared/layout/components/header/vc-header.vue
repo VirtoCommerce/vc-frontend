@@ -4,10 +4,12 @@
 
   <!-- Desktop header -->
   <template v-else>
+    <AnnouncementBar />
+
     <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
 
     <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
-      <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
+      <BottomHeader :is-menu-shown="isCatalogMenuShown && desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
       <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />
     </div>
@@ -22,11 +24,12 @@
 
 <script setup lang="ts">
 import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
-import { useWhiteLabeling, useThemeContext } from "@/core/composables";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
+import { useNavigations, useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { BREAKPOINTS } from "@/ui-kit/constants";
+import AnnouncementBar from "../announcement-bar/announcement-bar.vue";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
@@ -52,11 +55,19 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
+const isShown = ref(true);
+
 watch(headerHeight, (value) => {
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
 });
 
-watch([headerHeight, isMobile], ([value, mobile]) => {
+// The page's anchors scroll past the header by this height, so a page without the header gets none.
+watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
+  if (!shown) {
+    appHeaderHeightVar.value = undefined;
+    return;
+  }
+
   if (mobile) {
     return;
   }
@@ -65,11 +76,21 @@ watch([headerHeight, isMobile], ([value, mobile]) => {
 });
 
 const { isAuthenticated } = useUser();
+const { isCatalogMenuShown } = useNavigations();
 
 const isMegamenuShown = computed(() => {
   return (
+    isCatalogMenuShown.value &&
     desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
     (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
   );
+});
+
+onActivated(() => {
+  isShown.value = true;
+});
+
+onDeactivated(() => {
+  isShown.value = false;
 });
 </script>

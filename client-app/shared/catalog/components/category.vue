@@ -210,7 +210,7 @@
           :page-number="currentPage"
           :page-history="pageHistory"
           :products="products"
-          :saved-view-mode="savedViewMode"
+          :saved-view-mode="shownViewMode"
           :mode="catalogPaginationMode"
           :keyword="searchParams.keyword || barcodeQueryParam"
           class="category__products"
@@ -436,6 +436,9 @@ const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrien
 const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
 });
+const shownViewMode = computed(() =>
+  props.viewMode && hideViewModeSelector.value ? props.viewMode : savedViewMode.value,
+);
 
 const reportedPositions = new Map<string, { page: number; index: number }>();
 
@@ -816,12 +819,6 @@ watch(
   },
   { immediate: true },
 );
-
-watch(props, ({ viewMode }) => {
-  if (viewMode && viewModes.includes(viewMode)) {
-    savedViewMode.value = viewMode;
-  }
-});
 
 watch(
   () => currentCategory.value?.id,

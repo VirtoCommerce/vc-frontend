@@ -19,6 +19,15 @@
         @apply-filters="applyFilters"
       />
 
+      <PageBuilderSection
+        v-for="item in templateParts.before"
+        :key="item.id"
+        :item="item"
+        :context="sectionContext"
+        :id="getAnchorId(item)"
+        class="mb-5 xl:mb-6"
+      />
+
       <!-- Breadcrumbs -->
       <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
@@ -50,14 +59,7 @@
             :variations="variations"
             :model="productInfoSection"
             :fetching-variations="fetchingVariations"
-          />
-
-          <component
-            :is="productDescriptionSection?.type"
-            v-if="productDescriptionSection && !productDescriptionSection.hidden"
-            :product="product"
-            :model="productDescriptionSection"
-            :is-collapsible="false"
+            v-bind="getPreviewSectionAttrs(productInfoSection.id)"
           />
 
           <ProductConfiguration
@@ -67,13 +69,13 @@
             :initial-configuration="initialConfiguration"
           />
 
-          <KeepAlive>
-            <ProductReviews
-              v-if="productReviewsEnabled && !productReviewsSection?.hidden"
-              :product-id="productId"
-              :product-rating="product.rating"
-            />
-          </KeepAlive>
+          <PageBuilderSection
+            v-for="item in templateParts.column"
+            :key="item.id"
+            :item="item"
+            :context="columnSectionContext"
+            :id="getAnchorId(item)"
+          />
 
           <component
             :is="productVariationsBlock?.type"
@@ -116,28 +118,15 @@
         </template>
       </VcLayout>
 
-      <component
-        :is="relatedProductsSection?.type"
-        v-if="relatedProductsSection && !relatedProductsSection.hidden"
-        :related-products="relatedProducts"
-        :product-id="productId"
-        :product-name="product.name"
+      <PageBuilderSection
+        v-for="item in templateParts.after"
+        :key="item.id"
+        :item="item"
+        :context="sectionContext"
+        :lazy="lazySections"
+        :id="getAnchorId(item)"
         class="mt-5 xl:mt-6"
       />
-
-      <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
-        <component
-          :is="recommendedProductsSection?.type"
-          v-for="{ model, id } in recommendedProductsSection.blocks"
-          :key="id"
-          :recommended-products="recommendedProducts[model as string]"
-          :title="$t(`pages.product.recommended_products.${model}_section_title`)"
-          :model="model"
-          :product-id="productId"
-          :product-name="product.name"
-          class="mt-5 xl:mt-6"
-        />
-      </template>
     </VcContainer>
 
     <FloatingBar v-if="isMobile">
@@ -145,7 +134,7 @@
     </FloatingBar>
   </template>
 
-  <Error404 v-else-if="!fetchingProduct && productTemplate" />
+  <Error404 v-else-if="!fetchingProduct && !product" />
 </template>
 
 <script setup lang="ts">
@@ -153,8 +142,6 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility, useLocalStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import productTemplateDefault from "@/config/product-default.json";
-import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, usePageTitle, useSeoKeywords } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -183,29 +170,29 @@ import {
 import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
-  useRelatedProducts,
   ProductVendor,
   ProductPrice,
   ProductConfiguration,
   useProducts,
-  useRecommendedProducts,
   useConfigurableProduct,
   useProductPickupLocations,
   useProductVariations,
   useLoyaltyCatalogCurrency,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
-import {
-  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
-  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
-} from "@/shared/catalog/constants/product";
 import { FloatingBar } from "@/shared/common";
-import { useAnchorScroll } from "@/shared/static-content";
+import {
+  getAnchorId,
+  getPreviewSectionAttrs,
+  isLazySectionsEnabled,
+  PageBuilderSection,
+  useAnchorScroll,
+  useProductTemplate,
+} from "@/shared/static-content";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, LocalConfigurationType, ProductsFiltersType } from "@/shared/catalog";
-import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import ProductPickupLocations from "@/shared/catalog/components/product-pickup-locations.vue";
@@ -217,7 +204,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const B2C_VARIATIONS_ITEMS_PER_PAGE = 150;
 
-const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 interface IProps {
@@ -263,8 +249,6 @@ const {
   filtersDisplayOrder,
   currencyCodeOverride: loyaltyCurrencyOverride,
 });
-const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
-const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
 const { applicableVariations } = useProductVariationProperties(variations);
 
 const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useProductPickupLocations();
@@ -297,24 +281,28 @@ const selectedVariationName = computed(() => {
   return applicableVariations.value.length === 1 ? applicableVariations.value[0].name : undefined;
 });
 
-const templateLayout = computed(() => {
-  const layoutProperty = product.value?.properties?.find(
-    (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
-  )?.value;
+const lazySections = isLazySectionsEnabled();
 
-  if (typeof layoutProperty === "string") {
-    return layoutProperty;
-  }
+const {
+  template: productTemplate,
+  parts: templateParts,
+  productInfoSection,
+  isB2cLayout,
+  variationsLayout: templateLayout,
+} = useProductTemplate(product);
 
-  return undefined;
-});
+const productVariationsBlock = computed(() =>
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
+);
+
+const sectionContext = computed(() => ({ product: product.value }));
+
+const columnSectionContext = computed(() => ({ product: product.value, isCollapsible: false }));
 
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
-
-const isB2cLayout = computed(() => templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c);
 
 const variationsItemsPerPage = computed(() => (isB2cLayout.value ? B2C_VARIATIONS_ITEMS_PER_PAGE : 50));
 
@@ -368,37 +356,6 @@ const seoUrl = computed(() =>
     : window.location.toString(),
 );
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
-
-const productTemplate = computed(() => {
-  if (isB2cLayout.value) {
-    return productTemplateB2c as IPageTemplate;
-  }
-  return productTemplateDefault as IPageTemplate;
-});
-
-const productInfoSection = computed(() =>
-  productTemplate.value?.content?.find((item) => item?.type === "product-info"),
-);
-
-const productDescriptionSection = computed(() =>
-  productTemplate.value?.content?.find((item) => item?.type === "product-description"),
-);
-
-const productReviewsSection = computed(() =>
-  productTemplate.value?.content?.find((item) => item?.type === "product-reviews"),
-);
-
-const productVariationsBlock = computed(() =>
-  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
-);
-
-const relatedProductsSection = computed(() =>
-  productTemplate.value?.content?.find((item) => item?.type === "related-products"),
-);
-
-const recommendedProductsSection = computed(() =>
-  productTemplate.value?.content?.find((item) => item?.type === "recommended-products"),
-);
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(product.value?.breadcrumbs));
 
@@ -482,24 +439,6 @@ watch(
     }
     if (product.value?.isConfigurable) {
       await fetchProductConfiguration();
-    }
-
-    if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
-      await fetchRelatedProducts({
-        productId: productId.value,
-        itemsPerPage: 30,
-        currencyCodeOverride: loyaltyCurrencyOverride.value,
-      });
-    }
-
-    const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
-    if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
-      const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
-        productId: productId.value,
-        model: model as string,
-        currencyCodeOverride: loyaltyCurrencyOverride.value,
-      }));
-      await fetchRecommendedProducts(paramsToFetch);
     }
 
     const showVariations = productVariationsBlock.value && !productVariationsBlock.value?.hidden;

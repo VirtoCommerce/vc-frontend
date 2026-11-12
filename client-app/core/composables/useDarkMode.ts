@@ -1,6 +1,5 @@
 import { createGlobalState, useLocalStorage, useMediaQuery } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
-import { darkPresets } from "@/assets/presets";
 
 type ColorModeType = "light" | "dark" | "system";
 
@@ -20,20 +19,21 @@ function _useDarkMode() {
   }
 
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+  const colorModeOverride = ref<"light" | "dark">();
   const activePresetName = ref<string>();
+  const hasDarkPreset = ref(false);
 
-  const isDarkModeAvailable = computed(() => {
-    return !!activePresetName.value && activePresetName.value in darkPresets;
-  });
+  const isDarkModeAvailable = computed(() => activePresetName.value !== undefined && hasDarkPreset.value);
 
   const isDark = computed(() => {
     if (!isDarkModeAvailable.value) {
       return false;
     }
-    if (storedMode.value === "system") {
+    const mode = colorModeOverride.value ?? storedMode.value;
+    if (mode === "system") {
       return systemPrefersDark.value;
     }
-    return storedMode.value === "dark";
+    return mode === "dark";
   });
 
   // Sync html.dark class with isDark state, but only after preset is known.
@@ -48,12 +48,17 @@ function _useDarkMode() {
     { immediate: true },
   );
 
-  function setActivePreset(presetName: string) {
+  function setActivePreset(presetName: string, withDarkPreset: boolean) {
     activePresetName.value = presetName;
+    hasDarkPreset.value = withDarkPreset;
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);
     // Persist availability flag so the FOUC script in index.html can check it
     localStorage.setItem(DARK_AVAILABLE_KEY, JSON.stringify(isDarkModeAvailable.value));
+  }
+
+  function setColorModeOverride(mode: "light" | "dark"): void {
+    colorModeOverride.value = mode;
   }
 
   function toggle() {
@@ -82,6 +87,7 @@ function _useDarkMode() {
     colorMode: storedMode,
     colorModeIcon,
     setActivePreset,
+    setColorModeOverride,
     toggle,
   };
 }

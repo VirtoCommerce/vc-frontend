@@ -1,0 +1,7 @@
+{
+  "name": "Customer reviews",
+  "icon": "star",
+  "targetTemplates": ["product"],
+  "info": "Shown when the customer reviews module is on.",
+  "settings": []
+}
