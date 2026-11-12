@@ -456,6 +456,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-file-uploader-radius` | VcFileUploader corners | `var(--vc-radius)` |
 | `--vc-input-radius` | VcInput and VcDateRangeInput corners | `var(--vc-radius)` |
 | `--vc-markdown-render-radius` | VcMarkdownRender corners | `var(--vc-radius)` |
+| `--vc-pagination-page-radius` | VcPagination page number corners | The `rounded` step: `var(--vc-radius-default)`, 0.25rem |
 | `--vc-popover-radius` | VcPopover corners. VcTooltip and VcDropdownMenu set it on their popover | `var(--vc-radius)` |
 | `--vc-product-card-radius` | VcProductCard corners | `var(--vc-radius)` |
 | `--vc-product-image-radius` | VcProductImage corners | `var(--vc-radius)` |
@@ -487,7 +488,7 @@ this table does not list, or the table lists one the code does not read.
 ### Where a design's value goes
 
 - **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
-  `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
+  `html[data-design="<name>"]`; dark values (shadows, colours) on `html.dark[data-design="<name>"]` in the
   same file. Which token changes what: the [token table](#token-table). A value that changes with
   the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
 - **Shadows** keep their step's colour: black `rgb(0 0 0 / …)` for the default `shadow` step (from
