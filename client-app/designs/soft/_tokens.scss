@@ -21,6 +21,9 @@ html[data-design="soft"] {
   --design-widget-border-width: var(--vc-widget-border-width);
   --design-widget-padding-x: var(--vc-widget-padding-x);
 
+  // VcContainer: no background of its own (blocks/vc-container.scss drops its pattern layer too).
+  --vc-container-bg-color: transparent;
+
   // VcFrame
   --vc-frame-bg-color: var(--body-bg-color);
   --vc-frame-padding-x: 0.75rem;

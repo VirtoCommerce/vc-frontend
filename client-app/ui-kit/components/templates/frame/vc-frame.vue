@@ -83,7 +83,7 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   --inherited-container-pt: var(--vc-container-pt);
   --inherited-container-pb: var(--vc-container-pb);
 
-  @apply flex min-h-screen flex-col;
+  @apply flex min-h-screen flex-col bg-[var(--vc-frame-bg-color,transparent)];
 
   padding-block-end: var(--vc-frame-footer-offset-bottom, var(--vc-frame-gap, 0px));
 
@@ -97,6 +97,7 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
 
   // Paper gets the classic frame in every design.
   @media print {
+    --vc-frame-bg-color: initial;
     --vc-frame-padding-x: initial;
     --vc-frame-max-width: initial;
     --vc-frame-gap: initial;

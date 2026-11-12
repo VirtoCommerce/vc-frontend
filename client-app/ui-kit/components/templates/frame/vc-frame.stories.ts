@@ -49,7 +49,7 @@ const meta: Meta<typeof VcFrame> = {
           "publishes its height as `--vc-app-header-height`, as both app layouts do, so the jump stops below it. The",
           "side space and column reach the page through VcContainer. A header piece takes the width",
           "`min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with auto margins, and the",
-          "frame applies the same to the footer.",
+          "frame applies the same to the footer. The frame paints the canvas, `--vc-frame-bg-color`, on screen.",
         ].join(" "),
       },
     },

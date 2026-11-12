@@ -1,0 +1,6 @@
+.vc-container {
+  // No pattern in soft: it has no token, so its whole layer goes, an explicit `bg-color` included.
+  &__bg {
+    @apply hidden;
+  }
+}

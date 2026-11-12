@@ -242,7 +242,7 @@ The rules for block files:
 
 Print rules sit in `vc.print` and win in print, so a block file needs no screen-only `@media` and
 never restates print. Token values apply in print too, except the frame's side space, column, gap and header and footer
-offsets, which VcFrame resets (`--vc-frame-main-min-height` still applies), and its canvas, which is screen only
+offsets and its canvas, which VcFrame resets (`--vc-frame-main-min-height` still applies)
 ([Page frame](#page-frame)).
 
 ### Make your own design
@@ -541,7 +541,7 @@ footer.
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |
-| `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | `body`, on screen (`main.scss`); set it on `:root` or `html` only: a value on a layout class or `.vc-frame` never reaches `body` | Not set: transparent | `var(--body-bg-color)` |
+| `--vc-frame-bg-color` | The page canvas: behind the page, in the spaces between header, page and footer, in the overscroll area | VcFrame's root, on screen (print resets it); `body` for the overscroll area outside the frame (`main.scss`, screen). Set it on `:root` or `html` to fill the overscroll area too: a value on a layout class or `.vc-frame` paints the frame but never reaches `body` | Not set: transparent | `var(--body-bg-color)` |
 | `--vc-frame-padding-x` | The page's side space: `--vc-container-px` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 24px, `lg` 32px, `2xl` 48px | 12px · `sm` 24px · `lg` 32px |
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
 | `--vc-frame-gap` | The value of the four vertical spaces below (above and below the header, above and below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
@@ -565,14 +565,16 @@ footer.
 - A fork that sets `--vc-frame-max-width` also narrows the header and footer.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
-- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` side space, column, gap and
-  header and footer offsets in `@media print`, a fork's values included; a container token set above the
+- Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` canvas, side space, column, gap
+  and header and footer offsets in `@media print`, a fork's values included; a container token set above the
   frame still applies (on paper `print/atoms/vc-container.scss` sets the container's own padding to 0; a page's
   padding utility, such as the cart's, still applies). A fork keeps its own print frame with a `.vc-frame` rule inside `@media print` in
   `_custom.scss`: its column and gaps apply on paper; its side space does not, because print sets the containers'
   padding to 0.
 - VcContainer paints its own background over the canvas (its `bg-color` prop, else `--vc-container-bg-color`, which
-  defaults to `--body-bg-color`; nothing when `has-bg-image` is false). Soft's canvas is that same colour. A fork that
+  defaults to `--body-bg-color`; nothing when `has-bg-image` is false), with the hexagon pattern on top. Soft paints
+  neither: `--vc-container-bg-color` is `transparent` (`_tokens.scss`) and `blocks/vc-container.scss` hides the
+  `__bg` layer, so the canvas shows everywhere, also behind a container given a `bg-color`. In classic, a fork that
   sets `--vc-frame-bg-color` alone sees it only around the containers: for one colour everywhere, set
   `--vc-container-bg-color` to the same value.
 
