@@ -529,10 +529,10 @@ ${loads("dark")}  }
       expect(errors).toEqual([
         expect.stringContaining(String.raw`--vc-x-bg, --vc-x-c\6f lor: red is a named colour; ${COLOR}`),
         expect.stringContaining(`--vc-button-bg-color: red is a named colour; ${COLOR}`),
-        expect.stringContaining(`--vc-button-bg: red is a named colour; ${COLOR}`),
+        expect.stringContaining(String.raw`--vc-button-b\67: red is a named colour; ${COLOR}`),
         expect.stringContaining(String.raw`--vc-button-b\g: red is a named colour; ${COLOR}`),
         expect.stringContaining(String.raw`-\-vc-button-bg-color: red is a named colour; ${COLOR}`),
-        expect.stringContaining(String.raw`\--vc-button-bg-color: red is a named colour; ${COLOR}`),
+        expect.stringContaining(String.raw`\2d\2d vc-button-bg-color: red is a named colour; ${COLOR}`),
         expect.stringContaining(`--vc-button-solid-primary-text: red is a named colour; ${COLOR}`),
         expect.stringContaining(`--vc-button-solid-primary-border: red is a named colour; ${COLOR}`),
         expect.stringContaining(`--vc-button-solid-primary-icon: red is a named colour; ${COLOR}`),
