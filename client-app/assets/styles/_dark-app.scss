@@ -12,4 +12,5 @@ html.dark {
   @include meta.load-css("dark/shared/layout/header-badge");
   @include meta.load-css("dark/shared/layout/search-bar");
   @include meta.load-css("dark/shared/layout/top-header");
+  @include meta.load-css("dark/shared/reporting/reporting-svg-chart");
 }
