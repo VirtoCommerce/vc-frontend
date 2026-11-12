@@ -470,8 +470,16 @@ const MAX_PICKUP_LOCATIONS_COUNT = 1;
 
 watch(
   productId,
-  async () => {
+  async (_productId, _previous, onCleanup) => {
+    let isCancelled = false;
+    onCleanup(() => {
+      isCancelled = true;
+    });
+
     await fetchProduct(productId.value);
+    if (isCancelled) {
+      return;
+    }
     if (product.value?.isConfigurable) {
       await fetchProductConfiguration();
     }
@@ -504,6 +512,10 @@ watch(
 
     if (xPickupEnabled.value && product.value) {
       await fetchPickupLocations({ productId: productId.value, first: MAX_PICKUP_LOCATIONS_COUNT });
+    }
+
+    if (isCancelled) {
+      return;
     }
 
     updateLocalizedUrl(product.value?.slug);

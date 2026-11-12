@@ -491,7 +491,7 @@ describe("useLanguages", () => {
       expect(() => {
         // Attempt to write to computed through a typed cast to bypass readonly at compile time
         (languages as unknown as { currentLanguage: { value: ILanguage } }).currentLanguage.value = hoisted.langs.deDE;
-      }).toThrowError(/read only/);
+      }).toThrow(/read only/);
     });
 
     it("pinLocale and unpinLocale update pinned storage ref", async () => {

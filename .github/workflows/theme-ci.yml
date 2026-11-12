@@ -187,6 +187,14 @@ jobs:
         run: |
           yarn check:designs
 
+      - name: Check Styles for !important
+        run: |
+          yarn check:css-important
+
+      - name: Test Agent Hooks
+        run: |
+          yarn test:hooks
+
       - name: Build
         run: |
           yarn build
