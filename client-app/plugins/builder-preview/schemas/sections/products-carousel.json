@@ -1,5 +1,6 @@
 {
   "name": "Products carousel",
+  "description": "Horizontally scrollable products carousel with title and subtitle. Use when: featured-products ribbon, promotional sliding row, 'you might also like' style carousel without auto-related logic. Skip when: a stationary grid is fine (use `products` or `favorite-products`), filterable category listing (use `category`), or a product detail page's auto-related (use `related-products` on a product template). `title` and `subtitle` head the carousel. `cardType` (`full` default, `short`); `count` is how many products to fetch (max 12, default 4); `slidesPerView` is the desktop-visible count (max 6, default 4). `skus` is a list of explicit codes (preserves order, takes precedence over `query` when set); `query` searches by keyword.",
   "icon": "local_mall",
   "displayField": "name",
   "settings": [

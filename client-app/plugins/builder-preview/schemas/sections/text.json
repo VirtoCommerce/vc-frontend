@@ -1,5 +1,6 @@
 {
   "name": "Text",
+  "description": "Article / body-copy section — optional heading (h2–h6, default h2) plus markdown rich-text content. The default section for any paragraph-style prose. Use when: blog post body, FAQ answers, info-page copy, or anything narrative. Skip when: a hero heading without body (use `title`), product imagery (use `image` or `slider`), CTAs (use `call-to-action` or `call-to-action-with-image`), or product showcases (use `products` family). `title` (from `shared/title`) is an optional section heading — leave empty for headerless body copy. `heading` selects the heading element — keep `h2` unless this section is nested under another heading section, then use `h3` or lower. `text` is markdown content — emit both `markdown` (source) and `html` (rendered) per the markdown convention, even though the schema's default is a plain string for backward compatibility.",
   "icon": "text_snippet",
   "displayField": "name",
   "includeShared": ["title"],

@@ -1,5 +1,6 @@
 {
   "name": "Product variations",
+  "description": "Renders the product's variations selector / table from the catalog — no editable content of its own. Used as a nested block inside the `product-info` section. Use when: the product has variations (sizes, colors, configurations) AND the user explicitly wants them picked inline in the body. Skip when: not on a product page, the product has no variations, or the standard PDP layout is enough — `product-info` hides this block by default (it's behind `BLOCKS_TO_HIDE` in the renderer), so only include it if specifically asked for. `title` is an optional heading above the variations control.",
   "icon": "smartphone",
   "displayField": "name",
   "settings": [
