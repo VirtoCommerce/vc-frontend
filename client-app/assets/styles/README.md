@@ -468,6 +468,10 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
+| `--vc-tab-switch-font-weight` | VcTabSwitch weight | `var(--vc-font-weight-bold)`, 700 |
+| `--vc-tab-switch-checked-font-weight` | VcTabSwitch weight when checked; a `label` prop keeps its width | `var(--vc-tab-switch-font-weight)` |
+| `--vc-tab-switch-checked-shadow` | VcTabSwitch shadow when checked | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-tab-switch-group-radius` | VcTabSwitchGroup corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
 | `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
 | `--vc-tile-button-radius` | VcTileButton corners | `var(--vc-radius)` |

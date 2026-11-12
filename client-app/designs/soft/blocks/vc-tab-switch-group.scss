@@ -1,0 +1,24 @@
+// The switches of the segmented track: borderless pills, regular text that turns semibold when checked.
+// The checked look is the group's pill, which slides between them, so the checked switch itself stays clear.
+.vc-tab-switch-group {
+  --vc-tab-switch-radius: 9999px;
+  --vc-tab-switch-padding-x: 0.875rem;
+  --vc-tab-switch-border-color: transparent;
+  --vc-tab-switch-checked-border-color: transparent;
+  --vc-tab-switch-checked-bg-color: transparent;
+  --vc-tab-switch-checked-shadow: 0 0 #0000;
+  --vc-tab-switch-text-color: var(--color-neutral-600);
+  --vc-tab-switch-hover-color: var(--color-neutral-950);
+  --vc-tab-switch-color: currentColor;
+  --vc-tab-switch-font-weight: 400;
+  --vc-tab-switch-checked-font-weight: 600;
+
+  &__pill {
+    display: block;
+    border-radius: var(--vc-tab-switch-radius);
+    background: var(--color-additional-50);
+    box-shadow:
+      0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05),
+      0 6px 20px 0 rgb(from var(--color-additional-950) r g b / 0.06);
+  }
+}

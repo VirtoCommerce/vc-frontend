@@ -59,6 +59,7 @@ declare module "vue" {
     VcSlider: typeof Components.VcSlider;
     VcSteps: typeof Components.VcSteps;
     VcTabSwitch: typeof Components.VcTabSwitch;
+    VcTabSwitchGroup: typeof Components.VcTabSwitchGroup;
     VcTextarea: typeof Components.VcTextarea;
     VcTileButton: typeof Components.VcTileButton;
     VcRating: typeof Components.VcRating;
