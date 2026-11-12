@@ -69,7 +69,7 @@ jobs:
           fi
 
       - name: Get Image Version
-        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.7
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.9
         with:
           projectType: theme
         id: image
@@ -128,7 +128,7 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.7
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.9
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
@@ -174,7 +174,7 @@ jobs:
           tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ steps.urls.outputs.FLOATING_TAG }}
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.7
+        uses: VirtoCommerce/.github/actions/get-jira-keys@v3.1000.9
         if: always()
         id: jira_keys
         with:
