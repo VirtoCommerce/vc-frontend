@@ -5,6 +5,7 @@ import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import VcTableColumn from "./vc-table-column.vue";
 import VcTable from "./vc-table.vue";
+import type { MockInstance } from "vitest";
 
 const i18n = createI18n({ locale: "en", legacy: false, messages: {}, missingWarn: false });
 
@@ -325,7 +326,7 @@ describe("rowHeader column", () => {
 });
 
 describe("rowHeader column — DEV warning", () => {
-  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let warnSpy: MockInstance<typeof console.warn>;
 
   beforeEach(() => {
     vi.stubEnv("DEV", true);
