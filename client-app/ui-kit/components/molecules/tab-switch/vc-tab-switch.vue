@@ -24,7 +24,7 @@
 
     <!-- The radio is display:none, so its `aria-checked` never reaches the a11y tree — the visible
          button has to carry the state itself. Alone it is a toggle; inside VcTabSwitchGroup it is a radio
-         of the group's radiogroup, with one tab stop for the whole group. -->
+         of the group's radiogroup, with one tab stop once an item is checked. -->
     <button
       class="vc-tab-switch__button"
       type="button"
@@ -201,7 +201,8 @@ onBeforeUnmount(() => unregister?.());
     }
   }
 
-  // A hidden copy of the label in the checked weight keeps the width when the weight changes.
+  // A hidden copy of the `label` prop in the checked weight keeps the width when the weight changes;
+  // a default-slot label gets no copy.
   // The label stays a block, so a consumer's `truncate` still gets its ellipsis.
   &__label {
     @apply block;

@@ -17,6 +17,8 @@
     display: block;
     border-radius: var(--vc-tab-switch-radius);
     background: var(--color-additional-50);
-    box-shadow: theme("boxShadow.md");
+    box-shadow:
+      0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05),
+      0 6px 20px 0 rgb(from var(--color-additional-950) r g b / 0.06);
   }
 }

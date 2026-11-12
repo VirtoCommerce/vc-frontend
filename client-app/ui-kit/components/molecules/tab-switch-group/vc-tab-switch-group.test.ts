@@ -108,10 +108,18 @@ describe("VcTabSwitchGroup", () => {
       light: { left: 0, width: 50 },
       dark: { left: 50, width: 60 },
       system: { left: 110, width: 70 },
+      // Where a running slide has drawn the pill.
+      pill: { left: 20, width: 100 },
     };
 
     function stubLayout() {
-      const box = (el: HTMLElement) => BOXES[el.getAttribute("aria-label") ?? ""] ?? { left: 0, width: 0 };
+      const box = (el: HTMLElement) =>
+        (el.dataset.testId === "vc-tab-switch-group-pill"
+          ? BOXES.pill
+          : BOXES[el.getAttribute("aria-label") ?? ""]) ?? {
+          left: 0,
+          width: 0,
+        };
 
       vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
         return box(this).left;
@@ -155,6 +163,20 @@ describe("VcTabSwitchGroup", () => {
         { left: "110px", width: "70px" },
       ]);
       expect(pill(wrapper).attributes("style")).toContain("left: 110px");
+    });
+
+    it("starts a move during a running slide from where the pill is drawn", async () => {
+      const animate = stubLayout();
+      animate.mockReturnValue({ playState: "running", cancel: vi.fn() });
+      const wrapper = createWrapper("light");
+      await nextTick();
+
+      await radios(wrapper)[2].trigger("click");
+      await radios(wrapper)[1].trigger("click");
+
+      const [keyframes] = animate.mock.calls[1] as [Keyframe[]];
+
+      expect(keyframes[0]).toEqual({ left: "20px", width: "100px" });
     });
 
     it("jumps without animation when the user prefers reduced motion", async () => {

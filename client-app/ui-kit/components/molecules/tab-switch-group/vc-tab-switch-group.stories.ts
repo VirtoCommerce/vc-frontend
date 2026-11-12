@@ -8,18 +8,8 @@ const COLOR_MODES = [
   { value: "system", label: "System", icon: "desktop-computer" },
 ];
 
-// The group around one VcTabSwitch per colour mode; `attrs` are that switch's extra attributes.
-function renderGroup(attrs: string) {
-  return (args: Partial<{ modelValue: VcTabSwitchGroupValueType }>) => ({
-    components: { VcTabSwitch, VcTabSwitchGroup },
-    setup: () => ({ modes: COLOR_MODES, value: ref(args.modelValue) }),
-    template: `
-      <VcTabSwitchGroup v-model="value" aria-label="Color mode">
-        <VcTabSwitch v-for="mode in modes" :key="mode.value" :value="mode.value" size="sm" ${attrs} />
-      </VcTabSwitchGroup>
-    `,
-  });
-}
+type ColorModeType = (typeof COLOR_MODES)[number];
+type ItemAttrsType = (mode: ColorModeType) => Record<string, string | boolean>;
 
 const meta: Meta<typeof VcTabSwitchGroup> = {
   title: "Components/Molecules/VcTabSwitchGroup",
@@ -27,27 +17,53 @@ const meta: Meta<typeof VcTabSwitchGroup> = {
   args: {
     modelValue: "light",
   },
-  render: renderGroup(`:label="mode.label"`),
 } as Meta<typeof VcTabSwitchGroup>;
 
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+// The group around one VcTabSwitch per colour mode; `itemAttrs` are that switch's extra attributes.
+// "Show code" gets the same markup with the items written out.
+function groupStory(itemAttrs: ItemAttrsType): StoryType {
+  const items = COLOR_MODES.map((mode) => {
+    const allAttrs: Record<string, string | boolean> = { value: mode.value, size: "sm", ...itemAttrs(mode) };
+    const attrs = Object.entries(allAttrs)
+      .filter(([, attrValue]) => attrValue !== false)
+      .map(([attrName, attrValue]) => (attrValue === true ? attrName : `${attrName}="${attrValue}"`));
 
-export const WithIcons: StoryType = {
-  render: renderGroup(`:label="mode.label" :icon="mode.icon"`),
-};
+    return `  <VcTabSwitch ${attrs.join(" ")} />`;
+  });
 
-export const IconsOnly: StoryType = {
-  render: renderGroup(`:icon="mode.icon" :aria-label="mode.label"`),
-};
+  return {
+    render: (args) => ({
+      components: { VcTabSwitch, VcTabSwitchGroup },
+      setup: () => ({ modes: COLOR_MODES, itemAttrs, value: ref(args.modelValue) }),
+      template: `
+        <VcTabSwitchGroup v-model="value" aria-label="Color mode">
+          <VcTabSwitch v-for="mode in modes" :key="mode.value" :value="mode.value" size="sm" v-bind="itemAttrs(mode)" />
+        </VcTabSwitchGroup>
+      `,
+    }),
+    parameters: {
+      docs: {
+        source: {
+          code: `<VcTabSwitchGroup v-model="colorMode" aria-label="Color mode">\n${items.join("\n")}\n</VcTabSwitchGroup>`,
+        },
+      },
+    },
+  };
+}
 
-export const DisabledItem: StoryType = {
-  render: renderGroup(`:label="mode.label" :disabled="mode.value === 'dark'"`),
-};
+export const Basic = groupStory((mode) => ({ label: mode.label }));
+
+export const WithIcons = groupStory((mode) => ({ label: mode.label, icon: mode.icon }));
+
+export const IconsOnly = groupStory((mode) => ({ icon: mode.icon, "aria-label": mode.label }));
+
+export const DisabledItem = groupStory((mode) => ({ label: mode.label, disabled: mode.value === "dark" }));
 
 export const NoSelection: StoryType = {
+  ...groupStory((mode) => ({ label: mode.label })),
   args: {
     modelValue: undefined,
   },

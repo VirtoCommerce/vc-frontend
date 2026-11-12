@@ -80,7 +80,12 @@ const pillStyle = computed(() => {
 // The pill is hidden in classic; a design that shows it (soft) gets the checked look sliding between the items.
 function placePill(animate: boolean): void {
   const checkedEl = root.value?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]');
-  const from = pillRect.value;
+  // A move during a running slide starts where the pill is drawn, not at the previous target.
+  const drawnPill = pillAnimation?.playState === "running" ? pill.value : null;
+  const from =
+    drawnPill && pillRect.value
+      ? { ...pillRect.value, left: drawnPill.offsetLeft, width: drawnPill.offsetWidth }
+      : pillRect.value;
   const to = checkedEl
     ? {
         left: checkedEl.offsetLeft,

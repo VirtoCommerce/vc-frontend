@@ -37,8 +37,3 @@ html[data-design="soft"] {
     --vc-widget-border-width: 1px;
   }
 }
-
-html.dark[data-design="soft"] {
-  // neutral-950 turns light in dark, so the track is a tint of the dark neutral-50 instead.
-  --vc-tab-switch-group-bg-color: color-mix(in srgb, var(--color-neutral-50) 60%, transparent);
-}

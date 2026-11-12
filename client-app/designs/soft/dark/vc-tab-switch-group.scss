@@ -1,5 +1,5 @@
 // The light pill turns into a dark plate on the dark track, so dark mode tints it with the secondary colour and
-// gives it a glass edge: a ring and a lighter top line.
+// gives it a glass edge: a ring and a top line.
 .vc-tab-switch-group {
   &__pill {
     background: color-mix(in srgb, var(--color-secondary-400) 72%, transparent);
