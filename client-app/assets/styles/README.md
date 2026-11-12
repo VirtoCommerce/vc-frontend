@@ -301,7 +301,9 @@ Only a preset bundled in `client-app/assets/presets/` (with its `<name>.json`) c
 a preset fetched at runtime from the platform cannot.
 
 The dark JSON already flips the `--color-*` values (neutral included), so the same `var(--color-*)`
-in the light block is right in dark too. Add an `html.dark[data-preset]` rule only for a
+in the light block is right in dark too. One exception: the Default and Mercury dark presets, and dark presets built
+on them, do not swap `additional` (`additional-50` is the raised panel, `additional-950` stays black), so a light
+colour in dark is `neutral-950`, never `additional-950`. Add an `html.dark[data-preset]` rule only for a
 deliberately different choice, like the title colour below; the light rules match in dark too, and
 the dark rule overrides them. Dark rules live in the same `<name>.scss`, never in a `<name>.dark.scss`.
 
@@ -476,7 +478,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
 | `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |
-| `--vc-widget-shadow` | VcWidget shadow | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-widget-shadow` | VcWidget shadow | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)`; none in dark mode |
 | `--vc-widget-title-font-weight` | VcWidget title weight | `var(--vc-heading-font-weight, var(--vc-font-weight-bold))`, 700 |
 | `--vc-widget-title-letter-spacing` | VcWidget title letter spacing | `var(--vc-heading-letter-spacing)`, else inherited |
 | `--vc-widget-title-text-transform` | VcWidget title letter case | `var(--vc-heading-text-transform, uppercase)` |

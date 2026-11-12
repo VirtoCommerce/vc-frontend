@@ -4,6 +4,8 @@
 // Applied when html.dark class is present (set by useDarkMode composable).
 // The dark preset JSON swaps palette shades (50↔950, 100↔900, etc.),
 // but semantic variables in _colors.scss still reference the light-mode shade numbers.
+// Exception: Default and Mercury dark, and dark presets built on them, keep additional-950 black and make
+// additional-50 the raised panel, so dark rules use neutral-950 for light text.
 // Per-component files remap them so UI stays visually correct in dark mode.
 
 html.dark {
