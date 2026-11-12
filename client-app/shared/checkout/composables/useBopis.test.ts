@@ -57,6 +57,7 @@ import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
 import { useBopis, BOPIS_CODE } from "./useBopis";
 import type { ProductPickupLocation } from "@/core/api/graphql/types";
+import type { Mock } from "vitest";
 import type { Ref, ComputedRef } from "vue";
 
 describe("useBopis composable", () => {
@@ -66,14 +67,14 @@ describe("useBopis composable", () => {
   let loadingMoreRef: Ref<boolean>;
   let availableShippingMethods: Ref<IShippingMethod[]>;
   let shipment: Ref<IShipment | null>;
-  let updateShipment: ReturnType<typeof vi.fn>;
-  let openModal: ReturnType<typeof vi.fn>;
-  let closeModal: ReturnType<typeof vi.fn>;
-  let isEnabled: ReturnType<typeof vi.fn>;
-  let getSettingValue: ReturnType<typeof vi.fn>;
-  let fetchPickupLocations: ReturnType<typeof vi.fn>;
-  let loadMorePickupLocations: ReturnType<typeof vi.fn>;
-  let buildFilter: ReturnType<typeof vi.fn>;
+  let updateShipment: Mock;
+  let openModal: Mock;
+  let closeModal: Mock;
+  let isEnabled: Mock;
+  let getSettingValue: Mock;
+  let fetchPickupLocations: Mock;
+  let loadMorePickupLocations: Mock;
+  let buildFilter: Mock;
   let filterKeyword: Ref<string>;
   let hasNextPageRef: Ref<boolean>;
 

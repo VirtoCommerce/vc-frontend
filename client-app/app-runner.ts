@@ -43,6 +43,7 @@ import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-pr
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
+import { registerAccountDashboardBlocks } from "@/shared/account/dashboard-blocks";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
@@ -275,6 +276,9 @@ export default async () => {
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
   }
+
+  // The account dashboard's blocks, before the app mounts — as each module below registers its own in `init()`.
+  registerAccountDashboardBlocks();
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
