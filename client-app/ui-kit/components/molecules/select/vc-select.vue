@@ -287,11 +287,9 @@ const props = withDefaults(
      * With `server-filter`: the query the current `items` and `total` answer, echoed back. Until it
      * matches the last `search` (spaces around either ignored), Select all is disabled, keeps counting
      * the answered query, and no result count is announced. Echo a query you skip (too short) at once.
-     * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, echo the
-     * variables of the result that is in:
-     * `computed<string | undefined>((prev) => !enabled.value ? variables.value.keyword : loading.value || !query.value ? prev : query.value.variables?.keyword)`.
-     * Not `loading.value ? prev : variables.value.keyword`: it names the new query before `loading`
-     * rises and keeps naming it through the load.
+     * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, bind
+     * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `core/api/graphql/composables`.
+     * Not `loading.value ? prev : variables.value.keyword`: it names the new query before its result is in.
      */
     answeredQuery?: string;
     testIdDropdown?: string;

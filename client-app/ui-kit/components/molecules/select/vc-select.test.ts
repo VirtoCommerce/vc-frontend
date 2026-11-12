@@ -1861,6 +1861,22 @@ describe("VcSelect", () => {
       expect(warn.mock.calls.some(([message]) => String(message).includes("needs `answered-query`"))).toBe(warns);
     });
 
+    it.each([
+      ["without server-filter", { answeredQuery: "" }, true],
+      ["without server-filter in kebab case", { "answered-query": "" }, true],
+      ["without server-filter, not set yet", { answeredQuery: undefined }, true],
+      ["with server-filter", { serverFilter: true, answeredQuery: "" }, false],
+      ["no answered-query and no server-filter", {}, false],
+    ])("warns about an answered-query bound %s accordingly", (_label, props, warns) => {
+      const warn = spyOnWarn();
+
+      createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, ...props });
+
+      expect(
+        warn.mock.calls.some(([message]) => String(message).includes("`answered-query` needs `server-filter`")),
+      ).toBe(warns);
+    });
+
     it("warns about server-filter without autocomplete", () => {
       const warn = spyOnWarn();
 

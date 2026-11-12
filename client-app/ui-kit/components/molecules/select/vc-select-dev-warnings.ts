@@ -139,6 +139,14 @@ function warnFiltering<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, v
         "count is announced.",
     );
   }
+
+  if (!props.serverFilter && ("answeredQuery" in vnodeProps || "answered-query" in vnodeProps)) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcSelect: `answered-query` needs `server-filter`; without it the select filters on the client and " +
+        "ignores the echo, so Select all and the result count follow the loaded options, not your query.",
+    );
+  }
 }
 
 function warnPaging<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnodeProps: VNodePropsType): void {
