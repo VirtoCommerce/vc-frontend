@@ -2,7 +2,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { filterActiveQueryNames, getFieldValidationErrors } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
-import { useReturnUrl, useSupportReports } from "@/core/composables";
+import { useAuth, useReturnUrl, useSupportReports } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { buildRedirectUrl, toSameOriginPath } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
@@ -43,6 +43,7 @@ export function setupBroadcastGlobalListeners() {
   const { on } = useBroadcast();
   const notifications = useNotifications();
   const { fetchUser, user } = useUser();
+  const { headers: authHeaders } = useAuth();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
@@ -96,7 +97,19 @@ export function setupBroadcastGlobalListeners() {
       client.cache.gc();
     }
   });
-  on(unauthorizedErrorEvent, async () => {
+  let signInRedirect: Promise<void> | undefined;
+
+  // A failed token refresh emits unauthorizedErrorEvent and lets the request go out without a token, so a
+  // forbiddenEvent follows. Both handlers share one run: one `me` request and one navigation, in either order.
+  function redirectToSignIn(): Promise<void> {
+    signInRedirect ??= reloadUserAndRedirectToSignIn().finally(() => {
+      signInRedirect = undefined;
+    });
+    return signInRedirect;
+  }
+
+  // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded first
+  async function reloadUserAndRedirectToSignIn(): Promise<void> {
     await fetchUser();
 
     if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
@@ -107,6 +120,10 @@ export function setupBroadcastGlobalListeners() {
     if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query });
     }
+  }
+
+  on(unauthorizedErrorEvent, async () => {
+    await redirectToSignIn();
   });
   on(graphqlErrorEvent, (errors) => {
     const graphQLErrors = errors as GraphQLFormattedError[];
@@ -156,7 +173,13 @@ export function setupBroadcastGlobalListeners() {
     location.href = toSameOriginPath(typeof returnUrl === "string" ? returnUrl : getReturnUrl());
   });
 
-  on(forbiddenEvent, () => {
+  on(forbiddenEvent, async () => {
+    // Without an access token the request went out anonymous: the session is gone, not the permission
+    if (!authHeaders.value.Authorization) {
+      await redirectToSignIn();
+      return;
+    }
+
     void router.push({ name: "NoAccess" });
   });
 
