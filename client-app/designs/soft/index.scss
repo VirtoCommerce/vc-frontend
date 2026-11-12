@@ -8,5 +8,6 @@
   html[data-design="soft"] {
     @include meta.load-css("blocks/vc-widget");
     @include meta.load-css("blocks/footer-links");
+    @include meta.load-css("blocks/vc-container");
   }
 }

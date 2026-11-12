@@ -21,9 +21,26 @@ html[data-design="soft"] {
   --design-widget-border-width: var(--vc-widget-border-width);
   --design-widget-padding-x: var(--vc-widget-padding-x);
 
+  // VcContainer: no background of its own (blocks/vc-container.scss drops its pattern layer too).
+  --vc-container-bg-color: transparent;
+
+  // VcFrame
+  --vc-frame-bg-color: var(--body-bg-color);
+  --vc-frame-padding-x: 0.75rem;
+  --vc-frame-max-width: 96.875rem;
+  --vc-frame-gap: 0.8125rem;
+  --vc-frame-header-offset-x: var(--vc-frame-padding-x);
+  --vc-frame-footer-offset-x: var(--vc-frame-padding-x);
+
+  @media (width >= theme("screens.sm")) {
+    --vc-frame-padding-x: 1.5rem;
+    --vc-frame-gap: 1.625rem;
+  }
+
   @media (width >= theme("screens.lg")) {
     --vc-widget-radius: 1.75rem;
     --vc-widget-padding-x: 2rem;
+    --vc-frame-padding-x: 2rem;
   }
 
   // Forced colours drop the shadow, so the plate keeps an edge.

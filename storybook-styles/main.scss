@@ -2,6 +2,7 @@
 @use "sass:meta";
 
 @layer theme {
+  @include meta.load-css("../client-app/assets/styles/colors");
   @include meta.load-css("../client-app/assets/styles/ui-kit-tokens");
 }
 

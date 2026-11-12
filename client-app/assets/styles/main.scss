@@ -23,6 +23,13 @@
     scroll-padding-top: var(--vc-app-header-height, 0px);
   }
 
+  // Only the overscroll area outside VcFrame (the rubber band); the frame paints its own canvas.
+  @media screen {
+    body {
+      @apply bg-[var(--vc-frame-bg-color,transparent)];
+    }
+  }
+
   @include meta.load-css("dark-app");
 }
 

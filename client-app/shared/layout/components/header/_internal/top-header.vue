@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    class="flex h-10 items-center gap-1 border-b border-neutral-300 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11 print:hidden"
     data-test-id="top-header"
   >
     <Teleport to="body">
