@@ -23,6 +23,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useFieldErrors } from "@/shared/common";
+import { closeAllModals } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -85,6 +86,7 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
+      closeAllModals();
       await router.replace({
         name: route.params.cartId ? "SharedCart" : "Cart",
         params: { cartId: route.params.cartId },
@@ -106,6 +108,7 @@ export function setupBroadcastGlobalListeners() {
     const query = buildRedirectUrl(router.currentRoute.value);
     if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query });
+      closeAllModals();
     }
   });
   on(graphqlErrorEvent, (errors) => {
@@ -157,7 +160,10 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(forbiddenEvent, () => {
-    void router.push({ name: "NoAccess" });
+    if (router.currentRoute.value.name !== "NoAccess") {
+      void router.push({ name: "NoAccess" });
+      closeAllModals();
+    }
   });
 
   on(passwordExpiredEvent, () => {
@@ -165,6 +171,7 @@ export function setupBroadcastGlobalListeners() {
 
     if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
       void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
+      closeAllModals();
     }
   });
 
