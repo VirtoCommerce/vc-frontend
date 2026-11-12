@@ -146,10 +146,9 @@ syncRefs(isScrollLocked, scrollLock);
 <style lang="scss">
 // Two roots: the header and the menu.
 .mobile-header {
-  @apply sticky top-0 z-40 shadow-md;
+  @apply sticky top-0 z-40 mx-auto shadow-md;
 
   inline-size: min(100% - 2 * var(--vc-frame-header-offset-x, 0px), var(--vc-frame-max-width, 100%));
-  margin-inline: auto;
 
   @media print {
     @apply hidden;

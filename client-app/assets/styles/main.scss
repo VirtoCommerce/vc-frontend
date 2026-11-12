@@ -26,7 +26,7 @@
   // VcFrame's canvas, on body so it also fills the overscroll area.
   @media screen {
     body {
-      background-color: var(--vc-frame-bg-color, transparent);
+      @apply bg-[var(--vc-frame-bg-color,transparent)];
     }
   }
 

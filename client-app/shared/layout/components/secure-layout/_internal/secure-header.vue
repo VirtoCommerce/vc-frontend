@@ -38,10 +38,9 @@ watch(
 
 <style lang="scss">
 .secure-header {
-  @apply sticky top-0 z-20 flex h-14 items-center justify-between gap-3 bg-additional-50 px-6 shadow-md;
+  @apply sticky top-0 z-20 mx-auto flex h-14 items-center justify-between gap-3 bg-additional-50 px-6 shadow-md;
 
   inline-size: min(100% - 2 * var(--vc-frame-header-offset-x, 0px), var(--vc-frame-max-width, 100%));
-  margin-inline: auto;
 
   @media (width >= theme("screens.lg")) {
     @apply h-auto px-12 py-5;

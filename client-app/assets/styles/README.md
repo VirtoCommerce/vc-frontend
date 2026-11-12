@@ -535,8 +535,9 @@ The frame owns the space around the page through the `--vc-frame-*` tokens. Clas
 to its Classic value in the table below; soft sets them in `designs/soft/_tokens.scss`. Set them on `:root` or `html`
 (a design: `html[data-design="<design>"]`); a fork sets them in `_custom.scss`, which beats a design's values. The
 frame does not style the header or the footer: they keep their own look. VcFrame sets the space above the header and
-below the footer and the footer's side insets; the header pieces read `--vc-frame-header-offset-x` themselves, because
-the header slot has no wrapper.
+below the footer. A header piece takes the width `min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with
+auto margins (the header slot has no wrapper, so each piece does it itself), and the frame applies the same to the
+footer.
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |

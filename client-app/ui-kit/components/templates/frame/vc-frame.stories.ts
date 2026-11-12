@@ -1,8 +1,8 @@
 import { VcFrame } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-// Each header piece reads the frame's side inset itself: the slot has no wrapper.
-const INSET = "ms-[var(--vc-frame-header-offset-x,0px)] me-[var(--vc-frame-header-offset-x,0px)]";
+// Each header piece takes the frame's width itself: the slot has no wrapper.
+const INSET = "mx-auto w-[min(100%_-_2_*_var(--vc-frame-header-offset-x,0px),var(--vc-frame-max-width,100%))]";
 
 const HEADER = `<div class="sticky top-0 z-10 ${INSET} bg-additional-50 p-4 shadow-md">Header: one sticky piece</div>`;
 
@@ -47,8 +47,9 @@ const meta: Meta<typeof VcFrame> = {
           "Page frame). Put the app's skip links first in the header",
           "slot: they target `#main-content` (the frame's main) and `#footer` (VcFooter renders it). A sticky header",
           "publishes its height as `--vc-app-header-height`, as both app layouts do, so the jump stops below it. The",
-          "side space and column reach the page through VcContainer; each header piece reads",
-          "`--vc-frame-header-offset-x` itself, the frame places the footer.",
+          "side space and column reach the page through VcContainer. A header piece takes the width",
+          "`min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with auto margins, and the",
+          "frame applies the same to the footer.",
         ].join(" "),
       },
     },

@@ -20,8 +20,9 @@ import type { VNode, VNodeArrayChildren } from "vue";
 defineSlots<{
   /**
    * The page header. Rendered with no wrapper: each root element of this slot is a direct child of the frame, so a
-   * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky. Each
-   * piece reads `--vc-frame-header-offset-x` for its side insets itself.
+   * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky. A
+   * piece takes the width `min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with auto
+   * margins; the frame applies the same to the footer.
    */
   header?: () => VNode[];
   /** The page content, inside the frame's `<main id="main-content">`, the skip-to-content target. */
@@ -89,8 +90,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   // The space above the header is a flex item, not padding: a fixed child with auto insets (the mobile menu) stays
   // at the top edge.
   &::before {
-    content: "";
-    flex: none;
+    @apply flex-none content-[''];
+
     block-size: var(--vc-frame-header-offset-top, var(--vc-frame-gap, 0px));
   }
 
@@ -126,8 +127,9 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   }
 
   &__footer {
+    @apply mx-auto;
+
     inline-size: min(100% - 2 * var(--vc-frame-footer-offset-x, 0px), var(--vc-frame-max-width, 100%));
-    margin-inline: auto;
   }
 }
 </style>
