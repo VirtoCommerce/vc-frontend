@@ -1,7 +1,16 @@
 @use "sass:meta";
 
 html.dark {
+  @include meta.load-css("dark/modules/customer-reviews/product-reviews");
+  @include meta.load-css("dark/pages/brands");
+  @include meta.load-css("dark/pages/home");
+  @include meta.load-css("dark/shared/account/coupon-item");
+  @include meta.load-css("dark/shared/cart/coupon-card");
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");
+  @include meta.load-css("dark/shared/catalog/product-videos");
   @include meta.load-css("dark/shared/checkout/select-address-map-view");
   @include meta.load-css("dark/shared/layout/header-badge");
+  @include meta.load-css("dark/shared/layout/search-bar");
+  @include meta.load-css("dark/shared/layout/top-header");
+  @include meta.load-css("dark/shared/reporting/reporting-svg-chart");
 }

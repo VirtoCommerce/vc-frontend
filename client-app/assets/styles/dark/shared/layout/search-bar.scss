@@ -1,0 +1,19 @@
+// The dark soft-secondary button sets --bg-color straight from the preset keys,
+// so the neutral scope chip of the header search needs its own dark rule.
+.search-bar__button.vc-button--soft--secondary,
+.mobile-search-bar__button.vc-button--soft--secondary {
+  --bg-color: var(--search-chip-bg);
+  --border-color: var(--search-chip-bg);
+  --text-color: var(--color-neutral-900);
+
+  &:hover:not(.vc-button--loading, .vc-button--disabled) {
+    --bg-color: color-mix(in srgb, var(--search-chip-bg), white 10%);
+    --border-color: var(--bg-color);
+  }
+
+  &:active:not(.vc-button--loading, .vc-button--disabled) {
+    --bg-color: color-mix(in srgb, var(--search-chip-bg), black 20%);
+    --border-color: var(--bg-color);
+    --text-color: var(--color-neutral-900);
+  }
+}

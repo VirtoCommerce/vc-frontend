@@ -3,5 +3,14 @@
 .vc-table {
   --selected-bg-alpha: 0.16;
   // neutral-200 is too strong a lift in dark: neutral-600 text on it drops to 3.4:1 in coffee.
-  --row-hover-shade: theme("colors.neutral.100");
+  --row-hover-shade: var(
+    --color-vc-table-row-hover,
+    color-mix(in srgb, var(--color-additional-50), white 8%)
+  );
+
+  // neutral-50 is the page colour, darker than the card in most dark presets: the stripe is lifted
+  // from the card instead, unless the preset names its own.
+  &__row:nth-child(even):not(:hover, .vc-table__row--selected) {
+    background-color: var(--color-vc-table-row-stripe, color-mix(in srgb, var(--color-additional-50), white 4%));
+  }
 }

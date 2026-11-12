@@ -1,0 +1,8 @@
+// The active column mixes in additional-950 to lift on a dark theme, but Default and Mercury dark keep it black,
+// so the column darkens there. neutral-950 is the light end in every dark preset. The dashed projection bar is
+// excluded: this rule outranks its transparent fill.
+.reporting-svg-chart {
+  &__bar:not(.reporting-svg-chart__bar--dashed) {
+    fill: color-mix(in srgb, var(--color-neutral-950) var(--shade), var(--series-color));
+  }
+}

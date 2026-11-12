@@ -19,7 +19,7 @@ const meta: Meta<typeof VcWidget> = {
           "| `--vc-widget-border-color` | neutral-200 |",
           "| `--vc-widget-divide-color` | the border colour |",
           "| `--vc-widget-bg-color` | additional-50 |",
-          "| `--vc-widget-shadow` | the `shadow-md` parts |",
+          "| `--vc-widget-shadow` | the `shadow-md` parts; none in dark mode |",
           "| `--vc-widget-padding-x` | xs, sm 1rem · md 1rem, 1.5rem from `sm` · lg 1rem, 1.75rem from `lg` |",
           "| `--vc-widget-title-font-weight` | `var(--vc-heading-font-weight)`, else 700 |",
           "| `--vc-widget-title-text-transform` | `var(--vc-heading-text-transform)`, else uppercase |",

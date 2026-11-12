@@ -1,0 +1,9 @@
+// The decorative hexagons behind the page content are drawn for a light page.
+// In dark they read as stray shapes under the content, so only the fill stays.
+.vc-container {
+  &__bg {
+    svg {
+      @apply hidden;
+    }
+  }
+}

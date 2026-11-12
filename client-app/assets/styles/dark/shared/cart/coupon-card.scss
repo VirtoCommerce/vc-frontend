@@ -1,0 +1,37 @@
+// The -400 steps are surface tints in dark: the icon in the ring reads 2.2-3:1. Icons and the error
+// line take the -700 text step; the applied disc keeps its fill and gets the text colour.
+.coupon-card {
+  $default: "";
+  $applied: "";
+  $error: "";
+
+  &--default {
+    $default: &;
+  }
+
+  &--applied {
+    $applied: &;
+  }
+
+  &--error {
+    $error: &;
+  }
+
+  &__icon {
+    #{$default} & {
+      @apply text-secondary-700;
+    }
+
+    #{$applied} & {
+      @apply text-additional-950;
+    }
+
+    #{$error} & {
+      @apply border-danger-700 text-danger-700;
+    }
+  }
+
+  &__error {
+    @apply text-danger-700;
+  }
+}

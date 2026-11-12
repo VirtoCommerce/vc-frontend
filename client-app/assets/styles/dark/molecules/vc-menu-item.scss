@@ -13,12 +13,10 @@
 
     @each $color in $colors {
       &--color--#{$color} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
-        }
-
+        // Lift from -100 like button and chip hovers: -200 is a light tint in some dark presets.
+        &:hover,
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: color-mix(in srgb, var(--color-#{$color}-100), white 10%);
         }
       }
     }

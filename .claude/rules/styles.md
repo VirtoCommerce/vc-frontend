@@ -175,7 +175,10 @@ catches anything, so everything else below is review-only. Severity guide: break
     links `--link-color` / `--link-hover-color`, prices `--price-color`, page `--body-bg-color` / `--body-text-color`,
     header/footer/mobile-menu `--header-*` / `--footer-*` / `--mobile-menu-*`, empty-state icon `--empty-list-icon`.
     A link styled `text-accent-600` instead of `text-[--link-color]` ignores the client's link colour.
-28. **Dark mode is a palette swap** under `html.dark` (shade numbers invert: 50↔950, 100↔900…). Consequences:
+28. **Dark mode is a palette swap** under `html.dark` (shade numbers invert: 50↔950, 100↔900…). Exception: the
+    Default and Mercury dark presets, and every dark preset built on them, do not swap `additional`:
+    `additional-50` is the raised panel and `additional-950` stays black. In dark rules, text takes `neutral-950`,
+    never `additional-950`. Consequences:
     - no `dark:` utilities and no dark branches in components;
     - `additional-50` surfaces and `neutral-*` text flip correctly; a hardcoded literal colour does not;
     - when a component genuinely needs a dark-specific remap, it goes to `assets/styles/dark/**` (§1.4);
@@ -187,7 +190,8 @@ catches anything, so everything else below is review-only. Severity guide: break
 30. **Radius**: `rounded-[--vc-radius]` / `var(--vc-radius)` (buttons `--vc-button-radius`), `rounded-full` for
     pills and circles, `rounded-[inherit]` for clipped children. Plain `rounded`, `rounded-sm/md/lg/xl/2xl`
     ignore the theme radius → finding. Logical corners only (`rounded-s-*`, `rounded-e-*`, `rounded-ss-*`).
-31. **Shadows**: theme `shadow-sm|md|lg|xl|2xl|inner` only (built on `additional-950`, flip in dark).
+31. **Shadows**: theme `shadow-sm|md|lg|xl|2xl|inner` only (built on `additional-950`: they flip in dark presets that
+    swap it, and stay black in Default and Mercury dark, where cards and widgets drop them for a hairline).
     No arbitrary `shadow-[0px_2px_10px_rgba(...)]` or raw `box-shadow` with literal colours.
 32. Don't restate what the component already provides (a white background on `VcWidget`, a border it already
     draws): duplicated styling hides intent and breaks when the token changes.

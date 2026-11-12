@@ -272,6 +272,15 @@ onMounted(() => {
 
   &__button {
     @apply ms-1;
+
+    // The scope chip stays neutral in every preset: one or two steps lighter than the input.
+    &.vc-button--soft--secondary {
+      --search-chip-bg: var(--color-search-chip-bg, var(--color-neutral-200));
+      --vc-button-soft-secondary-bg: var(--search-chip-bg);
+      --vc-button-soft-secondary-border: var(--search-chip-bg);
+      --vc-button-soft-secondary-text: var(--color-neutral-900);
+      --vc-button-soft-secondary-icon: currentColor;
+    }
   }
 
   &__dropdown {
