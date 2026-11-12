@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="purchase-requests">
     <!-- Title block -->
     <VcTypography tag="h1">{{ $t("purchase_requests.title") }}</VcTypography>
 
@@ -11,7 +11,7 @@
     />
 
     <div v-else>
-      <FromFile class="mb-5" />
+      <FromFile class="purchase-requests__from-file" />
 
       <!-- Content block -->
       <VcWidget size="lg">
@@ -30,28 +30,28 @@
           >
             <template #mobile-item="itemData">
               <div
-                class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
+                class="purchase-requests__card"
                 role="button"
                 tabindex="0"
                 @click="goToPurchaseRequest(itemData.item)"
                 @keyup.enter="goToPurchaseRequest(itemData.item)"
               >
-                <div class="flex flex-col">
-                  <span class="text-sm text-neutral-400">
+                <div class="purchase-requests__field">
+                  <span class="purchase-requests__label">
                     {{ $t("purchase_requests.purchase_request_number_label") }}
                   </span>
 
-                  <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                  <span class="purchase-requests__number">
                     {{ itemData.item.number }}
                   </span>
                 </div>
 
-                <div class="flex flex-col">
-                  <span class="text-sm text-neutral-400">
+                <div class="purchase-requests__field">
+                  <span class="purchase-requests__label">
                     {{ $t("purchase_requests.date_label") }}
                   </span>
 
-                  <span class="overflow-hidden text-ellipsis">
+                  <span class="purchase-requests__value">
                     {{ $d(itemData.item?.createdDate) }}
                   </span>
                 </div>
@@ -62,17 +62,17 @@
               <tr
                 v-for="purchaseRequest in purchaseRequests"
                 :key="purchaseRequest.id"
-                class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+                class="purchase-requests__row"
                 tabindex="0"
                 @click="goToPurchaseRequest(purchaseRequest)"
                 @keydown.enter.prevent="goToPurchaseRequest(purchaseRequest)"
                 @keydown.space.prevent="goToPurchaseRequest(purchaseRequest)"
               >
-                <td class="overflow-hidden text-ellipsis p-5">
+                <td class="purchase-requests__cell">
                   {{ purchaseRequest.number }}
                 </td>
 
-                <td class="overflow-hidden text-ellipsis p-5">
+                <td class="purchase-requests__cell">
                   {{ $d(purchaseRequest.createdDate) }}
                 </td>
               </tr>
@@ -130,3 +130,48 @@ function changePage(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
 }
 </script>
+
+<style lang="scss">
+.purchase-requests {
+  &__from-file {
+    @apply mb-5;
+  }
+
+  &__card {
+    @apply grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6;
+  }
+
+  &__field {
+    @apply flex flex-col;
+  }
+
+  &__label {
+    @apply text-sm text-neutral-400;
+  }
+
+  &__number {
+    @apply overflow-hidden text-ellipsis pr-4 font-black;
+  }
+
+  &__value {
+    @apply overflow-hidden text-ellipsis;
+  }
+
+  &__row {
+    @apply cursor-pointer;
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    // After the zebra: a hovered even row takes the hover colour.
+    &:hover {
+      @apply bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))];
+    }
+  }
+
+  &__cell {
+    @apply overflow-hidden text-ellipsis p-5;
+  }
+}
+</style>

@@ -4569,6 +4569,8 @@ interface IProps$g {
     sortable?: boolean;
     /** Text alignment within the column */
     align?: VcTableAlignType;
+    /** Marks the column that identifies the row (an order number, a name): its cells are bold and take `--vc-table-row-header-color`. Applies only to the cells VcTable renders from `VcTableColumn` slots; `#desktop-item` and `#desktop-body` render their own cells. */
+    rowHeader?: boolean;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;
     /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
@@ -6803,6 +6805,12 @@ type VcTableColumnType = {
     title?: string;
     sortable?: boolean;
     align?: VcTableAlignType;
+    /**
+     * Marks the column that identifies the row (an order number, a name): its cells are bold and take
+     * `--vc-table-row-header-color`. Applies only to the cells VcTable renders from `VcTableColumn` slots;
+     * `#desktop-item` and `#desktop-body` render their own cells.
+     */
+    rowHeader?: boolean;
     classes?: string;
     /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;

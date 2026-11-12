@@ -5,6 +5,7 @@ import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import VcTableColumn from "./vc-table-column.vue";
 import VcTable from "./vc-table.vue";
+import type { MockInstance } from "vitest";
 
 const i18n = createI18n({ locale: "en", legacy: false, messages: {}, missingWarn: false });
 
@@ -44,7 +45,7 @@ const createWrapper = createWrapperFactory(shallowMount, VcTable, {
  */
 async function mountWithSlots(options: {
   items?: VcTableItemType[];
-  columns?: Array<{ id: string; title: string }>;
+  columns?: Array<{ id: string; title: string; rowHeader?: boolean }>;
   rowClass?:
     string | Record<string, boolean> | ((item: VcTableItemType, index: number) => string | Record<string, boolean>);
   rowStyle?:
@@ -69,7 +70,7 @@ async function mountWithSlots(options: {
         cols.map((col) =>
           h(
             VcTableColumn,
-            { id: col.id, title: col.title },
+            { id: col.id, title: col.title, rowHeader: col.rowHeader },
             {
               default: ({ item }: { item: VcTableItemType }) => {
                 const value = item[col.id];
@@ -240,13 +241,6 @@ describe("columnOffsets", () => {
 // ─── 3. resolvedRowClass ────────────────────────────────────
 
 describe("resolvedRowClass", () => {
-  it("no extra classes without rowClass and without @row-click", async () => {
-    const wrapper = await mountWithSlots({ items });
-    const row = wrapper.find(".vc-table__row");
-
-    expect(row.classes()).not.toContain("cursor-pointer");
-  });
-
   it("applies string rowClass", async () => {
     const wrapper = await mountWithSlots({ items, rowClass: "highlighted" });
     const row = wrapper.find(".vc-table__row");
@@ -275,15 +269,26 @@ describe("resolvedRowClass", () => {
     expect(rows[0].classes()).toContain("first");
     expect(rows[1].classes()).toContain("other");
   });
+});
 
-  it("adds cursor-pointer when @row-click listener is bound", async () => {
+// ─── 3a. clickable rows ─────────────────────────────────────
+
+describe("clickable row modifier", () => {
+  it("leaves rows unmarked without a @row-click listener", async () => {
+    const wrapper = await mountWithSlots({ items });
+    const row = wrapper.find(".vc-table__row");
+
+    expect(row.classes()).not.toContain("vc-table__row--clickable");
+  });
+
+  it("adds the clickable modifier when @row-click listener is bound", async () => {
     const wrapper = await mountWithSlots({ items, onRowClick: () => {} });
     const row = wrapper.find(".vc-table__row");
 
-    expect(row.classes()).toContain("cursor-pointer");
+    expect(row.classes()).toContain("vc-table__row--clickable");
   });
 
-  it("combines rowClass and cursor-pointer", async () => {
+  it("combines rowClass and the clickable modifier", async () => {
     const wrapper = await mountWithSlots({
       items,
       rowClass: "custom",
@@ -292,7 +297,94 @@ describe("resolvedRowClass", () => {
     const row = wrapper.find(".vc-table__row");
 
     expect(row.classes()).toContain("custom");
-    expect(row.classes()).toContain("cursor-pointer");
+    expect(row.classes()).toContain("vc-table__row--clickable");
+  });
+});
+
+// ─── 3b. rowHeader column ───────────────────────────────────
+
+describe("rowHeader column", () => {
+  it("marks the cells of a rowHeader column only", async () => {
+    const wrapper = await mountWithSlots({
+      items,
+      columns: [
+        { id: "id", title: "ID", rowHeader: true },
+        { id: "name", title: "Name" },
+      ],
+    });
+    const [idCell, nameCell] = wrapper.findAll("tbody tr")[0].findAll("td");
+
+    expect(idCell.classes()).toContain("vc-table__cell--row-header");
+    expect(nameCell.classes()).not.toContain("vc-table__cell--row-header");
+  });
+
+  it("marks no cell when no column is a row header", async () => {
+    const wrapper = await mountWithSlots({ items });
+
+    expect(wrapper.findAll("tbody td").some((cell) => cell.classes("vc-table__cell--row-header"))).toBe(false);
+  });
+});
+
+describe("rowHeader column — DEV warning", () => {
+  let warnSpy: MockInstance<typeof console.warn>;
+
+  beforeEach(() => {
+    vi.stubEnv("DEV", true);
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    vi.unstubAllEnvs();
+  });
+
+  const rowHeaderWarnings = () => warnSpy.mock.calls.filter(([message]) => String(message).includes("rowHeader"));
+
+  async function mountMarked(slots: Record<string, () => unknown>, columns: VcTableColumnType[] = []) {
+    const wrapper = mount(VcTable, {
+      props: { items, columns },
+      slots,
+      global: { stubs: sharedStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+
+    return wrapper;
+  }
+
+  it("does not warn when VcTable renders the marked column's cells", async () => {
+    await mountWithSlots({ items, columns: [{ id: "name", title: "Name", rowHeader: true }] });
+
+    expect(rowHeaderWarnings()).toHaveLength(0);
+  });
+
+  it("warns once when #desktop-body renders the rows", async () => {
+    const wrapper = await mountMarked({
+      default: () => h(VcTableColumn, { id: "name", title: "Name", rowHeader: true }, { default: () => "cell" }),
+      "desktop-body": () => items.map((item) => h("tr", [h("td", String(item.name))])),
+    });
+
+    await wrapper.setProps({ items: [...items] });
+
+    expect(rowHeaderWarnings()).toHaveLength(1);
+  });
+
+  it("warns when a config-only column is marked and #desktop-item renders the rows", async () => {
+    await mountMarked({
+      default: () => h(VcTableColumn, { id: "name", title: "Name", rowHeader: true }),
+      "desktop-item": () => h("tr", [h("td", "cell")]),
+    });
+
+    expect(rowHeaderWarnings()).toHaveLength(1);
+  });
+
+  it("warns when the columns prop marks a column and #desktop-body renders the rows", async () => {
+    await mountMarked({ "desktop-body": () => items.map((item) => h("tr", [h("td", String(item.name))])) }, [
+      { id: "name", title: "Name", rowHeader: true },
+    ]);
+
+    expect(rowHeaderWarnings()).toHaveLength(1);
   });
 });
 
@@ -2134,7 +2226,7 @@ describe("built-in header — selection cell accessible name", () => {
 
     expect(selectionCell.find(".checkbox-stub").exists()).toBe(false);
     // The docs tell consumers to mirror this, so an empty cell here would make them wrong.
-    expect(selectionCell.find(".sr-only").text()).toBe("ui_kit.table.selection_column");
+    expect(selectionCell.find(".vc-table__selection-label").text()).toBe("ui_kit.table.selection_column");
   });
 
   it("labels the multiple-mode selection cell through the checkbox instead", async () => {
@@ -2142,7 +2234,7 @@ describe("built-in header — selection cell accessible name", () => {
 
     const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
 
-    expect(selectionCell.find(".sr-only").exists()).toBe(false);
+    expect(selectionCell.text()).toBe("");
     expect(selectionCell.find(".checkbox-stub").attributes("aria-label")).toBe("ui_kit.table.select_all");
   });
 });
