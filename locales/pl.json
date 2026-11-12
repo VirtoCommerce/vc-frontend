@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs poprzedni rok"
       },
       "last_year": "Poprzedni rok",
-      "last_year_toggle": "Pokaż poprzedni rok na wykresie „{chart}”",
+      "last_year_toggle": "Poprzedni rok: {chart}",
       "legend": {
         "aov_closed": "Śr. wartość zamówienia, zamknięte miesiące",
         "current": "Ten miesiąc, do dziś",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "Brak kluczy",
         "unnamed_key": "Klucz bez nazwy",
+        "rename_key_label": "Zmień nazwę: {name}",
+        "delete_key_label": "Usuń: {name}",
         "created": "Utworzono {date}",
         "changed": "Zmieniono {date}",
         "rename_modal": {

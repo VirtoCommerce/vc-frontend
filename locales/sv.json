@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs förra året"
       },
       "last_year": "Förra året",
-      "last_year_toggle": "Visa förra året i diagrammet ”{chart}”",
+      "last_year_toggle": "Förra året: {chart}",
       "legend": {
         "aov_closed": "Snittordervärde, avslutade månader",
         "current": "Denna månad, hittills",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "Inga nycklar",
         "unnamed_key": "Namnlös nyckel",
+        "rename_key_label": "Byt namn på {name}",
+        "delete_key_label": "Ta bort {name}",
         "created": "Skapad {date}",
         "changed": "Ändrad {date}",
         "rename_modal": {

@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs viime vuosi"
       },
       "last_year": "Viime vuosi",
-      "last_year_toggle": "Näytä viime vuosi kaaviossa ”{chart}”",
+      "last_year_toggle": "Viime vuosi: {chart}",
       "legend": {
         "aov_closed": "Keskim. tilausarvo, päättyneet kuukaudet",
         "current": "Tämä kuukausi, tähän mennessä",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ei avaimia",
         "unnamed_key": "Nimetön avain",
+        "rename_key_label": "Nimeä {name} uudelleen",
+        "delete_key_label": "Poista {name}",
         "created": "Luotu {date}",
         "changed": "Muutettu {date}",
         "rename_modal": {

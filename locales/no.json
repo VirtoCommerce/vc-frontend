@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs i fjor"
       },
       "last_year": "I fjor",
-      "last_year_toggle": "Vis tall for i fjor i diagrammet «{chart}»",
+      "last_year_toggle": "I fjor: {chart}",
       "legend": {
         "aov_closed": "Snittordreverdi, avsluttede måneder",
         "current": "Denne måneden, hittil",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "Ingen nøkler",
         "unnamed_key": "Nøkkel uten navn",
+        "rename_key_label": "Gi {name} nytt navn",
+        "delete_key_label": "Slett {name}",
         "created": "Opprettet {date}",
         "changed": "Endret {date}",
         "rename_modal": {

@@ -1279,7 +1279,7 @@
         "vs_last_year": "较去年 {change}"
       },
       "last_year": "去年",
-      "last_year_toggle": "在“{chart}”中显示去年数据",
+      "last_year_toggle": "去年：{chart}",
       "legend": {
         "aov_closed": "平均订单金额（已结束月份）",
         "current": "本月至今",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "没有密钥",
         "unnamed_key": "未命名的密钥",
+        "rename_key_label": "重命名 {name}",
+        "delete_key_label": "删除 {name}",
         "created": "创建于 {date}",
         "changed": "更改于 {date}",
         "rename_modal": {

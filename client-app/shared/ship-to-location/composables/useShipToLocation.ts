@@ -1,20 +1,21 @@
-import { useLocalStorage } from "@vueuse/core";
-import { isEqual, omit } from "lodash-es";
-import { computed, ref } from "vue";
-import { updateContact } from "@/core/api/graphql/account";
+import { createSharedComposable, useLocalStorage, watchDebounced } from "@vueuse/core";
+import { omit, pickBy } from "lodash-es";
+import { computed, ref, watch } from "vue";
+import { updateContact, useGetCurrentCustomerAddressesQuery } from "@/core/api/graphql/account";
+import { useGetCurrentOrganizationAddressesQuery } from "@/core/api/graphql/organization";
 import { XApiPermissions } from "@/core/enums";
-import { Logger, stringifyAddress } from "@/core/utilities";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { isEqualAddresses, Logger, stringifyAddress } from "@/core/utilities";
+import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, useShortCart } from "@/shared/cart";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
-import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
+import { AddOrUpdateCompanyAddressModal, useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
-import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 export const MAX_ADDRESSES_NUMBER = 6;
+const SEARCH_DEBOUNCE_IN_MS = 300;
 export const USER_TYPE = {
   PERSONAL: "personal",
   CORPORATE_LIMITED: "corporate-limited",
@@ -27,9 +28,14 @@ export const LOCAL_ID_PREFIX = "local-";
 type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
 /**
- * Composable for managing shipping locations and addresses
+ * Composable for managing shipping locations and addresses.
+ *
+ * Shared across all call sites (`createSharedComposable`): the underlying `useCustomerAddresses`/
+ * `useCurrentOrganizationAddresses` queries create fresh state per call, so without sharing, each
+ * consumer (header ship-to selector, catalog, checkout shipping section) would fire its own
+ * independent address query.
  */
-export function useShipToLocation() {
+function _useShipToLocation() {
   const updatingContact = ref(false);
   const { openModal, closeModal } = useModal();
 
@@ -43,19 +49,18 @@ export function useShipToLocation() {
     fetchUser,
   } = useUser();
 
-  const {
-    addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddresses,
-    addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-    loading: loadingUserAddresses,
-  } = useUserAddresses();
+  const personalAddressBook = useCustomerAddresses(
+    MAX_ADDRESSES_NUMBER,
+    computed(() => isAuthenticated.value && !isCorporateMember.value),
+  );
 
-  const {
-    addresses: organizationsAddresses,
-    fetchAddresses: fetchOrganizationAddresses,
-    loading: loadingOrganizationAddresses,
-    addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useOrganizationAddresses(organization.value?.id ?? "");
+  const organizationAddressBook = useCurrentOrganizationAddresses(
+    () => organization.value?.id ?? "",
+    MAX_ADDRESSES_NUMBER,
+    computed(() => isAuthenticated.value && isCorporateMember.value),
+  );
+
+  const addressBook = computed(() => (isCorporateMember.value ? organizationAddressBook : personalAddressBook));
 
   const { updateShipment: updateShipmentCart, shipment: currentShipment, forceFetch: forceFetchCart } = useFullCart();
   const { cart: shortCart } = useShortCart();
@@ -63,12 +68,13 @@ export function useShipToLocation() {
 
   const localStorageKeyPrefix = "local_ship_to_";
   const userSuffix = computed(() => (isAuthenticated.value ? `_${user.value.id}` : "_anonymous"));
+  // Keys are getters: the shared instance outlives a sign-in/out, so they must follow the current user.
   const localShipToAddresses = useLocalStorage<AnyAddressType[]>(
-    `${localStorageKeyPrefix}addresses${userSuffix.value}`,
+    () => `${localStorageKeyPrefix}addresses${userSuffix.value}`,
     [],
   );
   const selectedLocalShipToAddressId = useLocalStorage<string | null>(
-    `${localStorageKeyPrefix}selected_address_id${userSuffix.value}`,
+    () => `${localStorageKeyPrefix}selected_address_id${userSuffix.value}`,
     null,
   );
 
@@ -85,34 +91,124 @@ export function useShipToLocation() {
     return USER_TYPE.PERSONAL;
   });
 
-  const accountAddresses = computed<AnyAddressType[]>(() => {
+  const loadingAddresses = computed(() => addressBook.value.loading.value);
+  const totalCount = computed(() => addressBook.value.totalCount.value);
+  const keyword = computed(() => addressBook.value.keyword.value);
+
+  // The search box value; keyword (what the server list is scoped to) follows it after a debounce.
+  // Lives here rather than in the selector so a remounted selector (header <-> mobile header) keeps it.
+  const search = ref<string | undefined>("");
+
+  watchDebounced(
+    search,
+    (value) => {
+      addressBook.value.page.value = 1;
+      addressBook.value.keyword.value = value ?? "";
+    },
+    { debounce: SEARCH_DEBOUNCE_IN_MS },
+  );
+
+  const isSearchPending = computed(() => (search.value ?? "") !== keyword.value || loadingAddresses.value);
+
+  // totalCount is scoped to the active search; this one is the size of the whole address book.
+  const addressBookTotalCount = ref(0);
+
+  watch(
+    [totalCount, loadingAddresses],
+    () => {
+      if (!loadingAddresses.value && !keyword.value) {
+        addressBookTotalCount.value = totalCount.value;
+      }
+    },
+    { immediate: true },
+  );
+
+  // True when accountAddresses is the server-paginated address book (PERSONAL, CORPORATE, or
+  // CORPORATE_LIMITED whose organization has addresses) vs. the small local-storage list (ANONYMOUS,
+  // or CORPORATE_LIMITED whose organization has none).
+  const isPaginated = computed(() => {
     switch (userType.value) {
-      case USER_TYPE.CORPORATE:
-        return organizationsAddresses.value;
-      case USER_TYPE.CORPORATE_LIMITED:
-        return organizationsAddresses.value.length ? organizationsAddresses.value : localShipToAddresses.value;
       case USER_TYPE.PERSONAL:
-        return personalAddresses.value;
-      case USER_TYPE.ANONYMOUS:
-        return localShipToAddresses.value;
+      case USER_TYPE.CORPORATE:
+        return true;
+      case USER_TYPE.CORPORATE_LIMITED:
+        return addressBookTotalCount.value > 0;
       default:
-        return [];
+        return false;
     }
   });
 
-  const loading = computed(
-    () =>
-      loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value || updatingContact.value,
+  const accountAddresses = computed<AnyAddressType[]>(() => {
+    if (!isPaginated.value) {
+      return localShipToAddresses.value;
+    }
+
+    return addressBook.value.addresses.value;
+  });
+
+  const addressesCount = computed(() =>
+    isPaginated.value ? addressBookTotalCount.value : localShipToAddresses.value.length,
   );
+
+  const canAddNewAddress = computed(() => userType.value !== USER_TYPE.CORPORATE_LIMITED || !isPaginated.value);
+
+  const page = computed<number>({
+    get: () => addressBook.value.page.value,
+    set: (value) => {
+      addressBook.value.page.value = value;
+    },
+  });
+
+  const pages = computed(() => addressBook.value.pages.value);
+
+  const selectedAddressId = computed(() => user.value?.contact?.selectedAddressId);
+
+  // accountAddresses is only the current page/search result, so the selected address is resolved
+  // by id. Enabled on the id alone: its variables change only with the id, so it never refires
+  // on page or search changes.
+  const selectedAddressVariables = computed(() => ({ first: 1, ids: [selectedAddressId.value ?? ""] }));
+
+  const { result: personalSelectedAddressResult } = useGetCurrentCustomerAddressesQuery(
+    selectedAddressVariables,
+    computed(() => isPaginated.value && !isCorporateMember.value && !!selectedAddressId.value),
+  );
+
+  const { result: organizationSelectedAddressResult } = useGetCurrentOrganizationAddressesQuery(
+    selectedAddressVariables,
+    computed(() => isPaginated.value && isCorporateMember.value && !!selectedAddressId.value),
+  );
+
+  const loading = computed(() => loadingUser.value || loadingAddresses.value || updatingContact.value);
+
+  function findSelectedAccountAddress(): AnyAddressType | undefined {
+    const foundOnPage = accountAddresses.value.find((address) => address.id === selectedAddressId.value);
+
+    if (foundOnPage) {
+      return foundOnPage;
+    }
+
+    const resolvedById = isCorporateMember.value
+      ? organizationSelectedAddressResult.value?.currentOrganizationAddresses?.items?.[0]
+      : personalSelectedAddressResult.value?.currentCustomerAddresses?.items?.[0];
+
+    if (resolvedById?.id === selectedAddressId.value) {
+      return resolvedById;
+    }
+
+    // The cart's delivery address can be ahead of the lookup above (right after selecting an address).
+    return currentShipment.value?.deliveryAddress?.id === selectedAddressId.value
+      ? currentShipment.value?.deliveryAddress
+      : undefined;
+  }
 
   const selectedAddress = computed(() => {
     switch (userType.value) {
       case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE:
-        return accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId);
+        return findSelectedAccountAddress();
       case USER_TYPE.CORPORATE_LIMITED:
-        return organizationsAddresses.value.length
-          ? accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId)
+        return isPaginated.value
+          ? findSelectedAccountAddress()
           : localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
       case USER_TYPE.ANONYMOUS:
         return localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
@@ -121,43 +217,28 @@ export function useShipToLocation() {
     }
   });
 
-  function normalizeAddressToFind(address: AnyAddressType): Partial<AnyAddressType> {
-    return omit(address, ["id", "addressType", "regionName"]);
+  // The mutation response carries server-only fields (__typename, isDefault…) and may return empty
+  // optional fields as null where the form keeps "", so compare only the filled address fields.
+  function isSameAddress(address1: AnyAddressType, address2: AnyAddressType): boolean {
+    const withoutEmptyFields = (address: AnyAddressType) =>
+      pickBy(address, (value) => value !== null && value !== "") as AnyAddressType;
+
+    return isEqualAddresses(withoutEmptyFields(address1), withoutEmptyFields(address2));
   }
 
-  function filterAddresses(addresses: AnyAddressType[], filter?: string): AnyAddressType[] {
+  // Client-side filter/slice for the small local-storage address lists only (ANONYMOUS users,
+  // and CORPORATE_LIMITED users without organization address access). These lists are never
+  // fetched from the paginated backend, so filtering them in memory is fine.
+  function getLocalFilteredAddresses(filter?: string): AnyAddressType[] {
     if (!filter) {
-      return addresses;
+      return localShipToAddresses.value;
     }
 
     const lowerCaseStr = filter.toLowerCase();
 
-    return accountAddresses.value.filter((address) => {
-      const combinedAddressString = stringifyAddress(address).toLowerCase();
-      return combinedAddressString.includes(lowerCaseStr);
-    });
-  }
-
-  function getFilteredAddresses(filter?: string): AnyAddressType[] {
-    return filter ? filterAddresses(accountAddresses.value, filter) : accountAddresses.value;
-  }
-
-  function getLimitedAddresses(limit = MAX_ADDRESSES_NUMBER): AnyAddressType[] {
-    return accountAddresses.value.slice(0, limit);
-  }
-
-  async function fetchAddresses() {
-    switch (userType.value) {
-      case USER_TYPE.ANONYMOUS:
-        break;
-      case USER_TYPE.PERSONAL:
-        await fetchPersonalAddresses();
-        break;
-      case USER_TYPE.CORPORATE:
-      case USER_TYPE.CORPORATE_LIMITED:
-        await fetchOrganizationAddresses();
-        break;
-    }
+    return localShipToAddresses.value.filter((address) =>
+      stringifyAddress(address).toLowerCase().includes(lowerCaseStr),
+    );
   }
 
   async function updateContactWithAddress(address: AnyAddressType) {
@@ -189,11 +270,7 @@ export function useShipToLocation() {
         break;
       }
       case USER_TYPE.CORPORATE_LIMITED: {
-        const isOrganizationAddress = organizationsAddresses.value.some(
-          (organizationAddress) => organizationAddress.id === address.id,
-        );
-
-        if (!isOrganizationAddress) {
+        if (!isPaginated.value) {
           selectedLocalShipToAddressId.value = address.id;
           break;
         }
@@ -221,28 +298,6 @@ export function useShipToLocation() {
     }
   }
 
-  function openSelectAddressModal() {
-    openModal({
-      component: SelectAddressModal,
-      props: {
-        addresses: accountAddresses.value,
-        currentAddress: selectedAddress.value,
-        isCorporateAddresses: isCorporateMember.value,
-        async onResult(address?: AnyAddressType) {
-          if (!address) {
-            return;
-          }
-          await selectAddress(address);
-        },
-        onAddNewAddress() {
-          setTimeout(() => {
-            openAddOrUpdateAddressModal();
-          }, 500);
-        },
-      },
-    });
-  }
-
   function openAddOrUpdateAddressModal() {
     const component = isCorporateMember.value ? AddOrUpdateCompanyAddressModal : AddOrUpdateAddressModal;
 
@@ -260,19 +315,10 @@ export function useShipToLocation() {
 
   async function handleAddressAddition(address: MemberAddressType) {
     switch (userType.value) {
-      case USER_TYPE.CORPORATE: {
-        await addOrUpdateOrganizationAddresses([address]);
-        const justAddedAddress = organizationsAddresses.value.find((_address) =>
-          isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
-        );
-        address.id = justAddedAddress?.id;
-        break;
-      }
+      case USER_TYPE.CORPORATE:
       case USER_TYPE.PERSONAL: {
-        await addOrUpdatePersonalAddresses([address]);
-        const justAddedAddress = personalAddresses.value.find((_address) =>
-          isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
-        );
+        const updatedAddresses = await addressBook.value.addOrUpdateAddresses([address]);
+        const justAddedAddress = updatedAddresses.find((updatedAddress) => isSameAddress(updatedAddress, address));
         address.id = justAddedAddress?.id;
         break;
       }
@@ -287,17 +333,23 @@ export function useShipToLocation() {
 
   return {
     accountAddresses,
+    addressesCount,
+    canAddNewAddress,
     loading,
     selectedAddress,
-    organizationsAddresses,
+    isPaginated,
 
-    fetchAddresses,
+    page,
+    pages,
+    search,
+    isSearchPending,
+
     selectAddress,
 
-    getFilteredAddresses,
-    getLimitedAddresses,
+    getLocalFilteredAddresses,
 
-    openSelectAddressModal,
     openAddOrUpdateAddressModal,
   };
 }
+
+export const useShipToLocation = createSharedComposable(_useShipToLocation);

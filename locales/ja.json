@@ -1279,7 +1279,7 @@
         "vs_last_year": "前年比 {change}"
       },
       "last_year": "昨年",
-      "last_year_toggle": "「{chart}」に昨年のデータを表示",
+      "last_year_toggle": "昨年：{chart}",
       "legend": {
         "aov_closed": "平均注文額（確定月）",
         "current": "今月（本日まで）",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "キーがありません",
         "unnamed_key": "名前のないキー",
+        "rename_key_label": "{name} の名前を変更",
+        "delete_key_label": "{name} を削除",
         "created": "{date} に作成",
         "changed": "{date} に変更",
         "rename_modal": {

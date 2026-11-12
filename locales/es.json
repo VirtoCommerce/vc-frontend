@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs. año pasado"
       },
       "last_year": "Año pasado",
-      "last_year_toggle": "Mostrar el año pasado en el gráfico «{chart}»",
+      "last_year_toggle": "Año pasado: {chart}",
       "legend": {
         "aov_closed": "Ticket medio, meses cerrados",
         "current": "Este mes, hasta la fecha",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "No hay claves",
         "unnamed_key": "Clave sin nombre",
+        "rename_key_label": "Cambiar el nombre de {name}",
+        "delete_key_label": "Eliminar {name}",
         "created": "Creada el {date}",
         "changed": "Modificada el {date}",
         "rename_modal": {

@@ -1279,7 +1279,7 @@
         "vs_last_year": "{change} vs last year"
       },
       "last_year": "Last year",
-      "last_year_toggle": "Show last year on {chart}",
+      "last_year_toggle": "Last year: {chart}",
       "legend": {
         "aov_closed": "AOV, closed months",
         "current": "This month, to date",
@@ -1615,6 +1615,8 @@
         "title": "@:common.links.security",
         "no_keys": "No keys",
         "unnamed_key": "Unnamed key",
+        "rename_key_label": "Rename {name}",
+        "delete_key_label": "Delete {name}",
         "created": "Created {date}",
         "changed": "Changed {date}",
         "rename_modal": {

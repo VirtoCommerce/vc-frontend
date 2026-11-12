@@ -194,12 +194,14 @@ watch(
 
   // Flex, not grid: a grid's track count comes from state, which lags the card SortableJS has already
   // put in the container mid-drag. `grow basis-44` is the flex equivalent of the fixed row's
-  // `repeat(auto-fit, minmax(11rem, 1fr))`, so wrapping stays count-agnostic.
+  // `repeat(auto-fit, minmax(11rem, 1fr))`, so wrapping stays count-agnostic. No `min-w-0`: VcStatWidget
+  // never wraps or cuts its figure, so a card must not shrink below it; a long amount widens its card
+  // or moves it to the next line instead of running past the border.
   &--horizontal {
     @apply flex flex-wrap gap-4;
 
     > * {
-      @apply min-w-0 grow basis-44;
+      @apply grow basis-44;
     }
   }
 
