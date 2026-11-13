@@ -8,7 +8,7 @@ export const LAYOUT_SCOPES = {
   accountDashboard: "accountDashboard",
 } as const;
 // Ordered so serialization always emits regions in a stable sequence.
-export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as const;
+export const LAYOUT_REGION_IDS = ["statistics", "fullWidth", "mainLeft", "mainRight"] as const;
 // The keys X-Frontend accepts (`ModuleConstants.Layouts`). Outside them a layout reads back as never saved, with no
 // error, and every save fails validation; the backend also compares block ids ignoring case.
 export const LAYOUT_SCOPE_PATTERN = /^[A-Za-z][A-Za-z0-9]{0,63}$/;

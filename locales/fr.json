@@ -654,6 +654,9 @@
         "vs_last_year": "{delta} vs année dernière",
         "excluded_orders": "{count} commande dans une autre devise non incluse | {count} commandes dans d'autres devises non incluses",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Statistiques des ventes"
+        },
         "recent_orders": {
           "title": "Mes commandes récentes",
           "view_all": "Toutes les commandes",
@@ -1278,7 +1281,7 @@
         "vs_last_year": "{change} vs année dernière"
       },
       "last_year": "Année dernière",
-      "last_year_toggle": "Afficher l'année dernière sur le graphique « {chart} »",
+      "last_year_toggle": "Année dernière : {chart}",
       "legend": {
         "aov_closed": "Panier moyen, mois clôturés",
         "current": "Ce mois-ci, à ce jour",
