@@ -4,11 +4,7 @@
       <template #default-container>
         <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-6">
           <div class="min-w-0 truncate">
-            <VcImage
-              :src="payment?.paymentMethod?.logoUrl"
-              class="mr-3.5 inline-block size-8 object-center md:size-9"
-              lazy
-            />
+            <VcImage :src="payment?.paymentMethod?.logoUrl" class="mr-3.5 inline-block size-8 md:size-9" lazy />
 
             <span>{{ payment?.paymentMethod?.name }}</span>
           </div>

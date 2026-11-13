@@ -84,7 +84,11 @@ const ACCOUNT_DASHBOARD_BLOCKS: readonly BlockType[] = [
     titleKey: "shared.account.dashboard.recent_orders.title",
     order: 10,
     component: RecentOrdersWidget,
-    settings: [{ kind: "maxRows", default: RECENT_ORDERS_DEFAULT_ROWS, min: MIN_ROWS, max: RECENT_ORDERS_MAX_ROWS }],
+    settings: [
+      { kind: "maxRows", default: RECENT_ORDERS_DEFAULT_ROWS, min: MIN_ROWS, max: RECENT_ORDERS_MAX_ROWS },
+      // Which status chips to offer.
+      { kind: "ruleTabs" },
+    ],
   },
 ];
 

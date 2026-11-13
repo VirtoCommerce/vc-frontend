@@ -10,7 +10,7 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 
 export function useHotjar() {
   async function init(): Promise<void> {
-    if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
+    if (hasModuleSettings.value && isEnabled(IS_ENABLED_KEY)) {
       try {
         const { user } = useUser();
         const { useHotjarModule } = await import("@virto-commerce/front-modules-hotjar");

@@ -13,6 +13,23 @@ import type { AtRule, Root } from "postcss";
  * Usage: vite-node scripts/check-css-layers.ts
  */
 
+export interface ILayerCheckOptions {
+  /** The text of `_layers.scss`. */
+  layersSource: string;
+  /** Every built stylesheet, path to CSS text. */
+  stylesheets: Map<string, string>;
+  /** The stylesheets `index.html` links, in load order. */
+  loadOrder: string[];
+  /** That `index.html`, as messages name it. */
+  indexFile: string;
+}
+
+export interface ILayerCheckResult {
+  errors: string[];
+  /** The first linked stylesheet that declares layers, which sets the order. */
+  firstLayered?: string;
+}
+
 const LAYERS_FILE = "client-app/assets/styles/_layers.scss";
 const STYLESHEET_LINK = /<link\b[^>]*\brel=["']?stylesheet["']?[^>]*>/g;
 const HREF = /\bhref=["']?([^"'\s>]+)/;
@@ -20,7 +37,6 @@ const IMPORT_URL = /url\([^)]*\)|"[^"]*"|'[^']*'/gi;
 const IMPORT_LAYER = /(?:^|\s)layer(?:\(([^)]*)\))?(?![\w-])/i;
 
 const distDir = "dist";
-const errors: string[] = [];
 
 function parentOf(name: string): string {
   return name.split(".").slice(0, -1).join(".");
@@ -62,7 +78,7 @@ function declaredLayers(rule: AtRule): string[] {
 }
 
 /** Layer names in order of first appearance; statement, block and import names, by full dotted name. */
-function layerNames(root: Root, file: string): string[] {
+function layerNames(root: Root, file: string, errors: string[]): string[] {
   const names: string[] = [];
 
   root.walkAtRules((rule: AtRule) => {
@@ -102,37 +118,42 @@ function childrenByParent(names: string[]): Map<string, string[]> {
   return children;
 }
 
-function linkedStylesheets(): string[] {
-  const html = readFileSync(path.join(distDir, "index.html"), "utf-8");
-
+/** The root-relative (`/…`) stylesheets an `index.html` links, as paths under `dir`, in load order. */
+export function linkedStylesheets(html: string, dir: string): string[] {
   return [...html.matchAll(STYLESHEET_LINK)]
     .map((link) => HREF.exec(link[0])?.[1])
     .filter((href): href is string => !!href && href.startsWith("/") && !href.startsWith("//"))
-    .map((href) => path.join(distDir, href));
+    .map((href) => path.join(dir, href));
 }
 
-if (!existsSync(path.join(distDir, "index.html"))) {
-  console.error(`No build output in "${distDir}". Run \`yarn build\` first.`);
-  process.exit(1);
-}
+export function checkCssLayers({
+  layersSource,
+  stylesheets,
+  loadOrder,
+  indexFile,
+}: ILayerCheckOptions): ILayerCheckResult {
+  const errors: string[] = [];
+  const declared = layerNames(postcssScss.parse(layersSource), LAYERS_FILE, errors);
+  const declaredChildren = childrenByParent(declared);
+  const namesByFile = new Map<string, string[]>();
 
-const declared = layerNames(postcssScss.parse(readFileSync(LAYERS_FILE, "utf-8")), LAYERS_FILE);
-const declaredChildren = childrenByParent(declared);
-const namesByFile = new Map<string, string[]>();
+  for (const [file, css] of stylesheets) {
+    const names = layerNames(postcss.parse(css, { from: file }), file, errors);
+    namesByFile.set(path.normalize(file), names);
 
-for (const file of globSync(`${distDir}/**/*.css`).sort((a, b) => a.localeCompare(b))) {
-  const names = layerNames(postcss.parse(readFileSync(file, "utf-8"), { from: file }), file);
-  namesByFile.set(path.normalize(file), names);
-
-  for (const name of names.filter((item) => !declared.includes(item))) {
-    errors.push(`${file}: layer "${name}" is not declared in ${LAYERS_FILE}`);
+    for (const name of names.filter((item) => !declared.includes(item))) {
+      errors.push(`${file}: layer "${name}" is not declared in ${LAYERS_FILE}`);
+    }
   }
-}
 
-const loadOrder = linkedStylesheets();
-const firstLayered = loadOrder.find((file) => namesByFile.get(path.normalize(file))?.length);
+  const firstLayered = loadOrder.find((file) => namesByFile.get(path.normalize(file))?.length);
 
-if (firstLayered) {
+  if (!firstLayered) {
+    errors.push(`${indexFile}: no linked stylesheet declares the layer order`);
+
+    return { errors };
+  }
+
   const firstNames = namesByFile.get(path.normalize(firstLayered))!;
   const appeared = childrenByParent(firstNames);
 
@@ -156,18 +177,45 @@ if (firstLayered) {
   if (firstNames[0] !== firstDeclared) {
     errors.push(`${firstLayered}: the first stylesheet that declares layers must start with "${firstDeclared}"`);
   }
-} else {
-  errors.push(`${distDir}/index.html: no linked stylesheet declares the layer order`);
+
+  return { errors, firstLayered };
 }
 
-if (errors.length) {
-  console.error(`CSS layer check failed (${errors.length}):\n  ${errors.join("\n  ")}`);
-  process.exit(1);
+function main(): void {
+  const indexFile = path.join(distDir, "index.html");
+
+  if (!existsSync(indexFile)) {
+    console.error(`No build output in "${distDir}". Run \`yarn build\` first.`);
+    process.exit(1);
+  }
+
+  const stylesheets = new Map(
+    globSync(`${distDir}/**/*.css`)
+      .sort((a, b) => a.localeCompare(b))
+      .map((file): [string, string] => [file, readFileSync(file, "utf-8")]),
+  );
+  const loadOrder = linkedStylesheets(readFileSync(indexFile, "utf-8"), distDir);
+  const { errors, firstLayered } = checkCssLayers({
+    layersSource: readFileSync(LAYERS_FILE, "utf-8"),
+    stylesheets,
+    loadOrder,
+    indexFile,
+  });
+
+  if (errors.length) {
+    console.error(`CSS layer check failed (${errors.length}):\n  ${errors.join("\n  ")}`);
+    process.exit(1);
+  }
+
+  const loadedBefore = loadOrder.slice(0, loadOrder.indexOf(firstLayered!));
+
+  console.log(
+    `CSS layer check passed: ${stylesheets.size} stylesheets; order from ${firstLayered}` +
+      (loadedBefore.length ? `, loaded after ${loadedBefore.join(", ")}.` : ", the first linked stylesheet."),
+  );
 }
 
-const loadedBefore = loadOrder.slice(0, loadOrder.indexOf(firstLayered!));
-
-console.log(
-  `CSS layer check passed: ${namesByFile.size} stylesheets; order from ${firstLayered}` +
-    (loadedBefore.length ? `, loaded after ${loadedBefore.join(", ")}.` : ", the first linked stylesheet."),
-);
+// vite-node leaves the script out of process.argv, so a test import is told apart by vitest's flag.
+if (!process.env.VITEST) {
+  main();
+}

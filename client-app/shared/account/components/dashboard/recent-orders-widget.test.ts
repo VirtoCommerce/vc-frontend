@@ -1,8 +1,9 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { provideBlockChrome } from "@/shared/dashboard";
+import { VcCheckbox } from "@/ui-kit/components/atoms";
 import { VcTabSwitch } from "@/ui-kit/components/molecules";
 import { facets as ordersPageFacets } from "../../composables/useUserOrders";
 import OrdersTable from "../orders/orders-table.vue";
@@ -49,6 +50,14 @@ function response(items: unknown[], facets = [STATUS_FACET]) {
 
 /** The saved row cap a layout hands its blocks; `undefined` renders the widget outside any layout. */
 const savedRows = ref<number | undefined>(undefined);
+const editing = ref(false);
+const draftHiddenTabs = ref<string[]>([]);
+const savedHiddenTabs = ref<string[]>([]);
+const updateSettings = vi.fn((patch: { hiddenTabs?: readonly string[] }) => {
+  if (patch.hiddenTabs) {
+    draftHiddenTabs.value = [...patch.hiddenTabs];
+  }
+});
 
 function chrome(): ILayoutBlockChromeType {
   return {
@@ -58,11 +67,11 @@ function chrome(): ILayoutBlockChromeType {
     hide: vi.fn(),
     handleKeydown: vi.fn(),
     handleBlur: vi.fn(),
-    editing: computed(() => false),
-    settings: computed(() => ({ maxRows: savedRows.value, hiddenTabs: [] })),
-    savedSettings: computed(() => ({ maxRows: savedRows.value, hiddenTabs: [] })),
+    editing: computed(() => editing.value),
+    settings: computed(() => ({ maxRows: savedRows.value, hiddenTabs: draftHiddenTabs.value })),
+    savedSettings: computed(() => ({ maxRows: savedRows.value, hiddenTabs: savedHiddenTabs.value })),
     maxRows: computed(() => undefined),
-    updateSettings: vi.fn(),
+    updateSettings,
   };
 }
 
@@ -78,7 +87,7 @@ function mountWidget(inLayout = true) {
   return mount(inLayout ? InLayout : RecentOrdersWidget, {
     global: {
       // The real tab switch: the chosen chip lives in its markup.
-      components: { VcTabSwitch },
+      components: { VcCheckbox, VcTabSwitch },
       stubs: {
         VcWidget: { template: '<div class="widget"><slot name="append" /><slot name="default-container" /></div>' },
         VcEmptyView: {
@@ -89,21 +98,31 @@ function mountWidget(inLayout = true) {
         VcLink: true,
         VcIcon: true,
         VcButton: { template: '<button class="cta"><slot /></button>' },
+        // VcCheckbox renders its label in the tooltip trigger.
+        VcTooltip: { template: '<span><slot name="trigger" /></span>' },
       },
       mocks: { $t: (key: string) => key },
     },
   });
 }
 
-// [label, count] per chip; the baseline chip has no count.
 const chips = (wrapper: ReturnType<typeof mountWidget>) =>
-  wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button").map((chip) => {
-    const count = chip.find(".recent-orders-widget__count");
-    return [chip.find(".recent-orders-widget__label").text(), count.exists() ? count.text() : undefined];
-  });
+  wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button").map((chip) => chip.text());
+
+// [label, checked]
+const toggles = (wrapper: ReturnType<typeof mountWidget>) =>
+  wrapper
+    .findAll(".recent-orders-widget__toggles .vc-checkbox")
+    .map((box) => [box.text(), box.classes("vc-checkbox--checked")]);
+
+// The chrome refs and the spy are shared: unmount after each test.
+enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   savedRows.value = 5;
+  editing.value = false;
+  draftHiddenTabs.value = [];
+  savedHiddenTabs.value = [];
   getOrders.mockReset().mockResolvedValue(response([order("1"), order("2", "Processing")]));
   ordersPageFacets.value = undefined;
 });
@@ -161,28 +180,113 @@ describe("RecentOrdersWidget", () => {
     expect(wrapper.findComponent(OrdersTable).props()).toMatchObject({ loading: true, skeletonRows: 3 });
   });
 
-  it("offers a chip per status the orders carry, after the baseline, with grouped counts", async () => {
+  it("offers a chip per status the orders carry, after the baseline, without counts", async () => {
     const wrapper = mountWidget();
     await flushPromises();
 
-    expect(chips(wrapper)).toEqual([
-      ["shared.account.dashboard.recent_orders.filter_all", undefined],
-      ["New", "3"],
-      ["Processing", "1,200"],
-    ]);
+    expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "New", "Processing"]);
   });
 
-  // Driven by the widget's own selection rather than the kit's `--checked` class, which is not ours to select.
-  it("accents the count of the chosen chip only", async () => {
+  it("offers only the statuses the saved layout keeps", async () => {
+    savedHiddenTabs.value = ["New"];
+
     const wrapper = mountWidget();
     await flushPromises();
-    expect(wrapper.find(".recent-orders-widget__count--checked").exists()).toBe(false);
 
+    expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "Processing"]);
+  });
+
+  it("turns the chips into a checkbox per status in edit mode, checked = offered", async () => {
+    editing.value = true;
+    draftHiddenTabs.value = ["Processing"];
+
+    const wrapper = mountWidget();
+    await flushPromises();
+
+    expect(chips(wrapper)).toEqual([]);
+    expect(toggles(wrapper)).toEqual([
+      ["New", true],
+      ["Processing", false],
+    ]);
+
+    await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
+    expect(updateSettings).toHaveBeenLastCalledWith({ hiddenTabs: ["Processing", "New"] });
+  });
+
+  it("names the status checkboxes as a group", async () => {
+    editing.value = true;
+
+    const wrapper = mountWidget();
+    await flushPromises();
+
+    const group = wrapper.find(".recent-orders-widget__toggles");
+    expect(group.element.tagName).toBe("FIELDSET");
+    expect(group.attributes("aria-label")).toBe("shared.account.dashboard.recent_orders.statuses_label");
+  });
+
+  it("keeps an unsaved toggle in the draft", async () => {
+    editing.value = true;
+
+    const wrapper = mountWidget();
+    await flushPromises();
+    const requests = getOrders.mock.calls.length;
+
+    await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
+    await flushPromises();
+
+    expect(toggles(wrapper)).toEqual([
+      ["New", false],
+      ["Processing", true],
+    ]);
+    expect(getOrders).toHaveBeenCalledTimes(requests);
+
+    editing.value = false;
+    await flushPromises();
+
+    expect(chips(wrapper)).toEqual(["shared.account.dashboard.recent_orders.filter_all", "New", "Processing"]);
+  });
+
+  it("keeps a hidden status the orders do not carry now when edit mode begins and when the statuses arrive", async () => {
+    getOrders.mockResolvedValue(response([], []));
+    editing.value = true;
+    draftHiddenTabs.value = ["Cancelled"];
+
+    mountWidget();
+    await flushPromises();
+
+    getOrders.mockResolvedValue(response([order("1")]));
+    savedRows.value = 7;
+    await flushPromises();
+
+    expect(updateSettings).not.toHaveBeenCalled();
+    expect(draftHiddenTabs.value).toEqual(["Cancelled"]);
+  });
+
+  it("keeps a hidden status the orders do not carry now when another status is toggled", async () => {
+    editing.value = true;
+    draftHiddenTabs.value = ["Cancelled"];
+
+    const wrapper = mountWidget();
+    await flushPromises();
+
+    await wrapper.findAll(".recent-orders-widget__toggles input")[0].setValue(false);
+
+    expect(updateSettings).toHaveBeenLastCalledWith({ hiddenTabs: ["Cancelled", "New"] });
+  });
+
+  it("falls back to every status when the chosen one is hidden by a save", async () => {
+    const wrapper = mountWidget();
+    await flushPromises();
     await wrapper.findAll(".recent-orders-widget__filter .vc-tab-switch button")[2].trigger("click");
     await flushPromises();
 
-    const accented = wrapper.findAll(".recent-orders-widget__count--checked");
-    expect(accented.map((count) => count.text())).toEqual(["1,200"]);
+    savedHiddenTabs.value = ["Processing"];
+    await flushPromises();
+
+    expect(getOrders).toHaveBeenLastCalledWith(
+      expect.objectContaining({ filter: 'storeid:"B2B-store"' }),
+      SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+    );
   });
 
   it("offers no chips while the orders carry no status", async () => {

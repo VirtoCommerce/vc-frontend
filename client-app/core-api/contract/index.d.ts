@@ -31,9 +31,9 @@ interface IProps$K {
     square?: boolean;
     maxWidth?: string;
 }
-declare var __VLS_1$9: {};
+declare var __VLS_1$8: {};
 type __VLS_Slots$s = {} & {
-    default?: (props: typeof __VLS_1$9) => any;
+    default?: (props: typeof __VLS_1$8) => any;
 };
 declare const __VLS_base$s: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
     size: VcBadgeSizeType;
@@ -57,6 +57,10 @@ declare const _default$N: typeof __VLS_export$N;
 
 interface IProps$I {
     modelValue?: boolean;
+    /**
+     * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
+     * Ignored inside a clickable or linked `VcMenuItem`, where no input renders.
+     */
     name?: string;
     value?: string | number | object;
     disabled?: boolean;
@@ -70,6 +74,7 @@ interface IProps$I {
     testId?: string;
     preventDefault?: boolean;
     tabindex?: string;
+    /** Accessible name; overrides the slot label. Ignored inside a clickable or linked `VcMenuItem`, where no input renders. */
     ariaLabel?: string;
     tooltip?: {
         placement?: VcPopoverPlacementType;
@@ -117,9 +122,9 @@ type CheckboxGroupValueType = string | number | object;
 interface IProps$H {
     modelValue?: (string | number | object)[];
 }
-declare var __VLS_1$8: {};
+declare var __VLS_1$7: {};
 type __VLS_Slots$q = {} & {
-    default?: (props: typeof __VLS_1$8) => any;
+    default?: (props: typeof __VLS_1$7) => any;
 };
 declare const __VLS_base$q: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
@@ -198,6 +203,10 @@ declare const _default$I: typeof __VLS_export$I;
 interface IProps$D {
     required?: boolean;
     error?: boolean;
+    /**
+     * Renders a `<label for>` bound to this id instead of a `<div>`. A bound label hides the required asterisk from
+     * assistive tech, so the control must expose `required` or `aria-required` itself.
+     */
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
@@ -2588,14 +2597,14 @@ declare var __VLS_9$3: {
     };
     tooltipId: string;
 };
-declare var __VLS_12$1: {};
-declare var __VLS_15: {};
+declare var __VLS_12$2: {};
+declare var __VLS_15$1: {};
 type __VLS_Slots$n = {} & {
     default?: (props: typeof __VLS_9$3) => any;
 } & {
-    trigger?: (props: typeof __VLS_12$1) => any;
+    trigger?: (props: typeof __VLS_12$2) => any;
 } & {
-    content?: (props: typeof __VLS_15) => any;
+    content?: (props: typeof __VLS_15$1) => any;
 };
 declare const __VLS_base$n: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     shown: (isShown: boolean) => any;
@@ -2625,11 +2634,11 @@ interface IProps$z {
     shadow?: boolean;
     closable?: boolean;
 }
-declare var __VLS_1$7: {};
+declare var __VLS_1$6: {};
 declare var __VLS_8$6: {};
 declare var __VLS_10$2: {};
 type __VLS_Slots$m = {} & {
-    'main-icon'?: (props: typeof __VLS_1$7) => any;
+    'main-icon'?: (props: typeof __VLS_1$6) => any;
 } & {
     default?: (props: typeof __VLS_8$6) => any;
 } & {
@@ -2873,9 +2882,9 @@ interface IProps$v {
     autoFocus?: boolean;
     trapFocus?: boolean;
 }
-declare var __VLS_1$6: {};
+declare var __VLS_1$5: {};
 type __VLS_Slots$i = {} & {
-    default?: (props: typeof __VLS_1$6) => any;
+    default?: (props: typeof __VLS_1$5) => any;
 };
 declare const __VLS_base$i: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$v> & Readonly<{}>, {
     size: VcDialogSizeType;
@@ -2912,12 +2921,12 @@ type __VLS_WithSlots$h<T, S> = T & {
     };
 };
 
-declare var __VLS_1$5: {};
-declare var __VLS_3$3: {};
+declare var __VLS_1$4: {};
+declare var __VLS_3$2: {};
 type __VLS_Slots$g = {} & {
-    container?: (props: typeof __VLS_1$5) => any;
+    container?: (props: typeof __VLS_1$4) => any;
 } & {
-    default?: (props: typeof __VLS_3$3) => any;
+    default?: (props: typeof __VLS_3$2) => any;
 };
 declare const __VLS_base$g: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
@@ -2939,10 +2948,10 @@ interface IProps$t {
     closable?: boolean;
     size?: VcDialogSizeType;
 }
-declare var __VLS_1$4: {};
+declare var __VLS_1$3: {};
 declare var __VLS_8$4: {};
 type __VLS_Slots$f = {} & {
-    main?: (props: typeof __VLS_1$4) => any;
+    main?: (props: typeof __VLS_1$3) => any;
 } & {
     default?: (props: typeof __VLS_8$4) => any;
 };
@@ -2968,11 +2977,11 @@ interface IProp {
     icon?: string;
     variant?: VcEmptyViewVariantType;
 }
-declare var __VLS_1$3: {};
+declare var __VLS_1$2: {};
 declare var __VLS_8$3: {};
 declare var __VLS_10: {};
 type __VLS_Slots$e = {} & {
-    icon?: (props: typeof __VLS_1$3) => any;
+    icon?: (props: typeof __VLS_1$2) => any;
 } & {
     default?: (props: typeof __VLS_8$3) => any;
 } & {
@@ -2995,6 +3004,7 @@ interface IProps$s {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     name?: string;
     ariaLabel?: string;
@@ -3752,9 +3762,9 @@ interface IProps$r {
     fixedSpinner?: boolean;
     noBg?: boolean;
 }
-declare var __VLS_12: {};
+declare var __VLS_12$1: {};
 type __VLS_Slots$d = {} & {
-    default?: (props: typeof __VLS_12) => any;
+    default?: (props: typeof __VLS_12$1) => any;
 };
 declare const __VLS_base$d: vue.DefineComponent<IProps$r, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$r> & Readonly<{}>, {
     visible: boolean;
@@ -3788,13 +3798,13 @@ interface IProps$q {
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
-declare var __VLS_21: {};
+declare var __VLS_21$1: {};
 type __VLS_Slots$c = {} & {
     prepend?: (props: typeof __VLS_17) => any;
 } & {
     default?: (props: typeof __VLS_19) => any;
 } & {
-    append?: (props: typeof __VLS_21) => any;
+    append?: (props: typeof __VLS_21$1) => any;
 };
 declare const __VLS_base$c: vue.DefineComponent<IProps$q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
@@ -3862,7 +3872,7 @@ type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
 declare function open(): void;
 declare function close$2(): void;
 declare function toggle(): void;
-declare var __VLS_1$2: {
+declare var __VLS_1$1: {
     open: typeof open;
     close: typeof close$2;
     toggle: typeof toggle;
@@ -3880,7 +3890,7 @@ declare var __VLS_1$2: {
         role: "button";
     };
 };
-declare var __VLS_3$2: {
+declare var __VLS_3$1: {
     open: typeof open;
     close: typeof close$2;
     toggle: typeof toggle;
@@ -3891,15 +3901,15 @@ declare var __VLS_3$2: {
         "aria-controls": string | undefined;
     };
 };
-declare var __VLS_11$2: {
+declare var __VLS_11$1: {
     close: typeof close$2;
 };
 type __VLS_Slots$b = {} & {
-    default?: (props: typeof __VLS_1$2) => any;
+    default?: (props: typeof __VLS_1$1) => any;
 } & {
-    trigger?: (props: typeof __VLS_3$2) => any;
+    trigger?: (props: typeof __VLS_3$1) => any;
 } & {
-    content?: (props: typeof __VLS_11$2) => any;
+    content?: (props: typeof __VLS_11$1) => any;
 };
 declare const __VLS_base$b: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggle: (value: boolean) => any;
@@ -3948,6 +3958,10 @@ interface IProps$n {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
+    /**
+     * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
+     * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+     */
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;
@@ -3975,7 +3989,7 @@ declare var __VLS_16: {
     item: any;
     error: boolean;
 };
-declare var __VLS_18$1: {
+declare var __VLS_18$2: {
     error: boolean;
 };
 declare var __VLS_76: {
@@ -3985,7 +3999,7 @@ declare var __VLS_76: {
 type __VLS_Slots$a = {} & {
     selected?: (props: typeof __VLS_16) => any;
 } & {
-    placeholder?: (props: typeof __VLS_18$1) => any;
+    placeholder?: (props: typeof __VLS_18$2) => any;
 } & {
     item?: (props: typeof __VLS_76) => any;
 };
@@ -4065,6 +4079,7 @@ interface IProps$m {
     autocomplete?: string;
     readonly?: boolean;
     disabled?: boolean;
+    /** Draws the label's asterisk and sets native `required` on the textarea. */
     required?: boolean;
     name?: string;
     label?: string;
@@ -4124,6 +4139,7 @@ interface IProps$k {
     name?: string;
     disabled?: boolean;
     readonly?: boolean;
+    /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
     required?: boolean;
     message?: string;
     error?: boolean;
@@ -4570,12 +4586,18 @@ interface IProps$f {
     shadow?: boolean;
     border?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
+    /**
+     * Draws no plate (border, background, shadow, radius, dividers) and no inline padding, so the shell around it
+     * (another widget, a sidebar card) owns them; header and vertical spacing stay. Below `md` it also stays inside
+     * VcContainer's padding.
+     */
+    seamless?: boolean;
 }
 declare var __VLS_9$2: {
     collapsible: boolean;
     collapsed: boolean;
 };
-declare var __VLS_11$1: {
+declare var __VLS_11: {
     collapsible: boolean;
     collapsed: boolean;
 };
@@ -4592,7 +4614,7 @@ declare var __VLS_40: {};
 type __VLS_Slots$7 = {} & {
     'header-container'?: (props: typeof __VLS_9$2) => any;
 } & {
-    header?: (props: typeof __VLS_11$1) => any;
+    header?: (props: typeof __VLS_11) => any;
 } & {
     prepend?: (props: typeof __VLS_13) => any;
 } & {
@@ -4626,30 +4648,31 @@ type __VLS_WithSlots$7<T, S> = T & {
     };
 };
 
+/** Renders a VcWidget; its frame props, classes and listeners pass through, its title, icons and collapsible do not. */
 interface IProps$e {
     head?: boolean;
     foot?: boolean;
     noShadow?: boolean;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_1$1: {};
-declare var __VLS_3$1: {};
-declare var __VLS_5$1: {};
-declare var __VLS_7: {};
 declare var __VLS_9$1: {};
-declare var __VLS_11: {};
+declare var __VLS_12: {};
+declare var __VLS_15: {};
+declare var __VLS_18$1: {};
+declare var __VLS_21: {};
+declare var __VLS_24: {};
 type __VLS_Slots$6 = {} & {
-    'header-container'?: (props: typeof __VLS_1$1) => any;
+    'header-container'?: (props: typeof __VLS_9$1) => any;
 } & {
-    header?: (props: typeof __VLS_3$1) => any;
+    header?: (props: typeof __VLS_12) => any;
 } & {
-    'default-container'?: (props: typeof __VLS_5$1) => any;
+    'default-container'?: (props: typeof __VLS_15) => any;
 } & {
-    default?: (props: typeof __VLS_7) => any;
+    default?: (props: typeof __VLS_18$1) => any;
 } & {
-    'footer-container'?: (props: typeof __VLS_9$1) => any;
+    'footer-container'?: (props: typeof __VLS_21) => any;
 } & {
-    footer?: (props: typeof __VLS_11) => any;
+    footer?: (props: typeof __VLS_24) => any;
 };
 declare const __VLS_base$6: vue.DefineComponent<IProps$e, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{}>, {
     size: "xs" | "sm" | "md" | "lg";

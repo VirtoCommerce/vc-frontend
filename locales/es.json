@@ -414,7 +414,9 @@
             "navigation": "Navegación",
             "main_navigation": "Navegación principal"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Sin artículos | {n} artículo | {n} artículos"
       },
       "footer": {
         "version": "Ver.",
@@ -661,7 +663,8 @@
           "filter_all": "Todos",
           "empty": "Aún no hay pedidos",
           "no_results": "No hay pedidos con este estado",
-          "load_failed": "No se pudieron cargar los pedidos"
+          "load_failed": "No se pudieron cargar los pedidos",
+          "statuses_label": "Estados que se muestran"
         }
       }
     },

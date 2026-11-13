@@ -414,7 +414,9 @@
             "navigation": "Navigationsleiste",
             "main_navigation": "Hauptnavigation"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Keine Artikel | {n} Artikel | {n} Artikel"
       },
       "footer": {
         "version": "Ver.",
@@ -661,7 +663,8 @@
           "filter_all": "Alle",
           "empty": "Es liegen noch keine Bestellungen vor",
           "no_results": "Keine Bestellungen mit diesem Status",
-          "load_failed": "Bestellungen konnten nicht geladen werden"
+          "load_failed": "Bestellungen konnten nicht geladen werden",
+          "statuses_label": "Anzuzeigende Status"
         }
       }
     },

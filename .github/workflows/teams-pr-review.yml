@@ -29,7 +29,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@vcst-6259-teams-comments-debounce
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.9
         with:
           mode: card
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
@@ -48,7 +48,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@vcst-6259-teams-comments-debounce
+      - uses: VirtoCommerce/.github/actions/teams-pr-review-notification@v3.1000.9
         with:
           mode: ping
           webhook-url: ${{ secrets.TEAMS_PR_WEBHOOK }}
