@@ -415,7 +415,9 @@
             "navigation": "Navigointi",
             "main_navigation": "Päänavigointi"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Ei tuotteita | {n} tuote | {n} tuotetta"
       },
       "footer": {
         "version": "Versio",
@@ -662,7 +664,8 @@
           "filter_all": "Kaikki",
           "empty": "Tilauksia ei ole vielä",
           "no_results": "Ei tilauksia tällä tilalla",
-          "load_failed": "Tilauksia ei voitu ladata"
+          "load_failed": "Tilauksia ei voitu ladata",
+          "statuses_label": "Näytettävät tilat"
         }
       }
     },

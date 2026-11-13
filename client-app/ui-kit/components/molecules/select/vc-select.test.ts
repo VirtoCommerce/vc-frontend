@@ -410,41 +410,36 @@ describe("VcSelect inside a dialog popover", () => {
   );
 });
 
-describe("VcSelect required trigger ARIA", () => {
-  const RequiredHost = defineComponent({
-    components: { VcSelect },
+const requiredSelectProps = { items: ["Pickup", "Courier"], label: "Shipping method", required: true };
 
-    props: {
-      slotted: { type: Boolean, default: false },
-    },
+const createSelectWrapper = createWrapperFactory(mount, VcSelect, {
+  attachTo: document.body,
+  props: requiredSelectProps,
+  global: { components: kitComponents },
+});
 
-    setup() {
-      return { items: ["Standard", "Express"] };
-    },
+describe("VcSelect required", () => {
+  it("binds the label to the input trigger, which carries aria-required", () => {
+    const wrapper = createSelectWrapper();
+    const label = wrapper.get(".vc-label");
+    const input = wrapper.get('input[role="combobox"]');
 
-    template: `
-      <VcSelect :items="items" label="Delivery method" required>
-        <template v-if="slotted" #placeholder>Select a delivery method</template>
-      </VcSelect>
-    `,
+    expect(label.attributes("for")).toBe(input.attributes("id"));
+    expect(input.attributes("aria-required")).toBe("true");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
   });
 
-  const createRequiredWrapper = createWrapperFactory(mount, RequiredHost, {
-    attachTo: document.body,
-    global: { components: kitComponents },
-  });
+  it.each([
+    ["placeholder", { placeholder: "Select" }, ""],
+    ["selected", { selected: "Picked" }, "Pickup"],
+  ])("keeps the asterisk audible for a %s-slot trigger, which a label cannot name", (_, slots, modelValue) => {
+    const wrapper = createSelectWrapper({ props: { ...requiredSelectProps, modelValue }, slots });
+    const label = wrapper.get(".vc-label");
 
-  // aria-required is not allowed on role="button" (axe aria-allowed-attr).
-  it("keeps aria-required off the slotted role=button trigger", () => {
-    const wrapper = createRequiredWrapper({ props: { slotted: true } });
-    const trigger = wrapper.get('.vc-select__button[role="button"]');
-
-    expect(trigger.attributes()).not.toHaveProperty("aria-required");
-  });
-
-  it("keeps aria-required on the combobox trigger", () => {
-    const wrapper = createRequiredWrapper();
-
-    expect(wrapper.get('[role="combobox"]').attributes("aria-required")).toBe("true");
+    expect(wrapper.find('.vc-select__button[role="button"]').exists()).toBe(true);
+    // role="button" does not allow aria-required.
+    expect(wrapper.get(".vc-select__button").attributes("aria-required")).toBeUndefined();
+    expect(label.element.tagName).toBe("DIV");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBeUndefined();
   });
 });

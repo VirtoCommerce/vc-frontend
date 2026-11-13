@@ -1,8 +1,10 @@
-import { shallowMount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { mount } from "@vue/test-utils";
+import { Swiper } from "swiper/vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import ImageGallery from "./image-gallery.vue";
 import type { ImageType } from "@/core/api/graphql/types";
+import type { VueWrapper } from "@vue/test-utils";
 
 vi.mock("tw-elements", () => ({ initTE: vi.fn(), Lightbox: {} }));
 
@@ -15,27 +17,50 @@ function images(count: number): ImageType[] {
   return Array.from({ length: count }, (_, index) => ({ id: `${index}`, url: `/${index}.png` }) as ImageType);
 }
 
-function navButtons(count: number) {
-  const wrapper = shallowMount(ImageGallery, {
+let mounted: VueWrapper | undefined;
+
+function mountGallery(count: number) {
+  mounted = mount(ImageGallery, {
     props: { images: images(count) },
-    global: { mocks: { $t: (key: string) => key } },
+    global: {
+      mocks: { $t: (key: string) => key },
+      stubs: { VcIcon: true, VcImage: true, VcNavButton: true, VcCarouselPagination: true },
+    },
+    attachTo: document.body,
   });
 
-  return wrapper.findAll("[data-nav-prev], [data-nav-next]");
+  return mounted;
+}
+
+function thumbs(wrapper: VueWrapper) {
+  return wrapper.findAllComponents(Swiper).find((swiper) => swiper.classes("image-gallery__thumbs"))!;
 }
 
 describe("ImageGallery thumbs", () => {
-  it("hides the thumb buttons when every thumb fits, as Swiper locks the strip", () => {
-    const buttons = navButtons(4);
-
-    expect(buttons).toHaveLength(2);
-    expect(buttons.every((button) => !button.isVisible())).toBe(true);
+  beforeEach(() => {
+    // jsdom lays nothing out; Swiper sizes the slides from the strip's width.
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockReturnValue(400);
   });
 
-  it("shows the thumb buttons when the thumbs can slide", () => {
-    const buttons = navButtons(5);
+  afterEach(() => {
+    mounted?.unmount();
+    vi.restoreAllMocks();
+  });
+
+  it.each([
+    [4, true],
+    [5, false],
+  ])("with %i images, Swiper locks the thumb buttons: %s", (count, locked) => {
+    const buttons = mountGallery(count).findAll("[data-nav-prev], [data-nav-next]");
 
     expect(buttons).toHaveLength(2);
-    expect(buttons.every((button) => button.isVisible())).toBe(true);
+    expect(buttons.map((button) => button.classes("image-gallery__nav--locked"))).toEqual([locked, locked]);
+  });
+
+  it.each([
+    [4, false],
+    [5, true],
+  ])("with %i images, loops the thumbs: %s", (count, loop) => {
+    expect(thumbs(mountGallery(count)).props("loop")).toBe(loop);
   });
 });

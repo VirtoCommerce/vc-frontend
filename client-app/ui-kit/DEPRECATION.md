@@ -139,6 +139,16 @@ Current aliases:
 |---|---|---|
 | `--vc-table-selected-bg` | `--vc-table-selected-bg-color` | 2.56.0 |
 
+## Renaming a BEM Block
+
+A block class is public API too: forks target it in `_custom.scss`, and nothing warns when it stops
+matching. Our own styles name blocks outside the component as well: a design's
+`designs/<name>/blocks/<block>.scss` and `dark/<block>.scss` (the file name is the block, loaded by
+the design's `index.scss`) and the preset stylesheets `assets/presets/<name>.scss`. Rename them in the
+same change and list the rename under Breaking changes in the PR. `yarn check:designs` fails on a block
+file named after no block, and on a selector whose last compound has no class of a block (in a design, of
+the file's own block); the old name next to or above such a class passes, so search for it.
+
 ## Deprecating a Prop Value
 
 When deprecating a specific *value* of a prop (e.g. renaming a `variant` option `solid-light` → `soft`, or a `color`/`size` value) while keeping the prop itself, the old value must keep working during the deprecation period.
@@ -223,6 +233,10 @@ CSS variable deprecation:
 - [ ] assets/styles/dark/** — overrides an input to the chain, not the aliased property itself
 - [ ] assets/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
       there instead, the canonical name reads the deprecated one ahead of its existing fallback
+- [ ] designs/*/_tokens.scss, blocks/, dark/ — our designs set the new name
+- [ ] assets/presets/*.scss — our preset stylesheets set the new name
+- [ ] assets/styles/README.md token table — a shape or type token keeps a row for each name the
+      code reads (scripts/design-token-table.test.ts fails otherwise)
 - [ ] *.stories.ts — any demo of the old name switched to the new one
 - [ ] DEPRECATION.md — row added to the alias table
 - [ ] Backward compatibility maintained

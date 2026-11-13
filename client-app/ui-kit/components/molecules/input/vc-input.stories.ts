@@ -151,7 +151,7 @@ export const Required: StoryType = {
     docs: {
       description: {
         story:
-          "Adds the required indicator (red asterisk) rendered by VcLabel. Purely visual — enforce the actual requirement with vee-validate/your form schema.",
+          "Adds the required indicator (red asterisk) rendered by VcLabel and `aria-required` on the input. No native browser validation — enforce the actual requirement with vee-validate/your form schema.",
       },
       source: {
         code: `<VcInput label="Label" placeholder="Placeholder" message="Hint message" required />`,

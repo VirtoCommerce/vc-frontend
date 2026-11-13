@@ -415,7 +415,9 @@
             "navigation": "导航",
             "main_navigation": "主导航"
           }
-        }
+        },
+        "link_with_count": "{title}：{count}",
+        "cart_items_tooltip": "无商品 | {n} 件商品 | {n} 件商品"
       },
       "footer": {
         "version": "版本。",
@@ -662,7 +664,8 @@
           "filter_all": "全部",
           "empty": "尚无订单",
           "no_results": "没有此状态的订单",
-          "load_failed": "无法加载订单"
+          "load_failed": "无法加载订单",
+          "statuses_label": "要显示的状态"
         }
       }
     },

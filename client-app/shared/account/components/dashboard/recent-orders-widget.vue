@@ -11,33 +11,44 @@
     <!-- VcWidget has no padding prop; #default-container is the seam for the inset. -->
     <template #default-container>
       <div class="recent-orders-widget__body">
-        <!-- One chip per status the user's orders carry, from the list's own facets, so every chip has orders behind
-             it. The facets are multi-select, so their counts stay put while a chip is selected. -->
+        <!-- Statuses come from the list's facets, so every chip has orders. -->
         <div v-if="statuses.length" class="recent-orders-widget__filter">
-          <!-- Baseline chip, active when no status is chosen. A boolean value, so no status can collide with it;
-               `Boolean(true)` because `:value="true"` trips vue/prefer-true-attribute-shorthand. -->
-          <VcTabSwitch size="sm" :value="Boolean(true)" :model-value="!status" @change="status = undefined">
-            <span class="recent-orders-widget__label">
-              {{ $t("shared.account.dashboard.recent_orders.filter_all") }}
-            </span>
-          </VcTabSwitch>
-
-          <VcTabSwitch
-            v-for="item in statuses"
-            :key="item.term"
-            size="sm"
-            :value="item.term"
-            :model-value="status"
-            @change="status = $event"
+          <fieldset
+            v-if="editingTabs"
+            :aria-label="$t('shared.account.dashboard.recent_orders.statuses_label')"
+            class="recent-orders-widget__toggles"
           >
-            <span class="recent-orders-widget__label">{{ item.label }}</span>
-
-            <span
-              :class="['recent-orders-widget__count', { 'recent-orders-widget__count--checked': status === item.term }]"
+            <VcCheckbox
+              v-for="rule in statusRules"
+              :key="rule.name"
+              size="sm"
+              :model-value="!hiddenTabs.includes(rule.name)"
+              @update:model-value="toggleTab(rule.name)"
             >
-              {{ formatStatCount(item.count) }}
-            </span>
-          </VcTabSwitch>
+              {{ rule.label }}
+            </VcCheckbox>
+          </fieldset>
+
+          <template v-else>
+            <!-- "All": a boolean value never collides with a status.
+                 `Boolean(true)` because `:value="true"` trips vue/prefer-true-attribute-shorthand. -->
+            <VcTabSwitch size="sm" :value="Boolean(true)" :model-value="!status" @change="status = undefined">
+              <span class="recent-orders-widget__label">
+                {{ $t("shared.account.dashboard.recent_orders.filter_all") }}
+              </span>
+            </VcTabSwitch>
+
+            <VcTabSwitch
+              v-for="rule in visibleStatuses"
+              :key="rule.name"
+              size="sm"
+              :value="rule.name"
+              :model-value="status"
+              @change="status = $event"
+            >
+              <span class="recent-orders-widget__label">{{ rule.label }}</span>
+            </VcTabSwitch>
+          </template>
         </div>
 
         <div class="recent-orders-widget__content">
@@ -100,7 +111,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { escapeFilterSyntaxValue, Logger } from "@/core/utilities";
-import { formatStatCount, useBlockChrome } from "@/shared/dashboard";
+import { toggleTabRule, useBlockChrome, visibleTabRules } from "@/shared/dashboard";
 import { useOrderNavigation } from "../../composables/useOrderNavigation";
 // The pure filter builder only: the composable in the same file keeps the Orders page's filter state.
 import { getFilterExpression } from "../../composables/useUserOrdersFilter";
@@ -140,6 +151,26 @@ const orders = shallowRef<CustomerOrderType[]>([]);
 const statuses = shallowRef<StatusTermType[]>([]);
 const loading = ref(false);
 const failed = ref(false);
+
+const statusRules = computed(() => statuses.value.map((item) => ({ name: item.term, label: item.label })));
+
+const editingTabs = computed(() => Boolean(chrome?.editing.value));
+// Not pruned: the facet omits statuses that have no orders right now.
+const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
+// Chips change only on Save.
+const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
+
+const visibleStatuses = computed(() => visibleTabRules(statusRules.value, savedHiddenTabs.value));
+function toggleTab(name: string): void {
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(hiddenTabs.value, name) });
+}
+
+// A save may hide the active status: fall back to "All".
+watch(visibleStatuses, (rules) => {
+  if (status.value && !rules.some((rule) => rule.name === status.value)) {
+    status.value = undefined;
+  }
+});
 
 let latest = 0;
 
@@ -203,14 +234,9 @@ watch([rowLimit, status], load, { immediate: true });
     --vc-tab-switch-hover-color: var(--color-neutral-900);
   }
 
-  // Bold like the label beside it; only the selected chip's count is accented, so the others do not compete with it.
-  // The widget's own selection drives the accent, not the kit's `--checked` class: the kit's classes are not ours.
-  &__count {
-    @apply font-bold text-neutral-600;
-
-    &--checked {
-      @apply text-primary-500;
-    }
+  // A fieldset is min-content wide by default; `min-w-0` lets the checkboxes wrap.
+  &__toggles {
+    @apply m-0 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-0 p-0;
   }
 
   &__content {

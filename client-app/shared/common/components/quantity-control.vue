@@ -65,7 +65,6 @@ interface IEmits {
 
 interface IProps {
   name?: string;
-  modelValue?: number;
   loading?: boolean;
   disabled?: boolean;
   minQuantity?: number;

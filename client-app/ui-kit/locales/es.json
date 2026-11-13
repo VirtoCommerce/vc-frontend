@@ -37,7 +37,9 @@
       "nav_previous": "Anterior",
       "nav_next": "Siguiente",
       "nav_up": "Arriba",
-      "nav_down": "Abajo"
+      "nav_down": "Abajo",
+      "select_item": "Seleccionar {name}",
+      "select_all_items": "Seleccionar todos los artículos"
     },
     "calendar": {
       "aria_label": "Calendario",
