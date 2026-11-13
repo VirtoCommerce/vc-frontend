@@ -134,12 +134,13 @@
 - Props: size (sm/md/lg), centered
 - Features: spinner animation, inline/block display
 
-**VcTypography** (`client-app/ui-kit/components/atoms/typography/vc-typography.vue`)
-- Props: variant (h1/h2/h3/h4/h5/h6/body1/body2/caption/overline), weight (light/regular/medium/semibold/bold), color, align (left/center/right/justify), truncate
+**VcTypography** (`client-app/ui-kit/components/molecules/typography/vc-typography.vue`)
+- Props: tag (default p), variant (h1/h2/h3/h4/h5/h6/base; defaults to the tag when it is h1–h6, else base), truncate, fontSize, fontWeight, textTransform, color
 - Slots: default (text content)
-- Features: semantic HTML tags, responsive sizing
+- CSS vars: --vc-typography-font-size (per variant), --vc-typography-font-weight / --vc-typography-text-transform (700 / uppercase for h1–h6, 400 / none for base), --vc-typography-line-height (default inherited), --vc-typography-letter-spacing (default tracking-wide for h1–h3, the heading role token for h4–h6), --vc-typography-color
+- Features: h1–h6 variants use the heading font; with no font-size token or prop, h1–h4 grow one step at the lg breakpoint
 - Types: vc-typography.types.d.ts
-- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/typography/vc-typography.stories.ts)
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/typography/vc-typography.stories.ts)
 
 **VcMarkdownRender** (`client-app/ui-kit/components/atoms/markdown-render/vc-markdown-render.vue`)
 - Props: content (string)
