@@ -415,7 +415,9 @@
             "navigation": "Navigazione",
             "main_navigation": "Navigazione principale"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Nessun articolo | {n} articolo | {n} articoli"
       },
       "footer": {
         "version": "Ver.",
@@ -662,7 +664,8 @@
           "filter_all": "Tutti",
           "empty": "Non ci sono ancora ordini",
           "no_results": "Nessun ordine con questo stato",
-          "load_failed": "Impossibile caricare gli ordini"
+          "load_failed": "Impossibile caricare gli ordini",
+          "statuses_label": "Stati da mostrare"
         }
       }
     },

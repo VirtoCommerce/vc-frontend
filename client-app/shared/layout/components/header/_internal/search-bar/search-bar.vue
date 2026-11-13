@@ -14,8 +14,9 @@
       @keydown.enter="searchDropdownRef?.handleSearch()"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
+      @click="showSearchDropdown"
     >
-      <template #prepend>
+      <template #prepend="{ focusInput }">
         <VcButton
           v-if="isScopePending"
           class="search-bar__button"
@@ -44,7 +45,7 @@
             :min-width="SCOPE_MIN_WIDTH"
             :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
             :data-search-scope="item.label"
-            @click.stop="onScopeItemClick(item.id)"
+            @click.stop="onScopeItemClick(item.id, focusInput)"
           >
             {{ item.label }}
           </VcButton>
@@ -179,8 +180,15 @@ function getCategoriesNames() {
   return toCSV(searchScopeData.value.searchScope.filter((item) => item.type === "category").map((el) => el.label));
 }
 
-function onScopeItemClick(itemId: string | number) {
+function onScopeItemClick(itemId: string | number, focusInput: () => void) {
+  const wasDropdownVisible = searchDropdownVisible.value;
+
   removeScopeItemById(itemId);
+  focusInput();
+
+  if (!wasDropdownVisible) {
+    hideSearchDropdown();
+  }
 }
 
 function reset() {

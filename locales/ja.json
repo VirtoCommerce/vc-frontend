@@ -415,7 +415,9 @@
             "navigation": "ナビゲーション",
             "main_navigation": "メインナビゲーション"
           }
-        }
+        },
+        "link_with_count": "{title}：{count}",
+        "cart_items_tooltip": "商品なし | {n} 点 | {n} 点"
       },
       "footer": {
         "version": "Ver.",
@@ -662,7 +664,8 @@
           "filter_all": "すべて",
           "empty": "注文履歴がありません",
           "no_results": "このステータスの注文はありません",
-          "load_failed": "注文を読み込めませんでした"
+          "load_failed": "注文を読み込めませんでした",
+          "statuses_label": "表示するステータス"
         }
       }
     },

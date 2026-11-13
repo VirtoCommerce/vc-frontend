@@ -53,7 +53,7 @@ export default defineConfigWithVueTs(
       "artifacts/",
       "storybook-static/",
       "storybook-styles/dist/",
-      "client-app/public/fcm-service-worker-v1.10.js",
+      "client-app/public/fcm-service-worker-*.js",
       ".deployment/",
       ".github/",
       ".husky/",
@@ -221,6 +221,14 @@ export default defineConfigWithVueTs(
         },
         { element: "VcItemPriceCatalog", message: "VcItemPriceCatalog is deprecated. Use VcProductPrice instead." },
         {
+          element: "VcExpansionPanel",
+          message: "VcExpansionPanel is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
+          element: "VcExpansionPanels",
+          message: "VcExpansionPanels is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
           element: "VcDateSelector",
           message:
             "VcDateSelector is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
@@ -252,6 +260,7 @@ export default defineConfigWithVueTs(
       "sonarjs/prefer-native-lodash-alternative": "warn",
       "sonarjs/parameterized-tests": "warn",
       "sonarjs/super-linear-regex": "warn",
+      "sonarjs/vitest-mock-at-module-scope": "warn",
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",

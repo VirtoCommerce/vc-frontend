@@ -3,10 +3,18 @@
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="products-section__groups">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
-        <div v-if="group.items.length" class="products-section__group">
+        <fieldset
+          v-if="group.items.length"
+          :aria-labelledby="getVendorHeadingId(vendorId)"
+          class="products-section__group"
+        >
           <!-- Vendor -->
           <div class="products-section__vendor">
-            <VendorName :name="group.vendor?.name" class="products-section__vendor-name" />
+            <VendorName
+              :id="getVendorHeadingId(vendorId)"
+              :name="group.vendor?.name"
+              class="products-section__vendor-name"
+            />
 
             <VcRating
               v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -28,7 +36,7 @@
             @save-for-later="$emit('saveForLater', $event)"
             @link-click="$emit('linkClick', $event)"
           />
-        </div>
+        </fieldset>
       </template>
     </div>
 
@@ -50,8 +58,12 @@
 
     <!-- Items in other currencies (always flat, never grouped by vendor) -->
     <template v-for="group in otherCurrencyGroups" :key="group.currencyCode">
-      <div v-if="group.items.length" class="products-section__currency-group">
-        <h4 class="products-section__currency-title">
+      <fieldset
+        v-if="group.items.length"
+        :aria-labelledby="getCurrencyHeadingId(group.currencyCode)"
+        class="products-section__currency-group"
+      >
+        <h4 :id="getCurrencyHeadingId(group.currencyCode)" class="products-section__currency-title">
           {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
         </h4>
 
@@ -68,7 +80,7 @@
           @save-for-later="$emit('saveForLater', $event)"
           @link-click="$emit('linkClick', $event)"
         />
-      </div>
+      </fieldset>
     </template>
 
     <div class="products-section__footer">
@@ -89,6 +101,7 @@
 
 <script setup lang="ts">
 import { VendorName } from "@/shared/common";
+import { useComponentId } from "@/ui-kit/composables";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
@@ -121,6 +134,16 @@ withDefaults(defineProps<IProps>(), {
   otherCurrencyGroups: () => [],
   validationErrors: () => [],
 });
+
+const componentId = useComponentId("products-section");
+
+function getVendorHeadingId(index: number) {
+  return `${componentId}-vendor-${index}`;
+}
+
+function getCurrencyHeadingId(currencyCode: string) {
+  return `${componentId}-currency-${currencyCode}`;
+}
 </script>
 
 <style lang="scss">
@@ -133,8 +156,9 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
+  // Both groups are fieldsets: preflight misses their min-inline-size: min-content, which would stop them shrinking.
   &__group {
-    @apply space-y-3;
+    @apply space-y-3 min-w-0;
   }
 
   &__vendor {
@@ -150,7 +174,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__currency-group {
-    @apply mt-5 space-y-3;
+    @apply mt-5 space-y-3 min-w-0;
   }
 
   &__currency-title {

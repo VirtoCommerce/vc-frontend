@@ -415,7 +415,9 @@
             "navigation": "Navigering",
             "main_navigation": "Huvudnavigering"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Inga artiklar | {n} artikel | {n} artiklar"
       },
       "footer": {
         "version": "Ver.",
@@ -662,7 +664,8 @@
           "filter_all": "Alla",
           "empty": "Det finns inga beställningar ännu",
           "no_results": "Inga beställningar med den här statusen",
-          "load_failed": "Det gick inte att läsa in beställningarna"
+          "load_failed": "Det gick inte att läsa in beställningarna",
+          "statuses_label": "Statusar som visas"
         }
       }
     },

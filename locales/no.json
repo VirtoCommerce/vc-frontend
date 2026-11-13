@@ -415,7 +415,9 @@
             "navigation": "Navigasjon",
             "main_navigation": "Hovednavigasjon"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Ingen varer | {n} vare | {n} varer"
       },
       "footer": {
         "version": "Versjon",
@@ -662,7 +664,8 @@
           "filter_all": "Alle",
           "empty": "Ingen bestillinger ennå",
           "no_results": "Ingen bestillinger med denne statusen",
-          "load_failed": "Kunne ikke laste inn bestillingene"
+          "load_failed": "Kunne ikke laste inn bestillingene",
+          "statuses_label": "Statuser som vises"
         }
       }
     },

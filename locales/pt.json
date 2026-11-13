@@ -415,7 +415,9 @@
             "navigation": "Navegação",
             "main_navigation": "Navegação principal"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Nenhum item | {n} item | {n} itens"
       },
       "footer": {
         "version": "Ver.",
@@ -662,7 +664,8 @@
           "filter_all": "Todos",
           "empty": "Ainda não há pedidos",
           "no_results": "Nenhum pedido com este status",
-          "load_failed": "Falha ao carregar os pedidos"
+          "load_failed": "Falha ao carregar os pedidos",
+          "statuses_label": "Status a exibir"
         }
       }
     },

@@ -2957,6 +2957,10 @@ export type InputRenameSignInKeyType = {
   signInMethodName: Scalars['String']['input'];
 };
 
+export type InputRequestMfaChangeCodeType = {
+  storeId: Scalars['String']['input'];
+};
+
 export type InputRequestRegistrationType = {
   /** Creating contact's account */
   account: InputRegisterAccountType;
@@ -3001,42 +3005,6 @@ export type InputReturnItemType = {
 export type InputRevokeOrganizationInviteType = {
   /** Contact member ID */
   memberId: Scalars['String']['input'];
-};
-
-export type InputSalesRepLayout = {
-  /** Top-level fixed regions with their blocks. */
-  regions: Array<InputSalesRepLayoutRegion>;
-  /** Document schema version. */
-  schemaVersion: Scalars['Int']['input'];
-  /** Layout surface identifier (e.g. "dashboard", "customerProfile"). */
-  scope: Scalars['String']['input'];
-  /** Optional store to scope the layout to. */
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type InputSalesRepLayoutBlock = {
-  /** Whether the block is parked in the hidden tray. */
-  hidden: Scalars['Boolean']['input'];
-  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
-  id: Scalars['String']['input'];
-  /** Block-type-specific settings (send an empty list for none). */
-  settings: Array<InputSalesRepLayoutSetting>;
-  /** Block type discriminator (frontend-owned vocabulary). */
-  type: Scalars['String']['input'];
-};
-
-export type InputSalesRepLayoutRegion = {
-  /** Blocks in render order (array position is the order). */
-  blocks: Array<InputSalesRepLayoutBlock>;
-  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
-  id: Scalars['String']['input'];
-};
-
-export type InputSalesRepLayoutSetting = {
-  /** Setting key (block-type-specific, frontend-owned vocabulary). */
-  key: Scalars['String']['input'];
-  /** Scalar setting value (string, number, boolean). */
-  value?: InputMaybe<Scalars['AnyValue']['input']>;
 };
 
 export type InputSaveForLaterType = {
@@ -3301,6 +3269,25 @@ export type InputUpdateMemberAddressType = {
 export type InputUpdateMemberDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   memberId: Scalars['String']['input'];
+};
+
+export type InputUpdateMfaOrganizationModeType = {
+  /** The code sent by requestMfaChangeCode. */
+  code: Scalars['String']['input'];
+  enabled: Scalars['Boolean']['input'];
+  organizationId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  /** The two-factor token from requestMfaChangeCode. */
+  twoFactorToken: Scalars['String']['input'];
+};
+
+export type InputUpdateMfaUserModeType = {
+  /** The code sent by requestMfaChangeCode. */
+  code: Scalars['String']['input'];
+  enabled: Scalars['Boolean']['input'];
+  storeId: Scalars['String']['input'];
+  /** The two-factor token from requestMfaChangeCode. */
+  twoFactorToken: Scalars['String']['input'];
 };
 
 export type InputUpdateOrderDynamicPropertiesType = {
@@ -3862,6 +3849,46 @@ export type MenuLinkType = {
   url: Scalars['String']['output'];
 };
 
+export type MfaChangeResponse = {
+  errorCode?: Maybe<Scalars['String']['output']>;
+  errorDescription?: Maybe<Scalars['String']['output']>;
+  lockoutSecondsRemaining?: Maybe<Scalars['Int']['output']>;
+  settings?: Maybe<MfaSettings>;
+  succeeded: Scalars['Boolean']['output'];
+};
+
+export type MfaCodeChallenge = {
+  destination?: Maybe<Scalars['String']['output']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
+  errorDescription?: Maybe<Scalars['String']['output']>;
+  lockoutSecondsRemaining?: Maybe<Scalars['Int']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  resendSecondsRemaining?: Maybe<Scalars['Int']['output']>;
+  succeeded: Scalars['Boolean']['output'];
+  twoFactorToken?: Maybe<Scalars['String']['output']>;
+};
+
+export type MfaSettings = {
+  canChangeOrganizationMode: Scalars['Boolean']['output'];
+  canChangeUserMode: Scalars['Boolean']['output'];
+  destination?: Maybe<Scalars['String']['output']>;
+  /** Whether a code can be delivered to the user, for example the email is confirmed. */
+  isProviderAvailable: Scalars['Boolean']['output'];
+  /** Whether the password sign-in to the store requires the code. */
+  isRequired: Scalars['Boolean']['output'];
+  organizationId?: Maybe<Scalars['String']['output']>;
+  /** Off, Enabled (by the organization maintainer) or Required (by the administrator). */
+  organizationMode?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  /** None, Global, Store, Organization or User. */
+  requiredBy: Scalars['String']['output'];
+  storeId: Scalars['String']['output'];
+  /** "Use global setting", Enabled, Disabled, AdminManaged or CustomerChoice: the values of the store setting MultiFactorAuthentication.StoreMode. */
+  storeMode: Scalars['String']['output'];
+  /** Off, Enabled (by the user) or Required (by the administrator). */
+  userMode: Scalars['String']['output'];
+};
+
 export type ModuleSettingType = {
   name: Scalars['String']['output'];
   value?: Maybe<Scalars['ModuleSettingValue']['output']>;
@@ -3998,12 +4025,12 @@ export type Mutations = {
   removeWishlistItem?: Maybe<WishlistType>;
   removeWishlistItems?: Maybe<WishlistType>;
   renameSignInKey?: Maybe<IdentityResultType>;
+  requestMfaChangeCode?: Maybe<MfaCodeChallenge>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resendOrganizationInvite?: Maybe<CustomIdentityResultType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   revokeOrganizationInvite?: Maybe<ContactType>;
   saveLayout?: Maybe<Layout>;
-  saveSalesRepLayout?: Maybe<SalesRepLayout>;
   saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
   selectAllCartConfigurationItems?: Maybe<CartType>;
   selectAllCartItems?: Maybe<CartType>;
@@ -4029,6 +4056,8 @@ export type Mutations = {
   updateContact?: Maybe<ContactType>;
   updateMemberAddresses?: Maybe<MemberType>;
   updateMemberDynamicProperties?: Maybe<MemberType>;
+  updateMfaOrganizationMode?: Maybe<MfaChangeResponse>;
+  updateMfaUserMode?: Maybe<MfaChangeResponse>;
   updateOrderDynamicProperties?: Maybe<CustomerOrderType>;
   updateOrderItemDynamicProperties?: Maybe<CustomerOrderType>;
   updateOrderPaymentDynamicProperties?: Maybe<CustomerOrderType>;
@@ -4566,6 +4595,11 @@ export type MutationsRenameSignInKeyArgs = {
 };
 
 
+export type MutationsRequestMfaChangeCodeArgs = {
+  command: InputRequestMfaChangeCodeType;
+};
+
+
 export type MutationsRequestRegistrationArgs = {
   command: InputRequestRegistrationType;
 };
@@ -4588,11 +4622,6 @@ export type MutationsRevokeOrganizationInviteArgs = {
 
 export type MutationsSaveLayoutArgs = {
   command: InputLayout;
-};
-
-
-export type MutationsSaveSalesRepLayoutArgs = {
-  command: InputSalesRepLayout;
 };
 
 
@@ -4718,6 +4747,16 @@ export type MutationsUpdateMemberAddressesArgs = {
 
 export type MutationsUpdateMemberDynamicPropertiesArgs = {
   command: InputUpdateMemberDynamicPropertiesType;
+};
+
+
+export type MutationsUpdateMfaOrganizationModeArgs = {
+  command: InputUpdateMfaOrganizationModeType;
+};
+
+
+export type MutationsUpdateMfaUserModeArgs = {
+  command: InputUpdateMfaUserModeType;
 };
 
 
@@ -6233,6 +6272,7 @@ export type Query = {
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
+  mfaSettings?: Maybe<MfaSettings>;
   newsArticle?: Maybe<NewsArticleContent>;
   newsArticleAuthor?: Maybe<NewsArticleAuthor>;
   newsArticleTags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
@@ -6282,6 +6322,7 @@ export type Query = {
   role?: Maybe<RoleType>;
   salesRepActivities?: Maybe<SalesRepActivityConnection>;
   salesRepCartFilterRules?: Maybe<Array<Maybe<SalesRepCartFilterRule>>>;
+  salesRepCoupons?: Maybe<SalesRepCouponConnection>;
   salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
   salesRepCustomerActivitySummary?: Maybe<SalesRepCustomerActivitySummary>;
   salesRepCustomerCartStatistics?: Maybe<CustomerCartStatistics>;
@@ -6296,7 +6337,6 @@ export type Query = {
   salesRepDocument?: Maybe<SalesRepDocument>;
   salesRepDocumentCategories?: Maybe<Array<Maybe<SalesRepDocumentCategory>>>;
   salesRepDocuments?: Maybe<SalesRepDocumentConnection>;
-  salesRepLayout?: Maybe<SalesRepLayout>;
   salesRepOrderFilterRules?: Maybe<Array<Maybe<SalesRepOrderFilterRule>>>;
   salesRepOrderSortRules?: Maybe<Array<Maybe<SalesRepOrderSortRule>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
@@ -6652,6 +6692,12 @@ export type QueryMenuArgs = {
 export type QueryMenusArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+};
+
+
+export type QueryMfaSettingsArgs = {
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
 };
 
@@ -7055,6 +7101,14 @@ export type QuerySalesRepCartFilterRulesArgs = {
 };
 
 
+export type QuerySalesRepCouponsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  storeId: Scalars['String']['input'];
+};
+
+
 export type QuerySalesRepCustomerArgs = {
   organizationId: Scalars['String']['input'];
 };
@@ -7159,12 +7213,6 @@ export type QuerySalesRepDocumentsArgs = {
 };
 
 
-export type QuerySalesRepLayoutArgs = {
-  scope: Scalars['String']['input'];
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type QuerySalesRepOrderFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
@@ -7211,10 +7259,12 @@ export type QuerySalesRepTaskSortRulesArgs = {
 
 export type QuerySalesRepTasksArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  customerIds?: InputMaybe<Array<Scalars['String']['input']>>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+  priorities?: InputMaybe<Array<Scalars['String']['input']>>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
   today?: InputMaybe<Scalars['DateTime']['input']>;
@@ -7966,6 +8016,57 @@ export type SalesRepContactEdge = {
   node?: Maybe<SalesRepContact>;
 };
 
+export type SalesRepCoupon = {
+  /** The code a buyer enters at checkout. */
+  couponCode: Scalars['String']['output'];
+  /** Localized promotion description, falling back to its description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** When the coupon stops working: the earlier of its own expiration and the promotion's end. */
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The coupon's own expiration, if it has one. */
+  expirationDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Coupon id. */
+  id: Scalars['String']['output'];
+  /** Localized promotion label, e.g. "15% OFF". */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Total uses allowed across all buyers; 0 means unlimited. */
+  maxUsesNumber: Scalars['Int']['output'];
+  /** Uses allowed per buyer; 0 means unlimited. */
+  maxUsesPerUser: Scalars['Int']['output'];
+  /** Localized promotion display name, falling back to its name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** When the promotion ends. */
+  promotionEndDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Id of the promotion the coupon belongs to. */
+  promotionId: Scalars['String']['output'];
+  /** When the promotion starts. */
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Promotion name as set up in the back office. */
+  systemName?: Maybe<Scalars['String']['output']>;
+  /** Times the coupon has been used so far. */
+  totalUsesCount: Scalars['Int']['output'];
+};
+
+/** A connection from an object to a list of objects of type `SalesRepCoupon`. */
+export type SalesRepCouponConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepCouponEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepCoupon>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepCoupon`. */
+export type SalesRepCouponEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepCoupon>;
+};
+
 export type SalesRepCustomer = {
   /** External/display account id (the organization's OuterId); null when it has none. */
   accountId?: Maybe<Scalars['String']['output']>;
@@ -8184,40 +8285,6 @@ export type SalesRepDocumentEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<SalesRepDocument>;
-};
-
-export type SalesRepLayout = {
-  /** When the layout was last saved (UTC). */
-  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Top-level fixed regions. */
-  regions: Array<SalesRepLayoutRegion>;
-  /** Document schema version, for frontend migration of older saved layouts. */
-  schemaVersion: Scalars['Int']['output'];
-};
-
-export type SalesRepLayoutBlock = {
-  /** Whether the block is parked in the hidden tray. */
-  hidden: Scalars['Boolean']['output'];
-  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
-  id: Scalars['String']['output'];
-  /** Block-type-specific settings (may be empty). */
-  settings: Array<SalesRepLayoutSetting>;
-  /** Block type discriminator (frontend-owned vocabulary). */
-  type: Scalars['String']['output'];
-};
-
-export type SalesRepLayoutRegion = {
-  /** Blocks in render order (array position is the order). */
-  blocks: Array<SalesRepLayoutBlock>;
-  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
-  id: Scalars['String']['output'];
-};
-
-export type SalesRepLayoutSetting = {
-  /** Setting key (block-type-specific, frontend-owned vocabulary). */
-  key: Scalars['String']['output'];
-  /** Scalar setting value (string, number, boolean). */
-  value?: Maybe<Scalars['AnyValue']['output']>;
 };
 
 export type SalesRepOrder = {
