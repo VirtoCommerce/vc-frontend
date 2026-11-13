@@ -1,0 +1,36 @@
+# Accepted advisories for yarn.lock. An entry with ignoreUntil expires on that date,
+# after which osv-scanner reports it again and the reason has to be re-checked.
+# An entry without ignoreUntil stays accepted for as long as its reason holds.
+
+[[IgnoredVulns]]
+id = "GHSA-82fw-gwwq-j7x9"
+ignoreUntil = 2026-12-09
+reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed in @vitest/mocker 4.1.11. vitest 4 closes the vitest path; Storybook pins 3.2.4 through 10.x, and only Storybook 11 has a fixed copy."
+
+[[IgnoredVulns]]
+id = "GHSA-qxg6-89mg-rqv8"
+ignoreUntil = 2026-12-09
+reason = "@vitest/mocker 3.x via vitest 3 and Storybook 9 (local dev and test tooling, never shipped). Fixed in @vitest/mocker 4.1.12. vitest 4 closes the vitest path; Storybook pins 3.2.4 through 10.x, and only Storybook 11 has a fixed copy."
+
+[[IgnoredVulns]]
+id = "GHSA-7mx3-vvmw-hjmv"
+reason = "@graphql-tools/utils 9-11 via @graphql-codegen, which only generates types from our own backend schema and is never shipped. The flaw is in mergeDeep when it merges GraphQL responses an attacker controls; no such response reaches codegen."
+
+[[IgnoredVulns]]
+id = "GHSA-c4qx-w738-7hr3"
+reason = "@graphql-tools/utils 10-11 via @graphql-codegen, which only generates types from our own backend schema and is never shipped. The flaw is in mergeIncrementalResult when it merges @defer/@stream responses an attacker controls; no such response reaches codegen."
+
+[[IgnoredVulns]]
+id = "GHSA-3g3m-2fjr-6pw4"
+ignoreUntil = 2026-12-09
+reason = "glob 10 and 13 in build, lint and test scripts (never shipped). Only affects callers that cancel a walk with an AbortSignal, which no caller here does. Fixed only in glob 14; the transitive users (js-beautify, test-exclude) still require glob 10."
+
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+ignoreUntil = 2026-12-09
+reason = "minimatch 9 and 10 in lint, test, codegen, Storybook and script tooling (never shipped). Needs attacker-controlled glob patterns with optimizationLevel >= 2; every pattern here is a literal or comes from repo config. Fixed only in minimatch 11, which the transitive users do not accept yet."
+
+[[IgnoredVulns]]
+id = "GHSA-gcqx-w48m-w2h4"
+ignoreUntil = 2026-12-09
+reason = "deepmerge 4.3.1 via tw-elements; no fixed version is published. tw-elements calls deepmerge only in its Chart component, and the theme initialises only Lightbox, so deepmerge never receives input."

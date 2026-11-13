@@ -414,7 +414,9 @@
             "navigation": "Navigation",
             "main_navigation": "Navigation principale"
           }
-        }
+        },
+        "link_with_count": "{title} : {count}",
+        "cart_items_tooltip": "Aucun article | {n} article | {n} articles"
       },
       "footer": {
         "version": "Ver.",
@@ -661,7 +663,8 @@
           "filter_all": "Toutes",
           "empty": "Aucune commande pour le moment",
           "no_results": "Aucune commande avec ce statut",
-          "load_failed": "Impossible de charger les commandes"
+          "load_failed": "Impossible de charger les commandes",
+          "statuses_label": "Statuts à afficher"
         }
       }
     },

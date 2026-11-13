@@ -13,12 +13,16 @@ The rules in `.claude/rules/` say what the code must look like. This skill says 
    - UI-kit components: open each one's `vc-<name>.vue` and `vc-<name>.stories.ts` (props, slots, emits, tokens);
    - composables in `shared/<domain>/composables` and `core/composables`;
    - helpers in `core/utilities` and `ui-kit/utilities`.
+
    Anything you were about to hand-roll that is on this list gets reused instead.
+
 2. **New public UI-kit names come first.** A new prop, slot, emit or `--vc-*` token on a kit component is public API
    for client forks. Propose the names (and what each controls) to the developer and wait for agreement before
    writing the code that uses them.
-3. A kit component that looks different in the design than in the kit: stop and tell the developer
-   (`ui-kit.md` §9) — don't work around it.
+3. A kit component that looks different in the mockup (design document) than in the kit: stop and tell the
+   developer (`ui-kit.md` §9) — don't work around it.
+4. A style change for one design, one preset or every design: find its row in the table at the top of
+   `client-app/assets/styles/README.md` ("Where does my change go?") before writing it.
 
 ## 2. Done means checked
 
@@ -28,7 +32,12 @@ A task is done only after all of these ran. Report each result; paste failures v
 2. `yarn validate:types`.
 3. `yarn build` — required after any utility → `@apply` migration (`styles.md` §17: missing classes and
    leading-`!` utilities only fail here); otherwise when styles or imports changed substantially.
-4. A look at the result: the page in the browser (`yarn dev`, https://localhost:3000) or the component in
-   Storybook. For visual changes, also a second preset and dark mode (Storybook preset + dark toolbar).
+4. `yarn check:designs` — when a design folder (`client-app/designs/`), a preset stylesheet
+   (`client-app/assets/presets/<name>.scss`) or a block they name changed.
+5. `yarn test:unit run scripts/design-token-table.test.ts` — when a shape or type token was added, renamed or removed.
+6. A look at the result: the page in the browser (`yarn dev`, https://localhost:3000) or the component in
+   Storybook. For visual changes, also a second preset, dark mode and every design: Storybook's Theme preset, dark
+   and Design toolbars, or `&globals=design:<design>;themePreset:<preset>;darkMode:dark` in the story URL. A change
+   for one design or one preset leaves classic computing exactly as before: compare computed styles, not screenshots.
 
 If a check can't be run (no backend, no browser), say which one was skipped and why.

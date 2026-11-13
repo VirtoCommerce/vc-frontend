@@ -5,12 +5,16 @@
            there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
+      <!-- Marks where the sticky header row sits in the flow. The row itself isn't measured: useElementBounding
+           re-reads its target on a resize or a class/style change; sticking changes its class, compacting its size. -->
+      <div ref="headerRowAnchorRef" class="compare-table__header-row-anchor"></div>
+
       <!-- An overflow-x wrapper would trap thead's page sticky, so thead and tbody scroll separately (synced in script). -->
       <table class="compare-table__table" :aria-label="t('pages.compare.title')">
         <thead
           ref="headerRowRef"
           class="compare-table__header-row"
-          :class="{ 'compare-table__header-row--stuck': isCompact }"
+          :class="{ 'compare-table__header-row--stuck': isStuck }"
           tabindex="-1"
         >
           <tr class="compare-table__header-inner">
@@ -315,8 +319,8 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, useCssVar, useElementBounding } from "@vueuse/core";
-import { computed, nextTick, ref, useId, watch } from "vue";
+import { useBreakpoints, useCssVar, useElementBounding, useElementSize } from "@vueuse/core";
+import { computed, nextTick, ref, useId, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -369,6 +373,7 @@ const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
 const headerRowRef = ref<HTMLElement | null>(null);
+const headerRowAnchorRef = useTemplateRef<HTMLElement>("headerRowAnchorRef");
 const rowDescriptionIdPrefix = useId();
 
 // Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
@@ -376,14 +381,46 @@ const rowDescriptionIdPrefix = useId();
 const appHeaderHeightVar = useCssVar("--vc-app-header-height", undefined, { observe: true });
 const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.value ?? "0") || 0);
 
-// `top` below mirrors appHeaderHeight (see style block), so once the row's own top has scrolled
-// up to meet it, position: sticky has pinned the row in place — that's what "compact" reacts to.
+// The row's sticky `top` mirrors appHeaderHeight (see style block), so once the anchor has scrolled
+// up to meet it, position: sticky has pinned the row in place — that's what isStuck tracks, and the
+// row compacts only while stuck and only when the page has room for it (see isCompact).
 // Below md the row still sticks, but always in its full (non-compact) layout — there's no
 // space to gain from compacting it there since it's already the single-column mobile layout.
-const { top: headerRowTop, update: updateHeaderRowBounding } = useElementBounding(headerRowRef);
-const isCompact = computed(() => !isMobile.value && headerRowTop.value <= appHeaderHeight.value + 1);
+const { top: headerRowAnchorTop, update: updateHeaderRowAnchorBounding } = useElementBounding(headerRowAnchorRef);
+const { height: headerRowHeight } = useElementSize(headerRowRef);
+const compactHeaderRowHeight = ref(0);
 
-watch(appHeaderHeight, () => updateHeaderRowBounding());
+const isStuck = computed(() => !isMobile.value && headerRowAnchorTop.value <= appHeaderHeight.value + 1);
+
+const isCompact = computed<boolean>((wasCompact) => {
+  if (!isStuck.value) {
+    return false;
+  }
+
+  if (wasCompact) {
+    return true;
+  }
+
+  // Compacting shortens the page by the height the row loses, and the browser pulls the scroll back
+  // up by whatever the room below can't absorb. If that pulls the anchor back under the threshold,
+  // the row un-compacts and the page grows again, forever; the distance already scrolled past the
+  // threshold absorbs that much of the pull-back. The row is in its full layout here; until the
+  // compact height is first measured, all of it counts as lost, so pages with less room keep the
+  // full row.
+  const lostHeight = headerRowHeight.value - compactHeaderRowHeight.value;
+  const roomBelow = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+  const pastThreshold = appHeaderHeight.value - headerRowAnchorTop.value;
+
+  return roomBelow + pastThreshold >= lostHeight;
+});
+
+watch(headerRowHeight, (height) => {
+  if (isCompact.value) {
+    compactHeaderRowHeight.value = height;
+  }
+});
+
+watch(appHeaderHeight, () => updateHeaderRowAnchorBounding());
 
 // isCompact flipping swaps entire v-if/v-else subtrees (the clear-category button, and each
 // product's compact-vs-full cell) rather than patching them in place, so Vue destroys whatever

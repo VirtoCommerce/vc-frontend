@@ -11,17 +11,15 @@ describe("use-quantity-validation-schema", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(expect.objectContaining({ type: "min" }) as Error);
-    expect(() => quantitySchema.value.validateSync(-1)).toThrowError(expect.objectContaining({ type: "min" }) as Error);
+    expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
+    expect(() => quantitySchema.value.validateSync(-1)).toThrow(expect.objectContaining({ type: "min" }) as Error);
   });
 
   it("quantity is integer", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1.5)).toThrowError(
-      expect.objectContaining({ type: "integer" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(1.5)).toThrow(expect.objectContaining({ type: "integer" }) as Error);
   });
 
   it("quantity is less than system limit", () => {
@@ -31,10 +29,10 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(LINE_ITEM_QUANTITY_LIMIT)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(LINE_ITEM_QUANTITY_LIMIT + 1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(LINE_ITEM_QUANTITY_LIMIT + 1)).toThrow(
       expect.objectContaining({ type: "max" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(Number.MAX_SAFE_INTEGER)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(Number.MAX_SAFE_INTEGER)).toThrow(
       expect.objectContaining({ type: "max" }) as Error,
     );
   });
@@ -45,9 +43,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(expect.objectContaining({ type: "maxValue" }) as Error);
   });
 
   it("available quantity >= minimum quantity", () => {
@@ -57,10 +53,10 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
   });
@@ -73,10 +69,10 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(2)).toThrow(
       expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
   });
@@ -87,13 +83,13 @@ describe("use-quantity-validation-schema", () => {
       minQuantity: ref(6),
     });
 
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(0)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
   });
@@ -105,13 +101,13 @@ describe("use-quantity-validation-schema", () => {
       maxQuantity: ref(110),
     });
 
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(0)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
   });
@@ -123,9 +119,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(4)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(5)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(5)).toThrow(expect.objectContaining({ type: "maxValue" }) as Error);
   });
 
   it("available quantity < maximum quantity", () => {
@@ -135,9 +129,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(expect.objectContaining({ type: "maxValue" }) as Error);
   });
 
   it("minimum quantity", () => {
@@ -146,9 +138,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
-      expect.objectContaining({ type: "minValue" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(expect.objectContaining({ type: "minValue" }) as Error);
   });
 
   it("maximum quantity", () => {
@@ -157,9 +147,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(3)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
-    );
+    expect(() => quantitySchema.value.validateSync(3)).toThrow(expect.objectContaining({ type: "maxValue" }) as Error);
   });
 
   it("minimum and maximum quantity", () => {
@@ -170,10 +158,10 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
   });
@@ -186,10 +174,10 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
   });
@@ -203,10 +191,10 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(4)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(6)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
   });
@@ -218,16 +206,16 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(7)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(expect.objectContaining({ type: "min" }) as Error);
+    expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
   });
 
   it("non-numeric input", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
-    expect(() => quantitySchema.value.validateSync("a")).toThrowError(
+    expect(() => quantitySchema.value.validateSync("a")).toThrow(
       expect.objectContaining({ type: "typeError" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(null)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(null)).toThrow(
       expect.objectContaining({ type: "nullable" }) as Error,
     );
   });
@@ -239,10 +227,10 @@ describe("use-quantity-validation-schema", () => {
     });
 
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(2)).toThrow(
       expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
   });
@@ -250,10 +238,10 @@ describe("use-quantity-validation-schema", () => {
   it("floating point edge cases", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
-    expect(() => quantitySchema.value.validateSync(1.999999)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(1.999999)).toThrow(
       expect.objectContaining({ type: "integer" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(2.000001)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(2.000001)).toThrow(
       expect.objectContaining({ type: "integer" }) as Error,
     );
   });
@@ -266,10 +254,10 @@ describe("use-quantity-validation-schema", () => {
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(6)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(9)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(4)).toThrow(
       expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(5)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(5)).toThrow(
       expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
     );
   });
@@ -284,10 +272,10 @@ describe("use-quantity-validation-schema", () => {
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(6)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(9)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(12)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(12)).toThrow(
       expect.objectContaining({ type: "minMaxValue" }) as Error,
     );
-    expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(2)).toThrow(
       expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
     );
   });
@@ -301,10 +289,8 @@ describe("use-quantity-validation-schema", () => {
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(6)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(9)).not.toThrow();
-    expect(() => quantitySchema.value.validateSync(12)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
-    );
-    expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+    expect(() => quantitySchema.value.validateSync(12)).toThrow(expect.objectContaining({ type: "maxValue" }) as Error);
+    expect(() => quantitySchema.value.validateSync(1)).toThrow(
       expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
     );
   });
@@ -336,9 +322,7 @@ describe("use-quantity-validation-schema", () => {
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(-1)).toThrowError(
-        expect.objectContaining({ type: "min" }) as Error,
-      );
+      expect(() => quantitySchema.value.validateSync(-1)).toThrow(expect.objectContaining({ type: "min" }) as Error);
     });
 
     it("allowZero=false disallows quantity 0", () => {
@@ -346,18 +330,14 @@ describe("use-quantity-validation-schema", () => {
         allowZero: ref(false),
       });
 
-      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
-        expect.objectContaining({ type: "min" }) as Error,
-      );
+      expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
       expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
     });
 
     it("allowZero=undefined (default) disallows quantity 0", () => {
       const { quantitySchema } = useQuantityValidationSchema({});
 
-      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
-        expect.objectContaining({ type: "min" }) as Error,
-      );
+      expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
       expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
     });
 
@@ -368,7 +348,7 @@ describe("use-quantity-validation-schema", () => {
       });
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "minValue" }) as Error,
       );
       expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
@@ -382,7 +362,7 @@ describe("use-quantity-validation-schema", () => {
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(6)).toThrow(
         expect.objectContaining({ type: "maxValue" }) as Error,
       );
     });
@@ -395,12 +375,12 @@ describe("use-quantity-validation-schema", () => {
       });
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "minMaxValue" }) as Error,
       );
       expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(6)).toThrow(
         expect.objectContaining({ type: "minMaxValue" }) as Error,
       );
     });
@@ -413,11 +393,11 @@ describe("use-quantity-validation-schema", () => {
       });
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(2)).toThrow(
         expect.objectContaining({ type: "exactQtyValue" }) as Error,
       );
       expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(4)).toThrow(
         expect.objectContaining({ type: "exactQtyValue" }) as Error,
       );
     });
@@ -430,7 +410,7 @@ describe("use-quantity-validation-schema", () => {
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(6)).toThrow(
         expect.objectContaining({ type: "maxValue" }) as Error,
       );
     });
@@ -443,12 +423,12 @@ describe("use-quantity-validation-schema", () => {
       });
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "minMaxValue" }) as Error,
       );
       expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(6)).toThrow(
         expect.objectContaining({ type: "minMaxValue" }) as Error,
       );
     });
@@ -462,10 +442,10 @@ describe("use-quantity-validation-schema", () => {
 
       // With allowZero=true, 0 should be allowed even when available < min
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "incorrectMinValue" }) as Error,
       );
-      expect(() => quantitySchema.value.validateSync(5)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(5)).toThrow(
         expect.objectContaining({ type: "incorrectMinValue" }) as Error,
       );
     });
@@ -479,10 +459,10 @@ describe("use-quantity-validation-schema", () => {
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
       expect(() => quantitySchema.value.validateSync(6)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
       );
-      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(2)).toThrow(
         expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
       );
     });
@@ -495,10 +475,10 @@ describe("use-quantity-validation-schema", () => {
       });
 
       expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
-      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(1)).toThrow(
         expect.objectContaining({ type: "minValue" }) as Error,
       );
-      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+      expect(() => quantitySchema.value.validateSync(2)).toThrow(
         expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
       );
       expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
@@ -510,9 +490,7 @@ describe("use-quantity-validation-schema", () => {
         allowZero,
       });
 
-      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
-        expect.objectContaining({ type: "min" }) as Error,
-      );
+      expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
 
       allowZero.value = true;
 
@@ -529,9 +507,7 @@ describe("use-quantity-validation-schema", () => {
 
       allowZero.value = false;
 
-      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
-        expect.objectContaining({ type: "min" }) as Error,
-      );
+      expect(() => quantitySchema.value.validateSync(0)).toThrow(expect.objectContaining({ type: "min" }) as Error);
     });
   });
 });

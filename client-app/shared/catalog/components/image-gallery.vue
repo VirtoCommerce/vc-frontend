@@ -63,7 +63,7 @@
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
       <VcNavButton
-        v-show="canSlideThumbs"
+        class="image-gallery__nav"
         :label="$t('common.buttons.previous')"
         size="xs"
         direction="left"
@@ -78,6 +78,7 @@
         :navigation="{
           prevEl: `#${componentId} [data-nav-prev]`,
           nextEl: `#${componentId} [data-nav-next]`,
+          lockClass: 'image-gallery__nav--locked',
         }"
         :loop="showThumbs && canSlideThumbs"
         watch-slides-progress
@@ -106,7 +107,7 @@
       </Swiper>
 
       <VcNavButton
-        v-show="canSlideThumbs"
+        class="image-gallery__nav"
         :label="$t('common.buttons.next')"
         size="xs"
         direction="right"
@@ -165,7 +166,6 @@ const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
 
-// When every thumb fits, Swiper locks the strip and its buttons do nothing.
 const canSlideThumbs = computed(() => props.images.length > THUMBS_PER_VIEW);
 
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
@@ -280,6 +280,13 @@ onUnmounted(() => {
 
   &__thumbs-container {
     @apply flex justify-between items-center mt-3.5;
+  }
+
+  &__nav {
+    // Swiper's navigation `lockClass`, on both buttons while every thumb fits.
+    &--locked {
+      @apply hidden;
+    }
   }
 
   &__thumbs {

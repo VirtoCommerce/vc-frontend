@@ -2,9 +2,9 @@
   <div class="products-filters">
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
-      <template v-if="!isHorizontal">
-        <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
-      </template>
+      <div v-if="!isHorizontal" class="products-filters__container products-filters__container--vertical">
+        <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head collapsed />
+      </div>
 
       <div v-else class="products-filters__skeleton-row">
         <div v-for="i in 6" :key="i" class="products-filters__skeleton" />

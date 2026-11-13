@@ -414,7 +414,9 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"
       },
       "footer": {
         "version": "Версия",
@@ -661,7 +663,8 @@
           "filter_all": "Все",
           "empty": "Еще нет заказов",
           "no_results": "Нет заказов с этим статусом",
-          "load_failed": "Не удалось загрузить заказы"
+          "load_failed": "Не удалось загрузить заказы",
+          "statuses_label": "Отображаемые статусы"
         }
       }
     },

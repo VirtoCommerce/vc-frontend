@@ -111,5 +111,6 @@ const sfcLayers = () => ({
 
 sfcLayers.postcss = true;
 sfcLayers.parseLayerOrder = parseLayerOrder;
+sfcLayers.isPrintOnly = isPrintOnly;
 
 module.exports = sfcLayers;

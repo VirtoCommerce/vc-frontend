@@ -414,7 +414,9 @@
             "navigation": "Navigacja",
             "main_navigation": "Główna nawigacja"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Brak produktów | {n} produkt | {n} produkty | {n} produktów"
       },
       "footer": {
         "version": "Wersja.",
@@ -661,7 +663,8 @@
           "filter_all": "Wszystkie",
           "empty": "Nie ma jeszcze zamówień",
           "no_results": "Brak zamówień o tym statusie",
-          "load_failed": "Nie udało się wczytać zamówień"
+          "load_failed": "Nie udało się wczytać zamówień",
+          "statuses_label": "Statusy do wyświetlenia"
         }
       }
     },
