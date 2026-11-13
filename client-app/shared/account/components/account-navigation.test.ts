@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import AccountNavigation from "./account-navigation.vue";
 
-type MenuItemType = { title: string; priority?: number; children?: { id: string }[] };
+type MenuItemType = { title: string; priority?: number; children?: { id: string; permission?: string }[] };
 type SectionType = {
   id: string;
   title: string;
@@ -13,6 +13,7 @@ type SectionType = {
 
 const h = vi.hoisted(() => ({
   isCorporateMember: { value: false },
+  permissions: new Set<string>(),
   purchasing: { value: undefined as MenuItemType | undefined },
   marketing: { value: undefined as MenuItemType | undefined },
   user: { value: undefined as MenuItemType | undefined },
@@ -31,7 +32,10 @@ vi.mock("@/core/composables", () => ({
 }));
 
 vi.mock("@/shared/account/composables/useUser", () => ({
-  useUser: () => ({ isCorporateMember: h.isCorporateMember }),
+  useUser: () => ({
+    isCorporateMember: h.isCorporateMember,
+    checkPermissions: (permission: string) => h.permissions.has(permission),
+  }),
 }));
 
 vi.mock("@/core/utilities", () => ({
@@ -42,7 +46,7 @@ vi.mock("@/core/utilities", () => ({
 const stubs = {
   VcWidget: { props: ["title"], template: `<div :data-title="title"><slot name="default-container" /></div>` },
   ExtensionPoint: { template: `<div><slot /></div>` },
-  LinkDefault: { props: ["item"], template: `<span />` },
+  LinkDefault: { props: ["item"], template: `<span :data-link="item.id" />` },
 };
 
 function renderedSectionTitles() {
@@ -59,6 +63,7 @@ describe("account-navigation sections merge", () => {
     h.user.value = { title: "User", priority: 40, children: [{ id: "profile" }] };
     h.corporate.value = { title: "Corporate", priority: 30, children: [{ id: "info" }] };
     h.registered.value = [];
+    h.permissions.clear();
   });
 
   it("orders built-in sections by priority and hides Corporate for personal accounts", () => {
@@ -87,5 +92,26 @@ describe("account-navigation sections merge", () => {
       { id: "hub", title: "Hub", priority: 5, children: [{ id: "mc" }], isVisible: { value: false } },
     ];
     expect(renderedSectionTitles()).toEqual(["Purchasing", "Marketing", "User"]);
+  });
+
+  // Company → Reporting names the permission it needs (menu.json `permission`): a member without it never sees the link.
+  it("shows a corporate link that names a permission only to a user who holds it", () => {
+    h.isCorporateMember.value = true;
+    h.corporate.value = {
+      title: "Corporate",
+      priority: 30,
+      children: [{ id: "info" }, { id: "reporting", permission: "xapi:my_organization:order:view" }],
+    };
+    const links = () =>
+      mount(AccountNavigation, { global: { stubs } })
+        .findAll("[data-link]")
+        .map((w) => w.attributes("data-link"));
+
+    expect(links()).not.toContain("reporting");
+    expect(links()).toContain("info");
+
+    h.permissions.add("xapi:my_organization:order:view");
+
+    expect(links()).toContain("reporting");
   });
 });

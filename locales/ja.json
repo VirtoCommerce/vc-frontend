@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "設定",
           "currency": "通貨",
@@ -1705,6 +1706,17 @@
           "invite_revoked": "招待を取り消しました",
           "invite_resent": "招待を再送信しました"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "レポート",
+        "subtitle": "組織の売上、注文数、平均注文額（前年比較）",
+        "member_label": "メンバー",
+        "all_members": "すべてのメンバー（{count}）",
+        "all_members_plain": "すべてのメンバー",
+        "members_failed": "メンバーを読み込めませんでした"
       }
     },
     "cart": {

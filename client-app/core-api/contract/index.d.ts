@@ -3211,6 +3211,7 @@ type ExtendedMenuLinkType = {
     priority?: number;
     isCatalogItem?: boolean;
     dataTestId?: string;
+    permission?: string;
     activeWhen?: (route: RouteLocationNormalizedLoaded) => boolean;
 };
 type MarkedMenuLinkType = ExtendedMenuLinkType & {

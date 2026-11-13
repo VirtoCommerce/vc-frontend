@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Ustawienia",
           "currency": "Waluta",
@@ -1705,6 +1706,17 @@
           "invite_revoked": "Zaproszenie cofnięte",
           "invite_resent": "Zaproszenie wysłane ponownie"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Raporty",
+        "subtitle": "Sprzedaż, zamówienia i średnia wartość zamówienia Twojej organizacji w porównaniu z ubiegłym rokiem",
+        "member_label": "Członek",
+        "all_members": "Wszyscy członkowie ({count})",
+        "all_members_plain": "Wszyscy członkowie",
+        "members_failed": "Nie udało się wczytać członków"
       }
     },
     "cart": {

@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Configuraciones",
           "currency": "Moneda",
@@ -1705,6 +1706,17 @@
           "invite_revoked": "Invitación revocada",
           "invite_resent": "Invitación reenviada"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Informes",
+        "subtitle": "Ventas, pedidos y valor medio del pedido de su organización, comparados con el año pasado",
+        "member_label": "Miembro",
+        "all_members": "Todos los miembros ({count})",
+        "all_members_plain": "Todos los miembros",
+        "members_failed": "No se pudieron cargar los miembros"
       }
     },
     "cart": {

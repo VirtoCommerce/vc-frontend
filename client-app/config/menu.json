@@ -169,6 +169,14 @@
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
             "icon": "user-group"
+          },
+          {
+            "route": {
+              "name": "CompanyReporting"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_reporting",
+            "icon": "presentation-chart-bar",
+            "permission": "xapi:my_organization:order:view"
           }
         ],
         "priority": 30
@@ -338,6 +346,15 @@
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
             "icon": "user-group",
             "priority": 30
+          },
+          {
+            "route": {
+              "name": "CompanyReporting"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_reporting",
+            "icon": "presentation-chart-bar",
+            "priority": 40,
+            "permission": "xapi:my_organization:order:view"
           }
         ]
       }

@@ -390,7 +390,8 @@
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
             "company_info": "@:common.links.company_info",
-            "company_members": "@:common.links.company_members"
+            "company_members": "@:common.links.company_members",
+            "company_reporting": "@:pages.company.reporting.title"
           },
           "settings": "Настройки",
           "currency": "Валюта",
@@ -1705,6 +1706,17 @@
           "invite_revoked": "Приглашение отозвано",
           "invite_resent": "Приглашение отправлено повторно"
         }
+      },
+      "reporting": {
+        "meta": {
+          "title": "@:pages.company.reporting.title"
+        },
+        "title": "Отчётность",
+        "subtitle": "Продажи, заказы и средний чек вашей организации в сравнении с прошлым годом",
+        "member_label": "Участник",
+        "all_members": "Все участники ({count})",
+        "all_members_plain": "Все участники",
+        "members_failed": "Не удалось загрузить участников"
       }
     },
     "cart": {

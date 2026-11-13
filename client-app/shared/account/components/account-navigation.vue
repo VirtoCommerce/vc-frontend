@@ -28,7 +28,7 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 type RenderSectionType = { id: string; title?: string; priority: number; children: ExtendedMenuLinkType[] };
 
-const { isCorporateMember } = useUser();
+const { isCorporateMember, checkPermissions } = useUser();
 const {
   desktopPurchasingMenuItems,
   desktopMarketingMenuItems,
@@ -41,6 +41,11 @@ const {
 // under Company info instead.
 function canShowUserItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);
+}
+
+// A link may name a permission (menu.json `permission`); without it the user does not see the link.
+function isPermitted(item: ExtendedMenuLinkType) {
+  return !item.permission || checkPermissions(item.permission);
 }
 
 // The built-in sections plus any module-registered ones (e.g. the Sales Rep hub), each keeping its
@@ -75,7 +80,7 @@ const sections = computed<RenderSectionType[]>(() => {
         id: "corporate",
         title: corporate.title,
         priority: corporate.priority ?? 30,
-        children: corporate.children ?? [],
+        children: (corporate.children ?? []).filter(isPermitted),
       });
     }
   }
