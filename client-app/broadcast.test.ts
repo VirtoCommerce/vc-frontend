@@ -16,6 +16,7 @@ const h = vi.hoisted(() => ({
   authHeaders: { value: {} },
   fetchUser: vi.fn(),
   user: { value: {} },
+  isAuthenticated: { value: false },
 }));
 
 vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: {} }) }));
@@ -41,7 +42,7 @@ vi.mock("@/core/api/graphql", async () => ({
   getFieldValidationErrors: (await import("@/core/api/graphql/utils")).getFieldValidationErrors,
 }));
 vi.mock("@/shared/account", () => ({
-  useUser: () => ({ fetchUser: h.fetchUser, user: h.user }),
+  useUser: () => ({ fetchUser: h.fetchUser, user: h.user, isAuthenticated: h.isAuthenticated }),
   useSignMeOut: () => ({ signMeOut: vi.fn() }),
 }));
 vi.mock("@/shared/broadcast", async (importOriginal) => ({
@@ -63,6 +64,7 @@ beforeEach(() => {
   h.authHeaders.value = { Authorization: "Bearer token" };
   h.fetchUser.mockReset();
   h.user.value = {};
+  h.isAuthenticated.value = false;
 });
 
 function rejectedInput(field: string): GraphQLFormattedError {
@@ -149,7 +151,8 @@ describe("auth errors", () => {
       routes: [
         { path: "/company/info", name: "CompanyInfo", component: {} },
         { path: ROUTES.SIGN_IN.PATH, name: ROUTES.SIGN_IN.NAME, component: {} },
-        { path: "/403", name: "NoAccess", component: {}, meta: { redirectable: false } },
+        { path: "/403", name: "NoAccess", component: {}, meta: { public: true, redirectable: false } },
+        { path: "/checkout/payment", name: "CheckoutPayment", component: {}, meta: { redirectable: false } },
       ],
     });
     await router.push(PAGE_PATH);
@@ -238,6 +241,40 @@ describe("auth errors", () => {
     await reloadUser();
 
     expect(router.currentRoute.value.fullPath).toBe(PAGE_PATH);
+    expect(h.router.push).not.toHaveBeenCalled();
+  });
+
+  // Checkout can't be a returnUrl, so there is no way back to offer
+  it("sends a session that died on a page with no way back to Sign In without a return", async () => {
+    await router.push("/checkout/payment");
+    h.authHeaders.value = {};
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
+    expect(router.currentRoute.value.query).toEqual({});
+  });
+
+  it("stays on a page with no way back when the reloaded user is still signed in", async () => {
+    await router.push("/checkout/payment");
+    h.isAuthenticated.value = true;
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.fullPath).toBe("/checkout/payment");
+    expect(h.router.push).not.toHaveBeenCalled();
+  });
+
+  it("stays on a public page with no way back", async () => {
+    await router.push("/403");
+    h.authHeaders.value = {};
+
+    await emit(forbiddenEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.fullPath).toBe("/403");
     expect(h.router.push).not.toHaveBeenCalled();
   });
 

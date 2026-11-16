@@ -42,7 +42,7 @@ export function setupBroadcastGlobalListeners() {
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
-  const { fetchUser, user } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { headers: authHeaders } = useAuth();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { getReturnUrl } = useReturnUrl();
@@ -116,9 +116,19 @@ export function setupBroadcastGlobalListeners() {
       return;
     }
 
-    const query = buildRedirectUrl(router.currentRoute.value);
-    if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
-      void router.push({ name: ROUTES.SIGN_IN.NAME, query });
+    const route = router.currentRoute.value;
+
+    if (route.name === ROUTES.SIGN_IN.NAME) {
+      return;
+    }
+
+    const query = buildRedirectUrl(route);
+    // A page that can't be returned to is left only when it needs a session and that session is gone: Sign In sends
+    // a user who is still signed in on to the catalog.
+    const sessionRequiredAndGone = route.meta.redirectable === false && !route.meta.public && !isAuthenticated.value;
+
+    if (query || sessionRequiredAndGone) {
+      void router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
     }
   }
 
