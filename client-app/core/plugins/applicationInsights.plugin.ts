@@ -1,4 +1,4 @@
-import { AppInsightsPlugin } from "vue3-application-insights";
+import { AppInsightsPlugin, useAppInsights } from "vue3-application-insights";
 import { useModuleSettings } from "../composables/useModuleSettings";
 import {
   APP_INSIGHTS_ENABLE_STATE,
@@ -7,7 +7,7 @@ import {
 } from "../constants/modules";
 import type { App, Plugin } from "vue";
 import type { Router } from "vue-router";
-import type { AppInsightsPluginOptions, useAppInsights } from "vue3-application-insights";
+import type { AppInsightsPluginOptions } from "vue3-application-insights";
 
 export interface IApplicationInsightsPluginOptions {
   router?: Router;
@@ -37,12 +37,10 @@ export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOption
           router: pluginOptions?.router,
           trackAppErrors: true,
           trackInitialPageView: true,
-          onLoaded: (instance) => {
-            appInsightsInstance = instance;
-          },
         };
 
         app.use(AppInsightsPlugin, options);
+        appInsightsInstance = app.runWithContext(() => useAppInsights());
       }
     }
   },
