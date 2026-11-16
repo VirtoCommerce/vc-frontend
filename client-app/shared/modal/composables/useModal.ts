@@ -5,6 +5,11 @@ import type { CloseModalHandleType, IModal } from "..";
 const stack = ref<IModal[]>([]);
 const triggerElements = ref<Map<string, HTMLElement>>(new Map());
 
+export function closeAllModals() {
+  stack.value = [];
+  triggerElements.value.clear();
+}
+
 export function useModal() {
   function openModal(options: IModal): CloseModalHandleType {
     const id = options.id ?? uniqueId();

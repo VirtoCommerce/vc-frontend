@@ -23,6 +23,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useFieldErrors } from "@/shared/common";
+import { closeAllModals } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -86,6 +87,7 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
+      closeAllModals();
       await router.replace({
         name: route.params.cartId ? "SharedCart" : "Cart",
         params: { cartId: route.params.cartId },
@@ -130,7 +132,10 @@ export function setupBroadcastGlobalListeners() {
     const sessionGone = wasSignedIn && !isAuthenticated.value;
 
     if (query || (sessionGone && route.meta.redirectable === false && !route.meta.public)) {
-      void router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
+      const navigation = router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
+      closeAllModals();
+      // Awaited so that the run lasts until Sign In is open: the 403 of the same dead session then joins it
+      await navigation;
     }
   }
 
@@ -186,13 +191,24 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(forbiddenEvent, async () => {
-    // Without an access token the request went out anonymous: what is missing is a session, not a permission
     if (!authHeaders.value.Authorization) {
-      await redirectToSignIn();
-      return;
+      // No token while the user is still held as signed in, or while that user is on the way to Sign In: the session
+      // is gone, not the permission
+      if (isAuthenticated.value || signInRedirect) {
+        await redirectToSignIn();
+        return;
+      }
+
+      // The 403 of a dead session can also arrive after its redirect, when only the page tells it from a guest's
+      if (router.currentRoute.value.name === ROUTES.SIGN_IN.NAME) {
+        return;
+      }
     }
 
-    void router.push({ name: "NoAccess" });
+    if (router.currentRoute.value.name !== "NoAccess") {
+      void router.push({ name: "NoAccess" });
+      closeAllModals();
+    }
   });
 
   on(passwordExpiredEvent, () => {
@@ -200,6 +216,7 @@ export function setupBroadcastGlobalListeners() {
 
     if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
       void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
+      closeAllModals();
     }
   });
 

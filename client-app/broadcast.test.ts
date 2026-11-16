@@ -2,7 +2,13 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { ROUTES } from "@/router/routes/constants";
-import { forbiddenEvent, graphqlErrorEvent, unauthorizedErrorEvent } from "@/shared/broadcast";
+import {
+  cartReloadEvent,
+  forbiddenEvent,
+  graphqlErrorEvent,
+  passwordExpiredEvent,
+  unauthorizedErrorEvent,
+} from "@/shared/broadcast";
 import { setupBroadcastGlobalListeners } from "./broadcast";
 import type { INotification } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -15,7 +21,9 @@ const h = vi.hoisted(() => {
     listeners: new Map<string, (data?: unknown) => unknown>(),
     notifyError: vi.fn(),
     report: vi.fn(),
-    router: { currentRoute: { value: {} }, push: vi.fn() },
+    router: { currentRoute: { value: {} }, push: vi.fn(), replace: vi.fn() },
+    client: { refetchQueries: vi.fn(), cache: { gc: vi.fn() } },
+    closeAllModals: vi.fn(),
     authHeaders: { value: {} },
     fetchUser: vi.fn(),
     user,
@@ -28,7 +36,7 @@ const h = vi.hoisted(() => {
   };
 });
 
-vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: {} }) }));
+vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: h.client }) }));
 vi.mock("vue-router", async (importOriginal) => ({
   ...(await importOriginal<typeof import("vue-router")>()),
   useRouter: () => h.router,
@@ -63,6 +71,7 @@ vi.mock("@/shared/broadcast", async (importOriginal) => ({
 vi.mock("@/shared/common", async () => ({
   useFieldErrors: (await import("@/shared/common/composables/useFieldErrors")).useFieldErrors,
 }));
+vi.mock("@/shared/modal", () => ({ closeAllModals: h.closeAllModals }));
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: h.notifyError, update: vi.fn() }) }));
 
 beforeAll(() => {
@@ -128,7 +137,8 @@ describe("graphqlErrorEvent", () => {
   });
 });
 
-// A session that is gone ends on Sign In, whichever of the two events comes first; NoAccess is for a signed-in user
+// A session that is gone ends on Sign In, whichever of the two events comes first. A 403 with nothing to say a session
+// was lost ends on NoAccess, for a signed-in user and for a guest alike.
 describe("auth errors", () => {
   const PAGE_PATH = "/company/info?page=2";
   const PASSWORD_AND_LOCK_FLAGS = ["forcePasswordChange", "passwordExpired", "lockedState"];
@@ -168,6 +178,7 @@ describe("auth errors", () => {
 
     h.router.currentRoute = router.currentRoute;
     h.router.push.mockReset().mockImplementation((to: RouteLocationRaw) => router.push(to));
+    h.closeAllModals.mockReset();
 
     pendingUserReloads = [];
     reloadedUser = { userName: "Anonymous" };
@@ -192,7 +203,17 @@ describe("auth errors", () => {
     expect(h.fetchUser).not.toHaveBeenCalled();
   });
 
-  it("sends a client without an access token to Sign In with a return to the page, once the user is reloaded", async () => {
+  it("sends a guest to NoAccess without reloading the user", async () => {
+    h.authHeaders.value = {};
+
+    await emit(forbiddenEvent);
+
+    expect(router.currentRoute.value.name).toBe("NoAccess");
+    expect(h.fetchUser).not.toHaveBeenCalled();
+  });
+
+  it("sends a user whose access token is gone to Sign In with a return to the page, once the user is reloaded", async () => {
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
 
     await emit(forbiddenEvent);
@@ -218,6 +239,7 @@ describe("auth errors", () => {
       forbidden: () => emit(forbiddenEvent),
       me: reloadUser,
     };
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
 
     for (const step of steps) {
@@ -230,7 +252,27 @@ describe("auth errors", () => {
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
   });
 
+  // Sign In is a lazy route: the 403 can arrive after `me` and before the page has opened
+  it("keeps a 403 that arrives while Sign In is opening from ending on NoAccess", async () => {
+    let openSignIn = (): void => {};
+    h.router.push.mockImplementation(
+      (to: RouteLocationRaw) => new Promise((resolve) => (openSignIn = () => resolve(router.push(to)))),
+    );
+    h.user.value = SIGNED_IN_USER;
+    h.authHeaders.value = {};
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+    await emit(forbiddenEvent);
+    openSignIn();
+    await flushPromises();
+
+    expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
+    expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
+  });
+
   it("shares one user reload between the two events", async () => {
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
 
     await emit(unauthorizedErrorEvent);
@@ -243,6 +285,7 @@ describe("auth errors", () => {
   it.each(
     [unauthorizedErrorEvent, forbiddenEvent].flatMap((event) => PASSWORD_AND_LOCK_FLAGS.map((flag) => [event, flag])),
   )("stays on the page after %s when the reloaded user has %s", async (event, flag) => {
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
     reloadedUser = { [flag]: true };
 
@@ -264,6 +307,7 @@ describe("auth errors", () => {
 
     expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
     expect(router.currentRoute.value.query).toEqual({});
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
   });
 
   it("stays on a page with no way back when the reloaded user is still signed in", async () => {
@@ -276,6 +320,7 @@ describe("auth errors", () => {
 
     expect(router.currentRoute.value.fullPath).toBe("/checkout/payment");
     expect(h.router.push).not.toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
   });
 
   // A store open to anonymous users lets a guest check out: no session died, so the checkout is not theirs to lose
@@ -283,7 +328,7 @@ describe("auth errors", () => {
     await router.push("/checkout/payment");
     h.authHeaders.value = {};
 
-    await emit(forbiddenEvent);
+    await emit(unauthorizedErrorEvent);
     await reloadUser();
 
     expect(router.currentRoute.value.fullPath).toBe("/checkout/payment");
@@ -302,7 +347,7 @@ describe("auth errors", () => {
     expect(h.router.push).not.toHaveBeenCalled();
   });
 
-  it("stays on Sign In when a request made there is forbidden", async () => {
+  it("stays on Sign In when a request made there without a token is forbidden", async () => {
     await router.push(ROUTES.SIGN_IN.PATH);
     h.authHeaders.value = {};
 
@@ -311,5 +356,111 @@ describe("auth errors", () => {
 
     expect(router.currentRoute.value.fullPath).toBe(ROUTES.SIGN_IN.PATH);
     expect(h.router.push).not.toHaveBeenCalled();
+  });
+});
+
+// A forced redirect leaves no modal of the page being left on top of the page it opens
+describe("forced redirects", () => {
+  const PAGE = { name: "Orders", fullPath: "/account/orders", query: {}, matched: [] };
+
+  let settleNavigation: () => void;
+
+  // Not awaited: a handler may wait for its navigation
+  async function emit(event: string) {
+    void h.listeners.get(event)?.();
+    await flushPromises();
+  }
+
+  beforeEach(() => {
+    h.router.currentRoute = { value: PAGE };
+    // The navigation settles only after the test, so the modals must close without waiting for it
+    const navigation = new Promise<void>((resolve) => (settleNavigation = resolve));
+    h.router.push.mockReset().mockReturnValue(navigation);
+    h.router.replace.mockReset().mockReturnValue(navigation);
+    h.client.refetchQueries.mockReset();
+    h.user.value = {};
+    h.closeAllModals.mockReset();
+  });
+
+  // A redirect still waiting for its navigation would be shared with the next test
+  afterEach(async () => {
+    settleNavigation();
+    await flushPromises();
+  });
+
+  it("closes the modals when an unauthorized error sends the user to Sign In", async () => {
+    await emit(unauthorizedErrorEvent);
+
+    expect(h.router.push).toHaveBeenCalledWith(expect.objectContaining({ name: ROUTES.SIGN_IN.NAME }));
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it.each(["forcePasswordChange", "passwordExpired", "lockedState"])(
+    "keeps the modals on an unauthorized error when the user has %s",
+    async (flag) => {
+      h.user.value = { [flag]: true };
+
+      await emit(unauthorizedErrorEvent);
+
+      expect(h.router.push).not.toHaveBeenCalled();
+      expect(h.closeAllModals).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps the modals on an unauthorized error when Sign In is already open", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: ROUTES.SIGN_IN.NAME, fullPath: ROUTES.SIGN_IN.PATH };
+
+    await emit(unauthorizedErrorEvent);
+
+    expect(h.router.push).not.toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
+  });
+
+  it("closes the modals when access is forbidden", async () => {
+    await emit(forbiddenEvent);
+
+    expect(h.router.push).toHaveBeenCalledWith({ name: "NoAccess" });
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the modals when access is forbidden and NoAccess is already open", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: "NoAccess", fullPath: "/403" };
+
+    await emit(forbiddenEvent);
+
+    expect(h.router.push).not.toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
+  });
+
+  it("closes the modals when a cart change sends the user from Checkout to Cart", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: "Shipping", params: {}, matched: [{ name: "Checkout" }] };
+
+    await emit(cartReloadEvent);
+
+    expect(h.router.replace).toHaveBeenCalledWith(expect.objectContaining({ name: "Cart" }));
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the modals when the cart changes outside Checkout", async () => {
+    await emit(cartReloadEvent);
+
+    expect(h.client.refetchQueries).toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
+  });
+
+  it("closes the modals when an expired password sends the user to Change Password", async () => {
+    await emit(passwordExpiredEvent);
+
+    expect(h.router.push).toHaveBeenCalledWith(expect.objectContaining({ name: ROUTES.CHANGE_PASSWORD.NAME }));
+    expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the modals on an expired password when Change Password is already open", async () => {
+    h.router.currentRoute.value = { ...PAGE, name: ROUTES.CHANGE_PASSWORD.NAME, fullPath: ROUTES.CHANGE_PASSWORD.PATH };
+
+    await emit(passwordExpiredEvent);
+
+    expect(h.router.push).not.toHaveBeenCalled();
+    expect(h.closeAllModals).not.toHaveBeenCalled();
   });
 });
