@@ -12,6 +12,7 @@ import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
+import uiKitDebt from "./.ui-kit-boundary-debt.cjs";
 
 const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
 
@@ -28,6 +29,16 @@ const NO_HOST_INTERNAL_IMPORT = {
   selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
   message:
     "A module reached into a host '_internal/' folder. Those are private: once a module depends on one, the host can no longer restyle its own chrome without breaking it, and a module shipping as a Module Federation plugin cannot follow the host's refactors at all. Contribute through an extension point instead - see shared/common/composables/extensionRegistry/README.md.",
+};
+
+/**
+ * The `no-ui-kit-to-host` rule of .dependency-cruiser.cjs, restated for the same reason: `import type`.
+ * Matches `@/<anything but ui-kit>`; relative paths leaving ui-kit are left to dependency-cruiser.
+ */
+const NO_UI_KIT_TO_HOST_IMPORT = {
+  selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/^@\\W(?!ui-kit(\\W|$))/]`,
+  message:
+    "ui-kit imported something from the rest of client-app. ui-kit is the lowest layer and is becoming a separate package, so it can't depend on the theme: use ui-kit's own types and helpers, or take a theme service through the uiKit plugin options.",
 };
 
 const tsconfigRootDir = import.meta.dirname;
@@ -472,6 +483,14 @@ export default defineConfigWithVueTs(
     ],
     rules: {
       "no-restricted-syntax": ["error", NO_HOST_INTERNAL_IMPORT],
+    },
+  },
+  {
+    files: ["client-app/ui-kit/**/*.ts", "client-app/ui-kit/**/*.vue"],
+    // Known debt, the same list dependency-cruiser exempts. Do not add more.
+    ignores: uiKitDebt.uiKitToHost,
+    rules: {
+      "no-restricted-syntax": ["error", NO_UI_KIT_TO_HOST_IMPORT],
     },
   },
   {

@@ -1,3 +1,7 @@
+const uiKitDebt = require("./.ui-kit-boundary-debt.cjs");
+
+const toPathRegex = (file) => `^${file.replace(/[.]/g, "[.]")}$`;
+
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
@@ -228,6 +232,53 @@ module.exports = {
       to: {
         path: "^client-app/modules/returns/",
         pathNot: "^client-app/modules/returns/index[.]ts$",
+      },
+    },
+    // The ui-kit → host half is restated in eslint.config.js, where `import type` is visible.
+    {
+      name: "no-ui-kit-to-host",
+      comment:
+        "ui-kit imported something from the rest of client-app. ui-kit is the lowest layer and is becoming " +
+        "a separate package, so it can't depend on the theme: use ui-kit's own types and helpers, or take " +
+        "a theme service through the uiKit plugin options. Files in .ui-kit-boundary-debt.cjs are known debt; " +
+        "do not add more.",
+      severity: "error",
+      from: {
+        path: "^client-app/ui-kit/",
+        pathNot: uiKitDebt.uiKitToHost.map(toPathRegex),
+      },
+      to: {
+        path: "^client-app/",
+        pathNot: "^client-app/ui-kit/",
+      },
+    },
+    {
+      name: "no-host-to-ui-kit-internals",
+      comment:
+        "A file outside ui-kit imported a ui-kit file past its public entries. Once ui-kit is a package, " +
+        "every such file becomes package API. Import from @/ui-kit, its components / atoms / molecules / " +
+        "organisms / templates, composables, constants, enums, types or utilities index, or an asset in " +
+        "icons, images, locales or styles; add a missing export to the index. Tests and stories are exempt. " +
+        "Files in .ui-kit-boundary-debt.cjs are known debt; do not add more.",
+      severity: "error",
+      from: {
+        path: "^client-app/",
+        pathNot: [
+          "^client-app/ui-kit/",
+          "[.](test|test-d|stories)[.]ts$",
+          "/__tests__/",
+          ...uiKitDebt.hostToUiKitInternals.map(toPathRegex),
+        ],
+      },
+      to: {
+        path: "^client-app/ui-kit/",
+        pathNot: [
+          "^client-app/ui-kit/index[.]ts$",
+          "^client-app/ui-kit/(components|composables|constants|enums|utilities)/index[.]ts$",
+          "^client-app/ui-kit/components/(atoms|molecules|organisms|templates)/index[.]ts$",
+          "^client-app/ui-kit/types/index[.]d[.]ts$",
+          "^client-app/ui-kit/(icons|images|locales|styles)/",
+        ],
       },
     },
   ],
