@@ -1127,8 +1127,7 @@
       },
       "share_wishlist_modal": {
         "title": "Condividi “{listName}”",
-        "who_can_access_label": "Chi ha accesso",
-        "scope_selected": "{label}, selezionato"
+        "who_can_access_label": "Chi ha accesso"
       },
       "stop_sharing_modal": {
         "title": "Interrompere la condivisione di questa lista?",
