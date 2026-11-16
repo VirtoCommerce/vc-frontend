@@ -1,13 +1,15 @@
 import { globals } from "../../globals";
 import { getCategoryRoute } from "../categories";
+import { isSafeLinkUrl } from "../common";
 import type { ExtendedMenuLinkType } from "../../types";
 import type { Category, MenuLinkType } from "@/core/api/graphql/types";
 
+/** Menus are edited content: a link that would run script opens nothing. */
 export function convertToExtendedMenuLink(item: MenuLinkType, isCatalogItem?: boolean): ExtendedMenuLinkType {
   return {
     isCatalogItem,
     title: item.title,
-    route: item.url,
+    route: isSafeLinkUrl(item.url) ? item.url : undefined,
     children: item.childItems?.map((child) => convertToExtendedMenuLink(child, isCatalogItem)),
     priority: item.priority,
   };

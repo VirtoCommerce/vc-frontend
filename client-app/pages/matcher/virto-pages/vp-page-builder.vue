@@ -13,11 +13,11 @@
     </div>
 
     <template v-for="item in pageBuilderContent.content">
-      <component
-        :is="getBlockType(item.type)"
+      <PageBuilderSection
         v-if="!item.hidden"
         :key="item.id"
-        v-bind="item"
+        :component="getRegisteredSection(templateBlocks, getBlockType(item.type))"
+        :item="item"
         :id="getAnchorId(item)"
         :model="item"
         :settings="pageBuilderContent.settings"
@@ -30,13 +30,20 @@
 import { shallowRef, computed, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { getAnchorId, useAnchorScroll } from "@/shared/static-content";
+import {
+  getAnchorId,
+  getRegisteredSection,
+  PageBuilderSection,
+  templateBlocks,
+  useAnchorScroll,
+} from "@/shared/static-content";
 
 interface IProps {
   content?: string;
 }
 
 type BlockType = {
+  id?: string;
   type: string;
   [key: string]: unknown;
 };

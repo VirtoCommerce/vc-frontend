@@ -18,7 +18,9 @@ vi.mock("vue-router", () => ({
 }));
 
 vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => ref([]) }));
-vi.mock("@/plugins/builder-preview/block-mapping", () => ({ getBlockType: () => "TextBlock" }));
+vi.mock("@/plugins/builder-preview/block-mapping", () => ({
+  getBlockType: (type: string) => (type === "text-block" ? "section" : type),
+}));
 
 const { scrollToAnchor } = vi.hoisted(() => ({ scrollToAnchor: vi.fn(() => Promise.resolve(true)) }));
 
@@ -33,18 +35,22 @@ vi.mock("@/shared/static-content/anchors", async () => {
 vi.mock("@/shared/static-content", async () => {
   const anchors = await import("@/shared/static-content/anchors");
   const { useAnchorScroll } = await import("@/shared/static-content/composables/useAnchorScroll");
+  const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
+  const { getRegisteredSection } = await import("@/shared/static-content/sections");
+  const { defineComponent, h } = await import("vue");
+  const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
 
-  return { ...anchors, useAnchorScroll };
+  return { ...anchors, useAnchorScroll, getRegisteredSection, PageBuilderSection, templateBlocks: { section } };
 });
 
 function page(id: string, name = "page-a") {
   return JSON.stringify({ settings: { name }, content: [{ id, type: "text-block" }] });
 }
 
-function render() {
+function render(content = page("text2")) {
   return mount(VPPageBuilder, {
-    props: { content: page("text2") },
-    global: { stubs: { VcBreadcrumbs: true, VcTypography: true, TextBlock: true } },
+    props: { content },
+    global: { stubs: { VcBreadcrumbs: true, VcTypography: true } },
   });
 }
 
@@ -76,5 +82,28 @@ describe("VPPageBuilder", () => {
     await wrapper.setProps({ content: page("text2", "page-b") });
 
     expect(scrollToAnchor).toHaveBeenCalledWith("#text2");
+  });
+
+  it("does not render a section of an unregistered type", () => {
+    const wrapper = render(
+      JSON.stringify({ settings: { hideBreadcrumbs: true }, content: [{ id: "unknown", type: "iframe" }] }),
+    );
+
+    expect(wrapper.find("#unknown").exists()).toBe(false);
+    expect(wrapper.find("iframe").exists()).toBe(false);
+  });
+
+  it("passes only declared settings to a section", () => {
+    const wrapper = render(
+      JSON.stringify({
+        settings: { hideBreadcrumbs: true },
+        content: [{ id: "known", type: "text-block", title: "Title", onmouseover: "alert(1)", style: "color: red" }],
+      }),
+    );
+
+    const section = wrapper.find("#known");
+    expect(section.text()).toBe("Title");
+    expect(section.attributes("onmouseover")).toBeUndefined();
+    expect(section.attributes("style")).toBeUndefined();
   });
 });
