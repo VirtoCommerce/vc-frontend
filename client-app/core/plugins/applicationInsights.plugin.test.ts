@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { App } from "vue";
+import type { AppInsightsPluginOptions } from "vue3-application-insights";
 
 const moduleSettings = vi.hoisted<{ enabled: boolean; instrumentationKey?: string }>(() => ({
   enabled: true,
@@ -14,15 +15,12 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
   }),
 }));
 
-// Same contract as the real plugin: the instance is provided to the app, and `useAppInsights` injects it.
-vi.mock("vue3-application-insights", async () => {
-  const { inject } = await import("vue");
-  const injectKey = Symbol("appInsights");
-  return {
-    AppInsightsPlugin: { install: (app: App) => app.provide(injectKey, appInsights) },
-    useAppInsights: () => inject(injectKey),
-  };
-});
+// Same contract as the real plugin: it hands the instance to `onLoaded` while it is being installed.
+vi.mock("vue3-application-insights", () => ({
+  AppInsightsPlugin: {
+    install: (_app: App, options: AppInsightsPluginOptions) => options.onLoaded?.(appInsights as never),
+  },
+}));
 
 /** Installs a fresh copy of the plugin, so the instance it keeps never carries over between tests. */
 async function install(): Promise<typeof import("./applicationInsights.plugin")> {
