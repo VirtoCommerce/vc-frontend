@@ -34,6 +34,14 @@ vi.mock("@/shared/account/composables/useUser", () => ({
 vi.mock("./search-bar/search-bar.vue", () => ({ default: { name: "SearchBar", render: () => null } }));
 vi.mock("./catalog-menu.vue", () => ({ default: { name: "CatalogMenu", render: () => null } }));
 
+// A link with a count names itself through useI18n (useHeaderCountLabel), which needs no installed plugin here.
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string, params?: { title: string; count: string }) => (params ? `${params.title}: ${params.count}` : key),
+    n: (value: number) => String(value),
+  }),
+}));
+
 const VcBadgeStub = { name: "VcBadge", template: "<span><slot /></span>" };
 
 function mountHeader() {
@@ -65,7 +73,11 @@ describe("BottomHeader", () => {
   it("shows the count a headerMenu entry contributes as a badge on the host's link", () => {
     h.entries = { headerMenu: { "my-list": { use: () => ({ count: 4 }) } } };
 
-    expect(mountHeader().getComponent(VcBadgeStub).text()).toBe("4");
+    const wrapper = mountHeader();
+
+    expect(wrapper.getComponent(VcBadgeStub).text()).toBe("4");
+    // The badge is hidden from assistive technology, so the count also goes into the link's name.
+    expect(wrapper.get('a[aria-label="My list: 4"]').text()).toContain("My list");
   });
 
   it("repaints the badge when the contributed count changes", async () => {
