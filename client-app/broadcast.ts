@@ -110,6 +110,8 @@ export function setupBroadcastGlobalListeners() {
 
   // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded first
   async function reloadUserAndRedirectToSignIn(): Promise<void> {
+    const wasSignedIn = isAuthenticated.value;
+
     await fetchUser();
 
     if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
@@ -123,11 +125,11 @@ export function setupBroadcastGlobalListeners() {
     }
 
     const query = buildRedirectUrl(route);
-    // A page that can't be returned to is left only when it needs a session and that session is gone: Sign In sends
-    // a user who is still signed in on to the catalog.
-    const sessionRequiredAndGone = route.meta.redirectable === false && !route.meta.public && !isAuthenticated.value;
+    // A page that can't be returned to is left only by a user whose session is gone: a guest stays on their checkout,
+    // and Sign In sends a user who is still signed in on to the catalog.
+    const sessionGone = wasSignedIn && !isAuthenticated.value;
 
-    if (query || sessionRequiredAndGone) {
+    if (query || (sessionGone && route.meta.redirectable === false && !route.meta.public)) {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
     }
   }
@@ -184,7 +186,7 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(forbiddenEvent, async () => {
-    // Without an access token the request went out anonymous: the session is gone, not the permission
+    // Without an access token the request went out anonymous: what is missing is a session, not a permission
     if (!authHeaders.value.Authorization) {
       await redirectToSignIn();
       return;

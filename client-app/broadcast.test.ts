@@ -8,16 +8,25 @@ import type { INotification } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
 import type { RouteLocationRaw, Router } from "vue-router";
 
-const h = vi.hoisted(() => ({
-  listeners: new Map<string, (data?: unknown) => unknown>(),
-  notifyError: vi.fn(),
-  report: vi.fn(),
-  router: { currentRoute: { value: {} }, push: vi.fn() },
-  authHeaders: { value: {} },
-  fetchUser: vi.fn(),
-  user: { value: {} },
-  isAuthenticated: { value: false },
-}));
+const h = vi.hoisted(() => {
+  const user: { value: Record<string, unknown> } = { value: {} };
+
+  return {
+    listeners: new Map<string, (data?: unknown) => unknown>(),
+    notifyError: vi.fn(),
+    report: vi.fn(),
+    router: { currentRoute: { value: {} }, push: vi.fn() },
+    authHeaders: { value: {} },
+    fetchUser: vi.fn(),
+    user,
+    // As in `useUser`: derived from the loaded user, so a reload is what changes it
+    isAuthenticated: {
+      get value() {
+        return !!user.value.userName && user.value.userName !== "Anonymous";
+      },
+    },
+  };
+});
 
 vi.mock("@vue/apollo-composable", () => ({ useApolloClient: () => ({ client: {} }) }));
 vi.mock("vue-router", async (importOriginal) => ({
@@ -64,7 +73,6 @@ beforeEach(() => {
   h.authHeaders.value = { Authorization: "Bearer token" };
   h.fetchUser.mockReset();
   h.user.value = {};
-  h.isAuthenticated.value = false;
 });
 
 function rejectedInput(field: string): GraphQLFormattedError {
@@ -124,6 +132,7 @@ describe("graphqlErrorEvent", () => {
 describe("auth errors", () => {
   const PAGE_PATH = "/company/info?page=2";
   const PASSWORD_AND_LOCK_FLAGS = ["forcePasswordChange", "passwordExpired", "lockedState"];
+  const SIGNED_IN_USER = { userName: "jane" };
 
   let router: Router;
   let pendingUserReloads: (() => void)[];
@@ -247,6 +256,7 @@ describe("auth errors", () => {
   // Checkout can't be a returnUrl, so there is no way back to offer
   it("sends a session that died on a page with no way back to Sign In without a return", async () => {
     await router.push("/checkout/payment");
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
 
     await emit(unauthorizedErrorEvent);
@@ -258,7 +268,8 @@ describe("auth errors", () => {
 
   it("stays on a page with no way back when the reloaded user is still signed in", async () => {
     await router.push("/checkout/payment");
-    h.isAuthenticated.value = true;
+    h.user.value = SIGNED_IN_USER;
+    reloadedUser = SIGNED_IN_USER;
 
     await emit(unauthorizedErrorEvent);
     await reloadUser();
@@ -267,8 +278,21 @@ describe("auth errors", () => {
     expect(h.router.push).not.toHaveBeenCalled();
   });
 
+  // A store open to anonymous users lets a guest check out: no session died, so the checkout is not theirs to lose
+  it("leaves a guest on a page with no way back", async () => {
+    await router.push("/checkout/payment");
+    h.authHeaders.value = {};
+
+    await emit(forbiddenEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.fullPath).toBe("/checkout/payment");
+    expect(h.router.push).not.toHaveBeenCalled();
+  });
+
   it("stays on a public page with no way back", async () => {
     await router.push("/403");
+    h.user.value = SIGNED_IN_USER;
     h.authHeaders.value = {};
 
     await emit(forbiddenEvent);
