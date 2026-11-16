@@ -32,6 +32,7 @@
         with-image
         with-properties
         with-price
+        show-placed-price
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >

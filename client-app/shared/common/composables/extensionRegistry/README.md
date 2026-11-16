@@ -5,6 +5,9 @@
 1. Plug extra Vue components into fixed UI slots without touching core code.
 2. Add new extension points anywhere in the app quickly.
 
+A widget on a dashboard the user arranges (the account dashboard, a plugin's own) joins through `registerBlock`
+instead: [S9 · Add a widget to a dashboard](../../../../core/federation/scenarios/s9-add-a-dashboard-widget.md).
+
 ---
 
 ## Core pieces

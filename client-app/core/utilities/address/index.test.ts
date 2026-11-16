@@ -66,13 +66,13 @@ describe("toInputAddress", () => {
   it("should throw an error when address is null", () => {
     expect(() => {
       toInputAddress(null as unknown as AnyAddressType);
-    }).toThrowError();
+    }).toThrow();
   });
 
   it("should throw an error when address is undefined", () => {
     expect(() => {
       toInputAddress(undefined as unknown as AnyAddressType);
-    }).toThrowError();
+    }).toThrow();
   });
 });
 
@@ -112,13 +112,13 @@ describe("getAddressName", () => {
   it("should throw an error when address is null", () => {
     expect(() => {
       getAddressName(null as unknown as AnyAddressType);
-    }).toThrowError();
+    }).toThrow();
   });
 
   it("should throw an error when address is undefined", () => {
     expect(() => {
       getAddressName(undefined as unknown as AnyAddressType);
-    }).toThrowError();
+    }).toThrow();
   });
 });
 
@@ -177,7 +177,7 @@ describe("stringifyAddress", () => {
   });
 
   it("should return empty string when address is null", () => {
-    const result = stringifyAddress(null as unknown as AnyAddressType);
+    const result = stringifyAddress(null);
 
     expect(result).toBe("");
   });
