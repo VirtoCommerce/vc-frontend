@@ -1,0 +1,65 @@
+// Soft headings: the heading face a step lighter, without capitals, on the design's type scale.
+// The large ones step up from `lg`.
+.vc-typography {
+  &--variant {
+    &--h1,
+    &--h2,
+    &--h3,
+    &--h4,
+    &--h5,
+    &--h6 {
+      --vc-typography-font-weight: 600;
+      --vc-typography-text-transform: none;
+    }
+
+    &--h1 {
+      --vc-typography-font-size: 1.875rem;
+      --vc-typography-line-height: 2.125rem;
+      --vc-typography-letter-spacing: -0.03em;
+
+      @media (width >= theme("screens.lg")) {
+        --vc-typography-font-size: 2rem;
+        --vc-typography-line-height: 2.25rem;
+      }
+    }
+
+    &--h2 {
+      --vc-typography-font-size: 1.5rem;
+      --vc-typography-line-height: 1.875rem;
+      --vc-typography-letter-spacing: -0.025em;
+
+      @media (width >= theme("screens.lg")) {
+        --vc-typography-font-size: 1.625rem;
+        --vc-typography-line-height: 2rem;
+      }
+    }
+
+    &--h3 {
+      --vc-typography-font-size: 1.25rem;
+      --vc-typography-line-height: 1.625rem;
+      --vc-typography-letter-spacing: -0.02em;
+
+      @media (width >= theme("screens.lg")) {
+        --vc-typography-line-height: 1.75rem;
+      }
+    }
+
+    &--h4 {
+      --vc-typography-font-size: 1.125rem;
+      --vc-typography-line-height: 1.5rem;
+      --vc-typography-letter-spacing: -0.015em;
+    }
+
+    &--h5 {
+      --vc-typography-font-size: 1rem;
+      --vc-typography-line-height: 1.375rem;
+      --vc-typography-letter-spacing: -0.01em;
+    }
+
+    &--h6 {
+      --vc-typography-font-size: 0.875rem;
+      --vc-typography-line-height: 1.25rem;
+      --vc-typography-letter-spacing: -0.006em;
+    }
+  }
+}
