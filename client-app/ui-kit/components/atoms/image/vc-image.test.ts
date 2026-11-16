@@ -16,13 +16,13 @@ function mountImage(options?: IUiKitOptions) {
 
 describe("VcImage thumbnails", () => {
   it("shows src as is when the app passes no image options", () => {
-    expect(mountImage().get("img").attributes("src")).toBe(SRC);
+    expect(mountImage().attributes("src")).toBe(SRC);
   });
 
   it("appends the size suffix when thumbnails are enabled", () => {
     const wrapper = mountImage({ image: { thumbnails: () => ({ enabled: true, suffixes: SUFFIXES }) } });
 
-    expect(wrapper.get("img").attributes("src")).toBe("https://cdn.example.com/catalog/phone_md.png");
+    expect(wrapper.attributes("src")).toBe("https://cdn.example.com/catalog/phone_md.png");
   });
 
   it("falls back to the original image when the thumbnail fails and the fallback is enabled", async () => {
@@ -30,8 +30,8 @@ describe("VcImage thumbnails", () => {
       image: { thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: SUFFIXES } },
     });
 
-    await wrapper.get("img").trigger("error");
+    await wrapper.trigger("error");
 
-    expect(wrapper.get("img").attributes("src")).toBe(SRC);
+    expect(wrapper.attributes("src")).toBe(SRC);
   });
 });

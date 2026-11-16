@@ -60,5 +60,7 @@ How the rest of the app uses the kit is in `ui-kit.md`.
 
 ## Legacy — don't flag, don't copy
 
+- Enums in `ui-kit/enums` (`AddToCartModeType`, `ContentType`): `ContentType` moved from core and stays an enum because
+  `@/core/enums` and the `@vc-frontend/core` facade re-export it as a runtime value.
 - Existing cross-component selectors (`@at-root .vc-product-card`, `@at-root .vc-button` in `vc-icon`,
   `.vc-popover__body:has(...)`, `vc-line-item`'s `:has(.vc-*)`) — don't add new ones.

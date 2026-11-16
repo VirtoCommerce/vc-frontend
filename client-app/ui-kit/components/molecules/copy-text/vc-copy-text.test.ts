@@ -18,7 +18,7 @@ function mountCopyText(options?: IUiKitOptions) {
     global: {
       provide: options ? { [uiKitOptionsKey]: options } : {},
       mocks: { $t: (key: string) => key },
-      stubs: { VcButton: { template: "<button @click=\"$emit('click')\" />" } },
+      stubs: { VcButton: true },
     },
   });
 }
@@ -27,7 +27,8 @@ describe("VcCopyText", () => {
   it("copies without a toast when the app passes no notifications", async () => {
     copy.mockClear();
 
-    await mountCopyText().get("button").trigger("click");
+    mountCopyText().findComponent({ name: "VcButton" }).vm.$emit("click");
+    await vi.waitFor(() => expect(copy).toHaveBeenCalled());
 
     expect(copy).toHaveBeenCalledWith("ORDER-42");
   });
@@ -35,7 +36,7 @@ describe("VcCopyText", () => {
   it("shows the success toast through the app's notifications", async () => {
     const notifications: VcNotificationsType = { info: vi.fn(), success: vi.fn(), warning: vi.fn(), error: vi.fn() };
 
-    await mountCopyText({ notifications }).get("button").trigger("click");
+    mountCopyText({ notifications }).findComponent({ name: "VcButton" }).vm.$emit("click");
     await vi.waitFor(() => expect(notifications.success).toHaveBeenCalled());
 
     expect(notifications.success).toHaveBeenCalledWith({ text: "Copied", duration: 4000, single: true });
