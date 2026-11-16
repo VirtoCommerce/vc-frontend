@@ -1,10 +1,12 @@
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import {
   BARCODE_SCANNER_ENABLED_SETTING,
   BARCODE_SCANNER_SELECTOR,
+  SEARCH_INPUT_SELECTOR,
   SEARCH_PHRASE_SELECTOR,
   routeQuery,
   searchBarStubs,
@@ -54,16 +56,24 @@ vi.mock("vue-router", async () => {
   return createRouterMock();
 });
 
-vi.mock("@/shared/layout/composables/useSearchBar", () => ({
-  useSearchBar: () => ({
-    searchDropdownVisible: ref(false),
-    loading: ref(false),
-    maxSearchLength: ref(100),
-    hideSearchDropdown: vi.fn(),
-    showSearchDropdown: vi.fn(),
-    clearSearchResults: vi.fn(),
-  }),
-}));
+vi.mock("@/shared/layout/composables/useSearchBar", () => {
+  const searchDropdownVisible = ref(false);
+
+  return {
+    useSearchBar: () => ({
+      searchDropdownVisible,
+      loading: ref(false),
+      maxSearchLength: ref(100),
+      hideSearchDropdown: () => {
+        searchDropdownVisible.value = false;
+      },
+      showSearchDropdown: () => {
+        searchDropdownVisible.value = true;
+      },
+      clearSearchResults: vi.fn(),
+    }),
+  };
+});
 
 vi.mock("../search-dropdown.vue", () => ({
   default: defineComponent({
@@ -90,6 +100,7 @@ const PLACEHOLDER_SELECTOR = '[data-testid="placeholder"]';
 const DROPDOWN_SELECTOR = '[data-testid="search-dropdown"]';
 
 const { searchScopeData, preparingScope, holdScope } = useSearchScore();
+const { searchDropdownVisible, showSearchDropdown, hideSearchDropdown } = useSearchBar();
 
 let scopeReleases: (() => void)[] = [];
 
@@ -108,8 +119,9 @@ function setCategoryScope(id: string, label: string) {
 
 let mountedWrapper: VueWrapper | undefined;
 
-function createComponent() {
+function createComponent(options: { attachTo?: HTMLElement } = {}) {
   mountedWrapper = mount(SearchBar, {
+    attachTo: options.attachTo,
     global: {
       stubs: searchBarStubs,
       mocks: { $t: mockTranslate },
@@ -124,6 +136,7 @@ beforeEach(() => {
   routeQuery.value = {};
   searchScopeData.value = { queryScope: "", searchScope: [] };
   preparingScope.value = false;
+  hideSearchDropdown();
 });
 
 afterEach(() => {
@@ -177,6 +190,54 @@ describe("SearchBar scope indicators", () => {
     const chips = wrapper.findAll("[data-search-scope]");
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe("Parent category");
+  });
+});
+
+describe("SearchBar scope chip removal", () => {
+  async function removeChip(wrapper: VueWrapper) {
+    const chip = wrapper.get<HTMLButtonElement>("[data-search-scope]");
+
+    chip.element.focus();
+    await chip.trigger("click");
+  }
+
+  it("moves focus to the search input", async () => {
+    setCategoryScope("printers", "Printers");
+    const wrapper = createComponent({ attachTo: document.body });
+
+    await removeChip(wrapper);
+
+    expect(wrapper.findAll("[data-search-scope]")).toHaveLength(0);
+    expect(document.activeElement).toBe(wrapper.get(SEARCH_INPUT_SELECTOR).element);
+  });
+
+  it("keeps the search dropdown closed when it was closed", async () => {
+    setCategoryScope("printers", "Printers");
+    const wrapper = createComponent({ attachTo: document.body });
+
+    await removeChip(wrapper);
+
+    expect(searchDropdownVisible.value).toBe(false);
+  });
+
+  it("keeps the search dropdown open when it was open", async () => {
+    setCategoryScope("printers", "Printers");
+    showSearchDropdown();
+    const wrapper = createComponent({ attachTo: document.body });
+
+    await removeChip(wrapper);
+
+    expect(searchDropdownVisible.value).toBe(true);
+  });
+
+  it("opens the search dropdown on a click in the input that kept focus", async () => {
+    setCategoryScope("printers", "Printers");
+    const wrapper = createComponent({ attachTo: document.body });
+
+    await removeChip(wrapper);
+    await wrapper.get(SEARCH_INPUT_SELECTOR).trigger("click");
+
+    expect(searchDropdownVisible.value).toBe(true);
   });
 });
 
