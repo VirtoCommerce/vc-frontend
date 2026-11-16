@@ -7,7 +7,6 @@ const h = vi.hoisted(() => {
   const state = {} as {
     members: {
       options: { value: OrganizationMemberOptionType[] };
-      totalCount: { value: number };
       loading: { value: boolean };
       failed: { value: boolean };
     };
@@ -35,7 +34,6 @@ function run() {
 beforeEach(() => {
   h.members = {
     options: ref([ALICE, BOB, CAROL]),
-    totalCount: ref(3),
     loading: ref(false),
     failed: ref(false),
   };
@@ -45,17 +43,6 @@ beforeEach(() => {
 describe("useOrganizationBuyerOptions", () => {
   it("offers only the members one of whose accounts has ordered, ignoring the id's case", () => {
     expect(run().options.value).toEqual([ALICE, BOB]);
-  });
-
-  it("counts the buyers when the member list is complete", () => {
-    expect(run().totalCount.value).toBe(2);
-  });
-
-  // Past the limit some members are not loaded: the organization's count keeps a caller from taking the list as whole.
-  it("keeps the organization's count when the member list is cut off", () => {
-    h.members.totalCount.value = 500;
-
-    expect(run().totalCount.value).toBe(500);
   });
 
   it("offers every member until the orders are known, and when they cannot be read", () => {

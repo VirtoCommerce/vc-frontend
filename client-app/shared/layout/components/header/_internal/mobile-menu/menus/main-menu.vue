@@ -126,12 +126,12 @@
           <!-- Corporate -->
           <li>
             <MobileMenuLink
-              v-if="corporateMenuItem && isCorporateMember"
-              :link="corporateMenuItem"
+              v-if="mobileCorporateMenuItem && isCorporateMember"
+              :link="mobileCorporateMenuItem"
               class="py-1 text-2xl font-bold"
-              @select="$emit('selectItem', corporateMenuItem!)"
+              @select="$emit('selectItem', mobileCorporateMenuItem!)"
             >
-              {{ corporateMenuItem.title }}
+              {{ mobileCorporateMenuItem.title }}
             </MobileMenuLink>
           </li>
 
@@ -178,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toValue } from "vue";
+import { toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
@@ -200,7 +200,7 @@ defineEmits<IEmits>();
 defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
-const { user, operator, isAuthenticated, isCorporateMember, checkPermissions } = useUser();
+const { user, operator, isAuthenticated, isCorporateMember } = useUser();
 const { reverting, backToOperatorLabel, backToOperator: onBackToOperator } = useImpersonate();
 const {
   mobileMainMenuItems,
@@ -212,17 +212,6 @@ const {
 } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
-
-// A link may name a permission (menu.json `permission`); without it the user does not see the link.
-const corporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-  const item = mobileCorporateMenuItem.value;
-  return (
-    item && {
-      ...item,
-      children: item.children?.filter((child) => !child.permission || checkPermissions(child.permission)),
-    }
-  );
-});
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: ROUTES.SIGN_IN.NAME }, title: t("shared.layout.header.link_sign_in") },

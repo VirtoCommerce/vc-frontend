@@ -78,19 +78,23 @@ const { organization } = useUser();
 
 // Only members who have ordered: a member without orders would only ever show zeros.
 const memberOptions = useOrganizationBuyerOptions(() => organization.value?.id);
-const { options: members, totalCount: membersCount, loading: membersLoading, failed: membersFailed } = memberOptions;
+const { options: members, loading: membersLoading, failed: membersFailed } = memberOptions;
 
-const { period, memberId } = useCompanyReportingParams(memberOptions);
+const { period, memberId, reportMemberId, isMemberPending } = useCompanyReportingParams(memberOptions);
 
-const scope = computed<SalesReportScopeType>(() => ({ organization: true, memberId: memberId.value || undefined }));
+const scope = computed<SalesReportScopeType>(() => ({ organization: true, memberId: reportMemberId.value }));
 
-const { data, excludedCount, hasOrders, loading, failed } = useAccountSalesReport(period, scope);
+const { data, excludedCount, hasOrders, loading, failed } = useAccountSalesReport(
+  period,
+  scope,
+  () => !isMemberPending.value,
+);
 
 // No count until the list has loaded: "(0)" over a report with figures would read as "no members".
 const allMembersLabel = computed(() =>
   membersLoading.value || membersFailed.value
     ? t("pages.company.reporting.all_members_plain")
-    : t("pages.company.reporting.all_members", { count: n(membersCount.value) }),
+    : t("pages.company.reporting.all_members", { count: n(members.value.length) }),
 );
 
 const memberItems = computed(() => [

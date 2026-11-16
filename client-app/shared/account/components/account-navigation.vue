@@ -59,17 +59,18 @@ const sections = computed<RenderSectionType[]>(() => {
       id: "purchasing",
       title: purchasing.title,
       priority: purchasing.priority ?? 10,
-      children: purchasing.children ?? [],
+      children: (purchasing.children ?? []).filter(isPermitted),
     });
   }
 
   const marketing = desktopMarketingMenuItems.value;
-  if (marketing?.children?.length) {
+  const marketingChildren = (marketing?.children ?? []).filter(isPermitted);
+  if (marketing && marketingChildren.length) {
     result.push({
       id: "marketing",
       title: marketing.title,
       priority: marketing.priority ?? 20,
-      children: marketing.children,
+      children: marketingChildren,
     });
   }
 
@@ -91,7 +92,7 @@ const sections = computed<RenderSectionType[]>(() => {
       id: "user",
       title: user.title,
       priority: user.priority ?? 40,
-      children: (user.children ?? []).filter(canShowUserItem),
+      children: (user.children ?? []).filter((item) => canShowUserItem(item) && isPermitted(item)),
     });
   }
 
@@ -108,7 +109,7 @@ const sections = computed<RenderSectionType[]>(() => {
       id: section.id,
       title: translated.title,
       priority: section.priority ?? 100,
-      children: translated.children ?? [],
+      children: (translated.children ?? []).filter(isPermitted),
     });
   }
 

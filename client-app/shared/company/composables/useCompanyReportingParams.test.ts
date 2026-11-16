@@ -17,9 +17,7 @@ vi.mock("@/core/composables/useRouteQueryParam", () => ({
 
 const members = {
   options: ref<OrganizationMemberOptionType[]>([]),
-  totalCount: ref(0),
   loading: ref(false),
-  failed: ref(false),
 };
 
 function run() {
@@ -35,9 +33,7 @@ beforeEach(() => {
   params.period = ref("year");
   params.member = ref(COMPANY_REPORTING_ALL_MEMBERS);
   members.options.value = [{ id: "c-1", name: "Alice", accountIds: ["u-1"] }];
-  members.totalCount.value = 1;
   members.loading.value = false;
-  members.failed.value = false;
 });
 
 describe("useCompanyReportingParams", () => {
@@ -52,33 +48,53 @@ describe("useCompanyReportingParams", () => {
     expect(params.period.value).toBe("q3");
   });
 
-  it("keeps a member of the organization", async () => {
+  it("keeps a member of the organization and narrows the report to them", async () => {
     params.member.value = "c-1";
-    const { memberId } = run();
+    const { memberId, reportMemberId, isMemberPending } = run();
     await flushPromises();
 
     expect(memberId.value).toBe("c-1");
+    expect(reportMemberId.value).toBe("c-1");
+    expect(isMemberPending.value).toBe(false);
   });
 
-  it("falls back to All members for an id the complete list does not have", async () => {
+  it("reports on the whole organization for All members", () => {
+    const { reportMemberId, isMemberPending } = run();
+
+    expect(reportMemberId.value).toBeUndefined();
+    expect(isMemberPending.value).toBe(false);
+  });
+
+  it.each([
+    ["an id the list does not have", [{ id: "c-1", name: "Alice", accountIds: ["u-1"] }]],
+    ["a member list that failed", []],
+  ])("falls back to All members for %s", async (_case, options) => {
+    members.options.value = options;
     params.member.value = "someone-who-left";
-    run();
+    const { reportMemberId } = run();
     await flushPromises();
 
     expect(params.member.value).toBe(COMPANY_REPORTING_ALL_MEMBERS);
+    expect(reportMemberId.value).toBeUndefined();
   });
 
-  // Past the picker's limit the id may still be a member's, and while loading or after a failure nothing is known.
-  it.each([
-    ["the list is longer than what was loaded", () => (members.totalCount.value = 500)],
-    ["the list is still loading", () => (members.loading.value = true)],
-    ["the list failed", () => (members.failed.value = true)],
-  ])("keeps an id it cannot check when %s", async (_case, arrange) => {
-    arrange();
-    params.member.value = "maybe-a-member";
-    run();
+  // The server refuses a contact outside the organization, so an unconfirmed id is never sent.
+  it("holds the report while the list that would confirm the member loads", async () => {
+    members.options.value = [];
+    members.loading.value = true;
+    params.member.value = "c-1";
+    const { reportMemberId, isMemberPending } = run();
     await flushPromises();
 
-    expect(params.member.value).toBe("maybe-a-member");
+    expect(params.member.value).toBe("c-1");
+    expect(reportMemberId.value).toBeUndefined();
+    expect(isMemberPending.value).toBe(true);
+
+    members.options.value = [{ id: "c-1", name: "Alice", accountIds: ["u-1"] }];
+    members.loading.value = false;
+    await flushPromises();
+
+    expect(reportMemberId.value).toBe("c-1");
+    expect(isMemberPending.value).toBe(false);
   });
 });

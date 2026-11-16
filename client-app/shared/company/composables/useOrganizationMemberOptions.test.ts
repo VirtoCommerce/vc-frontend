@@ -17,7 +17,7 @@ vi.mock("@/core/api/graphql/organization", () => ({
     return { result: query.result, loading: query.loading, error: query.error, onError: vi.fn() };
   },
 }));
-vi.mock("@/core/globals", () => ({ globals: { userId: "user-1" } }));
+vi.mock("@/core/globals", () => ({ globals: { userId: "user-1", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 
 function run(organizationId = "org-1") {
@@ -58,13 +58,41 @@ describe("useOrganizationMemberOptions", () => {
       },
     };
 
-    const { options, totalCount } = run();
+    const { options } = run();
 
     expect(options.value).toEqual([
       { id: "c-1", name: "Alice Adams", accountIds: ["u-1", "u-2"] },
       { id: "c-2", name: "bob", accountIds: [] },
     ]);
-    expect(totalCount.value).toBe(2);
+  });
+
+  // The server sorts by `name`, which a member shown by e-mail or first and last name does not carry.
+  it("orders the members by the name it shows", () => {
+    query.result.value = {
+      organization: {
+        contacts: {
+          totalCount: 3,
+          items: [
+            { id: "c-1", name: "", emails: ["zoe@example.com"] },
+            { id: "c-2", name: "bob" },
+            { id: "c-3", name: "", firstName: "Alice", lastName: "Adams" },
+          ],
+        },
+      },
+    };
+
+    expect(run().options.value.map((option) => option.name)).toEqual(["Alice Adams", "bob", "zoe@example.com"]);
+  });
+
+  it("is loading only until there is a list, not while a cached list is refreshed", () => {
+    query.loading.value = true;
+    const { loading } = run();
+
+    expect(loading.value).toBe(true);
+
+    query.result.value = { organization: { contacts: { totalCount: 0, items: [] } } };
+
+    expect(loading.value).toBe(false);
   });
 
   it("reports a failed read instead of an empty list", () => {

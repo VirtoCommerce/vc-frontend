@@ -11,27 +11,35 @@ const h = vi.hoisted(() => {
     report: Record<string, Ref<unknown>>;
     members: {
       options: Ref<{ id: string; name: string }[]>;
-      totalCount: Ref<number>;
       loading: Ref<boolean>;
       failed: Ref<boolean>;
     };
     memberId: Ref<string>;
+    reportMemberId: Ref<string | undefined>;
+    isMemberPending: Ref<boolean>;
     period: Ref<string>;
     scope: () => ScopeType;
+    isReportEnabled: () => boolean;
   };
   return state;
 });
 
 vi.mock("@/shared/account/composables/useAccountSalesReport", () => ({
-  useAccountSalesReport: (_period: unknown, scope: { value: ScopeType }) => {
+  useAccountSalesReport: (_period: unknown, scope: { value: ScopeType }, isEnabled: () => boolean) => {
     h.scope = () => scope.value;
+    h.isReportEnabled = isEnabled;
     return h.report;
   },
 }));
 vi.mock("@/shared/company", () => ({
   COMPANY_REPORTING_ALL_MEMBERS: "",
   useOrganizationBuyerOptions: () => h.members,
-  useCompanyReportingParams: () => ({ period: h.period, memberId: h.memberId }),
+  useCompanyReportingParams: () => ({
+    period: h.period,
+    memberId: h.memberId,
+    reportMemberId: h.reportMemberId,
+    isMemberPending: h.isMemberPending,
+  }),
 }));
 vi.mock("@/shared/account", () => ({ useUser: () => ({ organization: ref({ id: "org-1" }) }) }));
 vi.mock("@/shared/dashboard", () => ({ formatStatCount: (count: number) => String(count) }));
@@ -96,11 +104,12 @@ beforeEach(() => {
       { id: "c-1", name: "Alice" },
       { id: "c-2", name: "Bob" },
     ]),
-    totalCount: ref(2),
     loading: ref(false),
     failed: ref(false),
   };
   h.memberId = ref("");
+  h.reportMemberId = ref(undefined);
+  h.isMemberPending = ref(false);
   h.period = ref("year");
 });
 
@@ -118,6 +127,7 @@ describe("CompanyReporting", () => {
     mountPage();
 
     expect(h.scope()).toEqual({ organization: true, memberId: undefined });
+    expect(h.isReportEnabled()).toBe(true);
   });
 
   it("lists All members with their count first, then every member", () => {
@@ -131,14 +141,37 @@ describe("CompanyReporting", () => {
     expect(select.props("modelValue")).toBe("");
   });
 
-  it("narrows the report to the picked member, and back to the organization", async () => {
+  it("narrows the report to a confirmed member only", async () => {
+    h.memberId.value = "c-2";
+    mountPage();
+
+    expect(h.scope()).toEqual({ organization: true, memberId: undefined });
+
+    h.reportMemberId.value = "c-2";
+    await nextTick();
+
+    expect(h.scope()).toEqual({ organization: true, memberId: "c-2" });
+  });
+
+  it("holds the report while the member from the URL waits for the member list", async () => {
+    h.isMemberPending.value = true;
+    mountPage();
+
+    expect(h.isReportEnabled()).toBe(false);
+
+    h.isMemberPending.value = false;
+    await nextTick();
+
+    expect(h.isReportEnabled()).toBe(true);
+  });
+
+  it("writes the picked member, and All members when the picker is cleared", async () => {
     const select = mountPage().findComponent(VcSelectStub);
 
     select.vm.$emit("change", "c-2");
     await nextTick();
 
     expect(h.memberId.value).toBe("c-2");
-    expect(h.scope()).toEqual({ organization: true, memberId: "c-2" });
 
     // The kit emits nothing when the picker is cleared: that is All members.
     select.vm.$emit("change", undefined);

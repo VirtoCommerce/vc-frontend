@@ -45,6 +45,7 @@ export function useOrganizationMemberOptions(organizationId: MaybeRefOrGetter<st
     id: toValue(organizationId) ?? "",
     userId: globals.userId ?? "",
     first: ORGANIZATION_MEMBER_OPTIONS_LIMIT,
+    // Decides which members load; the picker orders them by the name it shows.
     sort: "name:asc",
   }));
 
@@ -58,11 +59,13 @@ export function useOrganizationMemberOptions(organizationId: MaybeRefOrGetter<st
   const failed = computed(() => error.value != null);
 
   const options = computed<OrganizationMemberOptionType[]>(() =>
-    (result.value?.organization?.contacts?.items ?? []).map((contact) => ({
-      id: contact.id,
-      name: memberName(contact),
-      accountIds: (contact.securityAccounts ?? []).map((account) => account.id),
-    })),
+    (result.value?.organization?.contacts?.items ?? [])
+      .map((contact) => ({
+        id: contact.id,
+        name: memberName(contact),
+        accountIds: (contact.securityAccounts ?? []).map((account) => account.id),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, globals.cultureName)),
   );
 
   const totalCount = computed(() => result.value?.organization?.contacts?.totalCount ?? 0);
@@ -80,5 +83,10 @@ export function useOrganizationMemberOptions(organizationId: MaybeRefOrGetter<st
     { immediate: true },
   );
 
-  return { options, totalCount, loading, failed };
+  return {
+    options,
+    // `cache-and-network` keeps `loading` on until the network answers, with the cached list already shown.
+    loading: computed(() => loading.value && !result.value),
+    failed,
+  };
 }

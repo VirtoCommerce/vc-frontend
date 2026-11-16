@@ -10,14 +10,13 @@ export const COMPANY_REPORTING_ALL_MEMBERS = "";
 
 type MemberOptionsType = {
   options: Ref<OrganizationMemberOptionType[]>;
-  totalCount: Ref<number>;
   loading: Ref<boolean>;
-  failed: Ref<boolean>;
 };
 
 /**
  * The Company → Reporting selection kept in the URL (`?period=`, `?member=`), so a link opens the same view. An
- * unknown period reads as the default; an unknown member does once the complete member list shows it is not one.
+ * unknown period reads as the default. A member counts only once the member list has it: until then the report waits,
+ * and a member the loaded list lacks (or a failed list) falls back to All members.
  */
 export function useCompanyReportingParams(members: MemberOptionsType) {
   const periodParam = useRouteQueryParam<string>("period", {
@@ -40,22 +39,27 @@ export function useCompanyReportingParams(members: MemberOptionsType) {
     updateMethod: "replace",
   });
 
-  // A member who left (or a mistyped id) would leave a blank picker over a report the server refuses. Only a complete
-  // list can tell: past the options limit the id may still be a member's.
+  const isMemberConfirmed = computed(() => members.options.value.some((option) => option.id === memberId.value));
+
+  /** The member the report is narrowed to: undefined for All members and for a member the list does not have. */
+  const reportMemberId = computed(() => (isMemberConfirmed.value ? memberId.value : undefined));
+
+  /** A member from the URL the list has not confirmed yet: the report waits for the list. */
+  const isMemberPending = computed(
+    () => memberId.value !== COMPANY_REPORTING_ALL_MEMBERS && !isMemberConfirmed.value && members.loading.value,
+  );
+
+  // The server refuses a report for a contact outside the organization, and the picker would show it blank.
   watch(
-    [memberId, members.options, members.loading, members.failed],
+    [memberId, isMemberConfirmed, members.loading],
     () => {
-      if (members.loading.value || members.failed.value || memberId.value === COMPANY_REPORTING_ALL_MEMBERS) {
+      if (members.loading.value || memberId.value === COMPANY_REPORTING_ALL_MEMBERS || isMemberConfirmed.value) {
         return;
       }
-      const isComplete = members.options.value.length >= members.totalCount.value;
-      const isKnown = members.options.value.some((option) => option.id === memberId.value);
-      if (isComplete && !isKnown) {
-        memberId.value = COMPANY_REPORTING_ALL_MEMBERS;
-      }
+      memberId.value = COMPANY_REPORTING_ALL_MEMBERS;
     },
     { immediate: true },
   );
 
-  return { period, memberId };
+  return { period, memberId, reportMemberId, isMemberPending };
 }

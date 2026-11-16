@@ -94,9 +94,14 @@ describe("account-navigation sections merge", () => {
     expect(renderedSectionTitles()).toEqual(["Purchasing", "Marketing", "User"]);
   });
 
-  // Company → Reporting names the permission it needs (menu.json `permission`): a member without it never sees the link.
-  it("shows a corporate link that names a permission only to a user who holds it", () => {
+  it("shows a link that names a permission only to a user who holds it, in every section", () => {
     h.isCorporateMember.value = true;
+    h.purchasing.value = {
+      title: "Purchasing",
+      priority: 10,
+      children: [{ id: "orders" }, { id: "approvals", permission: "order:approve" }],
+    };
+    h.marketing.value = { title: "Marketing", priority: 20, children: [{ id: "coupons", permission: "coupon:view" }] };
     h.corporate.value = {
       title: "Corporate",
       priority: 30,
@@ -107,11 +112,13 @@ describe("account-navigation sections merge", () => {
         .findAll("[data-link]")
         .map((w) => w.attributes("data-link"));
 
-    expect(links()).not.toContain("reporting");
-    expect(links()).toContain("info");
+    expect(links()).toEqual(["orders", "info", "profile"]);
+    expect(renderedSectionTitles()).toEqual(["Purchasing", "Corporate", "User"]);
 
+    h.permissions.add("order:approve");
+    h.permissions.add("coupon:view");
     h.permissions.add("xapi:my_organization:order:view");
 
-    expect(links()).toContain("reporting");
+    expect(links()).toEqual(["orders", "approvals", "coupons", "info", "reporting", "profile"]);
   });
 });

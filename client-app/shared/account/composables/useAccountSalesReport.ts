@@ -43,10 +43,13 @@ export function excludedOrdersCount(plan: ReportingPlanType, statistics: Monthly
  * - Without a scope (the account dashboard): the signed-in user's own orders, as the stat cards count them, so the two
  *   agree.
  * - With one (Company → Reporting): the current organization's orders, or one member's.
+ *
+ * While `isEnabled` is false the months are not asked for and the report reads as loading.
  */
 export function useAccountSalesReport(
   period: MaybeRefOrGetter<ReportingPeriodType>,
   scope?: MaybeRefOrGetter<SalesReportScopeType | undefined>,
+  isEnabled: MaybeRefOrGetter<boolean> = true,
 ) {
   const plan = useReportingPlan(period);
   const variables = computed(() => ({
@@ -55,7 +58,10 @@ export function useAccountSalesReport(
     ...buildReportingVariables(plan.value),
   }));
 
-  const { result, loading, error, onError } = useGetMonthlyOrderStatisticsQuery(variables);
+  const { result, loading, error, onError } = useGetMonthlyOrderStatisticsQuery(
+    variables,
+    computed(() => toValue(isEnabled)),
+  );
 
   onError((queryError) => {
     // No toast: the report names the failure itself.
@@ -92,7 +98,9 @@ export function useAccountSalesReport(
      * Also while the history is still on its way: the two are separate requests, and months that land first would
      * otherwise show a buyer who never ordered tiles and charts of zeros before the empty state takes their place.
      */
-    loading: computed(() => loading.value || (hasOrders.value === undefined && history.loading.value)),
+    loading: computed(
+      () => !toValue(isEnabled) || loading.value || (hasOrders.value === undefined && history.loading.value),
+    ),
     failed: computed(() => Boolean(error.value)),
   };
 }
