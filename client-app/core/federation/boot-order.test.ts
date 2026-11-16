@@ -106,7 +106,7 @@ vi.mock("@/core/utilities/design", () => ({
   loadPresetStyles: vi.fn(async () => presetStyles.ready),
 }));
 vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
-vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
+vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn(), setLogger: vi.fn() }));
 vi.mock("@/ui-kit/utilities/getLocales", () => ({
   getLocales: vi.fn(async () => ({ messages: {}, fallbackMessages: {} })),
 }));

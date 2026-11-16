@@ -8,6 +8,7 @@ export * from "./focus";
 export * from "./icons";
 export * from "./images";
 export * from "./link";
+export * from "./logger";
 export * from "./optional-chunk";
 export * from "./price";
 export * from "./string-array";

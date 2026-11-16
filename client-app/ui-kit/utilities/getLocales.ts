@@ -1,4 +1,4 @@
-import { Logger } from "@/core/utilities";
+import { Logger } from "./logger";
 import { ignoreChunkLoadFailure } from "./optional-chunk";
 import type { LocaleMessageValue } from "vue-i18n";
 
