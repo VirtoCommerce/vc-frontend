@@ -195,7 +195,7 @@ function createOverlay() {
 function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl: HTMLElement | null) {
   const builderOrigin = getBuilderOrigin();
   window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
-    if (event.origin !== builderOrigin || event.data.source !== "builder") {
+    if (event.origin !== builderOrigin || event.source !== window.parent || event.data.source !== "builder") {
       return;
     }
 
