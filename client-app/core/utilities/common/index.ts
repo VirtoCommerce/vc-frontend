@@ -3,6 +3,14 @@ import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNorm
 
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
+function parseUrl(url: string, base: string): URL | null {
+  try {
+    return new URL(url, base);
+  } catch {
+    return null;
+  }
+}
+
 export function getReturnUrlValue(): string | null {
   const { searchParams, origin, hostname } = new URL(location.href);
 
