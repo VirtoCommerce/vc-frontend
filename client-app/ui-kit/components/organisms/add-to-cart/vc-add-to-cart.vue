@@ -61,8 +61,8 @@ import { debounce } from "lodash-es";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/ui-kit/constants";
 import { AddToCartModeType } from "@/ui-kit/enums";
 
 interface IEmits {

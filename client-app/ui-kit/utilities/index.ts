@@ -7,6 +7,8 @@ export * from "./file-size";
 export * from "./focus";
 export * from "./icons";
 export * from "./images";
+export * from "./link";
+export * from "./optional-chunk";
 export * from "./price";
 export * from "./string-array";
 export * from "./variant-compat";

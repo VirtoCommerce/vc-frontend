@@ -13,9 +13,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useThemeContext } from "@/core/composables";
-import { NO_IMAGE_URL } from "@/core/constants";
-import { appendSuffixToFilename } from "@/core/utilities";
-import { getImageUrl, isFilenameOnly } from "../../../utilities";
+import { NO_IMAGE_URL } from "../../../constants";
+import { appendSuffixToFilename, getImageUrl, isFilenameOnly } from "../../../utilities";
 
 export interface IProps {
   lazy?: boolean;

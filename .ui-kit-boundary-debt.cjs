@@ -8,16 +8,7 @@
 module.exports = {
   // ui-kit files that import from the rest of client-app.
   uiKitToHost: [
-    // Host helpers, constants and enums.
-    "client-app/ui-kit/components/atoms/link/vc-link.vue",
-    "client-app/ui-kit/components/molecules/file/vc-file.vue",
-    "client-app/ui-kit/components/molecules/menu-item/vc-menu-item.vue",
-    "client-app/ui-kit/components/organisms/add-to-cart/vc-add-to-cart.test.ts",
-    "client-app/ui-kit/components/organisms/add-to-cart/vc-add-to-cart.vue",
-    "client-app/ui-kit/composables/useQuantityValidationSchema.test.ts",
-    "client-app/ui-kit/composables/useQuantityValidationSchema.ts",
-
-    // Host services: theme context, notifications, Logger (vc-image also uses host helpers and constants).
+    // Host services: theme context, notifications, Logger.
     "client-app/ui-kit/components/atoms/image/vc-image.vue",
     "client-app/ui-kit/components/molecules/calendar/use-calendar-base.ts",
     "client-app/ui-kit/components/molecules/copy-text/vc-copy-text.vue",
@@ -27,20 +18,6 @@ module.exports = {
     "client-app/ui-kit/utilities/date.ts",
     "client-app/ui-kit/utilities/getLocales.ts",
     "client-app/ui-kit/utilities/icons.ts",
-
-    // Tests that mount through the host's createWrapperFactory.
-    "client-app/ui-kit/components/atoms/breadcrumbs/vc-breadcrumbs.test.ts",
-    "client-app/ui-kit/components/atoms/label/vc-label.test.ts",
-    "client-app/ui-kit/components/molecules/input/vc-input.test.ts",
-    "client-app/ui-kit/components/molecules/line-item/vc-line-item.test.ts",
-    "client-app/ui-kit/components/molecules/popover/vc-popover.test.ts",
-    "client-app/ui-kit/components/molecules/select/vc-select.test.ts",
-    "client-app/ui-kit/components/molecules/tab-switch/vc-tab-switch.test.ts",
-    "client-app/ui-kit/components/molecules/textarea/vc-textarea.test.ts",
-    "client-app/ui-kit/components/organisms/quantity-stepper/vc-quantity-stepper.test.ts",
-    "client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.test.ts",
-    "client-app/ui-kit/components/organisms/table/vc-table.test.ts",
-    "client-app/ui-kit/components/templates/layout/vc-layout.test.ts",
   ],
 
   // Files outside ui-kit that import a ui-kit file past its public entries.

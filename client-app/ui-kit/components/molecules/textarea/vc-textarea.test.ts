@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcTextarea from "./vc-textarea.vue";
 
 // VcLabel is real: the element it renders is what this suite asserts.

@@ -1,5 +1,5 @@
 import { Logger } from "@/core/utilities";
-import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
+import { ignoreChunkLoadFailure } from "./optional-chunk";
 import type { LocaleMessageValue } from "vue-i18n";
 
 export async function getLocales(
