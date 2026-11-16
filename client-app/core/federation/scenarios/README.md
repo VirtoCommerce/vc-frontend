@@ -21,6 +21,7 @@ on 2026-10-14. Each scenario ends with what was walked, and when._
  Make a plugin work on an environment ───────────────────────────▶ S6
  A plugin is missing or broken ──────────────────────────────────▶ S7
  Give plugins a new place to plug into the storefront ───────────▶ S8
+ Add a widget to a dashboard ────────────────────────────────────▶ S9
 ```
 
 ## Scenarios
@@ -36,6 +37,7 @@ on 2026-10-14. Each scenario ends with what was walked, and when._
 | S6  | [Enable a plugin on an environment](./s6-enable-on-an-environment.md)         | Written |
 | S7  | [A plugin is missing or broken](./s7-missing-or-broken.md)                    | Written |
 | S8  | [Add a new extension point to the host](./s8-new-extension-point.md)          | Written |
+| S9  | [Add a widget to a dashboard](./s9-add-a-dashboard-widget.md)                 | Written |
 
 ## How each scenario reads
 
