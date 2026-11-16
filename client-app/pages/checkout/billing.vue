@@ -6,6 +6,7 @@
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <ProceedTo
+            class="mt-4"
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
             test-id="review-order-button"

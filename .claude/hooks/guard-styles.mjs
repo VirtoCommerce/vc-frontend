@@ -3,17 +3,22 @@
 // (styles.md §1.4, §18; ui-kit.md §9). Exit code 2 blocks the edit and shows stderr to the agent.
 import { readFileSync, realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { isImportantUtility, matchImportant } from "../../scripts/important-patterns.mjs";
 
 const STYLE_FILE = /\.(vue|scss|css)$/;
 const KIT_OR_GLOBAL_STYLES = /(^|\/)client-app\/(ui-kit|assets\/styles)\//;
+// A design's block and dark files; nested ones fail check:designs, so they stay guarded.
+const DESIGN_BLOCK_STYLES = /(^|\/)client-app\/designs\/[^/]+\/(blocks|dark)\/[^/]+$/;
+// A preset's stylesheet recolours blocks; check:designs checks its selectors and values.
+const PRESET_STYLES = /(^|\/)client-app\/assets\/presets\/[^/]+\.scss$/;
 const STYLE_BLOCK = /<style[^>]*>([\s\S]*?)<\/style>/g;
 const VC_SELECTOR = /\.vc-[\w-]+/;
 const APPLY = /@apply\s([^;]+)/g;
 // `class="…"` (static value) or `:class="…"` / `v-bind:class="…"` (JS expression).
 const CLASS_ATTR = /(?<=\s)(:|v-bind:)?class="([^"]*)"/g;
 const JS_STRING = /'([^']*)'|`([^`]*)`/g;
-// Tailwind important utility: `!mt-4`, `!-mt-4`, `lg:!hidden`.
-const IMPORTANT_UTILITY = /^(\S*:)?!-?[\w[]/;
+// `${…}` in a template literal: `!p-${size}` is checked as `!p-`.
+const INTERPOLATION = /\$\{[^}]*\}/g;
 
 export function check(toolInput, readCurrent) {
   const file = (toolInput.file_path ?? "").replaceAll("\\", "/");
@@ -33,7 +38,7 @@ export function check(toolInput, readCurrent) {
     return "`!important` is forbidden in every form (styles.md §18). Fix the conflict at its cause: kit props / `--vc-<component>-…` tokens, or selector order. If that isn't possible, ask the developer.";
   }
   if (getAdded(before.vcSelectors, after.vcSelectors).length) {
-    return "No `.vc-*` selectors outside the UI kit (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
+    return "No `.vc-*` selectors outside the UI kit, `client-app/assets/styles/`, a design's `client-app/designs/<name>/blocks/` and `dark/` files and a preset's `client-app/assets/presets/<name>.scss` (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
   }
   return null;
 }
@@ -55,17 +60,22 @@ function findViolations(file, text) {
   const styles = file.endsWith(".vue") ? [...text.matchAll(STYLE_BLOCK)].map((match) => match[1]).join("\n") : text;
   const classLists = [
     ...[...text.matchAll(CLASS_ATTR)].flatMap(([, bound, value]) =>
-      bound ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2]) : [value],
+      bound
+        ? [...value.matchAll(JS_STRING)].map((match) => match[1] ?? match[2].replaceAll(INTERPOLATION, " "))
+        : [value],
     ),
     ...[...styles.matchAll(APPLY)].map((match) => match[1]),
   ];
 
   return {
     important: [
-      ...getLines(text).filter((line) => line.includes("!important")),
-      ...classLists.flatMap((list) => list.split(/\s+/)).filter((name) => IMPORTANT_UTILITY.test(name)),
+      ...getLines(text).filter((line) => matchImportant(line).length),
+      ...classLists.flatMap((list) => list.split(/\s+/)).filter(isImportantUtility),
     ],
-    vcSelectors: KIT_OR_GLOBAL_STYLES.test(file) ? [] : getLines(styles).filter((line) => VC_SELECTOR.test(line)),
+    vcSelectors:
+      KIT_OR_GLOBAL_STYLES.test(file) || DESIGN_BLOCK_STYLES.test(file) || PRESET_STYLES.test(file)
+        ? []
+        : getLines(styles).filter((line) => VC_SELECTOR.test(line)),
   };
 }
 

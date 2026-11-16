@@ -29,12 +29,14 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
+import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
+import { init as initMfa } from "@/modules/mfa";
 import { init as initNews } from "@/modules/news";
 import { init as initProductSubscriptions } from "@/modules/product-subscriptions";
 import { init as initPunchout } from "@/modules/punchout";
@@ -42,13 +44,13 @@ import { initialize as initializePurchaseRequests } from "@/modules/purchase-req
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { init as initReturns } from "@/modules/returns";
-import { init as initSalesRep } from "@/modules/sales-rep";
 import { init as initSkyflow } from "@/modules/skyflow";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
+import { registerAccountDashboardBlocks } from "@/shared/account/dashboard-blocks";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
@@ -80,6 +82,11 @@ export default async () => {
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
+
+  const design = getDesign();
+  setDesignAttribute(design);
+  // Awaited before mount, so a soft storefront never paints classic first.
+  const designStylesReady = loadDesignStyles(design);
 
   /**
    * Create and mount application
@@ -250,6 +257,8 @@ export default async () => {
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
   setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  // Awaited before mount with the design styles, so a preset's stylesheet never paints late.
+  const presetStylesReady = loadPresetStyles(themeContext.value.activePresetName ?? "");
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
@@ -258,9 +267,13 @@ export default async () => {
     void fetchCatalogMenu();
   }
 
+  // The account dashboard's blocks, before the app mounts — as each module below registers its own in `init()`.
+  registerAccountDashboardBlocks();
+
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initModuleBackInStock(router, i18n);
+  initMfa(i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
@@ -268,7 +281,6 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initProductSubscriptions(router, i18n);
-  void initSalesRep(router, i18n);
   void initReturns(router, i18n);
   void initSkyflow(router, i18n);
   void initPunchout(router, i18n);
@@ -341,6 +353,8 @@ export default async () => {
 
     Logger.warn(message, traceDetails);
   };
+
+  await Promise.all([designStylesReady, presetStylesReady]);
 
   app.mount(appElement);
 

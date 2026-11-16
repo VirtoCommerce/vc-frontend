@@ -437,12 +437,7 @@ const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
 });
 
-const categoryListProperties = computed(() => ({
-  item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-  item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  related_id: currentCategory.value?.id,
-  related_type: "category",
-}));
+const reportedPositions = new Map<string, { page: number; index: number }>();
 
 // A lookup ignores `q`, so analytics report the scanned code as its term.
 const searchTerm = computed(() => (isBarcodeLookup.value ? barcodeQueryParam.value : searchQueryParam.value));
@@ -602,7 +597,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  analytics("viewItemList", items, categoryListProperties.value);
+  reportItemList(items, currentPage.value);
 
   if (searchTerm.value) {
     trackViewSearchResults();
@@ -630,7 +625,8 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  analytics("viewItemList", products.value, categoryListProperties.value);
+  reportedPositions.clear();
+  reportItemList(products.value, currentPage.value);
 
   if (searchTerm.value) {
     trackViewSearchResults();
@@ -672,8 +668,38 @@ function trackViewSearchResults(): void {
   });
 }
 
+function getCategoryListProperties(page: number): Record<string, string | undefined> {
+  // The search page loads no category; elsewhere a keyword list can render before its category loads.
+  if (route.name === ROUTES.SEARCH.NAME || (!currentCategory.value && searchTerm.value)) {
+    return {
+      item_list_id: `search_results_page_${page}`,
+      item_list_name: `Search results (page ${page})`,
+      related_type: "search",
+    };
+  }
+
+  return {
+    item_list_id: `category_${currentCategory.value?.slug}_page_${page}`,
+    item_list_name: `Category "${currentCategory.value?.name}" (page ${page})`,
+    related_id: currentCategory.value?.id,
+    related_type: "category",
+  };
+}
+
+function reportItemList(items: Product[], page: number): void {
+  items.forEach((item, index) => reportedPositions.set(item.id, { page, index }));
+  analytics("viewItemList", items, getCategoryListProperties(page));
+}
+
 function selectProduct(product: Product): void {
-  analytics("selectItem", product, categoryListProperties.value);
+  const position = reportedPositions.get(product.id);
+  analytics(
+    "selectItem",
+    product,
+    position
+      ? { ...getCategoryListProperties(position.page), index: position.index }
+      : getCategoryListProperties(currentPage.value),
+  );
 }
 
 function resetPage() {
@@ -749,7 +775,11 @@ watch(
       setQueryScope(searchQueryParam.value);
 
       const finishPreparing = categoryId ? prepareScope() : undefined;
-      onCleanup(() => finishPreparing?.());
+      let isCancelled = false;
+      onCleanup(() => {
+        isCancelled = true;
+        finishPreparing?.();
+      });
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -771,6 +801,10 @@ watch(
         });
       } finally {
         finishPreparing?.();
+      }
+
+      if (isCancelled) {
+        return;
       }
 
       if (!props.isRoot) {

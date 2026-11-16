@@ -37,7 +37,9 @@
       "nav_previous": "前へ",
       "nav_next": "次へ",
       "nav_up": "上へ",
-      "nav_down": "下へ"
+      "nav_down": "下へ",
+      "select_item": "{name}を選択",
+      "select_all_items": "すべての商品を選択"
     },
     "calendar": {
       "aria_label": "カレンダー",

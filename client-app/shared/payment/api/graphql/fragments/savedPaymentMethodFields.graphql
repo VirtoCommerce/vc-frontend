@@ -1,0 +1,13 @@
+fragment savedPaymentMethodFields on SavedPaymentMethod {
+  id
+  paymentMethodCode
+  brand
+  last4
+  expirationMonth
+  expirationYear
+  cardholderName
+  status
+  isDefault
+  isExpired
+  createdDate
+}

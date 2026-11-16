@@ -37,7 +37,9 @@
       "nav_previous": "Edellinen",
       "nav_next": "Seuraava",
       "nav_up": "Ylös",
-      "nav_down": "Alas"
+      "nav_down": "Alas",
+      "select_item": "Valitse {name}",
+      "select_all_items": "Valitse kaikki tuotteet"
     },
     "calendar": {
       "aria_label": "Kalenteri",

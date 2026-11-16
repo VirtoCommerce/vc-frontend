@@ -132,7 +132,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   &__error {
-    @apply my-5 text-xs;
+    @apply my-5;
   }
 
   &__actions {

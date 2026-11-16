@@ -16,6 +16,7 @@ import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
 const Slider = defineAsyncComponent(() => import("./slider.vue"));
+const ImageCarousel = defineAsyncComponent(() => import("./image-carousel.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("./products-block.vue"));
 const ProductsCarousel = defineAsyncComponent(() => import("./products-carousel.vue"));
 const Category = defineAsyncComponent(() => import("./../../catalog/components/category.vue"));
@@ -27,6 +28,7 @@ export const templateBlocks: { [key: string]: Component } = {
   "favorite-products": FavoriteProducts,
   features: Features,
   "image-block": ImageBlock,
+  "image-carousel": ImageCarousel,
   login: Login,
   "product-info": ProductInfo,
   products: ProductsBlock,

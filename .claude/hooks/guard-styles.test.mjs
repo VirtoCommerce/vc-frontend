@@ -1,7 +1,7 @@
 // Run: yarn test:hooks
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdtempSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -29,10 +29,15 @@ test("blocks !important in every form, kit included", () => {
   assert.ok(edit("client-app/shared/a.vue", '<div class="!-mt-4">'));
   assert.ok(edit("client-app/shared/a.vue", '<div class="lg:!hidden">'));
   assert.ok(edit("client-app/shared/a.vue", "<div :class=\"['!mt-4']\">"));
+  assert.ok(edit("client-app/shared/a.vue", '<div class="[&>*]:!p-0 !w-[calc(100%-1rem)]">'));
+  assert.ok(edit("client-app/shared/a.scss", "  color: red ! IMPORTANT;"));
+  assert.ok(edit("client-app/shared/a.vue", "<div class=\"data-[state=open]:!block before:!content-['']\">"));
+  assert.ok(edit("client-app/shared/a.vue", '<div :class="`!p-${size}`">'));
 });
 
 test("passes JS negation in :class", () => {
   assert.equal(edit("client-app/shared/a.vue", "<div :class=\"{ 'text-neutral-400': !item.isReturnable }\">"), null);
+  assert.equal(edit("client-app/shared/a.vue", "<div :class=\"['![alt]', !items[i] && 'x']\">"), null);
 });
 
 test("blocks a partial-line edit that adds an important utility", () => {
@@ -52,6 +57,38 @@ test("blocks .vc-* selectors in styles outside the kit, allows them inside", () 
     check({ file_path: "C:\\repo\\client-app\\ui-kit\\x.scss", old_string: "", new_string: ".vc-x {" }, () => ""),
     null,
   );
+});
+
+test("allows .vc-* in a design's block and dark files, nowhere else in designs", () => {
+  const style = (css) => `<style lang="scss">\n${css}\n</style>`;
+  assert.equal(edit("client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(edit("client-app/designs/soft/dark/vc-button.scss", "html.dark .vc-button {"), null);
+  assert.equal(edit(".claude/worktrees/w/client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(
+    check(
+      { file_path: "C:\\repo\\client-app\\designs\\soft\\dark\\vc-button.scss", old_string: "", new_string: ".vc-x {" },
+      () => "",
+    ),
+    null,
+  );
+  assert.ok(edit("client-app/designs/soft/index.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/soft/_tokens.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/soft/blocks/nested/x.scss", ".vc-button {"));
+  assert.ok(edit("client-app/designs/blocks/vc-button.scss", ".vc-button {"));
+  assert.ok(edit("client-app/shared/x.scss", ".vc-button {"));
+  assert.ok(write("client-app/shared/x.vue", style("  .vc-button {")));
+});
+
+test("allows .vc-* in a preset's stylesheet, nowhere else in presets", () => {
+  assert.equal(edit("client-app/assets/presets/mercury.scss", '  html[data-preset="mercury"] .vc-button {'), null);
+  assert.ok(edit("client-app/assets/presets/mercury.scss", "  color: red !important;"));
+  assert.ok(edit("client-app/assets/presets/nested/mercury.scss", ".vc-button {"));
+  assert.ok(edit("client-app/assets/presets/mercury.css", ".vc-button {"));
+});
+
+test("blocks !important in a design's block file", () => {
+  assert.ok(edit("client-app/designs/soft/blocks/vc-button.scss", "  color: red !important;"));
+  assert.ok(edit("client-app/designs/soft/dark/vc-button.scss", "  @apply flex !mt-4;"));
 });
 
 test("passes .vc-* outside <style>", () => {
@@ -79,9 +116,16 @@ test("passes non-style files and tokens", () => {
 });
 
 test("runs as a hook from a path with a space", () => {
-  const hookDir = mkdtempSync(join(tmpdir(), "a b "));
+  const root = mkdtempSync(join(tmpdir(), "a b "));
+  const hookDir = join(root, ".claude", "hooks");
   const hook = join(hookDir, "guard-styles.mjs");
+  mkdirSync(hookDir, { recursive: true });
+  mkdirSync(join(root, "scripts"));
   copyFileSync(new URL("./guard-styles.mjs", import.meta.url), hook);
+  copyFileSync(
+    new URL("../../scripts/important-patterns.mjs", import.meta.url),
+    join(root, "scripts", "important-patterns.mjs"),
+  );
   const file = join(hookDir, "x.scss");
   writeFileSync(file, "");
 

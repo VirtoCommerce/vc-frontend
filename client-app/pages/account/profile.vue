@@ -83,18 +83,21 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useMutation } from "@vue/apollo-composable";
-import { useForm } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals } from "@/core/globals";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
+import { useFieldErrors } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 const MAX_NAME_LENGTH = 64;
+const NAME_FIELD_NAMES = ["firstName", "lastName"];
 
 const { t } = useI18n();
 const { user, updateUser } = useUser();
@@ -104,20 +107,12 @@ const { currentLanguage, removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
+const { showSaveErrors } = useFieldErrors();
 const { storeId, cultureName } = globals;
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
-
-const validationSchema = toTypedSchema(
-  yup.object({
-    firstName: yup.string().trim().required().max(MAX_NAME_LENGTH),
-    lastName: yup.string().trim().required().max(MAX_NAME_LENGTH),
-    defaultLanguage: yup.string(),
-    currencyCode: yup.string(),
-  }),
-);
 
 function initialValues() {
   return {
@@ -128,13 +123,15 @@ function initialValues() {
   };
 }
 
-const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
-  validationSchema,
+const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm, setErrors } = useForm({
   initialValues: initialValues(),
 });
 
-const [firstName] = defineField("firstName");
-const [lastName] = defineField("lastName");
+// Rules per field, not a form schema: a schema re-validates every field on any edit, which would drop the server's
+// messages on the other fields
+const nameRules = toTypedSchema(yup.string().trim().required().max(MAX_NAME_LENGTH));
+const { value: firstName } = useField("firstName", nameRules);
+const { value: lastName } = useField("lastName", nameRules);
 const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
 
@@ -164,7 +161,12 @@ async function applyCurrency(): Promise<void> {
 }
 
 const onSubmit = handleSubmit(async (data) => {
-  await updateUser(data);
+  try {
+    await updateUser(data, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
+  } catch (e) {
+    setErrors(showSaveErrors(e, NAME_FIELD_NAMES));
+    return;
+  }
 
   resetForm({ values: initialValues() });
   openModal({

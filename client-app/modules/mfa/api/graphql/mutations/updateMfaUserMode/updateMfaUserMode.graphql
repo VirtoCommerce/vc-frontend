@@ -1,0 +1,12 @@
+#import "../../fragments/mfaSettings.graphql"
+
+mutation UpdateMfaUserMode($command: InputUpdateMfaUserModeType!) {
+  updateMfaUserMode(command: $command) {
+    succeeded
+    errorCode
+    errorDescription
+    settings {
+      ...mfaSettings
+    }
+  }
+}

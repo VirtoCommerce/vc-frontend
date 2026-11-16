@@ -311,7 +311,9 @@ function toggleValue(): void {
   &__img {
     $image: &;
 
-    @apply grow rounded-[--radius-inner] object-cover object-center;
+    --vc-image-object-fit: cover;
+
+    @apply grow rounded-[--radius-inner];
   }
 
   &__text {

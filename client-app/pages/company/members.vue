@@ -246,11 +246,11 @@
         >
           <template #desktop-body>
             <tr v-for="contact in contacts" :key="contact.id" class="even:bg-neutral-50">
-              <td class="w-40 truncate px-4 py-2.5" :title="contact.fullName">
+              <td class="w-40 max-w-40 truncate px-4 py-2.5" :title="contact.fullName">
                 {{ contact.fullName }}
               </td>
 
-              <td class="max-w-xs truncate px-4 py-2.5" :title="contact.extended.roles.map((r) => r.name).join(', ')">
+              <td class="max-w-52 truncate px-4 py-2.5" :title="contact.extended.roles.map((r) => r.name).join(', ')">
                 {{ contact.extended.roles.map((r) => r.name).join(", ") }}
               </td>
 
@@ -282,7 +282,7 @@
 
           <template #mobile-item="{ item }">
             <div class="flex items-center border-b px-5">
-              <div class="grow py-4.5 [word-break:break-word]">
+              <div class="min-w-0 grow py-4.5 [word-break:break-word]">
                 <div>
                   <b>{{ item.fullName }}</b>
                 </div>

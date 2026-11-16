@@ -1,5 +1,6 @@
 import type { CartType, CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType, PreparedLineItemType } from "@/core/types";
+import type { SignInMethodContributionType } from "@/shared/account/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
@@ -77,13 +78,25 @@ export type ExtensionCategoryMapType = {
     never,
     ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
+  /**
+   * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+   * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+   */
+  addCardForm: ExtensionEntryType<
+    { paymentMethodCode: string; setDefault: boolean },
+    never,
+    (paymentMethodCode: string) => boolean
+  >;
   /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
   cartLineItem: ExtensionEntryType<
     { lineItem: PreparedLineItemType; readonly?: boolean },
     never,
     (lineItem: PreparedLineItemType) => boolean
   >;
-  /** The checkout review step, above the order summary (`pages/checkout/review.vue`). */
+  /**
+   * Before placing the order: on the multi-step checkout's review step, above the order summary
+   * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+   */
   checkoutReview: ExtensionEntryType<{ cart?: CartType }, never, (cart?: CartType) => boolean>;
   /** The order details page. A provider decides from the order whether it has anything to offer. */
   orderDetails: ExtensionEntryType<{ order?: CustomerOrderType }, never, (order?: CustomerOrderType) => boolean>;
@@ -95,6 +108,14 @@ export type ExtensionCategoryMapType = {
   >;
   /** The cart and checkout review steps. A provider decides on its own state whether it takes over. */
   checkout: ExtensionEntryType<never, never, () => boolean>;
+  /** The sign-in buttons, keyed by the authentication type. */
+  identityProviders: ExtensionEntryType;
+  /** The account security page, keyed by the sign-in method name. */
+  signInMethods: DecorateEntryType<SignInMethodContributionType>;
+  /** Widgets on Account › Security, below the sign-in methods. */
+  accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+  /** Widgets on Company › Info, between the company name and the addresses. */
+  companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 
 /** The parameter a category's `condition` accepts. */

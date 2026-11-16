@@ -89,8 +89,11 @@ watch(
 
 <style lang="scss">
 .vc-image {
+  object-fit: var(--vc-image-object-fit, fill);
+  object-position: var(--vc-image-object-position, 50% 50%);
+
   &--fallback {
-    @apply object-scale-down object-center;
+    object-fit: var(--vc-image-fallback-object-fit, var(--vc-image-object-fit, scale-down));
   }
 }
 </style>

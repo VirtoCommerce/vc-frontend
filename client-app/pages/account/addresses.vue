@@ -127,15 +127,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { AddressDropdownMenu, useCustomerAddresses } from "@/shared/account";
+import { ADDRESS_FORM_FIELD_NAMES, useFieldErrors } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+
+// The page saves one address, so the server names its fields addresses[0].<name>
+const ADDRESS_FIELD_PREFIX = "addresses[0].";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();
@@ -150,6 +155,7 @@ const {
 } = useCustomerAddresses();
 const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
+const { showSaveErrors } = useFieldErrors();
 
 usePageHead({
   title: t("pages.account.addresses.meta.title"),
@@ -184,14 +190,32 @@ function onPageChange(newPage: number): void {
 }
 
 function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): void {
+  const serverErrors = ref<Record<string, string>>();
+  // Disabled while saving, so the server's messages land on the values it rejected
+  const saving = ref(false);
+
   openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address,
-      loading: addressesLoading,
+      loading: computed(() => addressesLoading.value || saving.value),
+      serverErrors,
 
       async onResult(updatedAddress: MemberAddressFieldsFragment) {
-        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
+        saving.value = true;
+
+        try {
+          await addOrUpdateAddresses(
+            [{ ...updatedAddress, addressType: AddressType.BillingAndShipping }],
+            SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+          );
+        } catch (e) {
+          serverErrors.value = showSaveErrors(e, ADDRESS_FORM_FIELD_NAMES, ADDRESS_FIELD_PREFIX);
+          return;
+        } finally {
+          saving.value = false;
+        }
+
         closeModal();
       },
     },

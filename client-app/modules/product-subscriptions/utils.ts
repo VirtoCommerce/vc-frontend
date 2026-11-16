@@ -1,20 +1,8 @@
-import { globals } from "@/core/globals";
+import { Logger } from "@/core/utilities";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
 type TranslateType = Composer["t"];
-
-export function formatMoney(amount: number | null | undefined, currency: string | null | undefined): string {
-  const value = amount ?? 0;
-  try {
-    return new Intl.NumberFormat(globals.cultureName || undefined, {
-      style: "currency",
-      currency: currency || "USD",
-    }).format(value);
-  } catch {
-    return `${value.toFixed(2)} ${currency ?? ""}`.trim();
-  }
-}
 
 export function intervalLabel(
   t: TranslateType,
@@ -27,36 +15,25 @@ export function intervalLabel(
   return t(`product_subscriptions.intervals.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
 }
 
+/**
+ * "Save 10%" or "Save $5.00". A fixed-amount discount is shown with the amount the server formatted in the record's
+ * currency (`formattedAmount`); without it there is nothing correct to show, so no label.
+ */
 export function discountLabel(
   t: TranslateType,
   discountType: SubscriptionDiscountType | null | undefined,
   discountValue: number | null | undefined,
-  currency?: string | null,
+  formattedAmount?: string | null,
 ): string | undefined {
   if (!discountValue || discountType === SubscriptionDiscountType.None) {
     return undefined;
   }
 
-  return discountType === SubscriptionDiscountType.Percent
-    ? t("product_subscriptions.discount.percent", { value: discountValue })
-    : t("product_subscriptions.discount.amount", { value: formatMoney(discountValue, currency) });
-}
-
-export function applyDiscount(
-  price: number,
-  discountType: SubscriptionDiscountType | null | undefined,
-  discountValue: number | null | undefined,
-): number {
-  if (!discountValue || discountType === SubscriptionDiscountType.None) {
-    return price;
-  }
-
   if (discountType === SubscriptionDiscountType.Percent) {
-    const discount = Math.round(price * Math.min(Math.max(discountValue, 0), 100)) / 100;
-    return Math.max(0, Math.round((price - discount) * 100) / 100);
+    return t("product_subscriptions.discount.percent", { value: discountValue });
   }
 
-  return Math.max(0, price - Math.min(price, discountValue));
+  return formattedAmount ? t("product_subscriptions.discount.amount", { value: formattedAmount }) : undefined;
 }
 
 export function intervalKey(unit: SubscriptionIntervalUnit, count: number): string {
@@ -90,6 +67,7 @@ export function statusColor(status: string | null | undefined): VcMainColorType 
   return (status && STATUS_COLORS[status]) || "neutral";
 }
 
+/** The date's UTC day as a date input value ("YYYY-MM-DD"): the server counts delivery days in UTC. */
 export function toDateInputValue(date: string | Date | null | undefined): string | undefined {
   if (!date) {
     return undefined;
@@ -100,20 +78,57 @@ export function toDateInputValue(date: string | Date | null | undefined): string
     return undefined;
   }
 
-  const month = String(value.getMonth() + 1).padStart(2, "0");
-  const day = String(value.getDate()).padStart(2, "0");
-  return `${value.getFullYear()}-${month}-${day}`;
+  const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(value.getUTCDate()).padStart(2, "0");
+  return `${value.getUTCFullYear()}-${month}-${day}`;
 }
 
-export function cardLabel(brand?: string | null, last4?: string | null): string {
-  return `${brand || "Card"} •••• ${last4 ?? "????"}`;
+type PageType<T> = { totalCount?: number | null; items?: T[] | null } | null | undefined;
+
+/** Every item of a paged list: asks for the next page with `after` until `totalCount` items are read. */
+export async function fetchAllPages<T>(
+  fetchPage: (page: { first: number; after: string }) => Promise<PageType<T>>,
+  pageSize: number,
+): Promise<T[]> {
+  const items: T[] = [];
+  let totalCount = 0;
+
+  do {
+    // Each page starts where the previous one ended, so the requests can't run in parallel.
+    const page = await fetchPage({ first: pageSize, after: String(items.length) });
+    const pageItems = page?.items ?? [];
+    if (!pageItems.length) {
+      break;
+    }
+
+    items.push(...pageItems);
+    totalCount = page?.totalCount ?? 0;
+  } while (items.length < totalCount);
+
+  return items;
 }
 
-export function errorMessage(error: unknown, fallback: string): string {
-  const graphQLErrors = (error as { graphQLErrors?: { message?: string }[] })?.graphQLErrors;
-  if (graphQLErrors?.length && graphQLErrors[0]?.message) {
-    return graphQLErrors[0].message;
-  }
+/**
+ * What a shopper is told when a subscription action fails: a translated message. The error's own message is in English
+ * and meant for logs, so it is logged here instead of shown. (A renewal's own problem comes as a code and is translated
+ * by `useRenewalReasons`.)
+ */
+export function subscriptionErrorMessage(
+  error: unknown,
+  t: TranslateType,
+  key = "product_subscriptions.errors.generic",
+): string {
+  Logger.warn("product-subscriptions", error);
+  return t(key);
+}
 
-  return fallback;
+/**
+ * Whether the shopper must be told that the cart's subscriptions need a payment method that can save a card: the cart
+ * has subscription lines and the store offers no such method for it, so the payment list is empty.
+ */
+export function needsCardPaymentMethodNotice(
+  hasSubscriptionItems: boolean,
+  paymentMethods: unknown[] | null | undefined,
+): boolean {
+  return hasSubscriptionItems && !paymentMethods?.length;
 }

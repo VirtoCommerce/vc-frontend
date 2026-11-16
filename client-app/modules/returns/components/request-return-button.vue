@@ -6,7 +6,6 @@
     prepend-icon="receipt-refund"
     :loading="loading"
     :disabled="loading"
-    class="min-w-[10.5rem]"
     @click="goToWizard"
   >
     {{ $t("returns.request_button") }}

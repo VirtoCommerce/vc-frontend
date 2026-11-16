@@ -83,7 +83,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
-export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -131,6 +131,10 @@ export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+// Blocks Place order until a plugin's own condition holds (a terms checkbox it renders, a required choice). Every
+// registered guard must allow the order; unregister the guard when the plugin's block leaves the page.
+export { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
+export type { CheckoutGuardType } from "@/shared/checkout/composables/useCheckoutGuards";
 // What the sharing modal hands a scope's `onSaved`, and the shape a scope's element must expose
 // for the modal to read it.
 export type {
@@ -139,6 +143,14 @@ export type {
   WishlistSharingScopePayloadType,
   WishlistSharingScopeSavedContextType,
 } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+export { useThemeContext } from "@/core/composables/useThemeContext";
+export { useAnalytics } from "@/core/composables/useAnalytics";
+export { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
+export { useAuth } from "@/core/composables/useAuth";
+export { useSignMeIn } from "@/shared/account/composables/useSignMeIn";
+export { default as IdentityProvider } from "@/shared/sign-in/components/identity-provider.vue";
+export type { SignInMethodContributionType } from "@/shared/account/types";
+export type { IdentityErrorType, SignInKeyType } from "@/core/api/graphql/types";
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
@@ -176,12 +188,44 @@ export { default as OrderCommentSection } from "@/shared/checkout/components/ord
 export { default as OrderSummary } from "@/shared/checkout/components/order-summary.vue";
 export { default as AddressInfo } from "@/shared/common/components/address-info.vue";
 export { default as VendorName } from "@/shared/common/components/vendor-name.vue";
+
 // The orders `filter` expression the host builds from its filter panel model, and the facet name
 // the status chips read - a plugin listing orders has to speak the same filter grammar. Named for
 // orders here: `getFilterExpression` is the host's generic filter joiner in @/core/utilities.
 export { getFilterExpression as getOrdersFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
 export type { OrdersFilterDataType } from "@/shared/account/types";
+
+// Sales report (VCST-6650): the panel renders monthly sales and AOV from figures the caller fetches; the plan says
+// which month windows to fetch them for, `useReportingData` keeps each response with the plan it was fetched for.
+export {
+  buildReportingPlan,
+  buildReportingVariables,
+  isReportingPeriod,
+  REPORTING_DEFAULT_PERIOD,
+  REPORTING_MONTH_SLOTS,
+  REPORTING_PERIODS,
+  ReportingPanel,
+  toReportingData,
+  useReportingData,
+  useReportingPlan,
+} from "@/shared/reporting";
+export type {
+  ReportingDataType,
+  ReportingMonthSlotType,
+  ReportingPeriodTotalsType,
+  ReportingPeriodType,
+  ReportingPlanType,
+  ReportingRawMonthType,
+  ReportingSettledType,
+  ReportingStatisticsType,
+  ReportingVariablesType,
+} from "@/shared/reporting";
 export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
+
+// The promotion coupon card of the host's "Promotion coupons" page, so a plugin lists coupons the way the
+// host does. Props and the `after-description` slot are contract.
+export { default as CouponItem } from "@/shared/account/components/coupon-item.vue";
+export { default as CouponItemSkeleton } from "@/shared/account/components/coupon-item-skeleton.vue";
 
 // Files. `useFetch` is the host's fetch with its auth interceptors, so a plugin can read a
 // protected file URL as the signed-in user; `downloadFile` saves one through it.
@@ -209,6 +253,48 @@ export type { CustomerOrderType } from "@/core/api/graphql/types";
 // Already reachable through the list-sharing types; exported so a plugin can name it.
 export type { SharingTargetType } from "@/core/api/graphql/types";
 
+// Dashboard layout engine (VCST-6078). A dashboard page owns a layout controller (`useLayout(scope)`), hands it
+// to `<LayoutSurface>` and shapes its statistics queries from the same object (`useStatDataNeeds`); its blocks
+// join drag-and-drop, hiding and persistence through `registerBlock(scope, block)` and render inside
+// `<LayoutWidget>`. The Sales Rep Hub plugin runs its dashboards on this engine instead of carrying a copy.
+// Direct file paths, not the `shared/dashboard` barrel (same reason as the composables above), and nothing
+// from its `_internal/` folders: the surface and the widget are the two components whose look is the contract.
+export { default as LayoutSurface } from "@/shared/dashboard/components/layout-surface.vue";
+export { default as LayoutWidget } from "@/shared/dashboard/components/layout-widget.vue";
+export { useLayout } from "@/shared/dashboard/composables/useLayout";
+export { useBlockChrome } from "@/shared/dashboard/composables/useBlockChrome";
+export { useStatDataNeeds } from "@/shared/dashboard/composables/useStatDataNeeds";
+export { registerBlock, unregisterBlock } from "@/shared/dashboard/registry";
+export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "@/shared/dashboard/settings";
+export { buildStatCards, statBlocks, statDataNeeds } from "@/shared/dashboard/stat-cards";
+export {
+  buildStatisticsWindows,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+} from "@/shared/dashboard/statistics";
+export { MIN_ROWS } from "@/shared/dashboard/constants";
+export type { ILayoutBlockChromeType } from "@/shared/dashboard/composables/useBlockChrome";
+export type {
+  IStatCardDefType,
+  StatCardDataType,
+  StatNeedResultType,
+  StatQueryStateType,
+} from "@/shared/dashboard/stat-cards";
+export type { SignedPercentType, StatisticsWindowsType } from "@/shared/dashboard/statistics";
+export type {
+  BlockSettingsType,
+  BlockSettingType,
+  BlockType,
+  IStatBlock,
+  IWidgetBlock,
+  LayoutControllerType,
+  LayoutRegionIdType,
+  LayoutVisibilityType,
+  MaxRowsSettingType,
+  StatCardType,
+  StatDataNeedsType,
+} from "@/shared/dashboard/types";
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 export const CORE_VERSION: string = version;

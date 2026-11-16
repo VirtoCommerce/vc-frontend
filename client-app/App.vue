@@ -105,7 +105,9 @@ onMounted(() => {
 <style lang="scss">
 @use "assets/styles/main.scss";
 
-#popover-host {
-  @apply absolute bottom-0 right-0 z-[9999] size-0;
+@layer vc.app {
+  #popover-host {
+    @apply absolute bottom-0 right-0 z-[9999] size-0;
+  }
 }
 </style>

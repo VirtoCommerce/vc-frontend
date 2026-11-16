@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Este artículo no se puede comprar",
       "item_is_out_of_stock": "Este artículo está agotado",
       "invalid_value": "Valor inválido",
+      "invalid_characters": "Contiene caracteres no válidos",
+      "html_tags_not_allowed": "No se permiten etiquetas HTML",
+      "unsafe_content": "Contiene contenido no permitido",
+      "invalid_addresses": "Algunas de las direcciones no son válidas",
+      "invalid_data": "Algunos de los datos introducidos no son válidos",
       "invalid_user_id_or_token": "ID de usuario o token inválido.",
       "product_no_longer_available": "Ya no está disponible",
       "item_quantity_required_field": "El valor de la cantidad del artículo no puede estar vacío",
@@ -285,7 +290,8 @@
       "company_members": "Miembros de la empresa",
       "contact_administrator": "contacta al administrador del sitio",
       "skip_to_main_content": "Ir al contenido principal",
-      "skip_to_footer": "Ir al pie de página"
+      "skip_to_footer": "Ir al pie de página",
+      "security": "Seguridad"
     },
     "titles": {
       "all_actions": "Todas las acciones",
@@ -378,7 +384,9 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Guardado para más tarde",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "payment_methods": "Métodos de pago",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -407,7 +415,9 @@
             "navigation": "Navegación",
             "main_navigation": "Navegación principal"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Sin artículos | {n} artículo | {n} artículos"
       },
       "footer": {
         "version": "Ver.",
@@ -494,7 +504,9 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "payment_methods": "Métodos de pago",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +537,12 @@
           "duplicate_email_login_attempt": "Varias cuentas usan este correo electrónico.",
           "lockout_disabled": "Esta cuenta no puede iniciar sesión con un código.",
           "invalid_code": "Este código no ha funcionado.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Su sesión de inicio de sesión ha caducado. Inicie sesión de nuevo.",
+          "code_attempts_exceeded": "Demasiados códigos incorrectos. Espere unos minutos y vuelva a iniciar sesión.",
+          "mfa_provider_not_available": "No podemos enviar un código de inicio de sesión a esta cuenta. Póngase en contacto con su administrador.",
+          "two_factor_unavailable": "Esta cuenta requiere un segundo paso de inicio de sesión, pero no está disponible. Póngase en contacto con su administrador.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +562,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "La verificación fue exitosa, pero el cambio a la cuenta del cliente falló. Inténtelo de nuevo.",
-          "generic": "Algo salió mal. Inténtelo de nuevo."
+          "generic": "Algo salió mal. Inténtelo de nuevo.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -618,6 +644,27 @@
         "click_to_copy": "Haz clic para copiar",
         "clipboard_success": "Cupón copiado con éxito",
         "tap_to_copy": "Toca para copiar"
+      },
+      "dashboard": {
+        "orders_placed_week": "Pedidos de esta semana",
+        "orders_placed_mtd": "Pedidos del mes en curso",
+        "orders_placed_ytd": "Pedidos del año en curso",
+        "avg_order_value": "Valor medio del pedido",
+        "per_order": "Promedio por pedido (año en curso)",
+        "vs_last_week": "{delta} vs. semana pasada",
+        "vs_last_month": "{delta} vs. mes pasado",
+        "vs_last_year": "{delta} vs. año pasado",
+        "excluded_orders": "{count} pedido en otra moneda no incluido | {count} pedidos en otras monedas no incluidos",
+        "sub_with_excluded": "{sub} · {note}",
+        "recent_orders": {
+          "title": "Mis pedidos recientes",
+          "view_all": "Todos los pedidos",
+          "filter_all": "Todos",
+          "empty": "Aún no hay pedidos",
+          "no_results": "No hay pedidos con este estado",
+          "load_failed": "No se pudieron cargar los pedidos",
+          "statuses_label": "Estados que se muestran"
+        }
       }
     },
     "sign_in": {
@@ -632,12 +679,7 @@
         "verify": {
           "header": "Revisa tu correo electrónico",
           "subtitle": "Enviamos un código a {email}.",
-          "code_label": "Código",
-          "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
-          "submit_button": "Iniciar sesión",
-          "resend_button": "Reenviar código",
-          "use_different_email_link": "Usar otro correo electrónico",
-          "live_resent": "Nuevo código enviado."
+          "use_different_email_link": "Usar otro correo electrónico"
         },
         "locked": {
           "title": "Demasiados intentos fallidos",
@@ -653,6 +695,19 @@
           "password_button": "Iniciar sesión con contraseña",
           "back_link": "Volver al inicio de sesión"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Introduce el código de inicio de sesión",
+        "subtitle": "Enviamos un código a {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Código",
+        "paste_hint": "Escribe o pega el código. En el móvil, tócalo encima del teclado.",
+        "submit_button": "Iniciar sesión",
+        "resend_button": "Reenviar código",
+        "resend_countdown": "Reenviar código en {seconds} s",
+        "live_resent": "Nuevo código enviado."
       }
     },
     "company": {
@@ -1018,6 +1073,40 @@
           "missing_link": "Falta el enlace de redirección",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
+      },
+      "saved_cards": {
+        "pay_with": "Pagar con",
+        "new_card": "Usar una tarjeta nueva",
+        "save_card": "Guardar esta tarjeta para pagos futuros",
+        "save_card_required": "Esta compra requiere guardar la tarjeta para pagos futuros, por lo que se guarda de forma segura. Puede cambiarla en cualquier momento.",
+        "default": "Predeterminada",
+        "expired": "Caducada",
+        "needs_update": "Requiere actualización",
+        "expires": "Caduca {date}",
+        "page_title": "Métodos de pago",
+        "page_subtitle": "Tarjetas guardadas para pagar más rápido. Nunca guardamos el número completo de su tarjeta.",
+        "empty": "Aún no hay tarjetas guardadas.",
+        "make_default": "Establecer como predeterminada",
+        "remove": "Eliminar",
+        "remove_title": "¿Eliminar esta tarjeta?",
+        "remove_text": "La tarjeta se elimina de su cuenta y del proveedor de pagos.",
+        "removed": "Tarjeta eliminada.",
+        "add_title": "Añadir una tarjeta",
+        "add": "Guardar tarjeta",
+        "added": "Tarjeta guardada.",
+        "set_default": "Usar como mi tarjeta predeterminada",
+        "billing_title": "Dirección de facturación de la tarjeta",
+        "billing_hint": "Su banco la verifica al guardar la tarjeta.",
+        "address": "Dirección",
+        "city": "Ciudad",
+        "state": "Provincia",
+        "zip": "Código postal",
+        "form_unavailable": "No se pueden guardar tarjetas en este momento. Inténtelo más tarde.",
+        "error": "Algo salió mal. Inténtelo de nuevo.",
+        "card": "Tarjeta",
+        "load_failed": "No se pudieron cargar sus tarjetas guardadas.",
+        "forms_load_failed": "No se pudieron cargar los formularios de tarjeta.",
+        "retry": "Intentar de nuevo"
       }
     },
     "wishlists": {
@@ -1155,6 +1244,122 @@
           "unpin_label": "Desfijar “{label}”"
         }
       }
+    },
+    "dashboard": {
+      "edit": "Editar diseño",
+      "editing": "Editando el diseño",
+      "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+      "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+      "save": "Guardar diseño",
+      "cancel": "Cancelar",
+      "reset": "Restablecer",
+      "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+      "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+      "hidden_widgets": "Widgets ocultos",
+      "visible_stats": "Métricas visibles",
+      "hidden_stats": "Métricas ocultas",
+      "empty_visible": "Arrastre una métrica aquí para mostrarla",
+      "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+      "max_rows": "Filas máximas",
+      "restored": "Se restableció el diseño predeterminado.",
+      "empty": {
+        "title": "Todos los bloques están ocultos",
+        "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+        "hidden": "Ocultos",
+        "restore": "Restablecer diseño predeterminado"
+      },
+      "a11y": {
+        "reorder": "Reordenar {title}",
+        "hide": "Ocultar {title}",
+        "show": "Mostrar {title}",
+        "editing": "Editando el diseño. Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+        "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+        "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+        "moved": "{title} movido a la posición {position} de {total}.",
+        "dropped": "{title} soltado en la posición {position} de {total}.",
+        "edge": "{title} ya está en la posición {position} de {total}.",
+        "cancelled": "Movimiento de {title} cancelado.",
+        "parked": "{title} oculto.",
+        "restored": "{title} visible.",
+        "max_rows": "Filas máximas para {title}, entre {min} y {max}"
+      },
+      "stats": {
+        "load_failed": "No se pudo cargar"
+      }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Ticket medio del período: {aov}",
+        "title": "Valor medio del pedido"
+      },
+      "axis": {
+        "aov": "Ticket medio, {currency}"
+      },
+      "cancelled_excluded": "Pedidos cancelados excluidos",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "últimos 6 meses",
+        "twelve_months": "últimos 12 meses",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mes en curso hasta el {today}. Las ventas son netas, por fecha de pedido; se excluyen los pedidos cancelados.",
+      "footnote_closed": "{from} – {to}. Las ventas son netas, por fecha de pedido; se excluyen los pedidos cancelados.",
+      "footnote_upcoming": "Este período aún no ha comenzado.",
+      "kpi": {
+        "aov": "Valor medio del pedido · {period}",
+        "month_to_date": "{month} hasta la fecha · día {day} de {days}",
+        "orders": "Pedidos · {period}",
+        "projected": "{share} del mes · previsión {value}",
+        "sales": "Ventas · {period}",
+        "vs_last_year": "{change} vs. año pasado"
+      },
+      "last_year": "Año pasado",
+      "last_year_toggle": "Mostrar el año pasado en el gráfico «{chart}»",
+      "legend": {
+        "aov_closed": "Ticket medio, meses cerrados",
+        "current": "Este mes, hasta la fecha",
+        "down": "bajada",
+        "last_year": "Año pasado",
+        "projection": "Previsión a fin de mes",
+        "sales_closed": "Ventas, meses cerrados",
+        "up": "subida",
+        "vs_last_year": "vs. mismo mes del año pasado"
+      },
+      "load_failed": "No se pudo cargar el informe. Inténtelo de nuevo más tarde.",
+      "period_label": "Período",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 meses",
+        "twelve_months": "12 meses",
+        "year": "Año en curso"
+      },
+      "sales_chart": {
+        "subtitle": "Promedio de {value} por mes cerrado",
+        "title": "Ventas mensuales · {period}"
+      },
+      "table": {
+        "aov": "Ticket medio",
+        "change": "vs. año pasado",
+        "description": "Ventas, pedidos y valor medio del pedido por mes",
+        "last_year": "Mismo mes del año pasado",
+        "month": "Mes",
+        "orders": "Pedidos",
+        "sales": "Ventas",
+        "toggle": "Mostrar como tabla"
+      },
+      "tooltip": {
+        "aov": "Ticket medio",
+        "last_year_aov": "Ticket medio, {month}",
+        "last_year_revenue": "Ingresos, {month}",
+        "projection": "Previsión a fin de mes",
+        "revenue": "Ingresos",
+        "revenue_to_date": "Ingresos hasta la fecha",
+        "vs_month": "vs. {month}"
+      },
+      "upcoming": "Próximo"
     }
   },
   "pages": {
@@ -1307,31 +1512,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel de control",
-        "last_orders_card": {
-          "title": "Últimos pedidos",
-          "all_orders_link": "Todos los pedidos",
-          "order_number_label": "Número de pedido",
-          "purchase_number_label": "Orden de compra",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Factura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Sin pedidos",
-          "no_orders_message": "Aún no hay pedidos"
-        },
-        "monthly_report_card": {
-          "title": "Informe de gastos mensual",
-          "budget_title": "Presupuesto",
-          "total_spend_label": "Totalmente gastado",
-          "spend_chart_alt": "Gráfico de gastos"
-        },
-        "orders_status_card": {
-          "title": "Estado de los pedidos"
-        },
-        "bulk_order_card": {
-          "title": "Bloc de pedidos en masa"
-        }
+        "title": "Panel de control"
       },
       "change_password": {
         "meta": {
@@ -1464,6 +1645,23 @@
       "promotion_coupons": {
         "title": "Todos los cupones y promociones",
         "no_lists": "No tienes cupones ni promociones"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "No hay claves",
+        "unnamed_key": "Clave sin nombre",
+        "rename_key_label": "Cambiar el nombre de {name}",
+        "delete_key_label": "Eliminar {name}",
+        "created": "Creada el {date}",
+        "changed": "Modificada el {date}",
+        "rename_modal": {
+          "title": "Cambiar el nombre de la clave",
+          "name_label": "Nombre"
+        },
+        "delete_modal": {
+          "title": "Eliminar clave",
+          "message": "Ya no podrá iniciar sesión con esta clave."
+        }
       }
     },
     "company": {
@@ -1803,7 +2001,11 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one.",
+    "user_not_editable": "Este usuario no se puede editar",
+    "sign_in_key_not_found": "No se encontró la clave de inicio de sesión",
+    "last_sign_in_key": "No se puede eliminar la última clave de inicio de sesión",
+    "operation_not_supported": "Esta operación no es compatible"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",

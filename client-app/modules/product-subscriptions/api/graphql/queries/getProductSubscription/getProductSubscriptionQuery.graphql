@@ -2,8 +2,8 @@
 #import "../../fragments/renewalFields.graphql"
 #import "../../fragments/subscriptionIntervalFields.graphql"
 
-query GetProductSubscription($id: String!) {
-  productSubscription(id: $id) {
+query GetProductSubscription($id: String!, $cultureName: String) {
+  productSubscription(id: $id, cultureName: $cultureName) {
     ...productSubscriptionFields
     availableIntervals {
       ...subscriptionIntervalFields

@@ -444,6 +444,22 @@ describe("useCompareProductsPage", () => {
     });
   });
 
+  describe("selectItem analytics", () => {
+    it("sends the selected product with the column position it was clicked in", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p1", "cat-a")];
+      hoisted.state.fetchedProducts.value = [product("p1")];
+
+      const { selectItemEvent } = useCompareProductsPage();
+      selectItemEvent(product("p1"), 1);
+
+      expect(hoisted.fns.analytics).toHaveBeenCalledWith(
+        "selectItem",
+        expect.objectContaining({ id: "p1" }),
+        expect.objectContaining({ item_list_id: "compare_products", index: 1 }),
+      );
+    });
+  });
+
   describe("customFieldRows — availability differs (VCST-5735 fix)", () => {
     function setUpCategory(products: Product[]) {
       hoisted.state.compareEntries.value = products.map((p) => entry(p.id, "cat-a"));

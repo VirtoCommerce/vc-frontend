@@ -1,55 +1,13 @@
 <template>
   <div class="mock-card-payment" data-test-id="mock-card-payment">
-    <VcAlert color="warning" size="sm" variant="soft" icon class="mb-4">
+    <VcAlert color="warning" size="sm" variant="soft" icon class="mock-card-payment__banner">
       {{ $t("product_subscriptions.mock_payment.banner") }}
     </VcAlert>
 
     <VcAlert v-if="initError" color="danger" size="sm" variant="soft" icon>{{ initError }}</VcAlert>
 
     <template v-else>
-      <div v-if="savedMethods.length" class="mock-card-payment__saved">
-        <VcLabel>{{ $t("product_subscriptions.mock_payment.pay_with") }}</VcLabel>
-
-        <div
-          v-for="method in savedMethods"
-          :key="method.id"
-          class="mock-card-payment__option"
-          :class="{ 'mock-card-payment__option--active': selected === method.id }"
-        >
-          <VcRadioButton
-            v-model="selected"
-            :value="method.id"
-            name="mock-card"
-            size="sm"
-            class="mock-card-payment__radio"
-          >
-            <VcIcon name="credit-card" size="sm" />
-
-            <span class="mock-card-payment__option-text">
-              {{ cardLabel(method.brand, method.last4) }}
-              <span class="text-neutral-500">{{ method.expirationMonth }}/{{ method.expirationYear }}</span>
-            </span>
-
-            <VcBadge v-if="method.isDefault" size="sm" variant="soft" color="info" rounded>{{
-              $t("product_subscriptions.payment_methods.default")
-            }}</VcBadge>
-          </VcRadioButton>
-        </div>
-
-        <div class="mock-card-payment__option" :class="{ 'mock-card-payment__option--active': selected === NEW_CARD }">
-          <VcRadioButton
-            v-model="selected"
-            :value="NEW_CARD"
-            name="mock-card"
-            size="sm"
-            class="mock-card-payment__radio"
-          >
-            <VcIcon name="plus" size="sm" />
-
-            <span class="mock-card-payment__option-text">{{ $t("product_subscriptions.mock_payment.new_card") }}</span>
-          </VcRadioButton>
-        </div>
-      </div>
+      <SavedCardPicker v-model="selected" :methods="savedMethods" :new-card-value="NEW_CARD" name="mock-card" />
 
       <div v-if="selected === NEW_CARD" class="mock-card-payment__new">
         <BankCardForm
@@ -57,46 +15,59 @@
           v-model="card"
           v-model:valid="cardValid"
           :disabled="loading"
-          class="xl:w-2/3"
+          class="mock-card-payment__card-form"
           @submit="pay"
         />
 
         <div class="mock-card-payment__test-cards">
-          <span class="text-xs font-bold text-neutral-600">{{
+          <span class="mock-card-payment__test-cards-title">{{
             $t("product_subscriptions.mock_payment.test_cards")
           }}</span>
 
           <div class="mock-card-payment__chips">
-            <button
+            <VcButton
               v-for="testCard in MOCK_TEST_CARDS"
               :key="testCard.number"
-              type="button"
-              class="mock-card-payment__chip"
+              size="xs"
+              variant="outline"
+              color="neutral"
               :data-test-id="`mock-test-card-${testCard.key}`"
               @click="useTestCard(testCard.number)"
             >
-              <span class="font-mono">•••• {{ testCard.number.slice(-4) }}</span>
+              <span class="mock-card-payment__chip-number">•••• {{ testCard.number.slice(-4) }}</span>
 
               <span>{{ $t(`product_subscriptions.mock_payment.cards.${testCard.key}`) }}</span>
-            </button>
+            </VcButton>
           </div>
         </div>
 
-        <VcCheckbox v-model="saveCard" :disabled="requiresSavedCard || loading" class="mt-4" test-id="mock-card-save">
+        <VcCheckbox
+          v-model="saveCard"
+          :disabled="requiresSavedCard || loading"
+          class="mock-card-payment__save-card"
+          test-id="mock-card-save"
+        >
           {{ $t("product_subscriptions.mock_payment.save_card") }}
         </VcCheckbox>
 
-        <p v-if="requiresSavedCard" class="mt-1 text-xs text-neutral-600">
+        <p v-if="requiresSavedCard" class="mock-card-payment__note">
           {{ $t("product_subscriptions.mock_payment.save_card_required") }}
         </p>
       </div>
 
-      <VcAlert v-if="paymentError" color="danger" size="sm" variant="soft" icon class="mt-4" role="alert">{{
-        paymentError
-      }}</VcAlert>
+      <VcAlert
+        v-if="paymentError"
+        color="danger"
+        size="sm"
+        variant="soft"
+        icon
+        class="mock-card-payment__error"
+        role="alert"
+        >{{ paymentError }}</VcAlert
+      >
 
       <VcButton
-        class="mt-5"
+        class="mock-card-payment__pay"
         :loading="loading"
         :disabled="!canPay"
         min-width="12rem"
@@ -105,43 +76,22 @@
       >
         {{
           $t("product_subscriptions.mock_payment.pay", {
-            amount: formatMoney(order.total?.amount, order.currency?.code),
+            amount: order.total?.formattedAmount ?? "",
           })
         }}
       </VcButton>
     </template>
 
-    <VcModal
+    <ThreeDsModal
       :show="showThreeDs"
-      :title="$t('product_subscriptions.mock_payment.three_ds_title')"
-      icon="shield-check"
-      is-persistent
-      hide-actions
-      max-width="26rem"
-      @close="decline3ds"
-    >
-      <div class="flex flex-col items-center gap-3 text-center">
-        <VcIcon name="lock" size="lg" class="text-primary" />
-
-        <p class="text-sm">
-          {{
-            $t("product_subscriptions.mock_payment.three_ds_text", {
-              amount: formatMoney(order.total?.amount, order.currency?.code),
-            })
-          }}
-        </p>
-
-        <div class="flex w-full flex-col gap-2 sm:flex-row">
-          <VcButton variant="outline" color="neutral" full-width data-test-id="mock-3ds-decline" @click="decline3ds">
-            {{ $t("product_subscriptions.mock_payment.three_ds_decline") }}
-          </VcButton>
-
-          <VcButton full-width data-test-id="mock-3ds-approve" @click="approve3ds">
-            {{ $t("product_subscriptions.mock_payment.three_ds_approve") }}
-          </VcButton>
-        </div>
-      </div>
-    </VcModal>
+      :message="
+        $t('product_subscriptions.mock_payment.three_ds_text', {
+          amount: order.total?.formattedAmount ?? '',
+        })
+      "
+      @decline="decline3ds"
+      @approve="approve3ds"
+    />
   </div>
 </template>
 
@@ -151,18 +101,14 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { authorizePayment, initializePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
-import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
-import {
-  MOCK_PAYMENT_CODE,
-  MOCK_TEST_CARDS,
-  SUBSCRIPTION_CHECKOUT_STORAGE_KEY,
-  THREE_DS_ON_RENEWAL_LAST4,
-  THREE_DS_ON_SAVE_LAST4,
-} from "../constants";
-import { cardLabel, formatMoney } from "../utils";
+import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
+import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS, THREE_DS_ON_RENEWAL_LAST4, THREE_DS_ON_SAVE_LAST4 } from "../constants";
+import ThreeDsModal from "./three-ds-modal.vue";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
+import SavedCardPicker from "@/shared/payment/components/saved-card-picker.vue";
 
 interface IProps {
   order: CustomerOrderType;
@@ -177,13 +123,13 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const NEW_CARD = "new";
-const SUBSCRIPTION_FLAG_MAX_AGE_MS = 2 * 60 * 60 * 1000;
 
 const order = toRef(props, "order");
 
 const { t } = useI18n();
 const route = useRoute();
-const { activeMethods, fetch: fetchSavedMethods } = useSavedPaymentMethods();
+const { methodsFor, fetch: fetchSavedMethods } = useSavedPaymentMethods();
+const cardSaving = useCardSavingRequirement();
 
 const loading = ref(false);
 const initError = ref<string>();
@@ -196,26 +142,14 @@ const cardFormKey = ref(0);
 const saveCard = ref(true);
 const showThreeDs = ref(false);
 
-const subscriptionCheckout = readSubscriptionFlag();
+// Only for an order placed from the cart whose subscription terms were accepted: the requirement is matched by the
+// order's shoppingCartId.
+const subscriptionCheckout = cardSaving.read({ order: order.value });
 const requiresSavedCard = computed(() => !!subscriptionCheckout);
 
-const savedMethods = computed(() => activeMethods.value.filter((x) => x.paymentMethodCode === MOCK_PAYMENT_CODE));
+const savedMethods = computed(() => methodsFor(MOCK_PAYMENT_CODE));
 const payment = computed(() => order.value.inPayments?.[0]);
 const canPay = computed(() => !loading.value && !!payment.value && (selected.value !== NEW_CARD || cardValid.value));
-
-function readSubscriptionFlag(): { consentId?: string; acceptedAt: number } | undefined {
-  try {
-    const raw = sessionStorage.getItem(SUBSCRIPTION_CHECKOUT_STORAGE_KEY);
-    if (!raw) {
-      return undefined;
-    }
-
-    const value = JSON.parse(raw) as { consentId?: string; acceptedAt: number };
-    return Date.now() - value.acceptedAt < SUBSCRIPTION_FLAG_MAX_AGE_MS ? value : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 function useTestCard(number: string) {
   card.value = {
@@ -271,6 +205,8 @@ async function authorize(threeDsCompleted: boolean): Promise<void> {
 
   loading.value = true;
   paymentError.value = undefined;
+  // Only a new card is sent with the consent (see buildParameters), so only its payment fulfils the requirement.
+  const usedRequirement = selected.value === NEW_CARD && !!subscriptionCheckout;
 
   try {
     const result = await authorizePayment({
@@ -280,12 +216,16 @@ async function authorize(threeDsCompleted: boolean): Promise<void> {
     });
 
     if (result.isSuccess) {
-      sessionStorage.removeItem(SUBSCRIPTION_CHECKOUT_STORAGE_KEY);
+      if (usedRequirement) {
+        cardSaving.clear();
+      }
       emit("success");
       return;
     }
 
-    paymentError.value = result.errorMessage || t("product_subscriptions.mock_payment.declined");
+    // The provider's reason is in English and meant for logs; the customer gets a translated message.
+    Logger.warn("mock-card-payment.authorize", result.errorMessage);
+    paymentError.value = t("product_subscriptions.mock_payment.declined");
   } catch (e) {
     Logger.error("mock-card-payment.authorize", e);
     paymentError.value = t("product_subscriptions.errors.generic");
@@ -338,7 +278,8 @@ onMounted(async () => {
   try {
     const result = await initializePayment({ orderId: order.value.id, paymentId: payment.value.id });
     if (!result.isSuccess) {
-      initError.value = result.errorMessage || t("product_subscriptions.errors.generic");
+      Logger.warn("mock-card-payment.initialize", result.errorMessage);
+      initError.value = t("product_subscriptions.errors.generic");
     }
   } catch (e) {
     Logger.error("mock-card-payment.initialize", e);
@@ -349,50 +290,46 @@ onMounted(async () => {
 
 <style lang="scss">
 .mock-card-payment {
-  &__saved {
-    @apply mb-4 flex flex-col gap-2;
+  &__banner {
+    @apply mb-4;
   }
 
-  &__option {
-    @apply rounded-lg border border-neutral-200 text-sm;
-
-    &--active {
-      @apply border-primary bg-primary-50;
+  &__card-form {
+    @media (width >= theme("screens.xl")) {
+      @apply w-2/3;
     }
-  }
-
-  // the radio's own label fills the card, so the whole card selects the option
-  &__radio {
-    @apply w-full;
-
-    .vc-radio-button__container {
-      @apply w-full items-center gap-3 p-3;
-    }
-
-    .vc-radio-button__label {
-      @apply flex min-w-0 grow items-center gap-3;
-    }
-  }
-
-  &__option-text {
-    @apply flex grow flex-wrap items-center gap-x-2;
   }
 
   &__test-cards {
     @apply mt-4 flex flex-col gap-2;
   }
 
+  &__test-cards-title {
+    @apply text-xs font-bold text-neutral-600;
+  }
+
+  &__save-card {
+    @apply mt-4;
+  }
+
+  &__note {
+    @apply mt-1 text-xs text-neutral-600;
+  }
+
+  &__error {
+    @apply mt-4;
+  }
+
+  &__pay {
+    @apply mt-5;
+  }
+
   &__chips {
     @apply flex flex-wrap gap-2;
   }
 
-  &__chip {
-    @apply flex items-center gap-2 rounded-full border border-neutral-300 bg-additional-50 px-3 py-1 text-xs text-neutral-800 transition-colors;
-
-    &:hover,
-    &:focus-visible {
-      @apply border-primary bg-primary-50;
-    }
+  &__chip-number {
+    @apply me-1 font-mono;
   }
 }
 </style>

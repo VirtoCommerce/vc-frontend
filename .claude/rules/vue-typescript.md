@@ -48,7 +48,7 @@ paths:
 
 ## Errors and logging
 31. `Logger.debug/warn/error` from `@/core/utilities`, never `console.*`. Leftover debug logging is a finding.
-32. Prefix log messages with their origin: `` `${useX.name}.${fn.name}` `` or `"[sales-rep] createTask failed:"`.
+32. Prefix log messages with their origin: `` `${useX.name}.${fn.name}` `` or `"[<module>] <action> failed:"`.
 33. No empty/ignored `catch`: log and rethrow, or log and return a sentinel (`false`, `null`).
 
 ## Comments

@@ -1,7 +1,7 @@
 <template>
   <div class="ship-to-selector">
     <VcPopover
-      v-if="allAddresses.length > 0"
+      v-if="hasAnyAddresses"
       class="ship-to-selector__popover"
       arrow-enabled
       max-height="none"
@@ -57,7 +57,7 @@
                   </VcButton>
                 </div>
 
-                <div v-if="allAddresses.length > MAX_ADDRESSES_NUMBER" class="ship-to-selector__search">
+                <div v-if="showSearch" class="ship-to-selector__search">
                   <VcInput
                     v-model="filter"
                     size="sm"
@@ -72,7 +72,7 @@
 
           <VcDialogContent>
             <template #container>
-              <div v-if="loading" class="ship-to-selector__loading">
+              <div v-if="isSearchPending" class="ship-to-selector__loading">
                 <VcLoader />
               </div>
 
@@ -125,10 +125,19 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter v-if="hasAddresses && !filter && allAddresses.length > MAX_ADDRESSES_NUMBER">
+          <VcDialogFooter v-if="showFooter">
             <template #container>
               <div class="ship-to-selector__foot">
+                <VcPagination
+                  v-if="isPaginated"
+                  v-model:page="page"
+                  :pages="pages"
+                  compact
+                  data-test-id="ship-to-pagination"
+                />
+
                 <VcButtonSeeMoreLess
+                  v-else
                   :model-value="isSeeMore"
                   size="xs"
                   data-test-id="ship-to-more-button"
@@ -160,9 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { XApiPermissions } from "@/core/enums";
-import { useUser } from "@/shared/account";
+import { computed, ref } from "vue";
 import { AddressLine } from "@/shared/common";
 import { MAX_ADDRESSES_NUMBER, useShipToLocation } from "../composables";
 
@@ -172,42 +179,51 @@ interface IProps {
 
 defineProps<IProps>();
 
-const filter = ref<string | undefined>("");
 const isSeeMore = ref(false);
 
 const {
   accountAddresses: allAddresses,
+  addressesCount,
+  canAddNewAddress,
   loading,
   selectedAddress,
-  organizationsAddresses,
-  getFilteredAddresses,
-  getLimitedAddresses,
-  fetchAddresses,
+  isPaginated,
+  page,
+  pages,
+  search: filter,
+  isSearchPending: isServerSearchPending,
   selectAddress,
+  getLocalFilteredAddresses,
   openAddOrUpdateAddressModal,
 } = useShipToLocation();
 
-const { checkPermissions, isCorporateMember } = useUser();
-
+// Paginated: allAddresses is already the server page/search result. Otherwise it's the small
+// local-storage list, filtered/sliced here.
 const addresses = computed(() => {
-  if (!isSeeMore.value && !filter.value) {
-    return getLimitedAddresses();
+  if (isPaginated.value) {
+    return allAddresses.value;
   }
 
-  return getFilteredAddresses(filter.value);
+  if (!isSeeMore.value && !filter.value) {
+    return getLocalFilteredAddresses().slice(0, MAX_ADDRESSES_NUMBER);
+  }
+
+  return getLocalFilteredAddresses(filter.value);
 });
 
 const hasAddresses = computed(() => addresses.value.length > 0);
-const canAddNewAddress = computed(
-  () =>
-    !isCorporateMember.value ||
-    checkPermissions(XApiPermissions.CanEditOrganization) ||
-    (!checkPermissions(XApiPermissions.CanEditOrganization) && organizationsAddresses.value.length === 0),
-);
 
-onMounted(() => {
-  void fetchAddresses();
-});
+const isSearchPending = computed(() => isPaginated.value && isServerSearchPending.value);
+
+const hasAnyAddresses = computed(() => addressesCount.value > 0);
+
+const showSearch = computed(() => !!filter.value || addressesCount.value > MAX_ADDRESSES_NUMBER);
+
+const showFooter = computed(() =>
+  isPaginated.value
+    ? pages.value > 1
+    : hasAddresses.value && !filter.value && allAddresses.value.length > MAX_ADDRESSES_NUMBER,
+);
 </script>
 
 <style lang="scss">

@@ -117,8 +117,6 @@ async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUr
   // intact while still switching the active locale (see VCST-5219).
   if (options?.rewriteUrl !== false) {
     const localeFromUrl = getLocaleFromUrl();
-    const targetLocale = currentMaybeShortLocale.value;
-    const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
 
     let newPath = location.pathname;
 
@@ -128,10 +126,8 @@ async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUr
       newPath = newPath?.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
     }
 
-    if (!isDefault) {
-      // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
-      newPath = newPath === "/" ? `/${targetLocale}` : `/${targetLocale}${newPath}`;
-    }
+    // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
+    newPath = getLocalizedPath(cultureName, newPath);
 
     if (newPath !== location.pathname) {
       history.pushState(null, "", `${newPath}${location.search}${location.hash}`);
@@ -237,6 +233,27 @@ function getUrlWithoutPossibleLocale(fullPath: string): string {
   return fullPath;
 }
 
+function withLeadingSlash(path: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+/**
+ * Storefront path of a permalink in the given language: the default store language has no locale prefix,
+ * other languages are prefixed with their (short when unambiguous) locale, e.g. `/nl/over-ons`.
+ */
+function getLocalizedPath(cultureName: string, permalink: string): string {
+  const normalizedPermalink = withLeadingSlash(permalink);
+
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: typed string parameter
+  if (cultureName.toLowerCase() === defaultStoreCulture.value?.toLowerCase()) {
+    return normalizedPermalink;
+  }
+
+  const localePrefix = `/${tryShortLocale(cultureName)}`;
+  return normalizedPermalink === "/" ? localePrefix : `${localePrefix}${normalizedPermalink}`;
+}
+
 function pinLocale(locale: string) {
   pinnedLocale.value = locale;
 }
@@ -296,7 +313,7 @@ export function useLanguages() {
     }
 
     const localeFromUrl = getLocaleFromUrl();
-    const normalizedPermalink = permalink?.startsWith("/") ? permalink : `/${permalink}`;
+    const normalizedPermalink = withLeadingSlash(permalink);
 
     // Preserve a catalog namespace prefix (e.g. /loyalty-catalog) if the current URL is under one,
     // so that slug-driven replaceState calls don't drop it.
@@ -344,6 +361,7 @@ export function useLanguages() {
     getPossibleLocaleFromUrl,
     getUrlWithoutLocale,
     getUrlWithoutPossibleLocale,
+    getLocalizedPath,
     removeLocaleFromUrl,
     removeFacetsFromUrl,
     updateLocalizedUrl,

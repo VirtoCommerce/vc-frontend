@@ -1,8 +1,7 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions",
-      "payment_methods": "Payment methods"
+      "subscriptions": "Subscriptions"
     },
     "intervals": {
       "day": "Every day | Every {count} days",
@@ -43,7 +42,8 @@
       "paused": "Paused",
       "paused_until": "Paused until {date}",
       "cancelled_on": "Cancelled {date}",
-      "back": "Back"
+      "back": "Back",
+      "retry": "Try again"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -65,12 +65,14 @@
     "checkout": {
       "title": "Your subscription",
       "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order."
+      "required": "Please accept the terms to place your order.",
+      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
+      "terms_failed": "We couldn't load the subscription terms.",
+      "retry": "Try again",
+      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
     },
     "mock_payment": {
       "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "pay_with": "Pay with",
-      "new_card": "Use a new card",
       "test_cards": "Test cards",
       "cards": {
         "success": "Always approved",
@@ -104,9 +106,12 @@
       },
       "empty": {
         "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
+        "no_active": "No active subscriptions.",
         "paused": "No paused subscriptions.",
         "cancelled": "No cancelled subscriptions."
-      }
+      },
+      "tabs_label": "Subscription status",
+      "load_failed": "We couldn't load your subscriptions."
     },
     "renewal": {
       "total": "Total",
@@ -131,17 +136,39 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Some items in this delivery are not available right now.",
+        "NO_SHIPPING_METHOD": "No shipping method is available for the delivery address.",
+        "PRICE_INCREASED": "The total went up from {from} to {to}. Please confirm the new price.",
+        "UNHANDLED": "This delivery changed since your reminder. Please review it."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Your bank asked you to confirm this payment.",
+        "CARD_REQUIRED": "Please add a card to pay for this delivery.",
+        "CARD_NEEDS_UPDATE": "Your saved card needs to be updated before we can charge this delivery.",
+        "CARD_DECLINED": "Your card was declined. Please update your payment method.",
+        "CARD_DECLINED_WILL_RETRY": "Your card was declined. We'll try again automatically.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Your card was declined. Your payment provider will try again automatically.",
+        "CARD_DECLINED_ON_CAPTURE": "Your card was declined when the order shipped. Please update your payment method.",
+        "RETRIES_EXHAUSTED": "We couldn't charge your card after several attempts. Please update your payment method.",
+        "PAYMENT_FAILED": "We couldn't charge your card. Please update your payment method.",
+        "PAYMENT_NOT_CONFIRMED": "The payment wasn't confirmed in time.",
+        "PROVIDER_UNAVAILABLE": "We couldn't reach the payment provider. Please try again later.",
+        "UNHANDLED": "There was a problem with the payment for this delivery."
       }
     },
     "details": {
       "meta_title": "Subscription",
       "back": "All subscriptions",
       "not_found": "This subscription was not found.",
+      "load_failed": "We couldn't load this subscription.",
       "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
       "pending": "Your subscription starts as soon as the first payment is confirmed.",
       "paused": "This subscription is paused. No deliveries or charges until you resume it.",
       "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
       "cancelled": "Cancelled {date}. You won't be charged again.",
+      "cancelled_undated": "This subscription is cancelled. You won't be charged again.",
       "next_delivery": "Next delivery",
       "next_hint": "We'll email you a reminder with the price a few days before.",
       "no_next": "No upcoming deliveries.",
@@ -210,22 +237,6 @@
       "title": "Order now?",
       "text": "We'll place an order for this subscription right away and charge your saved card. Your schedule restarts from today.",
       "confirm": "Order now"
-    },
-    "payment_methods": {
-      "title": "Payment methods",
-      "subtitle": "Cards saved for subscriptions and faster checkout. We never store your full card number.",
-      "empty": "No saved cards yet.",
-      "default": "Default",
-      "expires": "Expires {date}",
-      "make_default": "Make default",
-      "remove": "Remove",
-      "remove_title": "Remove this card?",
-      "remove_text": "Subscriptions paid with this card need another card first.",
-      "removed": "Card removed.",
-      "add_title": "Add a card",
-      "add": "Save card",
-      "added": "Card saved.",
-      "set_default": "Use as my default card"
     }
   }
 }

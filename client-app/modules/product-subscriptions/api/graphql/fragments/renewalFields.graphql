@@ -6,9 +6,18 @@ fragment renewalFields on SubscriptionRenewal {
   cutoffDate
   isManual
   currency
-  previewTotal
-  notifiedTotal
-  orderTotal
+  previewTotalMoney {
+    amount
+    formattedAmount
+  }
+  notifiedTotalMoney {
+    amount
+    formattedAmount
+  }
+  orderTotalMoney {
+    amount
+    formattedAmount
+  }
   discountTotal
   shippingTotal
   taxTotal
@@ -17,8 +26,8 @@ fragment renewalFields on SubscriptionRenewal {
   orderNumber
   attemptCount
   nextAttemptDate
-  lastErrorMessage
-  reviewReason
+  lastErrorCode
+  reviewReasonCode
   canSkip
   canAcceptReview
   canRetryPayment
@@ -32,7 +41,10 @@ fragment renewalFields on SubscriptionRenewal {
     quantity
     listPrice
     discountAmount
-    total
+    totalMoney {
+      amount
+      formattedAmount
+    }
     isAvailable
     isExcluded
     message

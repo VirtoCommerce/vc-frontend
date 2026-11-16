@@ -1,23 +1,21 @@
 # Module Federation: open work
 
 Open items only, one line each. What is done is in git history; decisions are in [`core/specs/`](../specs/).
-_Checked against `dev` on 2026-10-14._
+_Checked against `dev` on 2026-10-27._
 
 ## Releasing sales-rep as a plugin
 
-- [ ] **Release `vc-module-sales-rep`** with the plugin (un-draft vc-module-sales-rep#13), and check its package
-      with `yarn check:plugin-module … --artifact`.
+- [ ] **Check the released SalesRep package** (3.1014.0) with `yarn check:plugin-module … --artifact`.
 - [ ] **`/modules → platform` route on every environment** that runs the theme (S6).
-- [ ] **Release notes**: MF is a preview; the backend floors (`BACKEND_REQUIREMENTS`), the `/modules` route, the
-      build-time switch, and that an installed plugin runs with the storefront's full rights. With a SalesRep that
-      ships no plugin and the default `sales_rep_builtin_enabled: false`, the Sales Rep Hub and the buyers' Sales
-      reps page are gone.
+- [ ] **Release notes**: the built-in Sales Rep Hub and its `sales_rep_builtin_enabled` setting are gone, so the hub
+      and the buyers' Sales reps page need SalesRep 3.1014.0 or later and the `/modules` route to the platform (S6);
+      themes that set `module_federation_enabled` to `false` per the 2.60.0 notes must set it back to `true`; the
+      bundle cost of the MF host; MF is a preview, and an installed plugin runs with the storefront's full rights.
 - [ ] **The module's own README**: a "Storefront plugin" section that links the scenarios.
-- [ ] **Delete `client-app/modules/sales-rep`** once QA signs the plugin off, with its `sales_rep_builtin_enabled`
-      theme setting and its `independentModules` entry in `scripts/graphql-codegen/generator.ts`.
 - [ ] **E2E smoke** in vc-testing-module: the plugin loads, a rep sees the hub menu.
 - [ ] **Backend:** any SalesRep version crashes a platform running `ASPNETCORE_ENVIRONMENT=Development`
-      (`ValidateOnBuild` rejects a scoped resolver in a singleton). Every local platform hits it.
+      (`ValidateOnBuild` rejects a scoped resolver in a singleton). Every local platform hits it. Fix in review:
+      [VCST-6476](https://virtocommerce.atlassian.net/browse/VCST-6476).
 
 ## Loader and platform
 

@@ -1,7 +1,7 @@
 import { isEqual, isPlainObject, kebabCase, set } from "lodash-es";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getItem, onItemChange } from "./registry";
-import type { ArgSourceType, AttrFieldType, ObjectSourceType, RuleType } from "./types";
+import type { ArgSourceType, AttrFieldType, ObjectSourceType, PositionFieldType, RuleType } from "./types";
 import type { AnalyticsEventMapType } from "@/core/types/analytics";
 
 const NAME_ATTR = "data-vc-track";
@@ -28,10 +28,44 @@ function readAttr(el: Element, { attr, type }: AttrFieldType): string | number |
   return Number.isNaN(num) ? undefined : num;
 }
 
-function readObject(el: Element, fields: ObjectSourceType["fields"]): Record<string, unknown> | undefined {
+// Cards of a nested list belong to that list only
+function ownChildren(scope: Element, target: string): Element[] {
+  const scopeName = scope.getAttribute(NAME_ATTR);
+  return Array.from(scope.querySelectorAll(byName(target))).filter(
+    (child) => !scopeName || child.closest(byName(scopeName)) === scope,
+  );
+}
+
+function readPosition(scope: Element, origin: Element, { position }: PositionFieldType): number | undefined {
+  const child = origin.closest(byName(position));
+  if (!child || !scope.contains(child)) {
+    return undefined;
+  }
+  const bound = getItem(scope);
+  const index = Array.isArray(bound)
+    ? bound.findIndex((item) => isSameValue(item, getItem(child)))
+    : ownChildren(scope, position).indexOf(child);
+  return index === -1 ? undefined : index;
+}
+
+function readObject(
+  el: Element,
+  fields: ObjectSourceType["fields"],
+  origin: Element,
+): Record<string, unknown> | undefined {
   let result: Record<string, unknown> | undefined;
-  Object.entries(fields).forEach(([path, field]) => {
-    const value = readAttr(el, field);
+  const entries = Object.entries(fields);
+  entries.forEach(([path, field]) => {
+    const value = "attr" in field ? readAttr(el, field) : undefined;
+    if (value !== undefined) {
+      result = set(result ?? {}, path, value);
+    }
+  });
+  if (!result) {
+    return undefined;
+  }
+  entries.forEach(([path, field]) => {
+    const value = "position" in field ? readPosition(el, origin, field) : undefined;
     if (value !== undefined) {
       result = set(result ?? {}, path, value);
     }
@@ -40,7 +74,7 @@ function readObject(el: Element, fields: ObjectSourceType["fields"]): Record<str
 }
 
 function readItem(el: Element, fallback?: ObjectSourceType): unknown {
-  return getItem(el) ?? (fallback ? readObject(el, fallback.fields) : undefined);
+  return getItem(el) ?? (fallback ? readObject(el, fallback.fields, el) : undefined);
 }
 
 function resolveArg(el: Element, arg: ArgSourceType): unknown {
@@ -54,17 +88,14 @@ function resolveArg(el: Element, arg: ArgSourceType): unknown {
     case "attr":
       return readAttr(scope, arg);
     case "object":
-      return readObject(scope, arg.fields);
+      return readObject(scope, arg.fields, el);
     case "collect": {
       // An array bound to the scope is the whole list, cards hidden at this width included
       const bound = getItem(scope);
       if (Array.isArray(bound)) {
         return bound.length ? bound : undefined;
       }
-      const scopeName = scope.getAttribute(NAME_ATTR);
-      const items = Array.from(scope.querySelectorAll(byName(arg.target)))
-        // Cards of a nested list belong to that list only
-        .filter((child) => !scopeName || child.closest(byName(scopeName)) === scope)
+      const items = ownChildren(scope, arg.target)
         .map((child) => readItem(child, arg.fallback))
         .filter((item) => item !== undefined);
       return items.length ? items : undefined;
@@ -106,7 +137,7 @@ function fieldAttrs(arg: ArgSourceType): string[] {
     case "attr":
       return [arg.attr];
     case "object":
-      return Object.values(arg.fields).map((field) => field.attr);
+      return Object.values(arg.fields).flatMap((field) => ("attr" in field ? [field.attr] : []));
     case "item":
     case "collect":
       return arg.fallback ? fieldAttrs(arg.fallback) : [];

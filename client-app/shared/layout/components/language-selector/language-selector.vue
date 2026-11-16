@@ -52,6 +52,7 @@
 import { getSlugInfo } from "@/core/api/graphql/slugInfo/queries/getSlugInfo";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
+import { safeDecode } from "@/core/utilities/common";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
@@ -68,7 +69,8 @@ const broadcast = useBroadcast();
 
 async function select(cultureName: string) {
   pinLocale(cultureName);
-  const permalink = location.pathname.slice(1);
+  // Without the current locale prefix: slug resolvers match the permalink itself (e.g. "veelgestelde-vragen", not "nl/veelgestelde-vragen").
+  const permalink = getUrlWithoutLocale(location.pathname).slice(1);
 
   if (cultureName === currentLanguage.value?.cultureName) {
     return;
@@ -77,9 +79,13 @@ async function select(cultureName: string) {
   const slugInfo = await getSlugInfo({ permalink, cultureName });
 
   if (!slugInfo?.entityInfo) {
+    // The current page may itself be shown through this fallback; keep the culture that owns the slug.
+    const isShownThroughFallback =
+      !!previousCultureSlug.value?.cultureName && safeDecode(previousCultureSlug.value.slug) === safeDecode(permalink);
+
     previousCultureSlug.value = {
-      cultureName: currentLanguage.value?.cultureName,
-      slug: getUrlWithoutLocale(location.pathname).slice(1),
+      cultureName: isShownThroughFallback ? previousCultureSlug.value.cultureName : currentLanguage.value?.cultureName,
+      slug: permalink,
     };
   } else {
     previousCultureSlug.value = {
