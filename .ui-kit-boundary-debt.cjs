@@ -8,20 +8,6 @@
 module.exports = {
   // ui-kit files that import from the rest of client-app.
   uiKitToHost: [
-    // Generated GraphQL types and host types in props and mocks.
-    "client-app/ui-kit/components/atoms/price-display/vc-price-display.vue",
-    "client-app/ui-kit/components/molecules/item-price-catalog/vc-item-price-catalog.vue",
-    "client-app/ui-kit/components/molecules/line-item/vc-line-item.test.ts",
-    "client-app/ui-kit/components/molecules/line-item/vc-line-item.vue",
-    "client-app/ui-kit/components/molecules/line-items/vc-line-items.test.ts",
-    "client-app/ui-kit/components/molecules/line-items/vc-line-items.vue",
-    "client-app/ui-kit/components/molecules/price-display-catalog/vc-price-display-catalog.vue",
-    "client-app/ui-kit/components/molecules/product-price/vc-product-price.vue",
-    "client-app/ui-kit/components/molecules/product-total/vc-product-total.vue",
-    "client-app/ui-kit/components/organisms/product-image/vc-product-image.vue",
-    "client-app/ui-kit/mocks/line-item.mock.ts",
-    "client-app/ui-kit/mocks/money.mock.ts",
-
     // Host helpers, constants and enums.
     "client-app/ui-kit/components/atoms/link/vc-link.vue",
     "client-app/ui-kit/components/molecules/file/vc-file.vue",
@@ -46,6 +32,7 @@ module.exports = {
     "client-app/ui-kit/components/atoms/breadcrumbs/vc-breadcrumbs.test.ts",
     "client-app/ui-kit/components/atoms/label/vc-label.test.ts",
     "client-app/ui-kit/components/molecules/input/vc-input.test.ts",
+    "client-app/ui-kit/components/molecules/line-item/vc-line-item.test.ts",
     "client-app/ui-kit/components/molecules/popover/vc-popover.test.ts",
     "client-app/ui-kit/components/molecules/select/vc-select.test.ts",
     "client-app/ui-kit/components/molecules/tab-switch/vc-tab-switch.test.ts",

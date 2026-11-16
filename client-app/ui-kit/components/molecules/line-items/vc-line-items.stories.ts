@@ -2,9 +2,13 @@ import { VcLineItems } from "..";
 import { preparedLineItemMock1, preparedLineItemMock2 } from "../../../mocks/line-item.mock";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const meta: Meta<typeof VcLineItems> = {
+// VcLineItems hands the caller's own item type back to its slots; the quantity stories read `item.quantity`.
+type StoryLineItemType = VcLineItemType & { quantity?: number };
+
+const meta: Meta<typeof VcLineItems<StoryLineItemType>> = {
   title: "Components/Molecules/VcLineItems",
-  component: VcLineItems,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcLineItems as any,
   args: {
     readonly: false,
     disabled: false,

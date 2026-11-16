@@ -3,10 +3,9 @@ import { describe, expect, it } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcPriceDisplay, VcProperty } from "@/ui-kit/components/atoms";
 import { VcLineItem, VcProductPrice } from "@/ui-kit/components/molecules";
-import type { MoneyType } from "@/core/api/graphql/types";
 
-function money(amount: number): MoneyType {
-  return { amount, formattedAmount: `$${amount}` } as MoneyType;
+function money(amount: number): VcMoneyType {
+  return { amount, formattedAmount: `$${amount}` };
 }
 
 const LIST_PRICE = money(100);

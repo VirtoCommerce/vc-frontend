@@ -148,7 +148,6 @@
 
 <script setup lang="ts">
 import { computed, ref, useSlots, watchEffect } from "vue";
-import type { CommonVendor, MoneyType, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -161,11 +160,11 @@ interface IProps {
   imageUrl?: string;
   name: string;
   route?: RouteLocationRaw;
-  properties?: Property[];
-  listPrice?: MoneyType;
-  actualPrice?: MoneyType;
-  total?: MoneyType;
-  listTotal?: MoneyType;
+  properties?: VcPropertyType[];
+  listPrice?: VcMoneyType;
+  actualPrice?: VcMoneyType;
+  total?: VcMoneyType;
+  listTotal?: VcMoneyType;
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
@@ -175,7 +174,7 @@ interface IProps {
   withProperties?: boolean;
   withPrice?: boolean;
   withTotal?: boolean;
-  vendor?: CommonVendor;
+  vendor?: VcVendorType;
   browserTarget?: BrowserTargetType;
   showPlacedPrice?: boolean;
 }

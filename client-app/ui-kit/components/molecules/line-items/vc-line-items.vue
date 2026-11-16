@@ -143,22 +143,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends VcLineItemType">
 import { intersection, map, sumBy } from "lodash-es";
 import { computed, ref, watchEffect } from "vue";
-import type { PreparedLineItemType } from "@/core/types";
 
-interface IEmits {
+export interface IEmits<T extends VcLineItemType> {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
-  (event: "linkClick", value: PreparedLineItemType): void;
+  (event: "linkClick", value: T): void;
 }
 
-interface IProps {
+export interface IProps<T extends VcLineItemType> {
   disabled?: boolean;
   readonly?: boolean;
   removable?: boolean;
-  items?: PreparedLineItemType[];
+  items?: T[];
   sharedSelectedItemIds?: string[];
   selectable?: boolean;
   withImage?: boolean;
@@ -172,9 +171,9 @@ interface IProps {
   subtotalCurrencyCode?: string;
 }
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<IEmits<T>>();
 
-const props = withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps<T>>(), {
   items: () => [],
   withHeader: true,
   browserTarget: "_blank",
