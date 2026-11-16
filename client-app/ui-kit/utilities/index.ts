@@ -5,6 +5,7 @@ export * from "./file";
 export * from "./file-requirements";
 export * from "./file-size";
 export * from "./focus";
+export * from "./getLocales";
 export * from "./icons";
 export * from "./images";
 export * from "./link";

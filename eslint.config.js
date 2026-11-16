@@ -12,7 +12,6 @@ import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
-import uiKitDebt from "./.ui-kit-boundary-debt.cjs";
 
 const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
 
@@ -487,8 +486,6 @@ export default defineConfigWithVueTs(
   },
   {
     files: ["client-app/ui-kit/**/*.ts", "client-app/ui-kit/**/*.vue"],
-    // Known debt, the same list dependency-cruiser exempts. Do not add more.
-    ignores: uiKitDebt.uiKitToHost,
     rules: {
       "no-restricted-syntax": ["error", NO_UI_KIT_TO_HOST_IMPORT],
     },

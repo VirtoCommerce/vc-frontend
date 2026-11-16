@@ -11,7 +11,7 @@ Module layout and routes are in `modules-and-routes.md`.
 ## Layers and import boundaries
 Direction: `ui-kit` ← `core` ← `shared` ← `modules` / `pages`. dependency-cruiser runs in CI and enforces the ui-kit boundary in both directions (rule 1); the other directions have no rule — review by hand.
 
-1. **No new upward imports**: ui-kit must not import anything else in `client-app`, `@/core` included (`no-ui-kit-to-host`, restated in ESLint for `import type`); `core/` and `shared/` must not import `modules/` or `pages/`. A module surfaces in the host through its `init()` and the extension registry, never through host imports of module code. In the other direction, code outside ui-kit imports it only through its public entries (`no-host-to-ui-kit-internals`): `@/ui-kit`, the `components` / `atoms` / `molecules` / `organisms` / `templates` / `composables` / `constants` / `enums` / `types` / `utilities` indexes, or an asset in `icons`, `images`, `locales`, `styles`. Tests and stories are exempt. Today's offenders of both rules are listed in `.ui-kit-boundary-debt.cjs`: delete a line when its file is fixed, never add one.
+1. **No new upward imports**: ui-kit must not import anything else in `client-app`, `@/core` included (`no-ui-kit-to-host`, restated in ESLint for `import type`); `core/` and `shared/` must not import `modules/` or `pages/`. A module surfaces in the host through its `init()` and the extension registry, never through host imports of module code. In the other direction, code outside ui-kit imports it only through its public entries (`no-host-to-ui-kit-internals`): `@/ui-kit`, the `components` / `atoms` / `molecules` / `organisms` / `templates` / `composables` / `constants` / `enums` / `types` / `utilities` indexes, or an asset in `icons`, `images`, `locales`, `styles`. Tests and stories are exempt.
 2. **Host → `modules/returns` only via its `index.ts`** (`no-host-to-returns-internals`). dependency-cruiser doesn't see `import type`, so a deep `import type` into returns is not caught by anything; flag it.
 3. **Modules never import a host `_internal/` folder** (`no-module-to-host-internal`). The two `push-messages/link-push-messages*.vue` exemptions are frozen — don't add more; add an extension point.
 4. **No module-to-module imports.** Shared logic goes to `shared/` or `core/`. (`purchase-requests` → `quotes` is legacy.)
@@ -29,4 +29,4 @@ Direction: `ui-kit` ← `core` ← `shared` ← `modules` / `pages`. dependency-
 12. Graceful dynamic imports call `ignoreChunkLoadFailure(error)` before logging, otherwise chunk-load recovery reloads the page.
 
 ## Legacy — don't flag, don't copy
-- Existing upward imports: host → `@/modules/customer-reviews`, UI kit → `@/shared/notification`, `core` → `shared`.
+- Existing upward imports: host → `@/modules/customer-reviews`, `core` → `shared`.

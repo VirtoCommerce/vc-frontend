@@ -227,11 +227,11 @@ export { default as CouponItemSkeleton } from "@/shared/account/components/coupo
 // protected file URL as the signed-in user; `downloadFile` saves one through it.
 export { useFetch } from "@/core/api/common/composables/useFetch";
 export { downloadFile } from "@/shared/files/utils";
-export { getFileSize } from "@/ui-kit/utilities/file-size";
+export { getFileSize } from "@/ui-kit/utilities";
 // The date fields' own display format, so a plugin echoing a picked date shows it the way the field did.
-export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities/date";
+export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities";
 // The host's breakpoint scale, for a plugin that switches layout in script (`useBreakpoints(BREAKPOINTS)`).
-export { BREAKPOINTS } from "@/ui-kit/constants/tailwind";
+export { BREAKPOINTS } from "@/ui-kit/constants";
 export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";

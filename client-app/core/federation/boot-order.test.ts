@@ -106,9 +106,10 @@ vi.mock("@/core/utilities/design", () => ({
   loadPresetStyles: vi.fn(async () => presetStyles.ready),
 }));
 vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
-vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn(), setLogger: vi.fn() }));
-vi.mock("@/ui-kit/utilities/getLocales", () => ({
+vi.mock("@/ui-kit/utilities", () => ({
   getLocales: vi.fn(async () => ({ messages: {}, fallbackMessages: {} })),
+  setDefaultIconVariant: vi.fn(),
+  setLogger: vi.fn(),
 }));
 vi.mock("@/i18n", () => ({ createI18n: () => ({ install: vi.fn(), global: { t: (k: string) => k } }) }));
 // Always a factory, never a bare vi.mock(path): a bare automock imports the real module to derive

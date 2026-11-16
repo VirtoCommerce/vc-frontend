@@ -54,8 +54,7 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
-import { setDefaultIconVariant, setLogger } from "@/ui-kit/utilities";
-import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
+import { getLocales as getUIKitLocales, setDefaultIconVariant, setLogger } from "@/ui-kit/utilities";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 
