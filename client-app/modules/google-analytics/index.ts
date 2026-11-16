@@ -27,7 +27,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
   const { trackId, isEnabled, gtmContainerId } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
-  if (!canUseDOM || !hasModuleSettings || !isEnabled || IS_DEVELOPMENT) {
+  if (!canUseDOM || !hasModuleSettings.value || !isEnabled || IS_DEVELOPMENT) {
     return;
   }
 
