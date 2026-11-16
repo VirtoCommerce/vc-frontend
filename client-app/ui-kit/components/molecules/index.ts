@@ -18,7 +18,9 @@ export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue"
 export { default as VcDialogHeader } from "./dialog-header/vc-dialog-header.vue";
 export { default as VcDropdownMenu } from "./dropdown-menu/vc-dropdown-menu.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
+/** @deprecated Use VcWidget with `collapsible` instead. */
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
+/** @deprecated Use VcWidget with `collapsible` instead. */
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
 export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";

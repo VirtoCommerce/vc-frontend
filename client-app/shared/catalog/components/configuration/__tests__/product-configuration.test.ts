@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useConfigurationSectionNavigation } from "@/shared/catalog/composables/useConfigurationSectionNavigation";
 import ProductConfiguration from "../product-configuration.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { Mock } from "vitest";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 vi.mock("vue-i18n", () => ({
@@ -85,7 +86,7 @@ function getSectionHeader(wrapper: ReturnType<typeof mountConfiguration>, sectio
 }
 
 describe("ProductConfiguration sections", () => {
-  let scrollIntoView: ReturnType<typeof vi.fn>;
+  let scrollIntoView: Mock;
 
   beforeEach(() => {
     scrollIntoView = vi.fn();

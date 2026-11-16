@@ -1,0 +1,7 @@
+// Header counters take their icon's primary-500: the kit's dark solid falls back to primary-200,
+// which is dark in presets without their own solid colour and sinks into the header.
+.header-badge {
+  --color-vc-background-solid-primary: var(--color-primary-500);
+  --color-vc-border-solid-primary: var(--color-primary-500);
+  --color-vc-text-solid-primary: var(--color-additional-50);
+}

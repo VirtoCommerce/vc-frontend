@@ -39,6 +39,7 @@
         with-properties
         with-price
         with-total
+        show-placed-price
         :removable="!readonly"
         @remove="() => $emit('remove:item', item.id)"
       >
@@ -68,7 +69,7 @@ import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { ConfigurationItems } from "@/shared/common";
-import type { MoneyType, QuoteItemType } from "../api/graphql/types";
+import type { QuoteItemType } from "../api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 defineEmits<IEmits>();
@@ -104,12 +105,11 @@ function getTotalPrice(item: QuoteItemType) {
   const quantity = item?.selectedTierPrice?.quantity || 0;
   const priceTotal = (price && price.amount * quantity) || 0;
   return (
-    price &&
-    ({
+    price && {
       ...price,
       amount: priceTotal,
       formattedAmount: n(priceTotal, "currency"),
-    } as MoneyType)
+    }
   );
 }
 
