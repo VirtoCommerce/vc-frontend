@@ -16,11 +16,15 @@ function _useSavedPaymentMethods() {
   const activeMethods = computed(() => methods.value.filter((x) => x.status === "Active" && !x.isExpired));
   const defaultMethod = computed(() => activeMethods.value.find((x) => x.isDefault) ?? activeMethods.value[0]);
 
-  async function fetch(): Promise<void> {
+  /**
+   * `suppressErrorNotifications`: for a caller that shows `failed` itself (the account's payment methods page), so a
+   * failed load is not also toasted. The card forms at checkout show no load error and keep the global toast.
+   */
+  async function fetch(options: { suppressErrorNotifications?: boolean } = {}): Promise<void> {
     loading.value = true;
     failed.value = false;
     try {
-      methods.value = (await getSavedPaymentMethods()) ?? [];
+      methods.value = (await getSavedPaymentMethods(options)) ?? [];
       loaded.value = true;
     } catch (e) {
       failed.value = true;

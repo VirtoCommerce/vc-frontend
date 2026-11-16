@@ -8,7 +8,12 @@ export async function getSubscriptionOffers(
 ): Promise<GetSubscriptionOffersQuery["subscriptionOffers"]> {
   const { data } = await graphqlClient.query({
     query: GetSubscriptionOffersDocument,
-    variables: { storeId: globals.storeId ?? "", productIds },
+    variables: {
+      storeId: globals.storeId ?? "",
+      productIds,
+      currencyCode: globals.currencyCode,
+      cultureName: globals.cultureName,
+    },
     fetchPolicy: "network-only",
   });
 

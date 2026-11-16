@@ -74,7 +74,7 @@ const currentKey = computed(() =>
   subscription.value ? intervalKey(subscription.value.intervalUnit, subscription.value.intervalCount) : undefined,
 );
 const savings = computed(() =>
-  discountLabel(t, offer.value?.discountType, offer.value?.discountValue, lineItem.value.actualPrice?.currency?.code),
+  discountLabel(t, offer.value?.discountType, offer.value?.discountValue, offer.value?.discountAmount?.formattedAmount),
 );
 const intervalItems = computed(() =>
   (offer.value?.intervals ?? []).map((x) => ({

@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Vissa artiklar i den här leveransen är inte tillgängliga just nu.",
+        "NO_SHIPPING_METHOD": "Inget leveranssätt finns för leveransadressen.",
+        "PRICE_INCREASED": "Totalbeloppet har ökat från {from} till {to}. Bekräfta det nya priset.",
+        "UNHANDLED": "Den här leveransen har ändrats sedan påminnelsen. Granska den."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Din bank bad dig bekräfta den här betalningen.",
+        "CARD_REQUIRED": "Lägg till ett kort för att betala för den här leveransen.",
+        "CARD_NEEDS_UPDATE": "Ditt sparade kort måste uppdateras innan vi kan debitera den här leveransen.",
+        "CARD_DECLINED": "Ditt kort nekades. Uppdatera din betalningsmetod.",
+        "CARD_DECLINED_WILL_RETRY": "Ditt kort nekades. Vi försöker igen automatiskt.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Ditt kort nekades. Din betalleverantör försöker igen automatiskt.",
+        "CARD_DECLINED_ON_CAPTURE": "Ditt kort nekades när beställningen skickades. Uppdatera din betalningsmetod.",
+        "RETRIES_EXHAUSTED": "Vi kunde inte debitera ditt kort efter flera försök. Uppdatera din betalningsmetod.",
+        "PAYMENT_FAILED": "Vi kunde inte debitera ditt kort. Uppdatera din betalningsmetod.",
+        "PAYMENT_NOT_CONFIRMED": "Betalningen bekräftades inte i tid.",
+        "PROVIDER_UNAVAILABLE": "Vi kunde inte nå betalleverantören. Försök igen senare.",
+        "UNHANDLED": "Det uppstod ett problem med betalningen för den här leveransen."
       }
     },
     "details": {

@@ -2,10 +2,12 @@ import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables";
+import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames.ts";
 import { loadModuleLocale } from "../utils";
-import { ENABLED_KEY, MOCK_PAYMENT_TYPE_NAME, MODULE_ID } from "./constants";
+import { useSubscriptionCheckout } from "./composables/useSubscriptionCheckout";
+import { ENABLED_KEY, MOCK_PAYMENT_TYPE_NAME, MODULE_ID, TERMS_GUARD_ID } from "./constants";
 import { menuItems } from "./menu";
 import { routes } from "./routes";
 import type { Product } from "@/core/api/graphql/types";
@@ -52,6 +54,10 @@ export function init(router: Router, i18n: I18n) {
     component: CartLineSubscription,
     condition: (lineItem: PreparedLineItemType) => !!lineItem.productId && !lineItem.isConfigurable,
   });
+
+  // Registered here, not by the terms block: the block is loaded on demand, and Place order must stay closed until it
+  // has shown the cart's subscriptions and their terms were accepted (see useSubscriptionCheckout).
+  useCheckoutGuards().registerGuard(TERMS_GUARD_ID, { canPlaceOrder: useSubscriptionCheckout().canPlaceOrder });
 
   register("checkoutReview", EXTENSION_NAMES.checkoutReview.beforePlaceOrder, {
     component: CheckoutSubscriptionTerms,

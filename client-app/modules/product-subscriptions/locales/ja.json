@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "このお届けの一部の商品は現在ご利用いただけません。",
+        "NO_SHIPPING_METHOD": "お届け先住所に利用できる配送方法がありません。",
+        "PRICE_INCREASED": "合計金額が {from} から {to} に上がりました。新しい価格をご確認ください。",
+        "UNHANDLED": "リマインダーの送信後にこのお届けの内容が変わりました。ご確認ください。"
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "銀行からこのお支払いの確認を求められています。",
+        "CARD_REQUIRED": "このお届けのお支払いにはカードを追加してください。",
+        "CARD_NEEDS_UPDATE": "このお届けを請求する前に、保存済みのカードを更新する必要があります。",
+        "CARD_DECLINED": "カードが拒否されました。お支払い方法を更新してください。",
+        "CARD_DECLINED_WILL_RETRY": "カードが拒否されました。自動的に再試行します。",
+        "CARD_DECLINED_PROVIDER_RETRY": "カードが拒否されました。決済サービスが自動的に再試行します。",
+        "CARD_DECLINED_ON_CAPTURE": "注文の発送時にカードが拒否されました。お支払い方法を更新してください。",
+        "RETRIES_EXHAUSTED": "何度か試みましたが、カードに請求できませんでした。お支払い方法を更新してください。",
+        "PAYMENT_FAILED": "カードに請求できませんでした。お支払い方法を更新してください。",
+        "PAYMENT_NOT_CONFIRMED": "お支払いが期限内に確認されませんでした。",
+        "PROVIDER_UNAVAILABLE": "決済サービスに接続できませんでした。しばらくしてからもう一度お試しください。",
+        "UNHANDLED": "このお届けのお支払いで問題が発生しました。"
       }
     },
     "details": {

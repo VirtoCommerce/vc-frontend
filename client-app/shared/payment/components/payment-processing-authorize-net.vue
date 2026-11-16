@@ -79,6 +79,7 @@ import { usePayment } from "../composables";
 import { useCardSavingRequirement } from "../composables/useCardSavingRequirement";
 import { useSavedPaymentMethods } from "../composables/useSavedPaymentMethods";
 import { AUTHORIZE_NET_PAYMENT_METHOD_CODE } from "../constants";
+import { mapAcceptJsErrors } from "../utils/accept-js-errors";
 import PaymentPolicies from "./payment-policies.vue";
 import SavedCardPicker from "./saved-card-picker.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
@@ -128,7 +129,7 @@ const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
-const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
+const { registerPaymentProcessor, unregisterPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 const { fetch: fetchSavedCards, methodsFor } = useSavedPaymentMethods();
 const cardSaving = useCardSavingRequirement();
 
@@ -231,8 +232,8 @@ async function initPayment() {
       return;
     }
 
-    initialized.value = true;
     registerPaymentProcessor(sendPaymentData);
+    initialized.value = true;
   } catch (e) {
     Logger.error(initPayment.name, e);
     initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
@@ -240,39 +241,12 @@ async function initPayment() {
 }
 
 function showErrors(messages: Accept.Message[]) {
-  messages.forEach(({ code, text }) => {
-    switch (code) {
-      case "E_WC_05":
-        bankCardErrors.value.number = t("shared.payment.bank_card_form.errors.card_number");
-        break;
+  const { fieldErrors, otherErrors } = mapAcceptJsErrors(messages, t);
+  bankCardErrors.value = { ...bankCardErrors.value, ...fieldErrors };
+  otherErrors.forEach(({ text }) => emit("fail", text));
 
-      case "E_WC_06":
-        bankCardErrors.value.month = t("shared.payment.bank_card_form.errors.month");
-        break;
-
-      case "E_WC_07":
-        bankCardErrors.value.year = t("shared.payment.bank_card_form.errors.year");
-        break;
-
-      case "E_WC_08":
-        bankCardErrors.value.year = t("shared.payment.bank_card_form.errors.expiration_date");
-        break;
-
-      case "E_WC_15":
-        bankCardErrors.value.securityCode = t("shared.payment.bank_card_form.errors.security_code");
-        break;
-
-      case "E_WC_17":
-        bankCardErrors.value.cardholderName = t("shared.payment.bank_card_form.errors.cardholder_name");
-        break;
-
-      default:
-        emit("fail", text);
-    }
-
-    // https://developer.authorize.net/api/reference/features/acceptjs.html#Appendix_Error_Codes
-    Logger.error(`[Authorize.net][${code}]: ${text}`);
-  });
+  // https://developer.authorize.net/api/reference/features/acceptjs.html#Appendix_Error_Codes
+  messages.forEach(({ code, text }) => Logger.error(`[Authorize.net][${code}]: ${text}`));
 }
 
 /** `usedRequirement`: the payment carried the card-saving requirement, which it fulfils once approved. */
@@ -412,16 +386,17 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  // Only stop late async init from registering a torn-down instance.
-  // Do NOT clear the shared payment processor or card-validity state here: in multistep
-  // checkout this form lives on the Billing step and unmounts before Place Order on Review,
-  // and the shared state must survive so `isCanFinalizePayment` stays true and
-  // `finalizePayment` can charge the placed order (same approach as CyberSource).
+  // Stop late async init from registering a torn-down instance, and take this form's processor out of the shared
+  // state, so Place order can't run a form that is gone (e.g. the shopper switched to another payment method). Cart
+  // payment only runs on single-page checkout (see canPayFromCart), where this form and Place order show together.
   isActive = false;
+  unregisterPaymentProcessor(sendPaymentData);
 });
 
+// Ready to pay only once the form is initialized and its processor registered: a preselected saved card must not
+// open Place order while Accept.js is still loading, or after the initialization failed.
 watch(
-  canPay,
+  () => initialized.value && canPay.value,
   (isValid) => {
     if (isValid) {
       setCardDataValid();

@@ -12,7 +12,7 @@
         :errors="cardErrors"
         :disabled="adding"
         class="add-card-authorize-net__card-form"
-        @submit="addCard"
+        embedded
       />
 
       <fieldset class="add-card-authorize-net__billing">
@@ -86,11 +86,13 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { AddressType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useCustomerAddresses } from "@/shared/account/composables";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { addSavedPaymentMethod } from "../api/graphql";
+import { mapAcceptJsErrors } from "../utils/accept-js-errors";
 import { savedCardErrorMessage as errorMessage } from "../utils/saved-card-label";
 import type { GetCardPaymentMethodsQuery } from "../api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -107,8 +109,6 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-const ADDRESS_TYPE_BILLING = 1;
-const ADDRESS_TYPE_BILLING_AND_SHIPPING = 3;
 
 const { t } = useI18n();
 // The customer's addresses, to prefill the card's billing address (see prefillBilling).
@@ -133,16 +133,6 @@ const { loadAcceptJS, dispatchData } = useAuthorizeNet({ scriptURL, manualScript
 
 const canAdd = computed(() => cardValid.value && !!billing.address.trim() && !!billing.zip.trim() && !adding.value);
 
-/** Accept.js field errors, shown on the field: https://developer.authorize.net/api/reference/features/acceptjs.html */
-const FIELD_ERRORS: Record<string, keyof BankCardErrorsType> = {
-  E_WC_05: "number",
-  E_WC_06: "month",
-  E_WC_07: "year",
-  E_WC_08: "year",
-  E_WC_15: "securityCode",
-  E_WC_17: "cardholderName",
-};
-
 function tokenize(): Promise<Accept.OpaqueData | null> {
   const { month, year, number: cardNumber, securityCode: cardCode, cardholderName: fullName } = card.value;
 
@@ -155,16 +145,15 @@ function tokenize(): Promise<Accept.OpaqueData | null> {
         },
         (response: Accept.Response) => {
           if (response.messages.resultCode === "Error") {
-            const errors: BankCardErrorsType = {};
-            response.messages.message.forEach(({ code, text }) => {
-              const field = FIELD_ERRORS[code];
-              if (field) {
-                errors[field] = text;
-              } else {
-                addError.value = text;
-              }
-            });
-            cardErrors.value = errors;
+            // Field errors go on their fields; Accept.js's English text is logged, never shown.
+            const { fieldErrors, otherErrors } = mapAcceptJsErrors(response.messages.message, t);
+            cardErrors.value = fieldErrors;
+            if (otherErrors.length) {
+              addError.value = t("shared.payment.saved_cards.error");
+            }
+            response.messages.message.forEach(({ code, text }) =>
+              Logger.error(`add-card-authorize-net.tokenize[${code}]`, text),
+            );
             resolve(null);
           } else {
             resolve(response.opaqueData ?? null);
@@ -184,7 +173,7 @@ function tokenize(): Promise<Accept.OpaqueData | null> {
 function prefillBilling() {
   const address =
     addresses.value.find(
-      (x) => x.isDefault && [ADDRESS_TYPE_BILLING, ADDRESS_TYPE_BILLING_AND_SHIPPING].includes(x.addressType ?? 0),
+      (x) => x.isDefault && [AddressType.Billing, AddressType.BillingAndShipping].includes(x.addressType ?? 0),
     ) ??
     addresses.value.find((x) => x.isDefault) ??
     addresses.value[0];

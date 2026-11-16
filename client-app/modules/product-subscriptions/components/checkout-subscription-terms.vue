@@ -79,22 +79,21 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useFullCart } from "@/shared/cart/composables";
 import { useOrderPlacement } from "@/shared/checkout/composables/useCheckout";
-import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
-import { useCartSubscriptions } from "../composables/useCartSubscriptions";
+import { useSubscriptionCheckout } from "../composables/useSubscriptionCheckout";
 import { intervalLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 
 const props = defineProps<{ cart?: CartType }>();
 
-const GUARD_ID = "product-subscription-terms";
-
 const { t } = useI18n();
 const cart = computed(() => props.cart);
-const { subscribedItems, hasSubscriptionItems, loading, failed, refresh } = useCartSubscriptions(cart);
-const { registerGuard, unregisterGuard } = useCheckoutGuards();
+// Shared with the checkout guard the module registers at start-up: it reads this cart and the accepted flag.
+const checkout = useSubscriptionCheckout();
+const { accepted } = checkout;
+const { subscribedItems, hasSubscriptionItems, failed, refresh } = checkout.subscriptions;
 // The payment list only offers methods that can save a card for a subscription cart; when none can, say why it's empty.
 const { availablePaymentMethods } = useFullCart();
 const showNoPaymentMethod = computed(() =>
@@ -106,7 +105,6 @@ const { placingOrder } = useOrderPlacement();
 
 const terms = ref<GetSubscriptionTermsQuery["subscriptionTerms"]>();
 const termsFailed = ref(false);
-const accepted = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 
@@ -172,20 +170,20 @@ watch(hasSubscriptionItems, (hasItems) => {
   }
 });
 
-// Registered for as long as the review shows: the order waits until the cart's subscriptions are known, and the
-// terms are accepted when there are any. A failed load keeps it blocked until the retry succeeds.
+// The guard reviews the cart this block shows: the order waits until its subscriptions are known, and the terms are
+// accepted when there are any. A failed load keeps it blocked until the retry succeeds.
+watch(cart, (value) => (checkout.cart.value = value), { immediate: true });
+
 onMounted(() => {
   // The checkbox starts unticked, so a consent stored earlier (e.g. before going back to the cart) no longer applies.
+  accepted.value = false;
   cardSaving.clear();
-  registerGuard(GUARD_ID, {
-    canPlaceOrder: () => !loading.value && !failed.value && (!hasSubscriptionItems.value || accepted.value),
-  });
   void refresh();
   void loadTerms();
 });
 
 onUnmounted(() => {
-  unregisterGuard(GUARD_ID);
+  checkout.cart.value = undefined;
   withdrawConsent();
 });
 </script>

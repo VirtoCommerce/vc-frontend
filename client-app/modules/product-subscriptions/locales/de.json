@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Einige Artikel dieser Lieferung sind derzeit nicht verfügbar.",
+        "NO_SHIPPING_METHOD": "Für die Lieferadresse ist keine Versandart verfügbar.",
+        "PRICE_INCREASED": "Der Gesamtbetrag ist von {from} auf {to} gestiegen. Bitte bestätigen Sie den neuen Preis.",
+        "UNHANDLED": "Diese Lieferung hat sich seit Ihrer Erinnerung geändert. Bitte prüfen Sie sie."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Ihre Bank hat Sie gebeten, diese Zahlung zu bestätigen.",
+        "CARD_REQUIRED": "Bitte fügen Sie eine Karte hinzu, um diese Lieferung zu bezahlen.",
+        "CARD_NEEDS_UPDATE": "Ihre gespeicherte Karte muss aktualisiert werden, bevor wir diese Lieferung belasten können.",
+        "CARD_DECLINED": "Ihre Karte wurde abgelehnt. Bitte aktualisieren Sie Ihre Zahlungsmethode.",
+        "CARD_DECLINED_WILL_RETRY": "Ihre Karte wurde abgelehnt. Wir versuchen es automatisch erneut.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Ihre Karte wurde abgelehnt. Ihr Zahlungsanbieter versucht es automatisch erneut.",
+        "CARD_DECLINED_ON_CAPTURE": "Ihre Karte wurde beim Versand der Bestellung abgelehnt. Bitte aktualisieren Sie Ihre Zahlungsmethode.",
+        "RETRIES_EXHAUSTED": "Wir konnten Ihre Karte nach mehreren Versuchen nicht belasten. Bitte aktualisieren Sie Ihre Zahlungsmethode.",
+        "PAYMENT_FAILED": "Wir konnten Ihre Karte nicht belasten. Bitte aktualisieren Sie Ihre Zahlungsmethode.",
+        "PAYMENT_NOT_CONFIRMED": "Die Zahlung wurde nicht rechtzeitig bestätigt.",
+        "PROVIDER_UNAVAILABLE": "Der Zahlungsanbieter war nicht erreichbar. Bitte versuchen Sie es später erneut.",
+        "UNHANDLED": "Bei der Zahlung für diese Lieferung ist ein Problem aufgetreten."
       }
     },
     "details": {

@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Osa tämän toimituksen tuotteista ei ole juuri nyt saatavilla.",
+        "NO_SHIPPING_METHOD": "Toimitusosoitteeseen ei ole saatavilla toimitustapaa.",
+        "PRICE_INCREASED": "Kokonaissumma nousi summasta {from} summaan {to}. Vahvista uusi hinta.",
+        "UNHANDLED": "Tämä toimitus on muuttunut muistutuksen jälkeen. Tarkista se."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Pankkisi pyysi sinua vahvistamaan tämän maksun.",
+        "CARD_REQUIRED": "Lisää kortti maksaaksesi tämän toimituksen.",
+        "CARD_NEEDS_UPDATE": "Tallennettu korttisi on päivitettävä, ennen kuin voimme veloittaa tämän toimituksen.",
+        "CARD_DECLINED": "Korttisi hylättiin. Päivitä maksutapasi.",
+        "CARD_DECLINED_WILL_RETRY": "Korttisi hylättiin. Yritämme uudelleen automaattisesti.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Korttisi hylättiin. Maksupalvelusi yrittää uudelleen automaattisesti.",
+        "CARD_DECLINED_ON_CAPTURE": "Korttisi hylättiin tilauksen lähtiessä. Päivitä maksutapasi.",
+        "RETRIES_EXHAUSTED": "Emme voineet veloittaa korttiasi useista yrityksistä huolimatta. Päivitä maksutapasi.",
+        "PAYMENT_FAILED": "Emme voineet veloittaa korttiasi. Päivitä maksutapasi.",
+        "PAYMENT_NOT_CONFIRMED": "Maksua ei vahvistettu ajoissa.",
+        "PROVIDER_UNAVAILABLE": "Maksupalveluun ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
+        "UNHANDLED": "Tämän toimituksen maksussa oli ongelma."
       }
     },
     "details": {

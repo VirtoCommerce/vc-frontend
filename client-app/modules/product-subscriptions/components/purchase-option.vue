@@ -34,9 +34,9 @@ defineProps<{
   name: string;
   disabled?: boolean;
   /** The option's price, unless the `price` slot shows it. */
-  price?: MoneyType;
+  price?: Pick<MoneyType, "formattedAmount">;
   /** A higher price shown struck through next to it. */
-  strikePrice?: MoneyType;
+  strikePrice?: Pick<MoneyType, "formattedAmount">;
   testId?: string;
 }>();
 const model = defineModel<T>();

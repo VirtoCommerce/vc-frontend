@@ -77,7 +77,12 @@ const props = defineProps<IProps>();
 const { t } = useI18n();
 
 const savings = computed(() =>
-  discountLabel(t, props.subscription.discountType, props.subscription.discountValue, props.subscription.currency),
+  discountLabel(
+    t,
+    props.subscription.discountType,
+    props.subscription.discountValue,
+    props.subscription.discountValueMoney?.formattedAmount,
+  ),
 );
 </script>
 

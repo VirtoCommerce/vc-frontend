@@ -122,7 +122,7 @@ type TabType = "active" | "paused" | "cancelled";
 const { t } = useI18n();
 const notifications = useNotifications();
 
-usePageHead({ title: t("product_subscriptions.list.title") });
+usePageHead({ title: computed(() => t("product_subscriptions.list.title")) });
 
 const tabs: { id: TabType; statuses: string[] }[] = [
   { id: "active", statuses: ["Active", "PendingActivation", "PastDue"] },
@@ -180,14 +180,15 @@ async function load(): Promise<void> {
   loadFailed.value = false;
   try {
     // The tabs count every subscription and the sections show every open renewal, so both lists are read in full.
-    // A fixed sort keeps the renewal pages from overlapping.
+    // A fixed sort keeps the renewal pages from overlapping. A failure shows the page's own error, so no toast.
+    const options = { suppressErrorNotifications: true };
     const [allSubscriptions, openRenewals, recentRenewals] = await Promise.all([
-      fetchAllPages((page) => getProductSubscriptions(page), SUBSCRIPTIONS_PAGE_SIZE),
+      fetchAllPages((page) => getProductSubscriptions(page, options), SUBSCRIPTIONS_PAGE_SIZE),
       fetchAllPages(
-        (page) => getSubscriptionRenewals({ ...page, onlyOpen: true, sort: "ScheduledDate:asc" }),
+        (page) => getSubscriptionRenewals({ ...page, onlyOpen: true, sort: "ScheduledDate:asc" }, options),
         RENEWALS_PAGE_SIZE,
       ),
-      getSubscriptionRenewals({ first: 10, sort: "ModifiedDate:desc" }),
+      getSubscriptionRenewals({ first: 10, sort: "ModifiedDate:desc" }, options),
     ]);
 
     subscriptions.value = allSubscriptions;

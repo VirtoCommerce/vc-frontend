@@ -260,11 +260,11 @@
 
               <dd class="subscription-details__fact-value">{{ subscription.ordersCount }}</dd>
 
-              <template v-if="subscription.referencePrice">
+              <template v-if="subscription.referencePriceMoney?.amount">
                 <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.price") }}</dt>
 
                 <dd class="subscription-details__fact-value">
-                  {{ formatMoney(subscription.referencePrice, subscription.currency) }}
+                  <VcPriceDisplay :value="subscription.referencePriceMoney" />
                 </dd>
               </template>
 
@@ -460,7 +460,7 @@ import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useNotifications } from "@/shared/notification";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
-import { savedCardLabel } from "@/shared/payment/utils/saved-card-label";
+import { savedCardExpiry, savedCardLabel } from "@/shared/payment/utils/saved-card-label";
 import {
   acceptSubscriptionRenewal,
   cancelProductSubscription,
@@ -481,7 +481,6 @@ import { ATTENTION_RENEWAL_STATES, SUBSCRIPTIONS_ROUTE_NAME } from "../constants
 import {
   discountLabel,
   subscriptionErrorMessage,
-  formatMoney,
   intervalKey,
   intervalLabel,
   parseIntervalKey,
@@ -497,7 +496,7 @@ const { t } = useI18n();
 const notifications = useNotifications();
 const { activeMethods, fetch: fetchCards } = useSavedPaymentMethods();
 
-usePageHead({ title: t("product_subscriptions.details.meta_title") });
+usePageHead({ title: computed(() => t("product_subscriptions.details.meta_title")) });
 
 const loading = ref(false);
 const loadFailed = ref(false);
@@ -532,7 +531,12 @@ const form = reactive({
 
 const currentRenewal = computed(() => subscription.value?.currentRenewal ?? undefined);
 const savings = computed(() =>
-  discountLabel(t, subscription.value?.discountType, subscription.value?.discountValue, subscription.value?.currency),
+  discountLabel(
+    t,
+    subscription.value?.discountType,
+    subscription.value?.discountValue,
+    subscription.value?.discountValueMoney?.formattedAmount,
+  ),
 );
 const intervalItems = computed(() =>
   (subscription.value?.availableIntervals ?? []).map((x) => ({
@@ -543,7 +547,12 @@ const intervalItems = computed(() =>
 const cardItems = computed(() => {
   const items = activeMethods.value.map((x) => ({
     id: x.id,
-    label: `${savedCardLabel(x.brand, x.last4, t("shared.payment.saved_cards.card"))} · ${x.expirationMonth}/${x.expirationYear}`,
+    label: [
+      savedCardLabel(x.brand, x.last4, t("shared.payment.saved_cards.card")),
+      savedCardExpiry(x.expirationMonth, x.expirationYear),
+    ]
+      .filter(Boolean)
+      .join(" · "),
   }));
   const current = subscription.value?.savedPaymentMethod;
   if (current && !items.some((x) => x.id === current.id)) {
@@ -675,8 +684,12 @@ async function load() {
   loadFailed.value = false;
   try {
     const [result, renewals] = await Promise.all([
-      getProductSubscription(props.subscriptionId),
-      getSubscriptionRenewals({ subscriptionId: props.subscriptionId, first: 20, sort: "ScheduledDate:desc" }),
+      // A failure shows the page's own error, so no toast on top of it.
+      getProductSubscription(props.subscriptionId, { suppressErrorNotifications: true }),
+      getSubscriptionRenewals(
+        { subscriptionId: props.subscriptionId, first: 20, sort: "ScheduledDate:desc" },
+        { suppressErrorNotifications: true },
+      ),
     ]);
     subscription.value = result ?? undefined;
     const items = (renewals?.items ?? []).filter((x) => x.id !== result?.currentRenewal?.id);

@@ -7,6 +7,7 @@ query GetSubscriptionRenewals(
   $first: Int
   $after: String
   $sort: String
+  $cultureName: String
 ) {
   subscriptionRenewals(
     storeId: $storeId
@@ -15,6 +16,7 @@ query GetSubscriptionRenewals(
     first: $first
     after: $after
     sort: $sort
+    cultureName: $cultureName
   ) {
     totalCount
     items {

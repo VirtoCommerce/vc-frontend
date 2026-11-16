@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Some items in this delivery are not available right now.",
+        "NO_SHIPPING_METHOD": "No shipping method is available for the delivery address.",
+        "PRICE_INCREASED": "The total went up from {from} to {to}. Please confirm the new price.",
+        "UNHANDLED": "This delivery changed since your reminder. Please review it."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Your bank asked you to confirm this payment.",
+        "CARD_REQUIRED": "Please add a card to pay for this delivery.",
+        "CARD_NEEDS_UPDATE": "Your saved card needs to be updated before we can charge this delivery.",
+        "CARD_DECLINED": "Your card was declined. Please update your payment method.",
+        "CARD_DECLINED_WILL_RETRY": "Your card was declined. We'll try again automatically.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Your card was declined. Your payment provider will try again automatically.",
+        "CARD_DECLINED_ON_CAPTURE": "Your card was declined when the order shipped. Please update your payment method.",
+        "RETRIES_EXHAUSTED": "We couldn't charge your card after several attempts. Please update your payment method.",
+        "PAYMENT_FAILED": "We couldn't charge your card. Please update your payment method.",
+        "PAYMENT_NOT_CONFIRMED": "The payment wasn't confirmed in time.",
+        "PROVIDER_UNAVAILABLE": "We couldn't reach the payment provider. Please try again later.",
+        "UNHANDLED": "There was a problem with the payment for this delivery."
       }
     },
     "details": {

@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, reactive, toValue, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -17,32 +18,36 @@ export interface ISubscriptionCartType {
 type CartStateType = "loading" | "loaded" | "failed";
 
 // Shared across components and kept per cart: the cart page and checkout may show a cart other than the default one.
-const itemsByCart = reactive(new Map<string, SubscriptionCartItemFieldsFragment[]>());
-const stateByCart = reactive(new Map<string, CartStateType>());
-const pendingLoads = new Map<string, Promise<void>>();
+const useCartSubscriptionsStore = createGlobalState(() => {
+  const itemsByCart = reactive(new Map<string, SubscriptionCartItemFieldsFragment[]>());
+  const stateByCart = reactive(new Map<string, CartStateType>());
+  const pendingLoads = new Map<string, Promise<void>>();
 
-async function load(cartId: string): Promise<void> {
-  const pending = pendingLoads.get(cartId);
-  if (pending) {
-    return pending;
+  async function load(cartId: string): Promise<void> {
+    const pending = pendingLoads.get(cartId);
+    if (pending) {
+      return pending;
+    }
+
+    const request = (async () => {
+      stateByCart.set(cartId, "loading");
+      try {
+        itemsByCart.set(cartId, (await getCartSubscriptionItems(cartId)) ?? []);
+        stateByCart.set(cartId, "loaded");
+      } catch (e) {
+        Logger.error(`useCartSubscriptions.${load.name}`, e);
+        stateByCart.set(cartId, "failed");
+      } finally {
+        pendingLoads.delete(cartId);
+      }
+    })();
+
+    pendingLoads.set(cartId, request);
+    return request;
   }
 
-  const request = (async () => {
-    stateByCart.set(cartId, "loading");
-    try {
-      itemsByCart.set(cartId, (await getCartSubscriptionItems(cartId)) ?? []);
-      stateByCart.set(cartId, "loaded");
-    } catch (e) {
-      Logger.error(`useCartSubscriptions.${load.name}`, e);
-      stateByCart.set(cartId, "failed");
-    } finally {
-      pendingLoads.delete(cartId);
-    }
-  })();
-
-  pendingLoads.set(cartId, request);
-  return request;
-}
+  return { itemsByCart, stateByCart, load };
+});
 
 /**
  * The subscriptions chosen for the lines of a cart. Pass the cart the page shows; `useCurrentCartSubscriptions` and
@@ -54,6 +59,7 @@ export function useCartSubscriptions(
 ) {
   const { isAuthenticated } = useUser();
   const { loadOffers } = useSubscriptionOffers();
+  const { itemsByCart, stateByCart, load } = useCartSubscriptionsStore();
 
   const cart = computed(() => toValue(cartSource));
   const cartId = computed(() => cart.value?.id);

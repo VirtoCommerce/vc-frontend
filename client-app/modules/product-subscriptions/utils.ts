@@ -1,21 +1,8 @@
-import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
 type TranslateType = Composer["t"];
-
-export function formatMoney(amount: number | null | undefined, currency: string | null | undefined): string {
-  const value = amount ?? 0;
-  try {
-    return new Intl.NumberFormat(globals.cultureName || undefined, {
-      style: "currency",
-      currency: currency || "USD",
-    }).format(value);
-  } catch {
-    return `${value.toFixed(2)} ${currency ?? ""}`.trim();
-  }
-}
 
 export function intervalLabel(
   t: TranslateType,
@@ -28,36 +15,25 @@ export function intervalLabel(
   return t(`product_subscriptions.intervals.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
 }
 
+/**
+ * "Save 10%" or "Save $5.00". A fixed-amount discount is shown with the amount the server formatted in the record's
+ * currency (`formattedAmount`); without it there is nothing correct to show, so no label.
+ */
 export function discountLabel(
   t: TranslateType,
   discountType: SubscriptionDiscountType | null | undefined,
   discountValue: number | null | undefined,
-  currency?: string | null,
+  formattedAmount?: string | null,
 ): string | undefined {
   if (!discountValue || discountType === SubscriptionDiscountType.None) {
     return undefined;
   }
 
-  return discountType === SubscriptionDiscountType.Percent
-    ? t("product_subscriptions.discount.percent", { value: discountValue })
-    : t("product_subscriptions.discount.amount", { value: formatMoney(discountValue, currency) });
-}
-
-export function applyDiscount(
-  price: number,
-  discountType: SubscriptionDiscountType | null | undefined,
-  discountValue: number | null | undefined,
-): number {
-  if (!discountValue || discountType === SubscriptionDiscountType.None) {
-    return price;
-  }
-
   if (discountType === SubscriptionDiscountType.Percent) {
-    const discount = Math.round(price * Math.min(Math.max(discountValue, 0), 100)) / 100;
-    return Math.max(0, Math.round((price - discount) * 100) / 100);
+    return t("product_subscriptions.discount.percent", { value: discountValue });
   }
 
-  return Math.max(0, price - Math.min(price, discountValue));
+  return formattedAmount ? t("product_subscriptions.discount.amount", { value: formattedAmount }) : undefined;
 }
 
 export function intervalKey(unit: SubscriptionIntervalUnit, count: number): string {
@@ -134,8 +110,8 @@ export async function fetchAllPages<T>(
 
 /**
  * What a shopper is told when a subscription action fails: a translated message. The error's own message is in English
- * and meant for logs, so it is logged here instead of shown. (A renewal panel still shows the reason stored on the
- * renewal itself, such as its review reason or the card's decline message.)
+ * and meant for logs, so it is logged here instead of shown. (A renewal's own problem comes as a code and is translated
+ * by `useRenewalReasons`.)
  */
 export function subscriptionErrorMessage(
   error: unknown,

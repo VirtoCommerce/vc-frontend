@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Niektóre produkty z tej dostawy są obecnie niedostępne.",
+        "NO_SHIPPING_METHOD": "Dla adresu dostawy nie jest dostępna żadna metoda wysyłki.",
+        "PRICE_INCREASED": "Suma wzrosła z {from} do {to}. Potwierdź nową cenę.",
+        "UNHANDLED": "Ta dostawa zmieniła się od czasu przypomnienia. Sprawdź ją."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Twój bank poprosił o potwierdzenie tej płatności.",
+        "CARD_REQUIRED": "Dodaj kartę, aby zapłacić za tę dostawę.",
+        "CARD_NEEDS_UPDATE": "Zapisana karta wymaga aktualizacji, zanim będziemy mogli obciążyć ją za tę dostawę.",
+        "CARD_DECLINED": "Twoja karta została odrzucona. Zaktualizuj metodę płatności.",
+        "CARD_DECLINED_WILL_RETRY": "Twoja karta została odrzucona. Spróbujemy ponownie automatycznie.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Twoja karta została odrzucona. Twój operator płatności spróbuje ponownie automatycznie.",
+        "CARD_DECLINED_ON_CAPTURE": "Twoja karta została odrzucona przy wysyłce zamówienia. Zaktualizuj metodę płatności.",
+        "RETRIES_EXHAUSTED": "Nie udało się obciążyć Twojej karty mimo kilku prób. Zaktualizuj metodę płatności.",
+        "PAYMENT_FAILED": "Nie udało się obciążyć Twojej karty. Zaktualizuj metodę płatności.",
+        "PAYMENT_NOT_CONFIRMED": "Płatność nie została potwierdzona na czas.",
+        "PROVIDER_UNAVAILABLE": "Nie udało się połączyć z operatorem płatności. Spróbuj ponownie później.",
+        "UNHANDLED": "Wystąpił problem z płatnością za tę dostawę."
       }
     },
     "details": {

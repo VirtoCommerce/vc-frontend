@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Noen varer i denne leveransen er ikke tilgjengelige akkurat nå.",
+        "NO_SHIPPING_METHOD": "Ingen fraktmetode er tilgjengelig for leveringsadressen.",
+        "PRICE_INCREASED": "Totalbeløpet har økt fra {from} til {to}. Bekreft den nye prisen.",
+        "UNHANDLED": "Denne leveransen er endret siden påminnelsen. Se gjennom den."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Banken din ba deg bekrefte denne betalingen.",
+        "CARD_REQUIRED": "Legg til et kort for å betale for denne leveransen.",
+        "CARD_NEEDS_UPDATE": "Det lagrede kortet ditt må oppdateres før vi kan belaste denne leveransen.",
+        "CARD_DECLINED": "Kortet ditt ble avvist. Oppdater betalingsmåten din.",
+        "CARD_DECLINED_WILL_RETRY": "Kortet ditt ble avvist. Vi prøver igjen automatisk.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Kortet ditt ble avvist. Betalingsleverandøren din prøver igjen automatisk.",
+        "CARD_DECLINED_ON_CAPTURE": "Kortet ditt ble avvist da bestillingen ble sendt. Oppdater betalingsmåten din.",
+        "RETRIES_EXHAUSTED": "Vi kunne ikke belaste kortet ditt etter flere forsøk. Oppdater betalingsmåten din.",
+        "PAYMENT_FAILED": "Vi kunne ikke belaste kortet ditt. Oppdater betalingsmåten din.",
+        "PAYMENT_NOT_CONFIRMED": "Betalingen ble ikke bekreftet i tide.",
+        "PROVIDER_UNAVAILABLE": "Vi fikk ikke kontakt med betalingsleverandøren. Prøv igjen senere.",
+        "UNHANDLED": "Det oppstod et problem med betalingen for denne leveransen."
       }
     },
     "details": {

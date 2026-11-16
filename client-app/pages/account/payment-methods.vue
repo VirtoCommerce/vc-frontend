@@ -19,7 +19,7 @@
               variant="outline"
               class="payment-methods__retry"
               data-test-id="payment-methods-retry"
-              @click="fetch()"
+              @click="loadCards"
             >
               {{ $t("shared.payment.saved_cards.retry") }}
             </VcButton>
@@ -151,7 +151,7 @@ const notifications = useNotifications();
 const { methods, loading, loaded, failed, fetch, remove: removeMethod, setDefault } = useSavedPaymentMethods();
 const { canRender } = useExtensionRegistry();
 
-usePageHead({ title: t("shared.payment.saved_cards.page_title") });
+usePageHead({ title: computed(() => t("shared.payment.saved_cards.page_title")) });
 
 const busy = ref<string>();
 const toRemove = ref<string>();
@@ -178,10 +178,15 @@ function providerName(paymentMethodCode: string): string | undefined {
     : undefined;
 }
 
+/** The page shows its own load errors (with a retry), so the loads ask for no global toast. */
+function loadCards(): Promise<void> {
+  return fetch({ suppressErrorNotifications: true });
+}
+
 async function loadCardMethods() {
   cardMethodsFailed.value = false;
   try {
-    cardMethods.value = await getCardPaymentMethods();
+    cardMethods.value = await getCardPaymentMethods({ suppressErrorNotifications: true });
     providerCode.value = formMethods.value[0]?.paymentMethodCode;
   } catch (e) {
     Logger.error("payment-methods.loadCardMethods", e);
@@ -195,7 +200,7 @@ async function onAdded() {
     single: true,
     text: t("shared.payment.saved_cards.added"),
   });
-  await fetch();
+  await loadCards();
 }
 
 async function makeDefault(id: string) {
@@ -238,7 +243,7 @@ async function remove() {
   }
 }
 
-onMounted(() => Promise.all([fetch(), loadCardMethods()]));
+onMounted(() => Promise.all([loadCards(), loadCardMethods()]));
 </script>
 
 <style lang="scss">

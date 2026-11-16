@@ -22,6 +22,9 @@ fragment productSubscriptionFields on ProductSubscription {
   intervalLabel
   discountType
   discountValue
+  discountValueMoney {
+    formattedAmount
+  }
   startDate
   nextOrderDate
   pausedUntil
@@ -36,7 +39,10 @@ fragment productSubscriptionFields on ProductSubscription {
   initialOrderId
   initialOrderNumber
   ordersCount
-  referencePrice
+  referencePriceMoney {
+    amount
+    formattedAmount
+  }
   createdDate
   canSkip
   canPause

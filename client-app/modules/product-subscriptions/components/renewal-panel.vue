@@ -13,36 +13,38 @@
     <p class="renewal-panel__message">{{ message }}</p>
 
     <VcAlert
-      v-if="renewal.reviewReason && renewal.canAcceptReview"
+      v-if="reviewReason && renewal.canAcceptReview"
       color="warning"
       size="sm"
       variant="soft"
       icon
       class="renewal-panel__alert"
+      data-test-id="renewal-review-reason"
     >
-      {{ renewal.reviewReason }}
+      {{ reviewReason }}
     </VcAlert>
 
     <VcAlert
-      v-else-if="renewal.lastErrorMessage && renewal.state === 'Failed'"
+      v-else-if="lastError && renewal.state === 'Failed'"
       color="danger"
       size="sm"
       variant="soft"
       icon
       class="renewal-panel__alert"
+      data-test-id="renewal-last-error"
     >
-      {{ renewal.lastErrorMessage }}
+      {{ lastError }}
     </VcAlert>
 
     <ul class="renewal-panel__items">
-      <RenewalItem v-for="item in renewal.items" :key="item.subscriptionId" :item="item" :currency="renewal.currency" />
+      <RenewalItem v-for="item in renewal.items" :key="item.subscriptionId" :item="item" />
     </ul>
 
     <div class="renewal-panel__footer">
-      <div v-if="total" class="renewal-panel__total">
+      <div v-if="total?.amount" class="renewal-panel__total">
         <span>{{ $t("product_subscriptions.renewal.total") }}</span>
 
-        <strong>{{ formatMoney(total, renewal.currency) }}</strong>
+        <strong><VcPriceDisplay :value="total" /></strong>
       </div>
 
       <div class="renewal-panel__actions">
@@ -106,7 +108,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatMoney } from "../utils";
+import { useRenewalReasons } from "../composables/useRenewalReasons";
 import RenewalItem from "./renewal-item.vue";
 import SubscriptionStatusBadge from "./subscription-status-badge.vue";
 import type { RenewalFieldsFragment } from "../api/graphql/types";
@@ -123,8 +125,13 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { t, d } = useI18n();
+const { reviewReasonText, errorText } = useRenewalReasons();
 
-const total = computed(() => props.renewal.orderTotal ?? props.renewal.notifiedTotal ?? props.renewal.previewTotal);
+const total = computed(
+  () => props.renewal.orderTotalMoney ?? props.renewal.notifiedTotalMoney ?? props.renewal.previewTotalMoney,
+);
+const reviewReason = computed(() => reviewReasonText(props.renewal));
+const lastError = computed(() => errorText(props.renewal.lastErrorCode));
 
 const tone = computed<"warning" | "danger" | undefined>(() => {
   if (["ReviewRequired", "PaymentActionRequired", "RetryScheduled"].includes(props.renewal.state)) {
@@ -154,7 +161,7 @@ const message = computed(() => {
       return t("product_subscriptions.renewal.messages.ordered");
     case "PaymentActionRequired":
       // The renewal says why: 3-D Secure, or no card on file to charge.
-      return r.lastErrorMessage || t("product_subscriptions.renewal.messages.action");
+      return lastError.value ?? t("product_subscriptions.renewal.messages.action");
     case "RetryScheduled":
       return r.nextAttemptDate
         ? t("product_subscriptions.renewal.messages.retry", { date: d(new Date(r.nextAttemptDate), "short") })

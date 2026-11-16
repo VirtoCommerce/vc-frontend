@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Certains articles de cette livraison ne sont pas disponibles pour le moment.",
+        "NO_SHIPPING_METHOD": "Aucun mode de livraison n'est disponible pour l'adresse de livraison.",
+        "PRICE_INCREASED": "Le total est passé de {from} à {to}. Veuillez confirmer le nouveau prix.",
+        "UNHANDLED": "Cette livraison a changé depuis votre rappel. Veuillez la vérifier."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Votre banque vous demande de confirmer ce paiement.",
+        "CARD_REQUIRED": "Veuillez ajouter une carte pour payer cette livraison.",
+        "CARD_NEEDS_UPDATE": "Votre carte enregistrée doit être mise à jour avant que nous puissions débiter cette livraison.",
+        "CARD_DECLINED": "Votre carte a été refusée. Veuillez mettre à jour votre moyen de paiement.",
+        "CARD_DECLINED_WILL_RETRY": "Votre carte a été refusée. Nous réessaierons automatiquement.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Votre carte a été refusée. Votre prestataire de paiement réessaiera automatiquement.",
+        "CARD_DECLINED_ON_CAPTURE": "Votre carte a été refusée lors de l'expédition de la commande. Veuillez mettre à jour votre moyen de paiement.",
+        "RETRIES_EXHAUSTED": "Nous n'avons pas pu débiter votre carte après plusieurs tentatives. Veuillez mettre à jour votre moyen de paiement.",
+        "PAYMENT_FAILED": "Nous n'avons pas pu débiter votre carte. Veuillez mettre à jour votre moyen de paiement.",
+        "PAYMENT_NOT_CONFIRMED": "Le paiement n'a pas été confirmé à temps.",
+        "PROVIDER_UNAVAILABLE": "Le prestataire de paiement est injoignable. Veuillez réessayer plus tard.",
+        "UNHANDLED": "Un problème est survenu avec le paiement de cette livraison."
       }
     },
     "details": {

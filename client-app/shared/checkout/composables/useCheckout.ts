@@ -16,6 +16,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
+import { useCheckoutGuards } from "./useCheckoutGuards";
 import { createAddressFilterContext } from "./usePickupFilterContext";
 import type {
   CartAddressType,
@@ -132,6 +133,7 @@ export function _useCheckout(cartId?: string) {
     clearState: clearGlobalCheckoutState,
     initialized,
   } = useGlobalCheckout();
+  const { canPlaceOrder } = useCheckoutGuards();
   const addressFilterContext = createAddressFilterContext({
     loading: computed(() =>
       isCorporateMember.value ? organizationAddressesLoading.value : personalAddressesLoading.value,
@@ -577,6 +579,12 @@ export function _useCheckout(cartId?: string) {
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
+    // A module guard (e.g. subscription terms not accepted yet) holds the order back, also when called past the button.
+    if (!canPlaceOrder.value) {
+      Logger.warn(`${useCheckout.name}.${createOrderFromCart.name}: blocked by a checkout guard`);
+      return null;
+    }
+
     loading.value = true;
 
     await prepareOrderData();

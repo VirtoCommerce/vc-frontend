@@ -76,7 +76,7 @@
       >
         {{
           $t("product_subscriptions.mock_payment.pay", {
-            amount: formatMoney(order.total?.amount, order.currency?.code),
+            amount: order.total?.formattedAmount ?? "",
           })
         }}
       </VcButton>
@@ -86,7 +86,7 @@
       :show="showThreeDs"
       :message="
         $t('product_subscriptions.mock_payment.three_ds_text', {
-          amount: formatMoney(order.total?.amount, order.currency?.code),
+          amount: order.total?.formattedAmount ?? '',
         })
       "
       @decline="decline3ds"
@@ -104,7 +104,6 @@ import { Logger } from "@/core/utilities";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
 import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS, THREE_DS_ON_RENEWAL_LAST4, THREE_DS_ON_SAVE_LAST4 } from "../constants";
-import { formatMoney } from "../utils";
 import ThreeDsModal from "./three-ds-modal.vue";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { BankCardType } from "@/shared/payment";
@@ -206,6 +205,8 @@ async function authorize(threeDsCompleted: boolean): Promise<void> {
 
   loading.value = true;
   paymentError.value = undefined;
+  // Only a new card is sent with the consent (see buildParameters), so only its payment fulfils the requirement.
+  const usedRequirement = selected.value === NEW_CARD && !!subscriptionCheckout;
 
   try {
     const result = await authorizePayment({
@@ -215,7 +216,9 @@ async function authorize(threeDsCompleted: boolean): Promise<void> {
     });
 
     if (result.isSuccess) {
-      cardSaving.clear();
+      if (usedRequirement) {
+        cardSaving.clear();
+      }
       emit("success");
       return;
     }

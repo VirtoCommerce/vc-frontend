@@ -8,6 +8,11 @@ import PaymentProcessingAuthorizeNet from "./payment-processing-authorize-net.vu
 import type { CartType, CustomerOrderType, PaymentType } from "@/core/api/graphql/types";
 import "@testing-library/jest-dom/vitest";
 
+const mocks = vi.hoisted(() => ({
+  savedCards: [] as { id: string; isDefault?: boolean }[],
+  loadAcceptJS: vi.fn(),
+}));
+
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }));
@@ -28,7 +33,7 @@ vi.mock("@/shared/account/composables/useUser", async () => {
 });
 
 vi.mock("../composables/useSavedPaymentMethods", () => ({
-  useSavedPaymentMethods: () => ({ fetch: vi.fn().mockResolvedValue(undefined), methodsFor: () => [] }),
+  useSavedPaymentMethods: () => ({ fetch: vi.fn().mockResolvedValue(undefined), methodsFor: () => mocks.savedCards }),
 }));
 
 // Accept.js: loads at once and tokenizes any card into the same nonce.
@@ -36,7 +41,7 @@ vi.mock("@/shared/payment/composables/useAuthorizeNet", async () => {
   const graphql = await import("@/core/api/graphql");
   return {
     useAuthorizeNet: () => ({
-      loadAcceptJS: vi.fn().mockResolvedValue(undefined),
+      loadAcceptJS: mocks.loadAcceptJS,
       dispatchData: (_data: unknown, handler: (response: unknown) => void) =>
         handler({
           messages: { resultCode: "Ok", message: [] },
@@ -118,6 +123,8 @@ describe("PaymentProcessingAuthorizeNet", () => {
 
   beforeEach(() => {
     sessionStorage.clear();
+    mocks.savedCards = [];
+    mocks.loadAcceptJS.mockResolvedValue(undefined);
     const initialized = {
       isSuccess: true,
       paymentActionType: "PreparedForm",
@@ -207,5 +214,62 @@ describe("PaymentProcessingAuthorizeNet", () => {
     const [{ parameters }] = vi.mocked(authorizePayment).mock.calls[0];
     expect(parameters).toContainEqual({ key: "storeForFutureUse", value: "false" });
     expect(parameters?.some((x) => x.key === "consentId")).toBe(false);
+  });
+
+  describe("shared payment readiness", () => {
+    it("is not ready with a preselected saved card until the form is initialized", async () => {
+      mocks.savedCards = [{ id: "card-1", isDefault: true }];
+      let acceptJsLoaded!: () => void;
+      mocks.loadAcceptJS.mockReturnValue(new Promise<void>((resolve) => (acceptJsLoaded = resolve)));
+
+      renderForm();
+      await waitFor(() => expect(mocks.loadAcceptJS).toHaveBeenCalled());
+      await nextTick();
+
+      expect(usePayment().isValidCardData.value).toBe(false);
+      expect(usePayment().isCanFinalizePayment.value).toBe(false);
+
+      acceptJsLoaded();
+      await waitFor(() => expect(usePayment().isCanFinalizePayment.value).toBe(true));
+    });
+
+    it("stays not ready with a preselected saved card when the initialization fails", async () => {
+      mocks.savedCards = [{ id: "card-1", isDefault: true }];
+      vi.mocked(initializeCartPayment).mockResolvedValue({
+        isSuccess: false,
+        paymentActionType: "PreparedForm",
+        errorMessage: "unavailable",
+      });
+
+      const { findByText } = renderForm();
+      expect(await findByText("unavailable")).toBeInTheDocument();
+
+      expect(usePayment().isValidCardData.value).toBe(false);
+      expect(usePayment().isCanFinalizePayment.value).toBe(false);
+    });
+
+    it("takes its processor out of the shared state when it unmounts", async () => {
+      const { unmount } = renderForm();
+      await waitFor(() => expect(usePayment().isCanFinalizePayment.value).toBe(true));
+
+      unmount();
+
+      expect(usePayment().isCanFinalizePayment.value).toBe(false);
+      expect(await usePayment().finalizePayment(order)).toBeUndefined();
+      expect(authorizePayment).not.toHaveBeenCalled();
+    });
+
+    it("leaves a processor registered by another form in place", async () => {
+      const { unmount } = renderForm();
+      await waitFor(() => expect(usePayment().isCanFinalizePayment.value).toBe(true));
+      const otherProcessor = vi.fn().mockResolvedValue(null);
+      usePayment().registerPaymentProcessor(otherProcessor);
+
+      unmount();
+      await usePayment().finalizePayment(order);
+
+      expect(otherProcessor).toHaveBeenCalledWith(order);
+      usePayment().registerPaymentProcessor(null);
+    });
   });
 });

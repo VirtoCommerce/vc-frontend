@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Algunos artículos de esta entrega no están disponibles en este momento.",
+        "NO_SHIPPING_METHOD": "No hay ningún método de envío disponible para la dirección de entrega.",
+        "PRICE_INCREASED": "El total ha subido de {from} a {to}. Confirma el nuevo precio.",
+        "UNHANDLED": "Esta entrega ha cambiado desde tu recordatorio. Revísala."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Tu banco te ha pedido que confirmes este pago.",
+        "CARD_REQUIRED": "Añade una tarjeta para pagar esta entrega.",
+        "CARD_NEEDS_UPDATE": "Tienes que actualizar tu tarjeta guardada antes de que podamos cobrar esta entrega.",
+        "CARD_DECLINED": "Tu tarjeta ha sido rechazada. Actualiza tu método de pago.",
+        "CARD_DECLINED_WILL_RETRY": "Tu tarjeta ha sido rechazada. Lo volveremos a intentar automáticamente.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Tu tarjeta ha sido rechazada. Tu proveedor de pagos lo volverá a intentar automáticamente.",
+        "CARD_DECLINED_ON_CAPTURE": "Tu tarjeta fue rechazada al enviar el pedido. Actualiza tu método de pago.",
+        "RETRIES_EXHAUSTED": "No hemos podido cobrar en tu tarjeta tras varios intentos. Actualiza tu método de pago.",
+        "PAYMENT_FAILED": "No hemos podido cobrar en tu tarjeta. Actualiza tu método de pago.",
+        "PAYMENT_NOT_CONFIRMED": "El pago no se confirmó a tiempo.",
+        "PROVIDER_UNAVAILABLE": "No hemos podido contactar con el proveedor de pagos. Inténtalo de nuevo más tarde.",
+        "UNHANDLED": "Ha habido un problema con el pago de esta entrega."
       }
     },
     "details": {

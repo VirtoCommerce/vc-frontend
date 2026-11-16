@@ -136,6 +136,26 @@
         "failed": "We couldn't charge your card. Choose another card, then retry.",
         "skipped": "This delivery was skipped.",
         "cancelled": "This delivery was cancelled."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "此次配送中的部分商品目前无法提供。",
+        "NO_SHIPPING_METHOD": "该收货地址没有可用的配送方式。",
+        "PRICE_INCREASED": "总价已从 {from} 上涨至 {to}。请确认新价格。",
+        "UNHANDLED": "此次配送在提醒发出后有所变更。请查看。"
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "您的银行要求您确认此笔付款。",
+        "CARD_REQUIRED": "请添加一张银行卡来支付此次配送。",
+        "CARD_NEEDS_UPDATE": "您保存的银行卡需要更新后，我们才能为此次配送扣款。",
+        "CARD_DECLINED": "您的银行卡被拒绝。请更新您的付款方式。",
+        "CARD_DECLINED_WILL_RETRY": "您的银行卡被拒绝。我们将自动重试。",
+        "CARD_DECLINED_PROVIDER_RETRY": "您的银行卡被拒绝。您的支付服务商将自动重试。",
+        "CARD_DECLINED_ON_CAPTURE": "订单发货时您的银行卡被拒绝。请更新您的付款方式。",
+        "RETRIES_EXHAUSTED": "多次尝试后仍无法从您的银行卡扣款。请更新您的付款方式。",
+        "PAYMENT_FAILED": "无法从您的银行卡扣款。请更新您的付款方式。",
+        "PAYMENT_NOT_CONFIRMED": "付款未在规定时间内确认。",
+        "PROVIDER_UNAVAILABLE": "无法连接支付服务商。请稍后重试。",
+        "UNHANDLED": "此次配送的付款出现问题。"
       }
     },
     "details": {

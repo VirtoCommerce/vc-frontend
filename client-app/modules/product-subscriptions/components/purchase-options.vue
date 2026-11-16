@@ -18,15 +18,14 @@
           value="subscribe"
           name="purchase-mode"
           :disabled="isSaving"
-          :strike-price="subscribePrice < basePrice ? product.price?.actual : undefined"
+          :price="offer.subscriptionPrice"
+          :strike-price="hasSavings ? offer.price : undefined"
           test-id="purchase-option-subscribe"
         >
           <template #title>
             {{ $t("product_subscriptions.purchase_options.subscribe") }}
             <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
           </template>
-
-          <template #price>{{ formatMoney(subscribePrice, currency) }}</template>
         </PurchaseOption>
       </fieldset>
 
@@ -97,15 +96,7 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import {
-  applyDiscount,
-  discountLabel,
-  subscriptionErrorMessage,
-  formatMoney,
-  intervalKey,
-  intervalLabel,
-  parseIntervalKey,
-} from "../utils";
+import { discountLabel, subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
 import PurchaseOption from "./purchase-option.vue";
 import type { Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
@@ -133,12 +124,14 @@ const syncError = ref<string>();
 // While a change is saved the choice is locked: a second click would race the first request.
 const isSaving = computed(() => syncState.value === "saving");
 
-const currency = computed(() => product.value.price?.actual?.currency?.code);
-const basePrice = computed(() => product.value.price?.actual?.amount ?? 0);
-const subscribePrice = computed(() =>
-  applyDiscount(basePrice.value, offer.value?.discountType, offer.value?.discountValue),
+// Prices come from the server in the store's currency, computed the way the cart applies the subscription discount.
+const hasSavings = computed(() => {
+  const { price, subscriptionPrice } = offer.value ?? {};
+  return !!price && !!subscriptionPrice && subscriptionPrice.amount < price.amount;
+});
+const savings = computed(() =>
+  discountLabel(t, offer.value?.discountType, offer.value?.discountValue, offer.value?.discountAmount?.formattedAmount),
 );
-const savings = computed(() => discountLabel(t, offer.value?.discountType, offer.value?.discountValue, currency.value));
 
 const intervalItems = computed(() =>
   (offer.value?.intervals ?? []).map((x) => ({

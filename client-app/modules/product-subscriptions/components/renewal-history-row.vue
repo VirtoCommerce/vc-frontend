@@ -12,14 +12,13 @@
       {{ renewal.orderNumber }}
     </router-link>
 
-    <span class="renewal-history-row__total">{{
-      formatMoney(renewal.orderTotal ?? renewal.previewTotal, renewal.currency)
-    }}</span>
+    <span v-if="renewal.orderTotalMoney ?? renewal.previewTotalMoney" class="renewal-history-row__total">
+      <VcPriceDisplay :value="renewal.orderTotalMoney ?? renewal.previewTotalMoney" />
+    </span>
   </li>
 </template>
 
 <script setup lang="ts">
-import { formatMoney } from "../utils";
 import SubscriptionStatusBadge from "./subscription-status-badge.vue";
 import type { RenewalFieldsFragment } from "../api/graphql/types";
 

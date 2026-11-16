@@ -15,19 +15,17 @@
       }}</span>
     </span>
 
-    <span v-if="item.total" class="renewal-item__total">{{ formatMoney(item.total, currency) }}</span>
+    <span v-if="item.totalMoney?.amount" class="renewal-item__total"><VcPriceDisplay :value="item.totalMoney" /></span>
   </li>
 </template>
 
 <script setup lang="ts">
-import { formatMoney } from "../utils";
 import type { RenewalFieldsFragment } from "../api/graphql/types";
 
 type RenewalItemType = NonNullable<RenewalFieldsFragment["items"]>[number];
 
 interface IProps {
   item: RenewalItemType;
-  currency?: string | null;
 }
 
 defineProps<IProps>();

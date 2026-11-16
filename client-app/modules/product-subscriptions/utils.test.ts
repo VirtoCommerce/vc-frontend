@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import {
-  applyDiscount,
+  discountLabel,
   fetchAllPages,
   intervalKey,
   intervalLabel,
@@ -23,23 +23,26 @@ describe("toDateInputValue", () => {
   });
 });
 
-describe("applyDiscount", () => {
-  it("takes a percent off and rounds to cents", () => {
-    expect(applyDiscount(9.99, SubscriptionDiscountType.Percent, 10)).toBeCloseTo(8.99, 2);
+describe("discountLabel", () => {
+  const t = ((key: string, params?: { value: unknown }) => `${key}:${String(params?.value)}`) as never;
+
+  it("shows a percent as is", () => {
+    expect(discountLabel(t, SubscriptionDiscountType.Percent, 10)).toBe("product_subscriptions.discount.percent:10");
   });
 
-  it("takes a fixed amount off, never below zero", () => {
-    expect(applyDiscount(10, SubscriptionDiscountType.FixedAmount, 2.5)).toBeCloseTo(7.5, 2);
-    expect(applyDiscount(10, SubscriptionDiscountType.FixedAmount, 25)).toBe(0);
+  it("shows a fixed amount with the amount the server formatted", () => {
+    expect(discountLabel(t, SubscriptionDiscountType.FixedAmount, 5, "5,00 €")).toBe(
+      "product_subscriptions.discount.amount:5,00 €",
+    );
   });
 
-  it("keeps the price without a discount", () => {
-    expect(applyDiscount(10, SubscriptionDiscountType.None, 10)).toBe(10);
-    expect(applyDiscount(10, SubscriptionDiscountType.Percent, 0)).toBe(10);
+  it("shows nothing for a fixed amount the server didn't format", () => {
+    expect(discountLabel(t, SubscriptionDiscountType.FixedAmount, 5)).toBeUndefined();
   });
 
-  it("caps a percent at 100", () => {
-    expect(applyDiscount(10, SubscriptionDiscountType.Percent, 150)).toBe(0);
+  it("shows nothing without a discount", () => {
+    expect(discountLabel(t, SubscriptionDiscountType.None, 10)).toBeUndefined();
+    expect(discountLabel(t, SubscriptionDiscountType.Percent, 0)).toBeUndefined();
   });
 });
 

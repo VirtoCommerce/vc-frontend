@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useSubscriptionCheckout } from "../composables/useSubscriptionCheckout";
 import CheckoutSubscriptionTerms from "./checkout-subscription-terms.vue";
 import type { CartType } from "@/core/api/graphql/types";
 
@@ -9,8 +10,6 @@ const h = vi.hoisted(() => ({
   acceptSubscriptionTerms: vi.fn(),
   getSubscriptionTerms: vi.fn(),
   refresh: vi.fn(),
-  registerGuard: vi.fn(),
-  unregisterGuard: vi.fn(),
 }));
 
 const state = vi.hoisted(() => ({
@@ -40,10 +39,6 @@ vi.mock("@/shared/checkout/composables/useCheckout", async () => {
   state.placingOrder = ref(false);
   return { useOrderPlacement: () => ({ placingOrder: state.placingOrder }) };
 });
-
-vi.mock("@/shared/checkout/composables/useCheckoutGuards", () => ({
-  useCheckoutGuards: () => ({ registerGuard: h.registerGuard, unregisterGuard: h.unregisterGuard }),
-}));
 
 vi.mock("../api/graphql", () => ({
   acceptSubscriptionTerms: h.acceptSubscriptionTerms,
@@ -198,5 +193,47 @@ describe("CheckoutSubscriptionTerms: stored card-saving consent", () => {
     await flushPromises();
 
     expect(sessionStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+});
+
+// The module registers the checkout guard at start-up; the block only tells it which cart it reviews and whether the
+// terms are accepted.
+describe("CheckoutSubscriptionTerms: checkout guard state", () => {
+  const checkout = useSubscriptionCheckout();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionStorage.clear();
+    state.placingOrder.value = false;
+    state.subscribedItems.value = [{ lineItemId: "line-1" }];
+    h.getSubscriptionTerms.mockResolvedValue({ text: "Terms", version: "1", hash: "hash" });
+    h.acceptSubscriptionTerms.mockResolvedValue("consent-1");
+  });
+
+  it("keeps Place order closed until the block shows its cart and the terms are accepted", async () => {
+    expect(checkout.canPlaceOrder.value).toBe(false);
+
+    const wrapper = mountTerms();
+    await flushPromises();
+    expect(checkout.cart.value?.id).toBe("cart-1");
+    expect(checkout.canPlaceOrder.value).toBe(false);
+
+    await tickTerms(wrapper);
+    expect(checkout.canPlaceOrder.value).toBe(true);
+
+    wrapper.unmount();
+    expect(checkout.cart.value).toBeUndefined();
+    expect(checkout.accepted.value).toBe(false);
+    expect(checkout.canPlaceOrder.value).toBe(false);
+  });
+
+  it("lets the order through without terms when the cart has no subscriptions", async () => {
+    state.subscribedItems.value = [];
+
+    const wrapper = mountTerms();
+    await flushPromises();
+
+    expect(checkout.canPlaceOrder.value).toBe(true);
+    wrapper.unmount();
   });
 });

@@ -5826,11 +5826,9 @@ type CheckoutGuardType = {
     /** True when the order can be placed as far as this guard is concerned. */
     canPlaceOrder: MaybeRefOrGetter<boolean>;
 };
-declare function unregisterGuard(id: string): void;
-declare function registerGuard(id: string, guard: CheckoutGuardType): () => void;
 declare function useCheckoutGuards(): {
-    registerGuard: typeof registerGuard;
-    unregisterGuard: typeof unregisterGuard;
+    registerGuard: (id: string, guard: CheckoutGuardType) => () => void;
+    unregisterGuard: (id: string) => void;
     canPlaceOrder: vue.ComputedRef<boolean>;
 };
 

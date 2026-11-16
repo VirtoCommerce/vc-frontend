@@ -71,6 +71,9 @@ describe("payment methods page", () => {
     await flushPromises();
 
     expect(getSavedPaymentMethods).toHaveBeenCalledTimes(2);
+    // The page shows the failure itself, so no global toast on top of it.
+    expect(getSavedPaymentMethods).toHaveBeenNthCalledWith(1, { suppressErrorNotifications: true });
+    expect(getSavedPaymentMethods).toHaveBeenNthCalledWith(2, { suppressErrorNotifications: true });
     expect(wrapper.find('[data-test-id="payment-methods-load-error"]').exists()).toBe(false);
     expect(wrapper.text()).toContain("shared.payment.saved_cards.empty");
   });
@@ -90,5 +93,7 @@ describe("payment methods page", () => {
     await flushPromises();
 
     expect(getCardPaymentMethods).toHaveBeenCalledTimes(2);
+    expect(getCardPaymentMethods).toHaveBeenNthCalledWith(1, { suppressErrorNotifications: true });
+    expect(getCardPaymentMethods).toHaveBeenNthCalledWith(2, { suppressErrorNotifications: true });
   });
 });
