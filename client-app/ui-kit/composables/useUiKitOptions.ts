@@ -38,7 +38,7 @@ export type VcNotificationsType = {
  */
 export interface IUiKitOptions {
   image?: {
-    thumbnails?: MaybeRefOrGetter<VcImageThumbnailsType | undefined>;
+    thumbnails?: MaybeRefOrGetter<VcImageThumbnailsType>;
   };
   notifications?: VcNotificationsType;
 }
