@@ -122,6 +122,7 @@ export const AddToCart: StoryType = {
       {
         ...preparedLineItemMock2,
         id: "3",
+        quantity: 1,
       },
     ],
     removable: true,
