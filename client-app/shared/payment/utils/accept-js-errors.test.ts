@@ -7,9 +7,9 @@ describe("mapAcceptJsErrors", () => {
   it("translates the card field errors and puts each on its field", () => {
     const { fieldErrors, otherErrors } = mapAcceptJsErrors(
       [
-        { code: "E_WC_05", text: "Please provide valid credit card number." },
-        { code: "E_WC_08", text: "Expiration date must be in the future." },
-        { code: "E_WC_15", text: "Please provide valid CVV." },
+        { code: "E_WC_05", text: "Please provide valid credit card number" },
+        { code: "E_WC_08", text: "Expiration date must be in the future" },
+        { code: "E_WC_15", text: "Please provide valid CVV" },
       ],
       t,
     );
@@ -23,7 +23,7 @@ describe("mapAcceptJsErrors", () => {
   });
 
   it("leaves the errors about no field to the caller", () => {
-    const other = { code: "E_WC_21", text: "User authentication failed due to invalid authentication values." };
+    const other = { code: "E_WC_21", text: "User authentication failed due to invalid authentication values" } as const;
 
     const { fieldErrors, otherErrors } = mapAcceptJsErrors([other], t);
 

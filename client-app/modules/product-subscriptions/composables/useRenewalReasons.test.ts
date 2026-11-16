@@ -58,7 +58,7 @@ describe("useRenewalReasons", () => {
   });
 
   it("gives nothing without a code", () => {
-    expect(reviewReasonText({ reviewReasonCode: null })).toBeUndefined();
+    expect(reviewReasonText({ reviewReasonCode: undefined })).toBeUndefined();
     expect(errorText(undefined)).toBeUndefined();
   });
 });
