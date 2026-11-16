@@ -14,3 +14,4 @@ export enum ContentType {
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "application/vnd.ms-excel",
   "application/zip" = "application/zip",
 }
+/* eslint-enable @typescript-eslint/no-duplicate-enum-values */

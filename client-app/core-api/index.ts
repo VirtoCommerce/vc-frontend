@@ -38,10 +38,8 @@ export {
   VcTextarea,
   VcTypography,
 } from "@/ui-kit/components/molecules";
-// `VcImage` needs the host too: its thumbnail logic reads the theme's `image_thumbnails_*`
-// settings, and `useThemeContext`'s getter THROWS ("Theme context is missing.") until the host has
-// set the context at boot. Only a filename-only `src` returns before that read — any URL `src`
-// throws outside the host, so a plugin's own dev server or specs must stub it.
+// `VcImage` builds thumbnail URLs only when the app passes `image.thumbnails` to
+// `app.use(uiKit, options)`; without it (a plugin's own dev server or specs) it shows `src` as is.
 export {
   VcBadge,
   VcBreadcrumbs,

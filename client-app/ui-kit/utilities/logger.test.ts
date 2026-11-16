@@ -15,12 +15,12 @@ describe("ui-kit Logger", () => {
     expect(consoleError).toHaveBeenCalledWith("failed", 1);
   });
 
-  it("routes to the logger the app sets", () => {
+  it.each(["debug", "info", "warn", "error"] as const)("routes %s to the logger the app sets", (level) => {
     const appLogger = { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() };
     setLogger(appLogger);
 
-    Logger.warn("careful");
+    Logger[level]("message", 1);
 
-    expect(appLogger.warn).toHaveBeenCalledWith("careful");
+    expect(appLogger[level]).toHaveBeenCalledWith("message", 1);
   });
 });

@@ -1,7 +1,6 @@
 import { setup } from "@storybook/vue3-vite";
 import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
-import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import {
   CLASSIC_DESIGN,
@@ -18,7 +17,6 @@ import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import { a11yConfig } from "./a11y-config";
 import { DocsPage } from "./docs-page";
 import { createStorybookRouter } from "./router";
-import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
@@ -39,62 +37,6 @@ const docsTheme = create({
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
 const router = createStorybookRouter();
-
-// Remove this after refactoring the VcImage component
-const { setThemeContext } = useThemeContext();
-setThemeContext({
-  storeId: "storybook",
-  storeName: "Storybook",
-  catalogId: "storybook",
-  storeUrl: "https://storybook.example.com",
-  defaultLanguage: {
-    twoLetterLanguageName: "en",
-    threeLetterLanguageName: "eng",
-    cultureName: "en-US",
-    nativeName: "English",
-    twoLetterRegionName: "US",
-    threeLetterRegionName: "USA",
-    isInvariant: false,
-  },
-  defaultCurrency: {
-    code: "USD",
-    symbol: "$",
-    cultureName: "en-US",
-    englishName: "US Dollar",
-    exchangeRate: 1,
-    name: "US Dollar",
-    isInvariant: false,
-  },
-  availableLanguages: [],
-  availableCurrencies: [],
-  graphQLSettings: { keepAliveInterval: 30 },
-  plugins: [],
-  settings: {
-    image_thumbnails_enabled: true,
-    image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
-    anonymousUsersAllowed: true,
-    modules: [],
-    authenticationTypes: [],
-    createAnonymousOrderEnabled: true,
-    defaultSelectedForCheckout: true,
-    emailVerificationEnabled: false,
-    emailVerificationRequired: false,
-    environmentName: "storybook",
-    passwordRequirements: {
-      requireLowercase: false,
-      requireUppercase: false,
-      requireDigit: false,
-      requiredLength: 6,
-      requiredUniqueChars: 0,
-      requireNonAlphanumeric: false,
-    },
-    seoLinkType: "short",
-    subscriptionEnabled: false,
-    taxCalculationEnabled: false,
-    isSpa: true,
-    quotesEnabled: false,
-  },
-} as StoreResponseType);
 
 // List of available theme presets
 const PRESETS = Object.keys(presets);

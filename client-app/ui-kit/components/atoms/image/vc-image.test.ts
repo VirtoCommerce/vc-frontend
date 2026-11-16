@@ -34,4 +34,30 @@ describe("VcImage thumbnails", () => {
 
     expect(wrapper.attributes("src")).toBe(SRC);
   });
+
+  it("shows src as is when thumbnails are disabled", () => {
+    const wrapper = mountImage({ image: { thumbnails: { enabled: false, suffixes: SUFFIXES } } });
+
+    expect(wrapper.attributes("src")).toBe(SRC);
+  });
+
+  it("shows the fallback image when the thumbnail fails and the original fallback is disabled", async () => {
+    const wrapper = mountImage({ image: { thumbnails: { enabled: true, suffixes: SUFFIXES } } });
+
+    await wrapper.trigger("error");
+
+    expect(wrapper.classes()).toContain("vc-image--fallback");
+    expect(wrapper.attributes("src")).not.toBe(SRC);
+  });
+
+  it("shows the fallback image when the original image fails too", async () => {
+    const wrapper = mountImage({
+      image: { thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: SUFFIXES } },
+    });
+
+    await wrapper.trigger("error");
+    await wrapper.trigger("error");
+
+    expect(wrapper.classes()).toContain("vc-image--fallback");
+  });
 });
