@@ -141,7 +141,7 @@ declare global {
   /** Product property shown as a label and a value */
   type VcPropertyType = {
     name: string;
-    label?: string;
+    label: string;
     value?: string | number | boolean | null;
   };
 

@@ -75,7 +75,7 @@
             <VcProperty
               v-for="property in properties"
               :key="property.name"
-              :label="property.label!"
+              :label="property.label"
               :disabled="disabled || deleted"
             >
               {{ property.value }}
