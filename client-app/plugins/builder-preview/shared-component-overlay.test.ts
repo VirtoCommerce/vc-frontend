@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { spyOnListeners } from "./event-listeners.mock";
 import {
   SHARED_COMPONENT_END_ANCHOR_ID,
   SharedComponentOverlay,
@@ -339,14 +340,6 @@ function createOverlay(onSelect = vi.fn(), onHover = vi.fn()) {
     blocker,
     overlay,
   };
-}
-
-/** Vitest's jsdom environment wraps the window's listener methods, so they bypass `EventTarget.prototype`. */
-function spyOnListeners(method: "addEventListener" | "removeEventListener"): () => unknown[][] {
-  const spies = [vi.spyOn(EventTarget.prototype, method), vi.spyOn(window, method)];
-
-  return () =>
-    spies.flatMap((spy) => spy.mock.calls.map(([type, listener], index) => [spy.mock.contexts[index], type, listener]));
 }
 
 function recordResizeObserver(observer: ResizeObserverMock): void {

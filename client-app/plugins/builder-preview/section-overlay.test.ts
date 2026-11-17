@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { spyOnListeners } from "./event-listeners.mock";
 import { SectionOverlay } from "./section-overlay";
 
 function addSection(id: string, parent: HTMLElement = document.body): HTMLElement {
@@ -26,14 +27,6 @@ function selectedLabel(): string | undefined {
   );
 
   return box?.style.display === "block" ? (box.textContent ?? "") : undefined;
-}
-
-/** Vitest's jsdom environment wraps the window's listener methods, so they bypass `EventTarget.prototype`. */
-function spyOnListeners(method: "addEventListener" | "removeEventListener"): () => unknown[][] {
-  const spies = [vi.spyOn(EventTarget.prototype, method), vi.spyOn(window, method)];
-
-  return () =>
-    spies.flatMap((spy) => spy.mock.calls.map(([type, listener], index) => [spy.mock.contexts[index], type, listener]));
 }
 
 describe("SectionOverlay", () => {
