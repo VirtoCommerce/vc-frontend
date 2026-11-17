@@ -162,6 +162,12 @@ export function useCartSubscriptions(
   };
 }
 
+/** Whether a cart line already has a subscription, in any loaded cart: for extension conditions outside components. */
+export function isCartLineSubscribed(lineItemId: string): boolean {
+  const { itemsByCart } = useCartSubscriptionsStore();
+  return [...itemsByCart.values()].some((items) => items.some((item) => item.lineItemId === lineItemId));
+}
+
 /** The cart the cart and checkout pages show (the route's cart, or the default one), with its products' offers. */
 export function useCurrentCartSubscriptions() {
   const { cart } = useFullCart();

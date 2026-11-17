@@ -37,7 +37,6 @@
           value="once"
           name="purchase-mode"
           :disabled="isSaving"
-          :price="product.price?.actual"
           test-id="purchase-option-once"
         >
           <template #title>{{ $t("product_subscriptions.purchase_options.one_time") }}</template>
@@ -48,38 +47,32 @@
           value="subscribe"
           name="purchase-mode"
           :disabled="isSaving"
-          :price="offer.subscriptionPrice"
-          :strike-price="hasSavings ? offer.price : undefined"
           test-id="purchase-option-subscribe"
         >
-          <template #title>
-            {{ $t("product_subscriptions.purchase_options.subscribe") }}
-            <VcBadge v-if="savings" color="success" size="sm" variant="soft" rounded>{{ savings }}</VcBadge>
-          </template>
+          <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
         </PurchaseOption>
       </fieldset>
 
       <div v-if="mode === 'subscribe'" class="purchase-options__subscribe">
-        <VcSelect
+        <SubscriptionFrequencyPicker
           v-model="selectedInterval"
-          :label="$t('product_subscriptions.purchase_options.deliver')"
-          :items="intervalItems"
-          text-field="label"
-          value-field="key"
-          size="sm"
+          :intervals="offer.intervals"
+          name="purchase-option-frequency"
           :disabled="isSaving"
-          data-test-id="purchase-option-frequency"
+          test-id="purchase-option-frequency"
         />
 
-        <ul class="purchase-options__benefits">
-          <li class="purchase-options__benefit">
-            <VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_reminder") }}
-          </li>
+        <SubscriptionBenefits class="purchase-options__benefits" />
 
-          <li class="purchase-options__benefit">
-            <VcIcon name="check" size="xs" /> {{ $t("product_subscriptions.purchase_options.benefit_cancel") }}
-          </li>
-        </ul>
+        <VcLink
+          :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
+          class="purchase-options__how"
+          data-test-id="purchase-option-how-it-works-link"
+        >
+          <VcIcon name="info" size="xs" />
+
+          {{ $t("product_subscriptions.how_it_works.link") }}
+        </VcLink>
 
         <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
           {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
@@ -96,8 +89,11 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { discountLabel, subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
+import { HOW_IT_WORKS_ROUTE_NAME } from "../constants";
+import { subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
 import PurchaseOption from "./purchase-option.vue";
+import SubscriptionBenefits from "./subscription-benefits.vue";
+import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
 import type { Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
@@ -124,21 +120,7 @@ const syncError = ref<string>();
 // While a change is saved the choice is locked: a second click would race the first request.
 const isSaving = computed(() => syncState.value === "saving");
 
-// Prices come from the server in the store's currency, computed the way the cart applies the subscription discount.
-const hasSavings = computed(() => {
-  const { price, subscriptionPrice } = offer.value ?? {};
-  return !!price && !!subscriptionPrice && subscriptionPrice.amount < price.amount;
-});
-const savings = computed(() =>
-  discountLabel(t, offer.value?.discountType, offer.value?.discountValue, offer.value?.discountAmount?.formattedAmount),
-);
-
-const intervalItems = computed(() =>
-  (offer.value?.intervals ?? []).map((x) => ({
-    key: intervalKey(x.unit, x.count),
-    label: intervalLabel(t, x.unit, x.count),
-  })),
-);
+// No prices or discount badges on the options for now: the block's own price stays the one price shown.
 
 const lineItem = computed(() => cart.value?.items?.find((item) => item.productId === product.value.id));
 const activeSubscription = computed(() => (lineItem.value ? byLineItemId.value.get(lineItem.value.id) : undefined));
@@ -224,12 +206,8 @@ onMounted(() => {
     @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
   }
 
-  &__benefits {
-    @apply flex flex-col gap-1 text-xs text-neutral-700;
-  }
-
-  &__benefit {
-    @apply flex items-center gap-1.5;
+  &__how {
+    @apply inline-flex items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__status {
@@ -265,7 +243,8 @@ onMounted(() => {
       @apply gap-2 bg-transparent p-0;
     }
 
-    &__benefits {
+    &__benefits,
+    &__how {
       @apply hidden;
     }
   }

@@ -27,7 +27,7 @@ export const ATTENTION_RENEWAL_STATES: ReadonlySet<string> = new Set([
 ]);
 
 export const SUBSCRIPTIONS_ROUTE_NAME = "ProductSubscriptions";
-export const SUBSCRIPTION_DETAILS_ROUTE_NAME = "ProductSubscriptionDetails";
+export const HOW_IT_WORKS_ROUTE_NAME = "SubscribeAndSaveHowItWorks";
 
 /** The checkout guard that holds Place order until the subscription terms are accepted. */
 export const TERMS_GUARD_ID = "product-subscription-terms";

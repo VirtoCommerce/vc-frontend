@@ -7,9 +7,18 @@
           {{ $t("pages.account.orders.order_number_label") }}
         </span>
 
-        <a class="order-card__number" :href="orderHref" :target="linkTarget" :rel="linkRel">
-          {{ item.number }}
-        </a>
+        <span class="order-card__number-line">
+          <a class="order-card__number" :href="orderHref" :target="linkTarget" :rel="linkRel">
+            {{ item.number }}
+          </a>
+
+          <ExtensionPoint
+            v-if="$canRenderExtensionPoint('orderListItem', EXTENSION_NAMES.orderListItem.badge, item)"
+            :name="EXTENSION_NAMES.orderListItem.badge"
+            category="orderListItem"
+            :order="item"
+          />
+        </span>
       </div>
 
       <!-- Date -->
@@ -70,6 +79,7 @@ import { useRouter } from "vue-router";
 import { useBrowserTarget } from "@/core/composables";
 import { BrowserTargetType } from "@/core/enums";
 import { getDisplayTotals } from "@/core/utilities";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import OrderStatus from "./order-status.vue";
 import type { OrderScopeType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
@@ -176,6 +186,11 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
 
   &__value {
     @apply truncate;
+  }
+
+  &__number-line {
+    // The badge wraps under the number rather than truncating it.
+    @apply flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5;
   }
 
   &__number {

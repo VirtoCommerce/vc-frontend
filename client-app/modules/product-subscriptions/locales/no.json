@@ -9,6 +9,12 @@
       "month": "Every month | Every {count} months",
       "year": "Every year | Every {count} years"
     },
+    "intervals_short": {
+      "day": "1 day | {count} days",
+      "week": "1 week | {count} weeks",
+      "month": "1 month | {count} months",
+      "year": "1 year | {count} years"
+    },
     "discount": {
       "percent": "Save {value}%",
       "amount": "Save {value}"
@@ -37,13 +43,8 @@
       "Revoked": "Removed"
     },
     "common": {
-      "qty": "Qty {quantity}",
-      "next": "Next: {date}",
-      "paused": "Paused",
-      "paused_until": "Paused until {date}",
-      "cancelled_on": "Cancelled {date}",
-      "back": "Back",
-      "retry": "Prøv igjen"
+      "retry": "Prøv igjen",
+      "subscription_number": "Subscription {number}"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -52,15 +53,94 @@
       "title": "Purchase options",
       "one_time": "One-time purchase",
       "subscribe": "Subscribe & Save",
-      "deliver": "Deliver",
       "benefit_reminder": "We email you before every delivery. No surprise charges.",
       "benefit_cancel": "Skip, pause or cancel any time.",
       "sign_in_required": "Sign in to subscribe.",
       "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase"
+      "in_cart_once": "In your cart as a one-time purchase",
+      "deliver_every": "Get it every",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "how_it_works": {
+      "link": "How it works",
+      "title": "How subscriptions work",
+      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "steps": {
+        "title": "How it works",
+        "choose": {
+          "title": "Choose how often",
+          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+        },
+        "remind": {
+          "title": "We remind you first",
+          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+        },
+        "deliver": {
+          "title": "We deliver and charge",
+          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+        }
+      },
+      "rules": {
+        "savings": {
+          "title": "Savings",
+          "items": [
+            "The discount is shown on the product page before you subscribe.",
+            "Some products save more when they are delivered more often.",
+            "The discount applies to every delivery for as long as the subscription is active."
+          ]
+        },
+        "prices": {
+          "title": "Prices",
+          "items": [
+            "Each delivery is priced on its order date, minus your discount.",
+            "You are never charged more than the price in your reminder.",
+            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+          ]
+        },
+        "changes": {
+          "title": "Skip, pause or change",
+          "items": [
+            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
+            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
+            "Order now if you need the items sooner."
+          ]
+        },
+        "payment": {
+          "title": "Payment",
+          "items": [
+            "We charge the card you saved at checkout. You can switch cards at any time.",
+            "The payment is authorized when the order is placed and charged when it ships.",
+            "If a payment fails, we retry and email you before the subscription is paused."
+          ]
+        },
+        "cancel": {
+          "title": "Cancel any time",
+          "items": [
+            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
+            "Deliveries already ordered are not affected.",
+            "Once a year we email you a summary of your active subscriptions."
+          ]
+        },
+        "availability": {
+          "title": "Out of stock",
+          "items": [
+            "If an item is unavailable, we let you review the delivery and order the rest.",
+            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+          ]
+        }
+      },
+      "manage": {
+        "title": "Manage your subscriptions",
+        "text": "See upcoming deliveries and change any subscription in your account.",
+        "button": "Go to my subscriptions"
+      }
     },
     "cart": {
-      "subscribe": "Subscribe & Save"
+      "subscribe_button": "Subscribe",
+      "subscribed": "Subscribed",
+      "change": "Change",
+      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
     },
     "checkout": {
       "title": "Your subscription",
@@ -95,23 +175,8 @@
     },
     "list": {
       "title": "Subscriptions",
-      "subtitle": "Your regular deliveries. Skip, pause or change them any time.",
-      "needs_attention": "Needs your attention",
-      "upcoming": "Upcoming deliveries",
-      "browse": "Browse products",
-      "tabs": {
-        "active": "Active",
-        "paused": "Paused",
-        "cancelled": "Cancelled"
-      },
-      "empty": {
-        "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
-        "no_active": "Ingen aktive abonnementer.",
-        "paused": "No paused subscriptions.",
-        "cancelled": "No cancelled subscriptions."
-      },
-      "tabs_label": "Subscription status",
-      "load_failed": "Kunne ikke laste inn abonnementene dine."
+      "load_failed": "Kunne ikke laste inn abonnementene dine.",
+      "browse": "Browse products"
     },
     "renewal": {
       "total": "Total",
@@ -158,86 +223,61 @@
         "UNHANDLED": "Det oppstod et problem med betalingen for denne leveransen."
       }
     },
-    "details": {
-      "meta_title": "Subscription",
-      "back": "All subscriptions",
-      "not_found": "This subscription was not found.",
-      "load_failed": "Kunne ikke laste inn dette abonnementet.",
-      "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
-      "pending": "Your subscription starts as soon as the first payment is confirmed.",
-      "paused": "This subscription is paused. No deliveries or charges until you resume it.",
-      "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
-      "cancelled": "Cancelled {date}. You won't be charged again.",
-      "cancelled_undated": "Dette abonnementet er avsluttet. Du blir ikke belastet igjen.",
-      "next_delivery": "Next delivery",
-      "next_hint": "We'll email you a reminder with the price a few days before.",
-      "no_next": "No upcoming deliveries.",
-      "order_now": "Order now",
-      "skip_next": "Skip next delivery",
-      "manage": "Change subscription",
+    "deliveries": {
+      "lead": "{count} active · next delivery {date}",
+      "need_action": "{count} needs your action | {count} need your action",
+      "in_days": "in {count} day | in {count} days",
+      "days_ago": "{count} day ago | {count} days ago",
+      "next_badge": "Next delivery",
+      "items": "{count} item | {count} items",
+      "skip": "Skip delivery",
+      "change": "Change",
       "quantity": "Quantity",
-      "frequency": "Frequency",
-      "next_date": "Next delivery date",
-      "payment_card": "Pay with",
-      "choose_card": "Choose a card",
-      "manage_cards": "Manage cards",
-      "save": "Save changes",
-      "reset": "Reset",
-      "history": "Delivery history",
-      "no_history": "No deliveries yet besides your first order.",
-      "summary": "Details",
-      "started": "Started",
-      "deliveries": "Orders",
-      "price": "Price per item",
-      "paid_with": "Paid with",
-      "ships_to": "Ships to",
-      "first_order": "First order",
-      "actions": "Subscription",
-      "resume": "Resume",
-      "pause": "Pause",
+      "settings": "Subscription settings",
+      "pause": "Pause subscription",
       "cancel": "Cancel subscription",
-      "skipped": "Next delivery skipped.",
-      "skip_stale": "This delivery was already changed, maybe in another tab. We've refreshed the page: check the next delivery and try again.",
-      "resumed": "Subscription resumed.",
+      "pause_title": "Pause subscription?",
+      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
+      "cancel_title": "Cancel subscription?",
+      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
       "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. You won't be charged again.",
-      "saved": "Changes saved.",
-      "ordered": "Order placed.",
-      "order_needs_attention": "We couldn't place the order yet. See the delivery above for what's needed.",
-      "quantity_pack": "Sold in packs of {packSize}.",
-      "quantity_min": "The minimum quantity is {min}.",
-      "quantity_max": "The maximum quantity is {max}."
+      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
+      "resumed": "Subscription resumed.",
+      "updated": "Subscription updated.",
+      "skipped": "Delivery skipped. Nothing will be charged for it.",
+      "cutoff": "You can change or skip until {date}.",
+      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
+      "needs_action": "Ships as soon as this is resolved.",
+      "ordered_hint": "Ordered — it's on its way.",
+      "estimated_total": "Estimated total",
+      "total": "Total",
+      "ships_to": "Ships to {address}",
+      "idle_title": "Paused and cancelled ({count})",
+      "paused_until": "Paused until {date}",
+      "paused": "Paused",
+      "cancelled_on": "Cancelled {date}",
+      "qty_every": "Qty {quantity} · {interval}",
+      "resume": "Resume now",
+      "subscribe_again": "Subscribe again",
+      "empty": "Nothing is scheduled yet.",
+      "today": "today",
+      "tomorrow": "tomorrow",
+      "skip_title": "Skip this delivery?",
+      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
+      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
+      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
+      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
+      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
+      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
+      "pause_after_many": "Deliveries already ordered still arrive.",
+      "cancel_lead_many": "No more deliveries or charges for these products:",
+      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone."
     },
-    "pause": {
-      "title": "Pause subscription",
-      "text": "No deliveries or charges while paused.",
-      "confirm": "Pause",
-      "options": {
-        "2w": "For 2 weeks",
-        "4w": "For 4 weeks",
-        "8w": "For 8 weeks",
-        "open": "Until I resume it"
-      }
-    },
-    "cancel": {
-      "title": "Cancel subscription?",
-      "text": "You won't be charged for this subscription again. Already placed orders aren't affected.",
-      "reason": "Why are you cancelling?",
-      "reason_optional": "Optional",
-      "keep": "Keep subscription",
-      "confirm": "Cancel subscription",
-      "reasons": {
-        "too_much": "I have too much",
-        "too_often": "Deliveries are too frequent",
-        "not_needed": "I don't need it anymore",
-        "price": "The price is too high",
-        "other": "Other reason"
-      }
-    },
-    "order_now": {
-      "title": "Order now?",
-      "text": "We'll place an order for this subscription right away and charge your saved card. Your schedule restarts from today.",
-      "confirm": "Order now"
+    "order": {
+      "badge": "Abonnement",
+      "automatic": "Lagt inn automatisk av abonnementet ditt for leveringen {date}.",
+      "subscriptions": "Abonnement {numbers}. | Abonnementer {numbers}.",
+      "manage": "Administrer abonnementer"
     }
   }
 }

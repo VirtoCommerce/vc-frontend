@@ -15,6 +15,36 @@ export function intervalLabel(
   return t(`product_subscriptions.intervals.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
 }
 
+/** The frequency without "Every", for a picker labelled "Get it every": "1 month", "2 weeks". */
+export function intervalShortLabel(
+  t: TranslateType,
+  unit: string | null | undefined,
+  count: number | null | undefined,
+): string {
+  const normalizedUnit = (unit || SubscriptionIntervalUnit.Month).toLowerCase();
+  const normalizedCount = count && count > 0 ? count : 1;
+  return t(`product_subscriptions.intervals_short.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
+}
+
+/** `from` moved forward by one delivery interval: an estimate, the real date is set when the order is placed. */
+export function addInterval(from: Date, unit: SubscriptionIntervalUnit, count: number): Date {
+  const result = new Date(from);
+  switch (unit) {
+    case SubscriptionIntervalUnit.Day:
+      result.setDate(result.getDate() + count);
+      break;
+    case SubscriptionIntervalUnit.Week:
+      result.setDate(result.getDate() + 7 * count);
+      break;
+    case SubscriptionIntervalUnit.Year:
+      result.setFullYear(result.getFullYear() + count);
+      break;
+    default:
+      result.setMonth(result.getMonth() + count);
+  }
+  return result;
+}
+
 /**
  * "Save 10%" or "Save $5.00". A fixed-amount discount is shown with the amount the server formatted in the record's
  * currency (`formattedAmount`); without it there is nothing correct to show, so no label.
@@ -34,6 +64,11 @@ export function discountLabel(
   }
 
   return formattedAmount ? t("product_subscriptions.discount.amount", { value: formattedAmount }) : undefined;
+}
+
+/** The element id of a subscription on Account › Subscriptions; a link from an order scrolls to it. */
+export function subscriptionAnchorId(subscriptionId: string): string {
+  return `subscription-${subscriptionId}`;
 }
 
 export function intervalKey(unit: SubscriptionIntervalUnit, count: number): string {

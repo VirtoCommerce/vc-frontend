@@ -9,6 +9,12 @@
       "month": "Every month | Every {count} months",
       "year": "Every year | Every {count} years"
     },
+    "intervals_short": {
+      "day": "1 day | {count} days",
+      "week": "1 week | {count} weeks",
+      "month": "1 month | {count} months",
+      "year": "1 year | {count} years"
+    },
     "discount": {
       "percent": "Save {value}%",
       "amount": "Save {value}"
@@ -37,13 +43,8 @@
       "Revoked": "Removed"
     },
     "common": {
-      "qty": "Qty {quantity}",
-      "next": "Next: {date}",
-      "paused": "Paused",
-      "paused_until": "Paused until {date}",
-      "cancelled_on": "Cancelled {date}",
-      "back": "Back",
-      "retry": "Повторить попытку"
+      "retry": "Повторить попытку",
+      "subscription_number": "Подписка {number}"
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
@@ -52,15 +53,94 @@
       "title": "Purchase options",
       "one_time": "One-time purchase",
       "subscribe": "Subscribe & Save",
-      "deliver": "Deliver",
       "benefit_reminder": "We email you before every delivery. No surprise charges.",
       "benefit_cancel": "Skip, pause or cancel any time.",
       "sign_in_required": "Sign in to subscribe.",
       "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase"
+      "in_cart_once": "In your cart as a one-time purchase",
+      "deliver_every": "Get it every",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "how_it_works": {
+      "link": "Как это работает",
+      "title": "Как работают подписки",
+      "lead": "Товары, которые вы покупаете регулярно, приходят по вашему графику и дешевле. Вы всё контролируете: пропустить, изменить или отменить доставку можно в любой момент до крайнего срока.",
+      "steps": {
+        "title": "Как это работает",
+        "choose": {
+          "title": "Выберите частоту",
+          "text": "На странице товара выберите подписку и частоту доставки. Первый заказ отправляется как обычно."
+        },
+        "remind": {
+          "title": "Мы заранее напоминаем",
+          "text": "Перед каждой доставкой мы присылаем письмо с товарами, датой и максимальной суммой списания."
+        },
+        "deliver": {
+          "title": "Доставляем и списываем оплату",
+          "text": "Заказ оформляется в выбранную дату и оплачивается картой, сохранённой при оформлении, со скидкой по подписке."
+        }
+      },
+      "rules": {
+        "savings": {
+          "title": "Скидка",
+          "items": [
+            "Скидка видна на странице товара до оформления подписки.",
+            "На некоторые товары скидка больше, если доставлять их чаще.",
+            "Скидка действует на каждую доставку, пока подписка активна."
+          ]
+        },
+        "prices": {
+          "title": "Цены",
+          "items": [
+            "Цена каждой доставки считается на дату заказа, со скидкой.",
+            "Мы никогда не спишем больше суммы из напоминания.",
+            "Если цена выросла больше чем на 5%, мы попросим вас подтвердить доставку перед заказом."
+          ]
+        },
+        "changes": {
+          "title": "Пропустить, приостановить, изменить",
+          "items": [
+            "Пропустить доставку, приостановить подписку, изменить количество, частоту или дату можно в разделе «Аккаунт › Подписки».",
+            "Изменения, сделанные до крайнего срока (за день до даты заказа), применяются к ближайшей доставке.",
+            "Если товар нужен раньше, оформите заказ сразу."
+          ]
+        },
+        "payment": {
+          "title": "Оплата",
+          "items": [
+            "Мы списываем оплату с карты, сохранённой при оформлении. Карту можно сменить в любой момент.",
+            "Сумма блокируется при оформлении заказа и списывается при отгрузке.",
+            "Если оплата не прошла, мы повторим попытку и напишем вам до приостановки подписки."
+          ]
+        },
+        "cancel": {
+          "title": "Отмена в любой момент",
+          "items": [
+            "Отменить подписку можно в один шаг в разделе «Аккаунт › Подписки». Без звонков и комиссий.",
+            "Уже оформленные доставки это не затрагивает.",
+            "Раз в год мы присылаем сводку ваших активных подписок."
+          ]
+        },
+        "availability": {
+          "title": "Если товара нет",
+          "items": [
+            "Если товар недоступен, мы попросим вас проверить доставку и закажем остальное.",
+            "Если вы не ответите, эта доставка будет пропущена, а следующая пройдёт по графику."
+          ]
+        }
+      },
+      "manage": {
+        "title": "Управление подписками",
+        "text": "Ближайшие доставки и все настройки подписок — в вашем аккаунте.",
+        "button": "Мои подписки"
+      }
     },
     "cart": {
-      "subscribe": "Subscribe & Save"
+      "subscribe_button": "Subscribe",
+      "subscribed": "Subscribed",
+      "change": "Change",
+      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
     },
     "checkout": {
       "title": "Your subscription",
@@ -95,23 +175,8 @@
     },
     "list": {
       "title": "Subscriptions",
-      "subtitle": "Your regular deliveries. Skip, pause or change them any time.",
-      "needs_attention": "Needs your attention",
-      "upcoming": "Upcoming deliveries",
-      "browse": "Browse products",
-      "tabs": {
-        "active": "Active",
-        "paused": "Paused",
-        "cancelled": "Cancelled"
-      },
-      "empty": {
-        "active": "You don't have any subscriptions yet. Look for Subscribe & Save on product pages.",
-        "no_active": "Нет активных подписок.",
-        "paused": "No paused subscriptions.",
-        "cancelled": "No cancelled subscriptions."
-      },
-      "tabs_label": "Subscription status",
-      "load_failed": "Не удалось загрузить ваши подписки."
+      "load_failed": "Не удалось загрузить ваши подписки.",
+      "browse": "Browse products"
     },
     "renewal": {
       "total": "Total",
@@ -158,86 +223,61 @@
         "UNHANDLED": "При оплате этой доставки возникла проблема."
       }
     },
-    "details": {
-      "meta_title": "Subscription",
-      "back": "All subscriptions",
-      "not_found": "This subscription was not found.",
-      "load_failed": "Не удалось загрузить эту подписку.",
-      "past_due": "We couldn't charge your card for the last delivery. Choose a working card below; your subscription continues as soon as the payment goes through.",
-      "pending": "Your subscription starts as soon as the first payment is confirmed.",
-      "paused": "This subscription is paused. No deliveries or charges until you resume it.",
-      "paused_until": "Paused until {date}. Deliveries resume automatically after that.",
-      "cancelled": "Cancelled {date}. You won't be charged again.",
-      "cancelled_undated": "Эта подписка отменена. Списаний больше не будет.",
-      "next_delivery": "Next delivery",
-      "next_hint": "We'll email you a reminder with the price a few days before.",
-      "no_next": "No upcoming deliveries.",
-      "order_now": "Order now",
-      "skip_next": "Skip next delivery",
-      "manage": "Change subscription",
-      "quantity": "Quantity",
-      "frequency": "Frequency",
-      "next_date": "Next delivery date",
-      "payment_card": "Pay with",
-      "choose_card": "Choose a card",
-      "manage_cards": "Manage cards",
-      "save": "Save changes",
-      "reset": "Reset",
-      "history": "Delivery history",
-      "no_history": "No deliveries yet besides your first order.",
-      "summary": "Details",
-      "started": "Started",
-      "deliveries": "Orders",
-      "price": "Price per item",
-      "paid_with": "Paid with",
-      "ships_to": "Ships to",
-      "first_order": "First order",
-      "actions": "Subscription",
-      "resume": "Resume",
-      "pause": "Pause",
-      "cancel": "Cancel subscription",
-      "skipped": "Next delivery skipped.",
-      "skip_stale": "This delivery was already changed, maybe in another tab. We've refreshed the page: check the next delivery and try again.",
-      "resumed": "Subscription resumed.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. You won't be charged again.",
-      "saved": "Changes saved.",
-      "ordered": "Order placed.",
-      "order_needs_attention": "We couldn't place the order yet. See the delivery above for what's needed.",
-      "quantity_pack": "Sold in packs of {packSize}.",
-      "quantity_min": "The minimum quantity is {min}.",
-      "quantity_max": "The maximum quantity is {max}."
+    "deliveries": {
+      "lead": "Активных: {count} · следующая доставка {date}",
+      "need_action": "{count} требует действия | {count} требуют действия | {count} требуют действия",
+      "in_days": "через {count} день | через {count} дня | через {count} дней",
+      "days_ago": "{count} день назад | {count} дня назад | {count} дней назад",
+      "next_badge": "Ближайшая доставка",
+      "items": "{count} товар | {count} товара | {count} товаров",
+      "skip": "Пропустить доставку",
+      "change": "Изменить",
+      "quantity": "Количество",
+      "settings": "Настройки подписки",
+      "pause": "Приостановить подписку",
+      "cancel": "Отменить подписку",
+      "pause_title": "Приостановить подписку?",
+      "pause_text": "Доставки и списания по товару {product} остановятся, пока вы не возобновите подписку. Уже оформленные доставки придут.",
+      "cancel_title": "Отменить подписку?",
+      "cancel_text": "Доставок и списаний по товару {product} больше не будет. Уже оформленные доставки придут. Это действие нельзя отменить.",
+      "paused_done": "Подписка приостановлена.",
+      "cancelled_done": "Подписка отменена. Уже оформленные доставки придут.",
+      "resumed": "Подписка возобновлена.",
+      "updated": "Подписка обновлена.",
+      "skipped": "Доставка пропущена. Оплата за неё не спишется.",
+      "cutoff": "Изменить или пропустить можно до {date}.",
+      "cutoff_passed": "Заказ готовится — изменения применятся к следующей доставке.",
+      "needs_action": "Отправим, как только проблема будет решена.",
+      "ordered_hint": "Заказ оформлен и уже в пути.",
+      "estimated_total": "Предварительный итог",
+      "total": "Итого",
+      "ships_to": "Доставка: {address}",
+      "idle_title": "Приостановленные и отменённые ({count})",
+      "paused_until": "Приостановлена до {date}",
+      "paused": "Приостановлена",
+      "cancelled_on": "Отменена {date}",
+      "qty_every": "Кол-во {quantity} · {interval}",
+      "resume": "Возобновить",
+      "subscribe_again": "Подписаться снова",
+      "empty": "Пока ничего не запланировано.",
+      "today": "сегодня",
+      "tomorrow": "завтра",
+      "skip_title": "Пропустить эту доставку?",
+      "skip_lead_one": "Мы пропустим доставку {date} ({product}).",
+      "skip_lead_many": "Мы пропустим доставку {date} с этими товарами:",
+      "skip_after": "Оплата за неё не спишется. Следующая доставка будет {next}. Все остальные доставки останутся в плане без изменений.",
+      "skip_after_no_next": "Оплата за неё не спишется. Все остальные доставки останутся в плане без изменений.",
+      "prices_estimate": "Цены предварительные: по текущим ценам каталога, к дате заказа могут измениться.",
+      "pause_lead_many": "Доставки и списания по этим товарам остановятся, пока вы не возобновите подписку:",
+      "pause_after_many": "Уже оформленные доставки придут.",
+      "cancel_lead_many": "Доставок и списаний по этим товарам больше не будет:",
+      "cancel_after_many": "Уже оформленные доставки придут. Это действие нельзя отменить."
     },
-    "pause": {
-      "title": "Pause subscription",
-      "text": "No deliveries or charges while paused.",
-      "confirm": "Pause",
-      "options": {
-        "2w": "For 2 weeks",
-        "4w": "For 4 weeks",
-        "8w": "For 8 weeks",
-        "open": "Until I resume it"
-      }
-    },
-    "cancel": {
-      "title": "Cancel subscription?",
-      "text": "You won't be charged for this subscription again. Already placed orders aren't affected.",
-      "reason": "Why are you cancelling?",
-      "reason_optional": "Optional",
-      "keep": "Keep subscription",
-      "confirm": "Cancel subscription",
-      "reasons": {
-        "too_much": "I have too much",
-        "too_often": "Deliveries are too frequent",
-        "not_needed": "I don't need it anymore",
-        "price": "The price is too high",
-        "other": "Other reason"
-      }
-    },
-    "order_now": {
-      "title": "Order now?",
-      "text": "We'll place an order for this subscription right away and charge your saved card. Your schedule restarts from today.",
-      "confirm": "Order now"
+    "order": {
+      "badge": "Подписка",
+      "automatic": "Заказ оформлен автоматически по вашей подписке для доставки {date}.",
+      "subscriptions": "Подписка {numbers}. | Подписки {numbers}.",
+      "manage": "Управлять подписками"
     }
   }
 }
