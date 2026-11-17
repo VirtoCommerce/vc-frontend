@@ -43,10 +43,12 @@
       "blocks": [
         {
           "id": "related_products",
+          "type": "recommendation",
           "model": "related-products"
         },
         {
           "id": "bought_together",
+          "type": "recommendation",
           "model": "bought-together"
         }
       ]

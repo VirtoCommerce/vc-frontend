@@ -9,8 +9,8 @@ export const MAIN_SECTION_TYPES: Readonly<Record<ThemePageType, string>> = {
 };
 
 export const BUILT_IN_TEMPLATES: Readonly<Record<string, IThemePageDocument>> = {
-  product: productTemplateDefault as IThemePageDocument,
-  "product.b2c": productTemplateB2c as IThemePageDocument,
+  product: productTemplateDefault,
+  "product.b2c": productTemplateB2c,
   category: { settings: {}, content: [{ id: "category-listing", type: MAIN_SECTION_TYPES.category }] },
   page: { settings: {}, content: [{ id: "page-content", type: MAIN_SECTION_TYPES.page }] },
 };
