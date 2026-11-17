@@ -9,7 +9,7 @@ import { loadModuleLocale } from "../utils";
 import { useSubscriptionCheckout } from "./composables/useSubscriptionCheckout";
 import { ENABLED_KEY, MOCK_PAYMENT_TYPE_NAME, MODULE_ID, TERMS_GUARD_ID } from "./constants";
 import { menuItems } from "./menu";
-import { routes } from "./routes";
+import { publicRoutes, routes } from "./routes";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { I18n } from "@/i18n";
@@ -39,6 +39,7 @@ export function init(router: Router, i18n: I18n) {
   void loadModuleLocale(i18n, "product-subscriptions");
 
   routes.forEach((route) => router.addRoute("Account", route));
+  publicRoutes.forEach((route) => router.addRoute(route));
 
   if (isAuthenticated.value) {
     mergeMenuSchema(menuItems);

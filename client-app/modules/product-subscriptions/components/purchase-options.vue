@@ -51,6 +51,16 @@
           </li>
         </ul>
 
+        <VcLink
+          :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
+          class="purchase-options__how"
+          data-test-id="purchase-option-how-it-works-link"
+        >
+          <VcIcon name="info" size="xs" />
+
+          {{ $t("product_subscriptions.how_it_works.link") }}
+        </VcLink>
+
         <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
           {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
         </VcAlert>
@@ -96,6 +106,7 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
+import { HOW_IT_WORKS_ROUTE_NAME } from "../constants";
 import { discountLabel, subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
 import PurchaseOption from "./purchase-option.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -232,6 +243,10 @@ onMounted(() => {
     @apply flex items-center gap-1.5;
   }
 
+  &__how {
+    @apply inline-flex items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
+  }
+
   &__status {
     @apply flex items-center gap-1.5 text-xs text-success-700;
 
@@ -265,7 +280,8 @@ onMounted(() => {
       @apply gap-2 bg-transparent p-0;
     }
 
-    &__benefits {
+    &__benefits,
+    &__how {
       @apply hidden;
     }
   }
