@@ -156,7 +156,11 @@ setup((app) => {
   try {
     app.use(router);
     app.use(i18n);
-    app.use(uiKit, { image: { thumbnails: { enabled: true, suffixes: { sm: "sm", md: "md", lg: "lg" } } } });
+    app.use(uiKit, {
+      image: {
+        thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: { sm: "sm", md: "md", lg: "lg" } },
+      },
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Storybook Vue setup error:", error);
