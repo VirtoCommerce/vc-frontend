@@ -47,7 +47,8 @@
       "subscription_number": "Subscription {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "action_disabled": "Dieser Shop erlaubt das nicht. Bitte wenden Sie sich an den Shop."
     },
     "purchase_options": {
       "title": "Purchase options",
@@ -272,7 +273,22 @@
       "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
       "pause_after_many": "Deliveries already ordered still arrive.",
       "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone."
+      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "order_now": "Jetzt bestellen",
+      "order_now_title": "Jetzt bestellen?",
+      "ordered": "Bestellung aufgegeben.",
+      "card_label": "Bezahlen mit",
+      "choose_card": "Karte wählen",
+      "manage_cards": "Karten verwalten",
+      "order_now_lead_one": "Wir bestellen {product} sofort und belasten Ihre gespeicherte Karte.",
+      "order_now_lead_many": "Wir bestellen diese Produkte sofort und belasten Ihre gespeicherte Karte:",
+      "order_now_after": "Der Zeitplan beginnt ab heute neu.",
+      "change_card": "Karte ändern",
+      "card_title": "Karte ändern",
+      "card_lead_one": "Wählen Sie die gespeicherte Karte für {product}.",
+      "card_lead_many": "Wählen Sie die gespeicherte Karte für diese Produkte:",
+      "no_cards": "Sie haben noch keine gespeicherten Karten.",
+      "card_changed": "Karte aktualisiert."
     },
     "order": {
       "badge": "Abo",

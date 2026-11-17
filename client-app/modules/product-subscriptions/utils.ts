@@ -2,6 +2,9 @@ import { Logger } from "@/core/utilities";
 import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
+/** The server's error code for an action the store has turned off in its "Customer actions" settings. */
+const ACTION_DISABLED_ERROR_CODE = "SUBSCRIPTION_ACTION_DISABLED";
+
 type TranslateType = Composer["t"];
 
 export function intervalLabel(
@@ -154,6 +157,11 @@ export function subscriptionErrorMessage(
   key = "product_subscriptions.errors.generic",
 ): string {
   Logger.warn("product-subscriptions", error);
+  // The store turned this action off for customers after the page was loaded: say so instead of "try again".
+  const { graphQLErrors = [] } = (error ?? {}) as { graphQLErrors?: { extensions?: { code?: unknown } }[] };
+  if (graphQLErrors.some((x) => x.extensions?.code === ACTION_DISABLED_ERROR_CODE)) {
+    return t("product_subscriptions.errors.action_disabled");
+  }
   return t(key);
 }
 

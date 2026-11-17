@@ -47,7 +47,8 @@
       "subscription_number": "Subscription {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "action_disabled": "This store doesn't let you do this. Please contact the store."
     },
     "purchase_options": {
       "title": "Purchase options",
@@ -272,7 +273,22 @@
       "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
       "pause_after_many": "Deliveries already ordered still arrive.",
       "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone."
+      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "order_now": "Order now",
+      "order_now_title": "Order now?",
+      "ordered": "Order placed.",
+      "card_label": "Pay with",
+      "choose_card": "Choose a card",
+      "manage_cards": "Manage cards",
+      "order_now_lead_one": "We'll place an order for {product} right away and charge your saved card.",
+      "order_now_lead_many": "We'll place an order for these products right away and charge your saved card:",
+      "order_now_after": "The schedule restarts from today.",
+      "change_card": "Change card",
+      "card_title": "Change card",
+      "card_lead_one": "Choose the saved card for {product}.",
+      "card_lead_many": "Choose the saved card for these products:",
+      "no_cards": "You have no saved cards yet.",
+      "card_changed": "Card updated."
     },
     "order": {
       "badge": "Subscription",

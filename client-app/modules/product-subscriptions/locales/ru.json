@@ -47,7 +47,8 @@
       "subscription_number": "Подписка {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "action_disabled": "Магазин не разрешает это действие. Обратитесь в магазин."
     },
     "purchase_options": {
       "title": "Purchase options",
@@ -272,7 +273,22 @@
       "pause_lead_many": "Доставки и списания по этим товарам остановятся, пока вы не возобновите подписку:",
       "pause_after_many": "Уже оформленные доставки придут.",
       "cancel_lead_many": "Доставок и списаний по этим товарам больше не будет:",
-      "cancel_after_many": "Уже оформленные доставки придут. Это действие нельзя отменить."
+      "cancel_after_many": "Уже оформленные доставки придут. Это действие нельзя отменить.",
+      "order_now": "Заказать сейчас",
+      "order_now_title": "Заказать сейчас?",
+      "ordered": "Заказ оформлен.",
+      "card_label": "Оплата картой",
+      "choose_card": "Выберите карту",
+      "manage_cards": "Управление картами",
+      "order_now_lead_one": "Мы сразу оформим заказ на {product} и спишем оплату с сохранённой карты.",
+      "order_now_lead_many": "Мы сразу оформим заказ на эти товары и спишем оплату с сохранённой карты:",
+      "order_now_after": "График начнётся заново с сегодняшнего дня.",
+      "change_card": "Сменить карту",
+      "card_title": "Сменить карту",
+      "card_lead_one": "Выберите сохранённую карту для {product}.",
+      "card_lead_many": "Выберите сохранённую карту для этих товаров:",
+      "no_cards": "У вас пока нет сохранённых карт.",
+      "card_changed": "Карта изменена."
     },
     "order": {
       "badge": "Подписка",

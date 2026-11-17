@@ -47,7 +47,8 @@
       "subscription_number": "Subscription {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "action_disabled": "此商店不允许此操作。请联系商店。"
     },
     "purchase_options": {
       "title": "Purchase options",
@@ -272,7 +273,22 @@
       "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
       "pause_after_many": "Deliveries already ordered still arrive.",
       "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone."
+      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "order_now": "立即下单",
+      "order_now_title": "立即下单？",
+      "ordered": "已下单。",
+      "card_label": "支付方式",
+      "choose_card": "选择银行卡",
+      "manage_cards": "管理银行卡",
+      "order_now_lead_one": "我们将立即为 {product} 下单，并从您保存的银行卡扣款。",
+      "order_now_lead_many": "我们将立即为这些商品下单，并从您保存的银行卡扣款：",
+      "order_now_after": "计划将从今天重新开始。",
+      "change_card": "更换银行卡",
+      "card_title": "更换银行卡",
+      "card_lead_one": "为 {product} 选择已保存的银行卡。",
+      "card_lead_many": "为这些商品选择已保存的银行卡：",
+      "no_cards": "您还没有保存的银行卡。",
+      "card_changed": "银行卡已更新。"
     },
     "order": {
       "badge": "订阅",

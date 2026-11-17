@@ -30,24 +30,15 @@
           <strong><VcPriceDisplay :value="total" /></strong>
         </span>
 
-        <VcButton
-          v-if="renewal.canSkip"
-          size="xs"
-          variant="outline"
-          color="secondary"
-          prepend-icon="fast-forward"
-          :loading="busy === 'skip'"
-          :disabled="!!busy"
-          data-test-id="subscription-delivery-skip-button"
-          @click="emitAction('skip')"
-        >
-          {{ $t("product_subscriptions.deliveries.skip") }}
-        </VcButton>
-
         <SubscriptionItemMenu
           :subscriptions="subscriptions"
+          :can-skip="renewal.canSkip"
+          :can-order-now="isOpen"
           :disabled="!!busy"
           :test-id="`subscription-settings-${renewal.number}`"
+          @skip="emitAction('skip')"
+          @order-now="$emit('orderNow', $event)"
+          @change-card="$emit('changeCard', $event)"
           @pause="$emit('pause', $event)"
           @cancel="$emit('cancel', $event)"
         />
@@ -123,7 +114,7 @@
               <span class="subscription-delivery__frequency-text">{{ frequencyOf(item.id) }}</span>
 
               <VcButton
-                v-if="subscriptionOf(item.id)?.canChange"
+                v-if="subscriptionOf(item.id)?.canChangeFrequency"
                 color="secondary"
                 variant="ghost"
                 size="xs"
@@ -185,6 +176,8 @@ interface IEmits {
   /** All the delivery's subscriptions that can be paused (the settings menu acts on the whole delivery). */
   (event: "pause", subscriptions: SubscriptionType[]): void;
   (event: "cancel", subscriptions: SubscriptionType[]): void;
+  (event: "orderNow", subscriptions: SubscriptionType[]): void;
+  (event: "changeCard", subscriptions: SubscriptionType[]): void;
 }
 
 interface IProps {
@@ -203,6 +196,8 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const ORDERED_STATES: ReadonlySet<string> = new Set(["Ordered", "Authorized"]);
+/** A delivery not placed yet: its products can still be ordered right away instead. */
+const OPEN_STATES: ReadonlySet<string> = new Set(["Scheduled", "Notified", UPCOMING_DELIVERY_STATE]);
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Half a cent: two prices closer than this are the same price. */
 const PRICE_TOLERANCE = 0.005;
@@ -213,6 +208,7 @@ const { offerFor } = useSubscriptionOffers();
 
 const scheduledDate = computed(() => new Date(props.renewal.scheduledDate));
 const isAttention = computed(() => ATTENTION_RENEWAL_STATES.has(props.renewal.state));
+const isOpen = computed(() => OPEN_STATES.has(props.renewal.state));
 
 const subscriptions = computed(() =>
   props.renewal.items.map((x) => props.subscriptionsById[x.subscriptionId]).filter((x): x is SubscriptionType => !!x),

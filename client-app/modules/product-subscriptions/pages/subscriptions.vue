@@ -63,6 +63,8 @@
           @change-frequency="changeFrequency"
           @pause="confirmPause"
           @cancel="confirmCancel"
+          @order-now="confirmOrderNow"
+          @change-card="changeCard"
         />
       </template>
 
@@ -155,6 +157,7 @@ import {
   changeProductSubscription,
   getProductSubscriptions,
   getSubscriptionRenewals,
+  orderProductSubscriptionNow,
   pauseProductSubscription,
   resumeProductSubscription,
   retrySubscriptionRenewalPayment,
@@ -162,6 +165,7 @@ import {
   skipSubscriptionRenewal,
 } from "../api/graphql";
 import PurchaseOptionsModal from "../components/purchase-options-modal.vue";
+import SubscriptionCardModal from "../components/subscription-card-modal.vue";
 import SubscriptionConfirmModal from "../components/subscription-confirm-modal.vue";
 import SubscriptionDelivery from "../components/subscription-delivery.vue";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
@@ -581,6 +585,52 @@ function confirmCancel(targets: SubscriptionType[]): void {
     text: many ? t("product_subscriptions.deliveries.cancel_after_many") : undefined,
     task: () => Promise.all(targets.map((x) => cancelProductSubscription({ subscriptionId: x.id }))),
     success: t("product_subscriptions.deliveries.cancelled_done"),
+  });
+}
+
+/**
+ * Orders a delivery's products right away, after a confirmation. Each subscription makes its own order and its schedule
+ * restarts from today; the store turns this on in its "Customer actions" settings.
+ */
+function confirmOrderNow(targets: SubscriptionType[]): void {
+  const many = targets.length > 1;
+  confirmChange({
+    variant: "warning",
+    title: t("product_subscriptions.deliveries.order_now_title"),
+    lead: many
+      ? t("product_subscriptions.deliveries.order_now_lead_many")
+      : t("product_subscriptions.deliveries.order_now_lead_one", { product: targets[0]?.productName ?? "" }),
+    products: many ? targets.map((x) => x.productName ?? "") : [],
+    text: t("product_subscriptions.deliveries.order_now_after"),
+    // One at a time: the server locks per customer, so parallel requests would only wait for each other.
+    task: async () => {
+      for (const target of targets) {
+        await orderProductSubscriptionNow({ subscriptionId: target.id });
+      }
+    },
+    success: t("product_subscriptions.deliveries.ordered"),
+  });
+}
+
+/** Picks another saved card for a delivery's subscriptions; the store turns this on in its "Customer actions" settings. */
+function changeCard(targets: SubscriptionType[]): void {
+  const cards = new Set(targets.map((x) => x.storedPaymentMethodId ?? ""));
+  openModal({
+    component: SubscriptionCardModal,
+    props: {
+      products: targets.map((x) => x.productName ?? ""),
+      // Preselect the card only when all the subscriptions share it.
+      currentCardId: cards.size === 1 ? (targets[0]?.storedPaymentMethodId ?? undefined) : undefined,
+      async onSave(cardId: string): Promise<void> {
+        await Promise.all(
+          targets
+            .filter((x) => x.storedPaymentMethodId !== cardId)
+            .map((x) => changeProductSubscription({ subscriptionId: x.id, savedPaymentMethodId: cardId })),
+        );
+        notifySuccess(t("product_subscriptions.deliveries.card_changed"));
+        await load();
+      },
+    },
   });
 }
 
