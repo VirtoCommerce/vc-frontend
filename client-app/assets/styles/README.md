@@ -460,6 +460,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-file-uploader-radius` | VcFileUploader corners | `var(--vc-radius)` |
 | `--vc-input-radius` | VcInput and VcDateRangeInput corners | `var(--vc-radius)` |
 | `--vc-markdown-render-radius` | VcMarkdownRender corners | `var(--vc-radius)` |
+| `--vc-menu-item-radius` | VcMenuItem row corners | Not set: the root's radius (`inherit`), none by default |
 | `--vc-popover-radius` | VcPopover corners. VcTooltip and VcDropdownMenu set it on their popover | `var(--vc-radius)` |
 | `--vc-product-card-radius` | VcProductCard corners | `var(--vc-radius)` |
 | `--vc-product-image-radius` | VcProductImage corners | `var(--vc-radius)` |
