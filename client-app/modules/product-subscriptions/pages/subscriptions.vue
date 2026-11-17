@@ -144,7 +144,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { useCurrency, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { getProductRoute, Logger, toLocalDateOnly } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
@@ -158,13 +158,14 @@ import {
   pauseProductSubscription,
   resumeProductSubscription,
   retrySubscriptionRenewalPayment,
+  skipProductSubscription,
   skipSubscriptionRenewal,
 } from "../api/graphql";
 import PurchaseOptionsModal from "../components/purchase-options-modal.vue";
 import SubscriptionConfirmModal from "../components/subscription-confirm-modal.vue";
 import SubscriptionDelivery from "../components/subscription-delivery.vue";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { ATTENTION_RENEWAL_STATES } from "../constants";
+import { ATTENTION_RENEWAL_STATES, UPCOMING_DELIVERY_STATE, UPCOMING_ID_PREFIX } from "../constants";
 import {
   addInterval,
   fetchAllPages,
@@ -190,7 +191,8 @@ const CHANGEABLE_STATES: ReadonlySet<string> = new Set(["Scheduled", "Notified"]
 const UPCOMING_STATES: ReadonlySet<string> = new Set([...CHANGEABLE_STATES, "Ordered", "Authorized"]);
 const ACTIVE_STATUSES: ReadonlySet<string> = new Set(["Active", "PendingActivation", "PastDue"]);
 
-const { t, d } = useI18n();
+const { t, d, n } = useI18n();
+const { currentCurrency } = useCurrency();
 const route = useRoute();
 const notifications = useNotifications();
 const { openModal } = useModal();
@@ -215,13 +217,99 @@ const subscriptionsById = computed(() => Object.fromEntries(subscriptions.value.
 const activeSubscriptions = computed(() => subscriptions.value.filter((x) => ACTIVE_STATUSES.has(x.status)));
 const inactiveSubscriptions = computed(() => subscriptions.value.filter((x) => !ACTIVE_STATUSES.has(x.status)));
 
-const deliveries = computed(() => {
+const openDeliveries = computed(() => {
   const orderedSince = Date.now() - ORDERED_SHOWN_DAYS * DAY_MS;
   return renewals.value
     .filter((x) => ATTENTION_RENEWAL_STATES.has(x.state) || UPCOMING_STATES.has(x.state))
-    .filter((x) => CHANGEABLE_STATES.has(x.state) || new Date(x.scheduledDate).getTime() >= orderedSince)
-    .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime());
+    .filter((x) => CHANGEABLE_STATES.has(x.state) || new Date(x.scheduledDate).getTime() >= orderedSince);
 });
+
+/**
+ * Deliveries the server hasn't prepared yet. A renewal is created only a few days before a delivery, so most active
+ * subscriptions have none: each one's next delivery is shown here, the ones due on the same day in one card. A
+ * subscription whose next delivery already has its renewal shows in that renewal's card instead.
+ */
+const upcomingDeliveries = computed<RenewalFieldsFragment[]>(() => {
+  const covered = new Set(
+    renewals.value.flatMap((renewal) =>
+      renewal.items.map((item) => `${item.subscriptionId}|${toLocalDateOnly(new Date(renewal.scheduledDate))}`),
+    ),
+  );
+  // A past-due subscription waits for its failed payment: its renewal card says so, it has no upcoming delivery.
+  const inRenewal = new Set(renewals.value.flatMap((renewal) => renewal.items.map((item) => item.subscriptionId)));
+  const byDay = new Map<string, SubscriptionType[]>();
+  activeSubscriptions.value
+    .filter((x) => !(x.status === "PastDue" && inRenewal.has(x.id)))
+    .filter((x) => !covered.has(`${x.id}|${toLocalDateOnly(new Date(x.nextOrderDate))}`))
+    .forEach((x) => {
+      // A past-due subscription gets a card of its own, so its payment problem doesn't mark the others.
+      const day = toLocalDateOnly(new Date(x.nextOrderDate)) + (x.status === "PastDue" ? "-past-due" : "");
+      byDay.set(day, [...(byDay.get(day) ?? []), x]);
+    });
+  return [...byDay.entries()].map(([day, items]) => toUpcomingDelivery(day, items));
+});
+
+const deliveries = computed(() =>
+  [...openDeliveries.value, ...upcomingDeliveries.value].sort(
+    (a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime(),
+  ),
+);
+
+/** The money for an estimate the server hasn't computed: the subscription's currency, formatted like the store's. */
+function estimate(amount: number, currency: string | null | undefined) {
+  const code = currency || currentCurrency.value.code;
+  return { amount, formattedAmount: n(amount, { style: "currency", currency: code }) };
+}
+
+/** An upcoming delivery in the shape of a renewal, so the page shows every delivery with the same card. */
+function toUpcomingDelivery(day: string, items: SubscriptionType[]): RenewalFieldsFragment {
+  const lines = items.map((x) => {
+    // The estimate is today's subscription price; the reminder before the delivery has the final one.
+    const unit = offerFor(x.productId)?.subscriptionPrice?.amount ?? x.referencePriceMoney?.amount ?? 0;
+    return {
+      subscriptionId: x.id,
+      productId: x.productId,
+      sku: x.sku,
+      productName: x.productName,
+      imageUrl: x.imageUrl,
+      quantity: x.quantity,
+      listPrice: offerFor(x.productId)?.price?.amount ?? 0,
+      discountAmount: 0,
+      totalMoney: estimate(unit * x.quantity, x.currency),
+      isAvailable: true,
+      isExcluded: false,
+      message: undefined,
+    };
+  });
+  const total = lines.reduce((sum, x) => sum + x.totalMoney.amount, 0);
+  // Past due with no renewal to retry: the payment failed for good, the customer has to update the card.
+  const pastDue = items.some((x) => x.status === "PastDue");
+  return {
+    id: `${UPCOMING_ID_PREFIX}${day}`,
+    number: `${UPCOMING_ID_PREFIX}${day}`,
+    state: pastDue ? "Failed" : UPCOMING_DELIVERY_STATE,
+    lastErrorCode: pastDue ? "RETRIES_EXHAUSTED" : undefined,
+    scheduledDate: items[0].nextOrderDate,
+    // No reminder has gone out yet, so there is no cut-off date: the hint says changes stay open until the reminder.
+    cutoffDate: undefined,
+    isManual: false,
+    currency: items[0].currency,
+    previewTotalMoney: estimate(total, items[0].currency),
+    discountTotal: 0,
+    shippingTotal: 0,
+    taxTotal: 0,
+    attemptCount: 0,
+    canSkip: items.every((x) => x.canSkip),
+    canAcceptReview: false,
+    canRetryPayment: false,
+    requiresPaymentAction: false,
+    items: lines,
+  };
+}
+/** Whether a delivery was built on the page from subscriptions (no renewal on the server yet). */
+function isUpcoming(renewal: RenewalFieldsFragment): boolean {
+  return renewal.id.startsWith(UPCOMING_ID_PREFIX);
+}
 const nextDelivery = computed(() => deliveries.value[0]);
 const actionCount = computed(() => deliveries.value.filter((x) => ATTENTION_RENEWAL_STATES.has(x.state)).length);
 
@@ -306,7 +394,21 @@ async function load(): Promise<void> {
 
     // Open renewals, plus recently failed ones the customer can still fix.
     const failed = (recentRenewals?.items ?? []).filter((x) => x.state === "Failed" && x.canRetryPayment);
-    const merged = [...openRenewals, ...failed];
+    // A subscription waiting for payment (past due) is shown by its failed renewal, which has Retry payment: the
+    // recent ones above may not include an older one, so it is loaded for each such subscription.
+    const shown = new Set([...openRenewals, ...failed].flatMap((x) => x.items.map((i) => i.subscriptionId)));
+    const pastDue = allSubscriptions.filter((x) => x.status === "PastDue" && !shown.has(x.id));
+    const pastDueRenewals = await Promise.all(
+      pastDue.map((x) =>
+        getSubscriptionRenewals({ subscriptionId: x.id, first: 1, sort: "ModifiedDate:desc" }, options).then(
+          (page) => page?.items?.[0],
+        ),
+      ),
+    );
+    const retryable = pastDueRenewals.filter(
+      (x): x is RenewalFieldsFragment => !!x && x.state === "Failed" && x.canRetryPayment,
+    );
+    const merged = [...openRenewals, ...failed, ...retryable];
     renewals.value = merged.filter((x, i) => merged.findIndex((y) => y.id === x.id) === i);
     loaded.value = true;
 
@@ -435,7 +537,16 @@ function confirmSkip(renewal: RenewalFieldsFragment): void {
       : t("product_subscriptions.deliveries.skip_lead_one", { date, product: products[0] ?? "" }),
     products: many ? products : [],
     text: after,
-    task: () => skipSubscriptionRenewal({ renewalId: renewal.id }),
+    // An upcoming delivery has no renewal yet: each subscription skips its own next delivery, the one shown here.
+    task: () =>
+      isUpcoming(renewal)
+        ? Promise.all(
+            included
+              .map((x) => subscriptionsById.value[x.subscriptionId])
+              .filter((x): x is SubscriptionType => !!x)
+              .map((x) => skipProductSubscription({ subscriptionId: x.id, expectedNextOrderDate: x.nextOrderDate })),
+          )
+        : skipSubscriptionRenewal({ renewalId: renewal.id }),
     success: t("product_subscriptions.deliveries.skipped"),
   });
 }

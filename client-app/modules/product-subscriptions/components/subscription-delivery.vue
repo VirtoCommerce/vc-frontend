@@ -58,7 +58,7 @@
       <VcAlert
         v-if="isAttention"
         :color="issueColor"
-        variant="tonal"
+        variant="soft"
         size="sm"
         icon
         :title="issueTitle"
@@ -169,7 +169,7 @@ import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities";
 import { useRenewalReasons } from "../composables/useRenewalReasons";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { ATTENTION_RENEWAL_STATES } from "../constants";
+import { ATTENTION_RENEWAL_STATES, UPCOMING_DELIVERY_STATE } from "../constants";
 import { intervalLabel, subscriptionAnchorId } from "../utils";
 import SubscriptionItemMenu from "./subscription-item-menu.vue";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
@@ -256,6 +256,9 @@ const hint = computed(() => {
   }
   if (ORDERED_STATES.has(props.renewal.state)) {
     return t("product_subscriptions.deliveries.ordered_hint");
+  }
+  if (props.renewal.state === UPCOMING_DELIVERY_STATE) {
+    return t("product_subscriptions.deliveries.upcoming_hint");
   }
   const cutoff = props.renewal.cutoffDate ? new Date(props.renewal.cutoffDate) : undefined;
   return cutoff && cutoff.getTime() > Date.now()

@@ -246,6 +246,7 @@
       "updated": "Subscription updated.",
       "skipped": "Delivery skipped. Nothing will be charged for it.",
       "cutoff": "You can change or skip until {date}.",
+      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
       "cutoff_passed": "Being prepared — changes apply to the next delivery.",
       "needs_action": "Ships as soon as this is resolved.",
       "ordered_hint": "Ordered — it's on its way.",

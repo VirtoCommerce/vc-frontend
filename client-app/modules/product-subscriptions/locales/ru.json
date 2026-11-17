@@ -246,6 +246,7 @@
       "updated": "Подписка обновлена.",
       "skipped": "Доставка пропущена. Оплата за неё не спишется.",
       "cutoff": "Изменить или пропустить можно до {date}.",
+      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
       "cutoff_passed": "Заказ готовится — изменения применятся к следующей доставке.",
       "needs_action": "Отправим, как только проблема будет решена.",
       "ordered_hint": "Заказ оформлен и уже в пути.",
