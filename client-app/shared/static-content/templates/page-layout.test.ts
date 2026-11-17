@@ -22,6 +22,7 @@ const SNAPSHOT: Partial<IThemeSnapshot> = {
       { id: "campaign", template: "page.campaign", when: { setting: { name: "campaign", equals: "spring" } } },
       { id: "docs", template: "page.docs", when: { path: "docs/*", source: "ContentFile" } },
       { id: "about", template: "page.bare", when: { path: "über-uns", source: "ContentFile" } },
+      { id: "promo", template: "page.bare", when: { path: "promo/*", source: "Pages" } },
     ],
   },
   templates: {
@@ -108,6 +109,17 @@ describe("chooseLandingPageLayout", () => {
 
     expect(choose(slug, { path: "/docs/setup" })).toBe("blank");
     expect(choose(slug, { path: "/other" })).toBe("full");
+  });
+
+  it("checks a Page Builder page's rules against its own permalink, not the visited path", () => {
+    const slug: IThemeSlug = {
+      permalink: "spring",
+      objectType: "Pages",
+      objectId: "page-1",
+      page: { source: "page-builder", permalink: "/promo/spring", settings: {} },
+    };
+
+    expect(choose(slug, { path: "/spring" })).toBe("blank");
   });
 
   it.each<[string, IThemeSlug | undefined, Partial<ILandingLayoutOptions>]>([

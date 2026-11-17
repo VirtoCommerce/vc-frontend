@@ -103,24 +103,36 @@ describe("chooseTemplate", () => {
     expect(choose({ pageType: "page", templates, ownTemplate: "product.landing" })?.template).toBe("page");
   });
 
-  it("matches pages by path, language, source and setting", () => {
-    const resolution = choose({
+  const pageSubject = {
+    permalink: "/Landing/Spring/",
+    language: "de-DE",
+    objectType: "Pages",
+    settings: { theme: "dark" },
+  };
+  const pageWhen = { path: "landing/*", language: "de", source: "Pages", setting: { name: "theme", equals: "dark" } };
+  const choosePage = (subject: typeof pageSubject, when: Record<string, unknown>) =>
+    choose({
       pageType: "page",
-      subject: { permalink: "/Landing/Spring/", language: "de-DE", objectType: "Pages", settings: { theme: "dark" } },
+      subject,
       templates: { ...BUILT_IN_TEMPLATES, "page.landing": DOCUMENT },
-      rules: {
-        version: 2,
-        page: [
-          {
-            id: "landing",
-            template: "page.landing",
-            when: { path: "landing/*", language: "de", source: "Pages", setting: { name: "theme", equals: "dark" } },
-          },
-        ],
-      },
+      rules: { version: 2, page: [{ id: "landing", template: "page.landing", when }] },
     });
 
-    expect(resolution?.template).toBe("page.landing");
+  it("matches pages by path, language, source and setting", () => {
+    expect(choosePage(pageSubject, pageWhen)?.template).toBe("page.landing");
+  });
+
+  it("matches the exact locale", () => {
+    expect(choosePage(pageSubject, { language: "de-DE" })?.template).toBe("page.landing");
+  });
+
+  it.each([
+    ["path", { path: "other/*" }],
+    ["language", { language: "fr" }],
+    ["source", { source: "Other" }],
+    ["setting value", { setting: { name: "theme", equals: "light" } }],
+  ])("does not match when the %s differs", (_name, override) => {
+    expect(choosePage(pageSubject, { ...pageWhen, ...override })?.template).not.toBe("page.landing");
   });
 
   it("checks a category against its own id and outline", () => {
