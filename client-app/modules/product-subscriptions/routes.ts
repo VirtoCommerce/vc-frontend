@@ -18,5 +18,5 @@ export const routes: RouteRecordRaw[] = [
 
 /** Top-level routes, open to guests: the Subscribe & Save rules linked from the product page. */
 export const publicRoutes: RouteRecordRaw[] = [
-  { path: "/subscribe-and-save", name: HOW_IT_WORKS_ROUTE_NAME, component: HowItWorks, meta: { public: true } },
+  { path: "/how-subscriptions-work", name: HOW_IT_WORKS_ROUTE_NAME, component: HowItWorks, meta: { public: true } },
 ];
