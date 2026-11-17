@@ -9,6 +9,7 @@ import { useModules } from "@/core/composables/useModules";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_MARKETING_EXPERIENCE_API, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { isDesignerPreview } from "@/core/theme-snapshot/designer-frame";
 import { useThemeGroups } from "@/core/theme-snapshot/groups";
 import {
   convertToExtendedMenuLink,
@@ -241,6 +242,11 @@ export function _useNavigations() {
     () => whiteLabelingCatalogMenuItems.value ?? themeCatalogMenuItems.value ?? catalogMenuItems.value,
   );
 
+  // In the designer a draft theme menu is undefined until it loads, and the regular one shows meanwhile.
+  const isRegularCatalogMenuReplaced = computed(
+    () => !!whiteLabelingCatalogMenuItems.value || (!!themeCatalogMenuItems.value && !isDesignerPreview()),
+  );
+
   const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
 
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
@@ -367,19 +373,15 @@ export function _useNavigations() {
 
   let isCatalogMenuFetchDeferred = false;
 
-  // A fetch made while white-labeling replaces the regular menu waits for it to go. The theme's menu does not defer
-  // it: a draft menu is undefined until it loads, and the regular one shows meanwhile.
-  watch(
-    () => !whiteLabelingCatalogMenuItems.value,
-    (isWithoutWhiteLabeling) => {
-      if (isWithoutWhiteLabeling && isCatalogMenuFetchDeferred) {
-        void fetchCatalogMenu();
-      }
-    },
-  );
+  // A fetch made while the regular menu is replaced waits for the replacement to go.
+  watch(isRegularCatalogMenuReplaced, (isReplaced) => {
+    if (!isReplaced && isCatalogMenuFetchDeferred) {
+      void fetchCatalogMenu();
+    }
+  });
 
   async function fetchCatalogMenu() {
-    isCatalogMenuFetchDeferred = !!whiteLabelingCatalogMenuItems.value;
+    isCatalogMenuFetchDeferred = isRegularCatalogMenuReplaced.value;
 
     if (isCatalogMenuFetchDeferred) {
       return;

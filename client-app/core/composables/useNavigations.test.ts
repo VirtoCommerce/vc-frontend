@@ -1,5 +1,6 @@
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { IPublishedTheme } from "@/core/theme-snapshot/types";
 
 const hoisted = vi.hoisted(() => {
   const mockRouter = {
@@ -93,6 +94,7 @@ const hoisted = vi.hoisted(() => {
     mockRouter,
     matchingRouteName,
     menuData,
+    isDesignerPreview: false,
   };
 });
 
@@ -131,6 +133,11 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({
     getSettingValue: () => undefined,
   }),
+}));
+
+vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
+  isDesignerPreview: () => hoisted.isDesignerPreview,
 }));
 
 vi.mock("@/core/api/graphql", () => ({
@@ -294,11 +301,16 @@ describe("useNavigations - theme header", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    hoisted.isDesignerPreview = false;
   });
 
   async function publishSiteHeader(settings: Record<string, unknown>): Promise<void> {
     const { useThemeSnapshot } = await import("@/core/theme-snapshot/useThemeSnapshot");
-    useThemeSnapshot().setPublished({
+    useThemeSnapshot().setPublished(createTheme(settings));
+  }
+
+  function createTheme(settings: Record<string, unknown>): IPublishedTheme {
+    return {
       storeId: "store",
       cultureName: "en-US",
       publication: 1,
@@ -310,7 +322,7 @@ describe("useNavigations - theme header", () => {
         header: { content: [{ id: "header", type: "site-header", ...settings }] },
       },
       menus: [{ name: "Header-Categories", items: [{ title: "Shoes", url: "/shoes" }] }],
-    });
+    };
   }
 
   it("gives the mobile menu the theme's category menu, as the desktop header", async () => {
@@ -333,12 +345,59 @@ describe("useNavigations - theme header", () => {
     expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
   });
 
-  it("shows the regular catalog menu while the theme's category menu has not loaded", async () => {
+  it("does not request the regular catalog menu while the theme's category menu replaces it", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+
+    await navigations.fetchCatalogMenu();
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Shoes"]);
+  });
+
+  it("requests the regular catalog menu at boot when the published theme lacks the menu it names", async () => {
+    await publishSiteHeader({ catalog_menu: "Missing-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
+    await navigations.fetchCatalogMenu();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("requests the regular catalog menu once a late theme without the category menu takes over", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+    const { useThemeSnapshot } = await import("@/core/theme-snapshot/useThemeSnapshot");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+    await navigations.fetchCatalogMenu();
+
+    useThemeSnapshot().setLate(createTheme({}));
+    useThemeSnapshot().promoteLate();
+    await flushPromises();
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    await publishSiteHeader({});
+    await flushPromises();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("shows the regular catalog menu in the designer while the theme's category menu has not loaded", async () => {
+    hoisted.isDesignerPreview = true;
     await publishSiteHeader({ catalog_menu: "Header-Categories" });
     const navigations = await importComposable();
     const { getChildCategories } = await import("@/core/api/graphql");
     vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
     await navigations.fetchCatalogMenu();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
 
     await publishSiteHeader({ catalog_menu: "Draft-Categories" });
 
