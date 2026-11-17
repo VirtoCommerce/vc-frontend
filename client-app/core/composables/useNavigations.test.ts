@@ -333,15 +333,16 @@ describe("useNavigations - theme header", () => {
     expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
   });
 
-  it("does not request the regular catalog menu while the theme's category menu replaces it", async () => {
+  it("shows the regular catalog menu while the theme's category menu has not loaded", async () => {
     await publishSiteHeader({ catalog_menu: "Header-Categories" });
     const navigations = await importComposable();
-    const { getChildCategories, getMenu } = await import("@/core/api/graphql");
-
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
     await navigations.fetchCatalogMenu();
 
-    expect(getChildCategories).not.toHaveBeenCalled();
-    expect(getMenu).not.toHaveBeenCalled();
+    await publishSiteHeader({ catalog_menu: "Draft-Categories" });
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
   });
 
   it("leaves the category menu out of the mobile menu when the theme hides it", async () => {

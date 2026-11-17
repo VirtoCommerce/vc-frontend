@@ -233,11 +233,13 @@ export function _useNavigations() {
   const themeCatalogMenuItems = computed(() => getMenuLinks(siteHeader.value?.catalog_menu, true));
 
   // Read live: the designer's "Preview as" swaps in the previewed user's white-labeling after boot.
-  const catalogMenuOverride = computed(() =>
-    whiteLabelingMainMenuLinks.value?.length ? whiteLabelingMainMenuLinks.value : themeCatalogMenuItems.value,
+  const whiteLabelingCatalogMenuItems = computed(() =>
+    whiteLabelingMainMenuLinks.value?.length ? whiteLabelingMainMenuLinks.value : undefined,
   );
 
-  const shownCatalogMenuItems = computed(() => catalogMenuOverride.value ?? catalogMenuItems.value);
+  const shownCatalogMenuItems = computed(
+    () => whiteLabelingCatalogMenuItems.value ?? themeCatalogMenuItems.value ?? catalogMenuItems.value,
+  );
 
   const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
 
@@ -365,18 +367,19 @@ export function _useNavigations() {
 
   let isCatalogMenuFetchDeferred = false;
 
-  // The regular menu is requested only while it is the one shown, so a fetch made under an override waits for it to go.
+  // A fetch made while white-labeling replaces the regular menu waits for it to go. The theme's menu does not defer
+  // it: a draft menu is undefined until it loads, and the regular one shows meanwhile.
   watch(
-    () => !catalogMenuOverride.value,
-    (isRegularMenuShown) => {
-      if (isRegularMenuShown && isCatalogMenuFetchDeferred) {
+    () => !whiteLabelingCatalogMenuItems.value,
+    (isWithoutWhiteLabeling) => {
+      if (isWithoutWhiteLabeling && isCatalogMenuFetchDeferred) {
         void fetchCatalogMenu();
       }
     },
   );
 
   async function fetchCatalogMenu() {
-    isCatalogMenuFetchDeferred = !!catalogMenuOverride.value;
+    isCatalogMenuFetchDeferred = !!whiteLabelingCatalogMenuItems.value;
 
     if (isCatalogMenuFetchDeferred) {
       return;
