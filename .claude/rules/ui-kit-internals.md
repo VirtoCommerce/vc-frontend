@@ -17,7 +17,7 @@ How the rest of the app uses the kit is in `ui-kit.md`.
    `vc-<name>.test.ts`. Registration: export in `<layer>/index.ts` **and** `GlobalComponents` entry in
    `<layer>/types.d.ts`. Missing the export → not registered; missing the `GlobalComponents` entry → untyped in templates.
 3. Boundaries: the kit must not import anything else in `client-app`, `@/core` included (`no-ui-kit-to-host` in
-   dependency-cruiser and ESLint). Use kit-local types, string-literal unions instead of enums, constants in
+   dependency-cruiser). Use kit-local types, string-literal unions instead of enums, constants in
    `ui-kit/constants`, and theme services through the `uiKit` plugin options.
 4. Kit text (labels, aria-labels) uses keys from `client-app/ui-kit/locales/*.json` (`ui_kit.*`), all 13 locales.
 5. Styling inside the kit:

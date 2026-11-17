@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash-es";
 import { computed, shallowRef, triggerRef } from "vue";
-import type { CloseNotificationHandleType, INotification, INotificationExtended } from "@/shared/notification";
+import type { CloseNotificationHandleType, INotification, INotificationExtended } from "../types";
 
 const stack = shallowRef<INotificationExtended[]>([]);
 

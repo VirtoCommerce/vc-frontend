@@ -13,9 +13,8 @@ import { ApolloClient, TypePolicies } from '@apollo/client/core';
 import * as _vueuse_core from '@vueuse/core';
 import { DeepPartial } from 'utility-types';
 import * as _intlify_core_base from '@intlify/core-base';
-import { LocaleMessage } from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
-import { IntlNumberFormat } from 'vue-i18n';
+import { LocaleMessageValue, IntlNumberFormat } from 'vue-i18n';
 import * as _vue_shared from '@vue/shared';
 import { CalendarDate } from '@internationalized/date';
 
@@ -143,13 +142,13 @@ declare const __VLS_base$r: vue.DefineComponent<IProps$I, {}, {}, {}, {}, vue.Co
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md";
-    modelValue: boolean;
-    labelPosition: "left" | "right";
     tooltip: {
         placement?: VcPopoverPlacementType;
         width?: string;
         disabled?: boolean;
     };
+    modelValue: boolean;
+    labelPosition: "left" | "right";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$M: __VLS_WithSlots$r<typeof __VLS_base$r, __VLS_Slots$r>;
 declare const _default$M: typeof __VLS_export$M;
@@ -438,13 +437,13 @@ declare const __VLS_base$l: vue.DefineComponent<IProps$y, {
     to: RouteLocationRaw | null;
     color: VcButtonColorType;
     variant: VcButtonVariantType;
-    tabindex: string | number;
     loading: boolean;
+    disabled: boolean;
     tag: string;
     truncate: boolean;
-    disabled: boolean;
-    fullWidth: boolean;
+    tabindex: string | number;
     noWrap: boolean;
+    fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$C: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
 declare const _default$C: typeof __VLS_export$C;
@@ -527,13 +526,13 @@ declare const __VLS_base$k: vue.DefineComponent<IProps$x, {
     locale: string;
     dataTestId: string;
     modelValue: string;
+    softMin: string;
+    softMax: string;
     disabledDate: VcCalendarDisabledDateType;
+    preventDeselect: boolean;
     showFooter: boolean;
     firstDayOfWeek: VcCalendarFirstDayOfWeekType;
     weekdayFormat: VcCalendarWeekdayFormatType;
-    softMin: string;
-    softMax: string;
-    preventDeselect: boolean;
     dayDescriptions: Record<string, string>;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$B: __VLS_WithSlots$k<typeof __VLS_base$k, __VLS_Slots$k>;
@@ -583,8 +582,8 @@ declare const __VLS_base$j: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.Co
     to: RouteLocationRaw | null;
     color: VcChipColorType;
     variant: VcChipVariantType;
-    tabindex: string | number;
     nowrap: boolean;
+    tabindex: string | number;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$A: __VLS_WithSlots$j<typeof __VLS_base$j, __VLS_Slots$j>;
 declare const _default$A: typeof __VLS_export$A;
@@ -966,8 +965,8 @@ declare const __VLS_base$b: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.Co
 }>, {
     zIndex: number | string;
     placement: VcPopoverPlacementType;
-    teleportSelector: string;
     enableTeleport: boolean | null;
+    teleportSelector: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$r: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
 declare const _default$r: typeof __VLS_export$r;
@@ -1264,10 +1263,10 @@ declare const __VLS_export$l: vue.DefineComponent<IProps$k, {
     hideDetails: boolean;
     clearable: boolean;
     placement: VcPopoverPlacementType;
-    updateOn: VcDateFieldUpdateOnType;
-    showFooter: boolean;
-    closeOnSelect: boolean;
     preventDeselect: boolean;
+    showFooter: boolean;
+    updateOn: VcDateFieldUpdateOnType;
+    closeOnSelect: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$l: typeof __VLS_export$l;
 
@@ -6006,7 +6005,7 @@ declare function getProductRoute(productId: string, productSlug?: string, basePa
 
 declare function createI18n(locale: string, currency: string, fallback?: {
     locale: string;
-    message: LocaleMessage;
+    message: Record<string, LocaleMessageValue>;
 }, pluralRuleLocales?: string[]): vue_i18n.I18n<{}, {
     en: {
         short: {
@@ -6156,30 +6155,6 @@ interface IProps$5 {
 declare const __VLS_export$5: vue.DefineComponent<IProps$5, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$5> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$5: typeof __VLS_export$5;
 
-interface IProps$4 {
-    coupon: PromotionCouponType;
-    /**
-     * Layout for narrow containers (e.g. a widget column): name, description and expiry stack between the label and
-     * the code, and the card switches layouts on its own width, not the viewport's.
-     */
-    compact?: boolean;
-}
-declare var __VLS_9: {};
-type __VLS_Slots$2 = {} & {
-    'after-description'?: (props: typeof __VLS_9) => any;
-};
-declare const __VLS_base$2: vue.DefineComponent<IProps$4, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{}>, {
-    compact: boolean;
-}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
-declare const _default$4: typeof __VLS_export$4;
-
-type __VLS_WithSlots$2<T, S> = T & {
-    new (): {
-        $slots: S;
-    };
-};
-
 declare function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string;
 
 /** Periods the report offers; `year` is the current calendar year, `q1`–`q4` its quarters. */
@@ -6268,7 +6243,7 @@ type ReportingStatisticsType = {
 /** One response as the report reads it. `plan` must be the plan the response was fetched for. */
 declare function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType;
 
-interface IProps$3 {
+interface IProps$4 {
     /**
      * The figures to show, with the plan they were fetched for: build the query from `useReportingPlan` and
      * `buildReportingVariables`, and take `data` from `useReportingData`. Until the first figures arrive the panel shows
@@ -6287,16 +6262,16 @@ interface IProps$3 {
     /** Prefixes every test id inside the panel, so two panels on one page keep theirs apart. */
     testId?: string;
 }
-type __VLS_Props = IProps$3;
+type __VLS_Props = IProps$4;
 type __VLS_ModelProps = {
     "period": ReportingPeriodType;
 };
 type __VLS_PublicProps = __VLS_Props & __VLS_ModelProps;
 declare var __VLS_8: {};
-type __VLS_Slots$1 = {} & {
+type __VLS_Slots$2 = {} & {
     actions?: (props: typeof __VLS_8) => any;
 };
-declare const __VLS_base$1: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
+declare const __VLS_base$2: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
     "update:period": (value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any;
 }, string, vue.PublicProps, Readonly<__VLS_PublicProps> & Readonly<{
     "onUpdate:period"?: ((value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any) | undefined;
@@ -6307,10 +6282,10 @@ declare const __VLS_base$1: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {
     withTable: boolean;
     withTiles: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$3: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
-declare const _default$3: typeof __VLS_export$3;
+declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
+declare const _default$4: typeof __VLS_export$4;
 
-type __VLS_WithSlots$1<T, S> = T & {
+type __VLS_WithSlots$2<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -6340,6 +6315,30 @@ declare function useReportingData<TStatistics extends ReportingStatisticsType>(p
  * query asks for. It moves on at midnight, so a page left open overnight asks for the new day.
  */
 declare function useReportingPlan(period: MaybeRefOrGetter<ReportingPeriodType>): vue.ComputedRef<ReportingPlanType>;
+
+interface IProps$3 {
+    coupon: PromotionCouponType;
+    /**
+     * Layout for narrow containers (e.g. a widget column): name, description and expiry stack between the label and
+     * the code, and the card switches layouts on its own width, not the viewport's.
+     */
+    compact?: boolean;
+}
+declare var __VLS_9: {};
+type __VLS_Slots$1 = {} & {
+    'after-description'?: (props: typeof __VLS_9) => any;
+};
+declare const __VLS_base$1: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{}>, {
+    compact: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$3: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
+declare const _default$3: typeof __VLS_export$3;
+
+type __VLS_WithSlots$1<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
 
 interface IProps$2 {
     /** Matches CouponItem's compact layout, so the placeholder has the shape of the card that replaces it. */
@@ -6758,7 +6757,7 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$4 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$c as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$3 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$D as VcAlert, _default$O as VcBadge, _default$N as VcBreadcrumbs, _default$C as VcButton, _default$B as VcCalendar, _default$M as VcCheckbox, _default$L as VcCheckboxGroup, _default$A as VcChip, _default$l as VcDatePicker, _default$k as VcDateRangePicker, _default$z as VcDialog, _default$y as VcDialogContent, _default$x as VcDialogFooter, _default$w as VcDialogHeader, _default$v as VcEmptyView, _default$K as VcIcon, _default$J as VcImage, _default$u as VcInput, _default$I as VcInputDetails, _default$H as VcLabel, _default$d as VcLayout, _default$G as VcLink, _default$t as VcLoaderOverlay, _default$F as VcMarkdownRender, _default$s as VcMenuItem, _default$j as VcModal, _default$i as VcPagination, _default$r as VcPopover, _default$q as VcRating, _default$p as VcSelect, _default$o as VcTabSwitch, _default$h as VcTable, _default$g as VcTableColumn, _default$n as VcTextarea, _default$E as VcTooltip, _default$m as VcTypography, _default$f as VcWidget, _default$e as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
+export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$c as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$D as VcAlert, _default$O as VcBadge, _default$N as VcBreadcrumbs, _default$C as VcButton, _default$B as VcCalendar, _default$M as VcCheckbox, _default$L as VcCheckboxGroup, _default$A as VcChip, _default$l as VcDatePicker, _default$k as VcDateRangePicker, _default$z as VcDialog, _default$y as VcDialogContent, _default$x as VcDialogFooter, _default$w as VcDialogHeader, _default$v as VcEmptyView, _default$K as VcIcon, _default$J as VcImage, _default$u as VcInput, _default$I as VcInputDetails, _default$H as VcLabel, _default$d as VcLayout, _default$G as VcLink, _default$t as VcLoaderOverlay, _default$F as VcMarkdownRender, _default$s as VcMenuItem, _default$j as VcModal, _default$i as VcPagination, _default$r as VcPopover, _default$q as VcRating, _default$p as VcSelect, _default$o as VcTabSwitch, _default$h as VcTable, _default$g as VcTableColumn, _default$n as VcTextarea, _default$E as VcTooltip, _default$m as VcTypography, _default$f as VcWidget, _default$e as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useReportingData, useReportingPlan, useRouteQueryParam, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
 export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
