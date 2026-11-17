@@ -283,9 +283,11 @@
               </template>
 
               <template v-if="subscription.shippingAddress">
-                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.ships_to") }}</dt>
+                <dt class="subscription-details__fact-label subscription-details__fact-label--wide">
+                  {{ $t("product_subscriptions.details.ships_to") }}
+                </dt>
 
-                <dd class="subscription-details__fact-value">
+                <dd class="subscription-details__fact-value subscription-details__fact-value--wide">
                   <span v-for="line in addressLines" :key="line" class="subscription-details__address-line">{{
                     line
                   }}</span>
@@ -603,8 +605,7 @@ const addressLines = computed(() => {
   const region = [a.regionName, a.postalCode].filter(Boolean).join(" ");
   return [
     [a.firstName, a.lastName].filter(Boolean).join(" "),
-    a.line1,
-    a.line2,
+    [a.line1, a.line2].filter(Boolean).join(", "),
     [a.city, region].filter(Boolean).join(", "),
   ].filter((x): x is string => !!x);
 });
@@ -706,7 +707,16 @@ async function load() {
   }
 }
 
-async function execute(key: string, action: () => Promise<unknown>, successText: string) {
+/**
+ * Runs an action and reloads the subscription. `explainError`, when given, reloads it after a failure too and may
+ * return a specific text for what it finds there.
+ */
+async function execute(
+  key: string,
+  action: () => Promise<unknown>,
+  successText: string,
+  explainError?: () => Promise<string | undefined>,
+) {
   busy.value = key;
   try {
     await action();
@@ -714,10 +724,11 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
     await load();
     return true;
   } catch (e) {
+    const specific = explainError ? await explainError() : undefined;
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: subscriptionErrorMessage(e, t),
+      text: specific ?? subscriptionErrorMessage(e, t),
     });
     return false;
   } finally {
@@ -728,7 +739,17 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
 function run(action: "skip" | "resume") {
   const command = { subscriptionId: props.subscriptionId };
   if (action === "skip") {
-    void execute("skip", () => skipProductSubscription(command), t("product_subscriptions.details.skipped"));
+    // The delivery on screen: if another tab skipped it already, the server refuses instead of skipping the next one.
+    const shown = subscription.value?.nextOrderDate;
+    void execute(
+      "skip",
+      () => skipProductSubscription({ ...command, expectedNextOrderDate: shown }),
+      t("product_subscriptions.details.skipped"),
+      async () => {
+        await load();
+        return subscription.value?.nextOrderDate === shown ? undefined : t("product_subscriptions.details.skip_stale");
+      },
+    );
   } else {
     void execute("resume", () => resumeProductSubscription(command), t("product_subscriptions.details.resumed"));
   }
@@ -992,10 +1013,19 @@ onMounted(() => {
 
   &__fact-label {
     @apply text-neutral-600;
+
+    &--wide {
+      @apply col-span-2;
+    }
   }
 
   &__fact-value {
     @apply text-end font-bold text-neutral-900;
+
+    /* An address is several lines: right-aligned in the narrow column it broke into fragments. */
+    &--wide {
+      @apply col-span-2 -mt-1 text-start font-normal;
+    }
   }
 
   &__address-line {
