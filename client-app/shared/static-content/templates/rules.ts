@@ -120,12 +120,12 @@ function withUniqueIds(
 
     if (!id || ids.has(id)) {
       const base = `${pageType}-${index}`;
-      let n = 2;
+      let suffix = 2;
       id = base;
 
       while (ids.has(id)) {
-        id = `${base}-${n}`;
-        n++;
+        id = `${base}-${suffix}`;
+        suffix++;
       }
     }
 
