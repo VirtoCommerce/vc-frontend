@@ -707,7 +707,16 @@ async function load() {
   }
 }
 
-async function execute(key: string, action: () => Promise<unknown>, successText: string) {
+/**
+ * Runs an action and reloads the subscription. `explainError`, when given, reloads it after a failure too and may
+ * return a specific text for what it finds there.
+ */
+async function execute(
+  key: string,
+  action: () => Promise<unknown>,
+  successText: string,
+  explainError?: () => Promise<string | undefined>,
+) {
   busy.value = key;
   try {
     await action();
@@ -715,10 +724,11 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
     await load();
     return true;
   } catch (e) {
+    const specific = explainError ? await explainError() : undefined;
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       single: true,
-      text: subscriptionErrorMessage(e, t),
+      text: specific ?? subscriptionErrorMessage(e, t),
     });
     return false;
   } finally {
@@ -729,7 +739,17 @@ async function execute(key: string, action: () => Promise<unknown>, successText:
 function run(action: "skip" | "resume") {
   const command = { subscriptionId: props.subscriptionId };
   if (action === "skip") {
-    void execute("skip", () => skipProductSubscription(command), t("product_subscriptions.details.skipped"));
+    // The delivery on screen: if another tab skipped it already, the server refuses instead of skipping the next one.
+    const shown = subscription.value?.nextOrderDate;
+    void execute(
+      "skip",
+      () => skipProductSubscription({ ...command, expectedNextOrderDate: shown }),
+      t("product_subscriptions.details.skipped"),
+      async () => {
+        await load();
+        return subscription.value?.nextOrderDate === shown ? undefined : t("product_subscriptions.details.skip_stale");
+      },
+    );
   } else {
     void execute("resume", () => resumeProductSubscription(command), t("product_subscriptions.details.resumed"));
   }

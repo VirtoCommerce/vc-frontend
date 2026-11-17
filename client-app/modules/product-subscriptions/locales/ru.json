@@ -197,6 +197,7 @@
       "pause": "Pause",
       "cancel": "Cancel subscription",
       "skipped": "Next delivery skipped.",
+      "skip_stale": "This delivery was already changed, maybe in another tab. We've refreshed the page: check the next delivery and try again.",
       "resumed": "Subscription resumed.",
       "paused_done": "Subscription paused.",
       "cancelled_done": "Subscription cancelled. You won't be charged again.",
