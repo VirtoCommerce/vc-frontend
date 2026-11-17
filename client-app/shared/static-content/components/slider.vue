@@ -16,11 +16,7 @@
           :navigation="navigationOptions"
         >
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
-            <component
-              :is="item.url ? getLinkTag(item.url) : 'div'"
-              class="vc-slider__image-wrap"
-              v-bind="getLinkAttr(item)"
-            >
+            <component :is="getLinkTag(item)" class="vc-slider__image-wrap" v-bind="getLinkAttr(item)">
               <VcImage
                 :src="item.image"
                 :aria-label="item.title ?? $t('common.labels.slider_image')"
@@ -56,6 +52,7 @@ import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
+import { isSafeLinkUrl } from "@/core/utilities/common";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 
 // synced with Page builder module config/schemas/sections/slider.json and builder.io builderIOComponents
@@ -121,22 +118,32 @@ const wrapperClasses = computed(() => {
   };
 });
 
-function getLinkTag(url: string) {
-  if (url.startsWith("/")) {
-    return "router-link";
-  } else {
-    return "a";
+function getSafeUrl(item: SlideType): string | undefined {
+  return item.url && isSafeLinkUrl(item.url) ? item.url : undefined;
+}
+
+function getLinkTag(item: SlideType) {
+  const url = getSafeUrl(item);
+
+  if (!url) {
+    return "div";
   }
+
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `url` is checked above
+  return url.startsWith("/") ? "router-link" : "a";
 }
 
 function getLinkAttr(item: SlideType) {
-  if (!item.url) {
+  const url = getSafeUrl(item);
+
+  if (!url) {
     return {};
   }
-  if (item.url.startsWith("/")) {
-    return { to: item.url, title: item.title };
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: `url` is checked above
+  if (url.startsWith("/")) {
+    return { to: url, title: item.title };
   } else {
-    return { href: item.url, title: item.title, target: "_blank" };
+    return { href: url, title: item.title, target: "_blank", rel: "noopener noreferrer" };
   }
 }
 </script>

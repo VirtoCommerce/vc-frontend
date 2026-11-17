@@ -3,8 +3,9 @@
 import type { Component, DeepReadonly, Ref } from "vue";
 
 /** Fixed regions. Owned by the registry, never read back from the document — widgets are built for
- * their column's width, so region is code, not user data. */
-export type LayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
+ * their column's width, so region is code, not user data. `fullWidth` spans both columns, between the stat row
+ * and them (VCST-6258). */
+export type LayoutRegionIdType = "statistics" | "fullWidth" | "mainLeft" | "mainRight";
 
 /** A setting a block exposes in layout-edit mode (VCST-5649). */
 export type BlockSettingType =
@@ -40,15 +41,23 @@ export interface IStatBlock extends IBlockBase {
   region: "statistics";
 }
 
-/** A widget in one of the two content columns. Renders through layout-widget.vue, which puts the drag
- * controls in the widget's own header slots. */
+/** A widget in the full-width region or one of the two content columns. Renders through layout-widget.vue, which
+ * puts the drag controls in the widget's own header slots. */
 export interface IWidgetBlock extends IBlockBase {
-  region: "mainLeft" | "mainRight";
+  region: Exclude<LayoutRegionIdType, "statistics">;
   component: Component;
   /** Extra props for `component`. `title` comes from `titleKey` and is passed by the surface. */
   props?: Record<string, unknown>;
   /** What the user can configure in edit mode. Absent = nothing, which is most blocks. */
   settings?: readonly BlockSettingType[];
+  /**
+   * The block's placeholder while the dashboard reads the saved layout, given the block's `title`. Without one, the
+   * kit's widget skeleton stands in, about a short list's height; a taller block draws its own shape, so the page does
+   * not jump when the block replaces it. It renders before `component` has loaded, so it is not lazy: keep it light.
+   * Pass it as the async component's `loadingComponent` too, with `delay: 0`, to hold the block's place while that
+   * component loads.
+   */
+  skeleton?: Component;
 }
 
 export type BlockType = IStatBlock | IWidgetBlock;
