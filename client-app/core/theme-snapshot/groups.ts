@@ -5,7 +5,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { Logger } from "@/core/utilities";
 import { convertToExtendedMenuLink } from "@/core/utilities/menu";
 import { useThemeSnapshot } from "./useThemeSnapshot";
-import type { IThemeItem, IThemeMenuLink } from "./types";
+import type { IThemeItem, IThemeMenu, IThemeMenuLink } from "./types";
 import type { MenuLinkType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
@@ -35,37 +35,58 @@ export const useThemeGroups = createGlobalState(() => {
       return undefined;
     }
 
-    const key = name.toLowerCase();
-    const menu = theme.value?.menus.find((item) => item.name.toLowerCase() === key);
+    const menu = findPublishedMenu(name);
 
     if (menu) {
       return menu.items.map((item) => toMenuLink(item, isCatalogItem));
     }
 
-    // Undefined until it is read, so the part showing it keeps its own content meanwhile.
-    const draftKey = `${currentLanguage.value?.cultureName ?? ""}:${key}`;
-
-    if (theme.value?.isDraft && !requestedDraftMenus.has(draftKey)) {
-      requestedDraftMenus.add(draftKey);
-      void loadDraftMenu(name, draftKey);
-    }
-
-    return draftMenus.get(draftKey)?.map((item) => convertToExtendedMenuLink(item, isCatalogItem));
+    // Undefined until `loadDraftMenus` reads it, so the part showing it keeps its own content meanwhile.
+    return draftMenus
+      .get(getDraftMenuKey(name, currentLanguage.value?.cultureName))
+      ?.map((item) => convertToExtendedMenuLink(item, isCatalogItem));
   }
 
-  async function loadDraftMenu(name: string, draftKey: string): Promise<void> {
+  /** Reads the menus a draft names that the published snapshot does not carry, each once per language. */
+  async function loadDraftMenus(names: string[]): Promise<void> {
+    const cultureName = currentLanguage.value?.cultureName;
+
+    await Promise.all(
+      names.filter((name) => name && !findPublishedMenu(name)).map((name) => loadDraftMenu(name, cultureName)),
+    );
+  }
+
+  async function loadDraftMenu(name: string, cultureName: string | undefined): Promise<void> {
+    const draftKey = getDraftMenuKey(name, cultureName);
+
+    if (requestedDraftMenus.has(draftKey)) {
+      return;
+    }
+
+    requestedDraftMenus.add(draftKey);
+
     try {
-      draftMenus.set(draftKey, (await getMenu(name)) as MenuLinkType[]);
+      // In the language it was asked in: the response may come after a switch to another one.
+      draftMenus.set(draftKey, (await getMenu(name, cultureName)) as MenuLinkType[]);
     } catch (error) {
       requestedDraftMenus.delete(draftKey);
       Logger.error(`${LOG_SCOPE} Failed to load the draft menu`, error);
     }
   }
 
+  function findPublishedMenu(name: string): IThemeMenu | undefined {
+    const key = name.toLowerCase();
+    return theme.value?.menus.find((item) => item.name.toLowerCase() === key);
+  }
+
   const siteHeader = computed(() => getGroupSection("header", "site-header"));
 
-  return { groups, siteHeader, getGroupSection, getMenuLinks };
+  return { groups, siteHeader, getGroupSection, getMenuLinks, loadDraftMenus };
 });
+
+function getDraftMenuKey(name: string, cultureName: string | undefined): string {
+  return `${cultureName ?? ""}:${name.toLowerCase()}`;
+}
 
 function toMenuLink(item: IThemeMenuLink, isCatalogItem: boolean): ExtendedMenuLinkType {
   return convertToExtendedMenuLink(

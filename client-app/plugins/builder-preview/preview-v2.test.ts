@@ -1,8 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, ref } from "vue";
+import { defineComponent, effectScope, ref, shallowRef } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { darkPresets, presets } from "@/assets/presets";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useTemplateResolution, useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
@@ -11,14 +12,21 @@ import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetti
 import { guardPreviewNavigation, installPageInputGuard, PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { PreviewV2Type } from "./preview-v2";
+import type { IThemeDraft } from "@/core/theme-snapshot";
+import type { ILanguage } from "@/core/types";
 import type { VueWrapper } from "@vue/test-utils";
+import type { EffectScope } from "vue";
 
 const setColorModeOverride = vi.hoisted(() => vi.fn());
+const getMenu = vi.hoisted(() => vi.fn());
 
 vi.mock("@/core/composables/useDarkMode", () => ({ useDarkMode: () => ({ setColorModeOverride }) }));
-vi.mock("@/core/composables/useLanguages", () => ({
-  useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
-}));
+vi.mock("@/core/composables/useLanguages", () => {
+  const currentLanguage = ref({ cultureName: "en-US" });
+  return { useLanguages: () => ({ currentLanguage, defaultStoreCulture: ref("en-US") }) };
+});
+vi.mock("@/core/api/graphql/common/queries/getMenu", () => ({ getMenu }));
 vi.mock("@/core/composables/useWhiteLabeling", async () => {
   const { computed } = await import("vue");
   return { useWhiteLabeling: () => ({ themeFieldsSetByWhiteLabeling: computed(() => ["brand.logoUrl"]) }) };
@@ -58,7 +66,7 @@ const SCHEMAS = {
 
 const DOCUMENT = { settings: {}, content: [{ id: "s1", type: "banner", title: "Hello" }] };
 
-function createPreview(options: { hasPreviewToken?: boolean } = {}) {
+function createPreview(options: { hasPreviewToken?: boolean; schemas?: () => PageBuilderSchemaType | undefined } = {}) {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/:path(.*)", component: {} }] });
   const blocker = document.createElement("div");
   const post = vi.fn();
@@ -70,7 +78,7 @@ function createPreview(options: { hasPreviewToken?: boolean } = {}) {
     router,
     body: document.body,
     blocker,
-    schemas: () => SCHEMAS,
+    schemas: options.schemas ?? (() => SCHEMAS),
     post,
     renderPage,
     allowNavigation,
@@ -637,5 +645,124 @@ describe("inline editing", () => {
     );
 
     expect(texts.map(({ path }) => path)).toEqual([["title"], ["code"]]);
+  });
+});
+
+describe("menus of the draft", () => {
+  const MENU_SCHEMAS = {
+    ...SCHEMAS,
+    sections: {
+      "site-header": {
+        settings: [
+          { id: "catalog_menu", type: "menu" },
+          { id: "icons_menu", type: "menu" },
+        ],
+      },
+      "site-footer": { settings: [{ id: "copyright", type: "string" }] },
+    },
+    blocks: {
+      "footer-menu": {
+        settings: [
+          { id: "heading", type: "string" },
+          { id: "menu", type: "menu" },
+        ],
+      },
+    },
+  } as unknown as PageBuilderSchemaType;
+
+  let scope: EffectScope;
+
+  function createWatchingPreview(schemas: () => PageBuilderSchemaType | undefined): PreviewV2Type {
+    const created = scope.run(() => createPreview({ schemas }));
+
+    if (!created) {
+      throw new Error("The test's effect scope is stopped");
+    }
+
+    return created.preview;
+  }
+
+  function draftNaming(catalogMenu: unknown, iconsMenu: string, footerMenu: string): IThemeDraft {
+    return {
+      header: { content: [{ id: "h", type: "site-header", catalog_menu: catalogMenu, icons_menu: iconsMenu }] },
+      footer: {
+        content: [
+          {
+            id: "f",
+            type: "site-footer",
+            copyright: "Acme",
+            blocks: [{ id: "b", type: "footer-menu", heading: "Help", menu: footerMenu }],
+          },
+        ],
+      },
+    };
+  }
+
+  function requestedMenus(): string[] {
+    return getMenu.mock.calls.map(([name]) => String(name)).sort((a, b) => a.localeCompare(b));
+  }
+
+  beforeEach(() => {
+    scope = effectScope();
+    getMenu.mockReset();
+    getMenu.mockResolvedValue([]);
+    useLanguages().currentLanguage.value = { cultureName: "en-US" } as ILanguage;
+    useThemeSnapshot().setPublished(null);
+    useThemeSnapshot().setDraft(undefined);
+  });
+
+  afterEach(() => {
+    scope.stop();
+    document.body.innerHTML = "";
+  });
+
+  it("loads the menus the header and the footer's blocks name in menu settings, not their other texts", async () => {
+    createWatchingPreview(() => MENU_SCHEMAS).applyDraft(draftNaming("catalog", "icons", "footer-help"));
+    await flushPromises();
+
+    expect(requestedMenus()).toEqual(["catalog", "footer-help", "icons"]);
+  });
+
+  it("loads the menus a draft names once the schemas arrive after it", async () => {
+    const schemas = shallowRef<PageBuilderSchemaType>();
+    createWatchingPreview(() => schemas.value).applyDraft(draftNaming("catalog-late", "icons-late", "footer-late"));
+    await flushPromises();
+    expect(getMenu).not.toHaveBeenCalled();
+
+    schemas.value = MENU_SCHEMAS;
+    await flushPromises();
+
+    expect(requestedMenus()).toEqual(["catalog-late", "footer-late", "icons-late"]);
+  });
+
+  it("loads the menus the draft names in the language the preview switches to", async () => {
+    createWatchingPreview(() => MENU_SCHEMAS).applyDraft(
+      draftNaming({ "en-US": "catalog-en", "de-DE": "catalog-de" }, "icons-languages", "footer-languages"),
+    );
+    await flushPromises();
+    getMenu.mockClear();
+
+    useLanguages().currentLanguage.value = { cultureName: "de-DE" } as ILanguage;
+    await flushPromises();
+
+    expect(getMenu).toHaveBeenCalledTimes(3);
+    expect(getMenu).toHaveBeenCalledWith("catalog-de", "de-DE");
+    expect(getMenu).toHaveBeenCalledWith("icons-languages", "de-DE");
+    expect(getMenu).toHaveBeenCalledWith("footer-languages", "de-DE");
+  });
+
+  it("loads no menu without a draft", async () => {
+    const { header, footer } = draftNaming("published", "published-icons", "published-footer");
+    createWatchingPreview(() => MENU_SCHEMAS);
+    useThemeSnapshot().setPublished({
+      storeId: "store",
+      cultureName: "en-US",
+      publication: 1,
+      menus: [],
+      snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, header, footer },
+    });
+    await flushPromises();
+
+    expect(getMenu).not.toHaveBeenCalled();
   });
 });

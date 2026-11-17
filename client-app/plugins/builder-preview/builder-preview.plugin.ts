@@ -1,3 +1,4 @@
+import { shallowRef } from "vue";
 import { useGlobalInterceptors } from "@/core/api/common";
 import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -38,7 +39,7 @@ import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
-import type { App } from "vue";
+import type { App, ShallowRef } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
 
@@ -286,7 +287,7 @@ interface IPreviewContext {
   blocker: HTMLElement | null;
   sharedComponentOverlay: SharedComponentOverlay | null;
   loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>;
-  schemas?: PageBuilderSchemaType;
+  schemas: ShallowRef<PageBuilderSchemaType | undefined>;
   previewV2?: PreviewV2Type;
   enqueue: (task: () => Promise<void>) => void;
 }
@@ -299,7 +300,7 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       router,
       body: context.bodyEl,
       blocker: context.blocker,
-      schemas: () => context.schemas,
+      schemas: () => context.schemas.value,
       post: (type, data) => window.parent.postMessage({ source: "preview", type, data }, context.builderOrigin),
       renderPage: async (message) => {
         if (router.currentRoute.value.path !== DESIGNER_PREVIEW_PATH) {
@@ -534,6 +535,7 @@ export default {
         options,
         builderOrigin,
         loadedNotifier,
+        schemas: shallowRef(),
         enqueue: createMessageQueue(),
         // Protocol 1 never lets the page take input; protocol 2 does with the inspector off.
         ...createOverlay(
@@ -545,7 +547,7 @@ export default {
       handleMessages(context);
 
       const customComponents = await getRegisteredComponents();
-      context.schemas = customComponents;
+      context.schemas.value = customComponents;
       loadedNotifier.setData(
         isNewPageBuilderEnabled() && isOpenedWithPreviewProtocol()
           ? buildPreviewCatalog(customComponents)

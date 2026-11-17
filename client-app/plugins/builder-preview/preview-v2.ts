@@ -11,6 +11,7 @@ import {
   readThemeSnapshotResponse,
   requestThemeSnapshot,
   resolveTranslatableValues,
+  useThemeGroups,
   useThemeSnapshot,
 } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
@@ -94,6 +95,7 @@ interface IPreviewV2Options {
   router: Router;
   body: HTMLElement;
   blocker: HTMLElement;
+  /** Read in a watcher too: the menus the draft's header and footer name load once the schemas are there. */
   schemas: () => PageBuilderSchemaType | undefined;
   post: (type: string, data: unknown) => void;
   renderPage: (message: IRenderMessage) => Promise<void>;
@@ -112,6 +114,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   const { setColorModeOverride } = useDarkMode();
   const { themeFieldsSetByWhiteLabeling } = useWhiteLabeling();
   const { defaultStoreCulture } = useLanguages();
+  const { groups, loadDraftMenus } = useThemeGroups();
 
   let isInspectorEnabled = false;
   let lastRender: IRenderMessage | undefined;
@@ -158,6 +161,15 @@ export function createPreviewV2(options: IPreviewV2Options) {
   );
 
   watch(lastResolution, () => reportResolved());
+
+  // `groups` resolves the draft's translatable settings, so a switch of language reads that language's menus too.
+  watch(
+    () =>
+      renderedTheme.value?.isDraft
+        ? findMenuNames(options.schemas(), [...groups.value.header, ...groups.value.footer])
+        : [],
+    (names) => void loadDraftMenus(names),
+  );
 
   function isBlocking(): boolean {
     return isInspectorEnabled || options.hasPreviewToken() || lastRender === undefined;
@@ -457,6 +469,16 @@ export function findSchemaField(
   }
 
   return field;
+}
+
+/** The store menus the items and their blocks name in settings the schemas type as a menu. */
+function findMenuNames(schemas: PageBuilderSchemaType | undefined, items: IThemeItem[]): string[] {
+  return items.flatMap((item) => [
+    ...Object.entries(item).flatMap(([key, value]) =>
+      typeof value === "string" && value && findSchemaField(schemas, item.type, [key])?.type === "menu" ? [value] : [],
+    ),
+    ...findMenuNames(schemas, item.blocks ?? []),
+  ]);
 }
 
 function getRenderPageType(render: IRenderMessage): string {
