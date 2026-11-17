@@ -1,26 +1,29 @@
 <template>
-  <PageTemplate :page-settings="settings" :permalink="permalink" :object-type="objectType">
-    <div
-      v-if="!settings?.hideBreadcrumbs || settings?.header"
-      class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
-    >
-      <VcBreadcrumbs v-if="!settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+  <div class="page-builder-page">
+    <PageTemplate :page-settings="settings" :permalink="permalink" :object-type="objectType">
+      <div v-if="!settings?.hideBreadcrumbs || settings?.header" class="page-builder-page__header">
+        <VcBreadcrumbs
+          v-if="!settings?.hideBreadcrumbs"
+          class="page-builder-page__breadcrumbs"
+          :items="breadcrumbs"
+        ></VcBreadcrumbs>
 
-      <VcTypography v-if="settings?.header" tag="h1">
-        {{ settings.header }}
-      </VcTypography>
-    </div>
+        <VcTypography v-if="settings?.header" tag="h1">
+          {{ settings.header }}
+        </VcTypography>
+      </div>
 
-    <template v-for="item in content">
-      <PageBuilderSection
-        v-if="!item.hidden"
-        :key="item.id"
-        :item="item"
-        :id="getAnchorId(item)"
-        :context="sectionContext"
-      />
-    </template>
-  </PageTemplate>
+      <template v-for="item in content">
+        <PageBuilderSection
+          v-if="!item.hidden"
+          :key="item.id"
+          :item="item"
+          :id="getAnchorId(item)"
+          :context="sectionContext"
+        />
+      </template>
+    </PageTemplate>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,3 +48,23 @@ const breadcrumbs = useBreadcrumbs(() => [{ title: props.title }] as IBreadcrumb
 
 const sectionContext = computed(() => ({ settings: props.settings }));
 </script>
+
+<style lang="scss">
+.page-builder-page {
+  &__header {
+    @apply mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5;
+
+    @media (width >= theme("screens.md")) {
+      @apply px-12;
+    }
+
+    @media (width >= theme("screens.lg")) {
+      @apply pb-10;
+    }
+  }
+
+  &__breadcrumbs {
+    @apply mb-3;
+  }
+}
+</style>
