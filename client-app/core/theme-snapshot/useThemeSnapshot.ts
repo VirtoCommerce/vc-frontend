@@ -67,7 +67,7 @@ function _useThemeSnapshot() {
   const hasNoTheme = computed(() => isNull.value && !draft.value);
 
   /** Off for a store without a theme too: its storefront looks as without the new Page Builder. */
-  function isNewPageBuilderOn(): boolean {
+  function isThemeApplied(): boolean {
     return isNewPageBuilderEnabled() && !hasNoTheme.value;
   }
 
@@ -80,7 +80,7 @@ function _useThemeSnapshot() {
     isRejected: readonly(isRejected),
     /** `false` until a snapshot is accepted, and after a failed request. */
     hasNoTheme,
-    isNewPageBuilderOn,
+    isThemeApplied,
     setPublished,
     setLate,
     promoteLate,

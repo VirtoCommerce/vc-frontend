@@ -23,7 +23,7 @@ const { flag, stub, headerMounted } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/core/theme-snapshot", () => ({
-  useThemeSnapshot: () => ({ isNewPageBuilderOn: () => flag.enabled && !flag.hasNoTheme }),
+  useThemeSnapshot: () => ({ isThemeApplied: () => flag.enabled && !flag.hasNoTheme }),
 }));
 vi.mock("@/shared/layout/components/header/vc-header.vue", () => stub("full-header", headerMounted));
 vi.mock("@/shared/layout/components/footer/vc-footer.vue", () => stub("full-footer"));

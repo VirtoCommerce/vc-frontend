@@ -30,10 +30,10 @@ import MinimalHeader from "@/shared/layout/components/minimal-header/minimal-hea
 import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
 
 const { pageLayout } = usePageLayout();
-const { isNewPageBuilderOn } = useThemeSnapshot();
+const { isThemeApplied } = useThemeSnapshot();
 
 /** Switched here so the page under the header and footer is never remounted. */
-const chrome = computed(() => (isNewPageBuilderOn() ? pageLayout.value : "full"));
+const chrome = computed(() => (isThemeApplied() ? pageLayout.value : "full"));
 </script>
 
 <style lang="scss">
