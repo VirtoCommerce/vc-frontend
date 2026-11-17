@@ -38,7 +38,7 @@ import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOpt
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
 import type { IThemeConfig } from "@/core/types";
-import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
+import type { IPageContent } from "@/shared/static-content/types";
 import type { App, ShallowRef } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
@@ -325,7 +325,7 @@ function toTransferData(message: IRenderMessage): TransferDataType {
   return {
     source: "builder",
     type: "page",
-    template: message.document as unknown as IPageTemplate,
+    template: message.document,
     model: message.model,
     cultureName: message.cultureName,
     sharedComponentBoundaries: message.sharedComponentBoundaries,
@@ -501,8 +501,7 @@ function handleMessages(context: IPreviewContext) {
 
 function modifyRoutes(router: Router, mode: "preview" | "designer") {
   if (mode === "designer") {
-    const page = <IPageTemplate>(<unknown>{ settings: {}, content: [] });
-    staticPagePreview.value = page;
+    staticPagePreview.value = { settings: {}, content: [] };
   }
   const routes = router.getRoutes();
   const matcher = routes.find((x) => x.name === "Matcher")!;

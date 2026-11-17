@@ -4,7 +4,6 @@ import { MAIN_SECTION_TYPES } from "../templates/built-in";
 import { splitTemplate } from "../templates/split";
 import { useTemplateResolution } from "./useThemeTemplates";
 import type { ITemplateSubject } from "../templates/conditions";
-import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -34,7 +33,7 @@ export function useProductTemplate(product: MaybeRefOrGetter<Product | undefined
     splitTemplate(template.value?.content ?? [], MAIN_SECTION_TYPES.product, PRODUCT_COLUMN_SECTION_TYPES),
   );
 
-  const productInfoSection = computed(() => parts.value.main as IPageContent | undefined);
+  const productInfoSection = computed(() => parts.value.main);
 
   /** Only the template decides how variations load; the product's property matters only through the template choice. */
   const isB2cLayout = computed(() => productInfoSection.value?.variationsLayout === B2C_VARIATIONS_LAYOUT);
