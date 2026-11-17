@@ -1,7 +1,7 @@
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot/enabled";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 export const SECTION_ATTRIBUTE = "data-pb-section";
@@ -68,11 +68,11 @@ function toHttpOrigin(endpoint: string): string {
 }
 
 function isDesignerFrame(value: unknown): value is IDesignerFrame {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const { origin, protocol } = value as Record<string, unknown>;
-  return typeof origin === "string" && (protocol === undefined || typeof protocol === "string");
+  return (
+    isRecord(value) &&
+    typeof value.origin === "string" &&
+    (value.protocol === undefined || typeof value.protocol === "string")
+  );
 }
 
 function readKeptDesignerFrame(): IDesignerFrame {

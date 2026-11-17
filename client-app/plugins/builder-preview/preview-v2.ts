@@ -1,3 +1,4 @@
+import { get } from "lodash-es";
 import { nextTick, watch } from "vue";
 import { darkPresets, presets } from "@/assets/presets";
 import { useDarkMode } from "@/core/composables/useDarkMode";
@@ -265,10 +266,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     const item = findItem(itemId);
     const shown = item ? resolveTranslatableValues(item, globals.cultureName, defaultStoreCulture.value) : undefined;
 
-    return path.reduce<unknown>(
-      (current, key) => (current as Record<string | number, unknown> | undefined)?.[key],
-      shown,
-    );
+    return get(shown, path);
   }
 
   async function showRender(message: IRenderMessage): Promise<void> {
@@ -391,10 +389,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
 
   function isTranslatable(itemId: string, path: (string | number)[]): boolean {
     const item = findItem(itemId);
-    const value = path.reduce<unknown>(
-      (current, key) => (current as Record<string | number, unknown> | undefined)?.[key],
-      item,
-    );
+    const value: unknown = get(item, path);
 
     return (
       isTranslatableDictionary(value) || (!!item && !!findSchemaField(options.schemas(), item.type, path)?.translatable)
