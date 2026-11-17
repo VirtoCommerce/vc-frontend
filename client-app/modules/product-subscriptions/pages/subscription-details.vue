@@ -283,9 +283,11 @@
               </template>
 
               <template v-if="subscription.shippingAddress">
-                <dt class="subscription-details__fact-label">{{ $t("product_subscriptions.details.ships_to") }}</dt>
+                <dt class="subscription-details__fact-label subscription-details__fact-label--wide">
+                  {{ $t("product_subscriptions.details.ships_to") }}
+                </dt>
 
-                <dd class="subscription-details__fact-value">
+                <dd class="subscription-details__fact-value subscription-details__fact-value--wide">
                   <span v-for="line in addressLines" :key="line" class="subscription-details__address-line">{{
                     line
                   }}</span>
@@ -603,8 +605,7 @@ const addressLines = computed(() => {
   const region = [a.regionName, a.postalCode].filter(Boolean).join(" ");
   return [
     [a.firstName, a.lastName].filter(Boolean).join(" "),
-    a.line1,
-    a.line2,
+    [a.line1, a.line2].filter(Boolean).join(", "),
     [a.city, region].filter(Boolean).join(", "),
   ].filter((x): x is string => !!x);
 });
@@ -992,10 +993,19 @@ onMounted(() => {
 
   &__fact-label {
     @apply text-neutral-600;
+
+    &--wide {
+      @apply col-span-2;
+    }
   }
 
   &__fact-value {
     @apply text-end font-bold text-neutral-900;
+
+    /* An address is several lines: right-aligned in the narrow column it broke into fragments. */
+    &--wide {
+      @apply col-span-2 -mt-1 text-start font-normal;
+    }
   }
 
   &__address-line {

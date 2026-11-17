@@ -63,7 +63,10 @@
           >
             <span class="subscriptions__tab-label">
               {{ $t(`product_subscriptions.list.tabs.${tab.id}`) }}
-              <span class="subscriptions__tab-count">{{ countFor(tab.id) }}</span>
+              <!-- Before the first load a "0" would read as "you have none". -->
+              <span v-if="!loading || subscriptions.length" class="subscriptions__tab-count">{{
+                countFor(tab.id)
+              }}</span>
             </span>
           </VcTabSwitch>
         </div>
