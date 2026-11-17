@@ -1,6 +1,6 @@
 import { escapeRegExp, trim } from "lodash-es";
 import { isRecord } from "@/core/utilities";
-import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/layout/composables/usePageLayout";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import type { ThemePageType } from "@/core/theme-snapshot";
 
 export interface ITemplateSubject {

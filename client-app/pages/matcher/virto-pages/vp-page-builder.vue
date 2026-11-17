@@ -34,7 +34,8 @@ import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
-import { PAGES_OBJECT_TYPE, usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import {
   getAnchorId,
   PageBuilderSection,

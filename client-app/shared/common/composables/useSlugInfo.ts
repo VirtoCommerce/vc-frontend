@@ -5,6 +5,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { humanizeName, isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -86,11 +87,11 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   });
 
   const hasContent = computed(() => {
-    return objectType.value === "ContentFile";
+    return objectType.value === CONTENT_FILE_OBJECT_TYPE;
   });
 
   const hasPageDocumentContent = computed(() => {
-    return objectType.value === "Pages";
+    return objectType.value === PAGES_OBJECT_TYPE;
   });
 
   const getPageParams = computed(() => {

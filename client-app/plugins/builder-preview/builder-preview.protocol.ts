@@ -3,6 +3,7 @@ import { isRecord, Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { IThemeDraft, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { IThemeConfig } from "@/core/types";
+import type { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
 
 type NullableBuilderMessageFieldsType = {
@@ -34,7 +35,7 @@ export interface IRenderMessage {
   document: IThemePageDocument;
   templateKey?: string;
   url?: string;
-  page?: { permalink: string; objectType: "Pages" | "ContentFile" };
+  page?: { permalink: string; objectType: typeof PAGES_OBJECT_TYPE | typeof CONTENT_FILE_OBJECT_TYPE };
   cultureName: string;
   selection?: { sectionId: string; blockId?: string; scroll: boolean };
   model?: PreviewModelType;

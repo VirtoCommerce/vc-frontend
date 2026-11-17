@@ -39,6 +39,7 @@
 import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import { isOwnLayoutSlugPage, joinSlugPath, usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
@@ -91,8 +92,6 @@ enum ObjectType {
   Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
   Category = "Category",
-  ContentFile = "ContentFile",
-  VirtoPages = "Pages",
   Brands = "Brands",
   Brand = "Brand",
   NewsArticle = "NewsArticle",
@@ -195,10 +194,10 @@ watch(
       case ObjectType.NewsArticle:
         setMatchingRouteName("NewsArticle");
         break;
-      case ObjectType.ContentFile:
+      case CONTENT_FILE_OBJECT_TYPE:
         void fetchContent();
         break;
-      case ObjectType.VirtoPages:
+      case PAGES_OBJECT_TYPE:
         void fetchPageDocumentContent();
         break;
       default:

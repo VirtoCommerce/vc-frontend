@@ -1,6 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { readonly, shallowRef } from "vue";
 import { ROUTES } from "@/router/routes/constants";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import type { RouteLocationNormalized, RouteRecordNameGeneric, Router } from "vue-router";
 
 /** What surrounds a content page: the site's header and footer, the logo only, or nothing. */
@@ -10,8 +11,6 @@ export const PAGE_LAYOUTS: readonly PageLayoutType[] = ["full", "minimal", "blan
 
 const SLUG_ROUTE_NAMES = new Set<string>([ROUTES.MATCHER.NAME, ROUTES.LOYALTY_CATALOG_MATCHER.NAME]);
 
-export const PAGES_OBJECT_TYPE = "Pages";
-export const CONTENT_FILE_OBJECT_TYPE = "ContentFile";
 const PAGE_BUILDER_SOURCE = "page-builder";
 
 export interface ISlugPage {

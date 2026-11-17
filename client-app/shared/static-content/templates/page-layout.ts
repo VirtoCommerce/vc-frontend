@@ -1,10 +1,10 @@
 import { useLanguages } from "@/core/composables/useLanguages";
 import { isNewPageBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
+import { PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import {
   getSlugRoutePermalink,
   isOwnLayoutSlugPage,
   isPageLayout,
-  PAGES_OBJECT_TYPE,
   usePageLayout,
 } from "@/shared/layout/composables/usePageLayout";
 import { useThemeTemplates } from "../composables/useThemeTemplates";
