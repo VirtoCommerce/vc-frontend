@@ -1,119 +1,118 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref, shallowRef, toValue } from "vue";
 import { Logger } from "@/core/utilities";
-import { getProductSubscriptions, getSubscriptionRenewals } from "../api/graphql";
-import { fetchAllPages } from "../utils";
-import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
+import { getOrderSubscriptionInfos } from "../api/graphql";
+import type { GetOrderSubscriptionInfosQuery } from "../api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
-const SUBSCRIPTIONS_PAGE_SIZE = 100;
-const RENEWALS_PAGE_SIZE = 50;
+type OrderInfoType = GetOrderSubscriptionInfosQuery["orderSubscriptionInfos"][number];
 
-/** Order id -> product id -> the subscription that put the product into the order. */
-type OrderIndexType = Map<string, Map<string, ProductSubscriptionFieldsFragment>>;
+/** The subscription behind an order line, as the order components show it. */
+export type OrderLineSubscriptionType = {
+  id: string;
+  number: string;
+  intervalUnit: OrderInfoType["subscriptions"][number]["intervalUnit"];
+  intervalCount: number;
+};
+
+/** The renewal that placed an order on a delivery date. */
+export type OrderRenewalType = {
+  id: string;
+  number?: string;
+  scheduledDate: string;
+};
+
+/** The server answers at most this many orders per request: a page of order history. */
+const BATCH_SIZE = 100;
 
 /**
- * Which lines of a placed order were bought by subscription. The backend links them indirectly: a subscription keeps
- * its first and last order (`initialOrderId`, `lastOrderId`), and each delivery (renewal) keeps its order and items.
- * Loaded once for the session and again when an order isn't known yet (it may have been placed since).
+ * Which orders a subscription placed and which lines belong to a subscription. The server computes it per order
+ * (`orderSubscriptionInfos`): the order components of a page ask for their orders, and the ids asked within one tick
+ * go out in one request. An order is asked once per session.
  */
 const useOrderSubscriptionsState = createGlobalState(() => {
-  const index = shallowRef<OrderIndexType>(new Map());
-  /** Orders the subscriptions placed themselves on a delivery's date: order id -> that delivery. */
-  const renewalsByOrder = shallowRef<Map<string, RenewalFieldsFragment>>(new Map());
-  const loadedOrderIds = new Set<string>();
+  /** Order id -> its info, or null when the order has nothing to do with subscriptions. */
+  const infos = shallowRef<Map<string, OrderInfoType | null>>(new Map());
   const loading = ref(false);
-  let pending: Promise<void> | undefined;
+  const requested = new Set<string>();
+  let queued = new Set<string>();
+  let flush: Promise<void> | undefined;
 
-  function add(
-    target: OrderIndexType,
-    orderId: string | null | undefined,
-    productId: string,
-    subscription: ProductSubscriptionFieldsFragment,
-  ) {
-    if (!orderId) {
-      return;
-    }
-    const byProduct = target.get(orderId) ?? new Map<string, ProductSubscriptionFieldsFragment>();
-    byProduct.set(productId, subscription);
-    target.set(orderId, byProduct);
-  }
-
-  async function load(): Promise<void> {
-    const options = { suppressErrorNotifications: true };
-    const [subscriptions, renewals] = await Promise.all([
-      fetchAllPages((page) => getProductSubscriptions(page, options), SUBSCRIPTIONS_PAGE_SIZE),
-      fetchAllPages(
-        (page) => getSubscriptionRenewals({ ...page, sort: "ScheduledDate:desc" }, options),
-        RENEWALS_PAGE_SIZE,
-      ),
-    ]);
-
-    const byId = new Map(subscriptions.map((x) => [x.id, x]));
-    const next: OrderIndexType = new Map();
-    const nextRenewals = new Map<string, RenewalFieldsFragment>();
-    subscriptions.forEach((subscription) => {
-      add(next, subscription.initialOrderId, subscription.productId, subscription);
-      add(next, subscription.lastOrderId, subscription.productId, subscription);
-    });
-    renewals.forEach((renewal) => {
-      if (renewal.orderId) {
-        nextRenewals.set(renewal.orderId, renewal);
+  async function load(orderIds: string[]): Promise<void> {
+    const next = new Map(infos.value);
+    for (let i = 0; i < orderIds.length; i += BATCH_SIZE) {
+      const batch = orderIds.slice(i, i + BATCH_SIZE);
+      try {
+        const result = await getOrderSubscriptionInfos(batch, { suppressErrorNotifications: true });
+        batch.forEach((id) => next.set(id, null));
+        result.forEach((info) => next.set(info.orderId, info));
+      } catch (e) {
+        // Asked again on the next visit.
+        batch.forEach((id) => requested.delete(id));
+        Logger.error(`${useOrderSubscriptions.name}.load`, e);
       }
-      renewal.items.forEach((item) => {
-        const subscription = byId.get(item.subscriptionId);
-        if (subscription) {
-          add(next, renewal.orderId, item.productId, subscription);
-        }
-      });
-    });
-
-    index.value = next;
-    renewalsByOrder.value = nextRenewals;
-    next.forEach((_, orderId) => loadedOrderIds.add(orderId));
+    }
+    infos.value = next;
   }
 
-  /** Loads the links unless this order is already known; one request at a time. */
-  async function ensure(orderId: string): Promise<void> {
-    if (loadedOrderIds.has(orderId)) {
-      return;
+  /** Asks for this order's info unless it is known or already asked; orders asked in the same tick share a request. */
+  function ensure(orderId: string): Promise<void> {
+    if (!orderId || requested.has(orderId)) {
+      return flush ?? Promise.resolve();
     }
-    pending ??= (async () => {
+    requested.add(orderId);
+    queued.add(orderId);
+    flush ??= Promise.resolve().then(async () => {
+      const ids = [...queued];
+      queued = new Set();
+      flush = undefined;
       loading.value = true;
       try {
-        await load();
-      } catch (e) {
-        Logger.error(`${useOrderSubscriptions.name}.${ensure.name}`, e);
+        await load(ids);
       } finally {
         loading.value = false;
-        pending = undefined;
       }
-    })();
-    await pending;
-    // An order without subscription lines is known too, so it isn't asked about again.
-    loadedOrderIds.add(orderId);
+    });
+    return flush;
   }
 
   function subscriptionFor(orderId: MaybeRefOrGetter<string>, productId: MaybeRefOrGetter<string | undefined>) {
-    return computed(() => {
+    return computed<OrderLineSubscriptionType | undefined>(() => {
       const product = toValue(productId);
-      return product ? index.value.get(toValue(orderId))?.get(product) : undefined;
+      const line = product
+        ? infos.value.get(toValue(orderId))?.subscriptions.find((x) => x.productId === product)
+        : undefined;
+      return line
+        ? {
+            id: line.subscriptionId,
+            number: line.subscriptionNumber,
+            intervalUnit: line.intervalUnit,
+            intervalCount: line.intervalCount,
+          }
+        : undefined;
     });
   }
 
   function renewalFor(orderId: MaybeRefOrGetter<string | undefined>) {
-    return computed(() => {
+    return computed<OrderRenewalType | undefined>(() => {
       const id = toValue(orderId);
-      return id ? renewalsByOrder.value.get(id) : undefined;
+      const info = id ? infos.value.get(id) : undefined;
+      return info?.renewalId && info.renewalScheduledDate
+        ? { id: info.renewalId, number: info.renewalNumber ?? undefined, scheduledDate: info.renewalScheduledDate }
+        : undefined;
     });
   }
 
-  /** The subscriptions that put products into this order, each once. */
+  /** The subscriptions behind this order's lines, each once. */
   function subscriptionsOf(orderId: MaybeRefOrGetter<string | undefined>) {
     return computed(() => {
       const id = toValue(orderId);
-      const byProduct = id ? index.value.get(id) : undefined;
-      return byProduct ? [...new Set(byProduct.values())] : [];
+      return (
+        (id ? infos.value.get(id)?.subscriptions : undefined)?.map((x) => ({
+          id: x.subscriptionId,
+          number: x.subscriptionNumber,
+        })) ?? []
+      );
     });
   }
 
