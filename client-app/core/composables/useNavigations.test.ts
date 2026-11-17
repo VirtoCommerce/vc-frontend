@@ -1,3 +1,4 @@
+import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 const hoisted = vi.hoisted(() => {
@@ -332,11 +333,82 @@ describe("useNavigations - theme header", () => {
     expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
   });
 
+  it("does not request the regular catalog menu while the theme's category menu replaces it", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories, getMenu } = await import("@/core/api/graphql");
+
+    await navigations.fetchCatalogMenu();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
+    expect(getMenu).not.toHaveBeenCalled();
+  });
+
   it("leaves the category menu out of the mobile menu when the theme hides it", async () => {
     await publishSiteHeader({ show_catalog_menu: false });
     const navigations = await importComposable();
 
     expect(navigations.isCatalogMenuShown.value).toBe(false);
     expect(navigations.mobileCatalogMenuItem.value).toBeUndefined();
+  });
+});
+
+describe("useNavigations - catalog menu", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  const WHITE_LABELING_MAIN_MENU = [{ title: "Organization", url: "/organization", priority: 0, childItems: [] }];
+
+  async function setUp() {
+    const navigations = await importComposable();
+    const { useWhiteLabeling } = await import("@/core/composables/useWhiteLabeling");
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
+    return { navigations, setWhiteLabelingSettings: useWhiteLabeling().setWhiteLabelingSettings, getChildCategories };
+  }
+
+  it("shows the regular catalog menu when nothing replaces it", async () => {
+    const { navigations } = await setUp();
+
+    await navigations.fetchCatalogMenu();
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("does not request the regular catalog menu while the white-labeling main menu replaces it", async () => {
+    const { navigations, setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+
+    await navigations.fetchCatalogMenu();
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
+  });
+
+  it("requests the regular catalog menu once the white-labeling main menu is gone", async () => {
+    const { navigations, setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+    await navigations.fetchCatalogMenu();
+
+    setWhiteLabelingSettings({ mainMenuLinks: [] });
+    await flushPromises();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("does not request the catalog menu nobody fetched when the white-labeling main menu is gone", async () => {
+    const { setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+    await flushPromises();
+
+    setWhiteLabelingSettings({ mainMenuLinks: [] });
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
   });
 });

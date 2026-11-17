@@ -1,6 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { mergeWith } from "lodash-es";
-import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { computed, readonly, ref, shallowRef, triggerRef, watch } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables/useCurrency";
@@ -233,11 +233,11 @@ export function _useNavigations() {
   const themeCatalogMenuItems = computed(() => getMenuLinks(siteHeader.value?.catalog_menu, true));
 
   // Read live: the designer's "Preview as" swaps in the previewed user's white-labeling after boot.
-  const shownCatalogMenuItems = computed(() =>
-    whiteLabelingMainMenuLinks.value?.length
-      ? whiteLabelingMainMenuLinks.value
-      : (themeCatalogMenuItems.value ?? catalogMenuItems.value),
+  const catalogMenuOverride = computed(() =>
+    whiteLabelingMainMenuLinks.value?.length ? whiteLabelingMainMenuLinks.value : themeCatalogMenuItems.value,
   );
+
+  const shownCatalogMenuItems = computed(() => catalogMenuOverride.value ?? catalogMenuItems.value);
 
   const isCatalogMenuShown = computed(() => siteHeader.value?.show_catalog_menu !== false);
 
@@ -363,23 +363,38 @@ export function _useNavigations() {
     }
   }
 
+  let isCatalogMenuFetchDeferred = false;
+
+  // The regular menu is requested only while it is the one shown, so a fetch made under an override waits for it to go.
+  watch(
+    () => !catalogMenuOverride.value,
+    (isRegularMenuShown) => {
+      if (isRegularMenuShown && isCatalogMenuFetchDeferred) {
+        void fetchCatalogMenu();
+      }
+    },
+  );
+
   async function fetchCatalogMenu() {
+    isCatalogMenuFetchDeferred = !!catalogMenuOverride.value;
+
+    if (isCatalogMenuFetchDeferred) {
+      return;
+    }
+
     const { zero_price_product_enabled } = themeContext.value.settings;
 
     const catalog_menu_link_list_name = getSettingValue(MODULE_XAPI_KEYS.CATALOG_MENU_LINK_LIST_NAME);
     const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (whiteLabelingMainMenuLinks.value?.length) {
-        // First priority: use white labeling main menu if available
-        catalogMenuItems.value = whiteLabelingMainMenuLinks.value;
-      } else if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
-        // Second priority: use XAPI catalog menu link list setting
+      if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
+        // First priority: use XAPI catalog menu link list setting
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item as MenuLinkType, true),
         );
       } else {
-        // Third priority: use category-based menu (query `childCategories`, with `maxLevel` equal to 2)
+        // Second priority: use category-based menu (query `childCategories`, with `maxLevel` equal to 2)
         const catalogId = themeContext.value.catalogId;
         const currencyCode = currentCurrency.value.code;
 
