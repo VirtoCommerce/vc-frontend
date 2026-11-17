@@ -6,7 +6,7 @@ the account dashboard, or a dashboard of the plugin's own.
 **Before you start:**
 
 1. The plugin pins a facade with the dashboard engine (`registerBlock`, `LayoutWidget`, `useLayout`,
-   `LayoutSurface`): 0.2.11 or later, with `requiredHostVersion` to match (S4).
+   `LayoutSurface`): 0.2.11 or later, 0.2.12 for a `fullWidth` block, with `requiredHostVersion` to match (S4).
 2. The platform serves the `layout` and `saveLayout` GraphQL operations (X-Frontend). Without them, a dashboard
    shows its defaults under a "The saved layout could not be loaded" alert, with no edit button.
 
