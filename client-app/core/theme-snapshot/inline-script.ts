@@ -1,3 +1,4 @@
+import { LOCALE_ID_REGEX } from "../constants/locale.js";
 import {
   DESIGNER_PREVIEW_PATH,
   PINNED_LOCALE_KEY,
@@ -22,6 +23,7 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
     query: THEME_SNAPSHOT_QUERY,
     previewPath: DESIGNER_PREVIEW_PATH,
     localePattern: URL_LOCALE_PATTERN,
+    localeIdPattern: LOCALE_ID_REGEX.source,
     pinnedLocaleKey: PINNED_LOCALE_KEY,
     domain: options.domain ?? "",
   });
@@ -54,7 +56,8 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
       var segments = path.slice(match ? match[0].length : 0).split("/").filter(Boolean).map(decodeSegment);
       permalink = segments.join("/") || "/";
     }
-    if (cultureName && !/^[a-zA-Z0-9-]+$/.test(cultureName)) {
+    var localeId = new RegExp(c.localeIdPattern);
+    if (cultureName && !localeId.test(cultureName)) {
       cultureName = undefined;
     }
     var variables = { domain: c.domain || location.hostname, cultureName: cultureName, permalink: permalink };
