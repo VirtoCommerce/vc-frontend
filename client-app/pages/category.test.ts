@@ -12,6 +12,7 @@ const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined 
 const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
 const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
 const scrollToAnchor = vi.hoisted(() => vi.fn(() => Promise.resolve(true)));
+const searchScope = vi.hoisted(() => ({ isPending: false, holds: 0 }));
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
 vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/printers", hash: "#promo" }) }));
@@ -45,7 +46,16 @@ vi.mock("@/shared/catalog/composables/useCategory", () => ({
 }));
 vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({ useLoyaltyCatalogCurrency: () => ref() }));
 vi.mock("@/shared/layout/composables/useSearchScore", () => ({
-  useSearchScore: () => ({ isCategoryScope: ref(false), isScopePending: ref(false), holdScope: vi.fn() }),
+  useSearchScore: () => ({
+    isCategoryScope: ref(false),
+    isScopePending: ref(searchScope.isPending),
+    holdScope: () => {
+      searchScope.holds++;
+      return () => {
+        searchScope.holds--;
+      };
+    },
+  }),
 }));
 vi.mock("@/shared/catalog/components/category.vue", async () => {
   const { defineComponent: define, h: render } = await import("vue");
@@ -97,6 +107,8 @@ describe("category page", () => {
     pageBuilder.isEnabled = false;
     heldFetches.value = undefined;
     scrollToAnchor.mockClear();
+    searchScope.isPending = false;
+    searchScope.holds = 0;
   });
 
   afterEach(() => {
@@ -287,6 +299,55 @@ describe("category page", () => {
     expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
     expect(listingProps.value).toMatchObject({ "category-id": "paper" });
     expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+  });
+
+  it("holds the search scope the previous page handed over until the first category has loaded", async () => {
+    pageBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    searchScope.isPending = true;
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    await flushPromises();
+
+    expect(searchScope.holds).toBe(1);
+
+    heldFetches.value.get("toner")?.();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
+    expect(searchScope.holds).toBe(0);
+  });
+
+  it("releases the search scope it holds when it is left before the first category has loaded", async () => {
+    pageBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    searchScope.isPending = true;
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    wrapper.unmount();
+    await flushPromises();
+
+    expect(searchScope.holds).toBe(0);
+  });
+
+  it("does not hold a search scope no page handed over", async () => {
+    pageBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+
+    mountCategory({ categoryId: "toner" });
+    await flushPromises();
+
+    expect(searchScope.holds).toBe(0);
+  });
+
+  it("does not hold the search scope when it does not wait for the category", async () => {
+    heldFetches.value = new Map();
+    searchScope.isPending = true;
+
+    mountCategory({ categoryId: "toner" });
+    await flushPromises();
+
+    expect(searchScope.holds).toBe(0);
   });
 
   it("scrolls to the section the address names", () => {

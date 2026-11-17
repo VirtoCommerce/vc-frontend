@@ -130,11 +130,37 @@ const sectionContext = computed(() => ({ category: currentCategory.value }));
 
 useAnchorScroll(() => templateResolution.value);
 
+let releaseScope: (() => void) | undefined;
+
+// Hold a scope the previous page handed over: the listing that takes it over mounts once the first category loads.
+watch(
+  isWaitingForFirstCategory,
+  (isWaiting) => {
+    if (isWaiting && (isCategoryScope.value || isScopePending.value) && !releaseScope) {
+      releaseScope = holdScope();
+    }
+  },
+  { immediate: true },
+);
+
+// Post flush: the listing has rendered and prepares the scope itself.
+watch(
+  isWaitingForFirstCategory,
+  (isWaiting) => {
+    if (!isWaiting) {
+      releaseScope?.();
+      releaseScope = undefined;
+    }
+  },
+  { flush: "post" },
+);
+
 // Runs before the child drops its scope or preparation; held a tick for a matcher mounting in its place.
 onBeforeUnmount(() => {
   if (isCategoryScope.value || isScopePending.value) {
     void nextTick(holdScope());
   }
+  releaseScope?.();
 });
 
 watch(
