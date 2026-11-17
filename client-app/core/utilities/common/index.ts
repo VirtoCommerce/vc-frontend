@@ -227,6 +227,11 @@ export function presetNameToFileName(name: string): string {
   return name.toLowerCase().replaceAll(" ", "-");
 }
 
+/** The language part of a culture name, lowercased as culture names compare case-insensitively: `de-DE` → `de`. */
+export function getLanguageCode(cultureName: string): string {
+  return cultureName.split("-")[0].toLowerCase();
+}
+
 /**
  * Turns a web-safe page / file name into a human-friendly label for display.
  * Replaces `_` and `-` separators with spaces, collapses whitespace and upper-cases the

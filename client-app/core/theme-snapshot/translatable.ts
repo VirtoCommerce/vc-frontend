@@ -1,4 +1,4 @@
-import { isRecord } from "@/core/utilities";
+import { getLanguageCode, isRecord } from "@/core/utilities";
 
 const CULTURE_KEY_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
 
@@ -24,21 +24,17 @@ export function pickTranslation(
   defaultCultureName: string,
 ): string {
   const entries = Object.entries(dictionary);
-  const language = languageOf(cultureName);
+  const language = getLanguageCode(cultureName);
   const find = (matches: (key: string) => boolean) => entries.find(([key]) => matches(key.toLowerCase()))?.[1];
 
   return (
     find((key) => key === cultureName.toLowerCase()) ??
     find((key) => key === language) ??
-    find((key) => languageOf(key) === language) ??
+    find((key) => getLanguageCode(key) === language) ??
     find((key) => key === defaultCultureName.toLowerCase()) ??
     entries[0]?.[1] ??
     ""
   );
-}
-
-function languageOf(cultureName: string): string {
-  return cultureName.split("-")[0].toLowerCase();
 }
 
 export function resolveTranslatableValues<T>(value: T, cultureName: string, defaultCultureName: string): T {

@@ -14,6 +14,7 @@ import {
   areStringOrNumberEqual,
   buildRedirectUrl,
   humanizeName,
+  getLanguageCode,
   parseJsonStringArray,
   toFirstString,
 } from "./index";
@@ -609,6 +610,16 @@ describe("humanizeName", () => {
     expect(humanizeName(undefined)).toBe("");
     expect(humanizeName(null)).toBe("");
     expect(humanizeName({})).toBe("");
+  });
+});
+
+describe("getLanguageCode", () => {
+  it.each([
+    ["de-DE", "de"],
+    ["DE", "de"],
+    ["sr-Latn-RS", "sr"],
+  ])("takes the language of %s", (cultureName, expected) => {
+    expect(getLanguageCode(cultureName)).toBe(expected);
   });
 });
 

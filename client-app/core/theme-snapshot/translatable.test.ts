@@ -26,6 +26,7 @@ describe("pickTranslation", () => {
   it("takes a culture of the same language, the bare language first", () => {
     expect(pickTranslation(dictionary, "de-AT", "en-US")).toBe("Hallo");
     expect(pickTranslation({ "de-DE": "Hallo", de: "Servus" }, "de-AT", "en-US")).toBe("Servus");
+    expect(pickTranslation(dictionary, "DE-at", "en-US")).toBe("Hallo");
   });
 
   it("takes the store default language, else the first text", () => {

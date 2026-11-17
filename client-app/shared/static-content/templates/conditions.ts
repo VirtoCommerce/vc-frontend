@@ -1,5 +1,5 @@
 import { escapeRegExp, trim } from "lodash-es";
-import { isRecord } from "@/core/utilities";
+import { getLanguageCode, isRecord } from "@/core/utilities";
 import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import type { ThemePageType } from "@/core/theme-snapshot";
 
@@ -81,10 +81,14 @@ export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     pageTypes: ["page"],
     label: "Language",
     value: { type: "string" },
-    evaluate: (subject, value) =>
-      typeof value === "string" &&
-      !!subject.language &&
-      (subject.language === value || subject.language.split("-")[0] === value),
+    evaluate: (subject, value) => {
+      if (typeof value !== "string" || !subject.language) {
+        return false;
+      }
+
+      const expected = value.toLowerCase();
+      return subject.language.toLowerCase() === expected || getLanguageCode(subject.language) === expected;
+    },
   },
   {
     name: "source",

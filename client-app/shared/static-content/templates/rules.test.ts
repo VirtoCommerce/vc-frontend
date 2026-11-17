@@ -122,13 +122,14 @@ describe("chooseTemplate", () => {
     expect(choosePage(pageSubject, pageWhen)?.template).toBe("page.landing");
   });
 
-  it("matches the exact locale", () => {
-    expect(choosePage(pageSubject, { language: "de-DE" })?.template).toBe("page.landing");
+  it.each(["de", "DE", "de-DE", "de-de"])("matches the language %s in any case", (language) => {
+    expect(choosePage(pageSubject, { language })?.template).toBe("page.landing");
   });
 
   it.each([
     ["path", { path: "other/*" }],
     ["language", { language: "fr" }],
+    ["region", { language: "de-AT" }],
     ["source", { source: "Other" }],
     ["setting value", { setting: { name: "theme", equals: "light" } }],
   ])("does not match when the %s differs", (_name, override) => {

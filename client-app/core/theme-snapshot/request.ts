@@ -1,4 +1,4 @@
-import { isRecord, Logger } from "@/core/utilities";
+import { getLanguageCode, isRecord, Logger } from "@/core/utilities";
 import { THEME_SNAPSHOT_GLOBAL, THEME_SNAPSHOT_OPERATION, THEME_SNAPSHOT_QUERY } from "./query";
 import type { IPublishedTheme, IThemeMenu, IThemeSlug, IThemeSlugPage, IThemeSnapshot } from "./types";
 
@@ -126,8 +126,8 @@ function isAskedLanguage(theme: LanguageCheckedThemeType, cultureName: string): 
 
   return (
     !requested.includes("-") &&
-    expected.split("-")[0] === requested &&
-    theme.cultureName.toLowerCase().split("-")[0] !== requested
+    getLanguageCode(expected) === requested &&
+    getLanguageCode(theme.cultureName) !== requested
   );
 }
 
@@ -139,7 +139,7 @@ function isSameLanguage(name: string | undefined, cultureName: string): boolean 
   const value = name.toLowerCase();
   const expected = cultureName.toLowerCase();
 
-  return value === expected || (!value.includes("-") && expected.split("-")[0] === value);
+  return value === expected || (!value.includes("-") && getLanguageCode(expected) === value);
 }
 
 function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {
