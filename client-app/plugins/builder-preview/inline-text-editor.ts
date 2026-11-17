@@ -1,5 +1,5 @@
+import { FIELD_ATTRIBUTE, SECTION_ATTRIBUTE } from "@/core/theme-snapshot";
 import { OUTLINE_COLOR } from "./section-overlay";
-import { FIELD_ATTRIBUTE, SECTION_ATTRIBUTE } from "./utils";
 
 export interface IEditableText {
   itemId: string;

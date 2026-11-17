@@ -28,12 +28,11 @@ vi.mock("./shared-component-overlay", () => ({
   normalizeSharedComponentBoundaries: (value: unknown) => value ?? [],
   SharedComponentOverlay: class {},
 }));
-vi.mock("./utils", () => ({
+vi.mock("@/core/theme-snapshot/designer-frame", () => ({
   getBuilderOrigin: () => "https://builder.example",
-  guardPreviewNavigation: vi.fn(),
-  installPageInputGuard: vi.fn(),
   isOpenedWithPreviewProtocol: () => state.isProtocolRequested,
 }));
+vi.mock("./utils", () => ({ guardPreviewNavigation: vi.fn(), installPageInputGuard: vi.fn() }));
 
 describe("the preview's loaded message", () => {
   const router = {

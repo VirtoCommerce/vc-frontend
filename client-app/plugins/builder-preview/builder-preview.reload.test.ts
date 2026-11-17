@@ -36,6 +36,7 @@ async function loadFrame(url: string) {
   return {
     plugin: (await import("./builder-preview.plugin")).default,
     utils: await import("./utils"),
+    designerFrame: await import("@/core/theme-snapshot/designer-frame"),
   };
 }
 
@@ -77,7 +78,7 @@ afterEach(() => {
 it("answers the designer's connect after a reload of its frame on a storefront page", async () => {
   const designer = frameInDesigner();
   const postMessage = vi.spyOn(designer, "postMessage").mockImplementation(() => undefined);
-  expect((await loadFrame(DESIGNER_URL)).utils.getBuilderOrigin()).toBe(BUILDER_ORIGIN);
+  expect((await loadFrame(DESIGNER_URL)).designerFrame.getBuilderOrigin()).toBe(BUILDER_ORIGIN);
 
   const { plugin, utils } = await loadFrame("/printers");
 
@@ -109,11 +110,11 @@ it("answers the designer's connect after a reload of its frame on a storefront p
 it("sends the preview catalog after a reload of the frame the designer opened with the preview protocol", async () => {
   const designer = frameInDesigner();
   const postMessage = vi.spyOn(designer, "postMessage").mockImplementation(() => undefined);
-  expect((await loadFrame(`${DESIGNER_URL}&protocol=2`)).utils.isPreviewV2Frame()).toBe(true);
+  expect((await loadFrame(`${DESIGNER_URL}&protocol=2`)).designerFrame.isPreviewV2Frame()).toBe(true);
 
-  const { plugin, utils } = await loadFrame("/printers");
+  const { plugin, designerFrame } = await loadFrame("/printers");
 
-  expect(utils.isPreviewV2Frame()).toBe(true);
+  expect(designerFrame.isPreviewV2Frame()).toBe(true);
 
   await plugin.install({} as App, { router: createRouter() });
 

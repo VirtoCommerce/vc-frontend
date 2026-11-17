@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const pageBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
-vi.mock("@/core/theme-snapshot", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
 vi.mock("./page-builder-components", () => ({ PageBuilderComponents: [] }));
 
 describe("getRegisteredComponents", () => {

@@ -1,7 +1,6 @@
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isNewPageBuilderEnabled, isOpenedWithPreviewProtocol } from "@/core/theme-snapshot";
 import { Logger } from "@/core/utilities";
 import { PageBuilderComponents } from "./page-builder-components";
-import { isOpenedWithPreviewProtocol } from "./utils";
 import type { PageBuilderDescriptorType } from "./models/PageBuilderComponentType";
 import type { PageBuilderSchemasStructureType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { Component } from "vue";

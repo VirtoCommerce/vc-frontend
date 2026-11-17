@@ -30,13 +30,12 @@ vi.mock("./shared-component-overlay", () => ({
     }
   },
 }));
-vi.mock("./utils", () => ({
+vi.mock("@/core/theme-snapshot/designer-frame", () => ({
   getBuilderOrigin: () => "https://builder.example",
-  guardPreviewNavigation: vi.fn(),
-  installPageInputGuard: vi.fn(),
   isOpenedWithPreviewProtocol: () => true,
   PREVIEW_PROTOCOL: 2,
 }));
+vi.mock("./utils", () => ({ guardPreviewNavigation: vi.fn(), installPageInputGuard: vi.fn() }));
 
 const router = {
   getRoutes: () => [{ name: "Matcher" }],

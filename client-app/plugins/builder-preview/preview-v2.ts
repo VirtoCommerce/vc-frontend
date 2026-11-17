@@ -8,6 +8,7 @@ import { globals } from "@/core/globals";
 import {
   isThemeForLanguage,
   isTranslatableDictionary,
+  PREVIEW_PROTOCOL,
   readThemeSnapshotResponse,
   requestThemeSnapshot,
   resolveTranslatableValues,
@@ -27,7 +28,6 @@ import {
 import { withPreviewId } from "./builder-preview.protocol";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
-import { PREVIEW_PROTOCOL } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { IEditableText, IEndedEdit } from "./inline-text-editor";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -490,7 +490,7 @@ function withHoverModel(document: IThemePageDocument, model: IRenderMessage["mod
     return document;
   }
 
-  const item = withPreviewId(model) as IThemeItem;
+  const item = withPreviewId(model);
 
   return { ...document, content: [...document.content, item] };
 }

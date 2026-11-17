@@ -1,13 +1,13 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
-import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
 import {
   FIELD_ATTRIBUTE,
   isDesignerPreview,
+  isNewPageBuilderEnabled,
   isPreviewV2Frame,
   SECTION_ATTRIBUTE,
-} from "@/plugins/builder-preview/utils";
+} from "@/core/theme-snapshot";
+import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 

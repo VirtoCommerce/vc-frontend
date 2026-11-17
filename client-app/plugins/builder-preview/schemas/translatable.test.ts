@@ -9,8 +9,8 @@ import type { PageBuilderSchemaType } from "../models/PageBuilderSchemaType";
 import type { IThemeItem } from "@/core/theme-snapshot";
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => true }));
-vi.mock("../utils", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../utils")>()),
+vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
   isOpenedWithPreviewProtocol: () => true,
 }));
 vi.mock("@/core/composables/useLanguages", () => ({

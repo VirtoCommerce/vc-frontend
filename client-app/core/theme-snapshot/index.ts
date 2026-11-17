@@ -1,4 +1,5 @@
 export * from "./boot";
+export * from "./designer-frame";
 export * from "./enabled";
 export * from "./groups";
 export * from "./palette";

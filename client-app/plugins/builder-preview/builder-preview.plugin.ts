@@ -4,7 +4,12 @@ import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals, setGlobals } from "@/core/globals";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import {
+  getBuilderOrigin,
+  isNewPageBuilderEnabled,
+  isOpenedWithPreviewProtocol,
+  PREVIEW_PROTOCOL,
+} from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
@@ -24,15 +29,7 @@ import {
   SharedComponentOverlay,
   normalizeSharedComponentBoundaries,
 } from "./shared-component-overlay";
-import {
-  getBuilderOrigin,
-  getPreviewCultureName,
-  getPreviewPageId,
-  guardPreviewNavigation,
-  installPageInputGuard,
-  isOpenedWithPreviewProtocol,
-  PREVIEW_PROTOCOL,
-} from "./utils";
+import { getPreviewCultureName, getPreviewPageId, guardPreviewNavigation, installPageInputGuard } from "./utils";
 import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";

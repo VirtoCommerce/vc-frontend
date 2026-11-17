@@ -1,5 +1,5 @@
+import { SECTION_ATTRIBUTE } from "@/core/theme-snapshot";
 import { OverlayLayer } from "./overlay-layer";
-import { SECTION_ATTRIBUTE } from "./utils";
 
 export const OUTLINE_COLOR = "#2563eb";
 const LABEL_TEXT_COLOR = "#ffffff";
