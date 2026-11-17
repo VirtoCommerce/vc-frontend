@@ -18,10 +18,10 @@ import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import {
   BUILT_IN_TEMPLATES,
+  getTemplateConditionDescriptors,
   getTemplatePageType,
   opensNewWindow,
   useStaticPage,
-  useTemplateConditions,
   useThemeTemplates,
 } from "@/shared/static-content";
 import { withPreviewId } from "./builder-preview.protocol";
@@ -67,7 +67,7 @@ export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<stri
     hash: hashOf(JSON.stringify(catalog)),
     protocol: PREVIEW_PROTOCOL,
     capabilities: PREVIEW_CAPABILITIES,
-    conditions: useTemplateConditions().getTemplateConditionDescriptors(),
+    conditions: getTemplateConditionDescriptors(),
     builtInTemplates: Object.keys(BUILT_IN_TEMPLATES),
   };
 }
@@ -255,7 +255,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   function settleEndedEdit(kind: AnswerKindType): void {
     const ended = endedEdit;
 
-    if (!ended || ended.answer !== kind || awaitedAnswer === kind) {
+    if (ended?.answer !== kind || awaitedAnswer === kind) {
       return;
     }
 

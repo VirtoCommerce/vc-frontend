@@ -2,8 +2,8 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, shallowRef, toValue, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { BUILT_IN_TEMPLATES, withMainSection } from "../templates/built-in";
+import { getTemplateCondition } from "../templates/conditions";
 import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "../templates/rules";
-import { useTemplateConditions } from "./useTemplateConditions";
 import type { ITemplateSubject } from "../templates/conditions";
 import type { ITemplateResolution, TemplateChoiceType } from "../templates/rules";
 import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
@@ -11,7 +11,6 @@ import type { MaybeRefOrGetter } from "vue";
 
 export const useThemeTemplates = createGlobalState(() => {
   const { theme, localizeThemeDraft } = useThemeSnapshot();
-  const { getTemplateCondition } = useTemplateConditions();
 
   const openTemplate = shallowRef<{ key: string; document: IThemePageDocument }>();
   const lastResolution = shallowRef<ITemplateResolution>();

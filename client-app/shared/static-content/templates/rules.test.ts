@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { useTemplateConditions } from "../composables/useTemplateConditions";
 import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
-import { matchesPath } from "./conditions";
+import { getTemplateCondition, matchesPath } from "./conditions";
 import { chooseTemplate, normalizeTemplateRules } from "./rules";
 import type { ITemplateChoiceOptions } from "./rules";
 import type { IThemePageDocument } from "@/core/theme-snapshot";
@@ -13,7 +12,7 @@ function choose(options: Partial<ITemplateChoiceOptions> & Pick<ITemplateChoiceO
     subject: {},
     rules: undefined,
     templates: BUILT_IN_TEMPLATES,
-    getCondition: useTemplateConditions().getTemplateCondition,
+    getCondition: getTemplateCondition,
     ...options,
   });
 }

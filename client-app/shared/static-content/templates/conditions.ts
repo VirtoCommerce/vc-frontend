@@ -28,6 +28,7 @@ export interface ITemplateCondition {
 
 export type TemplateConditionDescriptorType = Omit<ITemplateCondition, "evaluate">;
 
+/** Values compare exactly, path and language aside: a product layout of `b2c` does not match the default B2C rule. */
 export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
   {
     name: "inCategory",
@@ -120,6 +121,14 @@ export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     },
   },
 ];
+
+export function getTemplateCondition(name: string): ITemplateCondition | undefined {
+  return BUILT_IN_CONDITIONS.find((condition) => condition.name === name);
+}
+
+export function getTemplateConditionDescriptors(): TemplateConditionDescriptorType[] {
+  return BUILT_IN_CONDITIONS.map(({ name, pageTypes, label, value }) => ({ name, pageTypes, label, value }));
+}
 
 export function matchesPath(permalink: string | undefined, glob: string): boolean {
   if (permalink === undefined) {
