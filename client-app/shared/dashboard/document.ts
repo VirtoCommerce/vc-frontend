@@ -14,6 +14,7 @@ import type {
 function emptyRegions(): LayoutStateType["regions"] {
   return {
     statistics: { visible: [], hidden: [] },
+    fullWidth: { visible: [], hidden: [] },
     mainLeft: { visible: [], hidden: [] },
     mainRight: { visible: [], hidden: [] },
   };

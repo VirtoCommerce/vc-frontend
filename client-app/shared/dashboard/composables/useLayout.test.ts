@@ -348,7 +348,7 @@ describe("createLayoutController: the save", () => {
 
     const command = sentCommand();
     expect(command).toMatchObject({ scope: SCOPE, storeId: "B2B-store", schemaVersion: 1 });
-    expect(command.regions.map((region) => region.id)).toEqual(["statistics", "mainLeft", "mainRight"]);
+    expect(command.regions.map((region) => region.id)).toEqual(["statistics", "fullWidth", "mainLeft", "mainRight"]);
     expect(sentBlock("side")?.hidden).toBe(true);
     expect(sentBlock("alpha")?.hidden).toBe(false);
   });
