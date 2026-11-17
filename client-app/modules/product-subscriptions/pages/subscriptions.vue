@@ -149,10 +149,14 @@ const UPCOMING_STATES: ReadonlySet<string> = new Set([...CHANGEABLE_STATES, "Ord
 
 const attentionRenewals = computed(() => renewals.value.filter((x) => ATTENTION_RENEWAL_STATES.has(x.state)));
 // Deliveries the customer can still change first (soonest first), then orders already on their way.
+// An ordered delivery stays open until it ships; an old one is order history (the Orders page), not "upcoming".
+const ORDERED_SHOWN_DAYS = 14;
 const upcomingRenewals = computed(() => {
   const rank = (state: string) => (CHANGEABLE_STATES.has(state) ? 0 : 1);
+  const orderedSince = Date.now() - ORDERED_SHOWN_DAYS * 24 * 60 * 60 * 1000;
   return renewals.value
     .filter((x) => !ATTENTION_RENEWAL_STATES.has(x.state) && UPCOMING_STATES.has(x.state))
+    .filter((x) => CHANGEABLE_STATES.has(x.state) || new Date(x.scheduledDate).getTime() >= orderedSince)
     .sort(
       (a, b) =>
         rank(a.state) - rank(b.state) || new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime(),
