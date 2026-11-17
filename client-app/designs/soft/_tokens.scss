@@ -1,5 +1,5 @@
 html[data-design="soft"] {
-  --vc-radius: 1rem;
+  --vc-radius: 0.75rem;
   --vc-base-font-family: Inter, sans-serif;
   --vc-heading-font-family: Geologica, sans-serif;
 
@@ -23,7 +23,6 @@ html[data-design="soft"] {
   --vc-widget-title-text-transform: none;
   --vc-widget-title-letter-spacing: -0.02em;
   // The plate as html computes it, a fork's override included: blocks/vc-widget.scss gives it to nested widgets.
-  --design-widget-radius: var(--vc-widget-radius);
   --design-widget-border-width: var(--vc-widget-border-width);
   --design-widget-padding-x: var(--vc-widget-padding-x);
 

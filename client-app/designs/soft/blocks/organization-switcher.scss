@@ -1,0 +1,20 @@
+.organization-switcher {
+  // The theme's plate surface (cream in light paprika), not classic's neutral-50: the rows are transparent on it.
+  --vc-popover-bg-color: var(--vc-plate-bg-color, var(--color-additional-50));
+  --vc-popover-padding: theme("spacing[4.5]");
+  --vc-popover-border-width: 1px;
+
+  &__panel {
+    // The card's padding and border surround the panel: the card stays 20rem × 50vh, its corners clip nothing.
+    $inset: calc(2 * (var(--vc-popover-padding) + var(--vc-popover-border-width)));
+
+    @apply flex flex-col rounded-none;
+
+    width: calc(min(20rem, 100vw - 2rem) - #{$inset});
+    max-height: calc(50vh - #{$inset});
+  }
+
+  &__list {
+    @apply min-h-0 flex-1;
+  }
+}
