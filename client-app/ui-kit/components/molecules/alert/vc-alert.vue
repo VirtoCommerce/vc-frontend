@@ -203,10 +203,27 @@ const iconName = computed<string>(() => {
   }
 
   // With an action button in the end position the alert is taller than the text's
-  // line box, so the whole row centers vertically — icon, text, close button and the
-  // button sit on one center, with a title or wrapped text too.
+  // line box: the button and the close button center on the alert. A one-line text
+  // centers with them; with a title or wrapped text the icon stays on the first line,
+  // as in the bottom-button layout — icon and content align by their first baseline.
   &--button-end {
     @apply items-center;
+
+    .vc-alert__icon {
+      @apply self-baseline flex items-center my-0 h-[--line-height] leading-[--line-height];
+
+      // a zero-width character gives the icon box a text baseline matching the content
+      &::before {
+        content: "\200b";
+
+        @apply w-0 overflow-hidden;
+      }
+    }
+
+    .vc-alert__content {
+      // the xxs button height: a one-line text centers on the button
+      @apply self-baseline justify-center min-h-[1.625rem];
+    }
   }
 
   &__button {
