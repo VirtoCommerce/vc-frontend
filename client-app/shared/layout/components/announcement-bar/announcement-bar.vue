@@ -18,6 +18,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useIsHomePage } from "@/core/composables/useIsHomePage";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { isSafeLinkUrl } from "@/core/utilities/common";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
@@ -30,6 +31,7 @@ const TOKEN_REGEX = /^[a-z][a-z0-9_]*$/;
 const HOME_PERMALINK_REGEX = /^\/*$/;
 
 const route = useRoute();
+const isStorefrontHomePage = useIsHomePage();
 const { announcementBar } = useThemeChrome();
 const { staticPagePreviewSubject } = useStaticPage();
 
@@ -39,7 +41,7 @@ const isHomePage = computed(() => {
     return permalink !== undefined && HOME_PERMALINK_REGEX.test(permalink);
   }
 
-  return route.path === "/";
+  return isStorefrontHomePage.value;
 });
 
 const announcements = computed(() => {
