@@ -13,15 +13,7 @@
         </VcTypography>
       </div>
 
-      <template v-for="item in content">
-        <PageBuilderSection
-          v-if="!item.hidden"
-          :key="item.id"
-          :item="item"
-          :id="getAnchorId(item)"
-          :context="sectionContext"
-        />
-      </template>
+      <PageBuilderSections :items="content" :context="sectionContext" />
     </PageTemplate>
   </div>
 </template>
@@ -29,8 +21,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
-import { getAnchorId } from "../anchors";
-import PageBuilderSection from "./page-builder-section.vue";
+import PageBuilderSections from "./page-builder-sections.vue";
 import PageTemplate from "./page-template.vue";
 
 interface IProps {

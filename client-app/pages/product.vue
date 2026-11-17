@@ -19,14 +19,7 @@
         @apply-filters="applyFilters"
       />
 
-      <PageBuilderSection
-        v-for="item in templateParts.before"
-        :key="item.id"
-        :item="item"
-        :context="sectionContext"
-        :id="getAnchorId(item)"
-        class="mb-5 xl:mb-6"
-      />
+      <PageBuilderSections :items="templateParts.before" :context="sectionContext" spaced class="mb-5 xl:mb-6" />
 
       <!-- Breadcrumbs -->
       <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
@@ -69,13 +62,7 @@
             :initial-configuration="initialConfiguration"
           />
 
-          <PageBuilderSection
-            v-for="item in templateParts.column"
-            :key="item.id"
-            :item="item"
-            :context="columnSectionContext"
-            :id="getAnchorId(item)"
-          />
+          <PageBuilderSections :items="templateParts.column" :context="columnSectionContext" spaced />
 
           <component
             :is="productVariationsBlock?.type"
@@ -118,13 +105,11 @@
         </template>
       </VcLayout>
 
-      <PageBuilderSection
-        v-for="item in templateParts.after"
-        :key="item.id"
-        :item="item"
+      <PageBuilderSections
+        :items="templateParts.after"
         :context="sectionContext"
         :lazy="lazySections"
-        :id="getAnchorId(item)"
+        spaced
         class="mt-5 xl:mt-6"
       />
     </VcContainer>
@@ -182,10 +167,9 @@ import {
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { FloatingBar } from "@/shared/common";
 import {
-  getAnchorId,
   getPreviewSectionAttrs,
   isLazySectionsEnabled,
-  PageBuilderSection,
+  PageBuilderSections,
   useAnchorScroll,
   useProductTemplate,
 } from "@/shared/static-content";

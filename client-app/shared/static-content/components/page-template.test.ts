@@ -51,9 +51,12 @@ describe("PageTemplate", () => {
   });
 
   it("renders just the page in the built-in template and the full layout", () => {
-    const wrapper = mountPage();
+    // A multi-root wrapper's element is its mount container.
+    const container: Element = mountPage().element;
 
-    expect(wrapper.html()).toBe('<article data-test-id="page-own-content"></article>');
+    expect(Array.from(container.children, (node) => node.outerHTML)).toEqual([
+      '<article data-test-id="page-own-content"></article>',
+    ]);
     expect(usePageLayout().pageLayout.value).toBe("full");
   });
 
@@ -73,8 +76,11 @@ describe("PageTemplate", () => {
       },
     });
 
-    const wrapper = mountPage();
-    const order = wrapper.findAll("[data-test-id]").map((node) => node.text() || node.attributes("data-test-id"));
+    const container: Element = mountPage().element;
+    const order = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-test-id]"),
+      (node) => node.textContent || node.dataset.testId,
+    );
 
     expect(order).toEqual(["Above", "page-own-content", "Below"]);
     expect(usePageLayout().pageLayout.value).toBe("minimal");

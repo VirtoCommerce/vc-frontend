@@ -1,13 +1,6 @@
 <template>
   <VcContainer v-if="!isWaitingForFirstCategory">
-    <PageBuilderSection
-      v-for="item in templateParts.before"
-      :key="item.id"
-      :item="item"
-      :context="sectionContext"
-      :id="getAnchorId(item)"
-      class="mb-5 xl:mb-6"
-    />
+    <PageBuilderSections :items="templateParts.before" :context="sectionContext" spaced class="mb-5 xl:mb-6" />
 
     <VcBreadcrumbs
       v-if="currentCategory?.breadcrumbs && !listing?.hideBreadcrumbs"
@@ -22,13 +15,11 @@
       allow-set-meta
     />
 
-    <PageBuilderSection
-      v-for="item in templateParts.after"
-      :key="item.id"
-      :item="item"
+    <PageBuilderSections
+      :items="templateParts.after"
       :context="sectionContext"
       :lazy="lazySections"
-      :id="getAnchorId(item)"
+      spaced
       class="mt-5 xl:mt-6"
     />
   </VcContainer>
@@ -44,11 +35,10 @@ import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyal
 import { useScopeHandOver } from "@/shared/layout/composables/useScopeHandOver";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import {
-  getAnchorId,
   getPreviewSectionAttrs,
   isLazySectionsEnabled,
   MAIN_SECTION_TYPES,
-  PageBuilderSection,
+  PageBuilderSections,
   splitTemplate,
   useAnchorScroll,
   useTemplateResolution,

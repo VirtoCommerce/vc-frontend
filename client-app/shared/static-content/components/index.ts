@@ -19,6 +19,7 @@ import type { Component } from "vue";
 
 export { default as PageBuilderPage } from "./page-builder-page.vue";
 export { default as PageBuilderSection } from "./page-builder-section.vue";
+export { default as PageBuilderSections } from "./page-builder-sections.vue";
 export { default as PageTemplate } from "./page-template.vue";
 
 const Slider = defineAsyncComponent(() => import("./slider.vue"));

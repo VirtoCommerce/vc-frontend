@@ -1,21 +1,9 @@
 <template>
-  <PageBuilderSection
-    v-for="item in templateParts.before"
-    :key="item.id"
-    :item="item"
-    :id="getAnchorId(item)"
-    :context="sectionContext"
-  />
+  <PageBuilderSections :items="templateParts.before" :context="sectionContext" />
 
   <slot />
 
-  <PageBuilderSection
-    v-for="item in templateParts.after"
-    :key="item.id"
-    :item="item"
-    :id="getAnchorId(item)"
-    :context="sectionContext"
-  />
+  <PageBuilderSections :items="templateParts.after" :context="sectionContext" />
 </template>
 
 <script setup lang="ts">
@@ -23,11 +11,10 @@ import { computed, watchEffect } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
-import { getAnchorId } from "../anchors";
 import { usePermalinkSeo } from "../composables/usePermalinkSeo";
 import { useTemplateResolution } from "../composables/useThemeTemplates";
 import { getSettingsLayout, MAIN_SECTION_TYPES, mergePageSettings, splitTemplate } from "../templates";
-import PageBuilderSection from "./page-builder-section.vue";
+import PageBuilderSections from "./page-builder-sections.vue";
 
 interface IProps {
   pageSettings?: Record<string, unknown>;
