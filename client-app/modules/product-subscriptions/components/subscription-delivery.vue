@@ -328,6 +328,31 @@ function onChangeFrequency(id: string, event: MouseEvent): void {
     @apply flex flex-wrap items-center justify-end gap-x-3 gap-y-2;
   }
 
+  // On a phone the widget header (shape, date, total and buttons) doesn't fit one row: the date was squeezed onto
+  // three lines under the total. The header wraps, and the total and buttons take their own full-width row.
+  @media (width < theme("screens.sm")) {
+    .vc-widget__header {
+      @apply flex-wrap gap-y-2;
+    }
+
+    // The date stays beside the shape: sized from zero, it wraps inside itself instead of dropping below the shape.
+    .vc-widget__title {
+      @apply basis-0;
+    }
+
+    .vc-widget__header > .vc-widget__prepend-append:last-child {
+      @apply w-full;
+    }
+
+    .subscription-delivery__actions {
+      @apply w-full;
+    }
+
+    .subscription-delivery__summary {
+      @apply me-auto;
+    }
+  }
+
   &__summary {
     @apply whitespace-nowrap text-sm text-neutral-700;
   }
