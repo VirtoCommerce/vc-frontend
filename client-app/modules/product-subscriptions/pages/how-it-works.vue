@@ -35,11 +35,13 @@
           :title="$t(`product_subscriptions.how_it_works.rules.${rule.key}.title`)"
           :prepend-icon="rule.icon"
         >
-          <ul class="how-it-works__list">
-            <li v-for="index in rule.items" :key="index">
-              {{ $t(`product_subscriptions.how_it_works.rules.${rule.key}.items.${index - 1}`) }}
-            </li>
-          </ul>
+          <VcList>
+            <VcListItem
+              v-for="index in rule.items"
+              :key="index"
+              :description="$t(`product_subscriptions.how_it_works.rules.${rule.key}.items.${index - 1}`)"
+            />
+          </VcList>
         </VcWidget>
       </div>
 
@@ -138,9 +140,6 @@ usePageHead({ title: computed(() => t("product_subscriptions.how_it_works.title"
     }
   }
 
-  &__list {
-    @apply flex list-disc flex-col gap-2 ps-5 text-sm text-neutral-700;
-  }
 
   &__manage {
     @apply flex flex-wrap items-center justify-between gap-3 text-sm text-neutral-700;
