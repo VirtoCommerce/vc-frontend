@@ -458,9 +458,20 @@ function onRenewalAction({ action, renewal }: { action: "accept" | "retry" | "sk
   }
 }
 
-function changeFrequency(subscription: SubscriptionType, triggerElement?: HTMLElement): void {
+async function changeFrequency(subscription: SubscriptionType, triggerElement?: HTMLElement): Promise<void> {
+  // The plans load after the subscriptions: a click that comes first waits for them (the Change link shows busy)
+  // instead of doing nothing.
+  if (!offerFor(subscription.productId)) {
+    busy[subscription.id] = "change";
+    try {
+      await loadOffers([subscription.productId]);
+    } finally {
+      busy[subscription.id] = undefined;
+    }
+  }
   const offer = offerFor(subscription.productId);
   if (!offer) {
+    notifyError(new Error(`No subscription plan for product ${subscription.productId}`));
     return;
   }
 
