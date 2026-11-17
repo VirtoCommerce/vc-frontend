@@ -6,6 +6,7 @@
       `vc-alert--size--${size}`,
       {
         'vc-alert--shadow': shadow,
+        'vc-alert--button-end': button && buttonPosition === 'end',
       },
     ]"
   >
@@ -199,6 +200,13 @@ const iconName = computed<string>(() => {
     --vc-icon-color: var(--close-button-icon-color);
 
     @apply flex items-center justify-center my-[calc((var(--line-height)_-_1.75rem)/2)] -me-2 size-7;
+  }
+
+  // With an action button in the end position the alert is taller than the text's
+  // line box, so the whole row centers vertically — icon, text, close button and the
+  // button sit on one center, with a title or wrapped text too.
+  &--button-end {
+    @apply items-center;
   }
 
   &__button {
