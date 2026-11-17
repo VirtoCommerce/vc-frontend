@@ -1,0 +1,7 @@
+# One month of the Sales Statistics report: what `toReportingData` (shared/reporting) reads from a slot.
+fragment orderStatisticsSlotFields on OrderStatisticsPeriod {
+  count
+  total {
+    amount
+  }
+}
