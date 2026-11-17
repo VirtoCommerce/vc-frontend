@@ -8,9 +8,14 @@
       <VcWidget :title="$t('product_subscriptions.how_it_works.steps.title')" prepend-icon="refresh-cw" size="lg">
         <ol class="how-it-works__steps">
           <li v-for="step in STEPS" :key="step.key" class="how-it-works__step">
-            <span class="how-it-works__step-icon">
-              <VcIcon :name="step.icon" size="sm" />
-            </span>
+            <VcShape
+              class="how-it-works__step-icon"
+              :icon="step.icon"
+              mask="circle-solid"
+              size="2.5rem"
+              bg-color="--color-secondary-50"
+              icon-color="--color-secondary-600"
+            />
 
             <span class="how-it-works__step-text">
               <span class="how-it-works__step-title">
@@ -109,17 +114,16 @@ usePageHead({ title: computed(() => t("product_subscriptions.how_it_works.title"
   }
 
   &__step-icon {
-    --vc-icon-color: var(--color-secondary-600);
-
-    @apply flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary-50;
+    @apply shrink-0;
   }
 
   &__step-text {
     @apply flex flex-col gap-1 text-sm text-neutral-700;
   }
 
+  // A title inside the step: the heading font role, so a design that changes headings changes it too.
   &__step-title {
-    @apply text-base font-bold text-neutral-950;
+    @apply font-heading text-base font-bold text-neutral-950;
   }
 
   &__rules {
