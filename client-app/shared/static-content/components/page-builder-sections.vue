@@ -30,6 +30,11 @@ const visibleItems = computed(() => props.items.filter((item) => !item.hidden));
 
 <style lang="scss">
 .page-builder-sections {
+  // A visible item can still render nothing (no data, its module is off): the group then drops its margin too.
+  &:empty {
+    @apply hidden;
+  }
+
   // space-y, not a flex gap: the sections stay in block flow, where their own margins collapse.
   &--spaced {
     @apply space-y-5;
