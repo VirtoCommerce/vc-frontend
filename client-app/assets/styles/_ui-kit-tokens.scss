@@ -804,7 +804,8 @@
 
   // ============================================================
   // VcAlert — reuses the shared `--color-vc-*` semantic override keys so a
-  // single preset override drives button/badge/chip/alert. Fallbacks match VcBadge.
+  // single preset override drives button/badge/chip/alert. Fallbacks follow VcBadge
+  // except soft/outline/tonal icons (500 step, not 700) and the tonal background (50 tint, not 100).
   // VcAlert supports 4 variants (solid, soft, outline, tonal) — no surface/ghost.
   // ============================================================
   // VcAlert — solid

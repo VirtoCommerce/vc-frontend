@@ -31,9 +31,9 @@ interface IProps$K {
     square?: boolean;
     maxWidth?: string;
 }
-declare var __VLS_1$8: {};
+declare var __VLS_1$7: {};
 type __VLS_Slots$s = {} & {
-    default?: (props: typeof __VLS_1$8) => any;
+    default?: (props: typeof __VLS_1$7) => any;
 };
 declare const __VLS_base$s: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
     size: VcBadgeSizeType;
@@ -122,9 +122,9 @@ type CheckboxGroupValueType = string | number | object;
 interface IProps$H {
     modelValue?: (string | number | object)[];
 }
-declare var __VLS_1$7: {};
+declare var __VLS_1$6: {};
 type __VLS_Slots$q = {} & {
-    default?: (props: typeof __VLS_1$7) => any;
+    default?: (props: typeof __VLS_1$6) => any;
 };
 declare const __VLS_base$q: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
@@ -210,9 +210,9 @@ interface IProps$D {
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_8$8: {};
+declare var __VLS_8$7: {};
 type __VLS_Slots$p = {} & {
-    default?: (props: typeof __VLS_8$8) => any;
+    default?: (props: typeof __VLS_8$7) => any;
 };
 declare const __VLS_base$p: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$H: __VLS_WithSlots$p<typeof __VLS_base$p, __VLS_Slots$p>;
@@ -229,9 +229,9 @@ interface IProps$C {
     externalLink?: RouteLocationRaw;
     disabled?: boolean;
 }
-declare var __VLS_8$7: {};
+declare var __VLS_8$6: {};
 type __VLS_Slots$o = {} & {
-    default?: (props: typeof __VLS_8$7) => any;
+    default?: (props: typeof __VLS_8$6) => any;
 };
 declare const __VLS_base$o: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$G: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
@@ -2598,13 +2598,13 @@ declare var __VLS_9$3: {
     tooltipId: string;
 };
 declare var __VLS_12$2: {};
-declare var __VLS_15$1: {};
+declare var __VLS_15$2: {};
 type __VLS_Slots$n = {} & {
     default?: (props: typeof __VLS_9$3) => any;
 } & {
     trigger?: (props: typeof __VLS_12$2) => any;
 } & {
-    content?: (props: typeof __VLS_15$1) => any;
+    content?: (props: typeof __VLS_15$2) => any;
 };
 declare const __VLS_base$n: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     shown: (isShown: boolean) => any;
@@ -2633,25 +2633,30 @@ interface IProps$z {
     title?: string;
     shadow?: boolean;
     closable?: boolean;
+    buttonText?: string;
+    buttonPosition?: VcAlertButtonPositionType;
 }
-declare var __VLS_1$6: {};
-declare var __VLS_8$6: {};
-declare var __VLS_10$2: {};
+declare var __VLS_15$1: {};
+declare var __VLS_22$1: {};
+declare var __VLS_34$1: {};
 type __VLS_Slots$m = {} & {
-    'main-icon'?: (props: typeof __VLS_1$6) => any;
+    'main-icon'?: (props: typeof __VLS_15$1) => any;
 } & {
-    default?: (props: typeof __VLS_8$6) => any;
+    default?: (props: typeof __VLS_22$1) => any;
 } & {
-    'close-icon'?: (props: typeof __VLS_10$2) => any;
+    'close-icon'?: (props: typeof __VLS_34$1) => any;
 };
 declare const __VLS_base$m: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
+    buttonClick: () => any;
 }, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{
     onClose?: (() => any) | undefined;
+    onButtonClick?: (() => any) | undefined;
 }>, {
     size: VcAlertSizeType;
     variant: VcAlertVariantType;
     color: VcAlertColorType;
+    buttonPosition: VcAlertButtonPositionType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$D: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
 declare const _default$D: typeof __VLS_export$D;
@@ -6762,6 +6767,7 @@ type VcAlertVariantType =
     /** @deprecated Use "tonal" instead. */
     | "outline-dark";
 type VcAlertSizeType = "sm" | "md";
+type VcAlertButtonPositionType = "bottom" | "end";
 type VcButtonColorType = VcMainColorType;
 type VcButtonVariantType =
     | "solid"

@@ -46,7 +46,8 @@ const meta: Meta<typeof VcAlert> = {
     buttonPosition: {
       control: "inline-radio",
       options: BUTTON_POSITIONS,
-      description: "Where the action button renders when `button` is set: under the text or to the left of the close button.",
+      description:
+        "Where the action button renders when `buttonText` is set: under the text or to the left of the close button.",
       type: { name: "string", required: false },
       table: {
         type: {
@@ -307,13 +308,13 @@ export const Closable: StoryType = {
 
 // 7. Action button
 export const WithButton: StoryType = {
-  args: { title: "Order created", icon: true, button: "View details" },
+  args: { title: "Order created", icon: true, buttonText: "View details" },
   parameters: {
     actions: { handles: ["buttonClick"] },
     docs: {
       source: {
         code: `
-          <VcAlert title="Order created" icon button="View details" @button-click="handleButtonClick">
+          <VcAlert title="Order created" icon button-text="View details" @button-click="handleButtonClick">
             Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
           </VcAlert>
         `,
@@ -323,13 +324,17 @@ export const WithButton: StoryType = {
 };
 
 export const WithButtonEnd: StoryType = {
-  args: { icon: true, closable: true, button: "View details", buttonPosition: "end" },
+  args: { icon: true, closable: true, buttonText: "View details", buttonPosition: "end" },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">Your order #4812 has been placed.</VcAlert>`,
+  }),
   parameters: {
     actions: { handles: ["buttonClick", "close"] },
     docs: {
       source: {
         code: `
-          <VcAlert icon closable button="View details" button-position="end" @button-click="handleButtonClick">
+          <VcAlert icon closable button-text="View details" button-position="end" @button-click="handleButtonClick">
             Your order #4812 has been placed.
           </VcAlert>
         `,
