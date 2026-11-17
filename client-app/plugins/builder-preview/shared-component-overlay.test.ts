@@ -266,6 +266,22 @@ describe("shared component preview overlay", () => {
     expect(window.scroll).toHaveBeenCalledOnce();
   });
 
+  it("scrolls to a placement after a pending render, or at once without one", () => {
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    expect(window.scroll).not.toHaveBeenCalled();
+
+    flushAnimationFrames();
+    expect(window.scroll).toHaveBeenCalledOnce();
+
+    overlay.scrollToPlacement("componentRef1");
+    expect(window.scroll).toHaveBeenCalledTimes(2);
+  });
+
   it("rerenders on resize and removes observers and event listeners on dispose", () => {
     appendAnchor("first", 100);
     appendAnchor("after", 300);
@@ -292,6 +308,26 @@ describe("shared component preview overlay", () => {
     expect(nextAnimationFrameId).toBe(scheduledBeforeEvents);
     expect(onSelect).not.toHaveBeenCalled();
   });
+
+  it("removes every listener and its pending render when disposed, once", () => {
+    const addedListeners = spyOnListeners("addEventListener");
+    const removedListeners = spyOnListeners("removeEventListener");
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+
+    overlay.dispose();
+    overlay.dispose();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    flushAnimationFrames();
+
+    expect(addedListeners().map(([, type]) => type)).toEqual(["mousemove", "mouseleave", "click", "resize"]);
+    expect(removedListeners()).toEqual(expect.arrayContaining(addedListeners()));
+    expect(resizeObserver.disconnect).toHaveBeenCalledOnce();
+    expect(window.scroll).not.toHaveBeenCalled();
+  });
 });
 
 function createOverlay(onSelect = vi.fn(), onHover = vi.fn()) {
@@ -303,6 +339,14 @@ function createOverlay(onSelect = vi.fn(), onHover = vi.fn()) {
     blocker,
     overlay,
   };
+}
+
+/** Vitest's jsdom environment wraps the window's listener methods, so they bypass `EventTarget.prototype`. */
+function spyOnListeners(method: "addEventListener" | "removeEventListener"): () => unknown[][] {
+  const spies = [vi.spyOn(EventTarget.prototype, method), vi.spyOn(window, method)];
+
+  return () =>
+    spies.flatMap((spy) => spy.mock.calls.map(([type, listener], index) => [spy.mock.contexts[index], type, listener]));
 }
 
 function recordResizeObserver(observer: ResizeObserverMock): void {

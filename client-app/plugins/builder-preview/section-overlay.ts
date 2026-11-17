@@ -1,3 +1,4 @@
+import { OverlayLayer } from "./overlay-layer";
 import { SECTION_ATTRIBUTE } from "./utils";
 
 export const OUTLINE_COLOR = "#2563eb";
@@ -12,7 +13,7 @@ function findSectionElement(sectionId: string): HTMLElement | undefined {
 }
 
 export class SectionOverlay {
-  private readonly layer: HTMLDivElement;
+  private readonly layer: OverlayLayer;
   private readonly hoverBox: HTMLDivElement;
   private readonly selectBox: HTMLDivElement;
   private labels: Record<string, string> = {};
@@ -23,7 +24,6 @@ export class SectionOverlay {
   /** The selection is scrolled to once it has an element: a page may render it after its data has loaded. */
   private isScrollPending = false;
   private isEnabled = false;
-  private frame: number | undefined;
 
   constructor(
     body: HTMLElement,
@@ -33,34 +33,22 @@ export class SectionOverlay {
     /** The shared component placement at a point: hovered as a whole, as its sections are not the page's. */
     private readonly placementAt: (clientX: number, clientY: number) => string | null = () => null,
   ) {
-    this.layer = document.createElement("div");
-    this.layer.setAttribute("aria-hidden", "true");
-    Object.assign(this.layer.style, {
-      position: "absolute",
-      inset: "0",
+    this.layer = new OverlayLayer(body, blocker, {
       zIndex: OVERLAY_Z_INDEX,
-      pointerEvents: "none",
+      render: () => this.render(),
+      onPointerMove: this.handlePointerMove,
+      onPointerLeave: this.handlePointerLeave,
+      onClick: this.handleClick,
+      shouldRenderOnScroll: true,
     });
     this.hoverBox = createBox("1px dashed");
     this.selectBox = createBox("2px solid");
-    this.layer.append(this.hoverBox, this.selectBox);
-    body.appendChild(this.layer);
-
-    blocker.addEventListener("mousemove", this.handlePointerMove);
-    blocker.addEventListener("mouseleave", this.handlePointerLeave);
-    blocker.addEventListener("click", this.handleClick);
-    window.addEventListener("resize", this.scheduleRender);
-    window.addEventListener("scroll", this.scheduleRender, { passive: true });
-
-    // Sections load and move after selection; the layer is absolute, so placing boxes cannot resize the body and loop.
-    if (typeof ResizeObserver !== "undefined") {
-      new ResizeObserver(this.scheduleRender).observe(body);
-    }
+    this.layer.element.append(this.hoverBox, this.selectBox);
   }
 
   setEnabled(isEnabled: boolean): void {
     this.isEnabled = isEnabled;
-    this.layer.style.display = isEnabled ? "block" : "none";
+    this.layer.element.style.display = isEnabled ? "block" : "none";
     this.scheduleRender();
   }
 
@@ -81,22 +69,20 @@ export class SectionOverlay {
     this.scheduleRender();
   }
 
-  /** Two frames, so the outlines are measured after the page has rendered. */
-  readonly scheduleRender = (): void => {
-    if (this.frame !== undefined) {
-      cancelAnimationFrame(this.frame);
-    }
+  scheduleRender(): void {
+    this.layer.scheduleRender();
+  }
 
-    this.frame = requestAnimationFrame(() => {
-      this.frame = requestAnimationFrame(() => {
-        this.frame = undefined;
-        const selected = this.selected && findSectionElement(this.selected) ? this.selected : this.selectedFallback;
-        this.place(this.selectBox, selected);
-        this.place(this.hoverBox, this.hovered === selected ? null : this.hovered);
-        this.scrollToSelected(selected);
-      });
-    });
-  };
+  dispose(): void {
+    this.layer.dispose();
+  }
+
+  private render(): void {
+    const selected = this.selected && findSectionElement(this.selected) ? this.selected : this.selectedFallback;
+    this.place(this.selectBox, selected);
+    this.place(this.hoverBox, this.hovered === selected ? null : this.hovered);
+    this.scrollToSelected(selected);
+  }
 
   private scrollToSelected(sectionId: string | null): void {
     const element = this.isScrollPending && sectionId ? findSectionElement(sectionId) : undefined;

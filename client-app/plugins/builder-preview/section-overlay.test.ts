@@ -28,11 +28,21 @@ function selectedLabel(): string | undefined {
   return box?.style.display === "block" ? (box.textContent ?? "") : undefined;
 }
 
+/** Vitest's jsdom environment wraps the window's listener methods, so they bypass `EventTarget.prototype`. */
+function spyOnListeners(method: "addEventListener" | "removeEventListener"): () => unknown[][] {
+  const spies = [vi.spyOn(EventTarget.prototype, method), vi.spyOn(window, method)];
+
+  return () =>
+    spies.flatMap((spy) => spy.mock.calls.map(([type, listener], index) => [spy.mock.contexts[index], type, listener]));
+}
+
 describe("SectionOverlay", () => {
   let resizeCallbacks: (() => void)[];
+  let disconnectResizeObserver: () => void;
 
   beforeEach(() => {
     resizeCallbacks = [];
+    disconnectResizeObserver = vi.fn();
     vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
       callback(0);
       return 0;
@@ -45,11 +55,16 @@ describe("SectionOverlay", () => {
         }
 
         observe(): void {}
+
+        disconnect(): void {
+          disconnectResizeObserver();
+        }
       },
     );
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
   });
@@ -104,5 +119,34 @@ describe("SectionOverlay", () => {
     delete (document as Partial<Document>).elementsFromPoint;
 
     expect(onHover.mock.calls).toEqual([["placement"], ["section"]]);
+  });
+
+  it("removes its layer, listeners, observer and pending render when disposed, once", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    let nextFrameId = 1;
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback): number => {
+      frames.set(nextFrameId, callback);
+      return nextFrameId++;
+    });
+    vi.stubGlobal("cancelAnimationFrame", (id: number): void => {
+      frames.delete(id);
+    });
+    const addedListeners = spyOnListeners("addEventListener");
+    const removedListeners = spyOnListeners("removeEventListener");
+    const { overlay } = createOverlay();
+    const section = addSection("section");
+    overlay.select("section", null, true);
+
+    overlay.dispose();
+    overlay.dispose();
+    overlay.select("section", null, true);
+    frames.forEach((callback) => callback(0));
+    frames.forEach((callback) => callback(0));
+
+    expect(document.querySelector("[aria-hidden='true']")).toBeNull();
+    expect(addedListeners().map(([, type]) => type)).toEqual(["mousemove", "mouseleave", "click", "resize", "scroll"]);
+    expect(removedListeners()).toEqual(expect.arrayContaining(addedListeners()));
+    expect(disconnectResizeObserver).toHaveBeenCalledOnce();
+    expect(section.scrollIntoView).not.toHaveBeenCalled();
   });
 });
