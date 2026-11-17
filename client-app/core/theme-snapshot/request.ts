@@ -200,7 +200,8 @@ function parseSettings(value: unknown): Record<string, unknown> | undefined {
   try {
     const settings: unknown = JSON.parse(value);
     return isRecord(settings) ? settings : undefined;
-  } catch {
+  } catch (error) {
+    Logger.warn(`${LOG_SCOPE} Ignored page settings that are not valid JSON`, error);
     return undefined;
   }
 }

@@ -1,10 +1,12 @@
+import { isRecord } from "@/core/utilities";
+
 const CULTURE_KEY_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i;
 
 /** A dictionary has at least one culture name with a subtag, so a row such as `{ "sku": "X1" }` stays a row. */
 const CULTURE_WITH_SUBTAG_REGEX = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})+$/i;
 
 export function isTranslatableDictionary(value: unknown): value is Record<string, string> {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+  if (!isRecord(value)) {
     return false;
   }
 
@@ -48,7 +50,7 @@ export function resolveTranslatableValues<T>(value: T, cultureName: string, defa
     return value.map((item: unknown) => resolveTranslatableValues(item, cultureName, defaultCultureName)) as T;
   }
 
-  if (typeof value === "object" && value !== null) {
+  if (isRecord(value)) {
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [
         key,

@@ -11,6 +11,8 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 export type ThemeGroupType = "header" | "footer";
 
+const LOG_SCOPE = "[theme-snapshot]";
+
 export const useThemeGroups = createGlobalState(() => {
   const { theme, localizeThemeDraft } = useThemeSnapshot();
   const { currentLanguage } = useLanguages();
@@ -56,7 +58,7 @@ export const useThemeGroups = createGlobalState(() => {
       draftMenus.set(draftKey, (await getMenu(name)) as MenuLinkType[]);
     } catch (error) {
       requestedDraftMenus.delete(draftKey);
-      Logger.error(`${useThemeGroups.name}.${loadDraftMenu.name}`, error);
+      Logger.error(`${LOG_SCOPE} Failed to load the draft menu`, error);
     }
   }
 
