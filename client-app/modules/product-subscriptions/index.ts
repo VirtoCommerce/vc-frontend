@@ -6,7 +6,9 @@ import { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuar
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames.ts";
 import { loadModuleLocale } from "../utils";
+import { isCartLineSubscribed } from "./composables/useCartSubscriptions";
 import { useSubscriptionCheckout } from "./composables/useSubscriptionCheckout";
+import { useSubscriptionOffers } from "./composables/useSubscriptionOffers";
 import { ENABLED_KEY, MOCK_PAYMENT_TYPE_NAME, MODULE_ID, TERMS_GUARD_ID } from "./constants";
 import { menuItems } from "./menu";
 import { publicRoutes, routes } from "./routes";
@@ -17,6 +19,10 @@ import type { Router } from "vue-router";
 
 const PurchaseOptions = defineAsyncComponent(() => import("./components/purchase-options.vue"));
 const CartLineSubscription = defineAsyncComponent(() => import("./components/cart-line-subscription.vue"));
+const OrderLineSubscription = defineAsyncComponent(() => import("./components/order-line-subscription.vue"));
+const OrderSubscriptionBadge = defineAsyncComponent(() => import("./components/order-subscription-badge.vue"));
+const OrderSubscriptionNotice = defineAsyncComponent(() => import("./components/order-subscription-notice.vue"));
+const CartLineSubscribeButton = defineAsyncComponent(() => import("./components/cart-line-subscribe-button.vue"));
 const CheckoutSubscriptionTerms = defineAsyncComponent(() => import("./components/checkout-subscription-terms.vue"));
 const MockCardPayment = defineAsyncComponent(() => import("./components/mock-card-payment.vue"));
 const AddCardMock = defineAsyncComponent(() => import("./components/add-card-mock.vue"));
@@ -24,6 +30,7 @@ const AddCardMock = defineAsyncComponent(() => import("./components/add-card-moc
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { register } = useExtensionRegistry();
 const { mergeMenuSchema } = useNavigations();
+const { offerFor } = useSubscriptionOffers();
 
 function isMockPayment({ paymentTypeName }: { paymentTypeName: string }) {
   return paymentTypeName === MOCK_PAYMENT_TYPE_NAME;
@@ -51,9 +58,38 @@ export function init(router: Router, i18n: I18n) {
     condition: (product: Product) => !product.isConfigurable && !product.hasVariations,
   });
 
+  // Also loads the offers of the cart's products, which the Subscribe button's condition reads.
   register("cartLineItem", EXTENSION_NAMES.cartLineItem.details, {
     component: CartLineSubscription,
     condition: (lineItem: PreparedLineItemType) => !!lineItem.productId && !lineItem.isConfigurable,
+  });
+
+  // Only for a line that can be subscribed and isn't yet: the host then shows "Save for later" as an icon next to it,
+  // and a subscribed line gets its full "Save for later" button back.
+  register("cartLineItem", EXTENSION_NAMES.cartLineItem.actions, {
+    component: CartLineSubscribeButton,
+    condition: (lineItem: PreparedLineItemType) =>
+      isAuthenticated.value &&
+      !lineItem.isConfigurable &&
+      !!offerFor(lineItem.productId) &&
+      !isCartLineSubscribed(lineItem.id),
+  });
+
+  // Order history: a line bought by subscription shows the cart's subscription row, read-only.
+  register("orderLineItem", EXTENSION_NAMES.orderLineItem.details, {
+    component: OrderLineSubscription,
+    condition: () => isAuthenticated.value,
+  });
+
+  // Order history: an order a subscription placed itself on its delivery date is marked in the list and on its page.
+  register("orderListItem", EXTENSION_NAMES.orderListItem.badge, {
+    component: OrderSubscriptionBadge,
+    condition: () => isAuthenticated.value,
+  });
+
+  register("orderDetails", EXTENSION_NAMES.orderDetails.notice, {
+    component: OrderSubscriptionNotice,
+    condition: () => isAuthenticated.value,
   });
 
   // Registered here, not by the terms block: the block is loaded on demand, and Place order must stay closed until it

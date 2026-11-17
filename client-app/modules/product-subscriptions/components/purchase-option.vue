@@ -14,7 +14,7 @@
           <slot name="title" />
         </span>
 
-        <span class="purchase-option__price">
+        <span v-if="price || $slots.price" class="purchase-option__price">
           <slot name="price">
             <VcPriceDisplay :value="price" />
           </slot>

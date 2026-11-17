@@ -11,11 +11,14 @@
       :prepend-icon="!icons ? 'bookmark-solid' : null"
       :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
+      :title="icons ? $t('pages.cart.save_for_later') : undefined"
       data-test-id="save-for-later-button"
       @click="$emit('saveForLater')"
     >
       <span v-if="!icons">{{ $t("pages.cart.save_for_later") }}</span>
     </VcButton>
+
+    <slot />
   </div>
 </template>
 
@@ -42,8 +45,14 @@ const { isAuthenticated } = useUser();
 
 <style lang="scss">
 .cart-item-actions {
+  @apply mt-2 flex flex-wrap items-center gap-2;
+
+  &:empty {
+    @apply hidden;
+  }
+
   &__button {
-    @apply align-middle mt-2;
+    @apply align-middle;
   }
 }
 </style>

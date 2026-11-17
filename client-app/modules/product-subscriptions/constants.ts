@@ -27,8 +27,12 @@ export const ATTENTION_RENEWAL_STATES: ReadonlySet<string> = new Set([
 ]);
 
 export const SUBSCRIPTIONS_ROUTE_NAME = "ProductSubscriptions";
-export const SUBSCRIPTION_DETAILS_ROUTE_NAME = "ProductSubscriptionDetails";
 export const HOW_IT_WORKS_ROUTE_NAME = "SubscribeAndSaveHowItWorks";
 
 /** The checkout guard that holds Place order until the subscription terms are accepted. */
 export const TERMS_GUARD_ID = "product-subscription-terms";
+
+/** The state of a delivery the server hasn't prepared yet (no renewal): built on the page from the subscriptions. */
+export const UPCOMING_DELIVERY_STATE = "Upcoming";
+/** The id prefix of a delivery built on the page from subscriptions. */
+export const UPCOMING_ID_PREFIX = "upcoming-";

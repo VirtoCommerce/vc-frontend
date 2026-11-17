@@ -1,7 +1,13 @@
 <template>
   <div
     ref="containerRef"
-    class="vc-variant-picker-group"
+    :class="[
+      'vc-variant-picker-group',
+      {
+        [`vc-variant-picker-group--columns--${columns}`]: hasColumns,
+        'vc-variant-picker-group--with-top-badge': topBadgeCount > 0,
+      },
+    ]"
     role="radiogroup"
     :aria-label="ariaLabelValue"
     tabindex="-1"
@@ -55,6 +61,20 @@ interface IProps {
   maxRows?: number;
   ariaLabel?: string;
   testId?: string;
+  /**
+   * `auto` keeps tiles at their own width and wraps them; a number lays them out in that many equal columns.
+   */
+  columns?: VcVariantPickerGroupColumnsType;
+  /**
+   * Tile width: `false` sizes each tile by its text, `true` stretches tiles to the container (with `columns="auto"`
+   * they share each row but never get narrower than their text). Not set: stretch when `columns` is a number.
+   */
+  fill?: boolean;
+  /**
+   * What the group sits on. On `tinted` (a *-50/100 panel) and `dark` surfaces corner badges switch to `outline`.
+   * Set `--vc-variant-picker-surface-color` to the same colour for the badge ring.
+   */
+  surface?: VcVariantPickerGroupSurfaceType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -62,6 +82,9 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   multiple: false,
   maxRows: 2,
+  columns: "auto",
+  fill: undefined,
+  surface: "base",
 });
 
 const LAYOUT_CONFIG = {
@@ -77,13 +100,16 @@ const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
 const visibleItemsCount = ref(0);
-const { modelValue, multiple, size, type, name, truncate, maxRows, ariaLabel } = toRefs(props);
+const { modelValue, multiple, size, type, name, truncate, maxRows, ariaLabel, surface } = toRefs(props);
+const topBadgeCount = ref(0);
 
 const internalModelValue = ref<string | string[]>(modelValue.value ?? (multiple.value ? [] : ""));
 
 const { t } = useI18n();
 const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
+const hasColumns = computed(() => props.columns !== "auto");
+const fill = computed(() => props.fill ?? hasColumns.value);
 const ariaLabelValue = computed(() => ariaLabel.value ?? t("ui_kit.accessibility.variant_picker_group"));
 const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
@@ -420,13 +446,24 @@ function toggleValue(value: string | string[]): void {
   emit("change", internalModelValue.value);
 }
 
+function registerTopBadge(): () => void {
+  topBadgeCount.value++;
+
+  return () => {
+    topBadgeCount.value--;
+  };
+}
+
 provide<VcVariantPickerGroupContextType>("variantPickerGroupContext", {
   modelValue: internalModelValue,
   multiple,
   size,
   type,
   name,
+  fill,
+  surface,
   toggleValue,
+  registerTopBadge,
 });
 
 watch(
@@ -462,6 +499,19 @@ onMounted(() => {
 <style lang="scss">
 .vc-variant-picker-group {
   @apply flex flex-wrap gap-2;
+
+  &--columns {
+    @for $count from 1 through 4 {
+      &--#{$count} {
+        @apply grid grid-cols-#{$count};
+      }
+    }
+  }
+
+  // Room for badges that sit on the top edge of a tile, so they never cover the row above.
+  &--with-top-badge {
+    @apply pt-2 pe-1.5 gap-x-3.5 gap-y-4;
+  }
 
   &__wrapper {
     @apply flex items-center;

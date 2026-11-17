@@ -50,6 +50,8 @@ fragment productSubscriptionFields on ProductSubscription {
   canCancel
   canOrderNow
   canChange
+  canChangeFrequency
+  canChangePaymentMethod
   shippingAddress {
     firstName
     lastName

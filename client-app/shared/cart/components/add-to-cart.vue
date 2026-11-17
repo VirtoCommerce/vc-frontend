@@ -179,8 +179,7 @@ async function onConfigurableSubmit() {
   try {
     if (mode === AddToCartModeType.Update && lineItem) {
       const updatedCart = (await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value)) as
-        | CartValidationResultType
-        | undefined;
+        CartValidationResultType | undefined;
       const validationMessages = getConfigurableValidationErrors(updatedCart, lineItem.id);
       if (validationMessages.length) {
         displayErrorMessage(mode, validationMessages.join(" "));

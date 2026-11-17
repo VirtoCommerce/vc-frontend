@@ -140,7 +140,6 @@ usePageHead({ title: computed(() => t("product_subscriptions.how_it_works.title"
     }
   }
 
-
   &__manage {
     @apply flex flex-wrap items-center justify-between gap-3 text-sm text-neutral-700;
   }
