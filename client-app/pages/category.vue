@@ -1,5 +1,5 @@
 <template>
-  <VcContainer v-if="!isWaitingForCategory">
+  <VcContainer v-if="!isWaitingForFirstCategory">
     <PageBuilderSection
       v-for="item in templateParts.before"
       :key="item.id"
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, shallowRef, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
@@ -52,6 +52,7 @@ import {
   useAnchorScroll,
   useTemplateResolution,
 } from "@/shared/static-content";
+import type { ITemplateSubject } from "@/shared/static-content";
 import Category from "@/shared/catalog/components/category.vue";
 
 interface IProps {
@@ -90,26 +91,26 @@ const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
 
 const lazySections = isLazySectionsEnabled();
 
-const settledCategoryId = ref<string>();
+/** The last category whose request has finished, as the template rules see it. */
+const settledSubject = shallowRef<ITemplateSubject>();
 
-/** Without the slug's outline, a theme rule can depend on the loaded category, so waiting avoids a template switch. */
-const isWaitingForCategory = computed(
-  () =>
-    isNewPageBuilderEnabled() && !!props.categoryId && !props.outline && settledCategoryId.value !== props.categoryId,
-);
-
-const templateResolution = useTemplateResolution("category", () => {
-  if (isWaitingForCategory.value) {
+const templateSubject = computed<ITemplateSubject | undefined>(() => {
+  if (!props.categoryId) {
     return undefined;
   }
 
-  // The loaded category may still be the previous one: this route component stays when only the id changes.
-  const loadedOutline = currentCategory.value?.id === props.categoryId ? currentCategory.value?.outline : undefined;
-  const outline = props.outline ?? loadedOutline;
-  return props.categoryId
-    ? { categoryId: props.categoryId, categoryPaths: outline ? [outline.split("/")] : [] }
-    : undefined;
+  // Without the slug's outline a theme rule can depend on the loaded category, so the template follows the settled
+  // one: the next category switches it once it has loaded, while the page and its listing stay as they are.
+  if (isNewPageBuilderEnabled() && !props.outline) {
+    return settledSubject.value;
+  }
+
+  return toTemplateSubject(props.categoryId, props.outline ?? getLoadedOutline(props.categoryId));
 });
+
+const isWaitingForFirstCategory = computed(() => !!props.categoryId && !templateSubject.value);
+
+const templateResolution = useTemplateResolution("category", templateSubject);
 
 const templateParts = computed(() =>
   splitTemplate(templateResolution.value?.document.content ?? [], MAIN_SECTION_TYPES.category),
@@ -151,8 +152,17 @@ async function loadCategory(id: string): Promise<void> {
     await fetchCategory({ categoryId: id, maxLevel: 0, currencyCode: loyaltyCurrencyOverride.value });
   } finally {
     if (id === props.categoryId) {
-      settledCategoryId.value = id;
+      settledSubject.value = toTemplateSubject(id, getLoadedOutline(id));
     }
   }
+}
+
+// The loaded category may still be the previous one: this route component stays when only the id changes.
+function getLoadedOutline(id: string): string | undefined {
+  return currentCategory.value?.id === id ? (currentCategory.value.outline ?? undefined) : undefined;
+}
+
+function toTemplateSubject(id: string, outline: string | undefined): ITemplateSubject {
+  return { categoryId: id, categoryPaths: outline ? [outline.split("/")] : [] };
 }
 </script>

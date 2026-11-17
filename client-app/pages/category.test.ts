@@ -190,6 +190,64 @@ describe("category page", () => {
     expect(listingProps.value).toMatchObject({ "category-id": "toner", viewMode: "list" });
   });
 
+  it("keeps the listing and the previous category's template until the next category has loaded", async () => {
+    pageBuilder.isEnabled = true;
+    publish({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+    fetchedCategory.value = { id: "toner", outline: "catalog/sale/toner", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    await flushPromises();
+    const listing = wrapper.find('[data-test-id="category-listing-section"]').element;
+
+    heldFetches.value = new Map();
+    fetchedCategory.value = { id: "paper", outline: "catalog/office/paper", breadcrumbs: [] };
+    await wrapper.setProps({ categoryId: "paper" });
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').element).toBe(listing);
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "paper", viewMode: "list" });
+
+    heldFetches.value.get("paper")?.();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').element).toBe(listing);
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+    expect(listingProps.value).not.toHaveProperty("viewMode");
+  });
+
+  it("chooses the template by the slug's outline without waiting for the category", () => {
+    pageBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    publish({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+
+    const wrapper = mountCategory({ categoryId: "toner", outline: "catalog/sale/toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "toner", viewMode: "list" });
+  });
+
   it("shows the category once its request has finished, also when it found nothing", async () => {
     pageBuilder.isEnabled = true;
     fetchedCategory.value = { id: "catalog", breadcrumbs: [] };
@@ -200,20 +258,35 @@ describe("category page", () => {
     expect(listingProps.value).toMatchObject({ "category-id": "missing" });
   });
 
-  it("keeps the listing when the previous category's request finishes after the current one's", async () => {
+  it("keeps the listing and its template when the previous category's request finishes after the current one's", async () => {
     pageBuilder.isEnabled = true;
     heldFetches.value = new Map();
+    publish({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing" },
+          ],
+        },
+      },
+    });
 
     const wrapper = mountCategory({ categoryId: "toner" });
     await wrapper.setProps({ categoryId: "paper" });
 
+    fetchedCategory.value = { id: "paper", outline: "catalog/sale/paper", breadcrumbs: [] };
     heldFetches.value.get("paper")?.();
     await flushPromises();
+    fetchedCategory.value = { id: "toner", outline: "catalog/office/toner", breadcrumbs: [] };
     heldFetches.value.get("toner")?.();
     await flushPromises();
 
     expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
     expect(listingProps.value).toMatchObject({ "category-id": "paper" });
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
   });
 
   it("scrolls to the section the address names", () => {
