@@ -67,6 +67,7 @@
               params: { orderId: renewal.orderId },
               query: renewal.storedPaymentMethodId ? { card: renewal.storedPaymentMethodId } : undefined,
             }"
+            data-test-id="subscription-delivery-confirm-payment"
           >
             {{ $t("product_subscriptions.renewal.confirm_payment") }}
           </VcButton>
