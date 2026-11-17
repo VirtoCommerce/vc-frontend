@@ -352,6 +352,7 @@
           "switching_back": "Retour en cours…",
           "no_results": "Aucun résultat trouvé",
           "organization_locked_tooltip": "Cette organisation est verrouillée. Contactez votre administrateur pour obtenir l'accès.",
+          "search_organizations": "Rechercher des organisations",
           "dark_mode": {
             "system": "Thème : auto",
             "dark": "Thème : sombre",
@@ -414,6 +415,9 @@
             "navigation": "Navigation",
             "main_navigation": "Navigation principale"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title} : {name}"
         },
         "link_with_count": "{title} : {count}",
         "cart_items_tooltip": "Aucun article | {n} article | {n} articles"
