@@ -1,48 +1,21 @@
 <template>
-  <PageTemplate
+  <PageBuilderPage
     v-if="pageBuilderContent"
-    :page-settings="pageBuilderContent.settings"
+    :settings="pageBuilderContent.settings"
+    :content="pageBuilderContent.content"
+    :title="templateName"
     :permalink="permalink"
     :object-type="PAGES_OBJECT_TYPE"
-  >
-    <div
-      v-if="!pageBuilderContent.settings?.hideBreadcrumbs || pageBuilderContent.settings?.header"
-      class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
-    >
-      <VcBreadcrumbs v-if="!pageBuilderContent.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs">
-      </VcBreadcrumbs>
-
-      <VcTypography v-if="pageBuilderContent.settings?.header" tag="h1">
-        {{ pageBuilderContent.settings.header }}
-      </VcTypography>
-    </div>
-
-    <template v-for="item in pageBuilderContent.content">
-      <PageBuilderSection
-        v-if="!item.hidden"
-        :key="item.id"
-        :item="item"
-        :id="getAnchorId(item)"
-        :context="sectionContext"
-      />
-    </template>
-  </PageTemplate>
+  />
 </template>
 
 <script setup lang="ts">
 import { computed, shallowRef, unref, watch } from "vue";
-import { useBreadcrumbs } from "@/core/composables";
 import { isRecord, Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
-import {
-  getAnchorId,
-  PageBuilderSection,
-  PageTemplate,
-  useAnchorScroll,
-  usePageSeoInfo,
-} from "@/shared/static-content";
+import { PageBuilderPage, useAnchorScroll, usePageSeoInfo } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -73,10 +46,8 @@ const templateName = computed(() =>
     props.name || unref(pageBuilderContent)?.settings?.name || unref(pageBuilderContent)?.settings?.header || "",
   ),
 );
-const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 const pageBuilderContent = shallowRef<IPageBuilderContent | null>(null);
 
-const sectionContext = computed(() => ({ settings: pageBuilderContent.value?.settings }));
 const { setPageLayout } = usePageLayout();
 
 watch(

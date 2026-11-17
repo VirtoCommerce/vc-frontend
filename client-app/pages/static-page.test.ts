@@ -4,6 +4,7 @@ import { defineComponent, h, ref, toValue } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import StaticPage from "./static-page.vue";
+import type { Ref } from "vue";
 
 const staticPage = ref<{ settings: Record<string, unknown>; content: Array<Record<string, unknown>> }>();
 
@@ -24,15 +25,11 @@ vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
 
 vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/page" }) }));
 
-vi.mock("@/shared/static-content", async () => {
-  const anchors = await import("@/shared/static-content/anchors");
-  const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
-  const { defineComponent: define, h: render, ref: vueRef } = await import("vue");
+vi.mock("@/shared/static-content/components/page-template.vue", async () => {
+  const { defineComponent: define, h: render } = await import("vue");
 
   return {
-    ...anchors,
-    PageBuilderSection,
-    PageTemplate: define({
+    default: define({
       name: "PageTemplate",
       props: ["pageSettings", "permalink", "objectType"],
       setup:
@@ -43,6 +40,15 @@ vi.mock("@/shared/static-content", async () => {
           render("section", { "data-test-id": "template-after-section" }),
         ],
     }),
+  };
+});
+
+vi.mock("@/shared/static-content", async () => {
+  const { default: PageBuilderPage } = await import("@/shared/static-content/components/page-builder-page.vue");
+  const { ref: vueRef } = await import("vue");
+
+  return {
+    PageBuilderPage,
     useAnchorScroll: vi.fn(),
     usePageSeoInfo,
     useStaticPage: () => ({ staticPage, staticPagePreviewSubject: vueRef() }),
@@ -88,9 +94,17 @@ describe("StaticPage", () => {
     expect(anchor?.contains(wrapper.find('[data-test-id="template-after-section"]').element)).toBe(true);
     expect(usePageSeoInfo).toHaveBeenCalledWith(
       expect.any(Function),
-      expect.any(Function),
+      expect.anything(),
       useElementVisibility.mock.results[0].value,
     );
+  });
+
+  it("titles the head with the humanized page name when the page has no SEO title", () => {
+    staticPage.value = { settings: { name: "spring_sale" }, content: [] };
+    mount(StaticPage);
+    const [, fallbackTitle] = usePageSeoInfo.mock.calls[0] as [unknown, Ref<string>];
+
+    expect(fallbackTitle.value).toBe("Spring sale");
   });
 
   it("gives its template the page's permalink, which the canonical URL is built from, not the visited path", () => {

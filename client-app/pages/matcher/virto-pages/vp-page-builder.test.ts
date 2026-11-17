@@ -37,21 +37,27 @@ vi.mock("@/shared/static-content/anchors", async () => {
 });
 
 vi.mock("@/shared/static-content", async () => {
-  const anchors = await import("@/shared/static-content/anchors");
   const { useAnchorScroll } = await import("@/shared/static-content/composables/useAnchorScroll");
-  const { default: PageBuilderSection } = await import("@/shared/static-content/components/page-builder-section.vue");
+  const { default: PageBuilderPage } = await import("@/shared/static-content/components/page-builder-page.vue");
   const { registerPageBuilderSections } = await import("@/shared/static-content/sections");
   const { defineComponent, h } = await import("vue");
   const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
-  const PageTemplate = defineComponent({
-    setup:
-      (_props, { slots }) =>
-      () =>
-        slots.default?.(),
-  });
   registerPageBuilderSections({ "test-block": section });
 
-  return { ...anchors, useAnchorScroll, usePageSeoInfo, PageBuilderSection, PageTemplate };
+  return { useAnchorScroll, usePageSeoInfo, PageBuilderPage };
+});
+
+vi.mock("@/shared/static-content/components/page-template.vue", async () => {
+  const { defineComponent } = await import("vue");
+
+  return {
+    default: defineComponent({
+      setup:
+        (_props, { slots }) =>
+        () =>
+          slots.default?.(),
+    }),
+  };
 });
 
 const mountedWrappers: Array<{ unmount: () => void }> = [];
