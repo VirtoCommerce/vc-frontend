@@ -1,7 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, shallowRef, toValue, watch } from "vue";
-import { useLanguages } from "@/core/composables/useLanguages";
-import { resolveTranslatableValues, useThemeSnapshot } from "@/core/theme-snapshot";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { BUILT_IN_TEMPLATES, withMainSection } from "../templates/built-in";
 import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "../templates/rules";
 import { useTemplateConditions } from "./useTemplateConditions";
@@ -11,22 +10,14 @@ import type { IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 import type { MaybeRefOrGetter } from "vue";
 
 export const useThemeTemplates = createGlobalState(() => {
-  const { theme } = useThemeSnapshot();
+  const { theme, localizeThemeDraft } = useThemeSnapshot();
   const { getTemplateCondition } = useTemplateConditions();
-  const { currentLanguage, defaultStoreCulture } = useLanguages();
 
   const openTemplate = shallowRef<{ key: string; document: IThemePageDocument }>();
   const lastResolution = shallowRef<ITemplateResolution>();
 
   const templates = computed(() => ({ ...BUILT_IN_TEMPLATES, ...theme.value?.templates }));
   const rules = computed(() => normalizeTemplateRules(theme.value?.rules));
-
-  function localize(document: IThemePageDocument): IThemePageDocument {
-    // Only the designer's draft can hold translatable dictionaries; a published snapshot has one language.
-    return theme.value?.isDraft
-      ? resolveTranslatableValues(document, currentLanguage.value?.cultureName ?? "", defaultStoreCulture.value)
-      : document;
-  }
 
   function resolveTemplate(
     pageType: ThemePageType,
@@ -49,7 +40,7 @@ export const useThemeTemplates = createGlobalState(() => {
 
     return {
       ...shown,
-      document: withMainSection(localize(shown.document), pageType, shown.template),
+      document: withMainSection(localizeThemeDraft(shown.document), pageType, shown.template),
       rules: { template: choice.template, ruleId: choice.ruleId },
     };
   }

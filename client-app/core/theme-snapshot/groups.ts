@@ -4,7 +4,6 @@ import { getMenu } from "@/core/api/graphql";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { Logger } from "@/core/utilities";
 import { convertToExtendedMenuLink } from "@/core/utilities/menu";
-import { resolveTranslatableValues } from "./translatable";
 import { useThemeSnapshot } from "./useThemeSnapshot";
 import type { IThemeItem, IThemeMenuLink } from "./types";
 import type { MenuLinkType } from "@/core/api/graphql/types";
@@ -13,8 +12,8 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 export type ThemeGroupType = "header" | "footer";
 
 export const useThemeGroups = createGlobalState(() => {
-  const { theme } = useThemeSnapshot();
-  const { currentLanguage, defaultStoreCulture } = useLanguages();
+  const { theme, localizeThemeDraft } = useThemeSnapshot();
+  const { currentLanguage } = useLanguages();
   /** A draft can name menus the published snapshot does not carry. */
   const draftMenus = shallowReactive(new Map<string, MenuLinkType[]>());
   const requestedDraftMenus = new Set<string>();
@@ -22,10 +21,7 @@ export const useThemeGroups = createGlobalState(() => {
   const groups = computed<Record<ThemeGroupType, IThemeItem[]>>(() => {
     const content = { header: theme.value?.header?.content ?? [], footer: theme.value?.footer?.content ?? [] };
 
-    // Only the designer's draft can hold translatable dictionaries; a published snapshot has one language.
-    return theme.value?.isDraft
-      ? resolveTranslatableValues(content, currentLanguage.value?.cultureName ?? "", defaultStoreCulture.value)
-      : content;
+    return localizeThemeDraft(content);
   });
 
   function getGroupSection(group: ThemeGroupType, type: string): IThemeItem | undefined {

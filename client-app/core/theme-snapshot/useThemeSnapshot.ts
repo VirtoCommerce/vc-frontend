@@ -1,10 +1,13 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { isNewPageBuilderEnabled } from "./enabled";
+import { resolveTranslatableValues } from "./translatable";
 import type { IPublishedTheme, IThemeDraft, IThemeView } from "./types";
 
 /** `theme` is `undefined` while the storefront renders its built-in templates. */
 function _useThemeSnapshot() {
+  const { currentLanguage, defaultStoreCulture } = useLanguages();
   const published = shallowRef<IPublishedTheme>();
   const late = shallowRef<IPublishedTheme | null>();
   const draft = shallowRef<IThemeDraft>();
@@ -31,6 +34,13 @@ function _useThemeSnapshot() {
       isDraft: !!parts,
     };
   });
+
+  function localizeThemeDraft<T>(value: T): T {
+    // Only the designer's draft can hold translatable dictionaries; a published snapshot has one language.
+    return theme.value?.isDraft
+      ? resolveTranslatableValues(value, currentLanguage.value?.cultureName ?? "", defaultStoreCulture.value)
+      : value;
+  }
 
   function setPublished(value: IPublishedTheme | null): void {
     published.value = value ?? undefined;
@@ -73,6 +83,7 @@ function _useThemeSnapshot() {
 
   return {
     theme,
+    localizeThemeDraft,
     published: readonly(published),
     draft: readonly(draft),
     hasFailed: readonly(hasFailed),
