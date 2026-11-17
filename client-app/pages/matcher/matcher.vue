@@ -29,11 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from "vue";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
-import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import { useScopeHandOver } from "@/shared/layout/composables/useScopeHandOver";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { PreviewerStateType, UpdateStateEventArgs } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
@@ -128,36 +128,8 @@ watch(
   { immediate: true },
 );
 
-const { isCategoryScope, isScopePending, holdScope } = useSearchScore();
-
-let releaseScope: (() => void) | undefined;
-
-// Hold across the loader. Pre flush: the leaving category still has its scope; immediate: a route hand-over.
-watch(
-  () => visibleComponent.value === "loader",
-  (isLoader) => {
-    if (isLoader && (isCategoryScope.value || isScopePending.value) && !releaseScope) {
-      releaseScope = holdScope();
-    }
-  },
-  { immediate: true },
-);
-
-// Post flush: the next page has rendered; a category holds the scope itself (via slug-content until it prepares).
-watch(
-  () => visibleComponent.value === "loader",
-  (isLoader) => {
-    if (!isLoader) {
-      releaseScope?.();
-      releaseScope = undefined;
-    }
-  },
-  { flush: "post" },
-);
-
-onBeforeUnmount(() => {
-  releaseScope?.();
-});
+// Hold across the loader; a category holds the scope itself (via slug-content until it prepares).
+useScopeHandOver(() => visibleComponent.value === "loader");
 
 function updateState(eventArgs: UpdateStateEventArgs, previewerId: PreviewerStateType["id"]) {
   const { state, redirectUrl } = eventArgs;

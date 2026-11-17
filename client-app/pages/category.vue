@@ -41,6 +41,7 @@ import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
+import { useScopeHandOver } from "@/shared/layout/composables/useScopeHandOver";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import {
   getAnchorId,
@@ -130,38 +131,16 @@ const sectionContext = computed(() => ({ category: currentCategory.value }));
 
 useAnchorScroll(() => templateResolution.value);
 
-let releaseScope: (() => void) | undefined;
-
-// Hold a scope the previous page handed over: the listing that takes it over mounts once the first category loads.
-watch(
-  isWaitingForFirstCategory,
-  (isWaiting) => {
-    if (isWaiting && (isCategoryScope.value || isScopePending.value) && !releaseScope) {
-      releaseScope = holdScope();
-    }
-  },
-  { immediate: true },
-);
-
-// Post flush: the listing has rendered and prepares the scope itself.
-watch(
-  isWaitingForFirstCategory,
-  (isWaiting) => {
-    if (!isWaiting) {
-      releaseScope?.();
-      releaseScope = undefined;
-    }
-  },
-  { flush: "post" },
-);
-
 // Runs before the child drops its scope or preparation; held a tick for a matcher mounting in its place.
 onBeforeUnmount(() => {
   if (isCategoryScope.value || isScopePending.value) {
     void nextTick(holdScope());
   }
-  releaseScope?.();
 });
+
+// The listing that takes the scope over mounts once the first category loads. Registered after the hook above, so
+// leaving mid-wait still hands this hold on.
+useScopeHandOver(isWaitingForFirstCategory);
 
 watch(
   categoryId,

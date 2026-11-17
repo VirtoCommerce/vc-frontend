@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { computed, defineComponent, h, ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import CategoryPage from "./category.vue";
@@ -12,7 +12,11 @@ const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined 
 const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
 const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
 const scrollToAnchor = vi.hoisted(() => vi.fn(() => Promise.resolve(true)));
-const searchScope = vi.hoisted(() => ({ isPending: false, holds: 0 }));
+const searchScope = await vi.hoisted(async () => {
+  const { ref: createRef } = await import("vue");
+
+  return { isHandedOver: createRef(false), holds: createRef(0), holdsWhenPrepared: createRef<number>() };
+});
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
 vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/printers", hash: "#promo" }) }));
@@ -48,22 +52,28 @@ vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({ useLo
 vi.mock("@/shared/layout/composables/useSearchScore", () => ({
   useSearchScore: () => ({
     isCategoryScope: ref(false),
-    isScopePending: ref(searchScope.isPending),
+    isScopePending: computed(() => searchScope.isHandedOver.value || searchScope.holds.value > 0),
     holdScope: () => {
-      searchScope.holds++;
+      searchScope.holds.value++;
       return () => {
-        searchScope.holds--;
+        searchScope.holds.value--;
       };
+    },
+    prepareScope: () => {
+      searchScope.holdsWhenPrepared.value = searchScope.holds.value;
+      return () => undefined;
     },
   }),
 }));
 vi.mock("@/shared/catalog/components/category.vue", async () => {
   const { defineComponent: define, h: render } = await import("vue");
+  const { useSearchScore } = await import("@/shared/layout/composables/useSearchScore");
   return {
     default: define({
       inheritAttrs: false,
       setup: (_props, { attrs }) => {
         listingProps.value = attrs;
+        useSearchScore().prepareScope();
         return () => render("section", { "data-test-id": "category-listing-section" });
       },
     }),
@@ -107,8 +117,9 @@ describe("category page", () => {
     pageBuilder.isEnabled = false;
     heldFetches.value = undefined;
     scrollToAnchor.mockClear();
-    searchScope.isPending = false;
-    searchScope.holds = 0;
+    searchScope.isHandedOver.value = false;
+    searchScope.holds.value = 0;
+    searchScope.holdsWhenPrepared.value = undefined;
   });
 
   afterEach(() => {
@@ -304,30 +315,35 @@ describe("category page", () => {
   it("holds the search scope the previous page handed over until the first category has loaded", async () => {
     pageBuilder.isEnabled = true;
     heldFetches.value = new Map();
-    searchScope.isPending = true;
+    searchScope.isHandedOver.value = true;
 
-    const wrapper = mountCategory({ categoryId: "toner" });
+    mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
     await flushPromises();
 
-    expect(searchScope.holds).toBe(1);
+    expect(searchScope.holds.value).toBe(1);
 
     heldFetches.value.get("toner")?.();
     await flushPromises();
 
-    expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
-    expect(searchScope.holds).toBe(0);
+    expect(searchScope.holdsWhenPrepared.value).toBe(1);
+    expect(searchScope.holds.value).toBe(0);
   });
 
-  it("releases the search scope it holds when it is left before the first category has loaded", async () => {
+  it("hands its search scope hold on for a tick when it is left before the first category has loaded", async () => {
     pageBuilder.isEnabled = true;
     heldFetches.value = new Map();
-    searchScope.isPending = true;
+    searchScope.isHandedOver.value = true;
 
     const wrapper = mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
     wrapper.unmount();
+
+    expect(searchScope.holds.value).toBe(1);
+
     await flushPromises();
 
-    expect(searchScope.holds).toBe(0);
+    expect(searchScope.holds.value).toBe(0);
   });
 
   it("does not hold a search scope no page handed over", async () => {
@@ -337,17 +353,18 @@ describe("category page", () => {
     mountCategory({ categoryId: "toner" });
     await flushPromises();
 
-    expect(searchScope.holds).toBe(0);
+    expect(searchScope.holds.value).toBe(0);
   });
 
   it("does not hold the search scope when it does not wait for the category", async () => {
     heldFetches.value = new Map();
-    searchScope.isPending = true;
+    searchScope.isHandedOver.value = true;
 
     mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
     await flushPromises();
 
-    expect(searchScope.holds).toBe(0);
+    expect(searchScope.holds.value).toBe(0);
   });
 
   it("scrolls to the section the address names", () => {
