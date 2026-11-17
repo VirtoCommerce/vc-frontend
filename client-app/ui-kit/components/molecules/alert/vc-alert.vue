@@ -19,6 +19,28 @@
       <div v-if="title" class="vc-alert__title">{{ title }}</div>
 
       <slot />
+
+      <div v-if="button && buttonPosition === 'bottom'" class="vc-alert__button vc-alert__button--bottom">
+        <VcButton
+          size="xxs"
+          :color="buttonColor"
+          :variant="buttonVariant"
+          @click="$emit('buttonClick')"
+        >
+          {{ button }}
+        </VcButton>
+      </div>
+    </div>
+
+    <div v-if="button && buttonPosition === 'end'" class="vc-alert__button vc-alert__button--end">
+      <VcButton
+        size="xxs"
+        :color="buttonColor"
+        :variant="buttonVariant"
+        @click="$emit('buttonClick')"
+      >
+        {{ button }}
+      </VcButton>
     </div>
 
     <div v-if="closable">
@@ -42,6 +64,7 @@ import { resolveVariant } from "../../../utilities/variant-compat";
 
 interface IEmits {
   (event: "close"): void;
+  (event: "buttonClick"): void;
 }
 
 interface IProps {
@@ -52,6 +75,8 @@ interface IProps {
   title?: string;
   shadow?: boolean;
   closable?: boolean;
+  button?: string;
+  buttonPosition?: VcAlertButtonPositionType;
 }
 
 defineEmits<IEmits>();
@@ -60,6 +85,7 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
+  buttonPosition: "bottom",
 });
 
 const DEFAULT_ALERT_VARIANT: VcAlertVariantType = "solid";
@@ -71,6 +97,9 @@ const canonicalVariant = computed<VcAlertVariantType>(() => {
     ? (resolved as VcAlertVariantType)
     : DEFAULT_ALERT_VARIANT;
 });
+
+const buttonColor = computed<VcButtonColorType>(() => (canonicalVariant.value === "solid" ? "accent" : "secondary"));
+const buttonVariant = computed<VcButtonVariantType>(() => (canonicalVariant.value === "solid" ? "surface" : "outline"));
 
 const iconName = computed<string>(() => {
   const { icon } = props;
@@ -108,12 +137,14 @@ const iconName = computed<string>(() => {
   &--size {
     &--sm {
       --icon-size: 1.125rem;
+      --line-height: 0.875rem;
 
-      @apply ps-[0.438rem] pe-[0.625rem] py-[0.313rem] text-xs/[0.875rem];
+      @apply ps-[0.438rem] pe-[0.625rem] py-[0.438rem] text-xs/[0.875rem];
     }
 
     &--md {
       --icon-size: 1.25rem;
+      --line-height: 1.125rem;
 
       @apply p-[0.688rem] text-sm/[1.125rem];
     }
@@ -135,15 +166,20 @@ const iconName = computed<string>(() => {
     }
   }
 
+  // A one-line alert without a title has the icon, text and close button on one
+  // vertical center; when the text wraps, nothing re-centers — the icon and the
+  // close button stay anchored to the first line and new lines are added below.
+  // The symmetric negative margin-block keeps each control's margin box equal to
+  // the line height, so a one-line alert keeps its minimal symmetric height.
   &__icon {
     --vc-icon-size: var(--icon-size);
     --vc-icon-color: var(--icon-color);
 
-    @apply shrink-0 me-2;
+    @apply shrink-0 me-2 my-[calc((var(--line-height)_-_var(--icon-size))/2)];
   }
 
   &__content {
-    @apply grow self-center flex flex-col justify-center [word-break:break-word];
+    @apply grow flex flex-col [word-break:break-word];
 
     &:first-child {
       @apply ps-1;
@@ -162,7 +198,27 @@ const iconName = computed<string>(() => {
     --vc-icon-size: 0.875rem;
     --vc-icon-color: var(--close-button-icon-color);
 
-    @apply flex items-center justify-center -my-1 -me-2 size-7;
+    @apply flex items-center justify-center my-[calc((var(--line-height)_-_1.75rem)/2)] -me-2 size-7;
+  }
+
+  &__button {
+    @apply flex shrink-0;
+
+    &--bottom {
+      @apply mt-2;
+    }
+
+    &--end {
+      @apply self-center ms-3;
+
+      & + div .vc-alert__close-button {
+        @apply ms-1;
+      }
+    }
+  }
+
+  &--size--sm &__button--bottom {
+    @apply mt-1.5;
   }
 }
 </style>

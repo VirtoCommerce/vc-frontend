@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const COLORS = ["info", "success", "warning", "danger"];
 const VARIANTS = ["solid", "soft", "outline", "tonal"];
 const SIZES = ["sm", "md"];
+const BUTTON_POSITIONS = ["bottom", "end"];
 
 const meta: Meta<typeof VcAlert> = {
   title: "Components/Molecules/VcAlert",
@@ -39,6 +40,17 @@ const meta: Meta<typeof VcAlert> = {
       table: {
         type: {
           summary: SIZES.join(" | "),
+        },
+      },
+    },
+    buttonPosition: {
+      control: "inline-radio",
+      options: BUTTON_POSITIONS,
+      description: "Where the action button renders when `button` is set: under the text or to the left of the close button.",
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: BUTTON_POSITIONS.join(" | "),
         },
       },
     },
@@ -293,7 +305,40 @@ export const Closable: StoryType = {
   },
 };
 
-// 7. Kitchen sink
+// 7. Action button
+export const WithButton: StoryType = {
+  args: { title: "Order created", icon: true, button: "View details" },
+  parameters: {
+    actions: { handles: ["buttonClick"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert title="Order created" icon button="View details" @button-click="handleButtonClick">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const WithButtonEnd: StoryType = {
+  args: { icon: true, closable: true, button: "View details", buttonPosition: "end" },
+  parameters: {
+    actions: { handles: ["buttonClick", "close"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert icon closable button="View details" button-position="end" @button-click="handleButtonClick">
+            Your order #4812 has been placed.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+// 8. Kitchen sink
 export const AllStates: StoryType = {
   render: () => ({
     setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
