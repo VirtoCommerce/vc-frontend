@@ -366,6 +366,12 @@ function onChangeFrequency(id: string, event: MouseEvent): void {
     @apply text-center;
   }
 
+  // The line item hides its after-title slot on a narrow card (it is meant for icon actions); here it holds the
+  // subscription number, its frequency and the Change link, which a phone needs too.
+  .vc-line-item__name-actions {
+    @apply block;
+  }
+
   &__number {
     @apply mt-1 block text-xs text-neutral-600;
   }

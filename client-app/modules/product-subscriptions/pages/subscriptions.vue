@@ -673,6 +673,12 @@ onMounted(async () => {
     }
   }
 
+  // As on the delivery cards: the number, status and frequency sit in the line item's after-title slot, which it
+  // hides on a narrow card.
+  &__inactive .vc-line-item__name-actions {
+    @apply block;
+  }
+
   &__inactive-number {
     @apply basis-full text-xs;
   }
