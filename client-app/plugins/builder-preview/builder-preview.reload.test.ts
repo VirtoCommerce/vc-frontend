@@ -6,6 +6,9 @@ const BUILDER_ORIGIN = "https://builder.example";
 const DESIGNER_URL = "/designer-preview?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F";
 const PREVIEW_CATALOG = { sections: {}, protocol: 2 };
 
+// Every vi.resetModules() evaluates again the URL of each icon these two glob in, seconds per boot; no icon is shown here.
+vi.mock("@/ui-kit/utilities/icons", () => ({}));
+vi.mock("@/ui-kit/utilities/images", () => ({}));
 vi.mock("@/core/api/common", () => ({ useGlobalInterceptors: () => ({ onRequest: { value: [] } }) }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ normalizeToSupportedCulture: () => undefined }),

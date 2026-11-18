@@ -2,6 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
+// Every vi.resetModules() evaluates again the URL of each icon these two glob in, seconds per boot; no icon is shown here.
+vi.mock("@/ui-kit/utilities/icons", () => ({}));
+vi.mock("@/ui-kit/utilities/images", () => ({}));
 vi.mock("./enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
 
 const DESIGNER_URL = "/designer-preview?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F";
