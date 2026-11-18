@@ -140,7 +140,7 @@ describe("useAccountSalesReport", () => {
       cultureName: "en-US",
     });
     // The dashboard counts the user's own orders: no scope is sent.
-    expect(queries.monthlyVariables?.value.organizationScope).toBeUndefined();
+    expect(queries.monthlyVariables?.value.isOrganizationScope).toBeUndefined();
     expect(queries.monthlyVariables?.value.memberId).toBeUndefined();
 
     period.value = "q2";
@@ -154,12 +154,12 @@ describe("useAccountSalesReport", () => {
     const reportScope = ref<SalesReportScopeType>({ organization: true });
     run("year", reportScope);
 
-    expect(queries.monthlyVariables?.value).toMatchObject({ organizationScope: true, memberId: undefined });
+    expect(queries.monthlyVariables?.value).toMatchObject({ isOrganizationScope: true, memberId: undefined });
 
     reportScope.value = { organization: true, memberId: "contact-1" };
     await nextTick();
 
-    expect(queries.monthlyVariables?.value).toMatchObject({ organizationScope: true, memberId: "contact-1" });
+    expect(queries.monthlyVariables?.value).toMatchObject({ isOrganizationScope: true, memberId: "contact-1" });
   });
 
   // A member who never ordered gets zeros: the empty state would also take away the picker that leads back.
@@ -167,7 +167,7 @@ describe("useAccountSalesReport", () => {
     run("year", { organization: true, memberId: "contact-1" });
 
     expect(queries.historyVariables).toEqual([
-      { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", organizationScope: true, memberId: undefined },
+      { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", isOrganizationScope: true },
     ]);
   });
 

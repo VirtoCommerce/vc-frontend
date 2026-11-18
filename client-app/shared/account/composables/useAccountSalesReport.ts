@@ -21,14 +21,8 @@ function storeContext() {
 }
 
 // Nothing for the user's own orders, so the dashboard keeps sending exactly what it sent before.
-function scopeVariables(
-  scope: SalesReportScopeType | undefined,
-  withMember: boolean,
-): { organizationScope?: boolean; memberId?: string } {
-  return {
-    organizationScope: scope ? true : undefined,
-    memberId: scope && withMember ? scope.memberId || undefined : undefined,
-  };
+function scopeVariables(scope: SalesReportScopeType | undefined): { isOrganizationScope?: boolean } {
+  return { isOrganizationScope: scope ? true : undefined };
 }
 
 /** Orders of the period's months left out because their currency cannot be converted. */
@@ -54,7 +48,8 @@ export function useAccountSalesReport(
   const plan = useReportingPlan(period);
   const variables = computed(() => ({
     ...storeContext(),
-    ...scopeVariables(toValue(scope), true),
+    ...scopeVariables(toValue(scope)),
+    memberId: toValue(scope)?.memberId || undefined,
     ...buildReportingVariables(plan.value),
   }));
 
@@ -73,7 +68,7 @@ export function useAccountSalesReport(
   // organization it is the organization's, never one member's: a member who never ordered gets zeros, and the empty
   // state, which takes the report's place, would also take away the member picker that leads back.
   const history = useGetOrderStatisticsHistoryQuery(
-    computed(() => ({ ...storeContext(), ...scopeVariables(toValue(scope), false) })),
+    computed(() => ({ ...storeContext(), ...scopeVariables(toValue(scope)) })),
   );
 
   history.onError((queryError) => {
