@@ -146,7 +146,10 @@ module.exports = {
         "from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
       from: {
         path: "^(client-app)",
-        pathNot: "[.](spec|test|test-d|mock)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$",
+        pathNot: [
+          "[.](spec|test|test-d|mock)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$",
+          "^client-app/ui-kit/tailwind-preset[.]ts$", // build-time Tailwind config, never bundled
+        ],
       },
       to: {
         dependencyTypes: ["npm-dev"],

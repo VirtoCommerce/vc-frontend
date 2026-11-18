@@ -14,13 +14,13 @@ and the design never changes the preset.
 
 ## Where does my change go?
 
-Find your change, then read its section below. Paths are under `client-app/`, except `tailwind.config.ts` at the
-repo root.
+Find your change, then read its section below. Paths are under `client-app/`. The Tailwind scales are in the ui-kit
+preset, `ui-kit/tailwind-preset.ts`; the root `tailwind.config.ts` only extends it.
 
 | Change | For | File | Layer | Token / selector | Check |
 | --- | --- | --- | --- | --- | --- |
 | Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
-| The same, no token yet | every design | the component; a scale: `tailwind.config.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after `tailwind.config.ts` |
+| The same, no token yet | every design | the component; a scale: `ui-kit/tailwind-preset.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after the preset |
 | One part, no token | one design | `designs/<design>/blocks/<block>.scss`; dark: `dark/<block>.scss` | `vc.design` | the block's own BEM classes, every state | `check:designs` |
 | Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
 | Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
@@ -389,7 +389,7 @@ role       --vc-base-font-family, --vc-heading-font-style …
    ↓ var(…, scale)                       (only where a role maps to a step)
 scale      --vc-radius-md, --vc-font-size-sm …   ← read by the Tailwind utilities
    ↓ var(…, literal)
-literal    today's value: the fallback in tailwind.config.ts (typed there or taken from
+literal    today's value: the fallback in ui-kit/tailwind-preset.ts (typed there or taken from
            Tailwind's defaultTheme) or in a role rule
 ```
 
@@ -439,7 +439,7 @@ itself.
 ### Token table
 
 This table lists every shape and typography token the styles read. Colour tokens are not here:
-colours come from the preset. `scripts/design-token-table.test.ts` fails when `tailwind.config.ts`
+colours come from the preset. `scripts/design-token-table.test.ts` fails when the Tailwind theme
 or a `.vue` or `.scss` file under `client-app/` (outside `designs/`, tests and stories) reads a token
 this table does not list, or the table lists one the code does not read.
 
@@ -447,7 +447,7 @@ this table does not list, or the table lists one the code does not read.
 | --- | --- | --- |
 | `--vc-radius` | The default control radius; most component radius tokens below fall back to it | `0.5rem`, on `:root` in `main.scss` |
 | `--vc-radius-<key>` | The `rounded-<key>` utilities (`rounded` for `default`); `rounded-none` and `rounded-full` have no token | `sm` 0.125rem · `default` 0.25rem · `md` 0.375rem · `lg` 0.5rem · `xl` 0.75rem · `2xl` 1rem · `3xl` 1.5rem |
-| `--vc-shadow-<key>-<n>` | Part `<n>` (from 1) of the `shadow-<key>` utility (`shadow` for `default`). Parts: `default` 2 · `0` 2 · `sm` 1 · `md` 2 · `lg` 2 · `xl` 2 · `2xl` 1 · `inner` 1 | That part of `boxShadow.<key>` in `tailwind.config.ts`; `default` is Tailwind's own `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` |
+| `--vc-shadow-<key>-<n>` | Part `<n>` (from 1) of the `shadow-<key>` utility (`shadow` for `default`). Parts: `default` 2 · `0` 2 · `sm` 1 · `md` 2 · `lg` 2 · `xl` 2 · `2xl` 1 · `inner` 1 | That part of `boxShadow.<key>` in `ui-kit/tailwind-preset.ts`; `default` is Tailwind's own `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` |
 | `--vc-font-size-<key>` | The font size of `text-<key>` | `xxs` 0.625rem · `xs` 0.75rem · `sm` 0.875rem · `base` 1rem · `lg` 1.125rem · `xl` 1.25rem · `2xl` 1.5rem · `3xl` 1.875rem · `4xl` 2.25rem · `5xl` 3rem · `6xl` 3.75rem · `7xl` 4.5rem · `8xl` 6rem |
 | `--vc-line-height-<key>` | The line height `text-<key>` sets (`xxs`…`8xl`), and the `leading-<key>` utilities | `xxs` 0.75rem · `xs` 0.875rem · `sm` 1.125rem · `base` 1.25rem · `lg` 1.375rem · `xl` 1.75rem · `2xl` 2rem · `3xl` 2.25rem · `4xl` 2.5rem · `5xl` 3rem · `6xl` 3.75rem · `7xl` 4.5rem · `8xl` 6rem; `3` 0.75rem to `10` 2.5rem in 0.25rem steps · `none` 1 · `tight` 1.25 · `snug` 1.375 · `normal` 1.5 · `relaxed` 1.625 · `loose` 2 |
 | `--vc-font-weight-<key>` | The `font-<key>` weight utilities | `thin` 100 · `extralight` 200 · `light` 300 · `normal` 400 · `medium` 500 · `semibold` 600 · `bold` 700 · `extrabold` 800 · `black` 900 |
@@ -526,11 +526,11 @@ this table does not list, or the table lists one the code does not read.
 
 - **A role:** a rule or token `--vc-<role>-<property>` whose fallback is a scale token or today's
   value, so classic computes the same; add it to `_typography-roles.scss` when bare elements use it.
-  A family role is also a `fontFamily` key in `tailwind.config.ts`: run `yarn build:core-types`
+  A family role is also a `fontFamily` key in `ui-kit/tailwind-preset.ts`: run `yarn build:core-types`
   and commit everything it changes; `yarn validate:core-types` checks the result.
 - **A component token:** `--vc-<component>-<property>: var(<role or scale token>, <value>)` in
   the component, in that component's task.
-- **A scale:** wrap the Tailwind key in `tailwind.config.ts` with `vcToken` (or `tokenizeScale`),
+- **A scale:** wrap the Tailwind key in `ui-kit/tailwind-preset.ts` with `vcToken` (or `tokenizeScale`),
   keeping today's value as the fallback, then run `yarn build:core-types` and commit everything it
   changes; `yarn validate:core-types` checks the result. Existing tokens do not change.
 - Arbitrary values (`rounded-[3px]`, `text-[--x]`) bypass the scale and stay literal.

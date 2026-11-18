@@ -117,6 +117,14 @@ catches anything, so everything else below is review-only. Severity guide: break
 
 ## 3. Tailwind inside `@apply`
 
+The Tailwind theme lives in the ui-kit preset (`client-app/ui-kit/tailwind-preset.ts`): palette names, `screens`,
+the font, radius, shadow and spacing scales, `containers`. The root `tailwind.config.ts` takes it as a preset and
+adds only under `theme.extend` (`tailwind.config.test.ts`): a key set directly under `theme` replaces the preset's
+whole scale, so the theme and ui-kit drift apart without an error. A design-system scale (radius, shadow, font size,
+breakpoint), or anything a ui-kit file uses as a class or in `@apply` → the preset; something only pages or modules
+use → `theme.extend` in the root config. An app plugin that brings its own theme (`tw-elements`) goes into a preset
+listed before the kit's, so the kit's scales win.
+
 15. Anything a Tailwind utility expresses goes through `@apply` (arbitrary values like `rounded-[--vc-radius]`,
     `text-[--link-color]`, `size-[--icon-size]` included). Raw CSS only where no utility exists
     (`border-inline-start`, `color-mix()`, `container-type`, `appearance`, custom properties).
