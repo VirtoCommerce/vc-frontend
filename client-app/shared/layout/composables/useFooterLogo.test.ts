@@ -5,9 +5,9 @@ import { useFooterLogo } from "./useFooterLogo";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
 import type { IThemeDraft } from "@/core/theme-snapshot";
 
-const pageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
 vi.mock("@/core/api/graphql/whiteLabeling/queries", () => ({ getGetWhiteLabelingSettings: vi.fn() }));
 vi.mock("@/core/composables/useThemeContext", async () => {
   const { computed } = await import("vue");
@@ -29,7 +29,7 @@ const THEME_LOGOS: IThemeDraft = { brand: { logoUrl: "acme.svg", secondaryLogoUr
 
 describe("useFooterLogo", () => {
   beforeEach(() => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     useWhiteLabeling().setWhiteLabelingSettings();
     useThemeSnapshot().setDraft(undefined);
   });
@@ -73,8 +73,8 @@ describe("useFooterLogo", () => {
     expect(useFooterLogo().footerLogoUrl.value).toBe(expected);
   });
 
-  it("keeps white-labeling's logo for dark backgrounds field by field without the new Page Builder", () => {
-    pageBuilder.isEnabled = false;
+  it("keeps white-labeling's logo for dark backgrounds field by field without Site Builder", () => {
+    siteBuilder.isEnabled = false;
     useWhiteLabeling().setWhiteLabelingSettings({ secondaryLogoUrl: "store-white.svg" });
 
     expect(useFooterLogo().footerLogoUrl.value).toBe("store-white.svg");

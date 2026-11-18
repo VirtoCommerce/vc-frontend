@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getOutdatedModules } from "./checkModulesVersions";
 
-const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
 
 describe("getOutdatedModules", () => {
   beforeEach(() => {
-    newPageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
   });
 
   it("reports a Site Builder older than the storefront expects", () => {
@@ -16,8 +16,8 @@ describe("getOutdatedModules", () => {
     ]);
   });
 
-  it("does not check Site Builder while the new Page Builder is off", () => {
-    newPageBuilder.isEnabled = false;
+  it("does not check Site Builder while it is off", () => {
+    siteBuilder.isEnabled = false;
 
     expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.999.0" }])).toEqual([]);
   });

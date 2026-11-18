@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { themeSnapshotPlugin } from "./vite.page-builder.js";
+import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { IndexHtmlTransformHook, Plugin } from "vite";
 
 const INDEX_HTML = `<!doctype html>
@@ -24,7 +24,7 @@ describe("themeSnapshotPlugin", () => {
     expect(themeSnapshotPlugin()).toEqual([]);
   });
 
-  it.each([{}, { new_page_builder_enabled: false }, { new_page_builder_enabled: "true" }])(
+  it.each([{}, { site_builder_enabled: false }, { site_builder_enabled: "true" }])(
     "adds nothing when the theme settings are %j",
     (settings) => {
       expect(themeSnapshotPlugin({}, settings)).toEqual([]);
@@ -32,7 +32,7 @@ describe("themeSnapshotPlugin", () => {
   );
 
   it("puts the snapshot request right after the charset declaration, kept from Rocket Loader", () => {
-    const [plugin] = themeSnapshotPlugin({ devDomain: "backend.example.com" }, { new_page_builder_enabled: true });
+    const [plugin] = themeSnapshotPlugin({ devDomain: "backend.example.com" }, { site_builder_enabled: true });
     const html = transformIndexHtml(plugin as Plugin);
     const script = html.slice(html.indexOf("<script"), html.indexOf("</script>"));
 
@@ -45,7 +45,7 @@ describe("themeSnapshotPlugin", () => {
   });
 
   it("puts the snapshot request first in a head without a charset declaration", () => {
-    const [plugin] = themeSnapshotPlugin({}, { new_page_builder_enabled: true });
+    const [plugin] = themeSnapshotPlugin({}, { site_builder_enabled: true });
     const html = transformIndexHtml(plugin as Plugin, "<html><head><title>Store</title></head></html>");
 
     expect(html.indexOf("<script")).toBe("<html><head>\n    ".length);

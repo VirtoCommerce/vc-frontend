@@ -1,5 +1,5 @@
 import { isRecord, Logger } from "@/core/utilities";
-import { isNewPageBuilderEnabled } from "./enabled";
+import { isSiteBuilderEnabled } from "./enabled";
 import { DESIGNER_PREVIEW_PATH } from "./query";
 
 export const SECTION_ATTRIBUTE = "data-pb-section";
@@ -109,5 +109,5 @@ export function isDesignerPreview(): boolean {
 
 /** Only the designer that speaks the preview protocol reads the preview markup; elsewhere the page is unchanged. */
 export function isPreviewV2Frame(): boolean {
-  return !!getBuilderOrigin() && isOpenedWithPreviewProtocol() && isNewPageBuilderEnabled();
+  return !!getBuilderOrigin() && isOpenedWithPreviewProtocol() && isSiteBuilderEnabled();
 }

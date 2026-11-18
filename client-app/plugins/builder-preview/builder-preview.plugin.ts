@@ -5,7 +5,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals, setGlobals } from "@/core/globals";
 import { getThemeVariableName } from "@/core/plugins/config.plugin";
-import { getBuilderOrigin, isNewPageBuilderEnabled, isPreviewV2Frame, PREVIEW_PROTOCOL } from "@/core/theme-snapshot";
+import { getBuilderOrigin, isSiteBuilderEnabled, isPreviewV2Frame, PREVIEW_PROTOCOL } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
@@ -286,7 +286,7 @@ interface IPreviewContext {
 }
 
 function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
-  if (!context.previewV2 && isNewPageBuilderEnabled() && context.bodyEl && context.blocker) {
+  if (!context.previewV2 && isSiteBuilderEnabled() && context.bodyEl && context.blocker) {
     const { router } = context.options;
 
     context.previewV2 = createPreviewV2({
@@ -330,7 +330,7 @@ async function handlePreviewV2Message(context: IPreviewContext, data: PreviewV2M
 
   if (!previewV2) {
     Logger.warn(
-      `[builder-preview] The preview protocol ${PREVIEW_PROTOCOL} needs new_page_builder_enabled: ignored "${data.type}"`,
+      `[builder-preview] The preview protocol ${PREVIEW_PROTOCOL} needs site_builder_enabled: ignored "${data.type}"`,
     );
     return;
   }

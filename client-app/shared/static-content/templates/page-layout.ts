@@ -1,5 +1,5 @@
 import { useLanguages } from "@/core/composables/useLanguages";
-import { isNewPageBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
+import { isSiteBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
 import { PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import {
   getSlugRoutePermalink,
@@ -88,7 +88,7 @@ export function chooseLandingPageLayout(options: ILandingLayoutOptions): PageLay
 
 /** Runs before mount so the header and footer do not wait for the page to report its layout. */
 export function setLandingPageLayout(router: Router, entity: ISlugEntity | null | undefined): void {
-  if (!isNewPageBuilderEnabled()) {
+  if (!isSiteBuilderEnabled()) {
     return;
   }
 

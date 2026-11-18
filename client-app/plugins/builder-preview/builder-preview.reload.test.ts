@@ -6,12 +6,15 @@ const BUILDER_ORIGIN = "https://builder.example";
 const DESIGNER_URL = "/designer-preview?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F";
 const PREVIEW_CATALOG = { sections: {}, protocol: 2 };
 
+// Every vi.resetModules() evaluates again the URL of each icon these two glob in, seconds per boot; no icon is shown here.
+vi.mock("@/ui-kit/utilities/icons", () => ({}));
+vi.mock("@/ui-kit/utilities/images", () => ({}));
 vi.mock("@/core/api/common", () => ({ useGlobalInterceptors: () => ({ onRequest: { value: [] } }) }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ normalizeToSupportedCulture: () => undefined }),
 }));
 vi.mock("@/core/globals", () => ({ globals: {}, setGlobals: vi.fn() }));
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => true }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => true }));
 vi.mock("@/shared/static-content", () => ({ useStaticPage: () => ({ staticPagePreview: { value: undefined } }) }));
 vi.mock("@/shared/static-content/components", () => ({ templateBlocks: {} }));
 vi.mock("./components/preview-page.vue", () => ({ default: { name: "PreviewPage" } }));

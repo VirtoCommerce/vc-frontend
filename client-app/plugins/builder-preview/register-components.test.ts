@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const pageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
 vi.mock("./page-builder-components", () => ({ PageBuilderComponents: [] }));
 
 describe("getRegisteredComponents", () => {
@@ -24,7 +24,7 @@ describe("getRegisteredComponents", () => {
   ])(
     "with the flag $isEnabled at $url, theme schemas: $hasThemeSchemas",
     async ({ isEnabled, url, hasThemeSchemas }) => {
-      pageBuilder.isEnabled = isEnabled;
+      siteBuilder.isEnabled = isEnabled;
       window.history.replaceState(null, "", url);
 
       const { getRegisteredComponents } = await import("./register-components");

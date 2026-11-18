@@ -9,7 +9,7 @@ import CategoryPage from "./category.vue";
 const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
-const pageBuilder = vi.hoisted(() => ({ isEnabled: false }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: false }));
 const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
 const scrollToAnchor = vi.hoisted(() => vi.fn(() => Promise.resolve(true)));
 const searchScope = await vi.hoisted(async () => {
@@ -18,7 +18,7 @@ const searchScope = await vi.hoisted(async () => {
   return { isHandedOver: createRef(false), holds: createRef(0), holdsWhenPrepared: createRef<number>() };
 });
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => pageBuilder.isEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
 vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/printers", hash: "#promo" }) }));
 vi.mock("@/shared/static-content/anchors", async () => ({
   ...(await vi.importActual<typeof import("@/shared/static-content/anchors")>("@/shared/static-content/anchors")),
@@ -104,7 +104,7 @@ describe("category page", () => {
     listingProps.value = {};
     loadedCategory.value = { breadcrumbs: [{ title: "Toner" }] };
     fetchedCategory.value = undefined;
-    pageBuilder.isEnabled = false;
+    siteBuilder.isEnabled = false;
     heldFetches.value = undefined;
     scrollToAnchor.mockClear();
     searchScope.isHandedOver.value = false;
@@ -177,7 +177,7 @@ describe("category page", () => {
   });
 
   it("waits for a category without the slug's outline before choosing its template", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
@@ -204,7 +204,7 @@ describe("category page", () => {
   });
 
   it("keeps the listing and the previous category's template until the next category has loaded", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
@@ -240,7 +240,7 @@ describe("category page", () => {
   });
 
   it("chooses the template by the slug's outline without waiting for the category", () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     heldFetches.value = new Map();
     publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
@@ -262,7 +262,7 @@ describe("category page", () => {
   });
 
   it("shows the category once its request has finished, also when it found nothing", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     fetchedCategory.value = { id: "catalog", breadcrumbs: [] };
 
     mountCategory({ categoryId: "missing" });
@@ -272,7 +272,7 @@ describe("category page", () => {
   });
 
   it("keeps the listing and its template when the previous category's request finishes after the current one's", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     heldFetches.value = new Map();
     publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
@@ -303,7 +303,7 @@ describe("category page", () => {
   });
 
   it("holds the search scope the previous page handed over until the first category has loaded", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     heldFetches.value = new Map();
     searchScope.isHandedOver.value = true;
 
@@ -321,7 +321,7 @@ describe("category page", () => {
   });
 
   it("hands its search scope hold on for a tick when it is left before the first category has loaded", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     heldFetches.value = new Map();
     searchScope.isHandedOver.value = true;
 
@@ -337,7 +337,7 @@ describe("category page", () => {
   });
 
   it("does not hold a search scope no page handed over", async () => {
-    pageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     heldFetches.value = new Map();
 
     mountCategory({ categoryId: "toner" });

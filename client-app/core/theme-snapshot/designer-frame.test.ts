@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: true }));
 
-vi.mock("./enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
+// Every vi.resetModules() evaluates again the URL of each icon these two glob in, seconds per boot; no icon is shown here.
+vi.mock("@/ui-kit/utilities/icons", () => ({}));
+vi.mock("@/ui-kit/utilities/images", () => ({}));
+vi.mock("./enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
 
 const DESIGNER_URL = "/designer-preview?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F";
 
@@ -127,7 +130,7 @@ describe("isOpenedWithPreviewProtocol", () => {
 
 describe("isPreviewV2Frame", () => {
   beforeEach(() => {
-    newPageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     vi.stubGlobal("parent", {});
   });
 
@@ -163,8 +166,8 @@ describe("isPreviewV2Frame", () => {
     expect(isPreviewV2Frame()).toBe(false);
   });
 
-  it("is false when the New Page Builder is off", async () => {
-    newPageBuilder.isEnabled = false;
+  it("is false when Site Builder is off", async () => {
+    siteBuilder.isEnabled = false;
     window.history.replaceState(null, "", "/designer-preview?ep=https%3A%2F%2Fbuilder.example&protocol=2");
 
     const { isPreviewV2Frame } = await import("./designer-frame");
@@ -177,7 +180,7 @@ describe("the preview protocol of a reloaded frame", () => {
   const PROTOCOL_2_DESIGNER_URL = `${DESIGNER_URL}&protocol=2`;
 
   beforeEach(() => {
-    newPageBuilder.isEnabled = true;
+    siteBuilder.isEnabled = true;
     vi.stubGlobal("parent", {});
   });
 

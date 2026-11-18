@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, shallowRef, toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isSiteBuilderEnabled } from "@/core/theme-snapshot";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useLoyaltyCatalogCurrency } from "@/shared/catalog/composables/useLoyaltyCatalogCurrency";
@@ -92,7 +92,7 @@ const templateSubject = computed<ITemplateSubject | undefined>(() => {
 
   // Without the slug's outline a theme rule can depend on the loaded category, so the template follows the settled
   // one: the next category switches it once it has loaded, while the page and its listing stay as they are.
-  if (isNewPageBuilderEnabled() && !props.outline) {
+  if (isSiteBuilderEnabled() && !props.outline) {
     return settledSubject.value;
   }
 

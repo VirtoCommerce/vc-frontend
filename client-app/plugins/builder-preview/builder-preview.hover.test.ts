@@ -13,7 +13,7 @@ vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ normalizeToSupportedCulture: () => undefined }),
 }));
 vi.mock("@/core/globals", () => ({ globals: {}, setGlobals: vi.fn() }));
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => true }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => true }));
 vi.mock("@/shared/static-content", () => ({ useStaticPage: () => ({ staticPagePreview: { value: undefined } }) }));
 vi.mock("@/shared/static-content/components", () => ({ templateBlocks: {} }));
 vi.mock("./components/preview-page.vue", () => ({ default: {} }));

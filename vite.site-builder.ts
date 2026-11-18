@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { buildThemeSnapshotScript } from "./client-app/core/theme-snapshot/inline-script.js";
-import { isNewPageBuilderSwitchOn } from "./client-app/core/theme-snapshot/switch.js";
+import { isSiteBuilderSwitchOn } from "./client-app/core/theme-snapshot/switch.js";
 import type { PluginOption } from "vite";
 
 const require = createRequire(import.meta.url);
@@ -21,7 +21,7 @@ export function themeSnapshotPlugin(
   options: IThemeSnapshotPluginOptions = {},
   settings: Record<string, unknown> = themeSettings,
 ): PluginOption[] {
-  if (!isNewPageBuilderSwitchOn(settings)) {
+  if (!isSiteBuilderSwitchOn(settings)) {
     return [];
   }
 
