@@ -64,77 +64,77 @@
       "save": "Save"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Como funciona",
+      "title": "Como funcionam as assinaturas",
+      "lead": "Receba os produtos que você compra com frequência no seu cronograma, por um preço menor. Você mantém o controle: pule, altere ou cancele qualquer entrega antes do prazo.",
       "steps": {
-        "title": "How it works",
+        "title": "Como funciona",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Escolha a frequência",
+          "text": "Na página do produto, escolha \"Subscribe & Save\" e uma frequência de entrega. Seu primeiro pedido é enviado normalmente."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Avisamos antes",
+          "text": "Antes de cada entrega, enviamos um e-mail com os itens, a data e o valor máximo que pode ser cobrado."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Entregamos e cobramos",
+          "text": "O pedido é feito na data escolhida e cobrado, com o desconto da assinatura, no cartão salvo no checkout."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Economia",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "O desconto aparece na página do produto antes de você assinar.",
+            "Alguns produtos economizam mais quando entregues com mais frequência.",
+            "O desconto vale para todas as entregas enquanto a assinatura estiver ativa."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Preços",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Cada entrega tem o preço da data do pedido, menos o seu desconto.",
+            "Nunca cobramos mais do que o valor do aviso.",
+            "Se o preço subir mais de 5%, pedimos que você revise a entrega antes de fazermos o pedido."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Pular, pausar ou alterar",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Pule uma entrega, pause a assinatura ou altere a quantidade, a frequência ou a próxima data em \"Conta › Assinaturas\".",
+            "Alterações feitas antes do prazo, um dia antes da data do pedido, valem para a próxima entrega.",
+            "Se precisar dos itens antes, faça o pedido agora."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Pagamento",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Cobramos no cartão salvo no checkout. Você pode trocar de cartão a qualquer momento.",
+            "O pagamento é autorizado quando o pedido é feito e cobrado no envio.",
+            "Se um pagamento falhar, tentamos de novo e enviamos um e-mail antes de pausar a assinatura."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Cancele quando quiser",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Cancele em um só passo em \"Conta › Assinaturas\". Sem ligações e sem taxas.",
+            "Entregas já pedidas não são afetadas.",
+            "Uma vez por ano, enviamos um resumo das suas assinaturas ativas."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Sem estoque",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Se um item estiver indisponível, você pode revisar a entrega e pedir o restante.",
+            "Se você não responder, essa entrega é pulada e a próxima acontece como planejado."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Gerencie suas assinaturas",
+        "text": "Veja as próximas entregas e altere qualquer assinatura na sua conta.",
+        "button": "Ir para minhas assinaturas"
       }
     },
     "how_it_works": {

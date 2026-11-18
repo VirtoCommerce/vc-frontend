@@ -64,77 +64,77 @@
       "save": "Save"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Jak to działa",
+      "title": "Jak działają subskrypcje",
+      "lead": "Produkty, które kupujesz regularnie, dostarczamy według Twojego harmonogramu i taniej. Masz pełną kontrolę: pomiń, zmień lub anuluj dostawę w dowolnym momencie przed terminem.",
       "steps": {
-        "title": "How it works",
+        "title": "Jak to działa",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Wybierz częstotliwość",
+          "text": "Na stronie produktu wybierz „Subscribe & Save” i częstotliwość dostaw. Pierwsze zamówienie zostanie wysłane jak zwykle."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Przypominamy wcześniej",
+          "text": "Przed każdą dostawą wysyłamy e-mail z produktami, datą i maksymalną kwotą, jaką możemy pobrać."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Dostarczamy i pobieramy płatność",
+          "text": "Zamówienie jest składane w wybranym dniu i opłacane kartą zapisaną przy zamówieniu, z rabatem subskrypcyjnym."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Oszczędności",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Rabat jest widoczny na stronie produktu, zanim wykupisz subskrypcję.",
+            "Na niektórych produktach oszczędzasz więcej, gdy są dostarczane częściej.",
+            "Rabat obowiązuje przy każdej dostawie, dopóki subskrypcja jest aktywna."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Ceny",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Cena każdej dostawy jest ustalana w dniu zamówienia, z odliczeniem rabatu.",
+            "Nigdy nie pobierzemy więcej niż kwota z przypomnienia.",
+            "Jeśli cena wzrośnie o więcej niż 5%, poprosimy Cię o sprawdzenie dostawy przed zamówieniem."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Pomiń, wstrzymaj lub zmień",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Pomiń dostawę, wstrzymaj subskrypcję lub zmień ilość, częstotliwość albo datę następnej dostawy w sekcji „Konto › Subskrypcje”.",
+            "Zmiany wprowadzone przed terminem, dzień przed datą zamówienia, dotyczą najbliższej dostawy.",
+            "Jeśli potrzebujesz produktów wcześniej, zamów od razu."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Płatność",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Pobieramy płatność z karty zapisanej przy zamówieniu. Kartę możesz zmienić w dowolnym momencie.",
+            "Kwota jest autoryzowana przy składaniu zamówienia i pobierana przy wysyłce.",
+            "Jeśli płatność się nie powiedzie, spróbujemy ponownie i napiszemy do Ciebie, zanim subskrypcja zostanie wstrzymana."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Anuluj w każdej chwili",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Anuluj jednym krokiem w sekcji „Konto › Subskrypcje”. Bez telefonów i opłat.",
+            "Nie dotyczy to dostaw, które zostały już zamówione.",
+            "Raz w roku wysyłamy podsumowanie Twoich aktywnych subskrypcji."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Brak w magazynie",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Jeśli produkt jest niedostępny, możesz sprawdzić dostawę i zamówić resztę.",
+            "Jeśli nie odpowiesz, ta dostawa zostanie pominięta, a następna odbędzie się zgodnie z planem."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Zarządzaj subskrypcjami",
+        "text": "Sprawdzaj nadchodzące dostawy i zmieniaj subskrypcje na swoim koncie.",
+        "button": "Przejdź do moich subskrypcji"
       }
     },
     "how_it_works": {

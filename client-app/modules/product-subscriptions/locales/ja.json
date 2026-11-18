@@ -64,77 +64,77 @@
       "save": "Save"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "仕組み",
+      "title": "定期購入の仕組み",
+      "lead": "いつも購入する商品を、ご希望のスケジュールでお得にお届けします。締め切りまでなら、いつでもスキップ・変更・キャンセルできます。",
       "steps": {
-        "title": "How it works",
+        "title": "仕組み",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "頻度を選ぶ",
+          "text": "商品ページで「Subscribe & Save」を選び、お届けの頻度を選びます。初回のご注文は通常どおり発送されます。"
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "事前にお知らせ",
+          "text": "お届けの前に、商品、日付、請求される最大金額をメールでお知らせします。"
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "お届けと請求",
+          "text": "ご指定の日に注文が作成され、チェックアウト時に保存したカードに定期購入割引を適用して請求されます。"
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "割引",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "割引額は定期購入の前に商品ページに表示されます。",
+            "お届けの頻度が高いほど割引が大きくなる商品もあります。",
+            "割引は定期購入が有効な間、毎回のお届けに適用されます。"
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "価格",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "各お届けの価格は注文日の価格から割引を差し引いた額です。",
+            "お知らせメールに記載した金額を超えて請求することはありません。",
+            "価格が5%を超えて上がった場合は、注文前にお届け内容の確認をお願いします。"
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "スキップ・一時停止・変更",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "お届けのスキップ、一時停止、数量・頻度・次回日付の変更は「アカウント › 定期購入」で行えます。",
+            "締め切り（注文日の前日）までの変更は次回のお届けに反映されます。",
+            "早く必要な場合は、今すぐ注文できます。"
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "お支払い",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "チェックアウト時に保存したカードに請求します。カードはいつでも変更できます。",
+            "支払いは注文時に承認され、発送時に請求されます。",
+            "支払いに失敗した場合は再試行し、定期購入を一時停止する前にメールでお知らせします。"
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "いつでもキャンセル",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "「アカウント › 定期購入」でワンステップでキャンセルできます。電話も手数料も不要です。",
+            "すでに注文済みのお届けには影響しません。",
+            "年に一度、有効な定期購入の一覧をメールでお送りします。"
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "在庫切れ",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "商品が在庫切れの場合は、お届け内容を確認して残りを注文できます。",
+            "ご返答がない場合、そのお届けはスキップされ、次回は予定どおりお届けします。"
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "定期購入の管理",
+        "text": "今後のお届けを確認し、アカウントから定期購入を変更できます。",
+        "button": "定期購入へ移動"
       }
     },
     "how_it_works": {

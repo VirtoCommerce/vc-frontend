@@ -64,77 +64,77 @@
       "save": "Save"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Slik fungerer det",
+      "title": "Slik fungerer abonnementer",
+      "lead": "Få varene du kjøper jevnlig levert etter din egen plan, til en lavere pris. Du har kontrollen: hopp over, endre eller avbryt en levering når som helst før fristen.",
       "steps": {
-        "title": "How it works",
+        "title": "Slik fungerer det",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Velg hvor ofte",
+          "text": "Velg «Subscribe & Save» og et leveringsintervall på produktsiden. Den første bestillingen sendes som vanlig."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Vi minner deg på det",
+          "text": "Før hver levering sender vi deg en e-post med varene, datoen og det høyeste beløpet du kan bli belastet."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Vi leverer og belaster",
+          "text": "Bestillingen legges inn på datoen du valgte og belastes kortet du lagret i kassen, med abonnementsrabatten din."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Rabatt",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Rabatten vises på produktsiden før du abonnerer.",
+            "Noen produkter gir større rabatt når de leveres oftere.",
+            "Rabatten gjelder hver levering så lenge abonnementet er aktivt."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Priser",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Hver levering prises på bestillingsdatoen, minus rabatten din.",
+            "Vi belaster aldri mer enn beløpet i påminnelsen.",
+            "Hvis prisen stiger med mer enn 5 %, ber vi deg se over leveringen før vi bestiller den."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Hopp over, sett på pause eller endre",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Hopp over en levering, sett abonnementet på pause eller endre antall, intervall eller neste dato under «Konto › Abonnementer».",
+            "Endringer gjort før fristen, én dag før bestillingsdatoen, gjelder neste levering.",
+            "Bestill nå hvis du trenger varene tidligere."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Betaling",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Vi belaster kortet du lagret i kassen. Du kan bytte kort når som helst.",
+            "Betalingen reserveres når bestillingen legges inn, og trekkes når den sendes.",
+            "Hvis en betaling mislykkes, prøver vi igjen og sender deg en e-post før abonnementet settes på pause."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Avbryt når som helst",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Avbryt i ett steg under «Konto › Abonnementer». Ingen telefoner og ingen gebyrer.",
+            "Leveringer som allerede er bestilt, påvirkes ikke.",
+            "En gang i året sender vi deg en oversikt over dine aktive abonnementer."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Utsolgt",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Hvis en vare ikke er tilgjengelig, kan du se over leveringen og bestille resten.",
+            "Hvis du ikke svarer, hoppes denne leveringen over, og den neste går som planlagt."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Administrer abonnementene dine",
+        "text": "Se kommende leveringer og endre abonnementer på kontoen din.",
+        "button": "Gå til mine abonnementer"
       }
     },
     "how_it_works": {

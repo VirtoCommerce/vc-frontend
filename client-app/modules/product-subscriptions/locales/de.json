@@ -64,77 +64,77 @@
       "save": "Save"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "So funktioniert's",
+      "title": "So funktionieren Abonnements",
+      "lead": "Produkte, die Sie regelmäßig kaufen, kommen nach Ihrem Zeitplan und günstiger. Sie behalten die Kontrolle: Sie können jede Lieferung bis zum Stichtag überspringen, ändern oder kündigen.",
       "steps": {
-        "title": "How it works",
+        "title": "So funktioniert's",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Wählen Sie, wie oft",
+          "text": "Wählen Sie auf der Produktseite „Subscribe & Save“ und einen Lieferrhythmus. Ihre erste Bestellung wird wie gewohnt versandt."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Wir erinnern Sie vorher",
+          "text": "Vor jeder Lieferung senden wir Ihnen eine E-Mail mit den Artikeln, dem Datum und dem Höchstbetrag, der berechnet werden kann."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Wir liefern und buchen ab",
+          "text": "Die Bestellung wird am gewählten Datum aufgegeben und mit Ihrem Abo-Rabatt über die beim Checkout gespeicherte Karte bezahlt."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Rabatt",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Der Rabatt wird auf der Produktseite angezeigt, bevor Sie abonnieren.",
+            "Bei manchen Produkten sparen Sie mehr, wenn sie häufiger geliefert werden.",
+            "Der Rabatt gilt für jede Lieferung, solange das Abonnement aktiv ist."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Preise",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Jede Lieferung wird zum Preis am Bestelldatum abzüglich Ihres Rabatts berechnet.",
+            "Wir berechnen nie mehr als den Betrag aus Ihrer Erinnerung.",
+            "Steigt der Preis um mehr als 5 %, bitten wir Sie, die Lieferung vor der Bestellung zu prüfen."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Überspringen, pausieren, ändern",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Lieferung überspringen, Abonnement pausieren oder Menge, Rhythmus und nächstes Datum ändern: unter „Konto › Abonnements“.",
+            "Änderungen bis zum Stichtag, einen Tag vor dem Bestelldatum, gelten für die nächste Lieferung.",
+            "Wenn Sie die Artikel früher brauchen, bestellen Sie sofort."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Zahlung",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Wir belasten die beim Checkout gespeicherte Karte. Sie können die Karte jederzeit wechseln.",
+            "Der Betrag wird bei der Bestellung reserviert und beim Versand abgebucht.",
+            "Schlägt eine Zahlung fehl, versuchen wir es erneut und schreiben Ihnen, bevor das Abonnement pausiert wird."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Jederzeit kündbar",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Kündigen Sie mit einem Schritt unter „Konto › Abonnements“. Ohne Anruf und ohne Gebühren.",
+            "Bereits aufgegebene Lieferungen sind davon nicht betroffen.",
+            "Einmal im Jahr senden wir Ihnen eine Übersicht Ihrer aktiven Abonnements."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Nicht vorrätig",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Ist ein Artikel nicht verfügbar, können Sie die Lieferung prüfen und den Rest bestellen.",
+            "Wenn Sie nicht reagieren, wird diese Lieferung übersprungen und die nächste wie geplant ausgeführt."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Abonnements verwalten",
+        "text": "Sehen Sie anstehende Lieferungen und ändern Sie jedes Abonnement in Ihrem Konto.",
+        "button": "Zu meinen Abonnements"
       }
     },
     "how_it_works": {
