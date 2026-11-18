@@ -749,6 +749,7 @@
 - Slots: title, default (receives {close}), actions (receives {close})
 - Features: full-screen on mobile, HeadlessUI-based, animations, backdrop, focus trap
 - Works with: useModal composable
+- Initial focus: the first focusable element; put `data-autofocus` on another element (e.g. Cancel in a destructive confirmation) to open on it, `data-skip-autofocus` to exclude one
 - Note: No "size" prop - use maxWidth instead
 
 **VcConfirmationModal** (`client-app/ui-kit/components/organisms/confirmation-modal/vc-confirmation-modal.vue`)

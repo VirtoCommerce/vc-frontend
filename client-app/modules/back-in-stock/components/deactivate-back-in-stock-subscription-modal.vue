@@ -7,12 +7,19 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <!-- The dialog opens on Cancel, so Enter on a freshly opened dialog does not delete. -->
-      <VcButton :loading="fetching" color="danger" data-skip-autofocus @click="remove(close)">
+      <VcButton :loading="fetching" color="danger" @click="remove(close)">
         {{ $t("back_in_stock.deactivate_modal.delete_button") }}
       </VcButton>
 
-      <VcButton color="secondary" variant="outline" class="ms-auto" data-test-id="cancel-button" @click="close">
+      <!-- The dialog opens on Cancel, so Enter on a freshly opened dialog does not delete. -->
+      <VcButton
+        color="secondary"
+        variant="outline"
+        class="ms-auto"
+        data-test-id="cancel-button"
+        data-autofocus
+        @click="close"
+      >
         {{ $t("back_in_stock.deactivate_modal.cancel_button") }}
       </VcButton>
     </template>

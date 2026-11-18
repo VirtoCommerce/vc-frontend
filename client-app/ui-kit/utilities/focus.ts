@@ -1,6 +1,8 @@
 export const FOCUSABLE_SELECTOR =
   'a[href]:not([data-skip-autofocus]), button:not(:disabled):not([data-skip-autofocus]), input:not(:disabled):not([data-skip-autofocus]), textarea:not(:disabled):not([data-skip-autofocus]), select:not(:disabled):not([data-skip-autofocus]), [tabindex]:not([tabindex="-1"]):not([data-skip-autofocus]), [contenteditable="true"]:not([data-skip-autofocus])';
 
+const AUTOFOCUS_SELECTOR = "[data-autofocus]";
+
 function crossedFocusBoundary(event: FocusEvent): boolean {
   const other = event.relatedTarget;
   const shell = event.currentTarget as HTMLElement | null;
@@ -83,6 +85,11 @@ export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEven
   return () => document.removeEventListener("focusout", onDocumentFocusOut, true);
 }
 
+/**
+ * The element a dialog focuses when it opens. `data-autofocus` on an element inside the container picks that
+ * element, or the first focusable one inside it when the marker sits on a wrapper; without the marker it is the
+ * first focusable element in DOM order. An element marked `data-skip-autofocus` is never picked.
+ */
 export function findFirstFocusableElement(
   container: HTMLElement | string,
   { ignoreSelector, extendSelector }: { ignoreSelector?: string; extendSelector?: string },
@@ -94,6 +101,13 @@ export function findFirstFocusableElement(
   }
 
   const selectors = [FOCUSABLE_SELECTOR, extendSelector].filter(Boolean).join(", ");
+
+  const marked = element.querySelector<HTMLElement>(AUTOFOCUS_SELECTOR);
+  const preferred = marked?.matches(selectors) ? marked : marked?.querySelector<HTMLElement>(selectors);
+
+  if (preferred) {
+    return preferred;
+  }
 
   const focusableElement = element.querySelector(selectors) as HTMLElement;
   const elementsToExclude = ignoreSelector ? (element.querySelector(ignoreSelector) as HTMLElement) : null;

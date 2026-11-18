@@ -12,18 +12,19 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <!-- The dialog opens on Cancel, so Enter on a freshly opened dialog does not delete. -->
-      <VcButton
-        data-test-id="delete-button"
-        data-skip-autofocus
-        :loading="loading"
-        color="danger"
-        @click="remove(close)"
-      >
+      <VcButton data-test-id="delete-button" :loading="loading" color="danger" @click="remove(close)">
         {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
       </VcButton>
 
-      <VcButton data-test-id="cancel-button" class="ms-auto" color="secondary" variant="outline" @click="close">
+      <!-- The dialog opens on Cancel, so Enter on a freshly opened dialog does not delete. -->
+      <VcButton
+        data-test-id="cancel-button"
+        data-autofocus
+        class="ms-auto"
+        color="secondary"
+        variant="outline"
+        @click="close"
+      >
         {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
       </VcButton>
     </template>
