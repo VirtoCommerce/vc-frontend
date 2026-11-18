@@ -5,10 +5,11 @@
   --vc-popover-border-width: 1px;
 
   &__panel {
-    // The card's padding and border surround the panel: the card stays 20rem × 50vh, its corners clip nothing.
+    // The card's padding and border surround the panel: the card stays 20rem × 50vh, and the panel clips nothing,
+    // so the search field's focus ring, drawn outside the field, shows in full.
     $inset: calc(2 * (var(--vc-popover-padding) + var(--vc-popover-border-width)));
 
-    @apply flex flex-col rounded-none;
+    @apply flex flex-col overflow-visible rounded-none;
 
     width: calc(min(20rem, 100vw - 2rem) - #{$inset});
     max-height: calc(50vh - #{$inset});
