@@ -2,7 +2,7 @@ import { mount, shallowMount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick, ref } from "vue";
 import { createI18n } from "vue-i18n";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcTableColumn from "./vc-table-column.vue";
 import VcTable from "./vc-table.vue";
 

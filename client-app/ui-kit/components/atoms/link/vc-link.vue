@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getLinkAttr } from "@/core/utilities/common";
+import { getLinkAttr } from "@/ui-kit/utilities";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IAttributes {

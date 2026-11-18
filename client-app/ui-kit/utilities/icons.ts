@@ -1,6 +1,6 @@
 import DOMPurify from "dompurify";
-import { Logger } from "@/core/utilities";
 import { resolveIconName } from "./icon-aliases";
+import { Logger } from "./logger";
 
 export type IconVariantType = "solid" | "outline";
 

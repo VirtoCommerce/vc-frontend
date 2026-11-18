@@ -37,11 +37,11 @@ export const Carousel: StoryType = {
   args: {
     ...Basic.args,
     images: [
-      { id: "1", url: "product-example-1.webp", sortOrder: 1 },
-      { id: "2", url: "product-example-2.webp", sortOrder: 2 },
-      { id: "3", url: "product-example-3.webp", sortOrder: 3 },
-      { id: "4", url: "product-example-4.webp", sortOrder: 4 },
-      { id: "5", url: "product-example-5.webp", sortOrder: 5 },
+      { url: "product-example-1.webp" },
+      { url: "product-example-2.webp" },
+      { url: "product-example-3.webp" },
+      { url: "product-example-4.webp" },
+      { url: "product-example-5.webp" },
     ],
   },
 };
