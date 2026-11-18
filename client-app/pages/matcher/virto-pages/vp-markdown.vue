@@ -8,7 +8,6 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed } from "vue";
 import { usePageTitle } from "@/core/composables/usePageTitle";
-import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 
 interface IProps {
   content: string | null;

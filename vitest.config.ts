@@ -24,6 +24,7 @@ export default defineConfig((env) =>
             "node_modules/",
             "client-app/e2e/*",
             "**/*.d.ts",
+            "**/*.check.ts",
             "**/*.test.ts",
             "**/*.spec.ts",
             "**/types.ts",

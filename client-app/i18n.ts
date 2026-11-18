@@ -1,7 +1,6 @@
 import { createI18n as _createI18n } from "vue-i18n";
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
-import type { LocaleMessage } from "@intlify/core-base";
-import type { IntlNumberFormat, PluralizationRule } from "vue-i18n";
+import type { IntlNumberFormat, LocaleMessageValue, PluralizationRule } from "vue-i18n";
 
 /**
  * Default per-locale number formats. Registered for the boot locale by `createI18n` and for every
@@ -75,7 +74,7 @@ export function createIntlPluralRule(locale: string): PluralizationRule {
 export function createI18n(
   locale: string,
   currency: string,
-  fallback?: { locale: string; message: LocaleMessage },
+  fallback?: { locale: string; message: Record<string, LocaleMessageValue> },
   pluralRuleLocales?: string[],
 ) {
   // `locale` may originate from user-controlled input (e.g. a `?cultureName=` query param) and is

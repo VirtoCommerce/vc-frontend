@@ -37,7 +37,9 @@
       "nav_previous": "Назад",
       "nav_next": "Вперёд",
       "nav_up": "Вверх",
-      "nav_down": "Вниз"
+      "nav_down": "Вниз",
+      "select_item": "Выбрать {name}",
+      "select_all_items": "Выбрать все товары"
     },
     "calendar": {
       "aria_label": "Календарь",

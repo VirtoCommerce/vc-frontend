@@ -29,11 +29,10 @@
 
 <script setup lang="ts">
 import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
-import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  actualPrice?: Pick<MoneyType, "amount" | "formattedAmount">;
-  listPrice?: Pick<MoneyType, "amount" | "formattedAmount">;
+  actualPrice?: VcMoneyType;
+  listPrice?: VcMoneyType;
   align?: "start" | "end";
   singleLine?: boolean;
   truncate?: boolean;

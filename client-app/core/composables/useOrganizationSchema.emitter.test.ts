@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 import { useBrandProfile } from "./useBrandProfile";
 import { useLanguages } from "./useLanguages";
 import { useOrganizationSchema } from "./useOrganizationSchema";
-import type { OrganizationFactsType } from "./useOrganizationSchema";
+import type { OrganizationFactsType } from "./useBrandProfile";
 
 vi.mock("@unhead/vue", () => ({ useHead: vi.fn() }));
 vi.mock("./useBrandProfile", () => ({ useBrandProfile: vi.fn() }));
