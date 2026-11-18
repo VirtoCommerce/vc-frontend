@@ -6,6 +6,7 @@
 }
 
 @layer theme {
+  @include meta.load-css("@/ui-kit/styles/fallback-palette");
   @include meta.load-css("colors");
   @include meta.load-css("@/ui-kit/styles/ui-kit-tokens");
 

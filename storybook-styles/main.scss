@@ -2,6 +2,7 @@
 @use "sass:meta";
 
 @layer theme {
+  @include meta.load-css("../client-app/ui-kit/styles/fallback-palette");
   @include meta.load-css("../client-app/ui-kit/styles/ui-kit-tokens");
 }
 
