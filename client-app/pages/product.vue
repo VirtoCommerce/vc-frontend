@@ -464,6 +464,8 @@ watch(
   [isB2cLayout, shouldLoadVariations],
   async () => {
     if (variationsProductId === productId.value && shouldLoadVariations.value) {
+      updateSearchParams({ page: 1 });
+
       await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
     }
   },

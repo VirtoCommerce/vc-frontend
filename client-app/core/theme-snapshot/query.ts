@@ -1,4 +1,4 @@
-/** Import-free, because the Vite config loads it under Node to build the inline script. */
+/** Constants shared by the app and the inline script; import-free, because the Vite config loads it under Node to build that script. */
 
 export const THEME_SNAPSHOT_GLOBAL = "__vcThemeSnapshot";
 

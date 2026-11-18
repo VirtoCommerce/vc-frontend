@@ -37,6 +37,21 @@ describe("useRelatedProducts", () => {
     expect(loading.value).toBe(false);
   });
 
+  it("drops the previous product's list as soon as the next product's request starts", async () => {
+    const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
+    const answerA = answerLater();
+    answerLater();
+
+    const fetchingA = fetchRelatedProducts({ productId: "a" });
+    answerA("a");
+    await fetchingA;
+    expect(relatedProducts.value.map((product) => product.id)).toEqual(["a-related"]);
+
+    void fetchRelatedProducts({ productId: "b" });
+
+    expect(relatedProducts.value).toEqual([]);
+  });
+
   it("stays loading while the latest request runs after the previous one answers", async () => {
     const { relatedProducts, loading, fetchRelatedProducts } = useRelatedProducts();
     const answerA = answerLater();

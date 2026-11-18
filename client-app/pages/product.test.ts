@@ -6,9 +6,11 @@ import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { useThemeTemplates } from "@/shared/static-content/composables/useThemeTemplates";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import ProductPage from "./product.vue";
+import type { Ref } from "vue";
 
 const mocks = vi.hoisted(() => ({
   product: { value: undefined as Record<string, unknown> | undefined },
+  loadProduct: vi.fn(),
   fetchProducts: vi.fn(),
 }));
 
@@ -53,16 +55,15 @@ vi.mock("@/shared/catalog/composables/useProductVariationProperties", async () =
   return { useProductVariationProperties: () => ({ applicableVariations: createRef([]) }) };
 });
 vi.mock("@/shared/catalog", async () => {
-  const { computed, ref: createRef } = await import("vue");
+  const { ref: createRef, watch } = await import("vue");
   return {
     useProduct: () => {
       const loaded = createRef<Record<string, unknown>>();
       return {
         product: loaded,
         fetching: createRef(false),
-        fetchProduct: vi.fn(async () => {
-          await Promise.resolve();
-          loaded.value = mocks.product.value;
+        fetchProduct: vi.fn(async (id: string) => {
+          loaded.value = await mocks.loadProduct(id);
         }),
       };
     },
@@ -86,10 +87,16 @@ vi.mock("@/shared/catalog", async () => {
       fetchPickupLocations: vi.fn(),
       pickupLocationsLoading: createRef(false),
     }),
-    useProductVariations: (options: { itemsPerPage: { value: number } }) => {
+    useProductVariations: (options: { itemsPerPage: Ref<number> }) => {
+      const variationsSearchParams = createRef({ page: 1, itemsPerPage: options.itemsPerPage.value });
+      watch(options.itemsPerPage, (itemsPerPage) => {
+        variationsSearchParams.value = { page: variationsSearchParams.value.page, itemsPerPage };
+      });
       return {
-        variationsSearchParams: computed(() => ({ itemsPerPage: options.itemsPerPage.value })),
-        updateSearchParams: vi.fn(),
+        variationsSearchParams,
+        updateSearchParams: (updates: Partial<typeof variationsSearchParams.value>) => {
+          variationsSearchParams.value = { ...variationsSearchParams.value, ...updates };
+        },
       };
     },
     useLoyaltyCatalogCurrency: () => createRef(),
@@ -125,6 +132,11 @@ const ProductInfo = defineComponent({
   setup: (props) => () => h("section", { "data-test-id": "product-info", "data-section-id": props.model.id }),
 });
 
+const Variations = defineComponent({
+  emits: { changePage: (pageNumber: number) => typeof pageNumber === "number" },
+  setup: () => () => h("section", { "data-test-id": "product-variations" }),
+});
+
 registerPageBuilderSections({ banner: Banner, "product-reviews": Reviews });
 
 function product(overrides: Record<string, unknown> = {}): Record<string, unknown> {
@@ -148,7 +160,7 @@ async function mountProduct() {
   const wrapper = mount(ProductPage, {
     props: { productId: "p1" },
     global: {
-      components: { "product-info": ProductInfo },
+      components: { "product-info": ProductInfo, "product-variations": Variations },
       mocks: { $t: (key: string) => key },
       directives: { trackItem: {} },
       stubs: {
@@ -165,6 +177,16 @@ async function mountProduct() {
   return wrapper;
 }
 
+function answerProductLater() {
+  let answer!: (loaded: Record<string, unknown>) => void;
+  mocks.loadProduct.mockReturnValueOnce(
+    new Promise<Record<string, unknown>>((resolve) => {
+      answer = resolve;
+    }),
+  );
+  return (loaded: Record<string, unknown>) => answer(loaded);
+}
+
 const banners = (wrapper: Awaited<ReturnType<typeof mountProduct>>) =>
   wrapper.findAll('[data-test-id="product-banner"]').map((node) => node.text());
 
@@ -172,6 +194,10 @@ describe("product page", () => {
   beforeEach(() => {
     useThemeSnapshot().setPublished(null);
     mocks.product.value = product();
+    mocks.loadProduct.mockReset().mockImplementation(async () => {
+      await Promise.resolve();
+      return mocks.product.value;
+    });
     mocks.fetchProducts.mockReset();
   });
 
@@ -231,7 +257,7 @@ describe("product page", () => {
     const wrapper = await mountProduct();
 
     expect(wrapper.find('[data-test-id="price-block"]').text()).toBe("B2C");
-    expect(mocks.fetchProducts).toHaveBeenCalledWith({ itemsPerPage: 150 }, true);
+    expect(mocks.fetchProducts).toHaveBeenCalledWith({ page: 1, itemsPerPage: 150 }, true);
   });
 
   it("reloads the variations when the open template switches them to the B2C layout in place", async () => {
@@ -261,8 +287,43 @@ describe("product page", () => {
     await flushPromises();
 
     expect(mocks.fetchProducts.mock.calls).toEqual([
-      [{ itemsPerPage: 50 }, false],
-      [{ itemsPerPage: 150 }, true],
+      [{ page: 1, itemsPerPage: 50 }, false],
+      [{ page: 1, itemsPerPage: 150 }, true],
+    ]);
+  });
+
+  it("reloads the variations from the first page when the open template switches them to the B2C layout", async () => {
+    mocks.product.value = product({ hasVariations: true });
+    publishTheme({
+      rules: { version: 2, product: [] },
+      templates: {
+        product: {
+          settings: {},
+          content: [{ id: "info", type: "product-info", blocks: [{ id: "variations", type: "product-variations" }] }],
+        },
+      },
+    });
+
+    const wrapper = await mountProduct();
+    wrapper.findComponent(Variations).vm.$emit("changePage", 3);
+    await flushPromises();
+    useThemeTemplates().setOpenTemplate("product", {
+      settings: {},
+      content: [
+        {
+          id: "info",
+          type: "product-info",
+          variationsLayout: "b2c",
+          blocks: [{ id: "variations", type: "product-variations" }],
+        },
+      ],
+    });
+    await flushPromises();
+
+    expect(mocks.fetchProducts.mock.calls).toEqual([
+      [{ page: 1, itemsPerPage: 50 }, false],
+      [{ page: 3, itemsPerPage: 50 }, false],
+      [{ page: 1, itemsPerPage: 150 }, true],
     ]);
   });
 
@@ -324,8 +385,50 @@ describe("product page", () => {
     await flushPromises();
 
     expect(mocks.fetchProducts.mock.calls).toEqual([
-      [{ itemsPerPage: 50 }, false],
-      [{ itemsPerPage: 150 }, true],
+      [{ page: 1, itemsPerPage: 50 }, false],
+      [{ page: 1, itemsPerPage: 150 }, true],
+    ]);
+  });
+
+  it("loads the variations once when the visitor returns to the product before the next one loads", async () => {
+    mocks.product.value = product({ hasVariations: true });
+    publishTheme({
+      rules: {
+        version: 2,
+        product: [{ id: "digital", template: "product.digital", when: { productType: "Digital" } }],
+      },
+      templates: {
+        product: {
+          settings: {},
+          content: [{ id: "info", type: "product-info", blocks: [{ id: "options", type: "product-options" }] }],
+        },
+        "product.digital": {
+          settings: {},
+          content: [
+            {
+              id: "info",
+              type: "product-info",
+              variationsLayout: "b2c",
+              blocks: [{ id: "options", type: "product-options" }],
+            },
+          ],
+        },
+      },
+    });
+
+    const wrapper = await mountProduct();
+    const answerNext = answerProductLater();
+    const answerReturn = answerProductLater();
+    await wrapper.setProps({ productId: "p2" });
+    await wrapper.setProps({ productId: "p1" });
+    answerNext(product({ id: "p2", productType: "Digital", hasVariations: true }));
+    await flushPromises();
+    answerReturn(product({ hasVariations: true }));
+    await flushPromises();
+
+    expect(mocks.fetchProducts.mock.calls).toEqual([
+      [{ page: 1, itemsPerPage: 50 }, false],
+      [{ page: 1, itemsPerPage: 50 }, false],
     ]);
   });
 

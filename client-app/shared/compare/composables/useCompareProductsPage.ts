@@ -528,9 +528,7 @@ export function useCompareProductsPage() {
     { immediate: true },
   );
 
-  // fetchProducts writes straight into shared state with no cancellation hook of its own, so
-  // overlapping calls must be serialized here — otherwise an older, slower response can land after
-  // a newer one and leave stale products displayed.
+  // Calls are serialized so fetchFailed and the warning follow the order of the calls.
   let fetchProductsQueue = Promise.resolve();
   const fetchFailed = ref(false);
 
