@@ -25,6 +25,12 @@ export interface ICheckOptions {
 
 export interface IDesignCheckOptions extends ICheckOptions {
   designsDir: string;
+  /** Where ui-kit keeps the design files of its own blocks: `<kitDesignsDir>/<design>/{blocks,dark}/`. */
+  kitDesignsDir: string;
+  /** How a design's `index.scss` loads that folder: `@/ui-kit/styles/designs`. */
+  kitDesignsRef: string;
+  /** The blocks ui-kit defines: their design files go in the ui-kit folder, every other block's in the design's. */
+  kitBlocks: Set<string>;
 }
 
 export interface IPresetCheckOptions extends ICheckOptions {
@@ -468,8 +474,8 @@ function loadCandidates(target: string): string[] {
   ]);
 }
 
-function designImporter(designDir: string): Importer<"sync"> {
-  const designRoot = realpathSync(designDir) + path.sep;
+function designImporter(designDirs: string[]): Importer<"sync"> {
+  const designRoots = designDirs.filter((dir) => existsSync(dir)).map((dir) => realpathSync(dir) + path.sep);
 
   return {
     canonicalize(url) {
@@ -491,9 +497,9 @@ function designImporter(designDir: string): Importer<"sync"> {
 
       const real = realpathSync(found[0]);
 
-      if (!(real.startsWith(designRoot) && real.endsWith(".scss"))) {
+      if (!(designRoots.some((root) => real.startsWith(root)) && real.endsWith(".scss"))) {
         throw new Error(
-          `${path.relative(".", real)} is not a .scss file in ${designDir}, so this check does not read it`,
+          `${path.relative(".", real)} is not a .scss file in ${designDirs.join(" or ")}, so this check does not read it`,
         );
       }
 
@@ -506,8 +512,8 @@ function designImporter(designDir: string): Importer<"sync"> {
   };
 }
 
-async function compileDesignFile(file: string, designDir: string): Promise<Root> {
-  const importer = designImporter(designDir);
+async function compileDesignFile(file: string, designDirs: string[]): Promise<Root> {
+  const importer = designImporter(designDirs);
   const { css, sourceMap } = compileString(readFileSync(file, "utf-8"), {
     url: pathToFileURL(realpathSync(file)),
     importer,
@@ -524,9 +530,9 @@ async function compileDesignFile(file: string, designDir: string): Promise<Root>
   return result.root;
 }
 
-async function compileOrReport(file: string, designDir: string, errors: string[]): Promise<Root | undefined> {
+async function compileOrReport(file: string, designDirs: string[], errors: string[]): Promise<Root | undefined> {
   try {
-    return await compileDesignFile(file, designDir);
+    return await compileDesignFile(file, designDirs);
   } catch (error) {
     if (error instanceof Error && error.name === "CssSyntaxError") {
       const { file: source, line, reason } = error as CssSyntaxError;
@@ -1063,6 +1069,27 @@ function layoutOf(dir: string, errors: string[]): IDesignFiles {
   return files;
 }
 
+/** A ui-kit design folder holds only the design files of the kit's own blocks. */
+function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
+  const files: IDesignFiles = { blocks: [], dark: [] };
+
+  if (!existsSync(dir)) {
+    return files;
+  }
+
+  for (const entry of entriesOf(dir)) {
+    const at = path.join(dir, entry.name);
+
+    if ((entry.name === "blocks" || entry.name === "dark") && entry.isDirectory()) {
+      files[entry.name] = blockFiles(at, errors);
+    } else {
+      errors.push(`${at}  is not part of a ui-kit design folder (blocks/, dark/)`);
+    }
+  }
+
+  return files;
+}
+
 function checkDesignName(file: string, design: string): string[] {
   const text = readFileSync(file, "utf-8");
 
@@ -1075,13 +1102,34 @@ function checkDesignName(file: string, design: string): string[] {
     });
 }
 
-async function checkFolder(
-  dir: string,
-  blocks: Set<string>,
-  semantics: ReadonlySet<string>,
-  errors: string[],
-): Promise<number> {
+/** The file names a block of a component, and sits in the ui-kit folder exactly when it is a ui-kit block. */
+function blockFileErrors(
+  file: string,
+  kind: "blocks" | "dark",
+  [dir, kitDir]: string[],
+  { blocks, kitBlocks }: IDesignCheckOptions,
+): string[] {
+  const block = path.basename(file, ".scss");
+  const isKitBlock = kitBlocks.has(block);
+
+  if (!blocks.has(block)) {
+    return [`${file}  .${block} is not a block of any component`];
+  }
+
+  if (isKitBlock === file.startsWith(kitDir + path.sep)) {
+    return [];
+  }
+
+  return [
+    `${file}  .${block} is ${isKitBlock ? "a" : "not a"} ui-kit block: its design file goes in ${path.join(isKitBlock ? kitDir : dir, kind)}/`,
+  ];
+}
+
+async function checkFolder(dir: string, options: IDesignCheckOptions, errors: string[]): Promise<number> {
+  const { blocks, semantics } = options;
   const design = path.basename(dir);
+  const kitDir = path.join(options.kitDesignsDir, design);
+  const kitRef = `${options.kitDesignsRef}/${design}`;
 
   if (!DESIGN_NAME.test(design) || design === CLASSIC) {
     errors.push(
@@ -1090,6 +1138,7 @@ async function checkFolder(
   }
 
   const files = layoutOf(dir, errors);
+  const kitFiles = kitLayoutOf(kitDir, errors);
 
   for (const file of [files.index, files.tokens]) {
     if (file) {
@@ -1097,28 +1146,31 @@ async function checkFolder(
     }
   }
 
+  const blockSources = (list: string[], kind: "blocks" | "dark", refBase: string) =>
+    list.map((file) => ({ file, kind, ref: `${refBase}${kind}/${path.basename(file, ".scss")}` }));
   const sources = [
     ...(files.tokens ? [{ file: files.tokens, kind: "tokens" as const, ref: "tokens" }] : []),
-    ...files.blocks.map((file) => ({ file, kind: "blocks" as const, ref: `blocks/${path.basename(file, ".scss")}` })),
-    ...files.dark.map((file) => ({ file, kind: "dark" as const, ref: `dark/${path.basename(file, ".scss")}` })),
+    ...blockSources(files.blocks, "blocks", ""),
+    ...blockSources(files.dark, "dark", ""),
+    ...blockSources(kitFiles.blocks, "blocks", `${kitRef}/`),
+    ...blockSources(kitFiles.dark, "dark", `${kitRef}/`),
   ];
   const checked: ICheckedFileType[] = [];
 
   const compiled = await Promise.all(
     sources.map(async (source) => {
       const compileErrors: string[] = [];
-      const css = await compileOrReport(source.file, dir, compileErrors);
+      const css = await compileOrReport(source.file, [dir, kitDir], compileErrors);
 
       return { css, compileErrors };
     }),
   );
 
   for (const [position, source] of sources.entries()) {
-    const block = path.basename(source.file, ".scss");
     const { css, compileErrors } = compiled[position];
 
-    if (source.kind !== "tokens" && !blocks.has(block)) {
-      errors.push(`${source.file}  .${block} is not a block of any component`);
+    if (source.kind !== "tokens") {
+      errors.push(...blockFileErrors(source.file, source.kind, [dir, kitDir], options));
     }
 
     errors.push(...compileErrors);
@@ -1137,7 +1189,7 @@ async function checkFolder(
     return sources.length;
   }
 
-  const index = await compileOrReport(files.index, dir, errors);
+  const index = await compileOrReport(files.index, [dir, kitDir], errors);
 
   if (index) {
     errors.push(...checkWiring(index, files.index, design, checked));
@@ -1153,11 +1205,9 @@ function designFolders(designsDir: string): string[] {
     .sort((a, b) => a.localeCompare(b));
 }
 
-export async function checkDesigns({
-  designsDir,
-  blocks,
-  semantics,
-}: IDesignCheckOptions): Promise<IDesignCheckResult> {
+export async function checkDesigns(options: IDesignCheckOptions): Promise<IDesignCheckResult> {
+  const { designsDir, kitDesignsDir } = options;
+
   // A moved folder is reported as a check failure, not as readdirSync's ENOENT stack trace.
   if (!existsSync(designsDir)) {
     return {
@@ -1174,7 +1224,7 @@ export async function checkDesigns({
   const results = await Promise.all(
     folders.map(async (folder) => {
       const folderErrors: string[] = [];
-      const count = await checkFolder(path.join(designsDir, folder), blocks, semantics, folderErrors);
+      const count = await checkFolder(path.join(designsDir, folder), options, folderErrors);
 
       return { count, folderErrors };
     }),
@@ -1183,6 +1233,12 @@ export async function checkDesigns({
   for (const { count, folderErrors } of results) {
     fileCount += count;
     errors.push(...folderErrors);
+  }
+
+  const kitFolders = existsSync(kitDesignsDir) ? designFolders(kitDesignsDir) : [];
+
+  for (const folder of kitFolders.filter((kitFolder) => !folders.includes(kitFolder))) {
+    errors.push(`${path.join(kitDesignsDir, folder)}  no design folder ${path.join(designsDir, folder)} loads it`);
   }
 
   // A problem in a file that index.scss loads is reported once, at the line that wrote it.
@@ -1270,7 +1326,7 @@ export async function checkPresets({
   const compiled = await Promise.all(
     files.map(async (name) => {
       const compileErrors: string[] = [];
-      const css = await compileOrReport(path.join(presetsDir, name), presetsDir, compileErrors);
+      const css = await compileOrReport(path.join(presetsDir, name), [presetsDir], compileErrors);
 
       return { css, compileErrors };
     }),
@@ -1305,15 +1361,25 @@ async function main(): Promise<void> {
   const sources = globSync("client-app/**/*.{vue,scss}", {
     ignore: [
       "client-app/designs/**",
+      "client-app/ui-kit/styles/designs/**",
       "client-app/assets/presets/**",
       "client-app/assets/styles/dark/**",
       "client-app/ui-kit/styles/{dark,print}/**",
       "client-app/assets/styles/_custom.scss",
     ],
   });
-  const blocks = sourceBlocks(sources);
+  const isKitSource = (file: string) => file.startsWith("client-app/ui-kit/");
+  const kitBlocks = sourceBlocks(sources.filter(isKitSource));
+  const blocks = new Set([...kitBlocks, ...sourceBlocks(sources.filter((file) => !isKitSource(file)))]);
   const semantics = colorSemantics();
-  const designs = await checkDesigns({ designsDir: "client-app/designs", blocks, semantics });
+  const designs = await checkDesigns({
+    designsDir: "client-app/designs",
+    kitDesignsDir: "client-app/ui-kit/styles/designs",
+    kitDesignsRef: "@/ui-kit/styles/designs",
+    blocks,
+    kitBlocks,
+    semantics,
+  });
   const presets = await checkPresets({ presetsDir: "client-app/assets/presets", blocks, semantics });
   const errors = [...designs.errors, ...presets.errors];
 

@@ -21,11 +21,13 @@ what follows; the rest is review-only.
    inherited, so a block that sets the same token on its own element wins. It targets a block or BEM part only for
    a part with no token.
 3. A design's `blocks/<block>.scss` and `dark/<block>.scss` style only their own BEM block (block, elements,
-   modifiers), and restate every state that should look different (hover, disabled, modifiers).
+   modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
+   block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
+   block's in `client-app/designs/<design>/{blocks,dark}/`. The design's `index.scss` loads both.
 4. **Block order in `index.scss`:** kit blocks (`vc-*`) first, then app blocks. At equal specificity the later rule
    wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
-   `blocks/vc-widget.scss`).
+   `ui-kit/styles/designs/soft/blocks/vc-widget.scss`).
 6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so
    classic computes exactly as before. A new token is public API: agree its name with the developer first.
 7. **Preset stylesheet** (`assets/presets/<preset>.scss`): every rule inside `@layer vc.preset`; colours only.

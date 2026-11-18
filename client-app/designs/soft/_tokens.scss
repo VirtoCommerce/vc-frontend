@@ -14,7 +14,7 @@ html[data-design="soft"] {
   // The kit hovers a row on neutral-200. Across a whole row that reads as a selected row, so soft goes a step lighter.
   --vc-table-row-hover-bg-color: var(--color-neutral-100);
 
-  // VcTabSwitchGroup: a segmented track; blocks/vc-tab-switch-group.scss styles its switches.
+  // VcTabSwitchGroup: a segmented track; ui-kit/styles/designs/soft/blocks/vc-tab-switch-group.scss styles its switches.
   --vc-tab-switch-group-gap: 0px;
   --vc-tab-switch-group-padding: 0.1875rem;
   --vc-tab-switch-group-radius: 9999px;
@@ -30,7 +30,8 @@ html[data-design="soft"] {
   --vc-widget-title-font-weight: 600;
   --vc-widget-title-text-transform: none;
   --vc-widget-title-letter-spacing: -0.02em;
-  // The plate as html computes it, a fork's override included: blocks/vc-widget.scss gives it to nested widgets.
+  // The plate as html computes it, a fork's override included: ui-kit/styles/designs/soft/blocks/vc-widget.scss
+  // gives it to nested widgets.
   --design-widget-radius: var(--vc-widget-radius);
   --design-widget-border-width: var(--vc-widget-border-width);
   --design-widget-padding-x: var(--vc-widget-padding-x);
