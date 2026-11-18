@@ -15,6 +15,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { convertToExtendedContact } from "../utils";
+import type { ExtendedContactType } from "../types";
 import type {
   ContactType,
   CustomIdentityResultType,
@@ -23,7 +24,6 @@ import type {
   InputResendOrganizationInviteType,
 } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { ExtendedContactType } from "@/shared/company";
 import type { MaybeRef } from "vue";
 
 export function useOrganizationContacts(organizationId: MaybeRef<string>) {

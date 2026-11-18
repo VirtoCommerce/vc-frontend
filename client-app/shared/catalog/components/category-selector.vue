@@ -62,7 +62,7 @@ import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getCategoryRoute } from "@/core/utilities";
 import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
-import { useSlugInfo } from "@/shared/common";
+import { useSlugInfo } from "@/shared/common/composables/useSlugInfo";
 import type { Category } from "@/core/api/graphql/types";
 import type { FacetValueItemType } from "@/core/types";
 

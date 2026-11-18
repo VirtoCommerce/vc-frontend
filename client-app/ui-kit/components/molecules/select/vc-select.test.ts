@@ -1,9 +1,9 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent, nextTick } from "vue";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcCheckbox, VcIcon, VcInputDetails, VcLabel, VcScrollbar, VcTooltip } from "@/ui-kit/components/atoms";
 import { VcButton, VcDropdownMenu, VcInput, VcMenuItem, VcPopover, VcSelect } from "@/ui-kit/components/molecules";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import type { VueWrapper } from "@vue/test-utils";
 
 // A failed assertion skips a trailing unmount(), and these suites read document.activeElement.

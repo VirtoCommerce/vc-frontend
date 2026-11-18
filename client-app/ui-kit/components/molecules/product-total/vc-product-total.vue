@@ -9,11 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import type { MoneyType } from "@/core/api/graphql/types";
-
 interface IProps {
-  actualPrice?: MoneyType;
-  listPrice?: MoneyType;
+  actualPrice?: VcMoneyType;
+  listPrice?: VcMoneyType;
   disabled?: boolean;
 }
 
