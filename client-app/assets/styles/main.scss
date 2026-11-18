@@ -5,10 +5,10 @@
   @tailwind components;
 }
 
+@include meta.load-css("@/ui-kit/styles");
+
 @layer theme {
-  @include meta.load-css("@/ui-kit/styles/fallback-palette");
   @include meta.load-css("colors");
-  @include meta.load-css("@/ui-kit/styles/ui-kit-tokens");
 }
 
 @layer vc.app {
@@ -22,14 +22,8 @@
   @include meta.load-css("dark-app");
 }
 
-@layer vc.kit {
-  @include meta.load-css("@/ui-kit/styles/popover-host");
-  @include meta.load-css("@/ui-kit/styles/dark-kit");
-}
-
 @layer vc.print {
   @include meta.load-css("print");
-  @include meta.load-css("@/ui-kit/styles/print-kit");
 }
 
 /* Use for custom themes only */

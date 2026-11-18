@@ -84,16 +84,16 @@ How to verify:
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `_colors.scss`, `ui-kit/styles/_ui-kit-tokens.scss` with classic's `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/ui-kit/styles/designs/<name>/` for soft, `client-app/designs/<name>/` for a fork's own design). A design's colour tokens take colour only from preset variables |
+| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `ui-kit/styles/_ui-kit-tokens.scss` with classic's `--vc-radius` (both from the kit's entry, `ui-kit/styles/index.scss`), `_colors.scss`; each design's `_tokens.scss` (`client-app/ui-kit/styles/designs/<name>/` for soft, `client-app/designs/<name>/` for a fork's own design). A design's colour tokens take colour only from preset variables |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
-| `vc.kit` | ui-kit SFC styles (automatic, see below), `ui-kit/styles/_popover-host.scss` (`#popover-host`, which the `uiKit` plugin adds to `body`), `ui-kit/styles/_dark-kit.scss` |
+| `vc.kit` | ui-kit SFC styles (automatic, see below), `ui-kit/styles/_popover-host.scss` (`#popover-host`, which the `uiKit` plugin adds to `body`), `ui-kit/styles/_dark-kit.scss`, both from `ui-kit/styles/index.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `_dark-app.scss` |
 | `vc.design.kit` | a design's kit block files: `client-app/ui-kit/styles/designs/<name>/blocks/` and `dark/`, wired by that folder's own `index.scss` |
 | `vc.design.app` | a design's app block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by the design's `index.scss`; beats `vc.design.kit`, so an app block on a kit component's root (`footer-links` on a VcWidget) beats that component's block in any load order |
 | `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
-| `vc.print` | `_print.scss` (`html`, `body`, `#app`), then `ui-kit/styles/_print-kit.scss` (`ui-kit/styles/print/**`); every component's top-level print-only `@media`, moved there automatically |
+| `vc.print` | `ui-kit/styles/_print-kit.scss` (`ui-kit/styles/print/**`, from `ui-kit/styles/index.scss`), then `_print.scss` (`html`, `body`, `#app`); every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
@@ -148,6 +148,11 @@ Each is layered by hand and starts with `@use "layers"`: `preflight.scss`, `vend
 unlayered). A new entry follows the same pattern: `@use "layers"` first, then each part with
 `@include meta.load-css(…)` inside its `@layer` block. Swiper is loaded with a plain
 `@import … layer(vc.vendor)` (`vendors/_swiper.scss`).
+
+ui-kit's global styles have one entry of their own, `ui-kit/styles/index.scss`: it puts each of its
+files in its layer (`theme`, `vc.kit`, `vc.print`), so `main.scss` and Storybook's `main.scss` load it
+whole, after `@use "layers"`, with `@include meta.load-css("@/ui-kit/styles")` outside any `@layer`
+block. A file the kit adds goes in that entry, never in an app's entry stylesheet.
 
 A design's `index.scss` (`client-app/designs/<name>/`) does not restate the order: the preflight
 `<link>` in `index.html` (`.storybook/preview-head.html` in Storybook) declares it before any design
@@ -689,6 +694,7 @@ A fork that edited one of these merges its change into the new place, in the new
 | `designs/soft/_tokens.scss` | `ui-kit/styles/designs/soft/_tokens.scss` (`theme`), loaded the same way |
 | `:root { --vc-radius: 0.5rem }` in `main.scss` | `ui-kit/styles/_ui-kit-tokens.scss` (`theme`) |
 | `#popover-host` in `App.vue` (the element and its `vc.app` rule) | the `uiKit` plugin adds the element to `body`; its rule is in `ui-kit/styles/_popover-host.scss` (`vc.kit`). Drop your `App.vue` copy |
+| `main.scss` loading `_fallback-palette`, `_ui-kit-tokens`, `_popover-host`, `_dark-kit` and `_print-kit` one by one | one `@include meta.load-css("@/ui-kit/styles")` (`ui-kit/styles/index.scss` puts each in its layer). Do the same in your entry stylesheets |
 | a fork's rule in `@layer vc.design` | `@layer vc.design.kit` for a kit block, `@layer vc.design.app` for an app block; plain `vc.design` now beats both |
 
 Every entry stylesheet now starts with `@use "layers"`.

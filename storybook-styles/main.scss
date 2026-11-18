@@ -1,12 +1,4 @@
 @use "../client-app/assets/styles/layers";
 @use "sass:meta";
 
-@layer theme {
-  @include meta.load-css("../client-app/ui-kit/styles/fallback-palette");
-  @include meta.load-css("../client-app/ui-kit/styles/ui-kit-tokens");
-}
-
-@layer vc.kit {
-  @include meta.load-css("../client-app/ui-kit/styles/popover-host");
-  @include meta.load-css("../client-app/ui-kit/styles/dark-kit");
-}
+@include meta.load-css("../client-app/ui-kit/styles");
