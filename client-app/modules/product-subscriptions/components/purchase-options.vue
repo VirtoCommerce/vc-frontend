@@ -156,7 +156,7 @@ async function syncCartLine(): Promise<void> {
   try {
     if (wantsSubscription) {
       const { unit, count } = parseIntervalKey(selectedInterval.value!);
-      if (current && current.intervalUnit === unit && current.intervalCount === count) {
+      if (current?.intervalUnit === unit && current.intervalCount === count) {
         syncState.value = "ok";
         return;
       }
