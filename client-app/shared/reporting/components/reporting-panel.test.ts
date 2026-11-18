@@ -175,6 +175,21 @@ describe("ReportingPanel", () => {
     );
   });
 
+  it("adds the owner's note under its own footnote", () => {
+    const wrapper = mountPanel({ data: dataFor("year") }, { "footnote-append": "3 orders left out" });
+
+    expect(wrapper.get("[data-test-id='reporting-footnote-append-label']").text()).toBe("3 orders left out");
+  });
+
+  it("draws no second footnote without a note, nor with the error in its place", () => {
+    expect(mountPanel().find("[data-test-id='reporting-footnote-append-label']").exists()).toBe(false);
+    expect(
+      mountPanel({ error: true }, { "footnote-append": "3 orders left out" })
+        .find("[data-test-id='reporting-footnote-append-label']")
+        .exists(),
+    ).toBe(false);
+  });
+
   it("leaves no empty actions box without them", () => {
     expect(mountPanel().find("[data-test-id='reporting-actions-section']").exists()).toBe(false);
   });

@@ -3,7 +3,7 @@ import { computed, toValue, watch } from "vue";
 import { globals } from "@/core/globals";
 import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
-import { toAttachedFile } from "@/ui-kit/utilities/file";
+import { toAttachedFile } from "@/ui-kit/utilities";
 import { UpdatePurchaseRequestByDocumentsDocument } from "../api/graphql/types";
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 import type { MaybeRefOrGetter } from "vue";

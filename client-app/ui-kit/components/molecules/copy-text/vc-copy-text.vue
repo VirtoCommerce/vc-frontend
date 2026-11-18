@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
-import { useNotifications } from "@/shared/notification";
+import { useUiKitOptions } from "@/ui-kit/composables/useUiKitOptions";
 
 interface IProps {
   text: string;
@@ -28,12 +28,12 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { copy, isSupported } = useClipboard();
-const notifications = useNotifications();
+const { notifications } = useUiKitOptions();
 
 const copyText = async () => {
   await copy(props.text);
 
-  notifications.success({
+  notifications?.success({
     text: props.notification,
     duration: 4000,
     single: true,

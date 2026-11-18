@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
-import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/ui-kit/constants";
 import type { Ref } from "vue";
 import type { NumberSchema } from "yup";
 
