@@ -391,6 +391,43 @@ export const WithTwoActions: StoryType = {
   },
 };
 
+export const WithCustomActions: StoryType = {
+  args: { title: "Quote expires soon", icon: true, color: "warning", variant: "tonal" },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>Details</VcButton>
+        <VcButton color="primary" variant="solid">Renew quote</VcButton>
+        <VcButton variant="ghost">Remind me later</VcButton>
+        <VcButton size="xs" prepend-icon="save">Save quote</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A button's own `size`, `color` and `variant` override the values the alert passes to it; props it leaves unset still come from the alert.",
+      },
+      source: {
+        code: `
+          <VcAlert title="Quote expires soon" icon color="warning" variant="tonal">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleDetails">Details</VcButton>
+              <VcButton color="primary" variant="solid" @click="handleRenew">Renew quote</VcButton>
+              <VcButton variant="ghost" @click="handleRemind">Remind me later</VcButton>
+              <VcButton size="xs" prepend-icon="save" @click="handleSave">Save quote</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
 // 8. Kitchen sink
 export const AllStates: StoryType = {
   render: () => ({
