@@ -61,15 +61,7 @@
 
           <SubscriptionBenefits class="purchase-options__benefits" />
 
-          <VcLink
-            :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
-            class="purchase-options__how"
-            data-test-id="purchase-option-how-it-works-link"
-          >
-            <VcIcon name="info" size="xs" />
-
-            {{ $t("product_subscriptions.how_it_works.link") }}
-          </VcLink>
+          <HowItWorksLink class="purchase-options__how" test-id="purchase-option-how-it-works-link" />
 
           <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
             {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
@@ -87,8 +79,8 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { HOW_IT_WORKS_ROUTE_NAME } from "../constants";
 import { subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
+import HowItWorksLink from "./how-it-works-link.vue";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
@@ -198,11 +190,6 @@ onMounted(() => {
 
   &__choices {
     @apply flex flex-col gap-2;
-  }
-
-  &__how {
-    // The hand cursor is set here too: the link sits inside a selectable card, and the cursor must not depend on it.
-    @apply inline-flex cursor-pointer items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__status {

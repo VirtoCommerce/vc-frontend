@@ -43,6 +43,9 @@
             />
 
             <SubscriptionBenefits />
+
+            <!-- In a new tab: the dialog would stay open over the page, and the choice is not saved yet. -->
+            <HowItWorksLink new-tab test-id="purchase-options-modal-how-it-works-link" />
           </PurchaseOption>
         </fieldset>
 
@@ -101,6 +104,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { intervalKey, subscriptionErrorMessage } from "../utils";
+import HowItWorksLink from "./how-it-works-link.vue";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
