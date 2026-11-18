@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildThemeSnapshotScript } from "./inline-script";
 import { THEME_SNAPSHOT_GLOBAL } from "./query";
+import { isThemeSnapshotRejected } from "./request";
 
 type SentRequestType = {
   variables: { domain: string; cultureName?: string; permalink?: string };
@@ -82,5 +83,13 @@ describe("buildThemeSnapshotScript", () => {
     fetchMock.mockResolvedValue({ ok: false, status: 502 });
 
     await expect(runScript("/").response).rejects.toThrow("HTTP 502");
+  });
+
+  it("rejects a refused request with an error the storefront does not ask again for", async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 400 });
+
+    const error: unknown = await runScript("/").response.catch((reason: unknown) => reason);
+
+    expect(isThemeSnapshotRejected(error)).toBe(true);
   });
 });

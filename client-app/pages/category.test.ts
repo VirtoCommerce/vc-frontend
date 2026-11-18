@@ -2,9 +2,9 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import CategoryPage from "./category.vue";
-import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
 const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
@@ -87,16 +87,6 @@ const Banner = defineComponent({
 
 registerPageBuilderSections({ banner: Banner });
 
-function publish(snapshot: Partial<IThemeSnapshot>): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
-  });
-}
-
 const wrappers: { unmount: () => void }[] = [];
 
 function mountCategory(props: { categoryId: string; outline?: string }) {
@@ -135,7 +125,7 @@ describe("category page", () => {
   });
 
   it("chooses the template by the slug's outline and renders its sections around the listing", () => {
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {
@@ -167,7 +157,7 @@ describe("category page", () => {
   });
 
   it("does not choose the template by the outline of the category shown before", () => {
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {
@@ -188,7 +178,7 @@ describe("category page", () => {
 
   it("waits for a category without the slug's outline before choosing its template", async () => {
     pageBuilder.isEnabled = true;
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {
@@ -215,7 +205,7 @@ describe("category page", () => {
 
   it("keeps the listing and the previous category's template until the next category has loaded", async () => {
     pageBuilder.isEnabled = true;
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {
@@ -252,7 +242,7 @@ describe("category page", () => {
   it("chooses the template by the slug's outline without waiting for the category", () => {
     pageBuilder.isEnabled = true;
     heldFetches.value = new Map();
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {
@@ -284,7 +274,7 @@ describe("category page", () => {
   it("keeps the listing and its template when the previous category's request finishes after the current one's", async () => {
     pageBuilder.isEnabled = true;
     heldFetches.value = new Map();
-    publish({
+    publishTheme({
       rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
       templates: {
         "category.sale": {

@@ -2,10 +2,10 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { registerPageBuilderSections } from "../sections";
 import PageTemplate from "./page-template.vue";
-import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 vi.mock("../composables/usePermalinkSeo", () => ({ usePermalinkSeo: vi.fn() }));
 vi.mock("@/core/composables/useLanguages", () => ({
@@ -18,16 +18,6 @@ const Banner = defineComponent({
 });
 
 registerPageBuilderSections({ banner: Banner });
-
-function publish(snapshot: Partial<IThemeSnapshot>): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
-  });
-}
 
 const wrappers: { unmount: () => void }[] = [];
 
@@ -61,7 +51,7 @@ describe("PageTemplate", () => {
   });
 
   it("puts the page where its template's page-content section is, by the store's rules", () => {
-    publish({
+    publishTheme({
       rules: { version: 2, page: [{ id: "landing", template: "page.landing", when: { path: "/landing/*" } }] },
       templates: {
         "page.landing": {
@@ -87,7 +77,7 @@ describe("PageTemplate", () => {
   });
 
   it("lets the page's own template and layout win over the rules and its template", () => {
-    publish({
+    publishTheme({
       templates: {
         "page.blank": { settings: { layout: "blank" }, content: [{ id: "main", type: "page-content" }] },
         page: { settings: { layout: "minimal" }, content: [{ id: "main", type: "page-content" }] },
@@ -102,7 +92,7 @@ describe("PageTemplate", () => {
   });
 
   it("keeps the template's layout when the page's own layout was cleared", () => {
-    publish({
+    publishTheme({
       templates: { page: { settings: { layout: "minimal" }, content: [{ id: "main", type: "page-content" }] } },
     });
 

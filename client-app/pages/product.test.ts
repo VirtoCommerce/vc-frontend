@@ -2,9 +2,10 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
+import { useThemeTemplates } from "@/shared/static-content/composables/useThemeTemplates";
 import { registerPageBuilderSections } from "@/shared/static-content/sections";
 import ProductPage from "./product.vue";
-import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 const mocks = vi.hoisted(() => ({
   product: { value: undefined as Record<string, unknown> | undefined },
@@ -126,16 +127,6 @@ const ProductInfo = defineComponent({
 
 registerPageBuilderSections({ banner: Banner, "product-reviews": Reviews });
 
-function publish(snapshot: Partial<IThemeSnapshot>): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
-  });
-}
-
 function product(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     id: "p1",
@@ -186,10 +177,11 @@ describe("product page", () => {
 
   afterEach(() => {
     wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
+    useThemeTemplates().setOpenTemplate(undefined);
   });
 
   it("renders the theme template's sections before and after the product info, and none hidden", async () => {
-    publish({
+    publishTheme({
       rules: { version: 2, product: [] },
       templates: {
         product: {
@@ -219,7 +211,7 @@ describe("product page", () => {
 
   it("loads the variations by a B2C product info and shows its layout in the price block", async () => {
     mocks.product.value = product({ hasVariations: true });
-    publish({
+    publishTheme({
       rules: { version: 2, product: [] },
       templates: {
         product: {
@@ -242,8 +234,103 @@ describe("product page", () => {
     expect(mocks.fetchProducts).toHaveBeenCalledWith({ itemsPerPage: 150 }, true);
   });
 
+  it("reloads the variations when the open template switches them to the B2C layout in place", async () => {
+    mocks.product.value = product({ hasVariations: true });
+    publishTheme({
+      rules: { version: 2, product: [] },
+      templates: {
+        product: {
+          settings: {},
+          content: [{ id: "info", type: "product-info", blocks: [{ id: "options", type: "product-options" }] }],
+        },
+      },
+    });
+
+    await mountProduct();
+    useThemeTemplates().setOpenTemplate("product", {
+      settings: {},
+      content: [
+        {
+          id: "info",
+          type: "product-info",
+          variationsLayout: "b2c",
+          blocks: [{ id: "options", type: "product-options" }],
+        },
+      ],
+    });
+    await flushPromises();
+
+    expect(mocks.fetchProducts.mock.calls).toEqual([
+      [{ itemsPerPage: 50 }, false],
+      [{ itemsPerPage: 150 }, true],
+    ]);
+  });
+
+  it("loads the variations once the open template shows its hidden options block", async () => {
+    mocks.product.value = product({ hasVariations: true });
+    publishTheme({
+      rules: { version: 2, product: [] },
+      templates: {
+        product: {
+          settings: {},
+          content: [
+            { id: "info", type: "product-info", blocks: [{ id: "options", type: "product-options", hidden: true }] },
+          ],
+        },
+      },
+    });
+
+    await mountProduct();
+    expect(mocks.fetchProducts).not.toHaveBeenCalled();
+
+    useThemeTemplates().setOpenTemplate("product", {
+      settings: {},
+      content: [{ id: "info", type: "product-info", blocks: [{ id: "options", type: "product-options" }] }],
+    });
+    await flushPromises();
+
+    expect(mocks.fetchProducts).toHaveBeenCalledOnce();
+  });
+
+  it("loads the variations once for a product whose template switches the layout on navigation", async () => {
+    mocks.product.value = product({ hasVariations: true });
+    publishTheme({
+      rules: {
+        version: 2,
+        product: [{ id: "digital", template: "product.digital", when: { productType: "Digital" } }],
+      },
+      templates: {
+        product: {
+          settings: {},
+          content: [{ id: "info", type: "product-info", blocks: [{ id: "options", type: "product-options" }] }],
+        },
+        "product.digital": {
+          settings: {},
+          content: [
+            {
+              id: "info",
+              type: "product-info",
+              variationsLayout: "b2c",
+              blocks: [{ id: "options", type: "product-options" }],
+            },
+          ],
+        },
+      },
+    });
+
+    const wrapper = await mountProduct();
+    mocks.product.value = product({ id: "p2", productType: "Digital", hasVariations: true });
+    await wrapper.setProps({ productId: "p2" });
+    await flushPromises();
+
+    expect(mocks.fetchProducts.mock.calls).toEqual([
+      [{ itemsPerPage: 50 }, false],
+      [{ itemsPerPage: 150 }, true],
+    ]);
+  });
+
   it("renders the product info itself in a template that lost it, after the template's sections", async () => {
-    publish({
+    publishTheme({
       rules: { version: 2, product: [] },
       templates: { product: { settings: {}, content: [{ id: "top", type: "banner", text: "Above" }] } },
     });

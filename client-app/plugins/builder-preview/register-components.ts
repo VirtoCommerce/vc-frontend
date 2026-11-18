@@ -1,4 +1,4 @@
-import { isNewPageBuilderEnabled, isOpenedWithPreviewProtocol } from "@/core/theme-snapshot";
+import { isPreviewV2Frame } from "@/core/theme-snapshot";
 import { Logger } from "@/core/utilities";
 import { PageBuilderComponents } from "./page-builder-components";
 import type { PageBuilderDescriptorType } from "./models/PageBuilderComponentType";
@@ -15,14 +15,13 @@ const templates = import.meta.glob("./schemas/templates/*.json") as PageBuilderJ
 const settingsSchema = import.meta.glob("./schemas/settings_schema.json") as PageBuilderJsonModulesType;
 
 /** Override same-named schemas, only with the new Page Builder, so the Angular designer keeps what it knows. */
-const themeSchemas: Partial<PageBuilderSchemasStructureType<PageBuilderJsonModulesType>> =
-  isNewPageBuilderEnabled() && isOpenedWithPreviewProtocol()
-    ? {
-        blocks: import.meta.glob("./schemas/theme/blocks/*.json") as PageBuilderJsonModulesType,
-        sections: import.meta.glob("./schemas/theme/sections/*.json") as PageBuilderJsonModulesType,
-        templates: import.meta.glob("./schemas/theme/templates/*.json") as PageBuilderJsonModulesType,
-      }
-    : {};
+const themeSchemas: Partial<PageBuilderSchemasStructureType<PageBuilderJsonModulesType>> = isPreviewV2Frame()
+  ? {
+      blocks: import.meta.glob("./schemas/theme/blocks/*.json") as PageBuilderJsonModulesType,
+      sections: import.meta.glob("./schemas/theme/sections/*.json") as PageBuilderJsonModulesType,
+      templates: import.meta.glob("./schemas/theme/templates/*.json") as PageBuilderJsonModulesType,
+    }
+  : {};
 
 type SchemaKeysType = keyof PageBuilderSchemaType;
 

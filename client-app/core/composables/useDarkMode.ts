@@ -20,10 +20,10 @@ function _useDarkMode() {
 
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const colorModeOverride = ref<"light" | "dark">();
-  const activePresetName = ref<string>();
+  const isPresetKnown = ref(false);
   const hasDarkPreset = ref(false);
 
-  const isDarkModeAvailable = computed(() => activePresetName.value !== undefined && hasDarkPreset.value);
+  const isDarkModeAvailable = computed(() => hasDarkPreset.value);
 
   const isDark = computed(() => {
     if (!isDarkModeAvailable.value) {
@@ -41,15 +41,15 @@ function _useDarkMode() {
   watch(
     isDark,
     (value) => {
-      if (activePresetName.value !== undefined) {
+      if (isPresetKnown.value) {
         document.documentElement.classList.toggle("dark", value);
       }
     },
     { immediate: true },
   );
 
-  function setActivePreset(presetName: string, withDarkPreset: boolean) {
-    activePresetName.value = presetName;
+  function setActivePreset(withDarkPreset: boolean) {
+    isPresetKnown.value = true;
     hasDarkPreset.value = withDarkPreset;
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);

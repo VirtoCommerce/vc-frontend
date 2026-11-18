@@ -2,6 +2,7 @@ import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useThemeGroups } from "./groups";
+import { publishTheme } from "./published-theme.mock";
 import { useThemeSnapshot } from "./useThemeSnapshot";
 import type { ILanguage } from "@/core/types";
 
@@ -17,16 +18,6 @@ vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn() } }));
 
 function setLanguage(cultureName: string): void {
   useLanguages().currentLanguage.value = { cultureName } as ILanguage;
-}
-
-function publishMenus(menus: { name: string; items: { title: string; url: string }[] }[]): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus,
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {} },
-  });
 }
 
 describe("useThemeGroups", () => {
@@ -49,7 +40,7 @@ describe("useThemeGroups", () => {
 
   it("asks once for each menu the draft names that the published snapshot does not carry", async () => {
     menuApi.getMenu.mockResolvedValue([{ title: "Help", url: "/help", priority: 0, childItems: [] }]);
-    publishMenus([{ name: "Published", items: [{ title: "Home", url: "/" }] }]);
+    publishTheme({}, { menus: [{ name: "Published", items: [{ title: "Home", url: "/" }] }] });
     const { getMenuLinks, loadDraftMenus } = useThemeGroups();
 
     await Promise.all([loadDraftMenus(["support", "Support", "published", ""]), loadDraftMenus(["support"])]);

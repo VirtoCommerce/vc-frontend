@@ -2,7 +2,7 @@ import { computed } from "vue";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useThemeGroups } from "@/core/theme-snapshot/groups";
-import { isSafeLinkUrl } from "@/core/utilities/common";
+import { toNonEmptyString, toSafeLinkUrl } from "@/core/utilities/common";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { StyleValue } from "vue";
 
@@ -54,7 +54,7 @@ export function useThemeChrome() {
         getMenuLinks(block.menu) ??
         (block.links ?? []).map((link) => ({
           title: link.label ?? "",
-          route: link.link && isSafeLinkUrl(link.link) ? link.link : undefined,
+          route: toSafeLinkUrl(link.link),
         })),
     }));
 
@@ -62,11 +62,7 @@ export function useThemeChrome() {
     return theme.value?.isDraft ? columns : columns.filter((column) => column.children.length);
   });
 
-  const copyright = computed(() =>
-    typeof siteFooter.value?.copyright === "string" && siteFooter.value.copyright
-      ? siteFooter.value.copyright
-      : undefined,
-  );
+  const copyright = computed(() => toNonEmptyString(siteFooter.value?.copyright));
 
   const isCreditShown = computed(() => siteFooter.value?.show_credit !== false);
 

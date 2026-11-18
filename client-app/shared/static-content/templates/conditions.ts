@@ -28,6 +28,14 @@ export interface ITemplateCondition {
 
 export type TemplateConditionDescriptorType = Omit<ITemplateCondition, "evaluate">;
 
+const NAMED_VALUE_FIELD: ITemplateCondition["value"] = {
+  type: "object",
+  element: [
+    { id: "name", type: "string", label: "Name" },
+    { id: "equals", type: "string", label: "Value" },
+  ],
+};
+
 /** Values compare exactly, path and language aside: a product layout of `b2c` does not match the default B2C rule. */
 export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
   {
@@ -53,13 +61,7 @@ export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     name: "property",
     pageTypes: ["product"],
     label: "Property",
-    value: {
-      type: "object",
-      element: [
-        { id: "name", type: "string", label: "Name" },
-        { id: "equals", type: "string", label: "Value" },
-      ],
-    },
+    value: NAMED_VALUE_FIELD,
     evaluate: (subject, value) => {
       const condition = toNamedValue(value);
       return (
@@ -108,13 +110,7 @@ export const BUILT_IN_CONDITIONS: ITemplateCondition[] = [
     name: "setting",
     pageTypes: ["page"],
     label: "Page setting",
-    value: {
-      type: "object",
-      element: [
-        { id: "name", type: "string", label: "Name" },
-        { id: "equals", type: "string", label: "Value" },
-      ],
-    },
+    value: NAMED_VALUE_FIELD,
     evaluate: (subject, value) => {
       const condition = toNamedValue(value);
       return !!condition && subject.settings?.[condition.name] === condition.equals;

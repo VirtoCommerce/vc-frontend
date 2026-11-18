@@ -1,6 +1,7 @@
 import { LOCALE_ID_REGEX } from "../constants/locale.js";
 import {
   DESIGNER_PREVIEW_PATH,
+  HTTP_ERROR_MESSAGE_PREFIX,
   PINNED_LOCALE_KEY,
   THEME_SNAPSHOT_GLOBAL,
   THEME_SNAPSHOT_OPERATION,
@@ -25,6 +26,7 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
     localePattern: URL_LOCALE_PATTERN,
     localeIdPattern: LOCALE_ID_REGEX.source,
     pinnedLocaleKey: PINNED_LOCALE_KEY,
+    httpErrorPrefix: HTTP_ERROR_MESSAGE_PREFIX,
     domain: options.domain ?? "",
   });
 
@@ -67,7 +69,7 @@ export function buildThemeSnapshotScript(options: IThemeSnapshotScriptOptions = 
       body: JSON.stringify({ operationName: c.operation, query: c.query, variables: variables })
     }).then(function (result) {
       if (!result.ok) {
-        throw new Error("HTTP " + result.status);
+        throw new Error(c.httpErrorPrefix + result.status);
       }
       return result.json();
     });

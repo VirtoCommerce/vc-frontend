@@ -1,3 +1,4 @@
+import { isNewPageBuilderEnabled } from "@/core/theme-snapshot/enabled";
 import backendPackages from "../../../backend-packages.json";
 
 type ManifestModuleType = { Id: string; Version: string };
@@ -35,10 +36,9 @@ export function compareVersions(a: string, b: string): number {
 const EXTRA_EXPECTED_MODULES: ManifestModuleType[] = [{ Id: "VirtoCommerce.SiteBuilder", Version: "3.1000.0" }];
 
 function getManifestModules(): ManifestModuleType[] {
-  return [
-    ...backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]),
-    ...EXTRA_EXPECTED_MODULES,
-  ];
+  const modules = backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]);
+
+  return isNewPageBuilderEnabled() ? [...modules, ...EXTRA_EXPECTED_MODULES] : modules;
 }
 
 export function getOutdatedModules(

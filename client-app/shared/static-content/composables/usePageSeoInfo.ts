@@ -2,7 +2,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { computed, toValue } from "vue";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
-import { isRecord } from "@/core/utilities";
+import { isRecord, toNonEmptyString } from "@/core/utilities";
 import type { MaybeRefOrGetter } from "vue";
 
 /**
@@ -23,8 +23,8 @@ export function usePageSeoInfo(
     return isRecord(value) ? value : {};
   });
 
-  const { title } = usePageTitle(computed(() => readText(fields.value.pageTitle) ?? toValue(fallbackTitle)));
-  const description = computed(() => readText(fields.value.metaDescription));
+  const { title } = usePageTitle(computed(() => toNonEmptyString(fields.value.pageTitle) ?? toValue(fallbackTitle)));
+  const description = computed(() => toNonEmptyString(fields.value.metaDescription));
 
   function whenActive<T>(value: T): T | undefined {
     return toValue(isActive) ? value : undefined;
@@ -38,9 +38,5 @@ export function usePageSeoInfo(
     ogType: () => whenActive("website" as const),
   });
 
-  useSeoKeywords(() => whenActive(readText(fields.value.metaKeywords)));
-}
-
-function readText(value: unknown): string | undefined {
-  return typeof value === "string" && value ? value : undefined;
+  useSeoKeywords(() => whenActive(toNonEmptyString(fields.value.metaKeywords)));
 }

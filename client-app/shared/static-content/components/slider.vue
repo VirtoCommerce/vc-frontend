@@ -58,7 +58,7 @@ import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
-import { isSafeLinkUrl } from "@/core/utilities/common";
+import { toSafeLinkUrl } from "@/core/utilities/common";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { getPreviewFieldAttrs } from "../sections";
 
@@ -126,7 +126,7 @@ const wrapperClasses = computed(() => {
 });
 
 function getSafeUrl(item: SlideType): string | undefined {
-  return item.url && isSafeLinkUrl(item.url) ? item.url : undefined;
+  return toSafeLinkUrl(item.url);
 }
 
 function getLinkTag(item: SlideType) {

@@ -4,13 +4,17 @@ import type { App, Plugin } from "vue";
 
 export const THEME_VARIABLES_ID = "vc-theme-variables";
 
+export function getThemeVariableName(token: string): string {
+  return `--${token.replaceAll("_", "-")}`;
+}
+
 // A theme's palette comes from the backend, so its values are set one by one and never parsed as stylesheet text.
 function addPresetRule(sheet: CSSStyleSheet, selector: string, preset: IThemeConfigPreset): void {
   const rule = sheet.cssRules[sheet.insertRule(`${selector} {}`, sheet.cssRules.length)] as CSSStyleRule;
 
   Object.entries(preset).forEach(([key, value]) => {
     if (typeof value === "string") {
-      rule.style.setProperty(`--${key.replaceAll("_", "-")}`, value);
+      rule.style.setProperty(getThemeVariableName(key), value);
     }
   });
 }

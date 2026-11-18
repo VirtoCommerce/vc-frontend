@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useThemeTemplates } from "../composables/useThemeTemplates";
 import { chooseLandingPageLayout, mergePageSettings, setLandingPageLayout } from "./page-layout";
@@ -34,14 +34,7 @@ const SNAPSHOT: Partial<IThemeSnapshot> = {
 };
 
 function publish(slug?: IThemeSlug): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...SNAPSHOT },
-    slug,
-  });
+  publishTheme(SNAPSHOT, { slug });
 }
 
 function pageSlug(settings?: Record<string, unknown>, source = "page-builder"): IThemeSlug {

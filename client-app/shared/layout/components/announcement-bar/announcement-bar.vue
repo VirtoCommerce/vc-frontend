@@ -19,8 +19,9 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useIsHomePage } from "@/core/composables/useIsHomePage";
+import { getThemeVariableName } from "@/core/plugins/config.plugin";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
-import { isSafeLinkUrl } from "@/core/utilities/common";
+import { toNonEmptyString, toSafeLinkUrl } from "@/core/utilities/common";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { useStaticPage } from "@/shared/static-content/composables/useStaticPage";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
@@ -51,13 +52,13 @@ const announcements = computed(() => {
     return [];
   }
 
-  return (bar.blocks ?? [])
-    .filter((block) => block.type === "announcement" && !block.hidden && typeof block.text === "string" && block.text)
-    .map((block) => ({
-      id: block.id,
-      text: block.text as string,
-      link: typeof block.link === "string" && block.link && isSafeLinkUrl(block.link) ? block.link : undefined,
-    }));
+  return (bar.blocks ?? []).flatMap((block) => {
+    const text = toNonEmptyString(block.text);
+
+    return block.type === "announcement" && !block.hidden && text
+      ? [{ id: block.id, text, link: toSafeLinkUrl(block.link) }]
+      : [];
+  });
 });
 
 const colors = computed<StyleValue>(() => ({
@@ -66,7 +67,7 @@ const colors = computed<StyleValue>(() => ({
 }));
 
 function toTokenVariable(token: unknown): string | undefined {
-  return typeof token === "string" && TOKEN_REGEX.test(token) ? `var(--${token.replaceAll("_", "-")})` : undefined;
+  return typeof token === "string" && TOKEN_REGEX.test(token) ? `var(${getThemeVariableName(token)})` : undefined;
 }
 </script>
 

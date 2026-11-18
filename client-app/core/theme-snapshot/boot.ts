@@ -1,6 +1,7 @@
 import { START_LOCATION } from "vue-router";
 import { Logger } from "@/core/utilities";
 import { isNewPageBuilderEnabled } from "./enabled";
+import { THEME_SNAPSHOT_LOG_SCOPE } from "./query";
 import {
   isThemeForLanguage,
   isThemeSnapshotRejected,
@@ -26,8 +27,6 @@ export interface IThemeSnapshotBoot {
 }
 
 export const THEME_SNAPSHOT_REFETCH_TIMEOUT_MS = 1500;
-
-const LOG_SCOPE = "[theme-snapshot]";
 
 type OutcomeType = { result: IPublishedTheme | null } | { error: unknown };
 
@@ -97,19 +96,17 @@ export function installThemeSnapshotNavigation(router: Router, getContext: () =>
     // A query or hash change (sorting, filters, an anchor) keeps the page, which must not change its theme under it.
     const isSamePage = from !== START_LOCATION && to.path === from.path;
 
-    if (
-      failure ||
-      isSamePage ||
-      promoteLate() ||
-      from === START_LOCATION ||
-      !hasFailed.value ||
-      isRejected.value ||
-      isRetrying
-    ) {
+    if (failure || isSamePage) {
       return;
     }
 
-    void retry(getContext());
+    if (promoteLate()) {
+      return;
+    }
+
+    if (from !== START_LOCATION && hasFailed.value && !isRejected.value && !isRetrying) {
+      void retry(getContext());
+    }
   });
 }
 
@@ -141,7 +138,7 @@ async function accept(outcome: OutcomeType, context: IThemeSnapshotContext, refe
 }
 
 function failBoot(error: unknown): void {
-  Logger.warn(`${LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, error);
+  Logger.warn(`${THEME_SNAPSHOT_LOG_SCOPE} The theme snapshot request failed; the built-in templates are used`, error);
   useThemeSnapshot().setFailed(isThemeSnapshotRejected(error));
 }
 

@@ -23,7 +23,6 @@ export class SectionOverlay {
   private selectedFallback: string | null = null;
   /** The selection is scrolled to once it has an element: a page may render it after its data has loaded. */
   private isScrollPending = false;
-  private isEnabled = false;
 
   constructor(
     body: HTMLElement,
@@ -40,15 +39,16 @@ export class SectionOverlay {
       onPointerLeave: this.handlePointerLeave,
       onClick: this.handleClick,
       shouldRenderOnScroll: true,
+      isInitiallyEnabled: false,
     });
     this.hoverBox = createBox("1px dashed");
     this.selectBox = createBox("2px solid");
+    this.selectBox.dataset.testId = "page-builder-section-selection";
     this.layer.element.append(this.hoverBox, this.selectBox);
   }
 
   setEnabled(isEnabled: boolean): void {
-    this.isEnabled = isEnabled;
-    this.layer.element.style.display = isEnabled ? "block" : "none";
+    this.layer.setEnabled(isEnabled);
     this.scheduleRender();
   }
 
@@ -97,7 +97,7 @@ export class SectionOverlay {
     const element = sectionId ? findSectionElement(sectionId) : undefined;
     const rect = element?.getBoundingClientRect();
 
-    if (!this.isEnabled || !sectionId || !rect?.height) {
+    if (!this.layer.isEnabled || !sectionId || !rect?.height) {
       box.style.display = "none";
       return;
     }
@@ -122,10 +122,6 @@ export class SectionOverlay {
   }
 
   private readonly handlePointerMove = (event: MouseEvent): void => {
-    if (!this.isEnabled) {
-      return;
-    }
-
     const hoveredId = this.placementAt(event.clientX, event.clientY) ?? this.sectionAt(event.clientX, event.clientY);
 
     if (hoveredId !== this.hovered) {
@@ -135,14 +131,14 @@ export class SectionOverlay {
   };
 
   private readonly handlePointerLeave = (): void => {
-    if (this.isEnabled && this.hovered) {
+    if (this.hovered) {
       this.hover(null);
       this.onHover(null);
     }
   };
 
   private readonly handleClick = (event: MouseEvent): void => {
-    const isAvailable = this.isEnabled && !this.placementAt(event.clientX, event.clientY);
+    const isAvailable = !this.placementAt(event.clientX, event.clientY);
     const innermost = isAvailable ? this.sectionAt(event.clientX, event.clientY) : null;
 
     if (!innermost) {

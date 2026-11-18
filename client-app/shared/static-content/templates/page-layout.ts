@@ -9,8 +9,7 @@ import {
 } from "@/shared/layout/composables/usePageLayout";
 import { useThemeTemplates } from "../composables/useThemeTemplates";
 import type { ITemplateSubject } from "./conditions";
-import type { ITemplateResolution } from "./rules";
-import type { IThemeSlug, ThemePageType } from "@/core/theme-snapshot";
+import type { IThemeSlug } from "@/core/theme-snapshot";
 import type { PageLayoutType } from "@/shared/layout/composables/usePageLayout";
 import type { Router } from "vue-router";
 
@@ -28,7 +27,7 @@ export interface ILandingLayoutOptions {
   entity: ISlugEntity | null | undefined;
   path: string;
   language: string | undefined;
-  resolveTemplate: (pageType: ThemePageType, subject: ITemplateSubject, ownTemplate?: unknown) => ITemplateResolution;
+  resolveTemplate: ReturnType<typeof useThemeTemplates>["resolveTemplate"];
 }
 
 /** A setting the page left empty (the designer's "Empty") keeps the template's value. */

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { useProductTemplate } from "./useProductTemplate";
 import type { Product } from "@/core/api/graphql/types";
-import type { IThemeSnapshot } from "@/core/theme-snapshot";
 
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
@@ -16,16 +16,6 @@ function product(overrides: { layout?: string; outlines?: string[][] } = {}): Pr
     outlines: (overrides.outlines ?? [["catalog", "printers"]]).map((ids) => ({ items: ids.map((id) => ({ id })) })),
     properties: overrides.layout ? [{ name: "VirtoFrontend_UI_Layout", value: overrides.layout }] : [],
   } as unknown as Product;
-}
-
-function publish(snapshot: Partial<IThemeSnapshot>): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
-  });
 }
 
 const types = (items: { type: string }[]) => items.map((item) => item.type);
@@ -54,7 +44,7 @@ describe("useProductTemplate", () => {
   });
 
   it("does not load B2C variations in a B2B template", () => {
-    publish({
+    publishTheme({
       rules: { version: 2, product: [] },
       templates: { product: { settings: {}, content: [{ id: "info", type: "product-info" }] } },
     });
@@ -66,7 +56,7 @@ describe("useProductTemplate", () => {
   });
 
   it("chooses by any of the product's outlines, whatever the path it was reached by", () => {
-    publish({
+    publishTheme({
       rules: { version: 2, product: [{ id: "toner", template: "product.toner", when: { inCategory: ["toner"] } }] },
       templates: {
         "product.toner": {
@@ -94,7 +84,7 @@ describe("useProductTemplate", () => {
   });
 
   it("adds the product info to a template that lost it", () => {
-    publish({ templates: { product: { settings: {}, content: [{ id: "promo", type: "text-block" }] } } });
+    publishTheme({ templates: { product: { settings: {}, content: [{ id: "promo", type: "text-block" }] } } });
 
     const { parts } = useProductTemplate(product());
 

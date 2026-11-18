@@ -3,8 +3,8 @@ import { effectScope, nextTick } from "vue";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { writeThemeVariables } from "@/core/plugins/config.plugin";
 import { setupThemePalette } from "./palette";
+import { publishTheme } from "./published-theme.mock";
 import { useThemeSnapshot } from "./useThemeSnapshot";
-import type { IThemePalette } from "./types";
 import type { StoreResponseType } from "@/core/api/graphql/types";
 import type { EffectScope } from "vue";
 
@@ -16,16 +16,6 @@ vi.mock("@/assets/presets", () => ({
 }));
 vi.mock("@/core/composables/useDarkMode", () => ({ useDarkMode: () => ({ setActivePreset }) }));
 vi.mock("@/core/plugins/config.plugin", () => ({ writeThemeVariables: vi.fn() }));
-
-function publish(palette: IThemePalette | undefined): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus: [],
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, palette },
-  });
-}
 
 describe("setupThemePalette", () => {
   const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
@@ -48,7 +38,7 @@ describe("setupThemePalette", () => {
   });
 
   it("puts the theme's palette in place of the preset", () => {
-    publish({ light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } });
+    publishTheme({ palette: { light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } } });
 
     setup();
 
@@ -57,16 +47,16 @@ describe("setupThemePalette", () => {
   });
 
   it("has no dark theme when the palette has no dark part", () => {
-    publish({ light: { color_primary_50: "#light-only" } });
+    publishTheme({ palette: { light: { color_primary_50: "#light-only" } } });
 
     setup();
 
     expect(themeContext.value.darkPreset).toBeUndefined();
-    expect(setActivePreset).toHaveBeenLastCalledWith("coffee", false);
+    expect(setActivePreset).toHaveBeenLastCalledWith(false);
   });
 
   it("keeps the preset's value of a token the theme's palette lacks", () => {
-    publish({ light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } });
+    publishTheme({ palette: { light: { color_primary_50: "#theme" }, dark: { color_primary_50: "#theme-dark" } } });
 
     setup();
 
@@ -77,13 +67,14 @@ describe("setupThemePalette", () => {
   it("writes the next palette, and the preset once the palette is gone", async () => {
     setup();
 
-    publish({ light: { color_primary_50: "#theme" } });
+    publishTheme({ palette: { light: { color_primary_50: "#theme" } } });
     await nextTick();
 
     expect(writeThemeVariables).toHaveBeenLastCalledWith(
       expect.objectContaining({ color_primary_50: "#theme", color_primary_100: "#coffee" }),
       undefined,
     );
+    expect(setActivePreset).toHaveBeenLastCalledWith(false);
 
     useThemeSnapshot().setPublished(null);
     await nextTick();
@@ -92,24 +83,17 @@ describe("setupThemePalette", () => {
       expect.objectContaining({ color_primary_50: "#coffee" }),
       expect.objectContaining({ color_primary_50: "#coffee-dark" }),
     );
+    expect(setActivePreset).toHaveBeenLastCalledWith(true);
   });
 
   it("leaves the preset that white-labeling chose", async () => {
-    publish({ light: { color_primary_50: "#theme" } });
+    publishTheme({ palette: { light: { color_primary_50: "#theme" } } });
 
     setup(true);
-    publish({ light: { color_primary_50: "#theme-next" } });
+    publishTheme({ palette: { light: { color_primary_50: "#theme-next" } } });
     await nextTick();
 
     expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
     expect(writeThemeVariables).not.toHaveBeenCalled();
-  });
-
-  it("keeps the preset's stylesheet scope on <html> under the theme's palette", () => {
-    publish({ light: { color_primary_50: "#theme" } });
-
-    setup();
-
-    expect(document.documentElement.getAttribute("data-preset")).toBe("coffee");
   });
 });

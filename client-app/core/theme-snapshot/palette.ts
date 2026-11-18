@@ -13,8 +13,7 @@ export function setupThemePalette(hasWhiteLabelingPreset: () => boolean): void {
   const presetPalette = { light: themeContext.value.preset, dark: themeContext.value.darkPreset };
 
   function activatePreset(): void {
-    const { activePresetName, defaultPresetName, darkPreset } = themeContext.value;
-    setActivePreset(activePresetName ?? defaultPresetName, !!darkPreset);
+    setActivePreset(!!themeContext.value.darkPreset);
   }
 
   function applyPalette(palette: IThemePalette | undefined): void {

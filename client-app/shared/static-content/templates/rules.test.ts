@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
-import { getTemplateCondition, matchesPath } from "./conditions";
+import { matchesPath } from "./conditions";
 import { chooseTemplate, normalizeTemplateRules } from "./rules";
 import type { ITemplateChoiceOptions } from "./rules";
 import type { IThemePageDocument } from "@/core/theme-snapshot";
@@ -12,7 +12,6 @@ function choose(options: Partial<ITemplateChoiceOptions> & Pick<ITemplateChoiceO
     subject: {},
     rules: undefined,
     templates: BUILT_IN_TEMPLATES,
-    getCondition: getTemplateCondition,
     ...options,
   });
 }
@@ -43,6 +42,7 @@ describe("chooseTemplate", () => {
           { id: "off", template: "product.shoes", when: { inCategory: ["shoes"] }, disabled: true },
           { id: "digital", template: "product.digital", when: { productType: "Digital" } },
           { id: "shoes", template: "product.shoes", when: { inCategory: ["shoes"], productType: "Physical" } },
+          { id: "shoes-later", template: "product.digital", when: { inCategory: ["shoes"] } },
         ],
       },
     });

@@ -5,6 +5,7 @@ export interface IOverlayLayerOptions {
   onPointerLeave: () => void;
   onClick: (event: MouseEvent) => void;
   shouldRenderOnScroll?: boolean;
+  isInitiallyEnabled: boolean;
 }
 
 /** A layer over the whole page that renders when the page changes, with the pointer events of the blocker above it. */
@@ -13,25 +14,29 @@ export class OverlayLayer {
   private readonly resizeObserver: ResizeObserver | undefined;
   private frame: number | undefined;
   private disposed = false;
+  private enabled: boolean;
 
   constructor(
     body: HTMLElement,
     private readonly blocker: HTMLElement,
     private readonly options: IOverlayLayerOptions,
   ) {
+    this.enabled = options.isInitiallyEnabled;
     this.element = document.createElement("div");
     this.element.setAttribute("aria-hidden", "true");
+    this.element.dataset.testId = "page-builder-overlay-layer";
     Object.assign(this.element.style, {
       position: "absolute",
       inset: "0",
       zIndex: options.zIndex,
       pointerEvents: "none",
+      display: this.enabled ? "" : "none",
     });
     body.appendChild(this.element);
 
-    blocker.addEventListener("mousemove", options.onPointerMove);
-    blocker.addEventListener("mouseleave", options.onPointerLeave);
-    blocker.addEventListener("click", options.onClick);
+    blocker.addEventListener("mousemove", this.handlePointerMove);
+    blocker.addEventListener("mouseleave", this.handlePointerLeave);
+    blocker.addEventListener("click", this.handleClick);
     window.addEventListener("resize", this.scheduleRender);
     if (options.shouldRenderOnScroll) {
       window.addEventListener("scroll", this.scheduleRender, { passive: true });
@@ -50,6 +55,15 @@ export class OverlayLayer {
 
   get isRenderScheduled(): boolean {
     return this.frame !== undefined;
+  }
+
+  get isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  setEnabled(isEnabled: boolean): void {
+    this.enabled = isEnabled;
+    this.element.style.display = isEnabled ? "" : "none";
   }
 
   /** Two frames, so the overlay is measured after the page has rendered. */
@@ -84,9 +98,27 @@ export class OverlayLayer {
     this.resizeObserver?.disconnect();
     window.removeEventListener("resize", this.scheduleRender);
     window.removeEventListener("scroll", this.scheduleRender);
-    this.blocker.removeEventListener("mousemove", this.options.onPointerMove);
-    this.blocker.removeEventListener("mouseleave", this.options.onPointerLeave);
-    this.blocker.removeEventListener("click", this.options.onClick);
+    this.blocker.removeEventListener("mousemove", this.handlePointerMove);
+    this.blocker.removeEventListener("mouseleave", this.handlePointerLeave);
+    this.blocker.removeEventListener("click", this.handleClick);
     this.element.remove();
   }
+
+  private readonly handlePointerMove = (event: MouseEvent): void => {
+    if (this.enabled) {
+      this.options.onPointerMove(event);
+    }
+  };
+
+  private readonly handlePointerLeave = (): void => {
+    if (this.enabled) {
+      this.options.onPointerLeave();
+    }
+  };
+
+  private readonly handleClick = (event: MouseEvent): void => {
+    if (this.enabled) {
+      this.options.onClick(event);
+    }
+  };
 }

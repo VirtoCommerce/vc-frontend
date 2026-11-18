@@ -2,7 +2,6 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, shallowRef, toValue, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { BUILT_IN_TEMPLATES, withMainSection } from "../templates/built-in";
-import { getTemplateCondition } from "../templates/conditions";
 import { chooseTemplate, getTemplatePageType, normalizeTemplateRules } from "../templates/rules";
 import type { ITemplateSubject } from "../templates/conditions";
 import type { ITemplateResolution, TemplateChoiceType } from "../templates/rules";
@@ -29,7 +28,6 @@ export const useThemeTemplates = createGlobalState(() => {
       subject,
       rules: rules.value,
       templates: templates.value,
-      getCondition: getTemplateCondition,
       ownTemplate,
     });
     const shown: TemplateChoiceType =

@@ -7,7 +7,7 @@ import {
   isPreviewV2Frame,
   SECTION_ATTRIBUTE,
 } from "@/core/theme-snapshot";
-import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
+import { getLinkAttr, toSafeLinkUrl } from "@/core/utilities/common";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
@@ -98,7 +98,7 @@ export function toHeadingTag(value: unknown): HeadingTagType {
 }
 
 export function getSectionLinkAttr(link: string | undefined): ReturnType<typeof getLinkAttr> {
-  return getLinkAttr(link && isSafeLinkUrl(link) ? link : undefined);
+  return getLinkAttr(toSafeLinkUrl(link));
 }
 
 export function sanitizeSectionHtml(html: string | undefined): string {

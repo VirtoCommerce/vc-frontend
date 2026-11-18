@@ -32,7 +32,7 @@ vi.mock("./shared-component-overlay", () => ({
 }));
 vi.mock("@/core/theme-snapshot/designer-frame", () => ({
   getBuilderOrigin: () => "https://builder.example",
-  isOpenedWithPreviewProtocol: () => true,
+  isPreviewV2Frame: () => true,
   PREVIEW_PROTOCOL: 2,
 }));
 vi.mock("./utils", () => ({ guardPreviewNavigation: vi.fn(), installPageInputGuard: vi.fn() }));

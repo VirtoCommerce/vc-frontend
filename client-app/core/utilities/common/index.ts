@@ -122,6 +122,11 @@ export function isSafeLinkUrl(url: string): boolean {
   return parsed !== null && !UNSAFE_LINK_PROTOCOLS.has(parsed.protocol);
 }
 
+export function toSafeLinkUrl(value: unknown): string | undefined {
+  const url = toNonEmptyString(value);
+  return url && isSafeLinkUrl(url) ? url : undefined;
+}
+
 export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
   if (typeof link === "string") {
     if (link.startsWith("/")) {
@@ -282,6 +287,10 @@ export function toFirstString(value: unknown): string {
   const first: unknown = Array.isArray(value) ? value[0] : value;
 
   return typeof first === "string" ? first : "";
+}
+
+export function toNonEmptyString(value: unknown): string | undefined {
+  return typeof value === "string" && value ? value : undefined;
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

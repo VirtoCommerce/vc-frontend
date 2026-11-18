@@ -3,7 +3,8 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
-import type { ITemplateCondition, ITemplateSubject } from "./conditions";
+import { getTemplateCondition } from "./conditions";
+import type { ITemplateSubject } from "./conditions";
 import type { ITemplateRule, ITemplateRules, IThemePageDocument, ThemePageType } from "@/core/theme-snapshot";
 
 const PAGE_TYPES: readonly ThemePageType[] = ["product", "category", "page"];
@@ -47,7 +48,6 @@ export interface ITemplateChoiceOptions {
   rules: ITemplateRules | undefined;
   /** Holds the page type's own template: the built-in ones are always among them. */
   templates: Readonly<Record<string, IThemePageDocument>>;
-  getCondition: (name: string) => ITemplateCondition | undefined;
   ownTemplate?: unknown;
 }
 
@@ -56,7 +56,7 @@ export function getTemplatePageType(key: string): string {
 }
 
 export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceType {
-  const { pageType, subject, rules, templates, getCondition, ownTemplate } = options;
+  const { pageType, subject, rules, templates, ownTemplate } = options;
 
   if (
     typeof ownTemplate === "string" &&
@@ -72,10 +72,10 @@ export function chooseTemplate(options: ITemplateChoiceOptions): TemplateChoiceT
       !item.disabled &&
       getTemplatePageType(item.template) === pageType &&
       Object.hasOwn(templates, item.template) &&
-      Object.entries(item.when ?? {}).every(
-        ([name, value]) =>
-          getCondition(name)?.pageTypes.includes(pageType) && getCondition(name)?.evaluate(subject, value),
-      ),
+      Object.entries(item.when ?? {}).every(([name, value]) => {
+        const condition = getTemplateCondition(name);
+        return !!condition?.pageTypes.includes(pageType) && condition.evaluate(subject, value);
+      }),
   );
 
   if (rule) {

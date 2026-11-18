@@ -279,6 +279,16 @@ const productVariationsBlock = computed(() =>
   productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
 );
 
+const productOptionsBlock = computed(() =>
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-options"),
+);
+
+const shouldLoadVariations = computed(
+  () =>
+    !!product.value?.hasVariations &&
+    [productVariationsBlock.value, productOptionsBlock.value].some((block) => block && !block.hidden),
+);
+
 const sectionContext = computed(() => ({ product: product.value }));
 
 const columnSectionContext = computed(() => ({ product: product.value, isCollapsible: false }));
@@ -409,6 +419,9 @@ useSeoKeywords(() => (canSetMeta.value ? seoKeywords.value : undefined));
 
 const MAX_PICKUP_LOCATIONS_COUNT = 1;
 
+/** Set once the product's own load reaches its variations, so only a later template change reloads them. */
+let variationsProductId: string | undefined;
+
 watch(
   productId,
   async (_productId, _previous, onCleanup) => {
@@ -416,6 +429,7 @@ watch(
     onCleanup(() => {
       isCancelled = true;
     });
+    variationsProductId = undefined;
 
     await fetchProduct(productId.value);
     if (isCancelled) {
@@ -425,11 +439,11 @@ watch(
       await fetchProductConfiguration();
     }
 
-    const showVariations = productVariationsBlock.value && !productVariationsBlock.value?.hidden;
-    const optionsBlock = productInfoSection.value?.blocks?.find((block) => block?.type === "product-options");
-    const showOptions = optionsBlock && !optionsBlock?.hidden;
+    if (!isCancelled) {
+      variationsProductId = productId.value;
+    }
 
-    if (product.value?.hasVariations && (showVariations || showOptions)) {
+    if (shouldLoadVariations.value) {
       await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
     }
 
@@ -444,6 +458,16 @@ watch(
     updateLocalizedUrl(product.value?.slug);
   },
   { immediate: true },
+);
+
+watch(
+  [isB2cLayout, shouldLoadVariations],
+  async () => {
+    if (variationsProductId === productId.value && shouldLoadVariations.value) {
+      await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
+    }
+  },
+  { flush: "post" },
 );
 
 const fetchedProductId = computed(() => product.value?.id);

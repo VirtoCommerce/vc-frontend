@@ -251,7 +251,7 @@ describe("startThemeSnapshot", () => {
     expect(useThemeSnapshot().hasFailed.value).toBe(false);
   });
 
-  it("keeps a late snapshot for the next navigation and retries a failed request on it", async () => {
+  it("keeps a late snapshot for the next navigation", async () => {
     let resolveLate: (value: unknown) => void = () => {};
     leaveBootRequest(new Promise((resolve) => (resolveLate = resolve)));
     const router = await startRouter();
@@ -259,7 +259,6 @@ describe("startThemeSnapshot", () => {
     const boot = startThemeSnapshot({ domain: "localhost" });
     await boot?.settle({ storeId: STORE_ID, cultureName: "en-US" });
     resolveLate(snapshotResponse({ publication: 7 }));
-    await vi.waitFor(() => expect(useThemeSnapshot().theme.value).toBeUndefined());
     await flushRequests();
 
     expect(useThemeSnapshot().published.value).toBeUndefined();

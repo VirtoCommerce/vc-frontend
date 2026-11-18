@@ -63,16 +63,11 @@ watch(headerHeight, (value) => {
 
 // The page's anchors scroll past the header by this height, so a page without the header gets none.
 watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
-  if (!shown) {
-    appHeaderHeightVar.value = undefined;
-    return;
-  }
-
   if (mobile) {
     return;
   }
 
-  appHeaderHeightVar.value = `${value}px`;
+  appHeaderHeightVar.value = shown ? `${value}px` : undefined;
 });
 
 const { isAuthenticated } = useUser();

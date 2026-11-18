@@ -11,7 +11,7 @@ import type { IThemeItem } from "@/core/theme-snapshot";
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => true }));
 vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
-  isOpenedWithPreviewProtocol: () => true,
+  isPreviewV2Frame: () => true,
 }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "de-DE" }), defaultStoreCulture: ref("en-US") }),

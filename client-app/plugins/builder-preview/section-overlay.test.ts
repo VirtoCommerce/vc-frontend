@@ -22,9 +22,7 @@ function createOverlay(placementAt?: (clientX: number, clientY: number) => strin
 }
 
 function selectedLabel(): string | undefined {
-  const box = [...document.querySelectorAll<HTMLElement>("[aria-hidden='true'] > div")].find((element) =>
-    element.style.border.startsWith("2px solid"),
-  );
+  const box = document.querySelector<HTMLElement>("[data-test-id='page-builder-section-selection']");
 
   return box?.style.display === "block" ? (box.textContent ?? "") : undefined;
 }
@@ -114,6 +112,23 @@ describe("SectionOverlay", () => {
     expect(onHover.mock.calls).toEqual([["placement"], ["section"]]);
   });
 
+  it("hides the selection and leaves the pointer alone while it is turned off", () => {
+    const { overlay, blocker, onSelect, onHover } = createOverlay();
+    addSection("section");
+    document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
+    overlay.select("section");
+    expect(selectedLabel()).toBe("Section");
+
+    overlay.setEnabled(false);
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 10, clientY: 10 }));
+    delete (document as Partial<Document>).elementsFromPoint;
+
+    expect(selectedLabel()).toBeUndefined();
+    expect(onHover).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
   it("removes its layer, listeners, observer and pending render when disposed, once", () => {
     const frames = new Map<number, FrameRequestCallback>();
     let nextFrameId = 1;
@@ -136,7 +151,7 @@ describe("SectionOverlay", () => {
     frames.forEach((callback) => callback(0));
     frames.forEach((callback) => callback(0));
 
-    expect(document.querySelector("[aria-hidden='true']")).toBeNull();
+    expect(document.querySelector("[data-test-id='page-builder-overlay-layer']")).toBeNull();
     expect(addedListeners().map(([, type]) => type)).toEqual(["mousemove", "mouseleave", "click", "resize", "scroll"]);
     expect(removedListeners()).toEqual(expect.arrayContaining(addedListeners()));
     expect(disconnectResizeObserver).toHaveBeenCalledOnce();

@@ -1,6 +1,6 @@
 <template>
   <RelatedProducts
-    v-if="product"
+    v-if="product?.associations?.totalCount"
     :related-products="relatedProducts"
     :product-id="product.id"
     :product-name="product.name"

@@ -1,6 +1,7 @@
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import { isDesignerPreview } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
+import { opensNewWindow } from "@/shared/static-content/sections";
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 export function getPreviewPageId(): string | undefined {
@@ -62,6 +63,36 @@ export function installPageInputGuard(blocker: HTMLElement, isPageInputAllowed: 
   for (const type of PAGE_INPUT_EVENTS) {
     blocker.ownerDocument.addEventListener(type, stopPageInput, true);
   }
+}
+
+/** With the inspector off, clicks reach the page: a link the router does not take would load another document. */
+export function installLeavingLinkGuard(blocker: HTMLElement): void {
+  function stopLeavingLink(event: MouseEvent): void {
+    const anchor = event.target instanceof Element ? event.target.closest("a[href]") : null;
+
+    if (
+      !blocker.isConnected ||
+      event.defaultPrevented ||
+      !(anchor instanceof HTMLAnchorElement) ||
+      opensNewWindow(anchor.getAttribute("target"))
+    ) {
+      return;
+    }
+
+    const url = new URL(anchor.href);
+    const { location } = globalThis;
+    const isFragmentOnly =
+      !!url.hash &&
+      url.origin === location.origin &&
+      url.pathname === location.pathname &&
+      url.search === location.search;
+
+    if ((url.protocol === "http:" || url.protocol === "https:") && !isFragmentOnly) {
+      event.preventDefault();
+    }
+  }
+
+  blocker.ownerDocument.addEventListener("click", stopLeavingLink);
 }
 
 export type PreviewBootOptionsType = {

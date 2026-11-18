@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { useThemeChrome } from "./useThemeChrome";
 import type { IThemeDraft, IThemeSnapshot } from "@/core/theme-snapshot";
 
@@ -18,13 +19,7 @@ vi.mock("@/core/api/graphql", () => ({ getMenu: vi.fn(async () => []) }));
 const helpMenu = { name: "Footer-Help", items: [{ title: "Contact", url: "/contact" }] };
 
 function publish(snapshot: Partial<IThemeSnapshot>, menus = [helpMenu]): void {
-  useThemeSnapshot().setPublished({
-    storeId: "store",
-    cultureName: "en-US",
-    publication: 1,
-    menus,
-    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, ...snapshot },
-  });
+  publishTheme(snapshot, { menus });
 }
 
 describe("useThemeChrome", () => {

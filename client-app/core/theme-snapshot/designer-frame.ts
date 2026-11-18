@@ -8,6 +8,8 @@ export const PREVIEW_PROTOCOL = 2;
 
 const DESIGNER_FRAME_STORAGE_KEY = "builderPreviewFrame";
 
+const LOG_SCOPE = "[builder-preview]";
+
 interface IDesignerFrame {
   origin: string;
   protocol?: string;
@@ -60,7 +62,7 @@ function toHttpOrigin(endpoint: string): string {
     const url = endpoint ? new URL(endpoint) : null;
     return url && (url.protocol === "http:" || url.protocol === "https:") ? url.origin : "";
   } catch (error) {
-    Logger.warn("[builder-preview] Ignored a designer endpoint that is not a URL", error);
+    Logger.warn(`${LOG_SCOPE} Ignored a designer endpoint that is not a URL`, error);
     return "";
   }
 }
@@ -78,7 +80,7 @@ function readKeptDesignerFrame(): IDesignerFrame {
     const kept: unknown = JSON.parse(sessionStorage.getItem(DESIGNER_FRAME_STORAGE_KEY) ?? "null");
     return isDesignerFrame(kept) ? kept : { origin: "" };
   } catch (error) {
-    Logger.warn("[builder-preview] Reading the designer frame failed", error);
+    Logger.warn(`${LOG_SCOPE} Reading the designer frame failed`, error);
     return { origin: "" };
   }
 }
@@ -92,7 +94,7 @@ function keepDesignerFrame(frame: IDesignerFrame): void {
       sessionStorage.removeItem(DESIGNER_FRAME_STORAGE_KEY);
     }
   } catch (error) {
-    Logger.warn("[builder-preview] Keeping the designer frame failed", error);
+    Logger.warn(`${LOG_SCOPE} Keeping the designer frame failed`, error);
   }
 }
 

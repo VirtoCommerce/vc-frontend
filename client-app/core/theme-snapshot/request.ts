@@ -1,5 +1,11 @@
 import { getLanguageCode, isRecord, Logger } from "@/core/utilities";
-import { THEME_SNAPSHOT_GLOBAL, THEME_SNAPSHOT_OPERATION, THEME_SNAPSHOT_QUERY } from "./query";
+import {
+  HTTP_ERROR_MESSAGE_PREFIX,
+  THEME_SNAPSHOT_GLOBAL,
+  THEME_SNAPSHOT_LOG_SCOPE,
+  THEME_SNAPSHOT_OPERATION,
+  THEME_SNAPSHOT_QUERY,
+} from "./query";
 import type { IPublishedTheme, IThemeMenu, IThemeSlug, IThemeSlugPage, IThemeSnapshot } from "./types";
 
 export interface IThemeSnapshotVariables {
@@ -17,9 +23,7 @@ export interface IThemeSnapshotRequest {
 
 const SUPPORTED_FORMAT = 1;
 
-const LOG_SCOPE = "[theme-snapshot]";
-
-const REJECTED_REQUEST_MESSAGE = "HTTP 400";
+const REJECTED_REQUEST_MESSAGE = `${HTTP_ERROR_MESSAGE_PREFIX}400`;
 
 class ThemeSnapshotRejectedError extends Error {}
 
@@ -41,7 +45,7 @@ export function requestThemeSnapshot(variables: IThemeSnapshotVariables): ITheme
     body: JSON.stringify({ operationName: THEME_SNAPSHOT_OPERATION, query: THEME_SNAPSHOT_QUERY, variables }),
   }).then(async (result) => {
     if (!result.ok) {
-      throw new Error(`HTTP ${result.status}`);
+      throw new Error(`${HTTP_ERROR_MESSAGE_PREFIX}${result.status}`);
     }
 
     return (await result.json()) as unknown;
@@ -114,20 +118,10 @@ export function isThemeForLanguage(theme: LanguageCheckedThemeType, cultureName:
 
 function isAskedLanguage(theme: LanguageCheckedThemeType, cultureName: string): boolean {
   const requested = theme.requestedCultureName?.toLowerCase();
-  const expected = cultureName.toLowerCase();
-
-  if (!requested) {
-    return false;
-  }
-
-  if (requested === expected) {
-    return true;
-  }
 
   return (
-    !requested.includes("-") &&
-    getLanguageCode(expected) === requested &&
-    getLanguageCode(theme.cultureName) !== requested
+    isSameLanguage(requested, cultureName) &&
+    (requested === cultureName.toLowerCase() || getLanguageCode(theme.cultureName) !== requested)
   );
 }
 
@@ -151,7 +145,7 @@ function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {
     const value: unknown = JSON.parse(content);
 
     if (!isRecord(value) || value.format !== SUPPORTED_FORMAT) {
-      Logger.warn(`${LOG_SCOPE} Ignored a snapshot in a format this storefront does not read`, {
+      Logger.warn(`${THEME_SNAPSHOT_LOG_SCOPE} Ignored a snapshot in a format this storefront does not read`, {
         format: isRecord(value) ? value.format : undefined,
       });
       return undefined;
@@ -162,7 +156,7 @@ function parseSnapshotContent(content: unknown): IThemeSnapshot | undefined {
       templates: isRecord(value.templates) ? (value.templates as IThemeSnapshot["templates"]) : {},
     };
   } catch (error) {
-    Logger.warn(`${LOG_SCOPE} Ignored a snapshot that is not valid JSON`, error);
+    Logger.warn(`${THEME_SNAPSHOT_LOG_SCOPE} Ignored a snapshot that is not valid JSON`, error);
     return undefined;
   }
 }
@@ -201,7 +195,7 @@ function parseSettings(value: unknown): Record<string, unknown> | undefined {
     const settings: unknown = JSON.parse(value);
     return isRecord(settings) ? settings : undefined;
   } catch (error) {
-    Logger.warn(`${LOG_SCOPE} Ignored page settings that are not valid JSON`, error);
+    Logger.warn(`${THEME_SNAPSHOT_LOG_SCOPE} Ignored page settings that are not valid JSON`, error);
     return undefined;
   }
 }

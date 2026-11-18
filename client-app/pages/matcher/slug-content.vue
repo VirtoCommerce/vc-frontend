@@ -126,7 +126,7 @@ watchEffect(() => {
 
 const { setPageLayout } = usePageLayout();
 
-const isContentPage = computed(() =>
+const hasOwnLayout = computed(() =>
   isOwnLayoutSlugPage({
     objectType: objectType.value,
     document: pageDocumentContent.value,
@@ -135,9 +135,9 @@ const isContentPage = computed(() =>
 );
 
 watch(
-  () => props.isVisible && !loading.value && !isContentPage.value,
-  (isOtherPage) => {
-    if (isOtherPage) {
+  () => props.isVisible && !loading.value && !hasOwnLayout.value,
+  (needsFullLayout) => {
+    if (needsFullLayout) {
       setPageLayout("full");
     }
   },

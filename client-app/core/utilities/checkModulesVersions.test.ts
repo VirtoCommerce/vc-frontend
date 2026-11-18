@@ -1,11 +1,25 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getOutdatedModules } from "./checkModulesVersions";
 
+const newPageBuilder = vi.hoisted(() => ({ isEnabled: true }));
+
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => newPageBuilder.isEnabled }));
+
 describe("getOutdatedModules", () => {
+  beforeEach(() => {
+    newPageBuilder.isEnabled = true;
+  });
+
   it("reports a Site Builder older than the storefront expects", () => {
     expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.999.0" }])).toEqual([
       { moduleId: "VirtoCommerce.SiteBuilder", backendVersion: "3.999.0", expectedVersion: "3.1000.0" },
     ]);
+  });
+
+  it("does not check Site Builder while the new Page Builder is off", () => {
+    newPageBuilder.isEnabled = false;
+
+    expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.999.0" }])).toEqual([]);
   });
 
   it("accepts a Site Builder at the expected version", () => {

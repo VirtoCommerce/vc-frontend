@@ -4,12 +4,8 @@ import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals, setGlobals } from "@/core/globals";
-import {
-  getBuilderOrigin,
-  isNewPageBuilderEnabled,
-  isOpenedWithPreviewProtocol,
-  PREVIEW_PROTOCOL,
-} from "@/core/theme-snapshot";
+import { getThemeVariableName } from "@/core/plugins/config.plugin";
+import { getBuilderOrigin, isNewPageBuilderEnabled, isPreviewV2Frame, PREVIEW_PROTOCOL } from "@/core/theme-snapshot";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
@@ -137,7 +133,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   keys
     .filter(([key]) => key?.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key?.replaceAll("_", "-") ?? ""}`, value as string);
+      document.documentElement.style.setProperty(getThemeVariableName(key), value as string);
     });
 }
 
@@ -441,9 +437,9 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
     originalUserId = globals.userId;
     originalOrganizationId = globals.organizationId;
   }
-  const organizationId = message.userId ? await getPreviewUserOrganizationId(message.userId) : originalOrganizationId;
+  const organizationId = userId ? await getPreviewUserOrganizationId(userId) : originalOrganizationId;
   const isOrganizationChanged = organizationId !== globals.organizationId;
-  setGlobals({ userId: message.userId || originalUserId, organizationId });
+  setGlobals({ userId: userId || originalUserId, organizationId });
   if (isOrganizationChanged) {
     await loadOrganizationBranding();
   }
@@ -544,11 +540,7 @@ export default {
 
       const customComponents = await getRegisteredComponents();
       context.schemas.value = customComponents;
-      loadedNotifier.setData(
-        isNewPageBuilderEnabled() && isOpenedWithPreviewProtocol()
-          ? buildPreviewCatalog(customComponents)
-          : customComponents,
-      );
+      loadedNotifier.setData(isPreviewV2Frame() ? buildPreviewCatalog(customComponents) : customComponents);
       await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps

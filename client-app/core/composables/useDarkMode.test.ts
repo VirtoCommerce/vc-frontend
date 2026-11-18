@@ -6,7 +6,7 @@ describe("useDarkMode", () => {
   it("shows an overriding scheme without saving it as the visitor's choice", async () => {
     localStorage.setItem("vc-color-mode", "light");
     const { isDark, colorMode, setActivePreset, setColorModeOverride } = useDarkMode();
-    setActivePreset("default", true);
+    setActivePreset(true);
 
     setColorModeOverride("dark");
     await nextTick();

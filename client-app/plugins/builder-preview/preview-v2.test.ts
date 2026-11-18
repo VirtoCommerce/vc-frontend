@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from "vue-router";
 import { darkPresets, presets } from "@/assets/presets";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { PREVIEW_PROTOCOL, useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
 import { useTemplateResolution, useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
@@ -754,13 +755,7 @@ describe("menus of the draft", () => {
   it("loads no menu without a draft", async () => {
     const { header, footer } = draftNaming("published", "published-icons", "published-footer");
     createWatchingPreview(() => MENU_SCHEMAS);
-    useThemeSnapshot().setPublished({
-      storeId: "store",
-      cultureName: "en-US",
-      publication: 1,
-      menus: [],
-      snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, header, footer },
-    });
+    publishTheme({ header, footer });
     await flushPromises();
 
     expect(getMenu).not.toHaveBeenCalled();

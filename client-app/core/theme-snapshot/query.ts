@@ -2,6 +2,10 @@
 
 export const THEME_SNAPSHOT_GLOBAL = "__vcThemeSnapshot";
 
+export const THEME_SNAPSHOT_LOG_SCOPE = "[theme-snapshot]";
+
+export const HTTP_ERROR_MESSAGE_PREFIX = "HTTP ";
+
 export const THEME_SNAPSHOT_OPERATION = "ThemeSnapshot";
 
 export const THEME_SNAPSHOT_QUERY = `query ThemeSnapshot($domain: String, $storeId: String, $cultureName: String, $permalink: String) {

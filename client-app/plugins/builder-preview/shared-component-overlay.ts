@@ -79,7 +79,6 @@ export class SharedComponentOverlay {
   private pendingScrollPlacementId: string | null = null;
   private pendingPointerPosition: { clientX: number; clientY: number } | null = null;
   private pointerFrame: number | undefined;
-  private isEnabled = true;
 
   constructor(
     private readonly body: HTMLElement,
@@ -93,6 +92,7 @@ export class SharedComponentOverlay {
       onPointerMove: this.handlePointerMove,
       onPointerLeave: this.handlePointerLeave,
       onClick: this.handleClick,
+      isInitiallyEnabled: true,
     });
     this.layer.element.dataset.sharedComponentOverlay = "true";
   }
@@ -133,8 +133,7 @@ export class SharedComponentOverlay {
   }
 
   setEnabled(isEnabled: boolean): void {
-    this.isEnabled = isEnabled;
-    this.layer.element.style.display = isEnabled ? "" : "none";
+    this.layer.setEnabled(isEnabled);
 
     if (!isEnabled) {
       this.cancelPendingPointer();
@@ -143,7 +142,7 @@ export class SharedComponentOverlay {
   }
 
   findPlacementAt(clientX: number, clientY: number): string | null {
-    if (!this.isEnabled) {
+    if (!this.layer.isEnabled) {
       return null;
     }
 
@@ -260,10 +259,6 @@ export class SharedComponentOverlay {
   }
 
   private readonly handlePointerMove = (event: MouseEvent): void => {
-    if (!this.isEnabled) {
-      return;
-    }
-
     this.pendingPointerPosition = { clientX: event.clientX, clientY: event.clientY };
     if (this.pointerFrame !== undefined) {
       return;

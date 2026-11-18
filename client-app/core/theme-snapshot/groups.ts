@@ -4,14 +4,13 @@ import { getMenu } from "@/core/api/graphql";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { Logger } from "@/core/utilities";
 import { convertToExtendedMenuLink } from "@/core/utilities/menu";
+import { THEME_SNAPSHOT_LOG_SCOPE } from "./query";
 import { useThemeSnapshot } from "./useThemeSnapshot";
 import type { IThemeItem, IThemeMenu, IThemeMenuLink } from "./types";
 import type { MenuLinkType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 export type ThemeGroupType = "header" | "footer";
-
-const LOG_SCOPE = "[theme-snapshot]";
 
 export const useThemeGroups = createGlobalState(() => {
   const { theme, localizeThemeDraft } = useThemeSnapshot();
@@ -70,7 +69,7 @@ export const useThemeGroups = createGlobalState(() => {
       draftMenus.set(draftKey, (await getMenu(name, cultureName)) as MenuLinkType[]);
     } catch (error) {
       requestedDraftMenus.delete(draftKey);
-      Logger.error(`${LOG_SCOPE} Failed to load the draft menu`, error);
+      Logger.error(`${THEME_SNAPSHOT_LOG_SCOPE} Failed to load the draft menu`, error);
     }
   }
 

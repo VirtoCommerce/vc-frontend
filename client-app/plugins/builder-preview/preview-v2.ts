@@ -21,13 +21,13 @@ import {
   BUILT_IN_TEMPLATES,
   getTemplateConditionDescriptors,
   getTemplatePageType,
-  opensNewWindow,
   useStaticPage,
   useThemeTemplates,
 } from "@/shared/static-content";
 import { withPreviewId } from "./builder-preview.protocol";
 import { findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { SectionOverlay } from "./section-overlay";
+import { installLeavingLinkGuard } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { IEditableText, IEndedEdit } from "./inline-text-editor";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -185,32 +185,6 @@ export function createPreviewV2(options: IPreviewV2Options) {
     return editor.isEditing || !isBlocking();
   }
 
-  // With the inspector off, clicks reach the page: a link the router does not take would load another document.
-  function stopLeavingLink(event: MouseEvent): void {
-    const anchor = event.target instanceof Element ? event.target.closest("a[href]") : null;
-
-    if (
-      !blocker.isConnected ||
-      event.defaultPrevented ||
-      !(anchor instanceof HTMLAnchorElement) ||
-      opensNewWindow(anchor.getAttribute("target"))
-    ) {
-      return;
-    }
-
-    const url = new URL(anchor.href);
-    const { location } = globalThis;
-    const isFragmentOnly =
-      !!url.hash &&
-      url.origin === location.origin &&
-      url.pathname === location.pathname &&
-      url.search === location.search;
-
-    if ((url.protocol === "http:" || url.protocol === "https:") && !isFragmentOnly) {
-      event.preventDefault();
-    }
-  }
-
   function setInspector(isEnabled: boolean): void {
     isInspectorEnabled = isEnabled;
     if (!isEnabled) {
@@ -267,11 +241,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
   }
 
   function getAnswerKind(itemId: string): AnswerKindType {
-    const isPageItem = (lastRender?.document.content ?? []).some(
-      (item) => item.id === itemId || !!item.blocks?.some((block) => block.id === itemId),
-    );
-
-    return isPageItem ? "render" : "draft";
+    return findItemIn(lastRender?.document.content ?? [], itemId) ? "render" : "draft";
   }
 
   function readShownSetting({ itemId, path }: IEditableText): unknown {
@@ -384,19 +354,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
       renderedTheme.value?.footer?.content ?? [],
     ] as IThemeItem[][];
 
-    for (const item of sources.flat()) {
-      if (item.id === itemId) {
-        return item;
-      }
-
-      const block = item.blocks?.find((candidate) => candidate.id === itemId);
-
-      if (block) {
-        return block;
-      }
-    }
-
-    return undefined;
+    return findItemIn(sources.flat(), itemId);
   }
 
   function isTranslatable(itemId: string, path: (string | number)[]): boolean {
@@ -425,7 +383,7 @@ export function createPreviewV2(options: IPreviewV2Options) {
     await showRender(render.selection ? { ...render, selection: { ...render.selection, scroll: true } } : render);
   }
 
-  document.addEventListener("click", stopLeavingLink);
+  installLeavingLinkGuard(blocker);
 
   applyInteraction();
 
@@ -469,6 +427,10 @@ export function findSchemaField(
   }
 
   return field;
+}
+
+function findItemIn(items: IThemeItem[], itemId: string): IThemeItem | undefined {
+  return items.flatMap((item) => [item, ...(item.blocks ?? [])]).find((candidate) => candidate.id === itemId);
 }
 
 /** The store menus the items and their blocks name in settings the schemas type as a menu. */
