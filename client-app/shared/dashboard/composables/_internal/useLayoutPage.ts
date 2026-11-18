@@ -18,8 +18,10 @@ export function useLayoutPage(layout: LayoutControllerType, root: MaybeRefOrGett
   const { focusBlockControl, focusEditToggle, focusSaveButton, focusSurfaceStart } = useLayoutFocus(root);
   const { setHidden, visibleIn, hiddenIn, editing, saveFailed, canEdit } = layout;
 
-  // Widgets from both columns share one tray; the stat row has its own paired zone instead.
-  const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
+  // Widgets from the full-width region and both columns share one tray; the stat row has its own paired zone.
+  const hiddenWidgets = computed(() =>
+    LAYOUT_REGION_IDS.filter((regionId) => regionId !== "statistics").flatMap((regionId) => hiddenIn(regionId)),
+  );
 
   const allHidden = computed(
     () => !editing.value && LAYOUT_REGION_IDS.every((regionId) => visibleIn(regionId).length === 0),

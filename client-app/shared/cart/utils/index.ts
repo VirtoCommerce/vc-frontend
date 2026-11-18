@@ -1,7 +1,7 @@
 import { ValidationErrorObjectType } from "@/core/enums";
 import { LOYALTY_VALIDATION_ERROR_MESSAGE_KEYS } from "../enums";
+import type { ItemForAddBulkItemsToCartResultsModalType } from "../types";
 import type { ShortCartFragment, LineItemType, OrderLineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
 import type { NamedValue } from "vue-i18n";
 
 export type LoyaltyValidationMessageType = { code: string; text: string };

@@ -1,5 +1,5 @@
 import { CalendarDate, parseDate } from "@internationalized/date";
-import { Logger } from "@/core/utilities";
+import { Logger } from "./logger";
 
 export function toDateOnlyString(isoDate?: string): string | undefined {
   if (!isoDate) {

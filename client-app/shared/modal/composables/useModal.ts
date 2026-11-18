@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash-es";
 import { computed, markRaw, nextTick, ref } from "vue";
-import type { CloseModalHandleType, IModal } from "..";
+import type { CloseModalHandleType, IModal } from "../types";
 
 const stack = ref<IModal[]>([]);
 const triggerElements = ref<Map<string, HTMLElement>>(new Map());

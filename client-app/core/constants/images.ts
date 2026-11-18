@@ -1,1 +1,1 @@
-export const NO_IMAGE_URL = "no-image.svg";
+export { NO_IMAGE_URL } from "@/ui-kit/constants";

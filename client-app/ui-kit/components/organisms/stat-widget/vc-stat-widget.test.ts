@@ -2,8 +2,8 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import uiKitMessages from "@/ui-kit/locales/en.json";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcStatWidget from "./vc-stat-widget.vue";
 import type { VueWrapper } from "@vue/test-utils";
 

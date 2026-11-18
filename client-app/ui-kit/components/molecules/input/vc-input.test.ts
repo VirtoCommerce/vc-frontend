@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "./vc-input.vue";
 import type { DirectiveBinding } from "vue";

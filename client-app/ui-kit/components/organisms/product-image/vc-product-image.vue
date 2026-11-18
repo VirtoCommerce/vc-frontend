@@ -83,12 +83,11 @@
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref } from "vue";
-import type { ImageType } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
-  images?: ImageType[];
+  images?: VcProductImageType[];
   alt?: string;
   imgSrc?: string;
   lazy?: boolean;
