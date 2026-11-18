@@ -13,6 +13,8 @@ type ProductsRequestType = { params: Partial<ProductsSearchParamsType>; page: nu
 
 const mocks = vi.hoisted(() => ({
   analytics: vi.fn(),
+  fetchCategory: vi.fn(),
+  updateLocalizedUrl: vi.fn(),
   paginationMode: "infinite_scroll",
   // What the next products request resolves with.
   response: { items: [] as Product[], totalCount: 0 },
@@ -44,7 +46,7 @@ vi.mock("@/core/composables", async () => {
 });
 
 vi.mock("@/core/composables/useLanguages", () => ({
-  useLanguages: () => ({ updateLocalizedUrl: vi.fn() }),
+  useLanguages: () => ({ updateLocalizedUrl: mocks.updateLocalizedUrl }),
 }));
 
 // The fields setting makes a scan an exact lookup (see `scan`).
@@ -101,7 +103,7 @@ vi.mock("@/shared/catalog/composables", async () => {
   const { toFirstString } = await import("@/core/utilities/common");
 
   return {
-    useCategory: () => ({ loading: ref(false), category: ref(undefined), fetchCategory: vi.fn() }),
+    useCategory: () => ({ loading: ref(false), category: ref(undefined), fetchCategory: mocks.fetchCategory }),
     useProducts: (options: { catalogPaginationMode?: string }) => {
       const isLoadMore = options.catalogPaginationMode === "load_more";
       const pageQueryParam = useRouteQueryParam<string>("page", { defaultValue: "" });
@@ -386,6 +388,8 @@ beforeAll(() => {
 beforeEach(() => {
   router = createTestRouter();
   mocks.analytics.mockClear();
+  mocks.fetchCategory.mockReset();
+  mocks.updateLocalizedUrl.mockReset();
   mocks.paginationMode = "infinite_scroll";
   mocks.response = { items: [PRODUCT, OTHER_PRODUCT], totalCount: 2 };
   mocks.moreResponse = { items: [], totalCount: 0 };
@@ -654,5 +658,94 @@ describe("category page with infinite scroll", () => {
       ["selectItem", OTHER_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_1", index: 1 })],
       ["selectItem", THIRD_PRODUCT, expect.objectContaining({ item_list_id: "category_undefined_page_2", index: 0 })],
     ]);
+  });
+});
+
+describe("category page URL", () => {
+  type CategoryAnswerType = { category: { slug: string } };
+
+  // Holds the category request open until the test answers it.
+  function holdCategoryRequest() {
+    let resolveRequest: ((value: CategoryAnswerType) => void) | undefined;
+
+    mocks.fetchCategory.mockReturnValueOnce(
+      new Promise<CategoryAnswerType>((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
+
+    return (slug: string) => resolveRequest?.({ category: { slug } });
+  }
+
+  // Control: the URL follows the category once its data arrives.
+  it("moves the URL to the category's slug when the category arrives", async () => {
+    const answer = holdCategoryRequest();
+
+    await mountAt("/laser-printers", { categoryId: "laser-printers" });
+    answer("printers/laser-printers");
+    await flushPromises();
+
+    expect(mocks.updateLocalizedUrl.mock.calls).toEqual([["printers/laser-printers"]]);
+  });
+
+  it("leaves the URL alone when the page is left before its category arrives", async () => {
+    const answer = holdCategoryRequest();
+
+    await mountAt("/laser-printers", { categoryId: "laser-printers" });
+    wrapper!.unmount();
+    wrapper = undefined;
+    answer("printers/laser-printers");
+    await flushPromises();
+
+    expect(mocks.updateLocalizedUrl).not.toHaveBeenCalled();
+  });
+
+  it("keeps the URL of the newer category when the previous one arrives late", async () => {
+    const answerFirst = holdCategoryRequest();
+    const answerSecond = holdCategoryRequest();
+
+    await mountAt("/laser-printers", { categoryId: "laser-printers" });
+    await wrapper!.setProps({ categoryId: "inkjet-printers" });
+    await waitForRequests(2);
+    answerSecond("printers/inkjet-printers");
+    await flushPromises();
+    answerFirst("printers/laser-printers");
+    await flushPromises();
+
+    expect(mocks.updateLocalizedUrl.mock.calls).toEqual([["printers/inkjet-printers"]]);
+  });
+});
+
+describe("search results list in analytics", () => {
+  function viewItemListProperties(): Record<string, unknown> | undefined {
+    return mocks.analytics.mock.calls.find(([event]) => event === "viewItemList")?.[2] as
+      Record<string, unknown> | undefined;
+  }
+
+  it("reports a search list, not a category named undefined, for a keyword search", async () => {
+    await mountAt("/search?q=tablet");
+
+    const properties = viewItemListProperties();
+
+    expect(properties).toEqual(
+      expect.objectContaining({
+        item_list_id: "search_results_page_1",
+        item_list_name: "Search results (page 1)",
+        related_type: "search",
+      }),
+    );
+    expect(JSON.stringify(properties)).not.toContain("undefined");
+  });
+
+  it.each([
+    ["a barcode lookup", "/search?barcode=4101"],
+    ["the search page without a search term", "/search"],
+    ["a keyword search outside the search page while no category is loaded", "/catalog?q=tablet"],
+  ])("reports a search list for %s", async (_case, url) => {
+    await mountAt(url);
+
+    expect(viewItemListProperties()).toEqual(
+      expect.objectContaining({ item_list_id: "search_results_page_1", item_list_name: "Search results (page 1)" }),
+    );
   });
 });

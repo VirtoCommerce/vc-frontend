@@ -1,9 +1,23 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("getBuilderOrigin", () => {
+  beforeEach(() => {
+    vi.stubGlobal("parent", {});
+  });
+
   afterEach(() => {
     window.history.replaceState(null, "", "/");
+    vi.unstubAllGlobals();
     vi.resetModules();
+  });
+
+  it("ignores the endpoint when the preview is not in a frame", async () => {
+    vi.unstubAllGlobals();
+    window.history.replaceState(null, "", "/?ep=https%3A%2F%2Fbuilder.example%2Fdesigner%2F");
+
+    const { getBuilderOrigin } = await import("./utils");
+
+    expect(getBuilderOrigin()).toBeUndefined();
   });
 
   it("uses only the HTTP endpoint origin", async () => {

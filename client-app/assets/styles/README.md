@@ -113,7 +113,8 @@ fork CSS keeps working against utilities as before; plugin stylesheets beat our 
 
 `!important` inverts across layers: a layered `!important` beats an unlayered one, so a fork's
 unlayered `!important` (`_custom.scss`) cannot override one inside a layer (swiper's and
-nouislider's in `vc.vendor`). Never add `!important` to our styles.
+nouislider's in `vc.vendor`). Never add `!important` to our styles; `yarn check:css-important`
+fails on one ([Checks](#checks)).
 
 ### Component styles are layered for you
 
@@ -229,6 +230,10 @@ back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from i
 override on `html[data-design="soft"]` reaches it too. Override them on
 `html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
 short ones too.
+Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
+spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
+them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
+then applies at every width, soft's `lg` step for `h1`–`h3` included.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -478,12 +483,18 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
+| `--vc-tab-switch-font-weight` | VcTabSwitch weight | `var(--vc-font-weight-bold)`, 700 |
+| `--vc-tab-switch-checked-font-weight` | VcTabSwitch weight when checked; a `label` prop keeps its width | `var(--vc-tab-switch-font-weight)` |
+| `--vc-tab-switch-checked-shadow` | VcTabSwitch shadow when checked | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-tab-switch-group-radius` | VcTabSwitchGroup corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
 | `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
 | `--vc-tile-button-radius` | VcTileButton corners | `var(--vc-radius)` |
 | `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |
 | `--vc-typography-font-size` | VcTypography font size | Not set: each `variant` sets its own |
 | `--vc-typography-font-weight` | VcTypography weight | Not set: 700 for `h1`–`h6`, 400 for `base` |
+| `--vc-typography-letter-spacing` | VcTypography heading letter spacing | Not set: `var(--vc-letter-spacing-wide)` (0.025em) for `h1`–`h3`, `var(--vc-heading-letter-spacing)`, else inherited, for `h4`–`h6` |
+| `--vc-typography-line-height` | VcTypography line height | Not set: inherited |
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
 | `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |
@@ -532,6 +543,7 @@ this table does not list, or the table lists one the code does not read.
 ```bash
 yarn check:designs                    # every folder in client-app/designs/, a fork's too, and every preset stylesheet (no build needed)
 yarn build && yarn check:css-layers   # built CSS: layer names and order (dist/, lazy chunks too)
+yarn check:css-important              # no !important in client-app/ and index.html (no build needed)
 ```
 
 `scripts/check-designs.ts` compiles every `.scss` file of each design with Sass and Tailwind, as the
@@ -589,7 +601,33 @@ elements: `.mobile-menu.is-visible` in `mobile-menu.scss`.
 that does starts with `theme`, places every declared layer, and its names follow the declared order
 per parent. The tests are in `scripts/check-css-layers.test.ts`.
 
-Both run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
+`scripts/check-css-important.ts` fails on any `!important` and any Tailwind important modifier
+(`!mt-4`, `lg:!hidden`, `data-[state=open]:!block`) in `client-app/` and `index.html`, and names the
+file and line. It reads style declarations and at-rules (`@apply` included), inline `<style>`, static
+attribute values, Vue bindings and interpolations, string literals in scripts (markup in a string,
+such as a story's template, is read as a template) and `style.setProperty(…, "important")`. It skips
+Markdown, locale files, text between tags, comments between style rules and declarations, comments in
+templates and scripts, code negation (`v-if="!open"`) and the Sass flags `!default`, `!global` and
+`!optional`.
+
+What it reads, it reads whole, comments included: a comment inside a declaration or an at-rule's
+prelude (`color: /* !important */ red`, `@media /* !important */ screen`) fails it, and so does a
+static attribute value such as `title="!open"` or a comment in `style="…"`. In a string,
+`!important` counts only where a CSS value can end: before `;`, `}`, a quote or an escape, or at the
+end of the string. So `"red !important"` fails it, and so does prose with `!important` in such a
+place (`"avoid !important; use a layer"`, a sentence that ends on it or quotes it); other prose that
+names it passes. Markup in a string whose `<style>` does not parse is read as a plain string, its text
+and comments included. A file it cannot parse fails the check too and is listed apart. The pre-commit
+hook runs it on the staged files only. Its patterns live in `scripts/important-patterns.mjs`, shared
+with the agents' edit hook (`.claude/hooks/guard-styles.mjs`). The tests are in
+`scripts/check-css-important.test.ts`.
+
+**In a fork**, put an override in `_custom.scss`: it is unlayered, so a plain declaration there
+beats every layered rule but a layered `!important` (swiper's and nouislider's,
+[Unlayered, on purpose](#unlayered-on-purpose)), and the check skips the file. A fork that keeps
+`!important` elsewhere on purpose adds that file to `IGNORE` in `scripts/check-css-important.ts`.
+
+All three run in CI (`.github/workflows/theme-ci.yml`). `yarn lint` does not parse SCSS.
 
 ---
 

@@ -4,5 +4,6 @@ import { DeleteSignInKeyDocument, OperationNames } from "@/core/api/graphql/type
 export function useDeleteSignInKeyMutation() {
   return useMutation(DeleteSignInKeyDocument, {
     refetchQueries: [OperationNames.Query.GetSignInMethods],
+    awaitRefetchQueries: true,
   });
 }
