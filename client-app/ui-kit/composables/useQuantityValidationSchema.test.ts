@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ref } from "vue";
-import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/ui-kit/constants";
 import { mockI18n } from "../test-mocks";
 import { useQuantityValidationSchema } from ".";
 

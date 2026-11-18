@@ -157,7 +157,6 @@ import InStock from "./in-stock.vue";
 import Price from "./price.vue";
 import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
-import VcAlert from "@/ui-kit/components/molecules/alert/vc-alert.vue";
 
 interface IProps {
   product: Product;

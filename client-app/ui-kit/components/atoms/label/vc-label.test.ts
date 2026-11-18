@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcLabel from "./vc-label.vue";
 
 const createWrapper = createWrapperFactory(mount, VcLabel, { slots: { default: "Comment" } });

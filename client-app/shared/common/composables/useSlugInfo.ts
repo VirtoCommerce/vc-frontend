@@ -5,7 +5,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { humanizeName, isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
-import type { IPageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content/types";
 import type { MaybeRefOrGetter } from "vue";
 
 /**

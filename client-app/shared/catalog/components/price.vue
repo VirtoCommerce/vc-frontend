@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
+import { shouldUseActualPrice } from "@/ui-kit/utilities";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {

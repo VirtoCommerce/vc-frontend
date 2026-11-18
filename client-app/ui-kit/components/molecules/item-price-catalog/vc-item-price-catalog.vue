@@ -20,10 +20,9 @@
 
 <script setup lang="ts">
 import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
-import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
-  value?: PriceType | { list: MoneyType; actual: MoneyType };
+  value?: VcPriceType;
   withFromLabel?: boolean;
   priceColorClass?: string;
 }

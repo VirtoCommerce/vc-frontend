@@ -38,10 +38,8 @@ export {
   VcTextarea,
   VcTypography,
 } from "@/ui-kit/components/molecules";
-// `VcImage` needs the host too: its thumbnail logic reads the theme's `image_thumbnails_*`
-// settings, and `useThemeContext`'s getter THROWS ("Theme context is missing.") until the host has
-// set the context at boot. Only a filename-only `src` returns before that read — any URL `src`
-// throws outside the host, so a plugin's own dev server or specs must stub it.
+// `VcImage` builds thumbnail URLs only when the app passes `image.thumbnails` to
+// `app.use(uiKit, options)`; without it (a plugin's own dev server or specs) it shows `src` as is.
 export {
   VcBadge,
   VcBreadcrumbs,
@@ -231,11 +229,11 @@ export { default as CouponItemSkeleton } from "@/shared/account/components/coupo
 // protected file URL as the signed-in user; `downloadFile` saves one through it.
 export { useFetch } from "@/core/api/common/composables/useFetch";
 export { downloadFile } from "@/shared/files/utils";
-export { getFileSize } from "@/ui-kit/utilities/file-size";
+export { getFileSize } from "@/ui-kit/utilities";
 // The date fields' own display format, so a plugin echoing a picked date shows it the way the field did.
-export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities/date";
+export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities";
 // The host's breakpoint scale, for a plugin that switches layout in script (`useBreakpoints(BREAKPOINTS)`).
-export { BREAKPOINTS } from "@/ui-kit/constants/tailwind";
+export { BREAKPOINTS } from "@/ui-kit/constants";
 export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";
