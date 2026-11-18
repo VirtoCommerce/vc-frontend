@@ -219,6 +219,10 @@ back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from i
 override on `html[data-design="soft"]` reaches it too. Override them on
 `html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
 short ones too.
+Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
+spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
+them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
+then applies at every width, soft's `lg` step for `h1`–`h3` included.
 
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
@@ -468,6 +472,10 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
+| `--vc-tab-switch-font-weight` | VcTabSwitch weight | `var(--vc-font-weight-bold)`, 700 |
+| `--vc-tab-switch-checked-font-weight` | VcTabSwitch weight when checked; a `label` prop keeps its width | `var(--vc-tab-switch-font-weight)` |
+| `--vc-tab-switch-checked-shadow` | VcTabSwitch shadow when checked | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
+| `--vc-tab-switch-group-radius` | VcTabSwitchGroup corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
 | `--vc-table-title-font-size` | VcTable header font size | `var(--vc-font-size-sm)`, 0.875rem |
 | `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
@@ -475,6 +483,8 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |
 | `--vc-typography-font-size` | VcTypography font size | Not set: each `variant` sets its own |
 | `--vc-typography-font-weight` | VcTypography weight | Not set: 700 for `h1`–`h6`, 400 for `base` |
+| `--vc-typography-letter-spacing` | VcTypography heading letter spacing | Not set: `var(--vc-letter-spacing-wide)` (0.025em) for `h1`–`h3`, `var(--vc-heading-letter-spacing)`, else inherited, for `h4`–`h6` |
+| `--vc-typography-line-height` | VcTypography line height | Not set: inherited |
 | `--vc-typography-text-transform` | VcTypography letter case | Not set: `uppercase` for `h1`–`h6`, `none` for `base` |
 | `--vc-variant-picker-radius` | VcVariantPicker corners | `var(--vc-radius)` |
 | `--vc-widget-radius` | VcWidget corners | `var(--vc-radius)` |

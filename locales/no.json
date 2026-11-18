@@ -654,6 +654,9 @@
         "vs_last_year": "{delta} vs i fjor",
         "excluded_orders": "{count} bestilling i en annen valuta er ikke inkludert | {count} bestillinger i andre valutaer er ikke inkludert",
         "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Salgsstatistikk"
+        },
         "recent_orders": {
           "title": "Mine nylige bestillinger",
           "view_all": "Alle bestillinger",
@@ -1278,7 +1281,7 @@
         "vs_last_year": "{change} vs i fjor"
       },
       "last_year": "I fjor",
-      "last_year_toggle": "Vis tall for i fjor i diagrammet «{chart}»",
+      "last_year_toggle": "I fjor: {chart}",
       "legend": {
         "aov_closed": "Snittordreverdi, avsluttede måneder",
         "current": "Denne måneden, hittil",

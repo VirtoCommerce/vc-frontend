@@ -1,5 +1,13 @@
 <template>
-  <VcBadge v-if="change !== null" :color="TONES[direction]" variant="soft" size="sm" rounded nowrap>
+  <VcBadge
+    v-if="change !== null"
+    class="reporting-change-badge"
+    :color="TONES[direction]"
+    variant="soft"
+    size="sm"
+    rounded
+    nowrap
+  >
     <slot :text="text">{{ text }}</slot>
   </VcBadge>
 </template>
@@ -31,3 +39,10 @@ const formatters = useReportingFormatters();
 const direction = computed(() => changeDirection(props.change ?? 0));
 const text = computed(() => formatters.change(props.change ?? 0));
 </script>
+
+<style lang="scss">
+// Lato sits about 1px below the centre of a small VcBadge; 1px of bottom padding lifts it, as VcBadge's xs size does.
+.reporting-change-badge {
+  @apply pb-px;
+}
+</style>

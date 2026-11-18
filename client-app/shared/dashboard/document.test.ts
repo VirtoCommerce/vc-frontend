@@ -116,6 +116,7 @@ describe("reconcileLayout", () => {
     expect(reconcileLayout(doc(["orders", false]), [])).toEqual({
       regions: {
         statistics: { visible: [], hidden: [] },
+        fullWidth: { visible: [], hidden: [] },
         mainLeft: { visible: [], hidden: [] },
         mainRight: { visible: [], hidden: [] },
       },
@@ -153,6 +154,7 @@ describe("serializeLayout", () => {
   it("emits every region in a stable order", () => {
     expect(serializeLayout(state, "dashboard", registry).regions.map((r) => r.id)).toEqual([
       "statistics",
+      "fullWidth",
       "mainLeft",
       "mainRight",
     ]);
@@ -312,5 +314,39 @@ describe("echoMatchesSentBlocks", () => {
     };
 
     expect(echoMatchesSentBlocks(shuffled, sent)).toBe(true);
+  });
+});
+
+// The full-width region (VCST-6258): between the stat row and the columns, for blocks built for the whole width.
+describe("the full-width region", () => {
+  const report: BlockType = { id: "sales-report", region: "fullWidth", titleKey: "report", order: 10, component };
+  const withReport = [...registry, report];
+
+  it("places a full-width block in its own region by default", () => {
+    const state = reconcileLayout(null, withReport);
+
+    expect(state.regions.fullWidth).toEqual({ visible: ["sales-report"], hidden: [] });
+    expect(ids(state.regions.mainLeft)).not.toContain("sales-report");
+  });
+
+  it("keeps a layout saved before the region existed, and adds the newcomer in the region", () => {
+    // The user moved news above orders and hid actions, before any full-width block shipped.
+    const saved = doc(["stat-a", false], ["stat-b", false], ["news", false], ["orders", false], ["actions", true]);
+
+    const state = reconcileLayout(saved, withReport);
+
+    expect(state.regions.mainLeft.visible).toEqual(["news", "orders"]);
+    expect(state.regions.mainRight).toEqual({ visible: [], hidden: ["actions"] });
+    expect(state.regions.fullWidth).toEqual({ visible: ["sales-report"], hidden: [] });
+  });
+
+  it("round-trips a hidden full-width block through a save", () => {
+    const state = reconcileLayout(doc(["sales-report", true]), withReport);
+    const sent = serializeLayout(state, "dashboard", withReport);
+
+    expect(state.regions.fullWidth).toEqual({ visible: [], hidden: ["sales-report"] });
+    expect(sent.regions.find((region) => region.id === "fullWidth")?.blocks).toEqual([
+      { id: "sales-report", type: "sales-report", hidden: true, settings: [] },
+    ]);
   });
 });

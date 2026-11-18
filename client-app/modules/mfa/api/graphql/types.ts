@@ -18,6 +18,8 @@ export type Scalars = {
 };
 
 export type InputRequestMfaChangeCodeType = {
+  /** The organization whose mode is changed. Omit it to change the mode of the current user. */
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
 };
 
