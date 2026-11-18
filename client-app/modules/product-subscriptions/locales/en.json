@@ -137,80 +137,6 @@
         "button": "Go to my subscriptions"
       }
     },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
     "cart": {
       "subscribe_button": "Subscribe",
       "subscribed": "Subscribed",
@@ -219,6 +145,7 @@
     },
     "checkout": {
       "title": "Your subscription",
+      "deliver_every": "Deliver every",
       "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
       "required": "Please accept the terms to place your order.",
       "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",

@@ -1,281 +1,208 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Assinaturas"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "Todo dia | A cada {count} dias",
+      "week": "Toda semana | A cada {count} semanas",
+      "month": "Todo mês | A cada {count} meses",
+      "year": "Todo ano | A cada {count} anos"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "1 dia | {count} dias",
+      "week": "1 semana | {count} semanas",
+      "month": "1 mês | {count} meses",
+      "year": "1 ano | {count} anos"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "Economize {value}%",
+      "amount": "Economize {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "Iniciando",
+      "Active": "Ativa",
+      "Paused": "Pausada",
+      "PastDue": "Pagamento pendente",
+      "Cancelled": "Cancelada",
+      "Scheduled": "Agendada",
+      "Notified": "Próxima",
+      "ReviewRequired": "Requer revisão",
+      "Ordered": "Em processamento",
+      "PaymentActionRequired": "Confirmar pagamento",
+      "RetryScheduled": "Nova tentativa de pagamento",
+      "Authorized": "Confirmada",
+      "Completed": "Entregue",
+      "Failed": "Falha no pagamento",
+      "Skipped": "Pulada"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "Ativo",
+      "NeedsUpdate": "Requer atualização",
+      "Expired": "Expirado",
+      "Revoked": "Removido"
     },
     "common": {
       "retry": "Tentar novamente",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "Assinatura {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "Algo deu errado. Tente novamente.",
       "action_disabled": "Esta loja não permite isto. Contacte a loja."
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "Opções de compra",
+      "one_time": "Compra única",
+      "subscribe": "Assine e economize",
+      "benefit_reminder": "Enviamos um e-mail antes de cada entrega. Sem cobranças surpresa.",
+      "benefit_cancel": "Pule, pause ou cancele quando quiser.",
+      "sign_in_required": "Entre para assinar.",
+      "in_cart_subscription": "No seu carrinho como assinatura · {interval}",
+      "in_cart_once": "No seu carrinho como compra única",
+      "deliver_every": "Frequência de entrega",
+      "cancel": "Cancelar",
+      "save": "Salvar"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Como funciona",
+      "title": "Como funcionam as assinaturas",
+      "lead": "Receba os produtos que você compra com frequência no seu cronograma, por um preço menor. Você mantém o controle: pule, altere ou cancele qualquer entrega antes do prazo.",
       "steps": {
-        "title": "How it works",
+        "title": "Como funciona",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Escolha a frequência",
+          "text": "Na página do produto, escolha \"Assine e economize\" e uma frequência de entrega. Seu primeiro pedido é enviado normalmente."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Avisamos antes",
+          "text": "Antes de cada entrega, enviamos um e-mail com os itens, a data e o valor máximo que pode ser cobrado."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Entregamos e cobramos",
+          "text": "O pedido é feito na data escolhida e cobrado, com o desconto da assinatura, no cartão salvo no checkout."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Economia",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "O desconto aparece na página do produto antes de você assinar.",
+            "Alguns produtos economizam mais quando entregues com mais frequência.",
+            "O desconto vale para todas as entregas enquanto a assinatura estiver ativa."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Preços",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Cada entrega tem o preço da data do pedido, menos o seu desconto.",
+            "Nunca cobramos mais do que o valor do aviso.",
+            "Se o preço subir mais de 5%, pedimos que você revise a entrega antes de fazermos o pedido."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Pular, pausar ou alterar",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Pule uma entrega, pause a assinatura ou altere a quantidade, a frequência ou a próxima data em \"Conta › Assinaturas\".",
+            "Alterações feitas antes do prazo, um dia antes da data do pedido, valem para a próxima entrega.",
+            "Se precisar dos itens antes, faça o pedido agora."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Pagamento",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Cobramos no cartão salvo no checkout. Você pode trocar de cartão a qualquer momento.",
+            "O pagamento é autorizado quando o pedido é feito e cobrado no envio.",
+            "Se um pagamento falhar, tentamos de novo e enviamos um e-mail antes de pausar a assinatura."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Cancele quando quiser",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Cancele em um só passo em \"Conta › Assinaturas\". Sem ligações e sem taxas.",
+            "Entregas já pedidas não são afetadas.",
+            "Uma vez por ano, enviamos um resumo das suas assinaturas ativas."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Sem estoque",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Se um item estiver indisponível, você pode revisar a entrega e pedir o restante.",
+            "Se você não responder, essa entrega é pulada e a próxima acontece como planejado."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Gerencie suas assinaturas",
+        "text": "Veja as próximas entregas e altere qualquer assinatura na sua conta.",
+        "button": "Ir para minhas assinaturas"
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "Assinar",
+      "subscribed": "Assinado",
+      "change": "Alterar",
+      "subscribed_hint": "Próxima entrega por volta de {date}. Enviamos um e-mail antes de cada entrega."
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "Sua assinatura",
+      "deliver_every": "Frequência de entrega",
+      "agree": "Concordo com os termos da assinatura e com o salvamento do meu cartão para pagamentos automáticos.",
+      "required": "Aceite os termos para fazer o pedido.",
+      "items_failed": "Não foi possível verificar se este carrinho tem assinaturas. Tente novamente para fazer o pedido.",
+      "terms_failed": "Não foi possível carregar os termos da assinatura.",
+      "retry": "Tentar novamente",
+      "no_payment_method": "As assinaturas são pagas com um cartão salvo, e esta loja não tem nenhum método de pagamento que permita salvá-lo. Remova a assinatura para pagar uma única vez ou entre em contato com a loja."
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "Método de pagamento de teste: nenhum cartão real é cobrado. Use um dos cartões de teste abaixo.",
+      "test_cards": "Cartões de teste",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "Sempre aprovado",
+        "three_ds_on_save": "3-D Secure no checkout",
+        "three_ds_on_renewal": "3-D Secure nas renovações",
+        "insufficient_funds": "Renovações: saldo insuficiente",
+        "expired": "Cartão expirado",
+        "recurring_cancelled": "Renovações: pagamento recorrente cancelado"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "Salvar este cartão para pagamentos futuros",
+      "save_card_required": "Sua assinatura é paga com este cartão, por isso ele será salvo com segurança. Você pode alterá-lo a qualquer momento.",
+      "pay": "Pagar {amount}",
+      "declined": "O pagamento foi recusado. Tente outro cartão.",
+      "three_ds_title": "Confirme com seu banco",
+      "three_ds_text": "Seu banco pede que você confirme o pagamento de {amount}. Esta é uma verificação 3-D Secure simulada.",
+      "three_ds_verify_card": "Seu banco pede que você confirme este cartão. Esta é uma verificação 3-D Secure simulada.",
+      "three_ds_approve": "Aprovar",
+      "three_ds_decline": "Recusar",
+      "three_ds_failed": "O pagamento não foi confirmado. Você pode tentar novamente."
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "Assinaturas",
       "load_failed": "Não foi possível carregar as suas assinaturas.",
-      "browse": "Browse products"
+      "browse": "Ver produtos"
     },
     "renewal": {
       "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "excluded": "Não incluído nesta entrega",
+      "confirm_payment": "Confirmar pagamento",
+      "accept": "Confirmar entrega",
+      "retry": "Tentar pagamento novamente",
+      "skip": "Pular esta entrega",
+      "view_order": "Pedido {number}",
+      "accepted": "Entrega confirmada.",
+      "retried": "Nova tentativa de pagamento feita.",
+      "skipped": "Entrega pulada.",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "Você pode alterar ou pular esta entrega até {cutoff}.",
+        "review": "Algo mudou desde o seu aviso. Confirme ou pule esta entrega.",
+        "ordered": "Seu pedido foi feito e o pagamento está sendo processado.",
+        "action": "Seu banco pediu que você confirme o pagamento.",
+        "retry": "O cartão foi recusado. Tentaremos novamente em {date}.",
+        "retry_soon": "O cartão foi recusado. Tentaremos novamente em breve.",
+        "authorized": "Seu cartão foi aprovado. A cobrança é feita quando o pedido é enviado.",
+        "completed": "Enviado e pago.",
+        "failed": "Não foi possível cobrar seu cartão. Escolha outro cartão e tente novamente.",
+        "skipped": "Esta entrega foi pulada.",
+        "cancelled": "Esta entrega foi cancelada."
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "Alguns itens desta entrega não estão disponíveis no momento.",
@@ -299,55 +226,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
+      "lead": "{count} ativas · próxima entrega: {date}",
+      "need_action": "{count} precisa da sua ação | {count} precisam da sua ação",
+      "in_days": "em {count} dia | em {count} dias",
+      "days_ago": "há {count} dia | há {count} dias",
+      "next_badge": "Próxima entrega",
+      "items": "{count} item | {count} itens",
+      "skip": "Pular entrega",
+      "change": "Alterar",
+      "quantity": "Quantidade",
+      "settings": "Configurações da assinatura",
+      "pause": "Pausar assinatura",
+      "cancel": "Cancelar assinatura",
+      "pause_title": "Pausar a assinatura?",
+      "pause_text": "As entregas e cobranças de {product} param até você retomar a assinatura. As entregas já pedidas continuam chegando.",
+      "cancel_title": "Cancelar a assinatura?",
+      "cancel_text": "Não haverá mais entregas nem cobranças de {product}. As entregas já pedidas continuam chegando. Esta ação não pode ser desfeita.",
+      "paused_done": "Assinatura pausada.",
+      "cancelled_done": "Assinatura cancelada. As entregas já pedidas continuam chegando.",
+      "resumed": "Assinatura retomada.",
+      "updated": "Assinatura atualizada.",
+      "skipped": "Entrega pulada. Nada será cobrado por ela.",
+      "cutoff": "Você pode alterar ou pular até {date}.",
+      "upcoming_hint": "Você pode alterar ou pular esta entrega até enviarmos o aviso, alguns dias antes.",
+      "cutoff_passed": "Em preparação — as alterações valem para a próxima entrega.",
+      "needs_action": "Será enviada assim que isso for resolvido.",
+      "ordered_hint": "Pedido feito — está a caminho.",
+      "estimated_total": "Total estimado",
       "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "ships_to": "Envio para {address}",
+      "idle_title": "Pausadas e canceladas ({count})",
+      "paused_until": "Pausada até {date}",
+      "paused": "Pausada",
+      "cancelled_on": "Cancelada em {date}",
+      "qty_every": "Qtd. {quantity} · {interval}",
+      "resume": "Retomar agora",
+      "subscribe_again": "Assinar novamente",
+      "empty": "Nada agendado ainda.",
+      "today": "hoje",
+      "tomorrow": "amanhã",
+      "skip_title": "Pular esta entrega?",
+      "skip_lead_one": "Vamos pular a entrega de {date} ({product}).",
+      "skip_lead_many": "Vamos pular a entrega de {date} com estes itens:",
+      "skip_after": "Nada será cobrado por ela. Sua próxima entrega será em {next}. Todas as outras entregas continuam como planejado.",
+      "skip_after_no_next": "Nada será cobrado por ela. Todas as outras entregas continuam como planejado.",
+      "prices_estimate": "Os preços são estimativas baseadas nos preços atuais e podem mudar até a data do pedido.",
+      "pause_lead_many": "As entregas e cobranças destes produtos param até você retomar a assinatura:",
+      "pause_after_many": "As entregas já pedidas continuam chegando.",
+      "cancel_lead_many": "Não haverá mais entregas nem cobranças destes produtos:",
+      "cancel_after_many": "As entregas já pedidas continuam chegando. Esta ação não pode ser desfeita.",
       "order_now": "Encomendar agora",
       "order_now_title": "Encomendar agora?",
       "ordered": "Encomenda feita.",

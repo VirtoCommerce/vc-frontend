@@ -23,6 +23,11 @@
         </span>
       </span>
     </VcRadioButton>
+
+    <!-- What the chosen option asks for (the subscription frequency): inside the card, below the radio, never in its label. -->
+    <div v-if="model === value && $slots.default" class="purchase-option__details">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -81,6 +86,10 @@ const model = defineModel<T>();
 
   &__price {
     @apply text-sm font-bold text-neutral-900;
+  }
+
+  &__details {
+    @apply mt-3 flex flex-col gap-3 border-t border-accent-200 pt-3;
   }
 
   &__strike {

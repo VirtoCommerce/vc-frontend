@@ -33,20 +33,21 @@
             test-id="purchase-options-modal-subscribe"
           >
             <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
+
+            <SubscriptionFrequencyPicker
+              v-model="selectedKey"
+              :intervals="offer.intervals"
+              name="purchase-options-modal-frequency"
+              :disabled="saving"
+              test-id="purchase-options-modal-frequency"
+            />
+
+            <SubscriptionBenefits />
+
+            <!-- In a new tab: the dialog would stay open over the page, and the choice is not saved yet. -->
+            <HowItWorksLink new-tab test-id="purchase-options-modal-how-it-works-link" />
           </PurchaseOption>
         </fieldset>
-
-        <div v-if="mode === 'subscribe'" class="purchase-options-modal__subscribe">
-          <SubscriptionFrequencyPicker
-            v-model="selectedKey"
-            :intervals="offer.intervals"
-            name="purchase-options-modal-frequency"
-            :disabled="saving"
-            test-id="purchase-options-modal-frequency"
-          />
-
-          <SubscriptionBenefits />
-        </div>
 
         <div v-if="onPause || onCancel" class="purchase-options-modal__manage">
           <VcButton
@@ -103,6 +104,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { intervalKey, subscriptionErrorMessage } from "../utils";
+import HowItWorksLink from "./how-it-works-link.vue";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
@@ -172,10 +174,6 @@ async function save(close: () => void): Promise<void> {
 
   &__choices {
     @apply flex flex-col gap-2;
-  }
-
-  &__subscribe {
-    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
   }
 
   &__manage {

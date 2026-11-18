@@ -27,6 +27,7 @@ vi.mock("@/core/globals", () => ({
 
 vi.mock("@/core/utilities", () => ({
   Logger: { error: vi.fn(), warn: vi.fn() },
+  prepareLineItem: (item: { id: string; name: string }) => ({ id: item.id, name: item.name }),
 }));
 
 vi.mock("@/shared/cart/composables", async () => {
@@ -71,6 +72,8 @@ function mountTerms() {
         VcAlert: { template: "<div><slot /></div>" },
         VcButton: true,
         VcLoader: true,
+        VcLineItems: true,
+        VcMarkdownRender: true,
         VcCheckbox: { name: "VcCheckbox", props: ["modelValue"], template: "<input type='checkbox' />" },
       },
       mocks: { $t: (key: string) => key },

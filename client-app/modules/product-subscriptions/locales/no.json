@@ -1,281 +1,208 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Abonnementer"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "Hver dag | Hver {count}. dag",
+      "week": "Hver uke | Hver {count}. uke",
+      "month": "Hver måned | Hver {count}. måned",
+      "year": "Hvert år | Hvert {count}. år"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "1 dag | {count} dager",
+      "week": "1 uke | {count} uker",
+      "month": "1 måned | {count} måneder",
+      "year": "1 år | {count} år"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "Spar {value} %",
+      "amount": "Spar {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "Starter",
+      "Active": "Aktiv",
+      "Paused": "På pause",
+      "PastDue": "Betaling kreves",
+      "Cancelled": "Avbrutt",
+      "Scheduled": "Planlagt",
+      "Notified": "Kommende",
+      "ReviewRequired": "Må ses over",
+      "Ordered": "Behandles",
+      "PaymentActionRequired": "Bekreft betaling",
+      "RetryScheduled": "Nytt betalingsforsøk",
+      "Authorized": "Bekreftet",
+      "Completed": "Levert",
+      "Failed": "Betaling mislyktes",
+      "Skipped": "Hoppet over"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "Aktivt",
+      "NeedsUpdate": "Må oppdateres",
+      "Expired": "Utløpt",
+      "Revoked": "Fjernet"
     },
     "common": {
       "retry": "Prøv igjen",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "Abonnement {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "Noe gikk galt. Prøv igjen.",
       "action_disabled": "Denne butikken tillater ikke dette. Kontakt butikken."
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "Kjøpsalternativer",
+      "one_time": "Engangskjøp",
+      "subscribe": "Abonner og spar",
+      "benefit_reminder": "Vi sender deg en e-post før hver levering. Ingen overraskende trekk.",
+      "benefit_cancel": "Hopp over, sett på pause eller avbryt når som helst.",
+      "sign_in_required": "Logg inn for å abonnere.",
+      "in_cart_subscription": "I handlekurven som abonnement · {interval}",
+      "in_cart_once": "I handlekurven som engangskjøp",
+      "deliver_every": "Leveringsintervall",
+      "cancel": "Avbryt",
+      "save": "Lagre"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Slik fungerer det",
+      "title": "Slik fungerer abonnementer",
+      "lead": "Få varene du kjøper jevnlig levert etter din egen plan, til en lavere pris. Du har kontrollen: hopp over, endre eller avbryt en levering når som helst før fristen.",
       "steps": {
-        "title": "How it works",
+        "title": "Slik fungerer det",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Velg hvor ofte",
+          "text": "Velg «Abonner og spar» og et leveringsintervall på produktsiden. Den første bestillingen sendes som vanlig."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Vi minner deg på det",
+          "text": "Før hver levering sender vi deg en e-post med varene, datoen og det høyeste beløpet du kan bli belastet."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Vi leverer og belaster",
+          "text": "Bestillingen legges inn på datoen du valgte og belastes kortet du lagret i kassen, med abonnementsrabatten din."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Rabatt",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Rabatten vises på produktsiden før du abonnerer.",
+            "Noen produkter gir større rabatt når de leveres oftere.",
+            "Rabatten gjelder hver levering så lenge abonnementet er aktivt."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Priser",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Hver levering prises på bestillingsdatoen, minus rabatten din.",
+            "Vi belaster aldri mer enn beløpet i påminnelsen.",
+            "Hvis prisen stiger med mer enn 5 %, ber vi deg se over leveringen før vi bestiller den."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Hopp over, sett på pause eller endre",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Hopp over en levering, sett abonnementet på pause eller endre antall, intervall eller neste dato under «Konto › Abonnementer».",
+            "Endringer gjort før fristen, én dag før bestillingsdatoen, gjelder neste levering.",
+            "Bestill nå hvis du trenger varene tidligere."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Betaling",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Vi belaster kortet du lagret i kassen. Du kan bytte kort når som helst.",
+            "Betalingen reserveres når bestillingen legges inn, og trekkes når den sendes.",
+            "Hvis en betaling mislykkes, prøver vi igjen og sender deg en e-post før abonnementet settes på pause."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Avbryt når som helst",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Avbryt i ett steg under «Konto › Abonnementer». Ingen telefoner og ingen gebyrer.",
+            "Leveringer som allerede er bestilt, påvirkes ikke.",
+            "En gang i året sender vi deg en oversikt over dine aktive abonnementer."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Utsolgt",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Hvis en vare ikke er tilgjengelig, kan du se over leveringen og bestille resten.",
+            "Hvis du ikke svarer, hoppes denne leveringen over, og den neste går som planlagt."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Administrer abonnementene dine",
+        "text": "Se kommende leveringer og endre abonnementer på kontoen din.",
+        "button": "Gå til mine abonnementer"
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "Abonner",
+      "subscribed": "Abonnert",
+      "change": "Endre",
+      "subscribed_hint": "Neste levering rundt {date}. Vi sender deg en e-post før hver levering."
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "Ditt abonnement",
+      "deliver_every": "Leveringsintervall",
+      "agree": "Jeg godtar abonnementsvilkårene og at kortet mitt lagres for automatiske betalinger.",
+      "required": "Godta vilkårene for å legge inn bestillingen.",
+      "items_failed": "Vi kunne ikke sjekke handlekurven for abonnementer. Prøv igjen for å legge inn bestillingen.",
+      "terms_failed": "Vi kunne ikke laste inn abonnementsvilkårene.",
+      "retry": "Prøv igjen",
+      "no_payment_method": "Abonnementer betales med et lagret kort, og denne butikken har ingen betalingsmåte som kan lagre kort. Fjern abonnementet for å betale én gang, eller kontakt butikken."
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "Testbetalingsmåte: ingen ekte kort belastes. Bruk et av testkortene nedenfor.",
+      "test_cards": "Testkort",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "Godkjennes alltid",
+        "three_ds_on_save": "3-D Secure i kassen",
+        "three_ds_on_renewal": "3-D Secure ved fornyelser",
+        "insufficient_funds": "Fornyelser: ikke nok dekning",
+        "expired": "Utløpt kort",
+        "recurring_cancelled": "Fornyelser: gjentakende betaling avbrutt"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "Lagre kortet for fremtidige betalinger",
+      "save_card_required": "Abonnementet ditt betales med dette kortet, så det lagres sikkert. Du kan endre det når som helst.",
+      "pay": "Betal {amount}",
+      "declined": "Betalingen ble avvist. Prøv et annet kort.",
+      "three_ds_title": "Bekreft med banken din",
+      "three_ds_text": "Banken din ber deg bekrefte betalingen på {amount}. Dette er en simulert 3-D Secure-kontroll.",
+      "three_ds_verify_card": "Banken din ber deg bekrefte dette kortet. Dette er en simulert 3-D Secure-kontroll.",
+      "three_ds_approve": "Godkjenn",
+      "three_ds_decline": "Avvis",
+      "three_ds_failed": "Betalingen ble ikke bekreftet. Du kan prøve igjen."
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "Abonnementer",
       "load_failed": "Kunne ikke laste inn abonnementene dine.",
-      "browse": "Browse products"
+      "browse": "Se produkter"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "Totalt",
+      "excluded": "Ikke inkludert i denne leveringen",
+      "confirm_payment": "Bekreft betaling",
+      "accept": "Bekreft levering",
+      "retry": "Prøv betalingen igjen",
+      "skip": "Hopp over denne leveringen",
+      "view_order": "Bestilling {number}",
+      "accepted": "Leveringen er bekreftet.",
+      "retried": "Betalingen er forsøkt på nytt.",
+      "skipped": "Leveringen er hoppet over.",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "Du kan endre eller hoppe over denne leveringen frem til {cutoff}.",
+        "review": "Noe er endret siden påminnelsen. Bekreft eller hopp over denne leveringen.",
+        "ordered": "Bestillingen er lagt inn, og betalingen behandles.",
+        "action": "Banken din ba deg bekrefte betalingen.",
+        "retry": "Kortet ble avvist. Vi prøver igjen {date}.",
+        "retry_soon": "Kortet ble avvist. Vi prøver igjen snart.",
+        "authorized": "Kortet ditt er godkjent. Det belastes når bestillingen sendes.",
+        "completed": "Sendt og betalt.",
+        "failed": "Vi kunne ikke belaste kortet ditt. Velg et annet kort og prøv igjen.",
+        "skipped": "Denne leveringen ble hoppet over.",
+        "cancelled": "Denne leveringen ble avbrutt."
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "Noen varer i denne leveransen er ikke tilgjengelige akkurat nå.",
@@ -299,55 +226,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
-      "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "lead": "{count} aktive · neste levering {date}",
+      "need_action": "{count} krever handling fra deg | {count} krever handling fra deg",
+      "in_days": "om {count} dag | om {count} dager",
+      "days_ago": "for {count} dag siden | for {count} dager siden",
+      "next_badge": "Neste levering",
+      "items": "{count} vare | {count} varer",
+      "skip": "Hopp over levering",
+      "change": "Endre",
+      "quantity": "Antall",
+      "settings": "Abonnementsinnstillinger",
+      "pause": "Sett abonnementet på pause",
+      "cancel": "Avbryt abonnementet",
+      "pause_title": "Sette abonnementet på pause?",
+      "pause_text": "Leveringer og trekk for {product} stopper til du gjenopptar abonnementet. Leveringer som allerede er bestilt, kommer likevel.",
+      "cancel_title": "Avbryte abonnementet?",
+      "cancel_text": "Ingen flere leveringer eller trekk for {product}. Leveringer som allerede er bestilt, kommer likevel. Dette kan ikke angres.",
+      "paused_done": "Abonnementet er satt på pause.",
+      "cancelled_done": "Abonnementet er avbrutt. Leveringer som allerede er bestilt, kommer likevel.",
+      "resumed": "Abonnementet er gjenopptatt.",
+      "updated": "Abonnementet er oppdatert.",
+      "skipped": "Leveringen er hoppet over. Du blir ikke belastet for den.",
+      "cutoff": "Du kan endre eller hoppe over frem til {date}.",
+      "upcoming_hint": "Du kan endre eller hoppe over denne leveringen til vi sender påminnelsen noen dager før.",
+      "cutoff_passed": "Klargjøres — endringer gjelder neste levering.",
+      "needs_action": "Sendes så snart dette er løst.",
+      "ordered_hint": "Bestilt — den er på vei.",
+      "estimated_total": "Estimert totalbeløp",
+      "total": "Totalt",
+      "ships_to": "Sendes til {address}",
+      "idle_title": "På pause og avbrutt ({count})",
+      "paused_until": "På pause til {date}",
+      "paused": "På pause",
+      "cancelled_on": "Avbrutt {date}",
+      "qty_every": "Antall {quantity} · {interval}",
+      "resume": "Gjenoppta nå",
+      "subscribe_again": "Abonner igjen",
+      "empty": "Ingenting er planlagt ennå.",
+      "today": "i dag",
+      "tomorrow": "i morgen",
+      "skip_title": "Hoppe over denne leveringen?",
+      "skip_lead_one": "Vi hopper over leveringen {date} ({product}).",
+      "skip_lead_many": "Vi hopper over leveringen {date} med disse varene:",
+      "skip_after": "Du blir ikke belastet for den. Neste levering blir {next}. Alle andre leveringer går som planlagt.",
+      "skip_after_no_next": "Du blir ikke belastet for den. Alle andre leveringer går som planlagt.",
+      "prices_estimate": "Prisene er estimater basert på dagens priser og kan endre seg frem til bestillingsdatoen.",
+      "pause_lead_many": "Leveringer og trekk for disse produktene stopper til du gjenopptar abonnementet:",
+      "pause_after_many": "Leveringer som allerede er bestilt, kommer likevel.",
+      "cancel_lead_many": "Ingen flere leveringer eller trekk for disse produktene:",
+      "cancel_after_many": "Leveringer som allerede er bestilt, kommer likevel. Dette kan ikke angres.",
       "order_now": "Bestill nå",
       "order_now_title": "Bestille nå?",
       "ordered": "Bestillingen er lagt inn.",

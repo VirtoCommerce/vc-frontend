@@ -77,34 +77,24 @@
           test-id="purchase-option-subscribe"
         >
           <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
+
+          <SubscriptionFrequencyPicker
+            v-model="selectedInterval"
+            :intervals="offer.intervals"
+            name="purchase-option-frequency"
+            :disabled="isSaving"
+            test-id="purchase-option-frequency"
+          />
+
+          <SubscriptionBenefits class="purchase-options__benefits" />
+
+          <HowItWorksLink class="purchase-options__how" test-id="purchase-option-how-it-works-link" />
+
+          <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
+            {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
+          </VcAlert>
         </PurchaseOption>
       </fieldset>
-
-      <div v-if="mode === 'subscribe'" class="purchase-options__subscribe">
-        <SubscriptionFrequencyPicker
-          v-model="selectedInterval"
-          :intervals="offer.intervals"
-          name="purchase-option-frequency"
-          :disabled="isSaving"
-          test-id="purchase-option-frequency"
-        />
-
-        <SubscriptionBenefits class="purchase-options__benefits" />
-
-        <VcLink
-          :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
-          class="purchase-options__how"
-          data-test-id="purchase-option-how-it-works-link"
-        >
-          <VcIcon name="info" size="xs" />
-
-          {{ $t("product_subscriptions.how_it_works.link") }}
-        </VcLink>
-
-        <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
-          {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
-        </VcAlert>
-      </div>
     </template>
   </div>
 </template>
@@ -116,8 +106,8 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { HOW_IT_WORKS_ROUTE_NAME } from "../constants";
 import { subscriptionErrorMessage, intervalKey, intervalLabel, intervalShortLabel, parseIntervalKey } from "../utils";
+import HowItWorksLink from "./how-it-works-link.vue";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
@@ -204,7 +194,7 @@ async function syncCartLine(): Promise<void> {
   try {
     if (wantsSubscription) {
       const { unit, count } = parseIntervalKey(selectedInterval.value!);
-      if (current && current.intervalUnit === unit && current.intervalCount === count) {
+      if (current?.intervalUnit === unit && current.intervalCount === count) {
         syncState.value = "ok";
         return;
       }
@@ -272,50 +262,11 @@ watch(
     @apply w-36;
   }
 
-  &__subscribe {
-    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
-  }
-
-  &__how {
-    @apply inline-flex items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
-  }
-
   &__status {
     @apply flex items-center gap-1.5 text-xs text-success-700;
 
     &--error {
       @apply text-danger;
-    }
-  }
-
-  // On a phone the product page shows the price block in a bar stuck to the bottom of the screen. Full size, the options
-  // filled half of it and hid the product: here they sit side by side, and the benefits are left to the cart's terms.
-  .floating-bar & {
-    @apply gap-2;
-
-    &__choices {
-      @apply grid grid-cols-2;
-
-      .purchase-option {
-        @apply p-2;
-      }
-
-      .purchase-option__body {
-        @apply flex-col items-start gap-0.5;
-      }
-
-      .purchase-option__title {
-        @apply flex-wrap gap-1;
-      }
-    }
-
-    &__subscribe {
-      @apply gap-2 bg-transparent p-0;
-    }
-
-    &__benefits,
-    &__how {
-      @apply hidden;
     }
   }
 }

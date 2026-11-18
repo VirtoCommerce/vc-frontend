@@ -1,67 +1,67 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Подписки"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "Раз в {count} дней | Раз в {count} день | Раз в {count} дня | Раз в {count} дней",
+      "week": "Раз в {count} недель | Раз в {count} неделю | Раз в {count} недели | Раз в {count} недель",
+      "month": "Раз в {count} месяцев | Раз в {count} месяц | Раз в {count} месяца | Раз в {count} месяцев",
+      "year": "Раз в {count} лет | Раз в {count} год | Раз в {count} года | Раз в {count} лет"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "{count} дней | {count} день | {count} дня | {count} дней",
+      "week": "{count} недель | {count} неделя | {count} недели | {count} недель",
+      "month": "{count} месяцев | {count} месяц | {count} месяца | {count} месяцев",
+      "year": "{count} лет | {count} год | {count} года | {count} лет"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "Скидка {value}%",
+      "amount": "Скидка {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "Запускается",
+      "Active": "Активна",
+      "Paused": "Приостановлена",
+      "PastDue": "Нужна оплата",
+      "Cancelled": "Отменена",
+      "Scheduled": "Запланирована",
+      "Notified": "Скоро",
+      "ReviewRequired": "Нужна проверка",
+      "Ordered": "Обрабатывается",
+      "PaymentActionRequired": "Подтвердите оплату",
+      "RetryScheduled": "Повтор оплаты",
+      "Authorized": "Подтверждена",
+      "Completed": "Доставлена",
+      "Failed": "Оплата не прошла",
+      "Skipped": "Пропущена"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "Активна",
+      "NeedsUpdate": "Нужно обновить",
+      "Expired": "Срок истёк",
+      "Revoked": "Удалена"
     },
     "common": {
       "retry": "Повторить попытку",
       "subscription_number": "Подписка {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "Что-то пошло не так. Повторите попытку.",
       "action_disabled": "Магазин не разрешает это действие. Обратитесь в магазин."
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "Варианты покупки",
+      "one_time": "Разовая покупка",
+      "subscribe": "Подписаться и сэкономить",
+      "benefit_reminder": "Перед каждой доставкой мы присылаем письмо. Никаких неожиданных списаний.",
+      "benefit_cancel": "Пропустить, приостановить или отменить можно в любой момент.",
+      "sign_in_required": "Войдите, чтобы оформить подписку.",
+      "in_cart_subscription": "В корзине по подписке · {interval}",
+      "in_cart_once": "В корзине как разовая покупка",
+      "deliver_every": "Частота доставки",
+      "cancel": "Отмена",
+      "save": "Сохранить"
     },
     "how_it_works": {
       "link": "Как это работает",
@@ -71,81 +71,7 @@
         "title": "Как это работает",
         "choose": {
           "title": "Выберите частоту",
-          "text": "На странице товара выберите подписку и частоту доставки. Первый заказ отправляется как обычно."
-        },
-        "remind": {
-          "title": "Мы заранее напоминаем",
-          "text": "Перед каждой доставкой мы присылаем письмо с товарами, датой и максимальной суммой списания."
-        },
-        "deliver": {
-          "title": "Доставляем и списываем оплату",
-          "text": "Заказ оформляется в выбранную дату и оплачивается картой, сохранённой при оформлении, со скидкой по подписке."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Скидка",
-          "items": [
-            "Скидка видна на странице товара до оформления подписки.",
-            "На некоторые товары скидка больше, если доставлять их чаще.",
-            "Скидка действует на каждую доставку, пока подписка активна."
-          ]
-        },
-        "prices": {
-          "title": "Цены",
-          "items": [
-            "Цена каждой доставки считается на дату заказа, со скидкой.",
-            "Мы никогда не спишем больше суммы из напоминания.",
-            "Если цена выросла больше чем на 5%, мы попросим вас подтвердить доставку перед заказом."
-          ]
-        },
-        "changes": {
-          "title": "Пропустить, приостановить, изменить",
-          "items": [
-            "Пропустить доставку, приостановить подписку, изменить количество, частоту или дату можно в разделе «Аккаунт › Подписки».",
-            "Изменения, сделанные до крайнего срока (за день до даты заказа), применяются к ближайшей доставке.",
-            "Если товар нужен раньше, оформите заказ сразу."
-          ]
-        },
-        "payment": {
-          "title": "Оплата",
-          "items": [
-            "Мы списываем оплату с карты, сохранённой при оформлении. Карту можно сменить в любой момент.",
-            "Сумма блокируется при оформлении заказа и списывается при отгрузке.",
-            "Если оплата не прошла, мы повторим попытку и напишем вам до приостановки подписки."
-          ]
-        },
-        "cancel": {
-          "title": "Отмена в любой момент",
-          "items": [
-            "Отменить подписку можно в один шаг в разделе «Аккаунт › Подписки». Без звонков и комиссий.",
-            "Уже оформленные доставки это не затрагивает.",
-            "Раз в год мы присылаем сводку ваших активных подписок."
-          ]
-        },
-        "availability": {
-          "title": "Если товара нет",
-          "items": [
-            "Если товар недоступен, мы попросим вас проверить доставку и закажем остальное.",
-            "Если вы не ответите, эта доставка будет пропущена, а следующая пройдёт по графику."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Управление подписками",
-        "text": "Ближайшие доставки и все настройки подписок — в вашем аккаунте.",
-        "button": "Мои подписки"
-      }
-    },
-    "how_it_works": {
-      "link": "Как это работает",
-      "title": "Как работают подписки",
-      "lead": "Товары, которые вы покупаете регулярно, приходят по вашему графику и дешевле. Вы всё контролируете: пропустить, изменить или отменить доставку можно в любой момент до крайнего срока.",
-      "steps": {
-        "title": "Как это работает",
-        "choose": {
-          "title": "Выберите частоту",
-          "text": "На странице товара выберите подписку и частоту доставки. Первый заказ отправляется как обычно."
+          "text": "На странице товара выберите «Подписаться и сэкономить» и частоту доставки. Первый заказ отправляется как обычно."
         },
         "remind": {
           "title": "Мы заранее напоминаем",
@@ -212,70 +138,71 @@
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "Подписаться",
+      "subscribed": "Подписка оформлена",
+      "change": "Изменить",
+      "subscribed_hint": "Следующая доставка около {date}. Перед каждой доставкой мы присылаем письмо."
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "Ваша подписка",
+      "deliver_every": "Частота доставки",
+      "agree": "Я принимаю условия подписки и согласен на сохранение карты для автоматических платежей.",
+      "required": "Примите условия, чтобы оформить заказ.",
+      "items_failed": "Не удалось проверить подписки в этой корзине. Попробуйте оформить заказ ещё раз.",
+      "terms_failed": "Не удалось загрузить условия подписки.",
+      "retry": "Повторить",
+      "no_payment_method": "Подписки оплачиваются сохранённой картой, а в этом магазине нет способа оплаты, который может её сохранить. Уберите подписку, чтобы оплатить один раз, или свяжитесь с магазином."
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "Тестовый способ оплаты: реальные деньги не списываются. Используйте одну из тестовых карт ниже.",
+      "test_cards": "Тестовые карты",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "Всегда одобряется",
+        "three_ds_on_save": "3-D Secure при оформлении",
+        "three_ds_on_renewal": "3-D Secure при продлении",
+        "insufficient_funds": "Продления: недостаточно средств",
+        "expired": "Карта с истёкшим сроком",
+        "recurring_cancelled": "Продления: регулярные платежи отменены"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "Сохранить карту для будущих платежей",
+      "save_card_required": "Подписка оплачивается этой картой, поэтому она будет надёжно сохранена. Карту можно сменить в любой момент.",
+      "pay": "Оплатить {amount}",
+      "declined": "Платёж отклонён. Попробуйте другую карту.",
+      "three_ds_title": "Подтвердите в банке",
+      "three_ds_text": "Банк просит подтвердить платёж на {amount}. Это имитация проверки 3-D Secure.",
+      "three_ds_verify_card": "Банк просит подтвердить эту карту. Это имитация проверки 3-D Secure.",
+      "three_ds_approve": "Подтвердить",
+      "three_ds_decline": "Отклонить",
+      "three_ds_failed": "Платёж не подтверждён. Можно попробовать ещё раз."
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "Подписки",
       "load_failed": "Не удалось загрузить ваши подписки.",
-      "browse": "Browse products"
+      "browse": "Перейти к товарам"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "Итого",
+      "excluded": "Не входит в эту доставку",
+      "confirm_payment": "Подтвердить оплату",
+      "accept": "Подтвердить доставку",
+      "retry": "Повторить оплату",
+      "skip": "Пропустить эту доставку",
+      "view_order": "Заказ {number}",
+      "accepted": "Доставка подтверждена.",
+      "retried": "Оплата повторена.",
+      "skipped": "Доставка пропущена.",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "Изменить или пропустить эту доставку можно до {cutoff}.",
+        "review": "После напоминания что-то изменилось. Подтвердите или пропустите эту доставку.",
+        "ordered": "Заказ оформлен, оплата обрабатывается.",
+        "action": "Банк просит подтвердить платёж.",
+        "retry": "Карта отклонена. Мы повторим попытку {date}.",
+        "retry_soon": "Карта отклонена. Мы скоро повторим попытку.",
+        "authorized": "Платёж по карте одобрен. Деньги спишутся при отправке заказа.",
+        "completed": "Отправлено и оплачено.",
+        "failed": "Не удалось списать оплату с карты. Выберите другую карту и повторите оплату.",
+        "skipped": "Эта доставка пропущена.",
+        "cancelled": "Эта доставка отменена."
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "Некоторые товары из этой доставки сейчас недоступны.",
@@ -300,11 +227,11 @@
     },
     "deliveries": {
       "lead": "Активных: {count} · следующая доставка {date}",
-      "need_action": "{count} требует действия | {count} требуют действия | {count} требуют действия",
-      "in_days": "через {count} день | через {count} дня | через {count} дней",
-      "days_ago": "{count} день назад | {count} дня назад | {count} дней назад",
+      "need_action": "{count} требуют действия | {count} требует действия | {count} требуют действия | {count} требуют действия",
+      "in_days": "через {count} дней | через {count} день | через {count} дня | через {count} дней",
+      "days_ago": "{count} дней назад | {count} день назад | {count} дня назад | {count} дней назад",
       "next_badge": "Ближайшая доставка",
-      "items": "{count} товар | {count} товара | {count} товаров",
+      "items": "{count} товаров | {count} товар | {count} товара | {count} товаров",
       "skip": "Пропустить доставку",
       "change": "Изменить",
       "quantity": "Количество",
@@ -321,7 +248,7 @@
       "updated": "Подписка обновлена.",
       "skipped": "Доставка пропущена. Оплата за неё не спишется.",
       "cutoff": "Изменить или пропустить можно до {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
+      "upcoming_hint": "Изменить или пропустить эту доставку можно до напоминания, которое мы пришлём за несколько дней.",
       "cutoff_passed": "Заказ готовится — изменения применятся к следующей доставке.",
       "needs_action": "Отправим, как только проблема будет решена.",
       "ordered_hint": "Заказ оформлен и уже в пути.",
@@ -367,7 +294,7 @@
     "order": {
       "badge": "Подписка",
       "automatic": "Заказ оформлен автоматически по вашей подписке для доставки {date}.",
-      "subscriptions": "Подписка {numbers}. | Подписки {numbers}.",
+      "subscriptions": "Подписки {numbers}. | Подписка {numbers}. | Подписки {numbers}. | Подписки {numbers}.",
       "manage": "Управлять подписками"
     }
   }

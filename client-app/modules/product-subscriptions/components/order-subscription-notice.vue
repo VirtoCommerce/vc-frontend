@@ -46,7 +46,7 @@ const text = computed(() => {
     return "";
   }
   const numbers = subscriptions.value.map((x) => x.number);
-  const sentences = [t("product_subscriptions.order.automatic", { date: d(renewal.value.scheduledDate) })];
+  const sentences = [t("product_subscriptions.order.automatic", { date: d(renewal.value.scheduledDate, "short") })];
   if (numbers.length) {
     sentences.push(t("product_subscriptions.order.subscriptions", { numbers: numbers.join(", ") }, numbers.length));
   }

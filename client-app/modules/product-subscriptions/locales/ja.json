@@ -1,281 +1,208 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "定期購入"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "毎日 | {count}日ごと",
+      "week": "毎週 | {count}週間ごと",
+      "month": "毎月 | {count}か月ごと",
+      "year": "毎年 | {count}年ごと"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "1日 | {count}日",
+      "week": "1週間 | {count}週間",
+      "month": "1か月 | {count}か月",
+      "year": "1年 | {count}年"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "{value}%オフ",
+      "amount": "{value}お得"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "開始待ち",
+      "Active": "有効",
+      "Paused": "一時停止中",
+      "PastDue": "支払いが必要",
+      "Cancelled": "キャンセル済み",
+      "Scheduled": "予定",
+      "Notified": "近日お届け",
+      "ReviewRequired": "要確認",
+      "Ordered": "処理中",
+      "PaymentActionRequired": "支払いを確認",
+      "RetryScheduled": "支払い再試行",
+      "Authorized": "承認済み",
+      "Completed": "お届け済み",
+      "Failed": "支払い失敗",
+      "Skipped": "スキップ済み"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "有効",
+      "NeedsUpdate": "更新が必要",
+      "Expired": "期限切れ",
+      "Revoked": "削除済み"
     },
     "common": {
       "retry": "再試行",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "定期購入 {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "問題が発生しました。もう一度お試しください。",
       "action_disabled": "このストアではこの操作はできません。ストアにお問い合わせください。"
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "購入オプション",
+      "one_time": "1回のみ購入",
+      "subscribe": "定期購入でお得に",
+      "benefit_reminder": "毎回のお届け前にメールでお知らせします。予期しない請求はありません。",
+      "benefit_cancel": "スキップ・一時停止・キャンセルはいつでも可能です。",
+      "sign_in_required": "定期購入するにはサインインしてください。",
+      "in_cart_subscription": "定期購入としてカートに追加済み · {interval}",
+      "in_cart_once": "1回のみ購入としてカートに追加済み",
+      "deliver_every": "お届けの間隔",
+      "cancel": "キャンセル",
+      "save": "保存"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "仕組み",
+      "title": "定期購入の仕組み",
+      "lead": "いつも購入する商品を、ご希望のスケジュールでお得にお届けします。締め切りまでなら、いつでもスキップ・変更・キャンセルできます。",
       "steps": {
-        "title": "How it works",
+        "title": "仕組み",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "頻度を選ぶ",
+          "text": "商品ページで「定期購入でお得に」を選び、お届けの頻度を選びます。初回のご注文は通常どおり発送されます。"
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "事前にお知らせ",
+          "text": "お届けの前に、商品、日付、請求される最大金額をメールでお知らせします。"
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "お届けと請求",
+          "text": "ご指定の日に注文が作成され、チェックアウト時に保存したカードに定期購入割引を適用して請求されます。"
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "割引",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "割引額は定期購入の前に商品ページに表示されます。",
+            "お届けの頻度が高いほど割引が大きくなる商品もあります。",
+            "割引は定期購入が有効な間、毎回のお届けに適用されます。"
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "価格",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "各お届けの価格は注文日の価格から割引を差し引いた額です。",
+            "お知らせメールに記載した金額を超えて請求することはありません。",
+            "価格が5%を超えて上がった場合は、注文前にお届け内容の確認をお願いします。"
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "スキップ・一時停止・変更",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "お届けのスキップ、一時停止、数量・頻度・次回日付の変更は「アカウント › 定期購入」で行えます。",
+            "締め切り（注文日の前日）までの変更は次回のお届けに反映されます。",
+            "早く必要な場合は、今すぐ注文できます。"
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "お支払い",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "チェックアウト時に保存したカードに請求します。カードはいつでも変更できます。",
+            "支払いは注文時に承認され、発送時に請求されます。",
+            "支払いに失敗した場合は再試行し、定期購入を一時停止する前にメールでお知らせします。"
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "いつでもキャンセル",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "「アカウント › 定期購入」でワンステップでキャンセルできます。電話も手数料も不要です。",
+            "すでに注文済みのお届けには影響しません。",
+            "年に一度、有効な定期購入の一覧をメールでお送りします。"
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "在庫切れ",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "商品が在庫切れの場合は、お届け内容を確認して残りを注文できます。",
+            "ご返答がない場合、そのお届けはスキップされ、次回は予定どおりお届けします。"
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "定期購入の管理",
+        "text": "今後のお届けを確認し、アカウントから定期購入を変更できます。",
+        "button": "定期購入へ移動"
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "定期購入する",
+      "subscribed": "定期購入中",
+      "change": "変更",
+      "subscribed_hint": "次回のお届けは{date}頃です。毎回のお届け前にメールでお知らせします。"
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "お客様の定期購入",
+      "deliver_every": "お届けの間隔",
+      "agree": "定期購入の規約に同意し、自動支払いのためにカードを保存することに同意します。",
+      "required": "注文するには規約に同意してください。",
+      "items_failed": "このカートの定期購入を確認できませんでした。もう一度お試しのうえ、ご注文ください。",
+      "terms_failed": "定期購入の規約を読み込めませんでした。",
+      "retry": "再試行",
+      "no_payment_method": "定期購入は保存済みのカードで支払われますが、このストアにはカードを保存できる支払い方法がありません。1回払いにするには定期購入を削除するか、ストアにお問い合わせください。"
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "テスト用の支払い方法です。実際のカードには請求されません。以下のテストカードのいずれかをご使用ください。",
+      "test_cards": "テストカード",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "常に承認",
+        "three_ds_on_save": "チェックアウト時に3-D Secure",
+        "three_ds_on_renewal": "更新時に3-D Secure",
+        "insufficient_funds": "更新時：残高不足",
+        "expired": "期限切れのカード",
+        "recurring_cancelled": "更新時：継続課金のキャンセル"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "今後の支払いのためにこのカードを保存",
+      "save_card_required": "定期購入はこのカードで支払われるため、カードは安全に保存されます。いつでも変更できます。",
+      "pay": "{amount}を支払う",
+      "declined": "支払いが拒否されました。別のカードをお試しください。",
+      "three_ds_title": "銀行で確認",
+      "three_ds_text": "銀行から{amount}の支払いの確認を求められています。これはシミュレーションによる3-D Secure認証です。",
+      "three_ds_verify_card": "銀行からこのカードの確認を求められています。これはシミュレーションによる3-D Secure認証です。",
+      "three_ds_approve": "承認",
+      "three_ds_decline": "拒否",
+      "three_ds_failed": "支払いが確認されませんでした。もう一度お試しください。"
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "定期購入",
       "load_failed": "定期購入を読み込めませんでした。",
-      "browse": "Browse products"
+      "browse": "商品を見る"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "合計",
+      "excluded": "このお届けに含まれないもの",
+      "confirm_payment": "支払いを確認",
+      "accept": "お届けを確定",
+      "retry": "支払いを再試行",
+      "skip": "このお届けをスキップ",
+      "view_order": "注文 {number}",
+      "accepted": "お届けを確定しました。",
+      "retried": "支払いを再試行しました。",
+      "skipped": "お届けをスキップしました。",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "{cutoff}まで、このお届けを変更またはスキップできます。",
+        "review": "お知らせの後に内容が変わりました。このお届けを確定するかスキップしてください。",
+        "ordered": "注文が作成され、支払いを処理しています。",
+        "action": "銀行から支払いの確認を求められました。",
+        "retry": "カードが拒否されました。{date}に再試行します。",
+        "retry_soon": "カードが拒否されました。まもなく再試行します。",
+        "authorized": "カードが承認されました。注文の発送時に請求されます。",
+        "completed": "発送・支払い済みです。",
+        "failed": "カードに請求できませんでした。別のカードを選んでから再試行してください。",
+        "skipped": "このお届けはスキップされました。",
+        "cancelled": "このお届けはキャンセルされました。"
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "このお届けの一部の商品は現在ご利用いただけません。",
@@ -299,55 +226,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
-      "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "lead": "有効 {count}件 · 次回のお届け {date}",
+      "need_action": "{count}件の対応が必要です | {count}件の対応が必要です",
+      "in_days": "{count}日後 | {count}日後",
+      "days_ago": "{count}日前 | {count}日前",
+      "next_badge": "次回のお届け",
+      "items": "{count}点 | {count}点",
+      "skip": "お届けをスキップ",
+      "change": "変更",
+      "quantity": "数量",
+      "settings": "定期購入の設定",
+      "pause": "定期購入を一時停止",
+      "cancel": "定期購入をキャンセル",
+      "pause_title": "定期購入を一時停止しますか？",
+      "pause_text": "定期購入を再開するまで、{product}のお届けと請求は停止します。すでに注文済みのお届けは届きます。",
+      "cancel_title": "定期購入をキャンセルしますか？",
+      "cancel_text": "{product}のお届けと請求は今後行われません。すでに注文済みのお届けは届きます。この操作は元に戻せません。",
+      "paused_done": "定期購入を一時停止しました。",
+      "cancelled_done": "定期購入をキャンセルしました。すでに注文済みのお届けは届きます。",
+      "resumed": "定期購入を再開しました。",
+      "updated": "定期購入を更新しました。",
+      "skipped": "お届けをスキップしました。このお届け分は請求されません。",
+      "cutoff": "{date}まで変更またはスキップできます。",
+      "upcoming_hint": "数日前にお知らせメールをお送りするまで、このお届けを変更またはスキップできます。",
+      "cutoff_passed": "準備中です — 変更は次回のお届けに反映されます。",
+      "needs_action": "解決しだい発送します。",
+      "ordered_hint": "注文済み — 配送中です。",
+      "estimated_total": "合計見込み額",
+      "total": "合計",
+      "ships_to": "お届け先：{address}",
+      "idle_title": "一時停止中・キャンセル済み（{count}）",
+      "paused_until": "{date}まで一時停止中",
+      "paused": "一時停止中",
+      "cancelled_on": "{date}にキャンセル",
+      "qty_every": "数量 {quantity} · {interval}",
+      "resume": "今すぐ再開",
+      "subscribe_again": "もう一度定期購入する",
+      "empty": "まだ予定はありません。",
+      "today": "今日",
+      "tomorrow": "明日",
+      "skip_title": "このお届けをスキップしますか？",
+      "skip_lead_one": "{date}のお届け（{product}）をスキップします。",
+      "skip_lead_many": "{date}の以下の商品のお届けをスキップします：",
+      "skip_after": "このお届け分は請求されません。次回のお届けは{next}です。その他のお届けは予定どおりです。",
+      "skip_after_no_next": "このお届け分は請求されません。その他のお届けは予定どおりです。",
+      "prices_estimate": "価格は現在の価格に基づく見込みで、注文日までに変わる可能性があります。",
+      "pause_lead_many": "定期購入を再開するまで、以下の商品のお届けと請求は停止します：",
+      "pause_after_many": "すでに注文済みのお届けは届きます。",
+      "cancel_lead_many": "以下の商品のお届けと請求は今後行われません：",
+      "cancel_after_many": "すでに注文済みのお届けは届きます。この操作は元に戻せません。",
       "order_now": "今すぐ注文",
       "order_now_title": "今すぐ注文しますか？",
       "ordered": "注文しました。",

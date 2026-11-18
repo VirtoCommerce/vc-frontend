@@ -328,7 +328,10 @@ const inactiveLines = computed<PreparedLineItemType[]>(() =>
   })),
 );
 
-/** Scrolls to the subscription the page was opened for, opening "Paused and cancelled" when it is there. */
+/**
+ * Scrolls to the subscription the page was opened for, opening "Paused and cancelled" when it is there. An active
+ * subscription brings its whole delivery card to the top, so the date, status and settings are in view.
+ */
 async function revealTarget(): Promise<void> {
   const id = targetSubscriptionId.value;
   if (!id) {
@@ -338,7 +341,14 @@ async function revealTarget(): Promise<void> {
     showInactive.value = true;
   }
   await nextTick();
-  document.getElementById(subscriptionAnchorId(id))?.scrollIntoView({ block: "center" });
+  const anchor = document.getElementById(subscriptionAnchorId(id));
+  const deliveryCard = anchor?.closest(".subscription-delivery");
+  if (deliveryCard) {
+    // `html` has `scroll-padding-top` for the sticky header, so "start" lands just below it.
+    deliveryCard.scrollIntoView({ block: "start" });
+  } else {
+    anchor?.scrollIntoView({ block: "center" });
+  }
 }
 
 function monthKey(date: string): string {

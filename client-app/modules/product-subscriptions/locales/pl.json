@@ -1,281 +1,208 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Subskrypcje"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "Co {count} dni | Co dzień | Co {count} dni | Co {count} dni",
+      "week": "Co {count} tygodni | Co tydzień | Co {count} tygodnie | Co {count} tygodni",
+      "month": "Co {count} miesięcy | Co miesiąc | Co {count} miesiące | Co {count} miesięcy",
+      "year": "Co {count} lat | Co rok | Co {count} lata | Co {count} lat"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "{count} dni | {count} dzień | {count} dni | {count} dni",
+      "week": "{count} tygodni | {count} tydzień | {count} tygodnie | {count} tygodni",
+      "month": "{count} miesięcy | {count} miesiąc | {count} miesiące | {count} miesięcy",
+      "year": "{count} lat | {count} rok | {count} lata | {count} lat"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "Oszczędzasz {value}%",
+      "amount": "Oszczędzasz {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "Uruchamianie",
+      "Active": "Aktywna",
+      "Paused": "Wstrzymana",
+      "PastDue": "Wymagana płatność",
+      "Cancelled": "Anulowana",
+      "Scheduled": "Zaplanowana",
+      "Notified": "Nadchodząca",
+      "ReviewRequired": "Wymaga sprawdzenia",
+      "Ordered": "W realizacji",
+      "PaymentActionRequired": "Potwierdź płatność",
+      "RetryScheduled": "Ponowienie płatności",
+      "Authorized": "Potwierdzona",
+      "Completed": "Dostarczona",
+      "Failed": "Płatność nieudana",
+      "Skipped": "Pominięta"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "Aktywna",
+      "NeedsUpdate": "Wymaga aktualizacji",
+      "Expired": "Wygasła",
+      "Revoked": "Usunięta"
     },
     "common": {
       "retry": "Spróbuj ponownie",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "Subskrypcja {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "Coś poszło nie tak. Spróbuj ponownie.",
       "action_disabled": "Ten sklep na to nie pozwala. Skontaktuj się ze sklepem."
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "Opcje zakupu",
+      "one_time": "Zakup jednorazowy",
+      "subscribe": "Subskrybuj i oszczędzaj",
+      "benefit_reminder": "Przed każdą dostawą wysyłamy e-mail. Żadnych niespodziewanych opłat.",
+      "benefit_cancel": "Pomiń, wstrzymaj lub anuluj w dowolnym momencie.",
+      "sign_in_required": "Zaloguj się, aby wykupić subskrypcję.",
+      "in_cart_subscription": "W koszyku jako subskrypcja · {interval}",
+      "in_cart_once": "W koszyku jako zakup jednorazowy",
+      "deliver_every": "Częstotliwość dostaw",
+      "cancel": "Anuluj",
+      "save": "Zapisz"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Jak to działa",
+      "title": "Jak działają subskrypcje",
+      "lead": "Produkty, które kupujesz regularnie, dostarczamy według Twojego harmonogramu i taniej. Masz pełną kontrolę: pomiń, zmień lub anuluj dostawę w dowolnym momencie przed terminem.",
       "steps": {
-        "title": "How it works",
+        "title": "Jak to działa",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Wybierz częstotliwość",
+          "text": "Na stronie produktu wybierz „Subskrybuj i oszczędzaj” i częstotliwość dostaw. Pierwsze zamówienie zostanie wysłane jak zwykle."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Przypominamy wcześniej",
+          "text": "Przed każdą dostawą wysyłamy e-mail z produktami, datą i maksymalną kwotą, jaką możemy pobrać."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Dostarczamy i pobieramy płatność",
+          "text": "Zamówienie jest składane w wybranym dniu i opłacane kartą zapisaną przy zamówieniu, z rabatem subskrypcyjnym."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Oszczędności",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Rabat jest widoczny na stronie produktu, zanim wykupisz subskrypcję.",
+            "Na niektórych produktach oszczędzasz więcej, gdy są dostarczane częściej.",
+            "Rabat obowiązuje przy każdej dostawie, dopóki subskrypcja jest aktywna."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Ceny",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Cena każdej dostawy jest ustalana w dniu zamówienia, z odliczeniem rabatu.",
+            "Nigdy nie pobierzemy więcej niż kwota z przypomnienia.",
+            "Jeśli cena wzrośnie o więcej niż 5%, poprosimy Cię o sprawdzenie dostawy przed zamówieniem."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Pomiń, wstrzymaj lub zmień",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Pomiń dostawę, wstrzymaj subskrypcję lub zmień ilość, częstotliwość albo datę następnej dostawy w sekcji „Konto › Subskrypcje”.",
+            "Zmiany wprowadzone przed terminem, dzień przed datą zamówienia, dotyczą najbliższej dostawy.",
+            "Jeśli potrzebujesz produktów wcześniej, zamów od razu."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Płatność",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Pobieramy płatność z karty zapisanej przy zamówieniu. Kartę możesz zmienić w dowolnym momencie.",
+            "Kwota jest autoryzowana przy składaniu zamówienia i pobierana przy wysyłce.",
+            "Jeśli płatność się nie powiedzie, spróbujemy ponownie i napiszemy do Ciebie, zanim subskrypcja zostanie wstrzymana."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Anuluj w każdej chwili",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Anuluj jednym krokiem w sekcji „Konto › Subskrypcje”. Bez telefonów i opłat.",
+            "Nie dotyczy to dostaw, które zostały już zamówione.",
+            "Raz w roku wysyłamy podsumowanie Twoich aktywnych subskrypcji."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Brak w magazynie",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Jeśli produkt jest niedostępny, możesz sprawdzić dostawę i zamówić resztę.",
+            "Jeśli nie odpowiesz, ta dostawa zostanie pominięta, a następna odbędzie się zgodnie z planem."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Zarządzaj subskrypcjami",
+        "text": "Sprawdzaj nadchodzące dostawy i zmieniaj subskrypcje na swoim koncie.",
+        "button": "Przejdź do moich subskrypcji"
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "Subskrybuj",
+      "subscribed": "Subskrypcja",
+      "change": "Zmień",
+      "subscribed_hint": "Następna dostawa około {date}. Przed każdą dostawą wysyłamy e-mail."
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "Twoja subskrypcja",
+      "deliver_every": "Częstotliwość dostaw",
+      "agree": "Akceptuję warunki subskrypcji i zapisanie karty do płatności automatycznych.",
+      "required": "Zaakceptuj warunki, aby złożyć zamówienie.",
+      "items_failed": "Nie udało się sprawdzić subskrypcji w tym koszyku. Spróbuj ponownie złożyć zamówienie.",
+      "terms_failed": "Nie udało się wczytać warunków subskrypcji.",
+      "retry": "Spróbuj ponownie",
+      "no_payment_method": "Subskrypcje są opłacane zapisaną kartą, a ten sklep nie ma metody płatności, która może ją zapisać. Usuń subskrypcję, aby zapłacić jednorazowo, lub skontaktuj się ze sklepem."
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "Testowa metoda płatności: żadna prawdziwa karta nie zostanie obciążona. Użyj jednej z kart testowych poniżej.",
+      "test_cards": "Karty testowe",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "Zawsze akceptowana",
+        "three_ds_on_save": "3-D Secure przy zamówieniu",
+        "three_ds_on_renewal": "3-D Secure przy odnowieniach",
+        "insufficient_funds": "Odnowienia: brak środków",
+        "expired": "Karta wygasła",
+        "recurring_cancelled": "Odnowienia: płatności cykliczne anulowane"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "Zapisz tę kartę do przyszłych płatności",
+      "save_card_required": "Subskrypcja jest opłacana tą kartą, więc zostanie ona bezpiecznie zapisana. Możesz ją zmienić w dowolnym momencie.",
+      "pay": "Zapłać {amount}",
+      "declined": "Płatność została odrzucona. Spróbuj innej karty.",
+      "three_ds_title": "Potwierdź w banku",
+      "three_ds_text": "Bank prosi o potwierdzenie płatności {amount}. To symulowana weryfikacja 3-D Secure.",
+      "three_ds_verify_card": "Bank prosi o potwierdzenie tej karty. To symulowana weryfikacja 3-D Secure.",
+      "three_ds_approve": "Zatwierdź",
+      "three_ds_decline": "Odrzuć",
+      "three_ds_failed": "Płatność nie została potwierdzona. Możesz spróbować ponownie."
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "Subskrypcje",
       "load_failed": "Nie udało się wczytać Twoich subskrypcji.",
-      "browse": "Browse products"
+      "browse": "Przeglądaj produkty"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "Razem",
+      "excluded": "Nie wchodzi w skład tej dostawy",
+      "confirm_payment": "Potwierdź płatność",
+      "accept": "Potwierdź dostawę",
+      "retry": "Ponów płatność",
+      "skip": "Pomiń tę dostawę",
+      "view_order": "Zamówienie {number}",
+      "accepted": "Dostawa potwierdzona.",
+      "retried": "Płatność ponowiona.",
+      "skipped": "Dostawa pominięta.",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "Możesz zmienić lub pominąć tę dostawę do {cutoff}.",
+        "review": "Od czasu przypomnienia coś się zmieniło. Potwierdź lub pomiń tę dostawę.",
+        "ordered": "Zamówienie zostało złożone, a płatność jest przetwarzana.",
+        "action": "Bank prosi o potwierdzenie płatności.",
+        "retry": "Karta została odrzucona. Spróbujemy ponownie {date}.",
+        "retry_soon": "Karta została odrzucona. Wkrótce spróbujemy ponownie.",
+        "authorized": "Karta została zaakceptowana. Płatność zostanie pobrana przy wysyłce.",
+        "completed": "Wysłano i opłacono.",
+        "failed": "Nie udało się obciążyć karty. Wybierz inną kartę i ponów płatność.",
+        "skipped": "Ta dostawa została pominięta.",
+        "cancelled": "Ta dostawa została anulowana."
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "Niektóre produkty z tej dostawy są obecnie niedostępne.",
@@ -299,55 +226,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
-      "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "lead": "Aktywne: {count} · następna dostawa {date}",
+      "need_action": "{count} wymaga działania | {count} wymaga działania | {count} wymagają działania | {count} wymaga działania",
+      "in_days": "za {count} dni | za {count} dzień | za {count} dni | za {count} dni",
+      "days_ago": "{count} dni temu | {count} dzień temu | {count} dni temu | {count} dni temu",
+      "next_badge": "Następna dostawa",
+      "items": "{count} produktów | {count} produkt | {count} produkty | {count} produktów",
+      "skip": "Pomiń dostawę",
+      "change": "Zmień",
+      "quantity": "Ilość",
+      "settings": "Ustawienia subskrypcji",
+      "pause": "Wstrzymaj subskrypcję",
+      "cancel": "Anuluj subskrypcję",
+      "pause_title": "Wstrzymać subskrypcję?",
+      "pause_text": "Dostawy i płatności za {product} zostaną wstrzymane do czasu wznowienia subskrypcji. Dostawy już zamówione zostaną dostarczone.",
+      "cancel_title": "Anulować subskrypcję?",
+      "cancel_text": "Nie będzie więcej dostaw ani płatności za {product}. Dostawy już zamówione zostaną dostarczone. Tej operacji nie można cofnąć.",
+      "paused_done": "Subskrypcja wstrzymana.",
+      "cancelled_done": "Subskrypcja anulowana. Dostawy już zamówione zostaną dostarczone.",
+      "resumed": "Subskrypcja wznowiona.",
+      "updated": "Subskrypcja zaktualizowana.",
+      "skipped": "Dostawa pominięta. Nic nie zostanie za nią pobrane.",
+      "cutoff": "Możesz zmienić lub pominąć do {date}.",
+      "upcoming_hint": "Możesz zmienić lub pominąć tę dostawę, dopóki nie wyślemy przypomnienia kilka dni wcześniej.",
+      "cutoff_passed": "W przygotowaniu — zmiany dotyczą następnej dostawy.",
+      "needs_action": "Zostanie wysłana, gdy tylko to zostanie rozwiązane.",
+      "ordered_hint": "Zamówiono — jest w drodze.",
+      "estimated_total": "Szacowana suma",
+      "total": "Razem",
+      "ships_to": "Wysyłka do: {address}",
+      "idle_title": "Wstrzymane i anulowane ({count})",
+      "paused_until": "Wstrzymana do {date}",
+      "paused": "Wstrzymana",
+      "cancelled_on": "Anulowana {date}",
+      "qty_every": "Ilość {quantity} · {interval}",
+      "resume": "Wznów teraz",
+      "subscribe_again": "Subskrybuj ponownie",
+      "empty": "Nic nie jest jeszcze zaplanowane.",
+      "today": "dzisiaj",
+      "tomorrow": "jutro",
+      "skip_title": "Pominąć tę dostawę?",
+      "skip_lead_one": "Pominiemy dostawę z {date} ({product}).",
+      "skip_lead_many": "Pominiemy dostawę z {date} z tymi produktami:",
+      "skip_after": "Nic nie zostanie za nią pobrane. Następna dostawa: {next}. Wszystkie pozostałe dostawy odbędą się zgodnie z planem.",
+      "skip_after_no_next": "Nic nie zostanie za nią pobrane. Wszystkie pozostałe dostawy odbędą się zgodnie z planem.",
+      "prices_estimate": "Ceny są szacunkowe, oparte na aktualnych cenach, i mogą się zmienić do dnia zamówienia.",
+      "pause_lead_many": "Dostawy i płatności za te produkty zostaną wstrzymane do czasu wznowienia subskrypcji:",
+      "pause_after_many": "Dostawy już zamówione zostaną dostarczone.",
+      "cancel_lead_many": "Nie będzie więcej dostaw ani płatności za te produkty:",
+      "cancel_after_many": "Dostawy już zamówione zostaną dostarczone. Tej operacji nie można cofnąć.",
       "order_now": "Zamów teraz",
       "order_now_title": "Zamówić teraz?",
       "ordered": "Zamówienie złożone.",
@@ -367,7 +294,7 @@
     "order": {
       "badge": "Subskrypcja",
       "automatic": "Złożone automatycznie przez subskrypcję na dostawę z dnia {date}.",
-      "subscriptions": "Subskrypcja {numbers}. | Subskrypcje {numbers}.",
+      "subscriptions": "Subskrypcje {numbers}. | Subskrypcja {numbers}. | Subskrypcje {numbers}. | Subskrypcje {numbers}.",
       "manage": "Zarządzaj subskrypcjami"
     }
   }

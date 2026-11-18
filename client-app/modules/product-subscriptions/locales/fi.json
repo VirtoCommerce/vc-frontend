@@ -1,281 +1,208 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Tilaukset"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "Joka päivä | {count} päivän välein",
+      "week": "Joka viikko | {count} viikon välein",
+      "month": "Joka kuukausi | {count} kuukauden välein",
+      "year": "Joka vuosi | {count} vuoden välein"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "1 päivä | {count} päivää",
+      "week": "1 viikko | {count} viikkoa",
+      "month": "1 kuukausi | {count} kuukautta",
+      "year": "1 vuosi | {count} vuotta"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "Säästä {value} %",
+      "amount": "Säästä {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "Käynnistymässä",
+      "Active": "Voimassa",
+      "Paused": "Keskeytetty",
+      "PastDue": "Maksu tarvitaan",
+      "Cancelled": "Peruutettu",
+      "Scheduled": "Ajoitettu",
+      "Notified": "Tulossa",
+      "ReviewRequired": "Tarkistettava",
+      "Ordered": "Käsittelyssä",
+      "PaymentActionRequired": "Vahvista maksu",
+      "RetryScheduled": "Maksu yritetään uudelleen",
+      "Authorized": "Vahvistettu",
+      "Completed": "Toimitettu",
+      "Failed": "Maksu epäonnistui",
+      "Skipped": "Ohitettu"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "Voimassa",
+      "NeedsUpdate": "Päivitettävä",
+      "Expired": "Vanhentunut",
+      "Revoked": "Poistettu"
     },
     "common": {
       "retry": "Yritä uudelleen",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "Kestotilaus {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "Jokin meni vikaan. Yritä uudelleen.",
       "action_disabled": "Tämä kauppa ei salli tätä. Ota yhteyttä kauppaan."
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "Ostovaihtoehdot",
+      "one_time": "Kertaosto",
+      "subscribe": "Tilaa ja säästä",
+      "benefit_reminder": "Lähetämme sähköpostin ennen jokaista toimitusta. Ei yllättäviä veloituksia.",
+      "benefit_cancel": "Ohita, keskeytä tai peruuta milloin tahansa.",
+      "sign_in_required": "Kirjaudu sisään tilataksesi.",
+      "in_cart_subscription": "Ostoskorissasi tilauksena · {interval}",
+      "in_cart_once": "Ostoskorissasi kertaostona",
+      "deliver_every": "Toimitusväli",
+      "cancel": "Peruuta",
+      "save": "Tallenna"
     },
     "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
+      "link": "Näin se toimii",
+      "title": "Näin tilaukset toimivat",
+      "lead": "Saat säännöllisesti ostamasi tuotteet omassa aikataulussasi ja edullisemmin. Päätät itse: voit ohittaa, muuttaa tai peruuttaa toimituksen milloin tahansa ennen määräaikaa.",
       "steps": {
-        "title": "How it works",
+        "title": "Näin se toimii",
         "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
+          "title": "Valitse toimitusväli",
+          "text": "Valitse tuotesivulla ”Tilaa ja säästä” ja toimitusväli. Ensimmäinen tilauksesi toimitetaan tavalliseen tapaan."
         },
         "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
+          "title": "Muistutamme etukäteen",
+          "text": "Ennen jokaista toimitusta lähetämme sähköpostin, jossa ovat tuotteet, päivämäärä ja suurin veloitettava summa."
         },
         "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
+          "title": "Toimitamme ja veloitamme",
+          "text": "Tilaus tehdään valitsemanasi päivänä ja veloitetaan kassalla tallennetulta kortilta tilausalennuksella."
         }
       },
       "rules": {
         "savings": {
-          "title": "Savings",
+          "title": "Säästöt",
           "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
+            "Alennus näkyy tuotesivulla ennen kuin tilaat.",
+            "Joissakin tuotteissa säästät enemmän, kun ne toimitetaan useammin.",
+            "Alennus koskee jokaista toimitusta niin kauan kuin tilaus on voimassa."
           ]
         },
         "prices": {
-          "title": "Prices",
+          "title": "Hinnat",
           "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
+            "Jokainen toimitus hinnoitellaan tilauspäivän hinnalla, josta vähennetään alennuksesi.",
+            "Emme koskaan veloita enempää kuin muistutuksessa mainitun summan.",
+            "Jos hinta nousee yli 5 %, pyydämme sinua tarkistamaan toimituksen ennen tilaamista."
           ]
         },
         "changes": {
-          "title": "Skip, pause or change",
+          "title": "Ohita, keskeytä tai muuta",
           "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
+            "Ohita toimitus, keskeytä tilaus tai muuta määrää, toimitusväliä tai seuraavaa päivää kohdassa ”Tili › Tilaukset”.",
+            "Määräaikaan mennessä, päivää ennen tilauspäivää, tehdyt muutokset koskevat seuraavaa toimitusta.",
+            "Jos tarvitset tuotteet aiemmin, tilaa heti."
           ]
         },
         "payment": {
-          "title": "Payment",
+          "title": "Maksu",
           "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
+            "Veloitamme kassalla tallentamaltasi kortilta. Voit vaihtaa korttia milloin tahansa.",
+            "Maksu varataan tilausta tehtäessä ja veloitetaan, kun tilaus lähetetään.",
+            "Jos maksu epäonnistuu, yritämme uudelleen ja ilmoitamme sinulle ennen kuin tilaus keskeytetään."
           ]
         },
         "cancel": {
-          "title": "Cancel any time",
+          "title": "Peruuta milloin tahansa",
           "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
+            "Peruuta yhdellä toiminnolla kohdassa ”Tili › Tilaukset”. Ei puheluita eikä maksuja.",
+            "Jo tilattuihin toimituksiin tämä ei vaikuta.",
+            "Kerran vuodessa lähetämme yhteenvedon voimassa olevista tilauksistasi."
           ]
         },
         "availability": {
-          "title": "Out of stock",
+          "title": "Loppu varastosta",
           "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
+            "Jos tuote ei ole saatavilla, voit tarkistaa toimituksen ja tilata loput.",
+            "Jos et vastaa, tämä toimitus ohitetaan ja seuraava toimitetaan suunnitellusti."
           ]
         }
       },
       "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
+        "title": "Hallitse tilauksiasi",
+        "text": "Näe tulevat toimitukset ja muuta mitä tahansa tilausta tililläsi.",
+        "button": "Siirry tilauksiini"
       }
     },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "Tilaa",
+      "subscribed": "Tilattu",
+      "change": "Muuta",
+      "subscribed_hint": "Seuraava toimitus noin {date}. Lähetämme sähköpostin ennen jokaista toimitusta."
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "Tilauksesi",
+      "deliver_every": "Toimitusväli",
+      "agree": "Hyväksyn tilausehdot ja korttini tallentamisen automaattisia maksuja varten.",
+      "required": "Hyväksy ehdot tehdäksesi tilauksen.",
+      "items_failed": "Emme voineet tarkistaa, onko ostoskorissa tilauksia. Yritä uudelleen tehdäksesi tilauksen.",
+      "terms_failed": "Tilausehtoja ei voitu ladata.",
+      "retry": "Yritä uudelleen",
+      "no_payment_method": "Tilaukset maksetaan tallennetulla kortilla, eikä tässä kaupassa ole maksutapaa, joka voi tallentaa kortin. Poista tilaus maksaaksesi kertaostona tai ota yhteyttä kauppaan."
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "Testimaksutapa: oikeaa korttia ei veloiteta. Käytä jotakin alla olevista testikorteista.",
+      "test_cards": "Testikortit",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "Aina hyväksytty",
+        "three_ds_on_save": "3-D Secure kassalla",
+        "three_ds_on_renewal": "3-D Secure uusinnoissa",
+        "insufficient_funds": "Uusinnat: kate ei riitä",
+        "expired": "Vanhentunut kortti",
+        "recurring_cancelled": "Uusinnat: toistuvat maksut peruttu"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "Tallenna tämä kortti tulevia maksuja varten",
+      "save_card_required": "Tilauksesi maksetaan tällä kortilla, joten se tallennetaan turvallisesti. Voit vaihtaa sen milloin tahansa.",
+      "pay": "Maksa {amount}",
+      "declined": "Maksu hylättiin. Kokeile toista korttia.",
+      "three_ds_title": "Vahvista pankissasi",
+      "three_ds_text": "Pankkisi pyytää sinua vahvistamaan maksun, jonka summa on {amount}. Tämä on simuloitu 3-D Secure -tarkistus.",
+      "three_ds_verify_card": "Pankkisi pyytää sinua vahvistamaan tämän kortin. Tämä on simuloitu 3-D Secure -tarkistus.",
+      "three_ds_approve": "Hyväksy",
+      "three_ds_decline": "Hylkää",
+      "three_ds_failed": "Maksua ei vahvistettu. Voit yrittää uudelleen."
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "Tilaukset",
       "load_failed": "Tilauksiasi ei voitu ladata.",
-      "browse": "Browse products"
+      "browse": "Selaa tuotteita"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "Yhteensä",
+      "excluded": "Ei mukana tässä toimituksessa",
+      "confirm_payment": "Vahvista maksu",
+      "accept": "Vahvista toimitus",
+      "retry": "Yritä maksua uudelleen",
+      "skip": "Ohita tämä toimitus",
+      "view_order": "Tilaus {number}",
+      "accepted": "Toimitus vahvistettu.",
+      "retried": "Maksua yritettiin uudelleen.",
+      "skipped": "Toimitus ohitettu.",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "Voit muuttaa tai ohittaa tämän toimituksen {cutoff} asti.",
+        "review": "Jokin on muuttunut muistutuksen jälkeen. Vahvista tai ohita tämä toimitus.",
+        "ordered": "Tilauksesi on tehty, ja maksua käsitellään.",
+        "action": "Pankkisi pyysi sinua vahvistamaan maksun.",
+        "retry": "Kortti hylättiin. Yritämme uudelleen {date}.",
+        "retry_soon": "Kortti hylättiin. Yritämme pian uudelleen.",
+        "authorized": "Korttisi on hyväksytty. Veloitus tehdään, kun tilaus lähetetään.",
+        "completed": "Lähetetty ja maksettu.",
+        "failed": "Emme voineet veloittaa korttiasi. Valitse toinen kortti ja yritä uudelleen.",
+        "skipped": "Tämä toimitus ohitettiin.",
+        "cancelled": "Tämä toimitus peruutettiin."
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "Osa tämän toimituksen tuotteista ei ole juuri nyt saatavilla.",
@@ -299,55 +226,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
-      "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "lead": "{count} voimassa · seuraava toimitus {date}",
+      "need_action": "{count} vaatii toimenpiteitäsi | {count} vaatii toimenpiteitäsi",
+      "in_days": "{count} päivän päästä | {count} päivän päästä",
+      "days_ago": "{count} päivä sitten | {count} päivää sitten",
+      "next_badge": "Seuraava toimitus",
+      "items": "{count} tuote | {count} tuotetta",
+      "skip": "Ohita toimitus",
+      "change": "Muuta",
+      "quantity": "Määrä",
+      "settings": "Tilauksen asetukset",
+      "pause": "Keskeytä tilaus",
+      "cancel": "Peruuta tilaus",
+      "pause_title": "Keskeytetäänkö tilaus?",
+      "pause_text": "Tuotteen {product} toimitukset ja veloitukset keskeytetään, kunnes jatkat tilausta. Jo tilatut toimitukset saapuvat silti.",
+      "cancel_title": "Peruutetaanko tilaus?",
+      "cancel_text": "Tuotteesta {product} ei tule enää toimituksia eikä veloituksia. Jo tilatut toimitukset saapuvat silti. Tätä ei voi perua.",
+      "paused_done": "Tilaus keskeytetty.",
+      "cancelled_done": "Tilaus peruutettu. Jo tilatut toimitukset saapuvat silti.",
+      "resumed": "Tilausta jatkettu.",
+      "updated": "Tilaus päivitetty.",
+      "skipped": "Toimitus ohitettu. Siitä ei veloiteta mitään.",
+      "cutoff": "Voit muuttaa tai ohittaa {date} asti.",
+      "upcoming_hint": "Voit muuttaa tai ohittaa tämän toimituksen, kunnes lähetämme muistutuksen muutamaa päivää ennen.",
+      "cutoff_passed": "Valmisteilla — muutokset koskevat seuraavaa toimitusta.",
+      "needs_action": "Lähetetään heti, kun asia on ratkaistu.",
+      "ordered_hint": "Tilattu — matkalla.",
+      "estimated_total": "Arvioitu summa",
+      "total": "Yhteensä",
+      "ships_to": "Toimitusosoite: {address}",
+      "idle_title": "Keskeytetyt ja peruutetut ({count})",
+      "paused_until": "Keskeytetty {date} asti",
+      "paused": "Keskeytetty",
+      "cancelled_on": "Peruutettu {date}",
+      "qty_every": "Määrä {quantity} · {interval}",
+      "resume": "Jatka nyt",
+      "subscribe_again": "Tilaa uudelleen",
+      "empty": "Mitään ei ole vielä ajoitettu.",
+      "today": "tänään",
+      "tomorrow": "huomenna",
+      "skip_title": "Ohitetaanko tämä toimitus?",
+      "skip_lead_one": "Ohitamme toimituksen {date} ({product}).",
+      "skip_lead_many": "Ohitamme toimituksen {date}, jossa ovat nämä tuotteet:",
+      "skip_after": "Siitä ei veloiteta mitään. Seuraava toimituksesi on {next}. Kaikki muut toimitukset pysyvät ennallaan.",
+      "skip_after_no_next": "Siitä ei veloiteta mitään. Kaikki muut toimitukset pysyvät ennallaan.",
+      "prices_estimate": "Hinnat ovat arvioita nykyisten hintojen perusteella, ja ne voivat muuttua tilauspäivään mennessä.",
+      "pause_lead_many": "Näiden tuotteiden toimitukset ja veloitukset keskeytetään, kunnes jatkat tilausta:",
+      "pause_after_many": "Jo tilatut toimitukset saapuvat silti.",
+      "cancel_lead_many": "Näistä tuotteista ei tule enää toimituksia eikä veloituksia:",
+      "cancel_after_many": "Jo tilatut toimitukset saapuvat silti. Tätä ei voi perua.",
       "order_now": "Tilaa nyt",
       "order_now_title": "Tilataanko nyt?",
       "ordered": "Tilaus tehty.",
