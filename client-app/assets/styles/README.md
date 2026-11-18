@@ -132,6 +132,11 @@ with its plain BEM class in any load order, never `&__x.vc-button`. Other kit ro
 `:where()`: a parent's single class on them still depends on load order, so a root moves to `:where()`
 only when that changes nothing on screen.
 
+**For forks:** a fork rule inside `@layer vc.kit` that sets a layout property on a VcButton root with
+a single class now wins in any load order, where it used to win or lose by file order; check that
+such a rule still gives the look you want. Fork CSS in `_custom.scss`, app SFCs and designs is
+unaffected: unlayered CSS, `vc.app` and `vc.design` already beat `vc.kit`.
+
 ### Entry stylesheets
 
 Each is layered by hand and starts with `@use "layers"`: `preflight.scss`, `vendors.scss`,
