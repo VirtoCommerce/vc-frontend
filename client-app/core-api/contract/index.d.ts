@@ -82,14 +82,14 @@ interface IProps$I {
         disabled?: boolean;
     };
 }
-declare var __VLS_16$3: {
+declare var __VLS_16$4: {
     checked: boolean;
 };
 declare var __VLS_19$1: {
     checked: boolean;
 };
 type __VLS_Slots$r = {} & {
-    default?: (props: typeof __VLS_16$3) => any;
+    default?: (props: typeof __VLS_16$4) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
@@ -2597,12 +2597,12 @@ declare var __VLS_9$3: {
     };
     tooltipId: string;
 };
-declare var __VLS_12$3: {};
+declare var __VLS_12$2: {};
 declare var __VLS_15$1: {};
 type __VLS_Slots$n = {} & {
     default?: (props: typeof __VLS_9$3) => any;
 } & {
-    trigger?: (props: typeof __VLS_12$3) => any;
+    trigger?: (props: typeof __VLS_12$2) => any;
 } & {
     content?: (props: typeof __VLS_15$1) => any;
 };
@@ -2638,19 +2638,19 @@ interface IProps$z {
 }
 declare var __VLS_1$6: {};
 declare var __VLS_8$6: {};
-declare var __VLS_10$2: {};
-declare var __VLS_12$2: {};
-declare var __VLS_14$1: {};
+declare var __VLS_16$3: {};
+declare var __VLS_24$1: {};
+declare var __VLS_26: {};
 type __VLS_Slots$m = {} & {
     'main-icon'?: (props: typeof __VLS_1$6) => any;
 } & {
     default?: (props: typeof __VLS_8$6) => any;
 } & {
-    actions?: (props: typeof __VLS_10$2) => any;
+    actions?: (props: typeof __VLS_16$3) => any;
 } & {
-    actions?: (props: typeof __VLS_12$2) => any;
+    actions?: (props: typeof __VLS_24$1) => any;
 } & {
-    'close-icon'?: (props: typeof __VLS_14$1) => any;
+    'close-icon'?: (props: typeof __VLS_26) => any;
 };
 declare const __VLS_base$m: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;

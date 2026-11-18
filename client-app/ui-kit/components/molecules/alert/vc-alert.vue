@@ -22,12 +22,16 @@
       <slot />
 
       <div v-if="$slots.actions && !isActionsEnd()" class="vc-alert__actions vc-alert__actions--bottom">
-        <slot name="actions" />
+        <VcButtonContextProvider v-bind="actionButtonContext">
+          <slot name="actions" />
+        </VcButtonContextProvider>
       </div>
     </div>
 
     <div v-if="isActionsEnd()" class="vc-alert__actions vc-alert__actions--end">
-      <slot name="actions" />
+      <VcButtonContextProvider v-bind="actionButtonContext">
+        <slot name="actions" />
+      </VcButtonContextProvider>
     </div>
 
     <div v-if="closable">
@@ -48,7 +52,7 @@
 <script setup lang="ts">
 import { computed, useSlots } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
-import { provideButtonContext } from "../button/vc-button-context";
+import VcButtonContextProvider from "../button/vc-button-context-provider.vue";
 
 interface IEmits {
   (event: "close"): void;
@@ -93,8 +97,8 @@ function isActionsEnd(): boolean {
   return !!slots.actions && props.actionsPosition === "end";
 }
 
-// Every VcButton in the alert, in the actions or in the text, takes this look unless it sets its own props.
-provideButtonContext(() => {
+// Buttons in the actions slot take this look unless they set their own props.
+const actionButtonContext = computed<VcButtonContextType>(() => {
   const isSolid = canonicalVariant.value === "solid";
 
   return {
