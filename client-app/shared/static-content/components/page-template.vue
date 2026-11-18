@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { computed, watchEffect } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isSiteBuilderEnabled } from "@/core/theme-snapshot";
 import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { usePermalinkSeo } from "../composables/usePermalinkSeo";
 import { useTemplateResolution } from "../composables/useThemeTemplates";
@@ -50,5 +50,5 @@ watchEffect(() => {
   setPageLayout(getSettingsLayout(settings.value));
 });
 
-usePermalinkSeo(() => props.permalink, isNewPageBuilderEnabled);
+usePermalinkSeo(() => props.permalink, isSiteBuilderEnabled);
 </script>

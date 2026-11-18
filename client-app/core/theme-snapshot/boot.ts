@@ -1,6 +1,6 @@
 import { START_LOCATION } from "vue-router";
 import { Logger } from "@/core/utilities";
-import { isNewPageBuilderEnabled } from "./enabled";
+import { isSiteBuilderEnabled } from "./enabled";
 import { THEME_SNAPSHOT_LOG_SCOPE } from "./query";
 import {
   isThemeForLanguage,
@@ -33,7 +33,7 @@ type OutcomeType = { result: IPublishedTheme | null } | { error: unknown };
 type RefetchType = () => Promise<OutcomeType>;
 
 export function startThemeSnapshot(fallback: { domain: string; cultureName?: string }): IThemeSnapshotBoot | undefined {
-  if (!isNewPageBuilderEnabled()) {
+  if (!isSiteBuilderEnabled()) {
     return undefined;
   }
 
@@ -74,7 +74,7 @@ export function startThemeSnapshot(fallback: { domain: string; cultureName?: str
  * The first navigation does not retry: the request failed only moments before.
  */
 export function installThemeSnapshotNavigation(router: Router, getContext: () => IThemeSnapshotContext): void {
-  if (!isNewPageBuilderEnabled()) {
+  if (!isSiteBuilderEnabled()) {
     return;
   }
 

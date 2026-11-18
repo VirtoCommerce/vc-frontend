@@ -117,7 +117,7 @@ describe("MainLayout", () => {
     expect(chrome(wrapper)).toEqual(["full-header", "full-footer"]);
   });
 
-  it("keeps the full layout without the new Page Builder", async () => {
+  it("keeps the full layout without Site Builder", async () => {
     flag.enabled = false;
     const { setPageLayout, mountLayout } = await loadLayout();
     setPageLayout("blank");

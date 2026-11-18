@@ -3,9 +3,9 @@ import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { useThemeSnapshot } from "@/core/theme-snapshot/useThemeSnapshot";
 import { useHeaderLogo } from "./useHeaderLogo";
 
-const mocks = vi.hoisted(() => ({ isPageBuilderEnabled: true, isDark: { value: true } }));
+const mocks = vi.hoisted(() => ({ isSiteBuilderEnabled: true, isDark: { value: true } }));
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => mocks.isPageBuilderEnabled }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => mocks.isSiteBuilderEnabled }));
 vi.mock("@/core/composables/useDarkMode", () => ({ useDarkMode: () => ({ isDark: mocks.isDark }) }));
 vi.mock("@/core/api/graphql/whiteLabeling/queries", () => ({ getGetWhiteLabelingSettings: vi.fn() }));
 vi.mock("@/core/composables/useThemeContext", async () => {
@@ -26,7 +26,7 @@ vi.mock("@/core/composables/useThemeContext", async () => {
 
 describe("useHeaderLogo", () => {
   beforeEach(() => {
-    mocks.isPageBuilderEnabled = true;
+    mocks.isSiteBuilderEnabled = true;
     mocks.isDark.value = true;
     useWhiteLabeling().setWhiteLabelingSettings();
     useThemeSnapshot().setDraft({ brand: { logoUrl: "acme.svg", secondaryLogoUrl: "acme-white.svg" } });

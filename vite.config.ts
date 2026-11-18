@@ -8,7 +8,7 @@ import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
 import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
-import { themeSnapshotPlugin } from "./vite.page-builder.js";
+import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;

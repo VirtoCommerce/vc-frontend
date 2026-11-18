@@ -10,7 +10,7 @@ import type { IThemeSlug, IThemeSnapshot } from "@/core/theme-snapshot";
 
 const enabled = vi.hoisted(() => ({ value: true }));
 
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => enabled.value }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => enabled.value }));
 vi.mock("@/core/composables/useLanguages", () => ({
   useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
 }));
@@ -186,7 +186,7 @@ describe("setLandingPageLayout", () => {
     expect(usePageLayout().pageLayout.value).toBe("full");
   });
 
-  it("sets nothing without the new Page Builder", () => {
+  it("sets nothing without Site Builder", () => {
     enabled.value = false;
     publish(pageSlug({ campaign: "spring" }));
 

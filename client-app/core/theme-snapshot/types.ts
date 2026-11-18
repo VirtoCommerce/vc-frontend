@@ -1,4 +1,4 @@
-/** Mirrors the theme snapshot contract of the Page Builder backend module. */
+/** Mirrors the theme snapshot contract of the Site Builder backend module. */
 
 export type ThemePageType = "product" | "category" | "page";
 

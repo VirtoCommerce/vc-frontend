@@ -15,7 +15,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
 import { useRoute } from "vue-router";
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot";
+import { isSiteBuilderEnabled } from "@/core/theme-snapshot";
 import { humanizeName } from "@/core/utilities/common";
 import { CONTENT_FILE_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
 import { PageBuilderPage, useAnchorScroll, usePageSeoInfo, useStaticPage } from "@/shared/static-content";
@@ -47,7 +47,7 @@ const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
 usePageSeoInfo(() => template.value?.settings?.seoInfo, templateName, staticPageAnchorVisible);
 
 useSeoMeta({
-  // With the new Page Builder the page template sets it from the permalink, without the visited URL's query.
-  ogUrl: () => (staticPageAnchorVisible.value && !isNewPageBuilderEnabled() ? window.location.toString() : undefined),
+  // With Site Builder the page template sets it from the permalink, without the visited URL's query.
+  ogUrl: () => (staticPageAnchorVisible.value && !isSiteBuilderEnabled() ? window.location.toString() : undefined),
 });
 </script>

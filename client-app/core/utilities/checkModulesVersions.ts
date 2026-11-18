@@ -1,4 +1,4 @@
-import { isNewPageBuilderEnabled } from "@/core/theme-snapshot/enabled";
+import { isSiteBuilderEnabled } from "@/core/theme-snapshot/enabled";
 import backendPackages from "../../../backend-packages.json";
 
 type ManifestModuleType = { Id: string; Version: string };
@@ -38,7 +38,7 @@ const EXTRA_EXPECTED_MODULES: ManifestModuleType[] = [{ Id: "VirtoCommerce.SiteB
 function getManifestModules(): ManifestModuleType[] {
   const modules = backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]);
 
-  return isNewPageBuilderEnabled() ? [...modules, ...EXTRA_EXPECTED_MODULES] : modules;
+  return isSiteBuilderEnabled() ? [...modules, ...EXTRA_EXPECTED_MODULES] : modules;
 }
 
 export function getOutdatedModules(

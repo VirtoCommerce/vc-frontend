@@ -14,7 +14,7 @@ const objects = import.meta.glob("./schemas/objects/*.json") as PageBuilderJsonM
 const templates = import.meta.glob("./schemas/templates/*.json") as PageBuilderJsonModulesType;
 const settingsSchema = import.meta.glob("./schemas/settings_schema.json") as PageBuilderJsonModulesType;
 
-/** Override same-named schemas, only with the new Page Builder, so the Angular designer keeps what it knows. */
+/** Override same-named schemas, only with Site Builder, so the Angular designer keeps what it knows. */
 const themeSchemas: Partial<PageBuilderSchemasStructureType<PageBuilderJsonModulesType>> = isPreviewV2Frame()
   ? {
       blocks: import.meta.glob("./schemas/theme/blocks/*.json") as PageBuilderJsonModulesType,

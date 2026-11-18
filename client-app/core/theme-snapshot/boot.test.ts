@@ -6,7 +6,7 @@ import { useThemeSnapshot } from "./useThemeSnapshot";
 
 const enabled = vi.hoisted(() => ({ value: true }));
 
-vi.mock("./enabled", () => ({ isNewPageBuilderEnabled: () => enabled.value }));
+vi.mock("./enabled", () => ({ isSiteBuilderEnabled: () => enabled.value }));
 
 const STORE_ID = "B2B-store";
 
@@ -78,7 +78,7 @@ describe("startThemeSnapshot", () => {
     delete (window as unknown as Record<string, unknown>)[THEME_SNAPSHOT_GLOBAL];
   });
 
-  it("sends nothing without new_page_builder_enabled", () => {
+  it("sends nothing without site_builder_enabled", () => {
     enabled.value = false;
     const fetchMock = mockFetch();
 

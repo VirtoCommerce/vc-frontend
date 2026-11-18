@@ -28,7 +28,7 @@ vi.mock("@/core/globals", () => ({
   globals: state.globals,
   setGlobals: (patch: object) => Object.assign(state.globals, patch),
 }));
-vi.mock("@/core/theme-snapshot/enabled", () => ({ isNewPageBuilderEnabled: () => false }));
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => false }));
 vi.mock("@/shared/static-content", () => ({
   useStaticPage: () => ({ staticPagePreview: state.staticPagePreview }),
 }));

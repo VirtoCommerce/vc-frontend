@@ -3,7 +3,7 @@ import { camelize } from "vue";
 import {
   FIELD_ATTRIBUTE,
   isDesignerPreview,
-  isNewPageBuilderEnabled,
+  isSiteBuilderEnabled,
   isPreviewV2Frame,
   SECTION_ATTRIBUTE,
 } from "@/core/theme-snapshot";
@@ -80,7 +80,7 @@ export function getPreviewFieldAttrs(path: string): Record<string, string> {
 
 /** Off in the designer preview, which shows every section at once. */
 export function isLazySectionsEnabled(): boolean {
-  return isNewPageBuilderEnabled() && !isDesignerPreview();
+  return isSiteBuilderEnabled() && !isDesignerPreview();
 }
 
 /** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */

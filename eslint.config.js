@@ -380,7 +380,7 @@ export default defineConfigWithVueTs(
       "*.config.js",
       "*.config.ts",
       "vite.federation*.ts",
-      "vite.page-builder*.ts",
+      "vite.site-builder*.ts",
       "scripts/**/*.ts",
       ".storybook/main.ts",
     ],

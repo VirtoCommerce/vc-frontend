@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { isNewPageBuilderEnabled } from "./enabled";
+import { isSiteBuilderEnabled } from "./enabled";
 import { resolveTranslatableValues } from "./translatable";
 import type { IPublishedTheme, IThemeDraft, IThemeView } from "./types";
 
@@ -76,9 +76,9 @@ function _useThemeSnapshot() {
 
   const hasNoTheme = computed(() => isNull.value && !draft.value);
 
-  /** Off for a store without a theme too: its storefront looks as without the new Page Builder. */
+  /** Off for a store without a theme too: its storefront looks as without Site Builder. */
   function isThemeApplied(): boolean {
-    return isNewPageBuilderEnabled() && !hasNoTheme.value;
+    return isSiteBuilderEnabled() && !hasNoTheme.value;
   }
 
   return {
