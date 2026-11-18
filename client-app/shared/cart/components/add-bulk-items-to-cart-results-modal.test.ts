@@ -2,7 +2,6 @@ import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { computed, ref } from "vue";
 import { writeThemeVariables } from "@/core/plugins/config.plugin";
-import { VcButton } from "@/ui-kit/components";
 import AddBulkItemsToCartResultsModal from "./add-bulk-items-to-cart-results-modal.vue";
 import type { IThemeConfigPreset } from "@/core/types";
 
@@ -36,7 +35,7 @@ async function printResults() {
   });
 
   await wrapper
-    .findAllComponents(VcButton)
+    .findAllComponents({ name: "VcButton" })
     .find((button) => button.attributes("variant") === "outline")
     ?.trigger("click");
 

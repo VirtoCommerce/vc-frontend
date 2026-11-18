@@ -89,7 +89,6 @@
 
 <script setup lang="ts">
 import { getDisplayTotals } from "@/core/utilities";
-import { VcTableColumn } from "@/ui-kit/components/organisms";
 import OrderCard from "../order-card.vue";
 import OrderStatus from "../order-status.vue";
 import type { OrderScopeType } from "../../types";

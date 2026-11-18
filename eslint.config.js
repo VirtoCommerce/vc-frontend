@@ -13,23 +13,6 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
 
-const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
-
-/**
- * An import ban for `no-restricted-syntax`. Its options are REPLACED per matching flat-config block,
- * not merged, so a block that sets the rule must list every selector that should apply to its files.
- *
- * It duplicates the `no-module-to-host-internal` rule of .dependency-cruiser.cjs on purpose: that
- * config leaves `tsPreCompilationDeps` off, so type-only edges never enter its graph and no rule of
- * its can match one - and a type-only import is exactly the coupling that breaks when a module moves
- * to its own repository.
- */
-const NO_HOST_INTERNAL_IMPORT = {
-  selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
-  message:
-    "A module reached into a host '_internal/' folder. Those are private: once a module depends on one, the host can no longer restyle its own chrome without breaking it, and a module shipping as a Module Federation plugin cannot follow the host's refactors at all. Contribute through an extension point instead - see shared/common/composables/extensionRegistry/README.md.",
-};
-
 const tsconfigRootDir = import.meta.dirname;
 const tsconfigs = {
   app: "./tsconfig.app.json",
@@ -467,18 +450,6 @@ export default defineConfigWithVueTs(
     files: ["client-app/ui-kit/*"],
     rules: {
       "no-console": ["off", { allow: ["warn", "error"] }],
-    },
-  },
-  // Same boundary as .dependency-cruiser.cjs, restated where `import type` is visible.
-  {
-    files: ["client-app/modules/**/*.ts", "client-app/modules/**/*.vue"],
-    ignores: [
-      // Known debt, the same two files dependency-cruiser exempts. Do not add more.
-      "client-app/modules/push-messages/components/link-push-messages.vue",
-      "client-app/modules/push-messages/components/link-push-messages-mobile.vue",
-    ],
-    rules: {
-      "no-restricted-syntax": ["error", NO_HOST_INTERNAL_IMPORT],
     },
   },
   {

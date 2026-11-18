@@ -118,7 +118,6 @@ import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { getThemeVariablesCss, THEME_VARIABLES_ID } from "@/core/plugins/config.plugin";
 import { ROUTES } from "@/router/routes/constants";
-import { VcButton } from "@/ui-kit/components";
 import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 

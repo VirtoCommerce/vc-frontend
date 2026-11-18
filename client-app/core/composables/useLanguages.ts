@@ -13,7 +13,6 @@ import { useCurrency } from "./useCurrency";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
-import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
@@ -61,10 +60,10 @@ function tryShortLocale(localeOrCultureName: string) {
     : localeOrCultureName;
 }
 
-function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
+function fetchLocaleMessages(locale: string): Promise<Record<string, LocaleMessageValue>> {
   const localesPathPrefix = "../../../locales";
 
-  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
+  const locales = import.meta.glob<boolean, string, Record<string, LocaleMessageValue>>("../../../locales/*.json"); // can't use variables in import
 
   // The locale may originate from user-controlled input (e.g. a `?cultureName=` query param).
   // Reject anything that isn't a plain locale identifier before using it to index the bundle map,

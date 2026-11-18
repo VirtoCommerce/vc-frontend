@@ -1,7 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcLayout from "./vc-layout.vue";
 
 const createWrapper = createWrapperFactory(mount, VcLayout, {

@@ -9,7 +9,7 @@ import {
   isMultiColorProperty,
   getPropertyValue,
 } from "@/core/utilities/properties";
-import { serialize } from "@/ui-kit/utilities/string-array";
+import { serialize } from "@/ui-kit/utilities";
 import type { Product, Property, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 

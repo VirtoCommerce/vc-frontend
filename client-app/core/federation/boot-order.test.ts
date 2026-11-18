@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { toValue } from "vue";
 import type { IPlatformPlugin } from "./index";
+import type { IUiKitOptions } from "@/ui-kit/composables/useUiKitOptions";
 
 /**
  * Executes the real app-runner and records the order its calls actually happen in, so a call moved
@@ -21,6 +23,12 @@ const record = (name: string) =>
   vi.fn(() => {
     order.push(name);
   });
+
+// One shared notifications object, so a case can check the kit receives this very one.
+const { uiKitInstall, NOTIFICATIONS } = vi.hoisted(() => ({
+  uiKitInstall: vi.fn<(app: unknown, options?: IUiKitOptions) => void>(),
+  NOTIFICATIONS: { error: vi.fn(), success: vi.fn() },
+}));
 
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
@@ -105,10 +113,11 @@ vi.mock("@/core/utilities/design", () => ({
   loadDesignStyles: vi.fn(() => designStyles.ready),
   loadPresetStyles: vi.fn(async () => presetStyles.ready),
 }));
-vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
-vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
-vi.mock("@/ui-kit/utilities/getLocales", () => ({
+vi.mock("@/ui-kit", () => ({ uiKit: { install: uiKitInstall } }));
+vi.mock("@/ui-kit/utilities", () => ({
   getLocales: vi.fn(async () => ({ messages: {}, fallbackMessages: {} })),
+  setDefaultIconVariant: vi.fn(),
+  setLogger: vi.fn(),
 }));
 vi.mock("@/i18n", () => ({ createI18n: () => ({ install: vi.fn(), global: { t: (k: string) => k } }) }));
 // Always a factory, never a bare vi.mock(path): a bare automock imports the real module to derive
@@ -175,7 +184,12 @@ vi.mock("@/core/composables", () => ({
     themeContext: ref({
       storeId: "s",
       catalogId: "c",
-      settings: { icon_variant: "outline" },
+      settings: {
+        icon_variant: "outline",
+        image_thumbnails_enabled: true,
+        image_thumbnails_original_fallback_enabled: false,
+        image_thumbnails_suffixes: { sm: "s", md: "m", lg: "l" },
+      },
       storeSettings: { anonymousUsersAllowed: true },
       defaultPresetName: "d",
       activePresetName: "a",
@@ -191,7 +205,7 @@ vi.mock("@/core/composables", () => ({
 
 vi.mock("@/core/composables/useHotjar", () => ({ useHotjar: () => ({ init: vi.fn() }) }));
 
-vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: vi.fn(), success: vi.fn() }) }));
+vi.mock("@/shared/notification", () => ({ useNotifications: () => NOTIFICATIONS }));
 
 vi.mock("@/core/api/graphql", () => ({
   apolloClient: {},
@@ -322,6 +336,19 @@ describe("app-runner boot order", () => {
       expect(getStorePluginsMock).not.toHaveBeenCalled();
       await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
     });
+  });
+
+  it("hands the kit the theme's thumbnail settings and the app's notifications", async () => {
+    await runBoot();
+
+    const options = uiKitInstall.mock.calls[0]?.[1];
+    // `false`, not `undefined`: toEqual skips undefined keys, so a dropped setting would still pass.
+    expect(toValue(options?.image?.thumbnails)).toEqual({
+      enabled: true,
+      originalFallbackEnabled: false,
+      suffixes: { sm: "s", md: "m", lg: "l" },
+    });
+    expect(options?.notifications).toBe(NOTIFICATIONS);
   });
 
   it("starts the loader only after the host plugin that mutates routes has installed", async () => {

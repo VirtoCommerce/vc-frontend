@@ -54,8 +54,7 @@ import {
   templateBlocks,
 } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
-import { setDefaultIconVariant } from "@/ui-kit/utilities";
-import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
+import { getLocales as getUIKitLocales, setDefaultIconVariant, setLogger } from "@/ui-kit/utilities";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 
@@ -75,6 +74,9 @@ function reportOptionalChunkFailure(error: unknown): undefined {
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
+  // Before anything of the kit runs: the kit locales load, and can log, before app.use(uiKit).
+  setLogger(Logger);
+
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -303,7 +305,16 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
-  app.use(uiKit);
+  app.use(uiKit, {
+    image: {
+      thumbnails: () => ({
+        enabled: themeContext.value.settings.image_thumbnails_enabled,
+        originalFallbackEnabled: themeContext.value.settings.image_thumbnails_original_fallback_enabled,
+        suffixes: themeContext.value.settings.image_thumbnails_suffixes,
+      }),
+    },
+    notifications,
+  });
 
   app.use(applicationInsightsPlugin, { router });
 

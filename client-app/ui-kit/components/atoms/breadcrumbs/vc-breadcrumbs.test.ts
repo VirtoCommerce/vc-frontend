@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcBreadcrumbs from "./vc-breadcrumbs.vue";
 
 const createWrapper = createWrapperFactory(mount, VcBreadcrumbs);

@@ -17,6 +17,7 @@ declare module "vue" {
     VcQuantityStepper: typeof Components.VcQuantityStepper;
     VcStatWidget: typeof Components.VcStatWidget;
     VcTable: typeof Components.VcTable;
+    VcTableColumn: typeof Components.VcTableColumn;
     VcWidget: typeof Components.VcWidget;
     VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
