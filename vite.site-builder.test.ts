@@ -1,7 +1,12 @@
 // @vitest-environment node
+import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { IndexHtmlTransformHook, Plugin } from "vite";
+
+const require = createRequire(import.meta.url);
+const shippedSettings = (require("./client-app/config/settings_data.json") as { settings: Record<string, unknown> })
+  .settings;
 
 const INDEX_HTML = `<!doctype html>
 <html lang="en">
@@ -20,8 +25,8 @@ function transformIndexHtml(plugin: Plugin, html = INDEX_HTML): string {
 }
 
 describe("themeSnapshotPlugin", () => {
-  it("leaves index.html as it is with the theme config as shipped", () => {
-    expect(themeSnapshotPlugin()).toEqual([]);
+  it("follows site_builder_enabled in the theme config as shipped", () => {
+    expect(themeSnapshotPlugin().length > 0).toBe(shippedSettings.site_builder_enabled === true);
   });
 
   it.each([{}, { site_builder_enabled: false }, { site_builder_enabled: "true" }])(

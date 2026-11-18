@@ -14,6 +14,8 @@ const mocks = vi.hoisted(() => ({
   fetchProducts: vi.fn(),
 }));
 
+// With Site Builder on, sections below the product info mount as they scroll into view; these tests read the whole page.
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => false }));
 vi.mock("@unhead/vue", () => ({ useSeoMeta: () => undefined }));
 vi.mock("vue-router", () => ({ useRouter: () => ({ replace: vi.fn() }), useRoute: () => ({ query: {} }) }));
 vi.mock("@/core/composables", async () => {
