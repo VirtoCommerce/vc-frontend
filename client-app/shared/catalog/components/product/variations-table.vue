@@ -79,6 +79,17 @@
               v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
             />
 
+            <ExtensionPoint
+              v-else-if="
+                $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationPurchaseOptions, variation)
+              "
+              :name="EXTENSION_NAMES.productPage.variationPurchaseOptions"
+              category="productPage"
+              :product="variation"
+              compact
+              hide-stock
+            />
+
             <AddToCartSimple v-else :product="variation">
               <CountInCart :product-id="variation.id" />
             </AddToCartSimple>

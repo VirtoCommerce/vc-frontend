@@ -1,7 +1,8 @@
 <template>
-  <div class="purchase-options">
+  <div class="purchase-options" :class="{ 'purchase-options--compact': compact }">
     <AddToCartSimple :product="product">
       <InStock
+        v-if="!hideStock"
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === 'Digital'"
         :quantity="product.availabilityData?.availableQuantity"
@@ -30,7 +31,33 @@
       <span v-else>{{ $t("product_subscriptions.purchase_options.in_cart_once") }}</span>
     </output>
 
-    <template v-if="offer">
+    <!-- A row of a variation list: one checkbox under the row's own add-to-cart, the frequency once it is ticked. -->
+    <div v-if="offer && compact" class="purchase-options__compact">
+      <VcCheckbox
+        :model-value="mode === 'subscribe'"
+        size="sm"
+        :disabled="isSaving"
+        :test-id="`purchase-option-subscribe-${product.id}`"
+        @update:model-value="mode = $event ? 'subscribe' : 'once'"
+      >
+        {{ $t("product_subscriptions.purchase_options.subscribe") }}
+      </VcCheckbox>
+
+      <VcSelect
+        v-if="mode === 'subscribe'"
+        v-model="selectedInterval"
+        class="purchase-options__compact-frequency"
+        :items="intervalItems"
+        text-field="label"
+        value-field="key"
+        size="xs"
+        :aria-label="$t('product_subscriptions.purchase_options.deliver_every')"
+        :disabled="isSaving"
+        :test-id-dropdown="`purchase-option-frequency-${product.id}`"
+      />
+    </div>
+
+    <template v-else-if="offer">
       <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
         <PurchaseOption
           v-model="mode"
@@ -83,14 +110,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, toRef, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
 import { HOW_IT_WORKS_ROUTE_NAME } from "../constants";
-import { subscriptionErrorMessage, intervalKey, intervalLabel, parseIntervalKey } from "../utils";
+import { subscriptionErrorMessage, intervalKey, intervalLabel, intervalShortLabel, parseIntervalKey } from "../utils";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
@@ -101,6 +128,10 @@ import InStock from "@/shared/catalog/components/in-stock.vue";
 
 interface IProps {
   product: Product;
+  /** A row of a variation list: a checkbox and a frequency list instead of the full choice. */
+  compact?: boolean;
+  /** The host shows the stock itself (the variations table has its own column). */
+  hideStock?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -109,10 +140,11 @@ const product = toRef(props, "product");
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const { cart } = useShortCart();
-const { loadOffers, getOffer } = useSubscriptionOffers();
+const { loadOffers, offerFor } = useSubscriptionOffers();
 const { byLineItemId, setSubscription, removeSubscription } = useDefaultCartSubscriptions();
 
-const offer = getOffer(product.value.id);
+// By the current product: on a B2C variations page the same block shows whichever variation the options select.
+const offer = computed(() => offerFor(product.value.id));
 const mode = ref<"once" | "subscribe">("once");
 const selectedInterval = ref<string>();
 const syncState = ref<"ok" | "saving" | "error">();
@@ -121,6 +153,13 @@ const syncError = ref<string>();
 const isSaving = computed(() => syncState.value === "saving");
 
 // No prices or discount badges on the options for now: the block's own price stays the one price shown.
+
+const intervalItems = computed(() =>
+  (offer.value?.intervals ?? []).map((x) => ({
+    key: intervalKey(x.unit, x.count),
+    label: intervalShortLabel(t, x.unit, x.count),
+  })),
+);
 
 const lineItem = computed(() => cart.value?.items?.find((item) => item.productId === product.value.id));
 const activeSubscription = computed(() => (lineItem.value ? byLineItemId.value.get(lineItem.value.id) : undefined));
@@ -132,8 +171,7 @@ watch(
       return;
     }
 
-    const defaultInterval = value.intervals.find((x) => x.isDefault) ?? value.intervals[0];
-    selectedInterval.value ??= defaultInterval ? intervalKey(defaultInterval.unit, defaultInterval.count) : undefined;
+    selectedInterval.value ??= defaultIntervalKey();
   },
   { immediate: true },
 );
@@ -189,9 +227,29 @@ async function syncCartLine(): Promise<void> {
 // The core add-to-cart creates the line; the choice is applied to it as soon as it exists or changes.
 watch([() => lineItem.value?.id, mode, selectedInterval], () => void syncCartLine());
 
-onMounted(() => {
-  void loadOffers([product.value.id]);
-});
+/** The offer's default frequency (its first when none is marked). */
+function defaultIntervalKey(): string | undefined {
+  const intervals = offer.value?.intervals ?? [];
+  const interval = intervals.find((x) => x.isDefault) ?? intervals[0];
+  return interval ? intervalKey(interval.unit, interval.count) : undefined;
+}
+
+// A new product (another variation picked on a B2C page) starts from its own offer and cart line.
+watch(
+  () => product.value.id,
+  (id, previous) => {
+    if (previous !== undefined) {
+      // From the cart, never a blind reset: a variation already subscribed in the cart must keep its subscription.
+      const active = activeSubscription.value;
+      mode.value = active ? "subscribe" : "once";
+      selectedInterval.value = active ? intervalKey(active.intervalUnit, active.intervalCount) : defaultIntervalKey();
+      syncState.value = undefined;
+      syncError.value = undefined;
+    }
+    void loadOffers([id]);
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
@@ -200,6 +258,18 @@ onMounted(() => {
 
   &__choices {
     @apply flex flex-col gap-2;
+  }
+
+  &--compact {
+    @apply gap-2;
+  }
+
+  &__compact {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1.5;
+  }
+
+  &__compact-frequency {
+    @apply w-36;
   }
 
   &__subscribe {

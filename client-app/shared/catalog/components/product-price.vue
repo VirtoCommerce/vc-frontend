@@ -34,8 +34,21 @@
       </div>
 
       <div class="product-price__actions">
+        <!-- The selected variation gets the same purchase options as a simple product (e.g. Subscribe & Save). -->
+        <ExtensionPoint
+          v-if="
+            variationResult &&
+            variationResult.price?.actual?.amount > 0 &&
+            !product.isConfigurable &&
+            $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, variationResult)
+          "
+          :name="EXTENSION_NAMES.productPage.purchaseOptions"
+          category="productPage"
+          :product="variationResult"
+        />
+
         <component
-          v-if="variationResult && variationResult.price?.actual?.amount > 0"
+          v-else-if="variationResult && variationResult.price?.actual?.amount > 0"
           :is="product.isConfigurable ? AddToCart : AddToCartSimple"
           :product="variationResult"
         >
