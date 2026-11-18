@@ -1,7 +1,7 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
 import { formatDateLocale, parseDateInput, tryParseDate } from "@/ui-kit/utilities/date";
+import { Logger } from "@/ui-kit/utilities/logger";
 import type { CalendarDate } from "@internationalized/date";
 import type { MaybeRef, Ref } from "vue";
 

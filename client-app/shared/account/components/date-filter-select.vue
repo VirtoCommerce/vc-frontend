@@ -30,7 +30,7 @@
 import { computed, ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { DateFilterId } from "@/core/enums";
-import { isDateRangeInOrder } from "@/ui-kit/utilities/date";
+import { isDateRangeInOrder } from "@/ui-kit/utilities";
 import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 import type { DateFilterType } from "@/core/types";
 

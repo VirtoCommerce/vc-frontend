@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ContentType } from "@/core/enums";
+import { ContentType } from "@/ui-kit/enums";
 import { getFileSize, isAttachedFile, isFailedFile, isUploadingFile, isUploadedFile } from "@/ui-kit/utilities";
 
 interface IEmits {
