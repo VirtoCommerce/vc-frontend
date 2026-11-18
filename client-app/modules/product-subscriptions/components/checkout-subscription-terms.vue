@@ -36,7 +36,14 @@
         </template>
 
         <template #default="{ item }">
-          <span class="checkout-subscription-terms__interval">{{ intervalOf(item.id) }}</span>
+          <span class="checkout-subscription-terms__interval">
+            <!-- A stacked row (narrow screens) has no column headings: the value carries its own label. -->
+            <span class="checkout-subscription-terms__interval-label">
+              {{ $t("product_subscriptions.checkout.deliver_every") }}
+            </span>
+
+            <span>{{ intervalOf(item.id) }}</span>
+          </span>
         </template>
       </VcLineItems>
 
@@ -231,9 +238,22 @@ onUnmounted(() => {
     @apply whitespace-nowrap text-center;
   }
 
-  // The kit sizes the column by its cells: wide enough for the heading, so it stays on one line.
+  // Same breakpoint as the kit's line items: above it a table with headings, below it stacked rows. In the table the
+  // kit sizes the column by its cells, so the cell is wide enough for the heading to stay on one line.
   &__interval {
-    @apply block min-w-28 text-center text-sm text-neutral-900;
+    @apply flex flex-wrap gap-x-1.5 text-sm text-neutral-900;
+
+    @container (width > theme("containers.2xl")) {
+      @apply block min-w-28 text-center;
+    }
+  }
+
+  &__interval-label {
+    @apply text-neutral-600;
+
+    @container (width > theme("containers.2xl")) {
+      @apply hidden;
+    }
   }
 
   &__text {
