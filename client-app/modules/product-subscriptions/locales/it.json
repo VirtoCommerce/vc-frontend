@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Il tuo abbonamento",
+      "deliver_every": "Frequenza di consegna",
       "agree": "Accetto i termini dell’abbonamento e il salvataggio della mia carta per i pagamenti automatici.",
       "required": "Accetta i termini per effettuare l’ordine.",
       "items_failed": "Non è stato possibile verificare gli abbonamenti in questo carrello. Riprova per effettuare l’ordine.",

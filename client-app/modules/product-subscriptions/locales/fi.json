@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Tilauksesi",
+      "deliver_every": "Toimitusväli",
       "agree": "Hyväksyn tilausehdot ja korttini tallentamisen automaattisia maksuja varten.",
       "required": "Hyväksy ehdot tehdäksesi tilauksen.",
       "items_failed": "Emme voineet tarkistaa, onko ostoskorissa tilauksia. Yritä uudelleen tehdäksesi tilauksen.",

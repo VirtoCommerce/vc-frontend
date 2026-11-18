@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Ditt abonnement",
+      "deliver_every": "Leveringsintervall",
       "agree": "Jeg godtar abonnementsvilkårene og at kortet mitt lagres for automatiske betalinger.",
       "required": "Godta vilkårene for å legge inn bestillingen.",
       "items_failed": "Vi kunne ikke sjekke handlekurven for abonnementer. Prøv igjen for å legge inn bestillingen.",

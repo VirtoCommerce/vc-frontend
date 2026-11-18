@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Ihr Abonnement",
+      "deliver_every": "Lieferintervall",
       "agree": "Ich stimme den Abonnementbedingungen und der Speicherung meiner Karte für automatische Zahlungen zu.",
       "required": "Bitte akzeptieren Sie die Bedingungen, um Ihre Bestellung aufzugeben.",
       "items_failed": "Wir konnten diesen Warenkorb nicht auf Abonnements prüfen. Versuchen Sie erneut, die Bestellung aufzugeben.",

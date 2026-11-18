@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Twoja subskrypcja",
+      "deliver_every": "Częstotliwość dostaw",
       "agree": "Akceptuję warunki subskrypcji i zapisanie karty do płatności automatycznych.",
       "required": "Zaakceptuj warunki, aby złożyć zamówienie.",
       "items_failed": "Nie udało się sprawdzić subskrypcji w tym koszyku. Spróbuj ponownie złożyć zamówienie.",

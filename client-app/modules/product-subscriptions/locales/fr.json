@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Votre abonnement",
+      "deliver_every": "Fréquence de livraison",
       "agree": "J’accepte les conditions de l’abonnement et l’enregistrement de ma carte pour les paiements automatiques.",
       "required": "Veuillez accepter les conditions pour passer votre commande.",
       "items_failed": "Nous n’avons pas pu vérifier les abonnements de ce panier. Réessayez de passer la commande.",

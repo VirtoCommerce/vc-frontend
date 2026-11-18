@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Your subscription",
+      "deliver_every": "Deliver every",
       "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
       "required": "Please accept the terms to place your order.",
       "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",

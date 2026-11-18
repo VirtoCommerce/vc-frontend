@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Sua assinatura",
+      "deliver_every": "Frequência de entrega",
       "agree": "Concordo com os termos da assinatura e com o salvamento do meu cartão para pagamentos automáticos.",
       "required": "Aceite os termos para fazer o pedido.",
       "items_failed": "Não foi possível verificar se este carrinho tem assinaturas. Tente novamente para fazer o pedido.",

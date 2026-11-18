@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Din prenumeration",
+      "deliver_every": "Leveransintervall",
       "agree": "Jag godkänner prenumerationsvillkoren och att mitt kort sparas för automatiska betalningar.",
       "required": "Godkänn villkoren för att lägga din beställning.",
       "items_failed": "Vi kunde inte kontrollera varukorgen för prenumerationer. Försök igen för att lägga beställningen.",

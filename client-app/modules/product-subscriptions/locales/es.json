@@ -145,6 +145,7 @@
     },
     "checkout": {
       "title": "Tu suscripción",
+      "deliver_every": "Frecuencia de entrega",
       "agree": "Acepto las condiciones de la suscripción y que se guarde mi tarjeta para pagos automáticos.",
       "required": "Acepta las condiciones para realizar el pedido.",
       "items_failed": "No hemos podido comprobar si este carrito contiene suscripciones. Vuelve a intentarlo para realizar el pedido.",

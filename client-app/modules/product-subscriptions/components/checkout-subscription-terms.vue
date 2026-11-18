@@ -28,29 +28,47 @@
         {{ $t("product_subscriptions.checkout.no_payment_method") }}
       </VcAlert>
 
-      <ul class="checkout-subscription-terms__items">
-        <li v-for="item in subscribedLines" :key="item.lineItemId" class="checkout-subscription-terms__item">
-          <strong>{{ item.name }}</strong>
+      <VcLineItems :items="subscribedLines" with-image class="checkout-subscription-terms__items">
+        <template #titles>
+          <div class="checkout-subscription-terms__interval-title">
+            {{ $t("product_subscriptions.checkout.deliver_every") }}
+          </div>
+        </template>
 
-          <span class="checkout-subscription-terms__interval">{{
-            intervalLabel($t, item.intervalUnit, item.intervalCount)
-          }}</span>
-        </li>
-      </ul>
+        <template #default="{ item }">
+          <span class="checkout-subscription-terms__interval">{{ intervalOf(item.id) }}</span>
+        </template>
+      </VcLineItems>
 
-      <div class="checkout-subscription-terms__text">
-        <VcAlert v-if="termsFailed" color="danger" size="sm" variant="soft" icon>
-          {{ $t("product_subscriptions.checkout.terms_failed") }}
+      <VcAlert
+        v-if="termsFailed"
+        color="danger"
+        size="sm"
+        variant="soft"
+        icon
+        class="checkout-subscription-terms__text"
+      >
+        {{ $t("product_subscriptions.checkout.terms_failed") }}
 
-          <VcButton size="xs" variant="outline" class="checkout-subscription-terms__retry" @click="loadTerms">
-            {{ $t("product_subscriptions.checkout.retry") }}
-          </VcButton>
-        </VcAlert>
+        <VcButton size="xs" variant="outline" class="checkout-subscription-terms__retry" @click="loadTerms">
+          {{ $t("product_subscriptions.checkout.retry") }}
+        </VcButton>
+      </VcAlert>
 
-        <VcLoader v-else-if="!terms" size="sm" />
+      <VcLoader v-else-if="!terms" size="sm" class="checkout-subscription-terms__text" />
 
-        <p v-else>{{ terms.text }}</p>
-      </div>
+      <!-- The store's terms are Markdown (bold lead-ins, one paragraph per topic); the consent covers exactly this text. -->
+      <VcAlert
+        v-else
+        color="info"
+        size="sm"
+        variant="outline"
+        icon
+        class="checkout-subscription-terms__text"
+        data-test-id="checkout-subscription-terms-text"
+      >
+        <VcMarkdownRender :src="terms.text" />
+      </VcAlert>
 
       <VcCheckbox
         :model-value="accepted"
@@ -76,15 +94,16 @@
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
+import { Logger, prepareLineItem } from "@/core/utilities";
 import { useFullCart } from "@/shared/cart/composables";
 import { useOrderPlacement } from "@/shared/checkout/composables/useCheckout";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useSubscriptionCheckout } from "../composables/useSubscriptionCheckout";
-import { intervalLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
+import { intervalShortLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 const props = defineProps<{ cart?: CartType }>();
 
@@ -108,10 +127,22 @@ const termsFailed = ref(false);
 const saving = ref(false);
 const error = ref<string>();
 
-const subscribedLines = computed(() => {
+const subscribedLines = computed<PreparedLineItemType[]>(() => {
   const lines = new Map((cart.value?.items ?? []).map((x) => [x.id, x]));
-  return subscribedItems.value.map((x) => ({ ...x, name: lines.get(x.lineItemId)?.name }));
+  return subscribedItems.value.flatMap((x) => {
+    const line = lines.get(x.lineItemId);
+    return line ? [prepareLineItem(line)] : [];
+  });
 });
+
+const intervalsByLineId = computed(
+  () =>
+    new Map(subscribedItems.value.map((x) => [x.lineItemId, intervalShortLabel(t, x.intervalUnit, x.intervalCount)])),
+);
+
+function intervalOf(lineItemId: string): string {
+  return intervalsByLineId.value.get(lineItemId) ?? "";
+}
 
 async function loadTerms(): Promise<void> {
   termsFailed.value = false;
@@ -193,32 +224,20 @@ onUnmounted(() => {
   @apply mt-5;
 
   &__items {
-    @apply mb-3 flex flex-col gap-1 text-sm text-neutral-800;
+    @apply mb-4;
   }
 
-  &__item {
-    @apply flex flex-col;
-
-    @media (width >= theme("screens.sm")) {
-      @apply flex-row flex-wrap items-baseline gap-x-2;
-    }
+  &__interval-title {
+    @apply whitespace-nowrap text-center;
   }
 
+  // The kit sizes the column by its cells: wide enough for the heading, so it stays on one line.
   &__interval {
-    @apply text-neutral-600;
-
-    // The separator only makes sense on one line; on phones the frequency goes below the name.
-    &::before {
-      @apply hidden;
-
-      @media (width >= theme("screens.sm")) {
-        @apply me-2 inline content-['·'];
-      }
-    }
+    @apply block min-w-28 text-center text-sm text-neutral-900;
   }
 
   &__text {
-    @apply mb-4 rounded-[--vc-radius] bg-neutral-50 p-3 text-sm leading-relaxed text-neutral-800;
+    @apply mb-4;
   }
 
   &__required {
