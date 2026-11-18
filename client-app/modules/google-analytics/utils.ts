@@ -1,7 +1,6 @@
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { Logger, toCSV } from "@/core/utilities";
 import { canUseDOM, DEBUG_PREFIX } from "./constants";
-import type { ConfiguredPriceType } from "./types";
 import type {
   Breadcrumb,
   LineItemType,
@@ -13,6 +12,8 @@ import type {
 } from "@/core/api/graphql/types";
 import type { CamelToSnake } from "@/core/types/utility";
 import type { AnalyticsEventNameType } from "client-app/core/types/analytics";
+
+export type ConfiguredPriceType = { list: number; actual: number };
 
 type CustomEventNamesType = Exclude<CamelToSnake<AnalyticsEventNameType>, Gtag.EventNames>;
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;

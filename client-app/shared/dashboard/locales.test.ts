@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createI18n } from "@/i18n";
 import { useLayoutAnnouncer } from "./composables/_internal/useLayoutAnnouncer";
 import type { KeyboardSortSignalType } from "./types";
-import type { LocaleMessage } from "@intlify/core-base";
+import type { LocaleMessageValue } from "vue-i18n";
 
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 
@@ -21,10 +21,10 @@ vi.mock("vue-i18n", async (importOriginal) => ({
 
 const LOCALE_FILE = /([a-z]{2})\.json$/;
 
-const LOCALE_MESSAGES: Record<string, LocaleMessage> = Object.fromEntries(
-  Object.entries(import.meta.glob<{ default: LocaleMessage }>("../../../locales/*.json", { eager: true })).map(
-    ([filePath, module]) => [LOCALE_FILE.exec(filePath)?.[1], module.default],
-  ),
+const LOCALE_MESSAGES: Record<string, Record<string, LocaleMessageValue>> = Object.fromEntries(
+  Object.entries(
+    import.meta.glob<{ default: Record<string, LocaleMessageValue> }>("../../../locales/*.json", { eager: true }),
+  ).map(([filePath, module]) => [LOCALE_FILE.exec(filePath)?.[1], module.default]),
 );
 
 // One signal per kind, made total by `satisfies`: a kind added to KeyboardSortSignalType fails to compile here

@@ -11,8 +11,8 @@ import {
 } from "@/core/utilities";
 import { useUser } from "./useUser";
 import { facets } from "./useUserOrders";
+import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType, OrderScopeType } from "../types";
 import type { DateFilterType } from "@/core/types";
-import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType, OrderScopeType } from "@/shared/account";
 import type { MaybeRef, Ref } from "vue";
 
 export function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string {
