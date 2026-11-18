@@ -118,7 +118,6 @@ import { stringFormat } from "@/core/utilities";
 import { useConfigurableLineItemId } from "@/shared/catalog/composables";
 import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
-import { VcIcon } from "@/ui-kit/components";
 import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
 import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";

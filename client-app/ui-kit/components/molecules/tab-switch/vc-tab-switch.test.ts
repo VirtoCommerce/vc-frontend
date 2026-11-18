@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcTabSwitch } from "@/ui-kit/components/molecules";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 
 const createWrapper = createWrapperFactory(mount, VcTabSwitch, {
   global: {

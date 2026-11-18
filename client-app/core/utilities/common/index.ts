@@ -1,6 +1,8 @@
 import { uniqBy } from "lodash-es";
 import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
+export { appendSuffixToFilename, getLinkAttr } from "@/ui-kit/utilities";
+
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
 /** `null` rather than a throw, so a URL that does not parse is treated like one that is absent. */
@@ -71,24 +73,6 @@ export function truncate(str: string, length: number): string {
   return str.length > length ? `${str.slice(0, length)}...` : str;
 }
 
-export function appendSuffixToFilename(filename: string, suffix: string, checkIfSuffixExists = false) {
-  if (!filename) {
-    return filename;
-  }
-
-  const dotIndex = filename.lastIndexOf(".");
-
-  if (dotIndex === -1) {
-    return checkIfSuffixExists && filename.endsWith(suffix) ? filename : filename + suffix;
-  }
-
-  const fileNameWithoutExtension = filename.substring(0, dotIndex);
-
-  return checkIfSuffixExists && fileNameWithoutExtension.endsWith(suffix)
-    ? filename
-    : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
-}
-
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
@@ -112,8 +96,6 @@ export function replaceXFromBeginning(input: string, by: string = "•••• 
   return input.replace(/^X+/, by);
 }
 
-type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
-
 const UNSAFE_LINK_PROTOCOLS = new Set(["javascript:", "vbscript:", "data:"]);
 
 /** Blocks only the schemes that run script or load a document, so app links such as `sms:` keep working. */
@@ -121,17 +103,6 @@ export function isSafeLinkUrl(url: string): boolean {
   const parsed = parseUrl(url, location.origin);
   return parsed !== null && !UNSAFE_LINK_PROTOCOLS.has(parsed.protocol);
 }
-
-export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
-  if (typeof link === "string") {
-    if (link.startsWith("/")) {
-      return { to: link };
-    } else {
-      return { externalLink: link };
-    }
-  }
-  return {};
-};
 
 export type UniqByLastIterateeType<T> = keyof T | ((item: T) => unknown);
 export function uniqByLast<T>(arr: T[], iteratee: UniqByLastIterateeType<T>): T[] {

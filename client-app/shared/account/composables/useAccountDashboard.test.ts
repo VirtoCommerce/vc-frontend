@@ -11,8 +11,8 @@ import {
 } from "./useAccountDashboard";
 import type { AccountStatNeedType } from "../dashboard-blocks";
 import type { GetOrderStatisticsQuery } from "@/core/api/graphql/types";
-import type { LocaleMessage } from "@intlify/core-base";
 import type { EffectScope, Ref } from "vue";
+import type { LocaleMessageValue } from "vue-i18n";
 
 const query = await vi.hoisted(async () => {
   const { ref: createRef, shallowRef } = await import("vue");
@@ -47,10 +47,10 @@ vi.mock("vue-i18n", async (importOriginal) => ({
 type OrderStatisticsType = NonNullable<GetOrderStatisticsQuery["orderStatistics"]>;
 
 const LOCALE_FILE = /([a-z]{2})\.json$/;
-const LOCALE_MESSAGES: Record<string, LocaleMessage> = Object.fromEntries(
-  Object.entries(import.meta.glob<{ default: LocaleMessage }>("../../../../locales/*.json", { eager: true })).map(
-    ([filePath, module]) => [LOCALE_FILE.exec(filePath)?.[1], module.default],
-  ),
+const LOCALE_MESSAGES: Record<string, Record<string, LocaleMessageValue>> = Object.fromEntries(
+  Object.entries(
+    import.meta.glob<{ default: Record<string, LocaleMessageValue> }>("../../../../locales/*.json", { eager: true }),
+  ).map(([filePath, module]) => [LOCALE_FILE.exec(filePath)?.[1], module.default]),
 );
 
 /** The real messages of one locale, with no fallback: a missing key comes back as the key itself. */
