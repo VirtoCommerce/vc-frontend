@@ -1,67 +1,67 @@
 {
   "product_subscriptions": {
     "navigation": {
-      "subscriptions": "Subscriptions"
+      "subscriptions": "订阅"
     },
     "intervals": {
-      "day": "Every day | Every {count} days",
-      "week": "Every week | Every {count} weeks",
-      "month": "Every month | Every {count} months",
-      "year": "Every year | Every {count} years"
+      "day": "每天 | 每 {count} 天",
+      "week": "每周 | 每 {count} 周",
+      "month": "每月 | 每 {count} 个月",
+      "year": "每年 | 每 {count} 年"
     },
     "intervals_short": {
-      "day": "1 day | {count} days",
-      "week": "1 week | {count} weeks",
-      "month": "1 month | {count} months",
-      "year": "1 year | {count} years"
+      "day": "1 天 | {count} 天",
+      "week": "1 周 | {count} 周",
+      "month": "1 个月 | {count} 个月",
+      "year": "1 年 | {count} 年"
     },
     "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
+      "percent": "节省 {value}%",
+      "amount": "节省 {value}"
     },
     "statuses": {
-      "PendingActivation": "Starting",
-      "Active": "Active",
-      "Paused": "Paused",
-      "PastDue": "Payment needed",
-      "Cancelled": "Cancelled",
-      "Scheduled": "Scheduled",
-      "Notified": "Upcoming",
-      "ReviewRequired": "Needs review",
-      "Ordered": "Processing",
-      "PaymentActionRequired": "Confirm payment",
-      "RetryScheduled": "Payment retry",
-      "Authorized": "Confirmed",
-      "Completed": "Delivered",
-      "Failed": "Payment failed",
-      "Skipped": "Skipped"
+      "PendingActivation": "即将开始",
+      "Active": "有效",
+      "Paused": "已暂停",
+      "PastDue": "需付款",
+      "Cancelled": "已取消",
+      "Scheduled": "已计划",
+      "Notified": "即将配送",
+      "ReviewRequired": "需审核",
+      "Ordered": "处理中",
+      "PaymentActionRequired": "确认付款",
+      "RetryScheduled": "重试付款",
+      "Authorized": "已确认",
+      "Completed": "已送达",
+      "Failed": "付款失败",
+      "Skipped": "已跳过"
     },
     "card_status": {
-      "Active": "Active",
-      "NeedsUpdate": "Needs update",
-      "Expired": "Expired",
-      "Revoked": "Removed"
+      "Active": "有效",
+      "NeedsUpdate": "需更新",
+      "Expired": "已过期",
+      "Revoked": "已移除"
     },
     "common": {
       "retry": "重试",
-      "subscription_number": "Subscription {number}"
+      "subscription_number": "订阅 {number}"
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
+      "generic": "出了点问题。请重试。",
       "action_disabled": "此商店不允许此操作。请联系商店。"
     },
     "purchase_options": {
-      "title": "Purchase options",
-      "one_time": "One-time purchase",
-      "subscribe": "Subscribe & Save",
-      "benefit_reminder": "We email you before every delivery. No surprise charges.",
-      "benefit_cancel": "Skip, pause or cancel any time.",
-      "sign_in_required": "Sign in to subscribe.",
-      "in_cart_subscription": "In your cart as a subscription · {interval}",
-      "in_cart_once": "In your cart as a one-time purchase",
-      "deliver_every": "Get it every",
-      "cancel": "Cancel",
-      "save": "Save"
+      "title": "购买选项",
+      "one_time": "一次性购买",
+      "subscribe": "订阅更优惠",
+      "benefit_reminder": "每次配送前我们都会发邮件通知您。不会有意外扣款。",
+      "benefit_cancel": "可随时跳过、暂停或取消。",
+      "sign_in_required": "登录后即可订阅。",
+      "in_cart_subscription": "已作为订阅加入购物车 · {interval}",
+      "in_cart_once": "已作为一次性购买加入购物车",
+      "deliver_every": "配送频率",
+      "cancel": "取消",
+      "save": "保存"
     },
     "how_it_works": {
       "link": "如何运作",
@@ -71,7 +71,7 @@
         "title": "如何运作",
         "choose": {
           "title": "选择频率",
-          "text": "在商品页面选择“Subscribe & Save”和配送频率。首个订单照常发货。"
+          "text": "在商品页面选择“订阅更优惠”和配送频率。首个订单照常发货。"
         },
         "remind": {
           "title": "提前提醒",
@@ -137,145 +137,71 @@
         "button": "前往我的订阅"
       }
     },
-    "how_it_works": {
-      "link": "How it works",
-      "title": "How subscriptions work",
-      "lead": "Get the products you buy regularly delivered on your schedule, at a lower price. You stay in control: skip, change or cancel any time before the cut-off.",
-      "steps": {
-        "title": "How it works",
-        "choose": {
-          "title": "Choose how often",
-          "text": "Pick Subscribe & Save on the product page and choose a delivery frequency. Your first order ships as usual."
-        },
-        "remind": {
-          "title": "We remind you first",
-          "text": "Before each delivery we email you the items, the date and the highest price you can be charged."
-        },
-        "deliver": {
-          "title": "We deliver and charge",
-          "text": "The order is placed on the date you chose and charged to the card saved at checkout, with your subscription discount."
-        }
-      },
-      "rules": {
-        "savings": {
-          "title": "Savings",
-          "items": [
-            "The discount is shown on the product page before you subscribe.",
-            "Some products save more when they are delivered more often.",
-            "The discount applies to every delivery for as long as the subscription is active."
-          ]
-        },
-        "prices": {
-          "title": "Prices",
-          "items": [
-            "Each delivery is priced on its order date, minus your discount.",
-            "You are never charged more than the price in your reminder.",
-            "If the price rises by more than 5%, we ask you to review the delivery before we order it."
-          ]
-        },
-        "changes": {
-          "title": "Skip, pause or change",
-          "items": [
-            "Skip a delivery, pause, or change the quantity, frequency or next date in Account > Subscriptions.",
-            "Changes made before the cut-off, one day before the order date, apply to the next delivery.",
-            "Order now if you need the items sooner."
-          ]
-        },
-        "payment": {
-          "title": "Payment",
-          "items": [
-            "We charge the card you saved at checkout. You can switch cards at any time.",
-            "The payment is authorized when the order is placed and charged when it ships.",
-            "If a payment fails, we retry and email you before the subscription is paused."
-          ]
-        },
-        "cancel": {
-          "title": "Cancel any time",
-          "items": [
-            "Cancel in one step in Account > Subscriptions. No calls and no fees.",
-            "Deliveries already ordered are not affected.",
-            "Once a year we email you a summary of your active subscriptions."
-          ]
-        },
-        "availability": {
-          "title": "Out of stock",
-          "items": [
-            "If an item is unavailable, we let you review the delivery and order the rest.",
-            "If you do not respond, that delivery is skipped and the next one goes ahead as planned."
-          ]
-        }
-      },
-      "manage": {
-        "title": "Manage your subscriptions",
-        "text": "See upcoming deliveries and change any subscription in your account.",
-        "button": "Go to my subscriptions"
-      }
-    },
     "cart": {
-      "subscribe_button": "Subscribe",
-      "subscribed": "Subscribed",
-      "change": "Change",
-      "subscribed_hint": "Next delivery around {date}. We email you before every delivery."
+      "subscribe_button": "订阅",
+      "subscribed": "已订阅",
+      "change": "更改",
+      "subscribed_hint": "下次配送约在 {date}。每次配送前我们都会发邮件通知您。"
     },
     "checkout": {
-      "title": "Your subscription",
-      "agree": "I agree to the subscription terms and to saving my card for automatic payments.",
-      "required": "Please accept the terms to place your order.",
-      "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
-      "terms_failed": "We couldn't load the subscription terms.",
-      "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "title": "您的订阅",
+      "agree": "我同意订阅条款，并同意保存我的银行卡用于自动付款。",
+      "required": "请接受条款以提交订单。",
+      "items_failed": "无法检查此购物车中的订阅。请重试以提交订单。",
+      "terms_failed": "无法加载订阅条款。",
+      "retry": "重试",
+      "no_payment_method": "订阅需使用已保存的银行卡付款，而本店没有可保存银行卡的付款方式。请移除订阅以一次性付款，或联系本店。"
     },
     "mock_payment": {
-      "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
-      "test_cards": "Test cards",
+      "banner": "测试付款方式：不会从任何真实银行卡扣款。请使用下方任一测试卡。",
+      "test_cards": "测试卡",
       "cards": {
-        "success": "Always approved",
-        "three_ds_on_save": "3-D Secure at checkout",
-        "three_ds_on_renewal": "3-D Secure on renewals",
-        "insufficient_funds": "Renewals: insufficient funds",
-        "expired": "Expired card",
-        "recurring_cancelled": "Renewals: recurring cancelled"
+        "success": "始终通过",
+        "three_ds_on_save": "结账时 3-D Secure",
+        "three_ds_on_renewal": "续订时 3-D Secure",
+        "insufficient_funds": "续订：余额不足",
+        "expired": "过期卡",
+        "recurring_cancelled": "续订：定期付款已取消"
       },
-      "save_card": "Save this card for future payments",
-      "save_card_required": "Your subscription is paid with this card, so it will be saved securely. You can change it any time.",
-      "pay": "Pay {amount}",
-      "declined": "The payment was declined. Try another card.",
-      "three_ds_title": "Confirm with your bank",
-      "three_ds_text": "Your bank asks you to confirm the payment of {amount}. This is a simulated 3-D Secure check.",
-      "three_ds_verify_card": "Your bank asks you to confirm this card. This is a simulated 3-D Secure check.",
-      "three_ds_approve": "Approve",
-      "three_ds_decline": "Decline",
-      "three_ds_failed": "The payment wasn't confirmed. You can try again."
+      "save_card": "保存此卡用于今后付款",
+      "save_card_required": "您的订阅使用此卡付款，因此将安全保存此卡。您可以随时更换。",
+      "pay": "支付 {amount}",
+      "declined": "付款被拒绝。请尝试其他银行卡。",
+      "three_ds_title": "向银行确认",
+      "three_ds_text": "您的银行要求您确认 {amount} 的付款。这是模拟的 3-D Secure 验证。",
+      "three_ds_verify_card": "您的银行要求您确认此卡。这是模拟的 3-D Secure 验证。",
+      "three_ds_approve": "批准",
+      "three_ds_decline": "拒绝",
+      "three_ds_failed": "付款未确认。您可以重试。"
     },
     "list": {
-      "title": "Subscriptions",
+      "title": "订阅",
       "load_failed": "无法加载您的订阅。",
-      "browse": "Browse products"
+      "browse": "浏览商品"
     },
     "renewal": {
-      "total": "Total",
-      "excluded": "Not included in this delivery",
-      "confirm_payment": "Confirm payment",
-      "accept": "Confirm delivery",
-      "retry": "Retry payment",
-      "skip": "Skip this delivery",
-      "view_order": "Order {number}",
-      "accepted": "Delivery confirmed.",
-      "retried": "Payment retried.",
-      "skipped": "Delivery skipped.",
+      "total": "合计",
+      "excluded": "未包含在此次配送中",
+      "confirm_payment": "确认付款",
+      "accept": "确认配送",
+      "retry": "重试付款",
+      "skip": "跳过此次配送",
+      "view_order": "订单 {number}",
+      "accepted": "配送已确认。",
+      "retried": "已重试付款。",
+      "skipped": "已跳过配送。",
       "messages": {
-        "notified": "You can change or skip this delivery until {cutoff}.",
-        "review": "Something changed since your reminder. Please confirm or skip this delivery.",
-        "ordered": "Your order is placed and the payment is being processed.",
-        "action": "Your bank asked you to confirm the payment.",
-        "retry": "The card was declined. We'll try again on {date}.",
-        "retry_soon": "The card was declined. We'll try again shortly.",
-        "authorized": "Your card is approved. It's charged when the order ships.",
-        "completed": "Shipped and paid.",
-        "failed": "We couldn't charge your card. Choose another card, then retry.",
-        "skipped": "This delivery was skipped.",
-        "cancelled": "This delivery was cancelled."
+        "notified": "在 {cutoff} 之前，您可以更改或跳过此次配送。",
+        "review": "提醒发出后有内容变更。请确认或跳过此次配送。",
+        "ordered": "您的订单已提交，正在处理付款。",
+        "action": "您的银行要求您确认付款。",
+        "retry": "银行卡被拒绝。我们将于 {date} 重试。",
+        "retry_soon": "银行卡被拒绝。我们将很快重试。",
+        "authorized": "您的银行卡已获授权。将在订单发货时扣款。",
+        "completed": "已发货并付款。",
+        "failed": "无法从您的银行卡扣款。请选择其他银行卡，然后重试。",
+        "skipped": "此次配送已跳过。",
+        "cancelled": "此次配送已取消。"
       },
       "review_reasons": {
         "ITEMS_UNAVAILABLE": "此次配送中的部分商品目前无法提供。",
@@ -299,55 +225,55 @@
       }
     },
     "deliveries": {
-      "lead": "{count} active · next delivery {date}",
-      "need_action": "{count} needs your action | {count} need your action",
-      "in_days": "in {count} day | in {count} days",
-      "days_ago": "{count} day ago | {count} days ago",
-      "next_badge": "Next delivery",
-      "items": "{count} item | {count} items",
-      "skip": "Skip delivery",
-      "change": "Change",
-      "quantity": "Quantity",
-      "settings": "Subscription settings",
-      "pause": "Pause subscription",
-      "cancel": "Cancel subscription",
-      "pause_title": "Pause subscription?",
-      "pause_text": "Deliveries and charges for {product} stop until you resume the subscription. Deliveries already ordered still arrive.",
-      "cancel_title": "Cancel subscription?",
-      "cancel_text": "No more deliveries or charges for {product}. Deliveries already ordered still arrive. This can't be undone.",
-      "paused_done": "Subscription paused.",
-      "cancelled_done": "Subscription cancelled. Deliveries already ordered still arrive.",
-      "resumed": "Subscription resumed.",
-      "updated": "Subscription updated.",
-      "skipped": "Delivery skipped. Nothing will be charged for it.",
-      "cutoff": "You can change or skip until {date}.",
-      "upcoming_hint": "You can change or skip this delivery until we send the reminder a few days before.",
-      "cutoff_passed": "Being prepared — changes apply to the next delivery.",
-      "needs_action": "Ships as soon as this is resolved.",
-      "ordered_hint": "Ordered — it's on its way.",
-      "estimated_total": "Estimated total",
-      "total": "Total",
-      "ships_to": "Ships to {address}",
-      "idle_title": "Paused and cancelled ({count})",
-      "paused_until": "Paused until {date}",
-      "paused": "Paused",
-      "cancelled_on": "Cancelled {date}",
-      "qty_every": "Qty {quantity} · {interval}",
-      "resume": "Resume now",
-      "subscribe_again": "Subscribe again",
-      "empty": "Nothing is scheduled yet.",
-      "today": "today",
-      "tomorrow": "tomorrow",
-      "skip_title": "Skip this delivery?",
-      "skip_lead_one": "We'll skip the delivery on {date} ({product}).",
-      "skip_lead_many": "We'll skip the delivery on {date} with these items:",
-      "skip_after": "Nothing will be charged for it. Your next delivery will be on {next}. All other deliveries stay as planned.",
-      "skip_after_no_next": "Nothing will be charged for it. All other deliveries stay as planned.",
-      "prices_estimate": "Prices are estimates based on current prices and may change by the order date.",
-      "pause_lead_many": "Deliveries and charges for these products stop until you resume the subscription:",
-      "pause_after_many": "Deliveries already ordered still arrive.",
-      "cancel_lead_many": "No more deliveries or charges for these products:",
-      "cancel_after_many": "Deliveries already ordered still arrive. This can't be undone.",
+      "lead": "{count} 个有效 · 下次配送 {date}",
+      "need_action": "{count} 项需要您处理 | {count} 项需要您处理",
+      "in_days": "{count} 天后 | {count} 天后",
+      "days_ago": "{count} 天前 | {count} 天前",
+      "next_badge": "下次配送",
+      "items": "{count} 件商品 | {count} 件商品",
+      "skip": "跳过配送",
+      "change": "更改",
+      "quantity": "数量",
+      "settings": "订阅设置",
+      "pause": "暂停订阅",
+      "cancel": "取消订阅",
+      "pause_title": "暂停订阅？",
+      "pause_text": "在您恢复订阅之前，{product} 的配送和扣款将停止。已下单的配送仍会送达。",
+      "cancel_title": "取消订阅？",
+      "cancel_text": "{product} 将不再配送或扣款。已下单的配送仍会送达。此操作无法撤销。",
+      "paused_done": "订阅已暂停。",
+      "cancelled_done": "订阅已取消。已下单的配送仍会送达。",
+      "resumed": "订阅已恢复。",
+      "updated": "订阅已更新。",
+      "skipped": "已跳过配送。此次配送不会扣款。",
+      "cutoff": "在 {date} 之前可更改或跳过。",
+      "upcoming_hint": "在我们提前几天发送提醒之前，您可以更改或跳过此次配送。",
+      "cutoff_passed": "备货中 — 更改将应用于下一次配送。",
+      "needs_action": "问题解决后即发货。",
+      "ordered_hint": "已下单 — 正在配送途中。",
+      "estimated_total": "预计合计",
+      "total": "合计",
+      "ships_to": "配送至 {address}",
+      "idle_title": "已暂停和已取消（{count}）",
+      "paused_until": "暂停至 {date}",
+      "paused": "已暂停",
+      "cancelled_on": "{date} 已取消",
+      "qty_every": "数量 {quantity} · {interval}",
+      "resume": "立即恢复",
+      "subscribe_again": "再次订阅",
+      "empty": "暂无计划配送。",
+      "today": "今天",
+      "tomorrow": "明天",
+      "skip_title": "跳过此次配送？",
+      "skip_lead_one": "我们将跳过 {date} 的配送（{product}）。",
+      "skip_lead_many": "我们将跳过 {date} 包含以下商品的配送：",
+      "skip_after": "此次配送不会扣款。下次配送日期为 {next}。其他配送照常进行。",
+      "skip_after_no_next": "此次配送不会扣款。其他配送照常进行。",
+      "prices_estimate": "价格为基于当前价格的估算，下单日前可能会变动。",
+      "pause_lead_many": "在您恢复订阅之前，以下商品的配送和扣款将停止：",
+      "pause_after_many": "已下单的配送仍会送达。",
+      "cancel_lead_many": "以下商品将不再配送或扣款：",
+      "cancel_after_many": "已下单的配送仍会送达。此操作无法撤销。",
       "order_now": "立即下单",
       "order_now_title": "立即下单？",
       "ordered": "已下单。",
