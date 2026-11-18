@@ -488,6 +488,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-tab-switch-checked-shadow` | VcTabSwitch shadow when checked | The `shadow-md` parts: `var(--vc-shadow-md-1), var(--vc-shadow-md-2)` |
 | `--vc-tab-switch-group-radius` | VcTabSwitchGroup corners | `var(--vc-radius)` |
 | `--vc-table-radius` | VcTable corners | `var(--vc-radius)` |
+| `--vc-table-title-font-size` | VcTable header font size | `var(--vc-font-size-sm)`, 0.875rem |
 | `--vc-textarea-radius` | VcTextarea corners | `var(--vc-radius)` |
 | `--vc-tile-button-radius` | VcTileButton corners | `var(--vc-radius)` |
 | `--vc-tooltip-radius` | VcTooltip corners | `var(--vc-radius)` |
