@@ -3,7 +3,7 @@
     v-if="showScrollButton"
     type="button"
     class="vc-scroll-top-button"
-    :aria-label="$t('common.buttons.scroll_to_top')"
+    :aria-label="$t('ui_kit.buttons.scroll_to_top')"
     @click="scrollToTop"
   >
     <VcIcon class="vc-scroll-top-button__icon" name="arrow-circle-up" size="xl" />

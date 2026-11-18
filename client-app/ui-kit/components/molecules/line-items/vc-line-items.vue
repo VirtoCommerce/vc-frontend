@@ -343,7 +343,9 @@ watchEffect(() => {
   }
 
   &__subtotal {
-    @apply ms-auto justify-self-end flex items-center gap-2 text-[--price-color];
+    --text-color: var(--vc-line-items-subtotal-color, theme("colors.neutral.900"));
+
+    @apply ms-auto justify-self-end flex items-center gap-2 text-[--text-color];
   }
 
   &__subtotal-label {

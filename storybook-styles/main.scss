@@ -7,5 +7,6 @@
 }
 
 @layer vc.kit {
+  @include meta.load-css("../client-app/ui-kit/styles/popover-host");
   @include meta.load-css("../client-app/ui-kit/styles/dark-kit");
 }

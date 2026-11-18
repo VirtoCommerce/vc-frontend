@@ -31,7 +31,6 @@ function isWeekend(iso: string): boolean {
 const meta: Meta<typeof VcDatePicker> = {
   title: "Components/Organisms/VcDatePicker",
   component: VcDatePicker,
-  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
   parameters: {
     docs: {
       description: {
@@ -616,7 +615,7 @@ export const EnabledTeleport: StoryType = {
     docs: {
       description: {
         story:
-          "`enable-teleport` renders the calendar popover into `#popover-host` (the app-level host element). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. In production the host lives in `App.vue`; this story provides a host via a Storybook decorator.",
+          "`enable-teleport` renders the calendar popover into `#popover-host` (the host the `uiKit` plugin adds to `body`). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. The `uiKit` plugin adds the host to `body` when it installs.",
       },
       source: {
         code: `<VcDatePicker v-model="value" label="Date" :enable-teleport="true" />`,

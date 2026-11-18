@@ -84,12 +84,12 @@ How to verify:
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `_colors.scss`, `ui-kit/styles/_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/ui-kit/styles/designs/<name>/` for soft, `client-app/designs/<name>/` for a fork's own design). A design's colour tokens take colour only from preset variables |
+| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `_colors.scss`, `ui-kit/styles/_ui-kit-tokens.scss` with classic's `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/ui-kit/styles/designs/<name>/` for soft, `client-app/designs/<name>/` for a fork's own design). A design's colour tokens take colour only from preset variables |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
-| `vc.kit` | ui-kit SFC styles (automatic, see below), `ui-kit/styles/_dark-kit.scss` |
-| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
+| `vc.kit` | ui-kit SFC styles (automatic, see below), `ui-kit/styles/_popover-host.scss` (`#popover-host`, which the `uiKit` plugin adds to `body`), `ui-kit/styles/_dark-kit.scss` |
+| `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `_dark-app.scss` |
 | `vc.design.kit` | a design's kit block files: `client-app/ui-kit/styles/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
 | `vc.design.app` | a design's app block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss`; beats `vc.design.kit`, so an app block on a kit component's root (`footer-links` on a VcWidget) beats that component's block in any load order |
 | `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
@@ -418,7 +418,7 @@ literal    today's value: the fallback in ui-kit/tailwind-preset.ts (typed there
 fallbacks, so classic output does not change and a design sets only what differs.
 
 `--vc-radius` (the default control radius) predates the tiers. Classic sets it to `0.5rem` on
-`:root` in `main.scss`, components read it directly, and it is not chained to a scale step:
+`:root` in `ui-kit/styles/_ui-kit-tokens.scss`, components read it directly, and it is not chained to a scale step:
 setting `--vc-radius-*` does not move it. A design that changes control radii sets `--vc-radius`
 itself.
 
@@ -466,7 +466,7 @@ this table does not list, or the table lists one the code does not read.
 
 | Token | What it changes | Classic value |
 | --- | --- | --- |
-| `--vc-radius` | The default control radius; most component radius tokens below fall back to it | `0.5rem`, on `:root` in `main.scss` |
+| `--vc-radius` | The default control radius; most component radius tokens below fall back to it | `0.5rem`, on `:root` in `ui-kit/styles/_ui-kit-tokens.scss` |
 | `--vc-radius-<key>` | The `rounded-<key>` utilities (`rounded` for `default`); `rounded-none` and `rounded-full` have no token | `sm` 0.125rem · `default` 0.25rem · `md` 0.375rem · `lg` 0.5rem · `xl` 0.75rem · `2xl` 1rem · `3xl` 1.5rem |
 | `--vc-shadow-<key>-<n>` | Part `<n>` (from 1) of the `shadow-<key>` utility (`shadow` for `default`). Parts: `default` 2 · `0` 2 · `sm` 1 · `md` 2 · `lg` 2 · `xl` 2 · `2xl` 1 · `inner` 1 | That part of `boxShadow.<key>` in `ui-kit/tailwind-preset.ts`; `default` is Tailwind's own `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)` |
 | `--vc-font-size-<key>` | The font size of `text-<key>` | `xxs` 0.625rem · `xs` 0.75rem · `sm` 0.875rem · `base` 1rem · `lg` 1.125rem · `xl` 1.25rem · `2xl` 1.5rem · `3xl` 1.875rem · `4xl` 2.25rem · `5xl` 3rem · `6xl` 3.75rem · `7xl` 4.5rem · `8xl` 6rem |
@@ -669,6 +669,8 @@ A fork that edited one of these merges its change into the new place, in the new
 | the kit files of `assets/styles/_print.scss`, `assets/styles/print/**` | `ui-kit/styles/_print-kit.scss`, `ui-kit/styles/print/**` (`vc.print`); `_print.scss` keeps the `html`, `body` and `#app` rules |
 | `designs/soft/blocks/vc-{tab-switch-group,typography,widget}.scss`, `designs/soft/dark/vc-tab-switch-group.scss` | `ui-kit/styles/designs/soft/blocks/`, `ui-kit/styles/designs/soft/dark/` (`vc.design.kit`, still loaded by `designs/soft/index.scss`) |
 | `designs/soft/_tokens.scss` | `ui-kit/styles/designs/soft/_tokens.scss` (`theme`, still loaded by `designs/soft/index.scss`) |
+| `:root { --vc-radius: 0.5rem }` in `main.scss` | `ui-kit/styles/_ui-kit-tokens.scss` (`theme`) |
+| `#popover-host` in `App.vue` (the element and its `vc.app` rule) | the `uiKit` plugin adds the element to `body`; its rule is in `ui-kit/styles/_popover-host.scss` (`vc.kit`). Drop your `App.vue` copy |
 | a fork's rule in `@layer vc.design` | `@layer vc.design.kit` for a kit block, `@layer vc.design.app` for an app block; plain `vc.design` now beats both |
 
 Every entry stylesheet now starts with `@use "layers"`.

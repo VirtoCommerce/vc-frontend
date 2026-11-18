@@ -9,11 +9,6 @@
   @include meta.load-css("@/ui-kit/styles/fallback-palette");
   @include meta.load-css("colors");
   @include meta.load-css("@/ui-kit/styles/ui-kit-tokens");
-
-  :root {
-    //Recommended maximum border-radius: 10px (0.625rem)
-    --vc-radius: 0.5rem;
-  }
 }
 
 @layer vc.app {
@@ -28,6 +23,7 @@
 }
 
 @layer vc.kit {
+  @include meta.load-css("@/ui-kit/styles/popover-host");
   @include meta.load-css("@/ui-kit/styles/dark-kit");
 }
 

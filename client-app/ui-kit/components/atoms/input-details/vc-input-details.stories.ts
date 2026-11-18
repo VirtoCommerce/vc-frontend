@@ -112,11 +112,6 @@ export const SingleLine: StoryType = {
     counter: true,
     singleLine: true,
   },
-  decorators: [
-    () => ({
-      template: '<div id="popover-host"></div><story />',
-    }),
-  ],
   parameters: {
     docs: {
       source: {
