@@ -1,6 +1,5 @@
 @use "layers";
 @use "sass:meta";
-@use "vendors/swiper";
 
 @layer vc.app {
   @include meta.load-css("vendors/builder-io");

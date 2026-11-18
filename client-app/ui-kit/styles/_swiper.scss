@@ -2,3 +2,9 @@
 @import "swiper/css/pagination" layer(vc.vendor);
 @import "swiper/css/navigation" layer(vc.vendor);
 @import "swiper/css/thumbs" layer(vc.vendor);
+
+@layer vc.vendor {
+  :root {
+    --swiper-theme-color: theme("colors.primary.500");
+  }
+}

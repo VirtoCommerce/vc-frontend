@@ -21,7 +21,6 @@ import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
 
-import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
 import "../storybook-styles/main.scss";
 

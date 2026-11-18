@@ -2,12 +2,6 @@
 @use "../client-app/assets/styles/typography-roles" as *;
 @use "../client-app/ui-kit/styles/focus-ring" as *;
 
-@layer theme {
-  :root {
-    --vc-radius: 0.5rem;
-  }
-}
-
 @layer base.tw {
   @tailwind base;
 
