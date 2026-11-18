@@ -16,4 +16,16 @@ describe("useDarkMode", () => {
     expect(colorMode.value).toBe("light");
     expect(localStorage.getItem("vc-color-mode")).toBe("light");
   });
+
+  it("still takes a preset name, available only for a preset with a dark variant", () => {
+    const { isDarkModeAvailable, setActivePreset } = useDarkMode();
+
+    // eslint-disable-next-line sonarjs/deprecation -- the deprecated signature is what this test covers
+    setActivePreset("coffee");
+    expect(isDarkModeAvailable.value).toBe(true);
+
+    // eslint-disable-next-line sonarjs/deprecation -- the deprecated signature is what this test covers
+    setActivePreset("no-such-preset");
+    expect(isDarkModeAvailable.value).toBe(false);
+  });
 });

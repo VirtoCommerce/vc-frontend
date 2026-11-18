@@ -1,5 +1,6 @@
 import { createGlobalState, useLocalStorage, useMediaQuery } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
+import { darkPresets } from "@/assets/presets";
 
 type ColorModeType = "light" | "dark" | "system";
 
@@ -48,9 +49,12 @@ function _useDarkMode() {
     { immediate: true },
   );
 
-  function setActivePreset(withDarkPreset: boolean) {
+  function setActivePreset(withDarkPreset: boolean): void;
+  /** @deprecated Pass whether the active preset has a dark variant. */
+  function setActivePreset(presetName: string): void;
+  function setActivePreset(value: boolean | string): void {
     isPresetKnown.value = true;
-    hasDarkPreset.value = withDarkPreset;
+    hasDarkPreset.value = typeof value === "string" ? value in darkPresets : value;
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);
     // Persist availability flag so the FOUC script in index.html can check it
