@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import defaultDarkPreset from "./default.dark.json";
 import defaultPreset from "./default.json";
 
-const SOURCE = readFileSync(new URL("../../ui-kit/styles/_fallback-palette.scss", import.meta.url), "utf-8");
+const SOURCE = readFileSync(new URL("../styles/_fallback-palette.scss", import.meta.url), "utf-8");
 const PALETTE_KEY = /^color_(primary|secondary|accent|neutral|warning|danger|success|info|additional)_\d+$/;
 
 function declarations(selector: string): Record<string, string> {

@@ -1398,6 +1398,32 @@ ${loads("dark")}  }
       ).toEqual([expect.stringContaining("ghost.json is missing")]);
     });
 
+    it("passes a stylesheet that adds to a stock preset whose JSON is in the stock folder", async () => {
+      root = mkdtempSync(path.join(tmpdir(), "presets-"));
+
+      const presetsDir = path.join(root, "presets");
+      const stockPresetsDir = path.join(root, "stock");
+      const source = path.join(root, "footer-links.vue");
+
+      mkdirSync(presetsDir);
+      mkdirSync(stockPresetsDir);
+      writeFileSync(source, "<style>.footer-links { margin: 0; }</style>");
+      writeFileSync(path.join(stockPresetsDir, "mercury.json"), "{}");
+      writeFileSync(
+        path.join(presetsDir, "mercury.scss"),
+        `@layer vc.preset { ${MERCURY} .footer-links { color: var(--link-color); } }`,
+      );
+
+      const result = await checkPresets({
+        presetsDir,
+        stockPresetsDir,
+        blocks: sourceBlocks([source]),
+        semantics: colorSemantics(),
+      });
+
+      expect(result).toEqual({ errors: [], fileCount: 1 });
+    });
+
     it("rejects a separate dark preset stylesheet", async () => {
       expect(
         await check({

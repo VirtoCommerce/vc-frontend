@@ -22,8 +22,8 @@ preset, `ui-kit/tailwind-preset.ts`; the root `tailwind.config.ts` only extends 
 | Shape, spacing, type | one design | the design's `_tokens.scss`: soft's in `ui-kit/styles/designs/soft/`, a fork's own design's in `designs/<design>/` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
 | The same, no token yet | every design | the component; a scale: `ui-kit/tailwind-preset.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after the preset |
 | One part, no token | one design | `designs/<design>/blocks/<block>.scss`, a kit block's in `ui-kit/styles/designs/<design>/blocks/`; dark: `dark/<block>.scss` next to it | `vc.design.app`, a kit block's `vc.design.kit` | the block's own BEM classes, every state | `check:designs` |
-| Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
-| Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
+| Colour, whole palette | one preset, light and dark | a stock preset: `ui-kit/presets/<preset>.json`, `<preset>.dark.json`; the theme's own: the same in `assets/presets/`, listed in its `index.ts` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
+| Colour, one block | one preset | a kit block in a stock preset: `ui-kit/presets/<preset>.scss`; an app block, or the theme's own preset: `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
 | Colour, one block | one design | the design's `_tokens.scss` or `blocks/` | `theme` / `vc.design.*` | the public colour token first; preset variables only | `check:designs` |
 | Colour, one block | every preset and design | the component; dark: `ui-kit/styles/dark/**` (kit), `assets/styles/dark/shared/**` (app) | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
 | An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design.app` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
@@ -92,7 +92,7 @@ How to verify:
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `_dark-app.scss` |
 | `vc.design.kit` | a design's kit block files: `client-app/ui-kit/styles/designs/<name>/blocks/` and `dark/`, wired by that folder's own `index.scss` |
 | `vc.design.app` | a design's app block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by the design's `index.scss`; beats `vc.design.kit`, so an app block on a kit component's root (`footer-links` on a VcWidget) beats that component's block in any load order |
-| `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
+| `vc.preset` | a preset's stylesheet, `client-app/ui-kit/presets/<name>.scss`, then the theme's `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
 | `vc.print` | `ui-kit/styles/_print-kit.scss` (`ui-kit/styles/print/**`, from `ui-kit/styles/index.scss`), then `_print.scss` (`html`, `body`, `#app`); every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
@@ -353,11 +353,15 @@ component (in that component's task) over a block file when several designs will
 ## Recolour with a preset stylesheet
 
 A preset's JSON recolours the whole palette. When one preset needs a block in another colour, it
-gets a stylesheet next to its JSON: `client-app/assets/presets/<name>.scss` (no underscore: it is an
-entry, not a partial). The app downloads it only while that preset is on and mounts after it;
-Storybook loads it on the Theme preset switch. A preset without one loads nothing.
-Only a preset bundled in `client-app/assets/presets/` (with its `<name>.json`) can have a stylesheet;
-a preset fetched at runtime from the platform cannot.
+gets a stylesheet next to its JSON: `<name>.scss` (no underscore: it is an entry, not a partial). The
+app downloads it only while that preset is on and mounts after it; Storybook loads it on the Theme
+preset switch. A preset without one loads nothing.
+
+The stock presets live in ui-kit, `client-app/ui-kit/presets/`; their stylesheets name kit blocks only.
+`client-app/assets/presets/index.ts` adds the theme's own presets to them, bundled in the same folder,
+and a `<name>.scss` there may also be named after a stock preset: it recolours app blocks in that preset
+and loads after ui-kit's. A preset fetched at runtime from the platform (`/assets/presets/<name>.json`)
+cannot have a stylesheet.
 
 The dark JSON already flips the `--color-*` values (neutral included), so the same `var(--color-*)`
 in the light block is right in dark too. Add an `html.dark[data-preset]` rule only for a
@@ -594,7 +598,7 @@ yarn check:css-important              # no !important in client-app/ and index.h
 build does, and checks the CSS it emits, so nesting, `$x: &` captures and `@apply` are read as they
 ship. A problem is reported at the source line that wrote it, except a file `index.scss` loads out
 of its place: that is reported once, at the file's `meta.load-css` line in `index.scss`. A missing
-`client-app/designs/` or `client-app/assets/presets/` folder fails the check. The tests are in
+`client-app/designs/`, `client-app/ui-kit/presets/` or `client-app/assets/presets/` folder fails the check. The tests are in
 `scripts/check-designs.test.ts`.
 
 | Rule | Rejected |
@@ -620,11 +624,11 @@ of its place: that is reported once, at the file's `meta.load-css` line in `inde
 | `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix, a kit block file in `vc.design.app` |
 | A ui-kit folder with files has its own `index.scss`, which loads them; the design's `index.scss` loads that folder whole (`@include meta.load-css("@/ui-kit/styles/designs/<name>")`) and none of its files itself | a ui-kit folder with no `index.scss`, a design that does not load its ui-kit folder, `@include meta.load-css("@/ui-kit/styles/designs/soft/blocks/vc-widget")` in `designs/soft/index.scss` |
 
-Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same way:
+Preset stylesheets (`client-app/ui-kit/presets/<name>.scss`, then `client-app/assets/presets/<name>.scss`), compiled the same way:
 
 | Rule | Rejected |
 | --- | --- |
-| It sits next to its preset's `<name>.json` | `ghost.scss` without `ghost.json`, `_partial.scss` |
+| It sits next to its preset's `<name>.json`; in `assets/presets/` it may instead be named after a stock preset in `ui-kit/presets/`. A stock preset's names kit blocks only | `ghost.scss` without `ghost.json`, `_partial.scss`, `.footer-links` in `ui-kit/presets/paprika.scss` |
 | Every rule is inside a top-level `@layer vc.preset { … }` block; no other at-rule but `@media`, `@supports`, `@container` and `@starting-style` | a rule outside the layer, `@layer vc.design { … }`, the layer inside `@media`, a bare `@layer vc.preset;`, `@keyframes` |
 | No separate dark stylesheet: dark rules go in `<name>.scss` under `html.dark[data-preset="<name>"]` | `mercury.dark.scss` |
 | No `@media` on `prefers-color-scheme`, which follows the OS theme: dark rules go under `html.dark[data-preset="<name>"]` | `@apply dark:text-primary`, `@media (prefers-color-scheme: dark) { … }` |
@@ -688,6 +692,7 @@ A fork that edited one of these merges its change into the new place, in the new
 | `@use "swiper/css…"` in `vendors/_swiper.scss` | `@import "swiper/css…" layer(vc.vendor);` |
 | `assets/styles/vendors/_swiper-base.scss`, `vendors/_swiper.scss` (`--swiper-theme-color`), `storybook-styles/swiper.scss` | `ui-kit/styles/_swiper.scss` (`vc.vendor`), loaded by `ui-kit/styles/index.scss`; `vendors.scss` keeps Builder.io only |
 | `.storybook/preview.ts` importing `_ui-kit-tokens.scss` and `_dark.scss` | one import of `storybook-styles/main.scss` |
+| `assets/presets/*.json`, `paprika.scss`, the `presets` / `darkPresets` lists in `assets/presets/index.ts` | `ui-kit/presets/` (`presets`, `darkPresets`, `presetStyles`); `assets/presets/index.ts` adds the theme's own presets to them |
 | `assets/styles/_ui-kit-tokens.scss` | `ui-kit/styles/_ui-kit-tokens.scss` (`theme`) |
 | `assets/styles/_dark-kit.scss`, `assets/styles/dark/{atoms,molecules,organisms}/**` | `ui-kit/styles/_dark-kit.scss`, `ui-kit/styles/dark/**` (`vc.kit`); `dark/shared/**` stays |
 | the kit files of `assets/styles/_print.scss`, `assets/styles/print/**` | `ui-kit/styles/_print-kit.scss`, `ui-kit/styles/print/**` (`vc.print`); `_print.scss` keeps the `html`, `body` and `#app` rules |

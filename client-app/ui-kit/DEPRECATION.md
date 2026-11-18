@@ -144,7 +144,7 @@ Current aliases:
 A block class is public API too: forks target it in `_custom.scss`, and nothing warns when it stops
 matching. Our own styles name blocks outside the component as well: a design's
 `designs/<name>/blocks/<block>.scss` and `dark/<block>.scss` (the file name is the block, loaded by
-the design's `index.scss`) and the preset stylesheets `assets/presets/<name>.scss`. Rename them in the
+the design's `index.scss`) and the preset stylesheets `ui-kit/presets/<name>.scss` and `assets/presets/<name>.scss`. Rename them in the
 same change and list the rename under Breaking changes in the PR. `yarn check:designs` fails on a block
 file named after no block, and on a selector whose last compound has no class of a block (in a design, of
 the file's own block); the old name next to or above such a class passes, so search for it.
@@ -234,7 +234,7 @@ CSS variable deprecation:
 - [ ] ui-kit/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
       there instead, the canonical name reads the deprecated one ahead of its existing fallback
 - [ ] designs/*/ and ui-kit/styles/designs/*/ (_tokens.scss, blocks/, dark/) — our designs set the new name
-- [ ] assets/presets/*.scss — our preset stylesheets set the new name
+- [ ] ui-kit/presets/*.scss, assets/presets/*.scss — our preset stylesheets set the new name
 - [ ] assets/styles/README.md token table — a shape or type token keeps a row for each name the
       code reads (scripts/design-token-table.test.ts fails otherwise)
 - [ ] *.stories.ts — any demo of the old name switched to the new one

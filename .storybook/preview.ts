@@ -102,10 +102,7 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
   loadingPreset = presetName;
 
   try {
-    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
-      default: IThemeConfigPreset;
-    };
-    const preset = module.default;
+    const preset: IThemeConfigPreset | undefined = presets[presetName];
 
     if (preset) {
       if (currentStyleElement && currentStyleElement.parentNode) {

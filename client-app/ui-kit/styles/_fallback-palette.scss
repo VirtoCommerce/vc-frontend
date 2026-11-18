@@ -1,6 +1,6 @@
 // The default preset's palette, so the kit has its colours without the theme (its own Storybook, a plugin with
 // its own kit copy). Loaded into `theme`, the weakest layer: the theme's preset sets the same variables unlayered and
-// always wins. assets/presets/fallback-palette.test.ts keeps it equal to default.json and default.dark.json there.
+// always wins. ui-kit/presets/fallback-palette.test.ts keeps it equal to default.json and default.dark.json there.
 :root {
   --color-primary-50: #fff8eb;
   --color-primary-100: #fbead2;

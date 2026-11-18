@@ -35,6 +35,8 @@ export interface IDesignCheckOptions extends ICheckOptions {
 
 export interface IPresetCheckOptions extends ICheckOptions {
   presetsDir: string;
+  /** ui-kit's stock presets: a stylesheet here may add to one of them instead of sitting next to its own JSON. */
+  stockPresetsDir?: string;
 }
 
 export interface IDesignCheckResult {
@@ -1362,6 +1364,7 @@ function checkPresetFile(
 /** Every `<name>.scss` next to the preset JSON files: a preset's optional stylesheet. */
 export async function checkPresets({
   presetsDir,
+  stockPresetsDir,
   blocks,
   semantics,
 }: IPresetCheckOptions): Promise<IPresetCheckResult> {
@@ -1400,7 +1403,12 @@ export async function checkPresets({
       continue;
     }
 
-    if (!existsSync(path.join(presetsDir, `${preset}.json`))) {
+    const json = `${preset}.json`;
+
+    if (
+      !existsSync(path.join(presetsDir, json)) &&
+      !(stockPresetsDir && existsSync(path.join(stockPresetsDir, json)))
+    ) {
       errors.push(`${file}  is a preset's stylesheet only next to its preset: ${preset}.json is missing`);
     }
 
@@ -1420,6 +1428,7 @@ async function main(): Promise<void> {
       "client-app/designs/**",
       "client-app/ui-kit/styles/designs/**",
       "client-app/assets/presets/**",
+      "client-app/ui-kit/presets/**",
       "client-app/assets/styles/dark/**",
       "client-app/ui-kit/styles/{dark,print}/**",
       "client-app/assets/styles/_custom.scss",
@@ -1437,7 +1446,17 @@ async function main(): Promise<void> {
     kitBlocks,
     semantics,
   });
-  const presets = await checkPresets({ presetsDir: "client-app/assets/presets", blocks, semantics });
+  const kitPresets = await checkPresets({ presetsDir: "client-app/ui-kit/presets", blocks: kitBlocks, semantics });
+  const appPresets = await checkPresets({
+    presetsDir: "client-app/assets/presets",
+    stockPresetsDir: "client-app/ui-kit/presets",
+    blocks,
+    semantics,
+  });
+  const presets = {
+    errors: [...kitPresets.errors, ...appPresets.errors],
+    fileCount: kitPresets.fileCount + appPresets.fileCount,
+  };
   const errors = [...designs.errors, ...presets.errors];
 
   if (errors.length) {

@@ -26,10 +26,10 @@ Hence: colours only from the palette and semantic tokens; low specificity — on
 us; renaming or removing a BEM class or token is a breaking change (alias the token per `ui-kit/DEPRECATION.md`,
 list it under Breaking changes in the PR). Where a change goes (the component, a design, a preset, `_custom.scss`):
 the table at the top of `client-app/assets/styles/README.md`. Check visual changes in Storybook's Design, Theme
-preset and dark toolbars (presets: `client-app/assets/presets/index.ts`, each with a `.dark.json`).
+preset and dark toolbars (presets: `client-app/ui-kit/presets/index.ts` plus the theme's own in `client-app/assets/presets/index.ts`, each with a `.dark.json`).
 
 `yarn lint` does not parse SCSS; `yarn check:designs`, `yarn check:css-layers` and `yarn check:css-important` check
-design folders, preset stylesheets (`assets/presets/<name>.scss`), layer names and `!important` (§18)
+design folders, preset stylesheets (`ui-kit/presets/<name>.scss`, `assets/presets/<name>.scss`), layer names and `!important` (§18)
 (`client-app/assets/styles/README.md`, "Checks"), and `scripts/design-token-table.test.ts` checks the README's token
 table against the shape and type tokens the styles read. Beyond them, only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything else below is review-only. Severity guide: breaks the build or renders visibly wrong
@@ -47,7 +47,7 @@ catches anything, so everything else below is review-only. Severity guide: break
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
-   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
+   - `ui-kit/presets/<name>.scss` (kit blocks) and `assets/presets/<name>.scss` (app blocks, the theme's own presets): an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
      token on the preset root `html[data-preset]` (inherited, so a block's own setting wins), a block or BEM part
      only for a part with no token; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
