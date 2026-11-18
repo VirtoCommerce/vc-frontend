@@ -11,7 +11,7 @@
 
     "module_federation_enabled": true,
 
-    "new_page_builder_enabled": false,
+    "new_page_builder_enabled": true,
 
     "product_compare_enabled": true,
     "product_compare_limit": 5,
