@@ -4899,10 +4899,24 @@ type ExtensionCategoryMapType = {
         paymentMethodCode: string;
         setDefault: boolean;
     }, never, (paymentMethodCode: string) => boolean>;
-    /** Under each cart line item (`shared/cart/components/cart-line-items.vue`). A provider decides from the line whether it has anything to show. */
+    /**
+     * On each cart line item (`shared/cart/components/cart-line-items.vue`): `details` under the line, `actions` next to
+     * "Save for later" (`icons` when the line shows its actions as icons, `selected` when the line is selected).
+     * A provider decides from the line whether it has anything to show.
+     */
     cartLineItem: ExtensionEntryType<{
         lineItem: PreparedLineItemType;
         readonly?: boolean;
+        icons?: boolean;
+        selected?: boolean;
+    }, never, (lineItem: PreparedLineItemType) => boolean>;
+    /**
+     * On each line of a placed order (`shared/account/components/order-line-items.vue` with `orderId`): `details` under
+     * the line, as `cartLineItem.details` in the cart. A provider decides from the line whether it has anything to show.
+     */
+    orderLineItem: ExtensionEntryType<{
+        lineItem: PreparedLineItemType;
+        orderId: string;
     }, never, (lineItem: PreparedLineItemType) => boolean>;
     /**
      * Before placing the order: on the multi-step checkout's review step, above the order summary
@@ -4915,6 +4929,13 @@ type ExtensionCategoryMapType = {
     orderDetails: ExtensionEntryType<{
         order?: CustomerOrderType;
     }, never, (order?: CustomerOrderType) => boolean>;
+    /**
+     * Next to the order number in Order history (`shared/account/components/orders/orders-table.vue` and the mobile
+     * `order-card.vue`). A provider decides from the order whether it has anything to show.
+     */
+    orderListItem: ExtensionEntryType<{
+        order: CustomerOrderType;
+    }, never, (order: CustomerOrderType) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
@@ -4997,6 +5018,11 @@ declare const CUSTOM_EXTENSION_NAMES: {
         /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
         readonly purchaseOptions: "purchase-options";
         readonly variationItemButton: "variation-item-button";
+        /**
+         * Replaces a variation row's add-to-cart (variations table and list) when `variationItemButton` does not apply,
+         * the way `purchaseOptions` follows `sidebarButton` for a simple product (e.g. Subscribe & Save per variation).
+         */
+        readonly variationPurchaseOptions: "variation-purchase-options";
     };
     readonly paymentPage: {
         readonly paymentMethods: "payment-methods";
@@ -5006,11 +5032,23 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly orderDetails: {
         readonly actions: "actions";
+        /** Above the order's line items, under the title (e.g. "Placed automatically by your subscription"). */
+        readonly notice: "notice";
+    };
+    /** Next to the order number in Order history (table row and mobile card). */
+    readonly orderListItem: {
+        readonly badge: "badge";
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
     };
     readonly cartLineItem: {
+        readonly details: "details";
+        /** Next to "Save for later" on the cart line (Subscribe). */
+        readonly actions: "actions";
+    };
+    /** Under an order line in Order history, as `cartLineItem.details` in the cart (Subscribed). */
+    readonly orderLineItem: {
         readonly details: "details";
     };
     readonly checkoutReview: {
@@ -5033,8 +5071,10 @@ declare const EXTENSION_CATEGORIES: {
     readonly orderPaymentPage: "orderPaymentPage";
     readonly cartPayment: "cartPayment";
     readonly orderDetails: "orderDetails";
+    readonly orderListItem: "orderListItem";
     readonly sharedList: "sharedList";
     readonly cartLineItem: "cartLineItem";
+    readonly orderLineItem: "orderLineItem";
     readonly checkoutReview: "checkoutReview";
     readonly checkout: "checkout";
     readonly addCardForm: "addCardForm";
@@ -6115,6 +6155,8 @@ declare function useOrderView(source: MaybeRefOrGetter<CustomerOrderType | undef
 interface IProps$a {
     items?: OrderLineItemType[] | LineItemType[];
     subtotalCurrencyCode?: string;
+    /** A placed order's id: its lines then show what modules add to them (`orderLineItem`); not set for a cart. */
+    orderId?: string;
 }
 declare const __VLS_export$a: vue.DefineComponent<IProps$a, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$a> & Readonly<{}>, {
     items: OrderLineItemType[] | LineItemType[];

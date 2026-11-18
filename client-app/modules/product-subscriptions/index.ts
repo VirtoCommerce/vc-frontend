@@ -52,10 +52,17 @@ export function init(router: Router, i18n: I18n) {
     mergeMenuSchema(menuItems);
   }
 
-  // Subscribe & Save choice on the product page (simple products; configurable products keep the core flow).
+  // Subscribe & Save choice on the product page: a simple product, or the variation picked on a B2C variations page
+  // (configurable products keep the core flow).
   register("productPage", EXTENSION_NAMES.productPage.purchaseOptions, {
     component: PurchaseOptions,
     condition: (product: Product) => !product.isConfigurable && !product.hasVariations,
+  });
+
+  // The same choice, compact, in each row of a variations table or list (B2B). Back in stock keeps the rows it takes.
+  register("productPage", EXTENSION_NAMES.productPage.variationPurchaseOptions, {
+    component: PurchaseOptions,
+    condition: (product: Product) => !product.isConfigurable,
   });
 
   // Also loads the offers of the cart's products, which the Subscribe button's condition reads.
