@@ -51,10 +51,13 @@ export interface IPresetCheckResult {
 }
 
 type FileKindType = "tokens" | "blocks" | "dark";
+/** Whose blocks a file styles: ui-kit's, from the ui-kit folder, or the app's, from the design's own. */
+type OwnerType = "kit" | "app";
 
 interface ICheckedFileType {
   file: string;
   kind: FileKindType;
+  owner: OwnerType;
   ref: string;
   keys: Set<string>;
 }
@@ -759,22 +762,28 @@ function shippedNodes(
   return nodes;
 }
 
-function placeOf(kind: FileKindType, design: string): string {
+function layerOf(kind: FileKindType, owner: OwnerType): string {
+  return kind === "tokens" ? "@layer theme" : `@layer vc.design.${owner}`;
+}
+
+function placeOf({ kind, owner }: ICheckedFileType, design: string): string {
+  const layer = layerOf(kind, owner);
+
   if (kind === "tokens") {
-    return "@layer theme";
+    return layer;
   }
 
-  return `@layer vc.design > html${kind === "dark" ? ".dark" : ""}[data-design="${design}"]`;
+  return `${layer} > html${kind === "dark" ? ".dark" : ""}[data-design="${design}"]`;
 }
 
 function shippedKey(
   rule: Rule,
   declarations: Declaration[],
-  kind: FileKindType,
+  { kind, owner }: ICheckedFileType,
   design: string,
   keepCombinator = false,
 ): string | undefined {
-  const outer = kind === "tokens" ? "@layer theme" : "@layer vc.design";
+  const outer = layerOf(kind, owner);
   const actual = wrappers(rule);
 
   if (actual !== outer && !actual.startsWith(`${outer} > `)) {
@@ -975,9 +984,9 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
 
   const ship = (rule: Rule, file: string | undefined, declarations: Declaration[]) => {
     const source = file === undefined ? undefined : byFile.get(file);
-    const key = source && shippedKey(rule, declarations, source.kind, design);
+    const key = source && shippedKey(rule, declarations, source, design);
     const outside = (misplacedSource: ICheckedFileType) =>
-      `"${rule.selector}" ships outside ${placeOf(misplacedSource.kind, design)}, where index.scss loads ${misplacedSource.ref}`;
+      `"${rule.selector}" ships outside ${placeOf(misplacedSource, design)}, where index.scss loads ${misplacedSource.ref}`;
 
     if (!source) {
       report(declarations[0], `"${rule.selector}": index.scss holds no rules of its own; put them in a block file`);
@@ -989,7 +998,7 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
         declarations[0],
         `"${rule.selector}": a variant that styles an ancestor or sibling (group-*, peer-*) puts a selector before html[data-design] and never matches; write the rule out`,
       );
-    } else if (source.keys.has(shippedKey(rule, declarations, source.kind, design, true) ?? "")) {
+    } else if (source.keys.has(shippedKey(rule, declarations, source, design, true) ?? "")) {
       // index.scss put the file in its place; the file's own selector starts with `>`, `+` or `~`.
       reported.add(source);
       report(declarations[0], outside(source));
@@ -1013,7 +1022,7 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
 
     // A file with a rule reported above is loaded, only not in its place.
     if (!reported.has(source) && [...source.keys].some((key) => !loaded.has(key))) {
-      const place = placeOf(source.kind, design);
+      const place = placeOf(source, design);
 
       errors.push(
         `${source.file}  index.scss does not load it: add @include meta.load-css("${source.ref}"); inside ${place}`,
@@ -1069,7 +1078,7 @@ function layoutOf(dir: string, errors: string[]): IDesignFiles {
   return files;
 }
 
-/** A ui-kit design folder holds only the design files of the kit's own blocks. */
+/** A ui-kit design folder holds only how the kit looks in the design: token values and its own blocks' files. */
 function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
   const files: IDesignFiles = { blocks: [], dark: [] };
 
@@ -1082,8 +1091,10 @@ function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
 
     if ((entry.name === "blocks" || entry.name === "dark") && entry.isDirectory()) {
       files[entry.name] = blockFiles(at, errors);
+    } else if (entry.name === "_tokens.scss" && entry.isFile()) {
+      files.tokens = at;
     } else {
-      errors.push(`${at}  is not part of a ui-kit design folder (blocks/, dark/)`);
+      errors.push(`${at}  is not part of a ui-kit design folder (_tokens.scss, blocks/, dark/)`);
     }
   }
 
@@ -1140,21 +1151,20 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
   const files = layoutOf(dir, errors);
   const kitFiles = kitLayoutOf(kitDir, errors);
 
-  for (const file of [files.index, files.tokens]) {
+  for (const file of [files.index, files.tokens, kitFiles.tokens]) {
     if (file) {
       errors.push(...checkDesignName(file, design));
     }
   }
 
-  const blockSources = (list: string[], kind: "blocks" | "dark", refBase: string) =>
-    list.map((file) => ({ file, kind, ref: `${refBase}${kind}/${path.basename(file, ".scss")}` }));
-  const sources = [
-    ...(files.tokens ? [{ file: files.tokens, kind: "tokens" as const, ref: "tokens" }] : []),
-    ...blockSources(files.blocks, "blocks", ""),
-    ...blockSources(files.dark, "dark", ""),
-    ...blockSources(kitFiles.blocks, "blocks", `${kitRef}/`),
-    ...blockSources(kitFiles.dark, "dark", `${kitRef}/`),
+  const sourcesOf = ({ tokens, blocks: blockList, dark }: IDesignFiles, owner: OwnerType, refBase: string) => [
+    ...(tokens ? [{ file: tokens, kind: "tokens" as const, owner, ref: `${refBase}tokens` }] : []),
+    ...[
+      ...blockList.map((file) => ({ file, kind: "blocks" as const })),
+      ...dark.map((file) => ({ file, kind: "dark" as const })),
+    ].map(({ file, kind }) => ({ file, kind, owner, ref: `${refBase}${kind}/${path.basename(file, ".scss")}` })),
   ];
+  const sources = [...sourcesOf(files, "app", ""), ...sourcesOf(kitFiles, "kit", `${kitRef}/`)];
   const checked: ICheckedFileType[] = [];
 
   const compiled = await Promise.all(

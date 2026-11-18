@@ -294,21 +294,12 @@ describe("check-designs", () => {
     }
 
     function wiring(design: string, files: string[], kitFiles: string[] = []): string {
-      const loads = (dir: string) =>
-        [
-          ...kitFiles.filter((file) => path.dirname(file) === dir).map((file) => `${KIT_REF}/${design}/${file}`),
-          ...files.filter((file) => path.dirname(file) === dir).map((file) => `${dir}/${path.basename(file)}`),
-        ]
-          .map((file) => `    @include meta.load-css("${file.replace(/\.scss$/, "")}");\n`)
+      const loadsOf = (list: string[], refBase: string) => (dir: string) =>
+        list
+          .filter((file) => path.dirname(file) === dir)
+          .map((file) => `    @include meta.load-css("${refBase}${file.replace(/\.scss$/, "")}");\n`)
           .join("");
-      const tokens = files.includes("_tokens.scss") ? '  @include meta.load-css("tokens");\n' : "";
-
-      return `@use "sass:meta";
-
-@layer theme {
-${tokens}}
-
-@layer vc.design {
+      const layer = (name: string, loads: (dir: string) => string) => `@layer vc.design.${name} {
   html[data-design="${design}"] {
 ${loads("blocks")}  }
 
@@ -316,6 +307,20 @@ ${loads("blocks")}  }
 ${loads("dark")}  }
 }
 `;
+      const tokens = [
+        ...(kitFiles.includes("_tokens.scss") ? [`${KIT_REF}/${design}/tokens`] : []),
+        ...(files.includes("_tokens.scss") ? ["tokens"] : []),
+      ]
+        .map((file) => `  @include meta.load-css("${file}");\n`)
+        .join("");
+
+      return `@use "sass:meta";
+
+@layer theme {
+${tokens}}
+
+${layer("kit", loadsOf(kitFiles, `${KIT_REF}/${design}/`))}
+${layer("app", loadsOf(files, ""))}`;
     }
 
     /**
@@ -433,7 +438,46 @@ ${loads("dark")}  }
       );
 
       expect((await checkDesigns(options)).errors).toEqual([
-        `${path.join(options.kitDesignsDir, "soft/blocks/vc-card.scss")}  index.scss does not load it: add @include meta.load-css("${KIT_REF}/soft/blocks/vc-card"); inside @layer vc.design > html[data-design="soft"]`,
+        `${path.join(options.kitDesignsDir, "soft/blocks/vc-card.scss")}  index.scss does not load it: add @include meta.load-css("${KIT_REF}/soft/blocks/vc-card"); inside @layer vc.design.kit > html[data-design="soft"]`,
+      ]);
+    });
+
+    it("passes ui-kit token values that sit in the ui-kit folder", async () => {
+      const result = await checkDesigns(
+        designs({ "soft/design.ts": "export {};" }, { "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }` }),
+      );
+
+      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
+    });
+
+    it("checks ui-kit token values like a design's own", async () => {
+      const options = designs(
+        { "soft/design.ts": "export {};" },
+        { "soft/_tokens.scss": 'html[data-design="mybrand"] { margin: 0; }' },
+      );
+
+      expect((await checkDesigns(options)).errors).toEqual([
+        expect.stringMatching(
+          /kit-designs\/soft\/_tokens\.scss:1 {2}data-design="mybrand" must be "soft", the folder name$/,
+        ),
+        expect.stringContaining(`kit-designs/soft/_tokens.scss:1  "html[data-design=mybrand]": ${TOKENS_ONLY}`),
+        expect.stringContaining("kit-designs/soft/_tokens.scss:1  margin: _tokens.scss sets custom properties only"),
+      ]);
+    });
+
+    it("reports a ui-kit block file loaded in the app's sublayer", async () => {
+      const options = designs(
+        {
+          "soft/index.scss": `@use "sass:meta";\n@layer vc.design.app {\n  ${SOFT} {\n    @include meta.load-css("${KIT_REF}/soft/blocks/vc-card");\n  }\n}\n`,
+        },
+        { "soft/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }" },
+        ["vc-card"],
+      );
+
+      expect((await checkDesigns(options)).errors).toEqual([
+        expect.stringMatching(
+          /soft\/index\.scss:4 {2}"[^"]+" ships outside @layer vc\.design\.kit > html\[data-design="soft"\], where index\.scss loads .+\/soft\/blocks\/vc-card$/,
+        ),
       ]);
     });
 
@@ -441,14 +485,14 @@ ${loads("dark")}  }
       const options = designs(
         { "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }` },
         {
-          "soft/_tokens.scss": "html { --vc-radius: 1rem; }",
+          "soft/index.scss": "",
           "mybrand/blocks/vc-card.scss": ".vc-card { margin: 0; }",
         },
         ["vc-card"],
       );
 
       expect((await checkDesigns(options)).errors).toEqual([
-        `${path.join(options.kitDesignsDir, "soft/_tokens.scss")}  is not part of a ui-kit design folder (blocks/, dark/)`,
+        `${path.join(options.kitDesignsDir, "soft/index.scss")}  is not part of a ui-kit design folder (_tokens.scss, blocks/, dark/)`,
         `${path.join(options.kitDesignsDir, "mybrand")}  no design folder ${path.join(options.designsDir, "mybrand")} loads it`,
       ]);
     });
@@ -865,8 +909,8 @@ ${loads("dark")}  }
     const TOKENS = `${SOFT} { --vc-radius: 1rem; }`;
     const load = (file: string) => `@include meta.load-css("${file}");`;
     const index = (theme: string, light: string, dark: string, after = "") =>
-      `@use "sass:meta"; @layer theme { ${theme} } @layer vc.design { ${SOFT} { ${light} } html.dark[data-design="soft"] { ${dark} } } ${after}`;
-    const LIGHT_PLACE = `ships outside @layer vc.design > ${SOFT}, where index.scss loads blocks/footer-links`;
+      `@use "sass:meta"; @layer theme { ${theme} } @layer vc.design.app { ${SOFT} { ${light} } html.dark[data-design="soft"] { ${dark} } } ${after}`;
+    const LIGHT_PLACE = `ships outside @layer vc.design.app > ${SOFT}, where index.scss loads blocks/footer-links`;
 
     it.each([
       [
@@ -890,12 +934,12 @@ ${loads("dark")}  }
         [LIGHT_PLACE],
       ],
       [
-        "a block file outside @layer vc.design",
+        "a block file outside @layer vc.design.app",
         index(load("tokens"), "", load("dark/footer-links"), `${SOFT} { ${load("blocks/footer-links")} }`),
         [LIGHT_PLACE],
       ],
       [
-        "a block file in a sublayer",
+        "a block file in another sublayer",
         index(
           load("tokens"),
           "",
@@ -907,7 +951,9 @@ ${loads("dark")}  }
       [
         "a dark file under the light prefix",
         index(load("tokens"), `${load("blocks/footer-links")} ${load("dark/footer-links")}`, ""),
-        ['ships outside @layer vc.design > html.dark[data-design="soft"], where index.scss loads dark/footer-links'],
+        [
+          'ships outside @layer vc.design.app > html.dark[data-design="soft"], where index.scss loads dark/footer-links',
+        ],
       ],
       [
         "tokens outside @layer theme",
@@ -951,7 +997,7 @@ ${loads("dark")}  }
       const entry = [
         '@use "sass:meta";',
         `@layer theme { ${load("tokens")} }`,
-        "@layer vc.design {",
+        "@layer vc.design.app {",
         `  ${SOFT} {`,
         `    ${load("dark/footer-links")}`,
         "  }",
@@ -969,7 +1015,7 @@ ${loads("dark")}  }
 
       expect(errors).toEqual([
         expect.stringMatching(
-          /soft\/index\.scss:5 {2}"[^"]+" ships outside @layer vc\.design > html\.dark\[data-design="soft"\], where index\.scss loads dark\/footer-links$/,
+          /soft\/index\.scss:5 {2}"[^"]+" ships outside @layer vc\.design\.app > html\.dark\[data-design="soft"\], where index\.scss loads dark\/footer-links$/,
         ),
         expect.stringMatching(/soft\/index\.scss:8 {2}"[^"]+" ships outside /),
       ]);

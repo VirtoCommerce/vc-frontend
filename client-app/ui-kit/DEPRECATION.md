@@ -233,7 +233,7 @@ CSS variable deprecation:
 - [ ] ui-kit/styles/dark/** — overrides an input to the chain, not the aliased property itself
 - [ ] ui-kit/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
       there instead, the canonical name reads the deprecated one ahead of its existing fallback
-- [ ] designs/*/_tokens.scss, blocks/, dark/ — our designs set the new name
+- [ ] designs/*/ and ui-kit/styles/designs/*/ (_tokens.scss, blocks/, dark/) — our designs set the new name
 - [ ] assets/presets/*.scss — our preset stylesheets set the new name
 - [ ] assets/styles/README.md token table — a shape or type token keeps a row for each name the
       code reads (scripts/design-token-table.test.ts fails otherwise)

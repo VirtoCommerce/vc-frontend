@@ -4,7 +4,7 @@
   $header: "";
   $slot-container: "";
 
-  // The plate html computes (designs/soft/_tokens.scss) again, so a nested widget does not inherit the tokens
+  // The plate html computes (soft's _tokens.scss) again, so a nested widget does not inherit the tokens
   // the rules below set on its parent.
   :where(.vc-widget) & {
     --vc-widget-radius: var(--design-widget-radius);

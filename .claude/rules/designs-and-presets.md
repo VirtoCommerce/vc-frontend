@@ -23,9 +23,12 @@ what follows; the rest is review-only.
 3. A design's `blocks/<block>.scss` and `dark/<block>.scss` style only their own BEM block (block, elements,
    modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
    block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
-   block's in `client-app/designs/<design>/{blocks,dark}/`. The design's `index.scss` loads both.
-4. **Block order in `index.scss`:** kit blocks (`vc-*`) first, then app blocks. At equal specificity the later rule
-   wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block.
+   block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are all kit tokens, so its
+   `_tokens.scss` sits in the kit folder too; a fork's own design keeps its `_tokens.scss` in its own folder.
+   The design's `index.scss` loads them all.
+4. **Layers in `index.scss`:** kit blocks (`vc-*`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
+   which wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block
+   whichever file loads first.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
    `ui-kit/styles/designs/soft/blocks/vc-widget.scss`).
 6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so

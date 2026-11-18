@@ -19,14 +19,14 @@ preset, `ui-kit/tailwind-preset.ts`; the root `tailwind.config.ts` only extends 
 
 | Change | For | File | Layer | Token / selector | Check |
 | --- | --- | --- | --- | --- | --- |
-| Shape, spacing, type | one design | `designs/<design>/_tokens.scss` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
+| Shape, spacing, type | one design | the design's `_tokens.scss`: soft's in `ui-kit/styles/designs/soft/`, a fork's own design's in `designs/<design>/` | `theme` | an existing `--vc-*` token on `html[data-design="<design>"]`; dark: `html.dark[data-design="<design>"]` | `check:designs`; Storybook Design |
 | The same, no token yet | every design | the component; a scale: `ui-kit/tailwind-preset.ts` | `vc.kit` / `vc.app`; a scale: unlayered (utilities) | a new token, today's value as its fallback, its name agreed first | token-table test (shape, type); `build:core-types` after the preset |
-| One part, no token | one design | `designs/<design>/blocks/<block>.scss`, a kit block's in `ui-kit/styles/designs/<design>/blocks/`; dark: `dark/<block>.scss` next to it | `vc.design` | the block's own BEM classes, every state | `check:designs` |
+| One part, no token | one design | `designs/<design>/blocks/<block>.scss`, a kit block's in `ui-kit/styles/designs/<design>/blocks/`; dark: `dark/<block>.scss` next to it | `vc.design.app`, a kit block's `vc.design.kit` | the block's own BEM classes, every state | `check:designs` |
 | Colour, whole palette | one preset, light and dark | `assets/presets/<preset>.json`, `<preset>.dark.json` | unlayered | palette (`color_primary_500`), app (`color_link`) and kit (`color_vc_*`) keys | Storybook Theme preset + dark |
 | Colour, one block | one preset | `assets/presets/<preset>.scss` | `vc.preset` | the public colour token on `html[data-preset="<preset>"]`, dark: `html.dark[data-preset="<preset>"]`, same file; a block or BEM part below it only for a part with no token | `check:designs` |
-| Colour, one block | one design | `designs/<design>/_tokens.scss` or `blocks/` | `theme` / `vc.design` | the public colour token first; preset variables only | `check:designs` |
+| Colour, one block | one design | the design's `_tokens.scss` or `blocks/` | `theme` / `vc.design.*` | the public colour token first; preset variables only | `check:designs` |
 | Colour, one block | every preset and design | the component; dark: `ui-kit/styles/dark/**` (kit), `assets/styles/dark/shared/**` (app) | `vc.kit` / `vc.app` | palette or semantic tokens, never a literal | two presets, light and dark |
-| An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
+| An in-tree module or app block | one design / one preset | `blocks/` / `assets/presets/<preset>.scss` | `vc.design.app` / `vc.preset` | as above; the file leaves with the module | `check:designs` |
 | A Module Federation remote | anything | the remote's own repository (the pilot, sales-rep: `VirtoCommerce/vc-module-sales-rep`) | — | host kit components, `--vc-*` tokens and preset variables (`--color-*`) only | the remote's docs |
 | Anything | a fork | `assets/styles/_custom.scss` | unlayered | `:root`, `html[data-design]`, `html[data-preset]`, `html.dark` | — |
 
@@ -60,6 +60,7 @@ How to verify:
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
+@layer vc.design.kit, vc.design.app;
 ```
 
 - The first declaration a page sees fixes the order; an identical re-declaration is a no-op. So
@@ -83,13 +84,14 @@ How to verify:
 
 | Layer | Contents |
 | --- | --- |
-| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `_colors.scss`, `ui-kit/styles/_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/designs/<name>/`). A design's colour tokens take colour only from preset variables |
+| `theme` | `ui-kit/styles/_fallback-palette.scss` (the default preset's palette, so the kit has colours without the theme; the active preset, set unlayered, always wins), `_colors.scss`, `ui-kit/styles/_ui-kit-tokens.scss`, `--vc-radius` (all from `main.scss`); each design's `_tokens.scss` (`client-app/ui-kit/styles/designs/<name>/` for soft, `client-app/designs/<name>/` for a fork's own design). A design's colour tokens take colour only from preset variables |
 | `base.tw` | all of `preflight.scss`: `@tailwind base`, its `@layer base {}` rules (incl. the typography roles and the focus ring), the number-input and `::-ms-reveal` rules |
 | `plugins-vendor` | reserved, empty: third-party CSS bundled by a plugin |
 | `vc.vendor` | swiper (`vendors/_swiper.scss`), nouislider (`ui-kit/.../slider/nouislider.layer.css`) |
 | `vc.kit` | ui-kit SFC styles (automatic, see below), `ui-kit/styles/_dark-kit.scss` |
 | `vc.app` | app SFC styles (automatic), `_helpers.scss`, `_deprecated.scss`, `vendors/_builder-io.scss`, `html { scroll-padding-top }`, `#popover-host` (`App.vue`), `_dark-app.scss` |
-| `vc.design` | a design's block files: `client-app/designs/<name>/blocks/` and `dark/`, and its kit blocks' in `client-app/ui-kit/styles/designs/<name>/blocks/` and `dark/`, all wired by its `index.scss` |
+| `vc.design.kit` | a design's kit block files: `client-app/ui-kit/styles/designs/<name>/blocks/` and `dark/`, wired by its `index.scss` |
+| `vc.design.app` | a design's app block files: `client-app/designs/<name>/blocks/` and `dark/`, wired by its `index.scss`; beats `vc.design.kit`, so an app block on a kit component's root (`footer-links` on a VcWidget) beats that component's block in any load order |
 | `vc.preset` | a preset's stylesheet, `client-app/assets/presets/<name>.scss` ([Recolour with a preset stylesheet](#recolour-with-a-preset-stylesheet)) |
 | `vc.print` | `_print.scss` (`html`, `body`, `#app`), then `ui-kit/styles/_print-kit.scss` (`ui-kit/styles/print/**`); every component's top-level print-only `@media`, moved there automatically |
 | `components.tw` | `@tailwind components` |
@@ -149,7 +151,7 @@ unlayered). A new entry follows the same pattern: `@use "layers"` first, then ea
 
 A design's `index.scss` (`client-app/designs/<name>/`) does not restate the order: the preflight
 `<link>` in `index.html` (`.storybook/preview-head.html` in Storybook) declares it before any design
-CSS runs, so `index.scss` only puts its files in `@layer theme` and `@layer vc.design`.
+CSS runs, so `index.scss` only puts its files in `@layer theme`, `@layer vc.design.kit` and `@layer vc.design.app`.
 
 ---
 
@@ -161,7 +163,7 @@ A design is a folder in `client-app/designs/`:
 client-app/designs/
   <name>/             # one folder per design; ours is soft
     design.ts         # export const design = { fonts: ["https://…"] }: its font stylesheet URLs
-    _tokens.scss      # html[data-design="<name>"] { token values }
+    _tokens.scss      # html[data-design="<name>"] { token values }; soft keeps its own in ui-kit (below)
     index.scss        # the wiring, the same in every design (below)
     blocks/           # one file per app BEM block, named after it
       footer-links.scss
@@ -169,7 +171,8 @@ client-app/designs/
       footer-links.scss
 
 client-app/ui-kit/styles/designs/
-  <name>/             # the same design's files for ui-kit blocks, next to the components they restyle
+  <name>/             # how ui-kit looks in the design, next to the components it restyles
+    _tokens.scss      # soft's token values: every one is a kit token
     blocks/
       vc-widget.scss
     dark/
@@ -195,25 +198,33 @@ Every design's `index.scss` is this file with its own name and one line per file
 @use "sass:meta";
 
 @layer theme {
-  @include meta.load-css("tokens");
+  @include meta.load-css("@/ui-kit/styles/designs/soft/tokens");
 }
 
-@layer vc.design {
+@layer vc.design.kit {
   html[data-design="soft"] {
     @include meta.load-css("@/ui-kit/styles/designs/soft/blocks/vc-widget");
-    @include meta.load-css("blocks/footer-links");
   }
 
   html.dark[data-design="soft"] {
     @include meta.load-css("@/ui-kit/styles/designs/soft/dark/vc-tab-switch-group");
+  }
+}
+
+@layer vc.design.app {
+  html[data-design="soft"] {
+    @include meta.load-css("blocks/footer-links");
+  }
+
+  html.dark[data-design="soft"] {
     @include meta.load-css("dark/footer-links");
   }
 }
 ```
 
-Inside each `html` block, kit component blocks (`vc-*`) load first, then app blocks, the same order as
-`vc.kit` before `vc.app`: at equal specificity the later rule wins, so an app block on a kit
-component's root (`footer-links` on a VcWidget) beats that component's block.
+Kit blocks (`vc-*`) go in `vc.design.kit`, app blocks in `vc.design.app`, the same order as `vc.kit`
+before `vc.app`: an app block on a kit component's root (`footer-links` on a VcWidget) beats that
+component's block, whichever file loads first. A design's own `_tokens.scss` loads as `"tokens"`.
 
 The design name appears in `_tokens.scss` and `index.scss` only. A design that loads no file yet
 keeps one comment line in `index.scss` instead.
@@ -266,9 +277,10 @@ never restates print. Token values apply in print too.
 
 ### Make your own design
 
-1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
-   and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy,
-   delete the `blocks/` and `dark/` files and the lines that load them in `index.scss`. Copy
+1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`,
+   copy `ui-kit/styles/designs/soft/_tokens.scss` into it and load it as `"tokens"`, and replace `soft`
+   with your name in the copy's `_tokens.scss` and `index.scss`. In the copy, delete the `blocks/` and
+   `dark/` files and the lines that load them in `index.scss`. Copy
    `ui-kit/styles/designs/soft/blocks/vc-widget.scss` to `ui-kit/styles/designs/mybrand/blocks/` and load
    it from there, and keep the `--design-widget-*` lines of `_tokens.scss` it reads, while you keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives short widgets
    the smaller radius (`--vc-radius`) and shadowless ones an edge, gives a nested widget the plate's
@@ -352,7 +364,7 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
 - Target a block or BEM part only for a part with no token, and set the property itself there: the
   rule sits below the preset's `html` and styles a BEM block, element or modifier, kit (`.vc-*`) or
   app, like `.vc-widget__title` above.
-- `vc.preset` sits above `vc.design` and below `vc.print`: a preset's token on `html` beats a
+- `vc.preset` sits above `vc.design` (both its sublayers) and below `vc.print`: a preset's token on `html` beats a
   design's token there (`_tokens.scss`), a preset's block rule beats every design's block, and print
   still wins.
 - Every rule sits in `@layer vc.preset` and sets colours only: a colour property (`border-color`,
@@ -517,7 +529,7 @@ this table does not list, or the table lists one the code does not read.
 
 ### Where a design's value goes
 
-- **Token values:** in the design's `client-app/designs/<name>/_tokens.scss`, on
+- **Token values:** in the design's `_tokens.scss` (soft's: `client-app/ui-kit/styles/designs/soft/`; a fork's own design's: `client-app/designs/<name>/`), on
   `html[data-design="<name>"]`; dark values (shadows) on `html.dark[data-design="<name>"]` in the
   same file. Which token changes what: the [token table](#token-table). A value that changes with
   the viewport goes in `@media (width >= theme("screens.<name>"))` inside the same rule.
@@ -568,7 +580,7 @@ of its place: that is reported once, at the file's `meta.load-css` line in `inde
 | The folder name is lower case (`a-z`, `0-9`, `-`), starts with a letter and is not `classic` | `My-Brand`, `2brand`, `classic` |
 | The folder holds only what the [tree](#designs) shows; dotfiles (`.DS_Store`, `.gitkeep`) are ignored | `extra.scss`, a `notes/` folder |
 | `blocks/` and `dark/` hold `.scss` files directly, each named after a block of a component | `blocks/layout/footer-links.scss`, `blocks/notes.md`, `blocks/nothing.scss` |
-| A ui-kit block's files are in `ui-kit/styles/designs/<name>/blocks/` and `dark/`, every other block's in the design's own; that folder holds only `blocks/` and `dark/`, and its design has a folder in `client-app/designs/` | `designs/soft/blocks/vc-widget.scss`, `ui-kit/styles/designs/soft/blocks/footer-links.scss`, `ui-kit/styles/designs/soft/_tokens.scss`, `ui-kit/styles/designs/mybrand/` with no `designs/mybrand/` |
+| A ui-kit block's files are in `ui-kit/styles/designs/<name>/blocks/` and `dark/`, every other block's in the design's own; that folder holds only `_tokens.scss`, `blocks/` and `dark/`, and its design has a folder in `client-app/designs/` | `designs/soft/blocks/vc-widget.scss`, `ui-kit/styles/designs/soft/blocks/footer-links.scss`, `ui-kit/styles/designs/soft/index.scss`, `ui-kit/styles/designs/mybrand/` with no `designs/mybrand/` |
 | `index.scss` and `_tokens.scss` write the folder's name in `data-design` | `data-design="soft"` in `mybrand/` |
 | `_tokens.scss` sets only custom properties, only on `html[data-design="<name>"]` or `html.dark[data-design="<name>"]` | `:root { … }`, `html[data-design="<name>"] .x { … }`, `margin: 0` |
 | A colour comes only from preset variables, in every design file. A colour is `color`, `fill`, `stroke` and every `…-color` property; the shorthands `background`, `border` and its sides, `outline`, `column-rule`, `text-decoration`, `text-emphasis`, `box-shadow`, `text-shadow`, `-webkit-text-stroke`, `filter` and `backdrop-filter`, also with a `-webkit-` or `-moz-` prefix (`-webkit-box-shadow`, `-webkit-border-before`), when they hold one; a gradient with a colour in it; Tailwind's gradient stops and colour opacities; a custom property named as a colour token (its name contains `color` or `bg` or ends in `-text`, `-border` or `-icon`; Tailwind's `--tw-shadow-colored` excepted); a `--vc-*` or `--tw-*` custom property whose value holds a colour, whatever its name (`--vc-brand`, the `--tw-shadow` of `@apply shadow-[…]`); and a shadow token (`--vc-widget-shadow`, `--vc-shadow-<key>-<n>`), where the default step's parts may keep Tailwind's black `rgb(0 0 0 / …)`, also in a `var(--vc-shadow-default-<n>, …)` fallback (`@apply shadow`, `theme("boxShadow.DEFAULT")`), and so may the theme's `drop-shadow-*` steps (`--tw-drop-shadow`; an arbitrary `drop-shadow-[…]` may not). Its value reads only `--color-*`, the `_colors.scss` semantics and `--vc-*` (Tailwind's `--tw-*` too), mixed by `color-mix()` or `rgb(from …)`, besides the keywords and a colour with alpha 0 (`transparent`, `rgb(0 0 0 / 0)`, `#fff0`, `#ffffff00`, Tailwind's `#0000`), except as a relative colour's origin, also through a `var()` fallback, as the relative colour sets its own alpha. A custom property named as a colour token whose value holds no colour (`--title-text: 1rem`) is not one, and a function named like a colour (`tan()`) holds none | `color: red`, `border-top-color: red`, `background: #fff`, `border: 1px solid red`, `box-shadow: 0 0 1px red`, `text-shadow: 0 0 2px rgb(0 0 0)`, `fill: var(--x)`, `color: color-mix(in srgb, var(--color-primary-500), white)`, `--vc-x-bg: red`, `--vc-widget-shadow: 0 6px 20px red`, `--vc-brand: #e30613`, `@apply shadow-[0_2px_10px_rgba(0,0,0,0.1)]`, `filter: drop-shadow(0 0 4px red)`, `-webkit-box-shadow: 0 0 4px red`, `-webkit-border-before: 1px solid red`, `@apply drop-shadow-[0_0_40px_rgb(0_0_0/1)]`, `color: rgb(from rgb(227 6 19 / 0) r g b / 1)`, `color: rgb(from transparent r g b / 1)` |
@@ -583,7 +595,7 @@ of its place: that is reported once, at the file's `meta.load-css` line in `inde
 | Its CSS holds no at-rule but `@media`, `@supports`, `@container` and `@starting-style` (and, in `index.scss`, the top-level `@layer` blocks) | `@keyframes`, `@layer`, `@import`, `@scope`, `@property` |
 | No `@media` on `prefers-color-scheme`: it follows the OS theme, not the storefront's dark mode (`html.dark`); dark rules go in `dark/<block>.scss`, dark tokens on `html.dark[data-design="<name>"]` | `@apply dark:underline`, `@media (prefers-color-scheme: dark) { … }` |
 | No print-only `@media` (one whose every comma-separated query starts with `print` or `only print`, as the build reads it): print rules live in `vc.print` (`ui-kit/styles/print/`), which wins in print over every design; `@media screen, print` stays allowed (the check misses `@media not screen`, which applies only in print) | `@media print { … }`, `@apply print:hidden`, `@media only print and (min-width: 1px)` |
-| `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix |
+| `index.scss` exists, holds no rules of its own, and loads every file that emits rules, each in its place ([Wiring](#wiring)); a file loaded out of its place is reported once, at its `meta.load-css` line | a missing `index.scss`, a rule written in it, a file it does not load, a dark file under the light prefix, a kit block file in `vc.design.app` |
 
 Preset stylesheets (`client-app/assets/presets/<name>.scss`), compiled the same way:
 
@@ -655,6 +667,8 @@ A fork that edited one of these merges its change into the new place, in the new
 | `assets/styles/_ui-kit-tokens.scss` | `ui-kit/styles/_ui-kit-tokens.scss` (`theme`) |
 | `assets/styles/_dark-kit.scss`, `assets/styles/dark/{atoms,molecules,organisms}/**` | `ui-kit/styles/_dark-kit.scss`, `ui-kit/styles/dark/**` (`vc.kit`); `dark/shared/**` stays |
 | the kit files of `assets/styles/_print.scss`, `assets/styles/print/**` | `ui-kit/styles/_print-kit.scss`, `ui-kit/styles/print/**` (`vc.print`); `_print.scss` keeps the `html`, `body` and `#app` rules |
-| `designs/soft/blocks/vc-{tab-switch-group,typography,widget}.scss`, `designs/soft/dark/vc-tab-switch-group.scss` | `ui-kit/styles/designs/soft/blocks/`, `ui-kit/styles/designs/soft/dark/` (`vc.design`, still loaded by `designs/soft/index.scss`) |
+| `designs/soft/blocks/vc-{tab-switch-group,typography,widget}.scss`, `designs/soft/dark/vc-tab-switch-group.scss` | `ui-kit/styles/designs/soft/blocks/`, `ui-kit/styles/designs/soft/dark/` (`vc.design.kit`, still loaded by `designs/soft/index.scss`) |
+| `designs/soft/_tokens.scss` | `ui-kit/styles/designs/soft/_tokens.scss` (`theme`, still loaded by `designs/soft/index.scss`) |
+| a fork's rule in `@layer vc.design` | `@layer vc.design.kit` for a kit block, `@layer vc.design.app` for an app block; plain `vc.design` now beats both |
 
 Every entry stylesheet now starts with `@use "layers"`.
