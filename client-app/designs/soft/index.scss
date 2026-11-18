@@ -1,20 +1,6 @@
 @use "sass:meta";
 
-@layer theme {
-  @include meta.load-css("@/ui-kit/styles/designs/soft/tokens");
-}
-
-@layer vc.design.kit {
-  html[data-design="soft"] {
-    @include meta.load-css("@/ui-kit/styles/designs/soft/blocks/vc-tab-switch-group");
-    @include meta.load-css("@/ui-kit/styles/designs/soft/blocks/vc-typography");
-    @include meta.load-css("@/ui-kit/styles/designs/soft/blocks/vc-widget");
-  }
-
-  html.dark[data-design="soft"] {
-    @include meta.load-css("@/ui-kit/styles/designs/soft/dark/vc-tab-switch-group");
-  }
-}
+@include meta.load-css("@/ui-kit/styles/designs/soft");
 
 @layer vc.design.app {
   html[data-design="soft"] {

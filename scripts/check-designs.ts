@@ -58,6 +58,7 @@ interface ICheckedFileType {
   file: string;
   kind: FileKindType;
   owner: OwnerType;
+  /** How the `index.scss` that loads the file names it: the design's, or ui-kit's for its own files. */
   ref: string;
   keys: Set<string>;
 }
@@ -974,7 +975,14 @@ function loadLine(indexFile: string, ref: string): string {
 }
 
 /** Each rule `index.scss` ships stands in its file's place, and every rule of every checked file ships. */
-function checkWiring(index: Root, indexFile: string, design: string, checked: ICheckedFileType[]): string[] {
+function checkWiring(
+  index: Root,
+  indexFiles: Record<OwnerType, string>,
+  design: string,
+  checked: ICheckedFileType[],
+  quiet: ReadonlySet<OwnerType>,
+): string[] {
+  const indexFile = indexFiles.app;
   const errors: string[] = [];
   const report: ReportType = (node, message) => errors.push(`${where(node, indexFile)}  ${message}`);
   const byFile = new Map(checked.map((source) => [realpathSync(source.file), source]));
@@ -1005,7 +1013,7 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
     } else if (!misplaced.has(source)) {
       misplaced.add(source);
       reported.add(source);
-      errors.push(`${loadLine(indexFile, source.ref)}  ${outside(source)}`);
+      errors.push(`${loadLine(indexFiles[source.owner], source.ref)}  ${outside(source)}`);
     }
   };
 
@@ -1021,11 +1029,11 @@ function checkWiring(index: Root, indexFile: string, design: string, checked: IC
     const loaded = shipped.get(source)!;
 
     // A file with a rule reported above is loaded, only not in its place.
-    if (!reported.has(source) && [...source.keys].some((key) => !loaded.has(key))) {
+    if (!reported.has(source) && !quiet.has(source.owner) && [...source.keys].some((key) => !loaded.has(key))) {
       const place = placeOf(source, design);
 
       errors.push(
-        `${source.file}  index.scss does not load it: add @include meta.load-css("${source.ref}"); inside ${place}`,
+        `${source.file}  ${source.owner === "kit" ? "ui-kit's index.scss" : "index.scss"} does not load it: add @include meta.load-css("${source.ref}"); inside ${place}`,
       );
     }
   }
@@ -1078,7 +1086,10 @@ function layoutOf(dir: string, errors: string[]): IDesignFiles {
   return files;
 }
 
-/** A ui-kit design folder holds only how the kit looks in the design: token values and its own blocks' files. */
+/**
+ * A ui-kit design folder holds only how the kit looks in the design: its own `index.scss`, which the design's
+ * loads as is, token values and its own blocks' files.
+ */
 function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
   const files: IDesignFiles = { blocks: [], dark: [] };
 
@@ -1093,8 +1104,10 @@ function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
       files[entry.name] = blockFiles(at, errors);
     } else if (entry.name === "_tokens.scss" && entry.isFile()) {
       files.tokens = at;
+    } else if (entry.name === "index.scss" && entry.isFile()) {
+      files.index = at;
     } else {
-      errors.push(`${at}  is not part of a ui-kit design folder (_tokens.scss, blocks/, dark/)`);
+      errors.push(`${at}  is not part of a ui-kit design folder (index.scss, _tokens.scss, blocks/, dark/)`);
     }
   }
 
@@ -1111,6 +1124,25 @@ function checkDesignName(file: string, design: string): string[] {
 
       return `${file}:${line}  data-design="${match[1]}" must be "${design}", the folder name`;
     });
+}
+
+/** `index.scss` loads ui-kit's part of the design as a whole, so a file the kit adds needs no edit there. */
+function kitLoadErrors(indexFile: string, kitRef: string, hasKitIndex: boolean): string[] {
+  const text = readFileSync(indexFile, "utf-8");
+  const loads = [...text.matchAll(LOAD_CSS)];
+  const errors = loads
+    .filter((load) => load[1].startsWith(`${kitRef}/`))
+    .map((load) => {
+      const line = text.slice(0, load.index).split("\n").length;
+
+      return `${indexFile}:${line}  loads ${load[1]} itself: load ui-kit's part as a whole, @include meta.load-css("${kitRef}");`;
+    });
+
+  if (hasKitIndex && !loads.some((load) => load[1] === kitRef)) {
+    errors.push(`${indexFile}  does not load ui-kit's part: add @include meta.load-css("${kitRef}");`);
+  }
+
+  return errors;
 }
 
 /** The file names a block of a component, and sits in the ui-kit folder exactly when it is a ui-kit block. */
@@ -1151,7 +1183,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
   const files = layoutOf(dir, errors);
   const kitFiles = kitLayoutOf(kitDir, errors);
 
-  for (const file of [files.index, files.tokens, kitFiles.tokens]) {
+  for (const file of [files.index, files.tokens, kitFiles.index, kitFiles.tokens]) {
     if (file) {
       errors.push(...checkDesignName(file, design));
     }
@@ -1164,7 +1196,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
       ...dark.map((file) => ({ file, kind: "dark" as const })),
     ].map(({ file, kind }) => ({ file, kind, owner, ref: `${refBase}${kind}/${path.basename(file, ".scss")}` })),
   ];
-  const sources = [...sourcesOf(files, "app", ""), ...sourcesOf(kitFiles, "kit", `${kitRef}/`)];
+  const sources = [...sourcesOf(files, "app", ""), ...sourcesOf(kitFiles, "kit", "")];
   const checked: ICheckedFileType[] = [];
 
   const compiled = await Promise.all(
@@ -1193,16 +1225,31 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     }
   }
 
+  if (sources.some((source) => source.owner === "kit") && !kitFiles.index) {
+    errors.push(
+      `${path.join(kitDir, "index.scss")} is missing; ui-kit loads its own design files, and the design's index.scss loads it as @include meta.load-css("${kitRef}");`,
+    );
+  }
+
   if (!files.index) {
     errors.push(`${path.join(dir, "index.scss")} is missing; a design ships only what its index.scss loads`);
 
     return sources.length;
   }
 
+  const kitErrors = kitLoadErrors(files.index, kitRef, !!kitFiles.index);
+
+  errors.push(...kitErrors);
+
   const index = await compileOrReport(files.index, [dir, kitDir], errors);
 
   if (index) {
-    errors.push(...checkWiring(index, files.index, design, checked));
+    // Kit files the problem above leaves unloaded are not reported again, one by one.
+    const quiet = kitErrors.length ? new Set<OwnerType>(["kit"]) : new Set<OwnerType>();
+
+    errors.push(
+      ...checkWiring(index, { app: files.index, kit: kitFiles.index ?? files.index }, design, checked, quiet),
+    );
   }
 
   return sources.length + 1;

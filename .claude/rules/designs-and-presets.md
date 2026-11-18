@@ -25,8 +25,10 @@ what follows; the rest is review-only.
    block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
    block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are all kit tokens, so its
    `_tokens.scss` sits in the kit folder too; a fork's own design keeps its `_tokens.scss` in its own folder.
-   The design's `index.scss` loads them all.
-4. **Layers in `index.scss`:** kit blocks (`vc-*`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
+   The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder
+   whole (`@include meta.load-css("@/ui-kit/styles/designs/<design>")`) and its own files, never a kit file
+   by name.
+4. **Layers in the two `index.scss`:** kit blocks (`vc-*`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
    which wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block
    whichever file loads first.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
