@@ -31,11 +31,7 @@
     </output>
 
     <template v-if="offer">
-      <fieldset
-        class="purchase-options__choices"
-        :class="{ 'purchase-options__choices--stacked': mode === 'subscribe' }"
-        :aria-label="$t('product_subscriptions.purchase_options.title')"
-      >
+      <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
         <PurchaseOption
           v-model="mode"
           value="once"
@@ -214,39 +210,6 @@ onMounted(() => {
 
     &--error {
       @apply text-danger;
-    }
-  }
-
-  // On a phone the product page shows the price block in a bar stuck to the bottom of the screen. Full size, the options
-  // filled half of it and hid the product: here they sit side by side until the subscription is chosen, and the benefits
-  // are left to the cart's terms.
-  .floating-bar & {
-    @apply gap-2;
-
-    &__choices {
-      @apply grid grid-cols-2;
-
-      // The chosen subscription holds the frequency tiles: the cards stack, so the tiles get the full width.
-      &--stacked {
-        @apply flex;
-      }
-
-      .purchase-option {
-        @apply p-2;
-      }
-
-      .purchase-option__body {
-        @apply flex-col items-start gap-0.5;
-      }
-
-      .purchase-option__title {
-        @apply flex-wrap gap-1;
-      }
-    }
-
-    &__benefits,
-    &__how {
-      @apply hidden;
     }
   }
 }
