@@ -948,7 +948,9 @@ function generateTailwindPreset() {
     presetData,
     (key, value) => {
       if (typeof value === "function") {
-        fail(`tailwind.config.ts contains a function at "${key}" — the preset snapshot cannot serialize it.`);
+        fail(
+          `tailwind.config.ts or its presets contain a function at "${key}" — the preset snapshot cannot serialize it.`,
+        );
       }
       return value;
     },

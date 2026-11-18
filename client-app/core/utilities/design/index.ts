@@ -63,7 +63,7 @@ export function mergeStyles(...sets: DesignStylesType[]): DesignStylesType {
  * (`client-app/assets/presets/`) for its own preset or for its app blocks in a stock one, loaded after ui-kit's.
  */
 const PRESET_STYLES: DesignStylesType = mergeStyles(
-  byFileName(kitPresetStyles),
+  kitPresetStyles,
   byFileName(import.meta.glob("@/assets/presets/*.scss")),
 );
 

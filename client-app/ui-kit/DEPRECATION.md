@@ -127,7 +127,7 @@ distinct dark value must override under `html.dark`.
 
 The chain direction is the same wherever the token lives; only the assignment target differs. On
 a component block it is the private downstream variable, as above. For a token declared on `:root`
-in `ui-kit/styles/_ui-kit-tokens.scss`, `_colors.scss` or `main.scss` it is the canonical name
+in `ui-kit/styles/_ui-kit-tokens.scss`, `assets/styles/_colors.scss` or `assets/styles/main.scss` it is the canonical name
 itself — `--vc-x-new: var(--vc-x-old, <the existing --color-vc-* key and palette fallback>)` — which
 keeps a fork's override of either name live. Never point the deprecated name at the canonical one:
 once consumers move to the canonical name, nothing reads the deprecated one and a fork's override
@@ -143,7 +143,8 @@ Current aliases:
 
 A block class is public API too: forks target it in `_custom.scss`, and nothing warns when it stops
 matching. Our own styles name blocks outside the component as well: a design's
-`designs/<name>/blocks/<block>.scss` and `dark/<block>.scss` (the file name is the block, loaded by
+`designs/<name>/blocks/<block>.scss` (a kit block's: `ui-kit/styles/designs/<name>/blocks/`) and
+`dark/<block>.scss` next to it (the file name is the block, loaded by
 the design's `index.scss`) and the preset stylesheets `ui-kit/presets/<name>.scss` and `assets/presets/<name>.scss`. Rename them in the
 same change and list the rename under Breaking changes in the PR. `yarn check:designs` fails on a block
 file named after no block, and on a selector whose last compound has no class of a block (in a design, of
@@ -231,7 +232,7 @@ Prop deprecation:
 CSS variable deprecation:
 - [ ] *.vue — old name chained into the new name's fallback, assigned to the private var
 - [ ] ui-kit/styles/dark/** — overrides an input to the chain, not the aliased property itself
-- [ ] ui-kit/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
+- [ ] ui-kit/styles/_ui-kit-tokens.scss / assets/styles/_colors.scss / assets/styles/main.scss — if the token is declared
       there instead, the canonical name reads the deprecated one ahead of its existing fallback
 - [ ] designs/*/ and ui-kit/styles/designs/*/ (_tokens.scss, blocks/, dark/) — our designs set the new name
 - [ ] ui-kit/presets/*.scss, assets/presets/*.scss — our preset stylesheets set the new name

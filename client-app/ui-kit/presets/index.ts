@@ -41,5 +41,7 @@ export const darkPresets = {
   paprika: paprikaDark,
 } satisfies Record<string, Record<string, string>>;
 
-/** A preset's optional stylesheet, `<name>.scss` next to its JSON, loaded while the preset is active. */
-export const presetStyles = import.meta.glob("./*.scss");
+/** A preset's optional stylesheet, `<name>.scss` next to its JSON, keyed by preset name; loaded while the preset is active. */
+export const presetStyles: Record<string, () => Promise<unknown>> = Object.fromEntries(
+  Object.entries(import.meta.glob("./*.scss")).map(([file, load]) => [file.slice("./".length, -".scss".length), load]),
+);

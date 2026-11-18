@@ -76,13 +76,13 @@ type ReportType = (node: ChildNode, message: string) => void;
 
 const DESIGN_NAME = /^[a-z][a-z0-9-]*$/;
 const CLASSIC = "classic";
-const LAYOUT = new Map([
-  ["design.ts", "file"],
+const KIT_LAYOUT = new Map([
   ["_tokens.scss", "file"],
   ["index.scss", "file"],
   ["blocks", "folder"],
   ["dark", "folder"],
 ]);
+const LAYOUT = new Map([["design.ts", "file"], ...KIT_LAYOUT]);
 const DESIGN_ATTRIBUTE = /data-design\s*=\s*["']?([\w-]+)/g;
 const COLORS_FILE = "client-app/assets/styles/_colors.scss";
 const PRESET_LAYER = "@layer vc.preset";
@@ -968,12 +968,17 @@ function isIndexAtRule(atRule: AtRule): boolean {
   );
 }
 
+/** The 1-based line of `index` in `text`. */
+function lineAt(text: string, index = 0): number {
+  return text.slice(0, index).split("\n").length;
+}
+
 /** Where `index.scss` loads `ref`, found in its text as `checkDesignName` finds `data-design`. */
 function loadLine(indexFile: string, ref: string): string {
   const text = readFileSync(indexFile, "utf-8");
   const match = [...text.matchAll(LOAD_CSS)].find((load) => load[1].replace(/\.scss$/, "") === ref);
 
-  return match ? `${indexFile}:${text.slice(0, match.index).split("\n").length}` : indexFile;
+  return match ? `${indexFile}:${lineAt(text, match.index)}` : indexFile;
 }
 
 /** Each rule `index.scss` ships stands in its file's place, and every rule of every checked file ships. */
@@ -982,7 +987,7 @@ function checkWiring(
   indexFiles: Record<OwnerType, string>,
   design: string,
   checked: ICheckedFileType[],
-  quiet: ReadonlySet<OwnerType>,
+  skipUnloadedKit: boolean,
 ): string[] {
   const indexFile = indexFiles.app;
   const errors: string[] = [];
@@ -1031,7 +1036,11 @@ function checkWiring(
     const loaded = shipped.get(source)!;
 
     // A file with a rule reported above is loaded, only not in its place.
-    if (!reported.has(source) && !quiet.has(source.owner) && [...source.keys].some((key) => !loaded.has(key))) {
+    if (
+      !reported.has(source) &&
+      !(skipUnloadedKit && source.owner === "kit") &&
+      [...source.keys].some((key) => !loaded.has(key))
+    ) {
       const place = placeOf(source, design);
 
       errors.push(
@@ -1068,14 +1077,19 @@ function blockFiles(dir: string, errors: string[]): string[] {
   return files;
 }
 
-function layoutOf(dir: string, errors: string[]): IDesignFiles {
+function layoutOf(
+  dir: string,
+  errors: string[],
+  layout = LAYOUT,
+  label = "a design folder (design.ts, _tokens.scss, index.scss, blocks/, dark/)",
+): IDesignFiles {
   const files: IDesignFiles = { blocks: [], dark: [] };
 
   for (const entry of entriesOf(dir)) {
     const at = path.join(dir, entry.name);
 
-    if (LAYOUT.get(entry.name) !== (entry.isDirectory() ? "folder" : "file")) {
-      errors.push(`${at}  is not part of a design folder (design.ts, _tokens.scss, index.scss, blocks/, dark/)`);
+    if (layout.get(entry.name) !== (entry.isDirectory() ? "folder" : "file")) {
+      errors.push(`${at}  is not part of ${label}`);
     } else if (entry.name === "_tokens.scss") {
       files.tokens = at;
     } else if (entry.name === "index.scss") {
@@ -1093,27 +1107,9 @@ function layoutOf(dir: string, errors: string[]): IDesignFiles {
  * loads as is, token values and its own blocks' files.
  */
 function kitLayoutOf(dir: string, errors: string[]): IDesignFiles {
-  const files: IDesignFiles = { blocks: [], dark: [] };
-
-  if (!existsSync(dir)) {
-    return files;
-  }
-
-  for (const entry of entriesOf(dir)) {
-    const at = path.join(dir, entry.name);
-
-    if ((entry.name === "blocks" || entry.name === "dark") && entry.isDirectory()) {
-      files[entry.name] = blockFiles(at, errors);
-    } else if (entry.name === "_tokens.scss" && entry.isFile()) {
-      files.tokens = at;
-    } else if (entry.name === "index.scss" && entry.isFile()) {
-      files.index = at;
-    } else {
-      errors.push(`${at}  is not part of a ui-kit design folder (index.scss, _tokens.scss, blocks/, dark/)`);
-    }
-  }
-
-  return files;
+  return existsSync(dir)
+    ? layoutOf(dir, errors, KIT_LAYOUT, "a ui-kit design folder (index.scss, _tokens.scss, blocks/, dark/)")
+    : { blocks: [], dark: [] };
 }
 
 function checkDesignName(file: string, design: string): string[] {
@@ -1122,7 +1118,7 @@ function checkDesignName(file: string, design: string): string[] {
   return [...text.matchAll(DESIGN_ATTRIBUTE)]
     .filter((match) => match[1] !== design)
     .map((match) => {
-      const line = text.slice(0, match.index).split("\n").length;
+      const line = lineAt(text, match.index);
 
       return `${file}:${line}  data-design="${match[1]}" must be "${design}", the folder name`;
     });
@@ -1135,7 +1131,7 @@ function kitLoadErrors(indexFile: string, kitRef: string, hasKitIndex: boolean):
   const errors = loads
     .filter((load) => load[1].startsWith(`${kitRef}/`))
     .map((load) => {
-      const line = text.slice(0, load.index).split("\n").length;
+      const line = lineAt(text, load.index);
 
       return `${indexFile}:${line}  loads ${load[1]} itself: load ui-kit's part as a whole, @include meta.load-css("${kitRef}");`;
     });
@@ -1191,14 +1187,17 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     }
   }
 
-  const sourcesOf = ({ tokens, blocks: blockList, dark }: IDesignFiles, owner: OwnerType, refBase: string) => [
-    ...(tokens ? [{ file: tokens, kind: "tokens" as const, owner, ref: `${refBase}tokens` }] : []),
-    ...[
-      ...blockList.map((file) => ({ file, kind: "blocks" as const })),
-      ...dark.map((file) => ({ file, kind: "dark" as const })),
-    ].map(({ file, kind }) => ({ file, kind, owner, ref: `${refBase}${kind}/${path.basename(file, ".scss")}` })),
+  const sourcesOf = ({ tokens, blocks: blockList, dark }: IDesignFiles, owner: OwnerType) => [
+    ...(tokens ? [{ file: tokens, kind: "tokens" as const, owner, ref: "tokens" }] : []),
+    ...blockList.map((file) => ({
+      file,
+      kind: "blocks" as const,
+      owner,
+      ref: `blocks/${path.basename(file, ".scss")}`,
+    })),
+    ...dark.map((file) => ({ file, kind: "dark" as const, owner, ref: `dark/${path.basename(file, ".scss")}` })),
   ];
-  const sources = [...sourcesOf(files, "app", ""), ...sourcesOf(kitFiles, "kit", "")];
+  const sources = [...sourcesOf(files, "app"), ...sourcesOf(kitFiles, "kit")];
   const checked: ICheckedFileType[] = [];
 
   const compiled = await Promise.all(
@@ -1247,10 +1246,14 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
 
   if (index) {
     // Kit files the problem above leaves unloaded are not reported again, one by one.
-    const quiet = kitErrors.length ? new Set<OwnerType>(["kit"]) : new Set<OwnerType>();
-
     errors.push(
-      ...checkWiring(index, { app: files.index, kit: kitFiles.index ?? files.index }, design, checked, quiet),
+      ...checkWiring(
+        index,
+        { app: files.index, kit: kitFiles.index ?? files.index },
+        design,
+        checked,
+        kitErrors.length > 0,
+      ),
     );
   }
 

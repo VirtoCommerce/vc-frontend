@@ -615,7 +615,7 @@ export const EnabledTeleport: StoryType = {
     docs: {
       description: {
         story:
-          "`enable-teleport` renders the calendar popover into `#popover-host` (the host the `uiKit` plugin adds to `body`). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. The `uiKit` plugin adds the host to `body` when it installs.",
+          "`enable-teleport` renders the calendar popover into `#popover-host` (the host the `uiKit` plugin adds to `body`). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI.",
       },
       source: {
         code: `<VcDatePicker v-model="value" label="Date" :enable-teleport="true" />`,

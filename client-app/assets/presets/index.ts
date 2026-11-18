@@ -2,7 +2,8 @@ import { darkPresets as kitDarkPresets, presets as kitPresets } from "@/ui-kit/p
 import type { IThemeConfigPreset } from "@/core/types";
 
 // The stock presets come from ui-kit. A theme's own bundled preset goes in this folder: <name>.json, an optional
-// <name>.dark.json and <name>.scss, imported and listed here after the stock ones; the same name replaces a stock preset.
+// <name>.dark.json and <name>.scss, imported and listed here after the stock ones. A JSON with a stock preset's name
+// replaces its palette; a <name>.scss with that name loads after ui-kit's stylesheet and adds to it.
 export const presets: Record<string, IThemeConfigPreset> = {
   ...kitPresets,
 };
