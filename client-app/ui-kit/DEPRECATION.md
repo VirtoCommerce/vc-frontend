@@ -109,7 +109,7 @@ result to the component's private downstream variable rather than declaring the 
 );
 ```
 
-Declare the chain exactly once, and have `assets/styles/dark/**` override an *input* to it rather
+Declare the chain exactly once, and have `ui-kit/styles/dark/**` override an *input* to it rather
 than the property itself — an alpha, a shade, a whole colour in its own variable:
 
 ```scss
@@ -127,7 +127,7 @@ distinct dark value must override under `html.dark`.
 
 The chain direction is the same wherever the token lives; only the assignment target differs. On
 a component block it is the private downstream variable, as above. For a token declared on `:root`
-in `assets/styles/_ui-kit-tokens.scss`, `_colors.scss` or `main.scss` it is the canonical name
+in `ui-kit/styles/_ui-kit-tokens.scss`, `_colors.scss` or `main.scss` it is the canonical name
 itself — `--vc-x-new: var(--vc-x-old, <the existing --color-vc-* key and palette fallback>)` — which
 keeps a fork's override of either name live. Never point the deprecated name at the canonical one:
 once consumers move to the canonical name, nothing reads the deprecated one and a fork's override
@@ -230,8 +230,8 @@ Prop deprecation:
 
 CSS variable deprecation:
 - [ ] *.vue — old name chained into the new name's fallback, assigned to the private var
-- [ ] assets/styles/dark/** — overrides an input to the chain, not the aliased property itself
-- [ ] assets/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
+- [ ] ui-kit/styles/dark/** — overrides an input to the chain, not the aliased property itself
+- [ ] ui-kit/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
       there instead, the canonical name reads the deprecated one ahead of its existing fallback
 - [ ] designs/*/_tokens.scss, blocks/, dark/ — our designs set the new name
 - [ ] assets/presets/*.scss — our preset stylesheets set the new name

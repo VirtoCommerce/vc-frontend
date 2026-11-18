@@ -723,7 +723,7 @@ function reportMedia(node: ChildNode, report: ReportType, owner: string, places:
   } else if (isPrintOnly(node)) {
     report(
       node,
-      `@media ${node.params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`,
+      `@media ${node.params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/ui-kit/styles/print/`,
     );
   }
 }
@@ -1306,7 +1306,8 @@ async function main(): Promise<void> {
     ignore: [
       "client-app/designs/**",
       "client-app/assets/presets/**",
-      "client-app/assets/styles/{dark,print}/**",
+      "client-app/assets/styles/dark/**",
+      "client-app/ui-kit/styles/{dark,print}/**",
       "client-app/assets/styles/_custom.scss",
     ],
   });

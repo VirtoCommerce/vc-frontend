@@ -24,7 +24,7 @@ const DARK_MEDIA =
 const LIGHT_MEDIA = "@media (prefers-color-scheme: light) follows the OS theme, not the storefront's dark mode";
 const osTheme = (media: string, places: string) => `${media}; drop it: ${places}`;
 const printOnly = (params: string, owner: string) =>
-  `@media ${params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/assets/styles/print/`;
+  `@media ${params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/ui-kit/styles/print/`;
 
 describe("check-designs", () => {
   describe("checkBlockSelector", () => {

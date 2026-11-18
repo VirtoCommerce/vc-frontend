@@ -52,14 +52,14 @@ catches anything, so everything else below is review-only. Severity guide: break
      only for a part with no token; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - Variant colour tokens (the `--vc-<comp>-<variant>-<color>-<part>` matrix, `ui-kit-internals.md` §5) go to `:root`
-     in `assets/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
+     in `ui-kit/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
      colour as its fallback (`--bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"))`). Shape and
      typography tokens follow the styles README ("Shape and typography tokens"), where classic sets none but
      `--vc-radius`.
-   - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
-     Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
-     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
-     are registered in `_print.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
+   - Dark-mode fixes for a component: a kit one in `ui-kit/styles/dark/<atoms|molecules|organisms>/<name>.scss`,
+     registered in `ui-kit/styles/_dark-kit.scss` (layer `vc.kit`); an app one in
+     `assets/styles/dark/shared/.../<name>.scss`, registered in `_dark-app.scss` (layer `vc.app`). Print fixes for
+     the kit: files in `ui-kit/styles/print/...`, registered in `ui-kit/styles/_print-kit.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
      `vc.print` automatically. A new file that is not registered is dead; one registered in the wrong file lands
      in the wrong cascade layer.
    - Never `html.dark` / `.dark` selectors inside an SFC (there are none today).
@@ -240,7 +240,7 @@ catches anything, so everything else below is review-only. Severity guide: break
 44. New animations and transitions run only under `@media (prefers-reduced-motion: no-preference)` unless they are
     the shared named transitions. Animate `transform`/`opacity`, not layout properties.
 45. Print: pages users print (orders, quotes, invoices, cart) hide chrome with `@media print` inside the block
-    (`print:hidden` in utility templates is legacy-accepted). UI-kit print fixes live in `assets/styles/print/**`.
+    (`print:hidden` in utility templates is legacy-accepted). UI-kit print fixes live in `ui-kit/styles/print/**`.
 
 ## 9. CSS custom properties and `v-bind`
 

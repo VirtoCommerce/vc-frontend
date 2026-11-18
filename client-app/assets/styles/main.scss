@@ -7,7 +7,7 @@
 
 @layer theme {
   @include meta.load-css("colors");
-  @include meta.load-css("ui-kit-tokens");
+  @include meta.load-css("@/ui-kit/styles/ui-kit-tokens");
 
   :root {
     //Recommended maximum border-radius: 10px (0.625rem)
@@ -27,11 +27,12 @@
 }
 
 @layer vc.kit {
-  @include meta.load-css("dark-kit");
+  @include meta.load-css("@/ui-kit/styles/dark-kit");
 }
 
 @layer vc.print {
   @include meta.load-css("print");
+  @include meta.load-css("@/ui-kit/styles/print-kit");
 }
 
 /* Use for custom themes only */
