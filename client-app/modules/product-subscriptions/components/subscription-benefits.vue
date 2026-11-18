@@ -2,12 +2,14 @@
   <ul class="subscription-benefits">
     <li class="subscription-benefits__item">
       <VcIcon class="subscription-benefits__icon" name="circle-check" size="xs" />
-      {{ $t("product_subscriptions.purchase_options.benefit_reminder") }}
+
+      <span>{{ $t("product_subscriptions.purchase_options.benefit_reminder") }}</span>
     </li>
 
     <li class="subscription-benefits__item">
       <VcIcon class="subscription-benefits__icon" name="circle-check" size="xs" />
-      {{ $t("product_subscriptions.purchase_options.benefit_cancel") }}
+
+      <span>{{ $t("product_subscriptions.purchase_options.benefit_cancel") }}</span>
     </li>
   </ul>
 </template>
@@ -20,11 +22,12 @@
     @apply flex items-start gap-1.5;
   }
 
-  // On the first line of a wrapped text, in the success colour.
+  // On the first line of a wrapped text, in the success colour. The xs icon is as tall as a line of this text, so
+  // with no offset the two share the line's centre.
   &__icon {
     --vc-icon-color: var(--color-success-600);
 
-    @apply mt-0.5 flex-none;
+    @apply flex-none;
   }
 }
 </style>

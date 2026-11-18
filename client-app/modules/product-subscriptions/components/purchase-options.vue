@@ -31,7 +31,11 @@
     </output>
 
     <template v-if="offer">
-      <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
+      <fieldset
+        class="purchase-options__choices"
+        :class="{ 'purchase-options__choices--stacked': mode === 'subscribe' }"
+        :aria-label="$t('product_subscriptions.purchase_options.title')"
+      >
         <PurchaseOption
           v-model="mode"
           value="once"
@@ -50,34 +54,32 @@
           test-id="purchase-option-subscribe"
         >
           <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
+
+          <SubscriptionFrequencyPicker
+            v-model="selectedInterval"
+            :intervals="offer.intervals"
+            name="purchase-option-frequency"
+            :disabled="isSaving"
+            test-id="purchase-option-frequency"
+          />
+
+          <SubscriptionBenefits class="purchase-options__benefits" />
+
+          <VcLink
+            :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
+            class="purchase-options__how"
+            data-test-id="purchase-option-how-it-works-link"
+          >
+            <VcIcon name="info" size="xs" />
+
+            {{ $t("product_subscriptions.how_it_works.link") }}
+          </VcLink>
+
+          <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
+            {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
+          </VcAlert>
         </PurchaseOption>
       </fieldset>
-
-      <div v-if="mode === 'subscribe'" class="purchase-options__subscribe">
-        <SubscriptionFrequencyPicker
-          v-model="selectedInterval"
-          :intervals="offer.intervals"
-          name="purchase-option-frequency"
-          :disabled="isSaving"
-          test-id="purchase-option-frequency"
-        />
-
-        <SubscriptionBenefits class="purchase-options__benefits" />
-
-        <VcLink
-          :to="{ name: HOW_IT_WORKS_ROUTE_NAME }"
-          class="purchase-options__how"
-          data-test-id="purchase-option-how-it-works-link"
-        >
-          <VcIcon name="info" size="xs" />
-
-          {{ $t("product_subscriptions.how_it_works.link") }}
-        </VcLink>
-
-        <VcAlert v-if="!isAuthenticated" color="info" size="sm" variant="soft" icon>
-          {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
-        </VcAlert>
-      </div>
     </template>
   </div>
 </template>
@@ -202,12 +204,9 @@ onMounted(() => {
     @apply flex flex-col gap-2;
   }
 
-  &__subscribe {
-    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
-  }
-
   &__how {
-    @apply inline-flex items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
+    // The hand cursor is set here too: the link sits inside a selectable card, and the cursor must not depend on it.
+    @apply inline-flex cursor-pointer items-center gap-1 self-start text-xs text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__status {
@@ -219,12 +218,18 @@ onMounted(() => {
   }
 
   // On a phone the product page shows the price block in a bar stuck to the bottom of the screen. Full size, the options
-  // filled half of it and hid the product: here they sit side by side, and the benefits are left to the cart's terms.
+  // filled half of it and hid the product: here they sit side by side until the subscription is chosen, and the benefits
+  // are left to the cart's terms.
   .floating-bar & {
     @apply gap-2;
 
     &__choices {
       @apply grid grid-cols-2;
+
+      // The chosen subscription holds the frequency tiles: the cards stack, so the tiles get the full width.
+      &--stacked {
+        @apply flex;
+      }
 
       .purchase-option {
         @apply p-2;
@@ -237,10 +242,6 @@ onMounted(() => {
       .purchase-option__title {
         @apply flex-wrap gap-1;
       }
-    }
-
-    &__subscribe {
-      @apply gap-2 bg-transparent p-0;
     }
 
     &__benefits,

@@ -33,20 +33,18 @@
             test-id="purchase-options-modal-subscribe"
           >
             <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
+
+            <SubscriptionFrequencyPicker
+              v-model="selectedKey"
+              :intervals="offer.intervals"
+              name="purchase-options-modal-frequency"
+              :disabled="saving"
+              test-id="purchase-options-modal-frequency"
+            />
+
+            <SubscriptionBenefits />
           </PurchaseOption>
         </fieldset>
-
-        <div v-if="mode === 'subscribe'" class="purchase-options-modal__subscribe">
-          <SubscriptionFrequencyPicker
-            v-model="selectedKey"
-            :intervals="offer.intervals"
-            name="purchase-options-modal-frequency"
-            :disabled="saving"
-            test-id="purchase-options-modal-frequency"
-          />
-
-          <SubscriptionBenefits />
-        </div>
 
         <div v-if="onPause || onCancel" class="purchase-options-modal__manage">
           <VcButton
@@ -172,10 +170,6 @@ async function save(close: () => void): Promise<void> {
 
   &__choices {
     @apply flex flex-col gap-2;
-  }
-
-  &__subscribe {
-    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-3;
   }
 
   &__manage {
