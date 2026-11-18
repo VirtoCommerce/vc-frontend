@@ -6,16 +6,10 @@
       `vc-alert--size--${size}`,
       {
         'vc-alert--shadow': shadow,
-        'vc-alert--button-end': isButtonEnd,
+        'vc-alert--actions-end': isActionsEnd(),
       },
     ]"
   >
-    <DefineActionButton>
-      <VcButton size="xxs" :color="buttonColor" :variant="buttonVariant" @click="$emit('buttonClick')">
-        {{ buttonText }}
-      </VcButton>
-    </DefineActionButton>
-
     <div v-if="icon || $slots['main-icon']" class="vc-alert__icon">
       <slot name="main-icon">
         <VcIcon :name="iconName" />
@@ -27,13 +21,13 @@
 
       <slot />
 
-      <div v-if="buttonText && !isButtonEnd" class="vc-alert__button vc-alert__button--bottom">
-        <ReuseActionButton />
+      <div v-if="$slots.actions && !isActionsEnd()" class="vc-alert__actions vc-alert__actions--bottom">
+        <slot name="actions" />
       </div>
     </div>
 
-    <div v-if="isButtonEnd" class="vc-alert__button vc-alert__button--end">
-      <ReuseActionButton />
+    <div v-if="isActionsEnd()" class="vc-alert__actions vc-alert__actions--end">
+      <slot name="actions" />
     </div>
 
     <div v-if="closable">
@@ -52,13 +46,12 @@
 </template>
 
 <script setup lang="ts">
-import { createReusableTemplate } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
+import { provideButtonContext } from "../button/vc-button-context";
 
 interface IEmits {
   (event: "close"): void;
-  (event: "buttonClick"): void;
 }
 
 interface IProps {
@@ -69,8 +62,8 @@ interface IProps {
   title?: string;
   shadow?: boolean;
   closable?: boolean;
-  buttonText?: string;
-  buttonPosition?: VcAlertButtonPositionType;
+  /** Where the `actions` slot renders: under the text, or at the end of the row before the close button. */
+  actionsPosition?: VcAlertActionsPositionType;
 }
 
 defineEmits<IEmits>();
@@ -79,8 +72,10 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
-  buttonPosition: "bottom",
+  actionsPosition: "bottom",
 });
+
+const slots = useSlots();
 
 const DEFAULT_ALERT_VARIANT: VcAlertVariantType = "solid";
 const CANONICAL_ALERT_VARIANTS: readonly VcAlertVariantType[] = [DEFAULT_ALERT_VARIANT, "soft", "outline", "tonal"];
@@ -92,13 +87,22 @@ const canonicalVariant = computed<VcAlertVariantType>(() => {
     : DEFAULT_ALERT_VARIANT;
 });
 
-const [DefineActionButton, ReuseActionButton] = createReusableTemplate();
-
 // Only "end" is special: any other value (a typo, a string from settings) falls back to "bottom".
-const isButtonEnd = computed<boolean>(() => !!props.buttonText && props.buttonPosition === "end");
+// A function, not a computed: slot presence is not reactive, so a cached value would go stale.
+function isActionsEnd(): boolean {
+  return !!slots.actions && props.actionsPosition === "end";
+}
 
-const buttonColor = computed<VcButtonColorType>(() => (canonicalVariant.value === "solid" ? "accent" : "secondary"));
-const buttonVariant = computed<VcButtonVariantType>(() => (canonicalVariant.value === "solid" ? "surface" : "outline"));
+// Every VcButton in the alert, in the actions or in the text, takes this look unless it sets its own props.
+provideButtonContext(() => {
+  const isSolid = canonicalVariant.value === "solid";
+
+  return {
+    size: "xxs",
+    color: isSolid ? "accent" : "secondary",
+    variant: isSolid ? "surface" : "outline",
+  };
+});
 
 const iconName = computed<string>(() => {
   const { icon } = props;
@@ -126,7 +130,7 @@ const iconName = computed<string>(() => {
 <style lang="scss">
 .vc-alert {
   $sm: "";
-  $buttonEnd: "";
+  $actionsEnd: "";
 
   --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
 
@@ -154,12 +158,12 @@ const iconName = computed<string>(() => {
     }
   }
 
-  // With an action button in the end position the alert is taller than the text's
-  // line box: the button and the close button center on the alert. A one-line text
+  // With actions in the end position the alert is taller than the text's
+  // line box: the actions and the close button center on the alert. A one-line text
   // centers with them; with a title or wrapped text the icon stays on the first line,
-  // as in the bottom-button layout — icon and content align by their first baseline.
-  &--button-end {
-    $buttonEnd: &;
+  // as in the bottom-actions layout — icon and content align by their first baseline.
+  &--actions-end {
+    $actionsEnd: &;
 
     @apply items-center;
   }
@@ -191,7 +195,7 @@ const iconName = computed<string>(() => {
 
     @apply shrink-0 me-2 my-[calc((var(--line-height)_-_var(--icon-size))/2)];
 
-    #{$buttonEnd} & {
+    #{$actionsEnd} & {
       @apply self-baseline flex items-center my-0 h-[--line-height] leading-[--line-height];
 
       // a zero-width character gives the icon box a text baseline matching the content
@@ -214,8 +218,8 @@ const iconName = computed<string>(() => {
       }
     }
 
-    #{$buttonEnd} & {
-      // the xxs button height: a one-line text centers on the button
+    #{$actionsEnd} & {
+      // the xxs button height: a one-line text centers on the action buttons
       @apply self-baseline justify-center min-h-[1.625rem];
     }
   }
@@ -231,16 +235,16 @@ const iconName = computed<string>(() => {
 
     @apply flex items-center justify-center my-[calc((var(--line-height)_-_var(--close-button-size))/2)] -me-2 size-[--close-button-size];
 
-    #{$buttonEnd} & {
+    #{$actionsEnd} & {
       @apply ms-1;
     }
   }
 
-  &__button {
-    @apply flex shrink-0;
+  &__actions {
+    @apply flex shrink-0 gap-2;
 
     &--bottom {
-      @apply mt-2;
+      @apply flex-wrap mt-2;
 
       #{$sm} & {
         @apply mt-1.5;

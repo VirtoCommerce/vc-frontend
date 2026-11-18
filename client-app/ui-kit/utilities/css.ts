@@ -32,6 +32,19 @@ export function getInputClearIconSize(size: VcInputSizeType): string {
   return size === "md" ? "0.875rem" : "0.75rem";
 }
 
+/** Size of the buttons inside input shells, keyed off the input size. */
+export function getInputButtonSize(size: VcInputSizeType): VcButtonSizeType {
+  if (size === "xs") {
+    return "xxs";
+  }
+
+  if (size === "sm") {
+    return "xs";
+  }
+
+  return "sm";
+}
+
 // One-shot read of a custom property's computed value (var() chains already substituted).
 // Not `useCssVar`: it writes what it read back as an inline style on the target, which then
 // outranks the preset's `:root` / `html.dark` rules and freezes the value across a theme switch.

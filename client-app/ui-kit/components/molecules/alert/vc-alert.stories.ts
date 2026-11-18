@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const COLORS = ["info", "success", "warning", "danger"];
 const VARIANTS = ["solid", "soft", "outline", "tonal"];
 const SIZES = ["sm", "md"];
-const BUTTON_POSITIONS = ["bottom", "end"];
+const ACTIONS_POSITIONS = ["bottom", "end"];
 
 const meta: Meta<typeof VcAlert> = {
   title: "Components/Molecules/VcAlert",
@@ -43,15 +43,15 @@ const meta: Meta<typeof VcAlert> = {
         },
       },
     },
-    buttonPosition: {
+    actionsPosition: {
       control: "inline-radio",
-      options: BUTTON_POSITIONS,
+      options: ACTIONS_POSITIONS,
       description:
-        "Where the action button renders when `buttonText` is set: under the text or to the left of the close button.",
+        "Where the `actions` slot renders: under the text, or at the end of the row before the close button.",
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: BUTTON_POSITIONS.join(" | "),
+          summary: ACTIONS_POSITIONS.join(" | "),
         },
       },
     },
@@ -306,16 +306,27 @@ export const Closable: StoryType = {
   },
 };
 
-// 7. Action button
-export const WithButton: StoryType = {
-  args: { title: "Order created", icon: true, buttonText: "View details" },
+// 7. Actions
+export const WithActions: StoryType = {
+  args: { title: "Order created", icon: true },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>View details</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
   parameters: {
-    actions: { handles: ["buttonClick"] },
     docs: {
       source: {
         code: `
-          <VcAlert title="Order created" icon button-text="View details" @button-click="handleButtonClick">
+          <VcAlert title="Order created" icon>
             Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+            </template>
           </VcAlert>
         `,
       },
@@ -323,19 +334,56 @@ export const WithButton: StoryType = {
   },
 };
 
-export const WithButtonEnd: StoryType = {
-  args: { icon: true, closable: true, buttonText: "View details", buttonPosition: "end" },
+export const WithActionsEnd: StoryType = {
+  args: { icon: true, closable: true, actionsPosition: "end" },
   render: (args) => ({
     setup: () => ({ args }),
-    template: `<VcAlert v-bind="args">Your order #4812 has been placed.</VcAlert>`,
+    template: `<VcAlert v-bind="args">
+      Your order #4812 has been placed.
+      <template #actions>
+        <VcButton>View details</VcButton>
+      </template>
+    </VcAlert>`,
   }),
   parameters: {
-    actions: { handles: ["buttonClick", "close"] },
+    actions: { handles: ["close"] },
     docs: {
       source: {
         code: `
-          <VcAlert icon closable button-text="View details" button-position="end" @button-click="handleButtonClick">
+          <VcAlert icon closable actions-position="end" @close="handleClose">
             Your order #4812 has been placed.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const WithTwoActions: StoryType = {
+  args: { title: "Order created", icon: true },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>View details</VcButton>
+        <VcButton :loading="true">Download invoice</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert title="Order created" icon>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+              <VcButton :loading="true">Download invoice</VcButton>
+            </template>
           </VcAlert>
         `,
       },
