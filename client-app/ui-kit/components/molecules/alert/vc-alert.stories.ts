@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const COLORS = ["info", "success", "warning", "danger"];
 const VARIANTS = ["solid", "soft", "outline", "tonal"];
 const SIZES = ["sm", "md"];
+const ACTIONS_POSITIONS = ["bottom", "end"];
 
 const meta: Meta<typeof VcAlert> = {
   title: "Components/Molecules/VcAlert",
@@ -39,6 +40,18 @@ const meta: Meta<typeof VcAlert> = {
       table: {
         type: {
           summary: SIZES.join(" | "),
+        },
+      },
+    },
+    actionsPosition: {
+      control: "inline-radio",
+      options: ACTIONS_POSITIONS,
+      description:
+        "Where the `actions` slot renders: under the text, or at the end of the row before the close button.",
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: ACTIONS_POSITIONS.join(" | "),
         },
       },
     },
@@ -293,7 +306,129 @@ export const Closable: StoryType = {
   },
 };
 
-// 7. Kitchen sink
+// 7. Actions
+export const WithActions: StoryType = {
+  args: { title: "Order created", icon: true },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>View details</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert title="Order created" icon>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const WithActionsEnd: StoryType = {
+  args: { icon: true, closable: true, actionsPosition: "end" },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Your order #4812 has been placed.
+      <template #actions>
+        <VcButton>View details</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    actions: { handles: ["close"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert icon closable actions-position="end" @close="handleClose">
+            Your order #4812 has been placed.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const WithTwoActions: StoryType = {
+  args: { title: "Order created", icon: true },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>View details</VcButton>
+        <VcButton :loading="true">Download invoice</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert title="Order created" icon>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleViewDetails">View details</VcButton>
+              <VcButton :loading="true">Download invoice</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const WithCustomActions: StoryType = {
+  args: { title: "Quote expires soon", icon: true, color: "warning", variant: "tonal" },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+      <template #actions>
+        <VcButton>Details</VcButton>
+        <VcButton color="primary" variant="solid">Renew quote</VcButton>
+        <VcButton variant="ghost">Remind me later</VcButton>
+        <VcButton size="xs" prepend-icon="save">Save quote</VcButton>
+      </template>
+    </VcAlert>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A button's own `size`, `color` and `variant` override the values the alert passes to it; props it leaves unset still come from the alert.",
+      },
+      source: {
+        code: `
+          <VcAlert title="Quote expires soon" icon color="warning" variant="tonal">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+            <template #actions>
+              <VcButton @click="handleDetails">Details</VcButton>
+              <VcButton color="primary" variant="solid" @click="handleRenew">Renew quote</VcButton>
+              <VcButton variant="ghost" @click="handleRemind">Remind me later</VcButton>
+              <VcButton size="xs" prepend-icon="save" @click="handleSave">Save quote</VcButton>
+            </template>
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+// 8. Kitchen sink
 export const AllStates: StoryType = {
   render: () => ({
     setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),

@@ -123,14 +123,14 @@ interface IProps$I {
         disabled?: boolean;
     };
 }
-declare var __VLS_16$3: {
+declare var __VLS_16$4: {
     checked: boolean;
 };
 declare var __VLS_19$1: {
     checked: boolean;
 };
 type __VLS_Slots$r = {} & {
-    default?: (props: typeof __VLS_16$3) => any;
+    default?: (props: typeof __VLS_16$4) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
@@ -355,16 +355,24 @@ interface IProps$z {
     title?: string;
     shadow?: boolean;
     closable?: boolean;
+    /** Where the `actions` slot renders: under the text, or at the end of the row before the close button. */
+    actionsPosition?: VcAlertActionsPositionType;
 }
 declare var __VLS_1$6: {};
 declare var __VLS_8$6: {};
-declare var __VLS_10$2: {};
+declare var __VLS_16$3: {};
+declare var __VLS_24$1: {};
+declare var __VLS_26: {};
 type __VLS_Slots$m = {} & {
     'main-icon'?: (props: typeof __VLS_1$6) => any;
 } & {
     default?: (props: typeof __VLS_8$6) => any;
 } & {
-    'close-icon'?: (props: typeof __VLS_10$2) => any;
+    actions?: (props: typeof __VLS_16$3) => any;
+} & {
+    actions?: (props: typeof __VLS_24$1) => any;
+} & {
+    'close-icon'?: (props: typeof __VLS_26) => any;
 };
 declare const __VLS_base$m: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
@@ -374,6 +382,7 @@ declare const __VLS_base$m: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.Co
     size: VcAlertSizeType;
     color: VcAlertColorType;
     variant: VcAlertVariantType;
+    actionsPosition: VcAlertActionsPositionType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$D: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
 declare const _default$D: typeof __VLS_export$D;
@@ -385,8 +394,20 @@ type __VLS_WithSlots$m<T, S> = T & {
 };
 
 interface IProps$y {
+    /**
+     * Taken from the nearest container's button context when not set.
+     * @default "primary"
+     */
     color?: VcButtonColorType;
+    /**
+     * Taken from the nearest container's button context when not set.
+     * @default "md"
+     */
     size?: VcButtonSizeType;
+    /**
+     * Taken from the nearest container's button context when not set.
+     * @default "solid"
+     */
     variant?: VcButtonVariantType;
     type?: VcButtonTypeType;
     disabled?: boolean;
@@ -435,8 +456,6 @@ declare const __VLS_base$l: vue.DefineComponent<IProps$y, {
 }>, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
-    color: VcButtonColorType;
-    variant: VcButtonVariantType;
     loading: boolean;
     disabled: boolean;
     tag: string;
@@ -6805,6 +6824,7 @@ type VcAlertVariantType =
     /** @deprecated Use "tonal" instead. */
     | "outline-dark";
 type VcAlertSizeType = "sm" | "md";
+type VcAlertActionsPositionType = "bottom" | "end";
 type VcButtonColorType = VcMainColorType;
 type VcButtonVariantType =
     | "solid"

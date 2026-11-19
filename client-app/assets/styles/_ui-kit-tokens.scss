@@ -804,7 +804,8 @@
 
   // ============================================================
   // VcAlert — reuses the shared `--color-vc-*` semantic override keys so a
-  // single preset override drives button/badge/chip/alert. Fallbacks match VcBadge.
+  // single preset override drives button/badge/chip/alert. Fallbacks follow VcBadge
+  // except soft/outline/tonal icons (500 step, not 700) and the tonal background (50 tint, not 100).
   // VcAlert supports 4 variants (solid, soft, outline, tonal) — no surface/ghost.
   // ============================================================
   // VcAlert — solid
@@ -832,64 +833,64 @@
   --vc-alert-soft-info-bg:          var(--color-vc-background-soft-info,      var(--color-info-100));
   --vc-alert-soft-info-border:      var(--color-vc-border-soft-info,          var(--color-info-100));
   --vc-alert-soft-info-text:        var(--color-vc-text-soft-info,            var(--color-info-800));
-  --vc-alert-soft-info-icon:        var(--color-vc-icon-soft-info,            var(--color-info-700));
+  --vc-alert-soft-info-icon:        var(--color-vc-icon-soft-info,            var(--color-info-500));
 
   --vc-alert-soft-success-bg:       var(--color-vc-background-soft-success,   var(--color-success-100));
   --vc-alert-soft-success-border:   var(--color-vc-border-soft-success,       var(--color-success-100));
   --vc-alert-soft-success-text:     var(--color-vc-text-soft-success,         var(--color-success-800));
-  --vc-alert-soft-success-icon:     var(--color-vc-icon-soft-success,         var(--color-success-700));
+  --vc-alert-soft-success-icon:     var(--color-vc-icon-soft-success,         var(--color-success-500));
 
   --vc-alert-soft-warning-bg:       var(--color-vc-background-soft-warning,   var(--color-warning-100));
   --vc-alert-soft-warning-border:   var(--color-vc-border-soft-warning,       var(--color-warning-100));
   --vc-alert-soft-warning-text:     var(--color-vc-text-soft-warning,         var(--color-warning-800));
-  --vc-alert-soft-warning-icon:     var(--color-vc-icon-soft-warning,         var(--color-warning-700));
+  --vc-alert-soft-warning-icon:     var(--color-vc-icon-soft-warning,         var(--color-warning-500));
 
   --vc-alert-soft-danger-bg:        var(--color-vc-background-soft-danger,    var(--color-danger-100));
   --vc-alert-soft-danger-border:    var(--color-vc-border-soft-danger,        var(--color-danger-100));
   --vc-alert-soft-danger-text:      var(--color-vc-text-soft-danger,          var(--color-danger-800));
-  --vc-alert-soft-danger-icon:      var(--color-vc-icon-soft-danger,          var(--color-danger-700));
+  --vc-alert-soft-danger-icon:      var(--color-vc-icon-soft-danger,          var(--color-danger-500));
 
   // VcAlert — outline
   --vc-alert-outline-info-bg:          var(--color-vc-background-outline-info,      var(--color-additional-50));
   --vc-alert-outline-info-border:      var(--color-vc-border-outline-info,          var(--color-info-500));
   --vc-alert-outline-info-text:        var(--color-vc-text-outline-info,            var(--color-info-800));
-  --vc-alert-outline-info-icon:        var(--color-vc-icon-outline-info,            var(--color-info-700));
+  --vc-alert-outline-info-icon:        var(--color-vc-icon-outline-info,            var(--color-info-500));
 
   --vc-alert-outline-success-bg:       var(--color-vc-background-outline-success,   var(--color-additional-50));
   --vc-alert-outline-success-border:   var(--color-vc-border-outline-success,       var(--color-success-500));
   --vc-alert-outline-success-text:     var(--color-vc-text-outline-success,         var(--color-success-800));
-  --vc-alert-outline-success-icon:     var(--color-vc-icon-outline-success,         var(--color-success-700));
+  --vc-alert-outline-success-icon:     var(--color-vc-icon-outline-success,         var(--color-success-500));
 
   --vc-alert-outline-warning-bg:       var(--color-vc-background-outline-warning,   var(--color-additional-50));
   --vc-alert-outline-warning-border:   var(--color-vc-border-outline-warning,       var(--color-warning-500));
   --vc-alert-outline-warning-text:     var(--color-vc-text-outline-warning,         var(--color-warning-800));
-  --vc-alert-outline-warning-icon:     var(--color-vc-icon-outline-warning,         var(--color-warning-700));
+  --vc-alert-outline-warning-icon:     var(--color-vc-icon-outline-warning,         var(--color-warning-500));
 
   --vc-alert-outline-danger-bg:        var(--color-vc-background-outline-danger,    var(--color-additional-50));
   --vc-alert-outline-danger-border:    var(--color-vc-border-outline-danger,        var(--color-danger-500));
   --vc-alert-outline-danger-text:      var(--color-vc-text-outline-danger,          var(--color-danger-800));
-  --vc-alert-outline-danger-icon:      var(--color-vc-icon-outline-danger,          var(--color-danger-700));
+  --vc-alert-outline-danger-icon:      var(--color-vc-icon-outline-danger,          var(--color-danger-500));
 
   // VcAlert — tonal (was "outline-dark")
-  --vc-alert-tonal-info-bg:          var(--color-vc-background-tonal-info,      var(--color-info-100));
+  --vc-alert-tonal-info-bg:          var(--color-vc-background-tonal-info,      var(--color-info-50));
   --vc-alert-tonal-info-border:      var(--color-vc-border-tonal-info,          var(--color-info-500));
   --vc-alert-tonal-info-text:        var(--color-vc-text-tonal-info,            var(--color-info-800));
-  --vc-alert-tonal-info-icon:        var(--color-vc-icon-tonal-info,            var(--color-info-700));
+  --vc-alert-tonal-info-icon:        var(--color-vc-icon-tonal-info,            var(--color-info-500));
 
-  --vc-alert-tonal-success-bg:       var(--color-vc-background-tonal-success,   var(--color-success-100));
+  --vc-alert-tonal-success-bg:       var(--color-vc-background-tonal-success,   var(--color-success-50));
   --vc-alert-tonal-success-border:   var(--color-vc-border-tonal-success,       var(--color-success-500));
   --vc-alert-tonal-success-text:     var(--color-vc-text-tonal-success,         var(--color-success-800));
-  --vc-alert-tonal-success-icon:     var(--color-vc-icon-tonal-success,         var(--color-success-700));
+  --vc-alert-tonal-success-icon:     var(--color-vc-icon-tonal-success,         var(--color-success-500));
 
-  --vc-alert-tonal-warning-bg:       var(--color-vc-background-tonal-warning,   var(--color-warning-100));
+  --vc-alert-tonal-warning-bg:       var(--color-vc-background-tonal-warning,   var(--color-warning-50));
   --vc-alert-tonal-warning-border:   var(--color-vc-border-tonal-warning,       var(--color-warning-500));
   --vc-alert-tonal-warning-text:     var(--color-vc-text-tonal-warning,         var(--color-warning-800));
-  --vc-alert-tonal-warning-icon:     var(--color-vc-icon-tonal-warning,         var(--color-warning-700));
+  --vc-alert-tonal-warning-icon:     var(--color-vc-icon-tonal-warning,         var(--color-warning-500));
 
-  --vc-alert-tonal-danger-bg:        var(--color-vc-background-tonal-danger,    var(--color-danger-100));
+  --vc-alert-tonal-danger-bg:        var(--color-vc-background-tonal-danger,    var(--color-danger-50));
   --vc-alert-tonal-danger-border:    var(--color-vc-border-tonal-danger,        var(--color-danger-500));
   --vc-alert-tonal-danger-text:      var(--color-vc-text-tonal-danger,          var(--color-danger-800));
-  --vc-alert-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          var(--color-danger-700));
+  --vc-alert-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          var(--color-danger-500));
 
   // ============================================================
   // VcTileButton — solid shares VcButton's `--color-vc-*` keys and fallbacks, so a solid

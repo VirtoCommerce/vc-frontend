@@ -31,17 +31,22 @@
       --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
       --border-color: var(--color-vc-border-soft-#{$color}, var(--color-#{$color}-100));
       --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
+      --icon-color: var(--color-vc-icon-soft-#{$color}, var(--color-#{$color}-700));
     }
 
     &--outline--#{$color} {
       --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
       --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
+      --icon-color: var(--color-vc-icon-outline-#{$color}, var(--color-#{$color}-700));
     }
 
+    // Tonal keeps the 50 tint in dark too (the baked --color-vc-background-tonal-* preset
+    // hexes stay on the 100 tint for buttons/badges/chips and are not used by alerts).
     &--tonal--#{$color} {
-      --bg-color: var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100));
+      --bg-color: var(--color-#{$color}-50);
       --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
       --border-color: var(--color-vc-border-tonal-#{$color}, var(--color-#{$color}-600));
+      --icon-color: var(--color-vc-icon-tonal-#{$color}, var(--color-#{$color}-700));
     }
   }
 }
