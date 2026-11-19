@@ -2,3 +2,7 @@
 @use "sass:meta";
 
 @include meta.load-css("../client-app/ui-kit/styles");
+
+@layer theme {
+  @include meta.load-css("../client-app/assets/styles/colors");
+}

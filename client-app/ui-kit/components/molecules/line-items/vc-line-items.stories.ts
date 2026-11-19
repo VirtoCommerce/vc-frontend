@@ -141,7 +141,10 @@ export const AddToCart: StoryType = {
           />
 
           <div class="flex gap-1 mt-1.5">
-            <VcChip size="xs" variant="outline-dark" color="neutral" rounded>10 in Cart</VcChip>
+            <VcChip size="sm" variant="tonal" color="neutral" rounded>
+              <VcIcon name="cart" variant="solid" />
+              10
+            </VcChip>
           </div>
       </template>
     </VcLineItems>`,
