@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "该收货地址没有可用的配送方式。",
         "PRICE_INCREASED": "总价已从 {from} 上涨至 {to}。请确认新价格。",
         "UNHANDLED": "此次配送在提醒发出后有所变更。请查看。",
-        "CONFIGURATION_CHANGED": "您配置中的某个选项已无法订购。我们绝不会发送不同的配置：请使用新选项重新订阅或跳过本次配送。"
+        "CONFIGURATION_CHANGED": "您配置中的某个选项已无法订购。我们绝不会发送不同的配置：请使用新选项重新订阅或跳过本次配送。",
+        "NO_PAYMENT_METHOD": "此订阅的付款方式已无法使用。请选择另一张卡，然后确认配送。"
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "您的银行要求您确认此笔付款。",

@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Für die Lieferadresse ist keine Versandart verfügbar.",
         "PRICE_INCREASED": "Der Gesamtbetrag ist von {from} auf {to} gestiegen. Bitte bestätigen Sie den neuen Preis.",
         "UNHANDLED": "Diese Lieferung hat sich seit Ihrer Erinnerung geändert. Bitte prüfen Sie sie.",
-        "CONFIGURATION_CHANGED": "Eine Option Ihrer Konfiguration kann nicht mehr bestellt werden. Wir senden nie eine andere Konfiguration: Schließen Sie das Abo mit neuen Optionen neu ab oder überspringen Sie diese Lieferung."
+        "CONFIGURATION_CHANGED": "Eine Option Ihrer Konfiguration kann nicht mehr bestellt werden. Wir senden nie eine andere Konfiguration: Schließen Sie das Abo mit neuen Optionen neu ab oder überspringen Sie diese Lieferung.",
+        "NO_PAYMENT_METHOD": "Die Zahlungsart dieses Abos kann nicht mehr verwendet werden. Wählen Sie eine andere Karte und bestätigen Sie dann die Lieferung."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Ihre Bank hat Sie gebeten, diese Zahlung zu bestätigen.",

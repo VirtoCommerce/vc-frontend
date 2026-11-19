@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Nenhum método de envio está disponível para o endereço de entrega.",
         "PRICE_INCREASED": "O total subiu de {from} para {to}. Confirme o novo preço.",
         "UNHANDLED": "Esta entrega mudou desde o seu lembrete. Reveja-a.",
-        "CONFIGURATION_CHANGED": "Uma opção da sua configuração não pode mais ser pedida. Nunca enviamos uma configuração diferente: assine novamente com novas opções ou pule esta entrega."
+        "CONFIGURATION_CHANGED": "Uma opção da sua configuração não pode mais ser pedida. Nunca enviamos uma configuração diferente: assine novamente com novas opções ou pule esta entrega.",
+        "NO_PAYMENT_METHOD": "O método de pagamento desta assinatura não pode mais ser usado. Escolha outro cartão e confirme a entrega."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "O seu banco pediu-lhe para confirmar este pagamento.",

@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Dla adresu dostawy nie jest dostępna żadna metoda wysyłki.",
         "PRICE_INCREASED": "Suma wzrosła z {from} do {to}. Potwierdź nową cenę.",
         "UNHANDLED": "Ta dostawa zmieniła się od czasu przypomnienia. Sprawdź ją.",
-        "CONFIGURATION_CHANGED": "Jednej z opcji Twojej konfiguracji nie można już zamówić. Nigdy nie wysyłamy innej konfiguracji: zasubskrybuj ponownie z nowymi opcjami lub pomiń tę dostawę."
+        "CONFIGURATION_CHANGED": "Jednej z opcji Twojej konfiguracji nie można już zamówić. Nigdy nie wysyłamy innej konfiguracji: zasubskrybuj ponownie z nowymi opcjami lub pomiń tę dostawę.",
+        "NO_PAYMENT_METHOD": "Metody płatności tej subskrypcji nie można już używać. Wybierz inną kartę, a następnie potwierdź dostawę."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Twój bank poprosił o potwierdzenie tej płatności.",

@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Toimitusosoitteeseen ei ole saatavilla toimitustapaa.",
         "PRICE_INCREASED": "Kokonaissumma nousi summasta {from} summaan {to}. Vahvista uusi hinta.",
         "UNHANDLED": "Tämä toimitus on muuttunut muistutuksen jälkeen. Tarkista se.",
-        "CONFIGURATION_CHANGED": "Kokoonpanosi vaihtoehtoa ei voi enää tilata. Emme koskaan lähetä eri kokoonpanoa: tilaa uudelleen uusilla vaihtoehdoilla tai ohita tämä toimitus."
+        "CONFIGURATION_CHANGED": "Kokoonpanosi vaihtoehtoa ei voi enää tilata. Emme koskaan lähetä eri kokoonpanoa: tilaa uudelleen uusilla vaihtoehdoilla tai ohita tämä toimitus.",
+        "NO_PAYMENT_METHOD": "Tämän tilauksen maksutapaa ei voi enää käyttää. Valitse toinen kortti ja vahvista sitten toimitus."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Pankkisi pyysi sinua vahvistamaan tämän maksun.",

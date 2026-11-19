@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Nessun metodo di spedizione disponibile per l'indirizzo di consegna.",
         "PRICE_INCREASED": "Il totale è passato da {from} a {to}. Conferma il nuovo prezzo.",
         "UNHANDLED": "Questa consegna è cambiata dopo il promemoria. Controllala.",
-        "CONFIGURATION_CHANGED": "Un'opzione della tua configurazione non può più essere ordinata. Non inviamo mai una configurazione diversa: abbonati di nuovo con nuove opzioni o salta questa consegna."
+        "CONFIGURATION_CHANGED": "Un'opzione della tua configurazione non può più essere ordinata. Non inviamo mai una configurazione diversa: abbonati di nuovo con nuove opzioni o salta questa consegna.",
+        "NO_PAYMENT_METHOD": "Il metodo di pagamento di questo abbonamento non può più essere usato. Scegli un'altra carta, poi conferma la consegna."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "La tua banca ti ha chiesto di confermare questo pagamento.",

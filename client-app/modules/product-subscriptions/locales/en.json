@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "No shipping method is available for the delivery address.",
         "PRICE_INCREASED": "The total went up from {from} to {to}. Please confirm the new price.",
         "UNHANDLED": "This delivery changed since your reminder. Please review it.",
-        "CONFIGURATION_CHANGED": "An option of your configuration can't be ordered any more. We never send a different configuration: subscribe again with new options or skip this delivery."
+        "CONFIGURATION_CHANGED": "An option of your configuration can't be ordered any more. We never send a different configuration: subscribe again with new options or skip this delivery.",
+        "NO_PAYMENT_METHOD": "The payment method of this subscription can't be used any more. Choose another card, then confirm the delivery."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Your bank asked you to confirm this payment.",

@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Aucun mode de livraison n'est disponible pour l'adresse de livraison.",
         "PRICE_INCREASED": "Le total est passé de {from} à {to}. Veuillez confirmer le nouveau prix.",
         "UNHANDLED": "Cette livraison a changé depuis votre rappel. Veuillez la vérifier.",
-        "CONFIGURATION_CHANGED": "Une option de votre configuration ne peut plus être commandée. Nous n'envoyons jamais une autre configuration : abonnez-vous à nouveau avec d'autres options ou sautez cette livraison."
+        "CONFIGURATION_CHANGED": "Une option de votre configuration ne peut plus être commandée. Nous n'envoyons jamais une autre configuration : abonnez-vous à nouveau avec d'autres options ou sautez cette livraison.",
+        "NO_PAYMENT_METHOD": "Le moyen de paiement de cet abonnement ne peut plus être utilisé. Choisissez une autre carte, puis confirmez la livraison."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Votre banque vous demande de confirmer ce paiement.",

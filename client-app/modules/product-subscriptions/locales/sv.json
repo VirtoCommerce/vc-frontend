@@ -211,7 +211,8 @@
         "NO_SHIPPING_METHOD": "Inget leveranssätt finns för leveransadressen.",
         "PRICE_INCREASED": "Totalbeloppet har ökat från {from} till {to}. Bekräfta det nya priset.",
         "UNHANDLED": "Den här leveransen har ändrats sedan påminnelsen. Granska den.",
-        "CONFIGURATION_CHANGED": "Ett alternativ i din konfiguration kan inte längre beställas. Vi skickar aldrig en annan konfiguration: prenumerera igen med nya alternativ eller hoppa över den här leveransen."
+        "CONFIGURATION_CHANGED": "Ett alternativ i din konfiguration kan inte längre beställas. Vi skickar aldrig en annan konfiguration: prenumerera igen med nya alternativ eller hoppa över den här leveransen.",
+        "NO_PAYMENT_METHOD": "Betalningssättet för den här prenumerationen kan inte längre användas. Välj ett annat kort och bekräfta sedan leveransen."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Din bank bad dig bekräfta den här betalningen.",
