@@ -185,16 +185,24 @@ export function subscriptionUnitPrice(
   discountType: SubscriptionDiscountType | null | undefined,
   discountValue: number | null | undefined,
 ): number {
-  const value = discountValue ?? 0;
-  let result = price;
+  const result = discountedPrice(price, discountType, discountValue ?? 0);
+  return Math.round(Math.max(0, result) * 100) / 100;
+}
 
+function discountedPrice(
+  price: number,
+  discountType: SubscriptionDiscountType | null | undefined,
+  value: number,
+): number {
   if (discountType === SubscriptionDiscountType.Percent) {
-    result = price * (1 - value / 100);
-  } else if (discountType === SubscriptionDiscountType.FixedAmount) {
-    result = price - value;
+    return price * (1 - value / 100);
   }
 
-  return Math.round(Math.max(0, result) * 100) / 100;
+  if (discountType === SubscriptionDiscountType.FixedAmount) {
+    return price - value;
+  }
+
+  return price;
 }
 
 /** One choice of a configuration, from the subscription's stored copy or from a cart line. */
