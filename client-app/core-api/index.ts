@@ -147,7 +147,7 @@ export { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 // Product properties grouped and formatted as the product page shows them: hidden ones out, multivalues joined.
 export { getPropertiesGroupedByName } from "@/core/utilities/properties";
 // The quantity rules the host's add-to-cart controls validate with: min, max, pack size, available stock.
-export { useQuantityValidationSchema } from "@/ui-kit/composables/useQuantityValidationSchema";
+export { useQuantityValidationSchema } from "@/ui-kit/composables";
 // A URL parameter a plugin owns preselects the product page's configuration.
 export { registerProductConfigurationSource } from "@/shared/catalog/composables/useProductConfigurationSources";
 export type { ProductConfigurationSourceType } from "@/shared/catalog/composables/useProductConfigurationSources";
