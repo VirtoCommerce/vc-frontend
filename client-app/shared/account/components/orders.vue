@@ -96,12 +96,14 @@
     <VcWidget v-else size="lg">
       <template #default-container>
         <OrdersTable
+          class="orders__table"
           :loading="ordersLoading"
           :orders="orders"
           :sort="sort"
           :pages="pages"
           :page="page"
           :order-scope="orderScope"
+          bordered
           @header-click="applySorting"
           @page-changed="changePage"
           @row-click="goToOrderDetails"
@@ -275,6 +277,11 @@ watch(
     @media (width >= theme("screens.lg")) {
       @apply flex flex-wrap mb-4 gap-x-3 gap-y-2;
     }
+  }
+
+  &__table {
+    // Flush in the widget body: the table's frame follows the widget's inner curve.
+    --vc-table-radius: calc(var(--vc-widget-radius) - var(--vc-widget-border-width, 1px));
   }
 }
 </style>
