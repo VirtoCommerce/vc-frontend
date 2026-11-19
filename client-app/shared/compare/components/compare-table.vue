@@ -376,7 +376,7 @@ const headerRowRef = ref<HTMLElement | null>(null);
 const headerRowAnchorRef = useTemplateRef<HTMLElement>("headerRowAnchorRef");
 const rowDescriptionIdPrefix = useId();
 
-// Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
+// Kept live by AppHeader/MobileHeader — the app header's exact current height (it's shorter on
 // mobile), so the table's own header row can stick flush below it instead of under/away from it.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height", undefined, { observe: true });
 const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.value ?? "0") || 0);
@@ -494,7 +494,7 @@ watch(
     -ms-overflow-style: none;
     scrollbar-width: none;
 
-    // Sits flush below the app header (shorter on mobile — see vc-header.vue/mobile-header.vue,
+    // Sits flush below the app header (shorter on mobile — see app-header.vue/mobile-header.vue,
     // which keep this var updated with the header's live, current height).
     top: var(--vc-app-header-height, 0px);
 
