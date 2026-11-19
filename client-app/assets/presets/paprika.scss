@@ -4,7 +4,7 @@
 @layer vc.preset {
   html[data-preset="paprika"] {
     --vc-plate-bg-color: color-mix(in srgb, var(--color-additional-50) 75%, var(--color-warning-50));
-    --vc-widget-bg-color: var(--vc-plate-bg-color);
+    --vc-menu-item-bg-color: transparent;
   }
 
   // The light rule matches in dark too, so dark sets the plate back to additional-50.
