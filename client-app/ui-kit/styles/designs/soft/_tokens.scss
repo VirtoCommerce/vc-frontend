@@ -47,8 +47,8 @@ html[data-design="soft"] {
   // VcContainer: no background of its own (blocks/vc-container.scss drops its pattern layer too).
   --vc-container-bg-color: transparent;
 
-  // VcFrame: the app's page colour; without the app, its palette default.
-  --vc-frame-bg-color: var(--body-bg-color, var(--color-neutral-50));
+  // VcFrame: the palette's page colour; the app maps its own in designs/soft/_tokens.scss.
+  --vc-frame-bg-color: var(--color-neutral-50);
   --vc-frame-padding-x: 0.75rem;
   --vc-frame-max-width: 96.875rem;
   --vc-frame-gap: 0.8125rem;

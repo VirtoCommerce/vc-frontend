@@ -171,7 +171,7 @@ A design is a folder in `client-app/designs/`:
 client-app/designs/
   <name>/             # one folder per design; ours is soft
     design.ts         # export const design = { fonts: ["https://…"] }: its font stylesheet URLs
-    _tokens.scss      # html[data-design="<name>"] { token values }; soft keeps its own in ui-kit (below)
+    _tokens.scss      # html[data-design="<name>"] { token values }; soft's here only map app colours, the rest are in ui-kit (below)
     index.scss        # the wiring, the same in every design (below)
     blocks/           # one file per app BEM block, named after it
       footer-links.scss
@@ -181,7 +181,7 @@ client-app/designs/
 client-app/ui-kit/styles/designs/
   <name>/             # how ui-kit looks in the design, next to the components it restyles
     index.scss        # the kit's wiring: the files below, each in its layer
-    _tokens.scss      # soft's token values: every one is a kit token
+    _tokens.scss      # soft's token values: kit tokens, palette colours only
     blocks/
       vc-widget.scss
     dark/
@@ -602,7 +602,8 @@ MobileHeader in the main layout, by the secure header in the secure layout) and 
 the page.
 
 The frame owns the space around the page through the `--vc-frame-*` tokens. Classic sets none: each token falls back
-to its Classic value in the table below; soft sets them in `ui-kit/styles/designs/soft/_tokens.scss`. Set them on `:root` or `html`
+to its Classic value in the table below; soft sets them in `ui-kit/styles/designs/soft/_tokens.scss`, and its canvas, `--vc-frame-bg-color: var(--body-bg-color)`,
+in `designs/soft/_tokens.scss`, because the page colour is the app's. Set them on `:root` or `html`
 (a design: `html[data-design="<design>"]`); a fork sets them in `_custom.scss`, which beats a design's values. The
 frame does not style the header or the footer: they keep their own look. VcFrame sets the space above the header and
 below the footer. VcFrame publishes the header width, `--vc-frame-header-width` =
@@ -648,7 +649,7 @@ same way, with `--vc-frame-footer-offset-x`.
   padding to 0.
 - VcContainer paints its own background over the canvas (its `bg-color` prop, else `--vc-container-bg-color`, which
   defaults to `--body-bg-color`; nothing when `has-bg-image` is false), with the hexagon pattern on top. Soft paints
-  neither: `--vc-container-bg-color` is `transparent` (`_tokens.scss`) and `blocks/vc-container.scss` hides the
+  neither: `--vc-container-bg-color` is `transparent` (`_tokens.scss`) and `blocks/vc-container.scss` (in ui-kit) hides the
   `__bg` layer, so the canvas shows everywhere, also behind a container given a `bg-color`. In classic, a fork that
   sets `--vc-frame-bg-color` alone sees it only around the containers: for one colour everywhere, set
   `--vc-container-bg-color` to the same value.
@@ -766,7 +767,7 @@ A fork that edited one of these merges its change into the new place, in the new
 | `assets/styles/_dark-kit.scss`, `assets/styles/dark/{atoms,molecules,organisms}/**` | `ui-kit/styles/_dark-kit.scss`, `ui-kit/styles/dark/**` (`vc.kit`); `dark/shared/**` stays |
 | the kit files of `assets/styles/_print.scss`, `assets/styles/print/**` | `ui-kit/styles/_print-kit.scss`, `ui-kit/styles/print/**` (`vc.print`); `_print.scss` keeps the `html`, `body` and `#app` rules |
 | `designs/soft/blocks/vc-{container,tab-switch-group,typography,widget}.scss`, `designs/soft/dark/vc-tab-switch-group.scss` | `ui-kit/styles/designs/soft/blocks/`, `ui-kit/styles/designs/soft/dark/` (`vc.design.kit`), loaded by `ui-kit/styles/designs/soft/index.scss`, which `designs/soft/index.scss` loads whole |
-| `designs/soft/_tokens.scss` | `ui-kit/styles/designs/soft/_tokens.scss` (`theme`), loaded the same way |
+| `designs/soft/_tokens.scss` | `ui-kit/styles/designs/soft/_tokens.scss` (`theme`), loaded the same way; `designs/soft/_tokens.scss` keeps only the values taken from app colours |
 | `:root { --vc-radius: 0.5rem }` in `main.scss` | `ui-kit/styles/_ui-kit-tokens.scss` (`theme`) |
 | `#popover-host` in `App.vue` (the element and its `vc.app` rule) | the `uiKit` plugin adds the element to `body`; its rule is in `ui-kit/styles/_popover-host.scss` (`vc.kit`). Drop your `App.vue` copy |
 | `main.scss` loading `_fallback-palette`, `_ui-kit-tokens`, `_popover-host`, `_dark-kit` and `_print-kit` one by one | one `@include meta.load-css("@/ui-kit/styles")` (`ui-kit/styles/index.scss` puts each in its layer). Do the same in your entry stylesheets |

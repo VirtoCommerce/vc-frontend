@@ -2,6 +2,10 @@
 
 @include meta.load-css("@/ui-kit/styles/designs/soft");
 
+@layer theme {
+  @include meta.load-css("tokens");
+}
+
 @layer vc.design.app {
   html[data-design="soft"] {
     @include meta.load-css("blocks/footer-links");

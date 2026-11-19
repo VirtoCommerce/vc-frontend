@@ -24,8 +24,10 @@ what follows; the rest is review-only.
 3. A design's `blocks/<block>.scss` and `dark/<block>.scss` style only their own BEM block (block, elements,
    modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
    block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
-   block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are all kit tokens, so its
-   `_tokens.scss` sits in the kit folder too; a fork's own design keeps its `_tokens.scss` in its own folder.
+   block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are kit tokens, so its
+   `_tokens.scss` sits in the kit folder too, with palette values; a value taken from an app colour
+   (`--vc-frame-bg-color: var(--body-bg-color)`) goes in the design's own `_tokens.scss`, loaded after the kit's.
+   A fork's own design keeps its `_tokens.scss` in its own folder.
    The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder
    whole (`@include meta.load-css("@/ui-kit/styles/designs/<design>")`) and its own files, never a kit file
    by name.
