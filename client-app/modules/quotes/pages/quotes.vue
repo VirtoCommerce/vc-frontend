@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <div class="quotes">
     <!-- Title block -->
-    <div class="flex items-center justify-between gap-2">
+    <div class="quotes__header">
       <VcTypography tag="h1">
         {{ $t("quotes.title") }}
       </VcTypography>
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
-        <span class="hidden sm:inline">{{ $t("quotes.request_quote_button") }}</span>
+        <span class="quotes__request-text quotes__request-text--wide">{{ $t("quotes.request_quote_button") }}</span>
 
-        <span class="sm:hidden">{{ $t("quotes.request_quote_button") }}</span>
+        <span class="quotes__request-text quotes__request-text--narrow">{{ $t("quotes.request_quote_button") }}</span>
       </VcButton>
     </div>
 
@@ -19,7 +19,7 @@
       :placeholder="$t('quotes.search_placeholder')"
       clearable
       maxlength="64"
-      class="w-full"
+      class="quotes__search"
       @keydown.enter="applyKeyword"
       @clear="resetKeyword"
     >
@@ -66,41 +66,41 @@
           <template #mobile-item="itemData">
             <button
               type="button"
-              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+              class="quotes__card"
               tabindex="0"
               @click="goToQuoteDetails(itemData.item)"
               @keyup.enter="goToQuoteDetails(itemData.item)"
             >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+              <div class="quotes__field">
+                <span class="quotes__label">
                   {{ $t("quotes.quote_number_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                <span class="quotes__number">
                   {{ itemData.item.number }}
                 </span>
               </div>
 
-              <div class="flex flex-col items-end justify-center">
+              <div class="quotes__field quotes__field--status">
                 <QuoteStatus :status="itemData.item.status" />
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+              <div class="quotes__field">
+                <span class="quotes__label">
                   {{ $t("quotes.date_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis">
+                <span class="quotes__value">
                   {{ $d(itemData.item?.createdDate) }}
                 </span>
               </div>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
+              <div class="quotes__field">
+                <span class="quotes__label">
                   {{ $t("quotes.total_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis font-black">
+                <span class="quotes__value quotes__value--strong">
                   {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
                 </span>
               </div>
@@ -111,25 +111,25 @@
             <tr
               v-for="quote in quotes"
               :key="quote.id"
-              class="cursor-pointer last:rounded-b-[--vc-radius] even:bg-neutral-50 hover:bg-neutral-200"
+              class="quotes__row"
               tabindex="0"
               @click="goToQuoteDetails(quote)"
               @keydown.enter.prevent="goToQuoteDetails(quote)"
               @keydown.space.prevent="goToQuoteDetails(quote)"
             >
-              <td class="overflow-hidden text-ellipsis p-5">
+              <td class="quotes__cell">
                 {{ quote.number }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5">
+              <td class="quotes__cell">
                 {{ $d(quote.createdDate) }}
               </td>
 
-              <td class="p-1">
-                <QuoteStatus :status="quote.status" class="inline-block" />
+              <td class="quotes__status-cell">
+                <QuoteStatus :status="quote.status" class="quotes__status" />
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5 text-right">
+              <td class="quotes__cell quotes__cell--total">
                 {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
               </td>
             </tr>
@@ -248,3 +248,92 @@ watch(
   },
 );
 </script>
+
+<style lang="scss">
+.quotes {
+  &__header {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  &__request-text {
+    &--wide {
+      @apply hidden;
+
+      @media (width >= theme("screens.sm")) {
+        @apply inline;
+      }
+    }
+
+    &--narrow {
+      @media (width >= theme("screens.sm")) {
+        @apply hidden;
+      }
+    }
+  }
+
+  &__search {
+    @apply w-full;
+  }
+
+  &__card {
+    @apply grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
+  }
+
+  &__field {
+    @apply flex flex-col;
+
+    &--status {
+      @apply items-end justify-center;
+    }
+  }
+
+  &__label {
+    @apply text-sm text-neutral-400;
+  }
+
+  &__number {
+    @apply overflow-hidden text-ellipsis pr-4 font-black;
+  }
+
+  &__value {
+    @apply overflow-hidden text-ellipsis;
+
+    &--strong {
+      @apply font-black;
+    }
+  }
+
+  &__row {
+    @apply cursor-pointer;
+
+    &:last-child {
+      @apply rounded-b-[--vc-radius];
+    }
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    // After the zebra: a hovered even row takes the hover colour.
+    &:hover {
+      @apply bg-[var(--vc-table-row-hover-bg-color,var(--color-neutral-200))];
+    }
+  }
+
+  &__cell {
+    @apply overflow-hidden text-ellipsis p-5;
+
+    &--total {
+      @apply text-right;
+    }
+  }
+
+  &__status-cell {
+    @apply p-1;
+  }
+
+  &__status {
+    @apply inline-block;
+  }
+}
+</style>

@@ -25,7 +25,7 @@ describe("layout vocabulary", () => {
   });
 
   it("pins the region ids and their order", () => {
-    expect(LAYOUT_REGION_IDS).toEqual(["statistics", "mainLeft", "mainRight"]);
+    expect(LAYOUT_REGION_IDS).toEqual(["statistics", "fullWidth", "mainLeft", "mainRight"]);
   });
 
   it("pins the schema version", () => {

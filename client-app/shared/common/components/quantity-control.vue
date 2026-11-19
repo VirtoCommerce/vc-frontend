@@ -56,7 +56,7 @@
 import { debounce } from "lodash-es";
 import { computed, nextTick, onMounted, ref, toRefs, watch, watchEffect } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants/line-items";
-import { useQuantityField } from "@/ui-kit/composables/useQuantityField";
+import { useQuantityField } from "@/ui-kit/composables";
 
 interface IEmits {
   "update:cartItemQuantity": [quantity: number];

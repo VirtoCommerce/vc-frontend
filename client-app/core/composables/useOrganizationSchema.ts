@@ -1,23 +1,7 @@
 import { useHead } from "@unhead/vue";
 import { useBrandProfile } from "./useBrandProfile";
 import { useIsHomePage } from "./useIsHomePage";
-
-export type OrganizationFactsType = {
-  id?: string;
-  name?: string;
-  url?: string;
-  /** The *store brand* logo, never a buyer organization's. Expected already absolute. */
-  logoUrl?: string;
-  /** One or two sentences on what the store sells. Expected already whitespace-collapsed. */
-  description?: string;
-  /** Absolute profile urls linking the domain to brands an agent already knows. */
-  sameAs?: string[];
-  tagline?: string;
-  /** Expected already validated as an international number. */
-  contactPhone?: string;
-  /** Expected already validated as an ISO 8601 calendar date. */
-  foundingDate?: string;
-};
+import type { OrganizationFactsType } from "./useBrandProfile";
 
 const SCHEMA_ORG_CONTEXT = "https://schema.org";
 
