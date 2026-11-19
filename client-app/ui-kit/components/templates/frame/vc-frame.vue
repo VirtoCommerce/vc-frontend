@@ -21,8 +21,8 @@ defineSlots<{
   /**
    * The page header. Rendered with no wrapper: each root element of this slot is a direct child of the frame, so a
    * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky. A
-   * piece takes the width `min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with auto
-   * margins; the frame applies the same to the footer.
+   * piece takes the frame's header width, `inline-size: var(--vc-frame-header-width)`, centred with auto margins;
+   * the frame sizes the footer the same way, with `--vc-frame-footer-offset-x`.
    */
   header?: () => VNode[];
   /** The page content, inside the frame's `<main id="main-content">`, the skip-to-content target. */
@@ -82,6 +82,8 @@ function hasContent(nodes: VNodeArrayChildren | undefined): boolean {
   --inherited-container-max-width: var(--vc-container-max-width);
   --inherited-container-pt: var(--vc-container-pt);
   --inherited-container-pb: var(--vc-container-pb);
+  // The width of each header piece; `100%` resolves where a piece reads it.
+  --vc-frame-header-width: min(100% - 2 * var(--vc-frame-header-offset-x, 0px), var(--vc-frame-max-width, 100%));
 
   @apply flex min-h-screen flex-col bg-[var(--vc-frame-bg-color,transparent)];
 

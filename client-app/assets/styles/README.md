@@ -535,9 +535,10 @@ The frame owns the space around the page through the `--vc-frame-*` tokens. Clas
 to its Classic value in the table below; soft sets them in `designs/soft/_tokens.scss`. Set them on `:root` or `html`
 (a design: `html[data-design="<design>"]`); a fork sets them in `_custom.scss`, which beats a design's values. The
 frame does not style the header or the footer: they keep their own look. VcFrame sets the space above the header and
-below the footer. A header piece takes the width `min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)` centred with
-auto margins (the header slot has no wrapper, so each piece does it itself), and the frame applies the same to the
-footer.
+below the footer. VcFrame publishes the header width, `--vc-frame-header-width` =
+`min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)`; `100%` resolves where it is read. The header slot
+has no wrapper, so each header piece sets `inline-size: var(--vc-frame-header-width)` with auto margins itself; a
+fork's own header does the same. The frame sizes the footer the same way, with `--vc-frame-footer-offset-x`.
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |
@@ -546,11 +547,11 @@ footer.
 | `--vc-frame-max-width` | The content column: `--vc-container-max-width` of every VcContainer in the page | VcFrame's `main` | Not set: the container's own 87.75rem (1404px) | 96.875rem (1550px) |
 | `--vc-frame-gap` | The value of the four vertical spaces below (above and below the header, above and below the footer) when they are not set | VcFrame | Not set: 0 | 13px · `sm` 26px |
 | `--vc-frame-header-offset-top` | The space above the header | VcFrame's `::before` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
-| `--vc-frame-header-offset-x` | The header's distance from the window's sides; never wider than the content column (`--vc-frame-max-width`) | The desktop header rows (`app-header.vue`), the mobile header, the secure header | Not set: 0 | The side space; from 1614px the header lines up with the 1550px column |
+| `--vc-frame-header-offset-x` | The header's distance from the window's sides; never wider than the content column (`--vc-frame-max-width`) | VcFrame, into `--vc-frame-header-width`, which the desktop header rows (`app-header.vue`), the mobile header and the secure header read | Not set: `0px` | The side space; from 1614px the header lines up with the 1550px column |
 | `--vc-frame-header-offset-bottom` | The space between the header and the page | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 | `--vc-frame-main-min-height` | The page's minimum height | VcFrame's `main` | `auto`; `main-layout` sets `60vh` on `.main-layout` | As classic |
 | `--vc-frame-footer-offset-top` | The space between the page and the footer | VcFrame's `main` | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
-| `--vc-frame-footer-offset-x` | The footer's distance from the window's sides; never wider than the content column (`--vc-frame-max-width`) | VcFrame's footer wrapper (`inline-size`) | Not set: 0 | As the header |
+| `--vc-frame-footer-offset-x` | The footer's distance from the window's sides; never wider than the content column (`--vc-frame-max-width`) | VcFrame's footer wrapper (`inline-size`) | Not set: `0px` | As the header |
 | `--vc-frame-footer-offset-bottom` | The space below the footer | VcFrame's root (`padding-block-end`) | Not set: `--vc-frame-gap`, else 0 | Not set: the gap |
 
 - VcFrame sets the container's own tokens on its `main`, so a design or a fork that sets the side space or the column
@@ -563,6 +564,9 @@ footer.
 - A container token set above the frame (`:root { --vc-container-px: … }` in `_custom.scss`, or a design's) keeps
   priority over the frame's values, and so does one a page sets on its own wrapper.
 - A fork that sets `--vc-frame-max-width` also narrows the header and footer.
+- `--vc-frame-max-width`, `--vc-frame-header-offset-x` and `--vc-frame-footer-offset-x` take a length: `0px`, not
+  `0`, and not `none`. The header and footer widths put them in `min()`, where a bare `0` is a number and `none` is no
+  value: the width falls back to `auto` and the header or footer shrinks to its content.
 - `--vc-frame-main-min-height` is set on the layout's class, not on `:root`: the secure layout has no minimum. A fork
   changes it on `.main-layout`.
 - Print gets the classic frame in every design: VcFrame resets the `--vc-frame-*` canvas, side space, column, gap
