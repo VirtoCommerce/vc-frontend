@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { invoke } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
@@ -136,15 +137,13 @@ function openDeleteListModal(list: WishlistType, triggerElement?: HTMLElement) {
   });
 }
 
-async function loadLists(): Promise<void> {
+void invoke(async () => {
   try {
     await fetchWishlists();
   } finally {
     listsFetching.value = false;
   }
-}
-
-void loadLists();
+});
 </script>
 
 <style lang="scss">

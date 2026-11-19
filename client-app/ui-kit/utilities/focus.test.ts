@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   classifyShellFocusOut,
   findFirstFocusableElement,
+  focusFirstElement,
   shellFocusEntered,
   watchFocusLeavingOwnPopover,
 } from "./focus";
@@ -45,7 +46,7 @@ afterEach(() => {
 });
 
 describe("findFirstFocusableElement", () => {
-  function initialFocusId(): string | undefined {
+  function firstFocusableId(): string | undefined {
     return findFirstFocusableElement(el("dialog"), {})?.id;
   }
 
@@ -54,7 +55,7 @@ describe("findFirstFocusableElement", () => {
       <div id="dialog"><p id="text"></p><button id="delete"></button><button id="cancel"></button></div>
     `;
 
-    expect(initialFocusId()).toBe("delete");
+    expect(firstFocusableId()).toBe("delete");
   });
 
   it("passes over an element marked data-skip-autofocus", () => {
@@ -62,7 +63,31 @@ describe("findFirstFocusableElement", () => {
       <div id="dialog"><button id="close" data-skip-autofocus></button><button id="delete"></button></div>
     `;
 
-    expect(initialFocusId()).toBe("delete");
+    expect(firstFocusableId()).toBe("delete");
+  });
+
+  // VcPopover asks it where to return the focus inside its trigger; a dialog's opening rule has no say there.
+  it("keeps to DOM order when a later element is marked data-autofocus", () => {
+    document.body.innerHTML = `
+      <div id="dialog"><button id="delete"></button><button id="cancel" data-autofocus></button></div>
+    `;
+
+    expect(firstFocusableId()).toBe("delete");
+  });
+});
+
+describe("focusFirstElement", () => {
+  function focusedId(): string | undefined {
+    focusFirstElement(el("dialog"), {});
+    return document.activeElement?.id;
+  }
+
+  it("focuses the first focusable element in DOM order", () => {
+    document.body.innerHTML = `
+      <div id="dialog"><p id="text"></p><button id="delete"></button><button id="cancel"></button></div>
+    `;
+
+    expect(focusedId()).toBe("delete");
   });
 
   it("prefers the element marked data-autofocus to an earlier one", () => {
@@ -70,7 +95,7 @@ describe("findFirstFocusableElement", () => {
       <div id="dialog"><button id="delete"></button><button id="cancel" data-autofocus></button></div>
     `;
 
-    expect(initialFocusId()).toBe("cancel");
+    expect(focusedId()).toBe("cancel");
   });
 
   it("takes the first focusable element inside a marked wrapper", () => {
@@ -81,7 +106,7 @@ describe("findFirstFocusableElement", () => {
       </div>
     `;
 
-    expect(initialFocusId()).toBe("name");
+    expect(focusedId()).toBe("name");
   });
 
   it("falls back to DOM order when the marked element cannot take the focus", () => {
@@ -89,7 +114,13 @@ describe("findFirstFocusableElement", () => {
       <div id="dialog"><button id="delete"></button><button id="cancel" data-autofocus disabled></button></div>
     `;
 
-    expect(initialFocusId()).toBe("delete");
+    expect(focusedId()).toBe("delete");
+  });
+
+  it("reports whether anything took the focus", () => {
+    document.body.innerHTML = `<div id="dialog"><p id="text"></p></div>`;
+
+    expect(focusFirstElement(el("dialog"), {})).toBe(false);
   });
 });
 

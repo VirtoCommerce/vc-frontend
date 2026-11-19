@@ -1,7 +1,7 @@
 import { cleanup, configure, render } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
-import { findFirstFocusableElement } from "@/ui-kit/utilities/focus";
+import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import DeactivateBackInStockSubscriptionModal from "./deactivate-back-in-stock-subscription-modal.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
@@ -41,7 +41,9 @@ describe("DeactivateBackInStockSubscriptionModal", () => {
   it("opens on Cancel, not on the destructive button", () => {
     const { getByTestId } = renderModal();
 
-    // `VcDialog` gives the initial focus to the element this helper returns.
-    expect(findFirstFocusableElement(getByTestId("modal"), {})).toBe(getByTestId("cancel-button"));
+    // `VcDialog` gives the initial focus through this helper.
+    focusFirstElement(getByTestId("modal"), {});
+
+    expect(document.activeElement).toBe(getByTestId("cancel-button"));
   });
 });
