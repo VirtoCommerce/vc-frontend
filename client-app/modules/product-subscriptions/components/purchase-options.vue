@@ -1,6 +1,7 @@
 <template>
   <div class="purchase-options" :class="{ 'purchase-options--compact': compact }">
-    <AddToCartSimple :product="product">
+    <!-- A configurable product keeps the core configured add-to-cart: the choice applies to the line it creates. -->
+    <component :is="isConfigurable ? AddToCart : AddToCartSimple" :product="product">
       <InStock
         v-if="!hideStock"
         :is-in-stock="product.availabilityData?.isInStock"
@@ -8,8 +9,12 @@
         :quantity="product.availabilityData?.availableQuantity"
       />
 
-      <CountInCart :product-id="product.id" />
-    </AddToCartSimple>
+      <CountInCart
+        v-if="!isConfigurable || configurableLineItemId"
+        :product-id="product.id"
+        :line-item-id="isConfigurable ? configurableLineItemId : undefined"
+      />
+    </component>
 
     <output
       v-if="offer && lineItem && syncState"
@@ -67,6 +72,10 @@
           test-id="purchase-option-once"
         >
           <template #title>{{ $t("product_subscriptions.purchase_options.one_time") }}</template>
+
+          <template v-if="configuredPrice" #price>
+            <VcPriceDisplay :value="configuredPrice" data-test-id="purchase-option-once-price" />
+          </template>
         </PurchaseOption>
 
         <PurchaseOption
@@ -78,6 +87,15 @@
         >
           <template #title>{{ $t("product_subscriptions.purchase_options.subscribe") }}</template>
 
+          <!-- A configured product's price comes from its options: the subscription price follows every change. -->
+          <template v-if="configuredSubscriptionPrice" #price>
+            <VcPriceDisplay :value="configuredSubscriptionPrice" data-test-id="purchase-option-subscribe-price" />
+
+            <s v-if="configuredSubscriptionPrice.amount < configuredPrice!.amount" class="purchase-options__strike">
+              <VcPriceDisplay :value="configuredPrice!" />
+            </s>
+          </template>
+
           <SubscriptionFrequencyPicker
             v-model="selectedInterval"
             :intervals="offer.intervals"
@@ -87,6 +105,14 @@
           />
 
           <SubscriptionBenefits class="purchase-options__benefits" />
+
+          <p
+            v-if="isConfigurable"
+            class="purchase-options__configuration-note"
+            data-test-id="purchase-option-configuration-note"
+          >
+            {{ $t("product_subscriptions.purchase_options.configuration_note") }}
+          </p>
 
           <HowItWorksLink class="purchase-options__how" test-id="purchase-option-how-it-works-link" />
 
@@ -104,15 +130,25 @@ import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
+import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
 import { useDefaultCartSubscriptions } from "../composables/useCartSubscriptions";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
-import { subscriptionErrorMessage, intervalKey, intervalLabel, intervalShortLabel, parseIntervalKey } from "../utils";
+import {
+  subscriptionErrorMessage,
+  intervalKey,
+  intervalLabel,
+  intervalShortLabel,
+  parseIntervalKey,
+  subscriptionUnitPrice,
+} from "../utils";
 import HowItWorksLink from "./how-it-works-link.vue";
 import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
-import type { Product } from "@/core/api/graphql/types";
+import type { SubscriptionOfferType } from "../composables/useSubscriptionOffers";
+import type { MoneyType, Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
+import AddToCart from "@/shared/cart/components/add-to-cart.vue";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
 import InStock from "@/shared/catalog/components/in-stock.vue";
 
@@ -127,7 +163,7 @@ interface IProps {
 const props = defineProps<IProps>();
 const product = toRef(props, "product");
 
-const { t } = useI18n();
+const { t, n } = useI18n();
 const { isAuthenticated } = useUser();
 const { cart } = useShortCart();
 const { loadOffers, offerFor } = useSubscriptionOffers();
@@ -142,7 +178,20 @@ const syncError = ref<string>();
 // While a change is saved the choice is locked: a second click would race the first request.
 const isSaving = computed(() => syncState.value === "saving");
 
-// No prices or discount badges on the options for now: the block's own price stays the one price shown.
+// No prices or discount badges on the options of a simple product: the block's own price stays the one price shown.
+// A configured product is the exception: its price depends on the options, so both options show what one costs.
+const isConfigurable = computed(() => !!product.value.isConfigurable);
+const { configurableLineItemId } = useConfigurableLineItemId();
+const { configuredLineItem } = useConfigurableProduct(product.value.id);
+
+const configuredPrice = computed<MoneyType | undefined>(() => {
+  const price = isConfigurable.value ? configuredLineItem.value?.extendedPrice : undefined;
+  return price ? (price as MoneyType) : undefined;
+});
+
+const configuredSubscriptionPrice = computed(() =>
+  configuredPrice.value && offer.value ? toSubscriptionMoney(configuredPrice.value, offer.value) : undefined,
+);
 
 const intervalItems = computed(() =>
   (offer.value?.intervals ?? []).map((x) => ({
@@ -151,7 +200,12 @@ const intervalItems = computed(() =>
   })),
 );
 
-const lineItem = computed(() => cart.value?.items?.find((item) => item.productId === product.value.id));
+// A configured product can be in the cart several times with other options: the line is the one this page edits.
+const lineItem = computed(() =>
+  isConfigurable.value
+    ? cart.value?.items?.find((item) => item.id === configurableLineItemId.value)
+    : cart.value?.items?.find((item) => item.productId === product.value.id),
+);
 const activeSubscription = computed(() => (lineItem.value ? byLineItemId.value.get(lineItem.value.id) : undefined));
 
 watch(
@@ -217,6 +271,16 @@ async function syncCartLine(): Promise<void> {
 // The core add-to-cart creates the line; the choice is applied to it as soon as it exists or changes.
 watch([() => lineItem.value?.id, mode, selectedInterval], () => void syncCartLine());
 
+function toSubscriptionMoney(price: MoneyType, value: SubscriptionOfferType): MoneyType {
+  const amount = subscriptionUnitPrice(price.amount, value.discountType, value.discountValue);
+  const code = price.currency?.code;
+  return {
+    ...price,
+    amount,
+    formattedAmount: code ? n(amount, { style: "currency", currency: code }) : String(amount),
+  };
+}
+
 /** The offer's default frequency (its first when none is marked). */
 function defaultIntervalKey(): string | undefined {
   const intervals = offer.value?.intervals ?? [];
@@ -260,6 +324,14 @@ watch(
 
   &__compact-frequency {
     @apply w-36;
+  }
+
+  &__strike {
+    @apply ms-1.5 text-xs font-normal text-neutral-500;
+  }
+
+  &__configuration-note {
+    @apply text-xs text-neutral-600;
   }
 
   &__status {

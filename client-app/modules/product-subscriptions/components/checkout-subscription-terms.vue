@@ -35,6 +35,17 @@
           </div>
         </template>
 
+        <!-- A configured product: what every delivery brings, so the customer knows what is subscribed to. -->
+        <template #after-title="{ item }">
+          <span
+            v-if="compositionOf(item.id)"
+            class="checkout-subscription-terms__composition"
+            :data-test-id="`checkout-subscription-composition-${item.id}`"
+          >
+            {{ $t("product_subscriptions.checkout.composition", { items: compositionOf(item.id) }) }}
+          </span>
+        </template>
+
         <template #default="{ item }">
           <span class="checkout-subscription-terms__interval">
             <!-- A stacked row (narrow screens) has no column headings: the value carries its own label. -->
@@ -107,7 +118,12 @@ import { useOrderPlacement } from "@/shared/checkout/composables/useCheckout";
 import { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
 import { acceptSubscriptionTerms, getSubscriptionTerms } from "../api/graphql";
 import { useSubscriptionCheckout } from "../composables/useSubscriptionCheckout";
-import { intervalShortLabel, needsCardPaymentMethodNotice, subscriptionErrorMessage } from "../utils";
+import {
+  configurationSummary,
+  intervalShortLabel,
+  needsCardPaymentMethodNotice,
+  subscriptionErrorMessage,
+} from "../utils";
 import type { GetSubscriptionTermsQuery } from "../api/graphql/types";
 import type { CartType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
@@ -146,6 +162,26 @@ const intervalsByLineId = computed(
   () =>
     new Map(subscribedItems.value.map((x) => [x.lineItemId, intervalShortLabel(t, x.intervalUnit, x.intervalCount)])),
 );
+
+const compositionsByLineId = computed(
+  () =>
+    new Map(
+      subscribedLines.value.map((line) => [
+        line.id,
+        configurationSummary(
+          (line.configurationItems ?? []).map((x) => ({
+            productName: x.type === "Product" || x.type === "Variation" ? x.name : undefined,
+            customText: x.customText,
+            files: x.files,
+          })),
+        ),
+      ]),
+    ),
+);
+
+function compositionOf(lineItemId: string): string {
+  return compositionsByLineId.value.get(lineItemId) ?? "";
+}
 
 function intervalOf(lineItemId: string): string {
   return intervalsByLineId.value.get(lineItemId) ?? "";
@@ -240,6 +276,10 @@ onUnmounted(() => {
 
   // Same breakpoint as the kit's line items: above it a table with headings, below it stacked rows. In the table the
   // kit sizes the column by its cells, so the cell is wide enough for the heading to stay on one line.
+  &__composition {
+    @apply mt-1 block text-xs text-neutral-600;
+  }
+
   &__interval {
     @apply flex flex-wrap gap-x-1.5 text-sm text-neutral-900;
 

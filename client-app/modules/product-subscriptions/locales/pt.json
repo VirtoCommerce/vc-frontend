@@ -61,7 +61,8 @@
       "in_cart_once": "No seu carrinho como compra única",
       "deliver_every": "Frequência de entrega",
       "cancel": "Cancelar",
-      "save": "Salvar"
+      "save": "Salvar",
+      "configuration_note": "Cada entrega chega com esta configuração. Para alterá-la, crie uma nova assinatura."
     },
     "how_it_works": {
       "link": "Como funciona",
@@ -151,7 +152,8 @@
       "items_failed": "Não foi possível verificar se este carrinho tem assinaturas. Tente novamente para fazer o pedido.",
       "terms_failed": "Não foi possível carregar os termos da assinatura.",
       "retry": "Tentar novamente",
-      "no_payment_method": "As assinaturas são pagas com um cartão salvo, e esta loja não tem nenhum método de pagamento que permita salvá-lo. Remova a assinatura para pagar uma única vez ou entre em contato com a loja."
+      "no_payment_method": "As assinaturas são pagas com um cartão salvo, e esta loja não tem nenhum método de pagamento que permita salvá-lo. Remova a assinatura para pagar uma única vez ou entre em contato com a loja.",
+      "composition": "Inclui: {items}"
     },
     "mock_payment": {
       "banner": "Método de pagamento de teste: nenhum cartão real é cobrado. Use um dos cartões de teste abaixo.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Alguns itens desta entrega não estão disponíveis no momento.",
         "NO_SHIPPING_METHOD": "Nenhum método de envio está disponível para o endereço de entrega.",
         "PRICE_INCREASED": "O total subiu de {from} para {to}. Confirme o novo preço.",
-        "UNHANDLED": "Esta entrega mudou desde o seu lembrete. Reveja-a."
+        "UNHANDLED": "Esta entrega mudou desde o seu lembrete. Reveja-a.",
+        "CONFIGURATION_CHANGED": "Uma opção da sua configuração não pode mais ser pedida. Nunca enviamos uma configuração diferente: assine novamente com novas opções ou pule esta entrega."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "O seu banco pediu-lhe para confirmar este pagamento.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "O pagamento não foi confirmado a tempo.",
         "PROVIDER_UNAVAILABLE": "Não foi possível contactar o fornecedor de pagamentos. Tente novamente mais tarde.",
         "UNHANDLED": "Ocorreu um problema com o pagamento desta entrega."
-      }
+      },
+      "subscribe_again": "Assinar novamente",
+      "skip_delivery": "Pular entrega"
     },
     "deliveries": {
       "lead": "{count} ativas · próxima entrega: {date}",
@@ -296,6 +301,9 @@
       "automatic": "Feito automaticamente pela sua assinatura para a entrega de {date}.",
       "subscriptions": "Assinatura {numbers}. | Assinaturas {numbers}.",
       "manage": "Gerenciar assinaturas"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — não está mais disponível"
     }
   }
 }

@@ -61,7 +61,8 @@
       "in_cart_once": "In your cart as a one-time purchase",
       "deliver_every": "Get it every",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "configuration_note": "Every delivery comes with this configuration. To change it, start a new subscription."
     },
     "how_it_works": {
       "link": "How it works",
@@ -151,7 +152,8 @@
       "items_failed": "We couldn't check this cart for subscriptions. Try again to place the order.",
       "terms_failed": "We couldn't load the subscription terms.",
       "retry": "Try again",
-      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store."
+      "no_payment_method": "Subscriptions are paid with a saved card, and this store has no payment method that can save one. Remove the subscription to pay once, or contact the store.",
+      "composition": "Includes: {items}"
     },
     "mock_payment": {
       "banner": "Test payment method: no real card is charged. Use one of the test cards below.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Some items in this delivery are not available right now.",
         "NO_SHIPPING_METHOD": "No shipping method is available for the delivery address.",
         "PRICE_INCREASED": "The total went up from {from} to {to}. Please confirm the new price.",
-        "UNHANDLED": "This delivery changed since your reminder. Please review it."
+        "UNHANDLED": "This delivery changed since your reminder. Please review it.",
+        "CONFIGURATION_CHANGED": "An option of your configuration can't be ordered any more. We never send a different configuration: subscribe again with new options or skip this delivery."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Your bank asked you to confirm this payment.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "The payment wasn't confirmed in time.",
         "PROVIDER_UNAVAILABLE": "We couldn't reach the payment provider. Please try again later.",
         "UNHANDLED": "There was a problem with the payment for this delivery."
-      }
+      },
+      "subscribe_again": "Subscribe again",
+      "skip_delivery": "Skip delivery"
     },
     "deliveries": {
       "lead": "{count} active · next delivery {date}",
@@ -296,6 +301,9 @@
       "automatic": "Placed automatically by your subscription for the delivery of {date}.",
       "subscriptions": "Subscription {numbers}. | Subscriptions {numbers}.",
       "manage": "Manage subscriptions"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — no longer available"
     }
   }
 }

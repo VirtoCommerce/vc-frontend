@@ -61,7 +61,8 @@
       "in_cart_once": "Nel carrello come acquisto singolo",
       "deliver_every": "Frequenza di consegna",
       "cancel": "Annulla",
-      "save": "Salva"
+      "save": "Salva",
+      "configuration_note": "Ogni consegna arriva con questa configurazione. Per cambiarla, crea un nuovo abbonamento."
     },
     "how_it_works": {
       "link": "Come funziona",
@@ -151,7 +152,8 @@
       "items_failed": "Non è stato possibile verificare gli abbonamenti in questo carrello. Riprova per effettuare l’ordine.",
       "terms_failed": "Non è stato possibile caricare i termini dell’abbonamento.",
       "retry": "Riprova",
-      "no_payment_method": "Gli abbonamenti si pagano con una carta salvata e questo negozio non ha un metodo di pagamento che permetta di salvarla. Rimuovi l’abbonamento per pagare una sola volta oppure contatta il negozio."
+      "no_payment_method": "Gli abbonamenti si pagano con una carta salvata e questo negozio non ha un metodo di pagamento che permetta di salvarla. Rimuovi l’abbonamento per pagare una sola volta oppure contatta il negozio.",
+      "composition": "Include: {items}"
     },
     "mock_payment": {
       "banner": "Metodo di pagamento di prova: nessuna carta reale viene addebitata. Usa una delle carte di prova qui sotto.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Alcuni articoli di questa consegna non sono al momento disponibili.",
         "NO_SHIPPING_METHOD": "Nessun metodo di spedizione disponibile per l'indirizzo di consegna.",
         "PRICE_INCREASED": "Il totale è passato da {from} a {to}. Conferma il nuovo prezzo.",
-        "UNHANDLED": "Questa consegna è cambiata dopo il promemoria. Controllala."
+        "UNHANDLED": "Questa consegna è cambiata dopo il promemoria. Controllala.",
+        "CONFIGURATION_CHANGED": "Un'opzione della tua configurazione non può più essere ordinata. Non inviamo mai una configurazione diversa: abbonati di nuovo con nuove opzioni o salta questa consegna."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "La tua banca ti ha chiesto di confermare questo pagamento.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Il pagamento non è stato confermato in tempo.",
         "PROVIDER_UNAVAILABLE": "Impossibile contattare il fornitore di pagamenti. Riprova più tardi.",
         "UNHANDLED": "Si è verificato un problema con il pagamento di questa consegna."
-      }
+      },
+      "subscribe_again": "Abbonati di nuovo",
+      "skip_delivery": "Salta la consegna"
     },
     "deliveries": {
       "lead": "{count} attivi · prossima consegna: {date}",
@@ -296,6 +301,9 @@
       "automatic": "Effettuato automaticamente dal tuo abbonamento per la consegna del {date}.",
       "subscriptions": "Abbonamento {numbers}. | Abbonamenti {numbers}.",
       "manage": "Gestisci abbonamenti"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — non più disponibile"
     }
   }
 }

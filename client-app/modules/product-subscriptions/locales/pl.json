@@ -61,7 +61,8 @@
       "in_cart_once": "W koszyku jako zakup jednorazowy",
       "deliver_every": "Częstotliwość dostaw",
       "cancel": "Anuluj",
-      "save": "Zapisz"
+      "save": "Zapisz",
+      "configuration_note": "Każda dostawa przychodzi z tą konfiguracją. Aby ją zmienić, załóż nową subskrypcję."
     },
     "how_it_works": {
       "link": "Jak to działa",
@@ -151,7 +152,8 @@
       "items_failed": "Nie udało się sprawdzić subskrypcji w tym koszyku. Spróbuj ponownie złożyć zamówienie.",
       "terms_failed": "Nie udało się wczytać warunków subskrypcji.",
       "retry": "Spróbuj ponownie",
-      "no_payment_method": "Subskrypcje są opłacane zapisaną kartą, a ten sklep nie ma metody płatności, która może ją zapisać. Usuń subskrypcję, aby zapłacić jednorazowo, lub skontaktuj się ze sklepem."
+      "no_payment_method": "Subskrypcje są opłacane zapisaną kartą, a ten sklep nie ma metody płatności, która może ją zapisać. Usuń subskrypcję, aby zapłacić jednorazowo, lub skontaktuj się ze sklepem.",
+      "composition": "Zawiera: {items}"
     },
     "mock_payment": {
       "banner": "Testowa metoda płatności: żadna prawdziwa karta nie zostanie obciążona. Użyj jednej z kart testowych poniżej.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Niektóre produkty z tej dostawy są obecnie niedostępne.",
         "NO_SHIPPING_METHOD": "Dla adresu dostawy nie jest dostępna żadna metoda wysyłki.",
         "PRICE_INCREASED": "Suma wzrosła z {from} do {to}. Potwierdź nową cenę.",
-        "UNHANDLED": "Ta dostawa zmieniła się od czasu przypomnienia. Sprawdź ją."
+        "UNHANDLED": "Ta dostawa zmieniła się od czasu przypomnienia. Sprawdź ją.",
+        "CONFIGURATION_CHANGED": "Jednej z opcji Twojej konfiguracji nie można już zamówić. Nigdy nie wysyłamy innej konfiguracji: zasubskrybuj ponownie z nowymi opcjami lub pomiń tę dostawę."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Twój bank poprosił o potwierdzenie tej płatności.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Płatność nie została potwierdzona na czas.",
         "PROVIDER_UNAVAILABLE": "Nie udało się połączyć z operatorem płatności. Spróbuj ponownie później.",
         "UNHANDLED": "Wystąpił problem z płatnością za tę dostawę."
-      }
+      },
+      "subscribe_again": "Zasubskrybuj ponownie",
+      "skip_delivery": "Pomiń dostawę"
     },
     "deliveries": {
       "lead": "Aktywne: {count} · następna dostawa {date}",
@@ -296,6 +301,9 @@
       "automatic": "Złożone automatycznie przez subskrypcję na dostawę z dnia {date}.",
       "subscriptions": "Subskrypcje {numbers}. | Subskrypcja {numbers}. | Subskrypcje {numbers}. | Subskrypcje {numbers}.",
       "manage": "Zarządzaj subskrypcjami"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — już niedostępne"
     }
   }
 }

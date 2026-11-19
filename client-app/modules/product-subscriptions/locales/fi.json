@@ -61,7 +61,8 @@
       "in_cart_once": "Ostoskorissasi kertaostona",
       "deliver_every": "Toimitusväli",
       "cancel": "Peruuta",
-      "save": "Tallenna"
+      "save": "Tallenna",
+      "configuration_note": "Jokainen toimitus tulee tällä kokoonpanolla. Muuttaaksesi sen aloita uusi tilaus."
     },
     "how_it_works": {
       "link": "Näin se toimii",
@@ -151,7 +152,8 @@
       "items_failed": "Emme voineet tarkistaa, onko ostoskorissa tilauksia. Yritä uudelleen tehdäksesi tilauksen.",
       "terms_failed": "Tilausehtoja ei voitu ladata.",
       "retry": "Yritä uudelleen",
-      "no_payment_method": "Tilaukset maksetaan tallennetulla kortilla, eikä tässä kaupassa ole maksutapaa, joka voi tallentaa kortin. Poista tilaus maksaaksesi kertaostona tai ota yhteyttä kauppaan."
+      "no_payment_method": "Tilaukset maksetaan tallennetulla kortilla, eikä tässä kaupassa ole maksutapaa, joka voi tallentaa kortin. Poista tilaus maksaaksesi kertaostona tai ota yhteyttä kauppaan.",
+      "composition": "Sisältää: {items}"
     },
     "mock_payment": {
       "banner": "Testimaksutapa: oikeaa korttia ei veloiteta. Käytä jotakin alla olevista testikorteista.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Osa tämän toimituksen tuotteista ei ole juuri nyt saatavilla.",
         "NO_SHIPPING_METHOD": "Toimitusosoitteeseen ei ole saatavilla toimitustapaa.",
         "PRICE_INCREASED": "Kokonaissumma nousi summasta {from} summaan {to}. Vahvista uusi hinta.",
-        "UNHANDLED": "Tämä toimitus on muuttunut muistutuksen jälkeen. Tarkista se."
+        "UNHANDLED": "Tämä toimitus on muuttunut muistutuksen jälkeen. Tarkista se.",
+        "CONFIGURATION_CHANGED": "Kokoonpanosi vaihtoehtoa ei voi enää tilata. Emme koskaan lähetä eri kokoonpanoa: tilaa uudelleen uusilla vaihtoehdoilla tai ohita tämä toimitus."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Pankkisi pyysi sinua vahvistamaan tämän maksun.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Maksua ei vahvistettu ajoissa.",
         "PROVIDER_UNAVAILABLE": "Maksupalveluun ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
         "UNHANDLED": "Tämän toimituksen maksussa oli ongelma."
-      }
+      },
+      "subscribe_again": "Tilaa uudelleen",
+      "skip_delivery": "Ohita toimitus"
     },
     "deliveries": {
       "lead": "{count} voimassa · seuraava toimitus {date}",
@@ -296,6 +301,9 @@
       "automatic": "Tilauksesi teki tämän automaattisesti toimitukselle {date}.",
       "subscriptions": "Tilaus {numbers}. | Tilaukset {numbers}.",
       "manage": "Hallitse tilauksia"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — ei enää saatavilla"
     }
   }
 }

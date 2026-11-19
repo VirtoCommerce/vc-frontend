@@ -52,11 +52,11 @@ export function init(router: Router, i18n: I18n) {
     mergeMenuSchema(menuItems);
   }
 
-  // Subscribe & Save choice on the product page: a simple product, or the variation picked on a B2C variations page
-  // (configurable products keep the core flow).
+  // Subscribe & Save choice on the product page: a simple or configurable product, or the variation picked on a B2C
+  // variations page. A configurable product is subscribed to with the options chosen on the page.
   register("productPage", EXTENSION_NAMES.productPage.purchaseOptions, {
     component: PurchaseOptions,
-    condition: (product: Product) => !product.isConfigurable && !product.hasVariations,
+    condition: (product: Product) => !product.hasVariations,
   });
 
   // The same choice, compact, in each row of a variations table or list (B2B). Back in stock keeps the rows it takes.
@@ -68,7 +68,7 @@ export function init(router: Router, i18n: I18n) {
   // Also loads the offers of the cart's products, which the Subscribe button's condition reads.
   register("cartLineItem", EXTENSION_NAMES.cartLineItem.details, {
     component: CartLineSubscription,
-    condition: (lineItem: PreparedLineItemType) => !!lineItem.productId && !lineItem.isConfigurable,
+    condition: (lineItem: PreparedLineItemType) => !!lineItem.productId,
   });
 
   // Only for a line that can be subscribed and isn't yet: the host then shows "Save for later" as an icon next to it,
@@ -76,10 +76,7 @@ export function init(router: Router, i18n: I18n) {
   register("cartLineItem", EXTENSION_NAMES.cartLineItem.actions, {
     component: CartLineSubscribeButton,
     condition: (lineItem: PreparedLineItemType) =>
-      isAuthenticated.value &&
-      !lineItem.isConfigurable &&
-      !!offerFor(lineItem.productId) &&
-      !isCartLineSubscribed(lineItem.id),
+      isAuthenticated.value && !!offerFor(lineItem.productId) && !isCartLineSubscribed(lineItem.id),
   });
 
   // Order history: a line bought by subscription shows the cart's subscription row, read-only.

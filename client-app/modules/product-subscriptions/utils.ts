@@ -175,3 +175,54 @@ export function needsCardPaymentMethodNotice(
 ): boolean {
   return hasSubscriptionItems && !paymentMethods?.length;
 }
+
+/**
+ * Price of one item with the subscription discount, as the server computes it: a percent off, or a fixed amount off
+ * (never below zero), rounded to cents. Used for a configured product, whose price comes from the chosen options.
+ */
+export function subscriptionUnitPrice(
+  price: number,
+  discountType: SubscriptionDiscountType | null | undefined,
+  discountValue: number | null | undefined,
+): number {
+  const value = discountValue ?? 0;
+  let result = price;
+
+  if (discountType === SubscriptionDiscountType.Percent) {
+    result = price * (1 - value / 100);
+  } else if (discountType === SubscriptionDiscountType.FixedAmount) {
+    result = price - value;
+  }
+
+  return Math.round(Math.max(0, result) * 100) / 100;
+}
+
+/** One choice of a configuration, from the subscription's stored copy or from a cart line. */
+export type ConfigurationChoiceType = Partial<{
+  name: string | null;
+  productName: string | null;
+  quantity: number | null;
+  customText: string | null;
+  files: Array<Partial<{ name: string | null }> | null> | null;
+}>;
+
+/** The value of one choice: "Fanta Mango × 6", “Thank you!” or the file names. */
+export function configurationChoiceText(choice: ConfigurationChoiceType): string {
+  if (choice.productName) {
+    return choice.quantity && choice.quantity > 1 ? `${choice.productName} × ${choice.quantity}` : choice.productName;
+  }
+
+  if (choice.customText) {
+    return `“${choice.customText}”`;
+  }
+
+  return (choice.files ?? [])
+    .map((file) => file?.name)
+    .filter(Boolean)
+    .join(", ");
+}
+
+/** A configuration in one short line: "Fanta Mango × 6 · “Thank you!” · logo.png". */
+export function configurationSummary(choices: ConfigurationChoiceType[] | null | undefined): string {
+  return (choices ?? []).map(configurationChoiceText).filter(Boolean).join(" · ");
+}

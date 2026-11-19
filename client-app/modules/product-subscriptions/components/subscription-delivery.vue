@@ -84,6 +84,32 @@
             {{ $t("product_subscriptions.renewal.retry") }}
           </VcButton>
 
+          <!-- Another configuration is never ordered silently: the customer subscribes again or skips the delivery. -->
+          <span v-else-if="isConfigurationChanged" class="subscription-delivery__issue-actions">
+            <VcButton
+              v-if="changedItem"
+              size="xs"
+              :color="issueColor"
+              :to="getProductRoute(changedItem.productId)"
+              data-test-id="subscription-delivery-subscribe-again-button"
+            >
+              {{ $t("product_subscriptions.renewal.subscribe_again") }}
+            </VcButton>
+
+            <VcButton
+              v-if="renewal.canSkip"
+              size="xs"
+              :color="issueColor"
+              variant="outline"
+              :loading="busy === 'skip'"
+              :disabled="!!busy"
+              data-test-id="subscription-delivery-skip-button"
+              @click="emitAction('skip')"
+            >
+              {{ $t("product_subscriptions.renewal.skip_delivery") }}
+            </VcButton>
+          </span>
+
           <VcButton
             v-else-if="renewal.canAcceptReview"
             size="xs"
@@ -129,6 +155,14 @@
           </template>
         </template>
 
+        <!-- Below the line, as the cart and the order show a configured product's components. -->
+        <template #after-content="{ item }">
+          <SubscriptionConfiguration
+            :configuration="configurationOf(item.id)"
+            :test-id="`subscription-configuration-${item.id}`"
+          />
+        </template>
+
         <template #default="{ item }">
           <VcAddToCart hide-button :model-value="item.quantity" :name="item.id" disabled />
         </template>
@@ -163,6 +197,7 @@ import { useRenewalReasons } from "../composables/useRenewalReasons";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
 import { ATTENTION_RENEWAL_STATES, UPCOMING_DELIVERY_STATE } from "../constants";
 import { intervalLabel, subscriptionAnchorId } from "../utils";
+import SubscriptionConfiguration from "./subscription-configuration.vue";
 import SubscriptionItemMenu from "./subscription-item-menu.vue";
 import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from "../api/graphql/types";
 import type { MoneyType } from "@/core/api/graphql/types";
@@ -237,6 +272,12 @@ const relativeDay = computed(() => {
 });
 
 // What the alert of a delivery that needs the customer says (shown only for those deliveries).
+const CONFIGURATION_CHANGED = "CONFIGURATION_CHANGED";
+const isConfigurationChanged = computed(
+  () => props.renewal.state === "ReviewRequired" && props.renewal.reviewReasonCode === CONFIGURATION_CHANGED,
+);
+const changedItem = computed(() => props.renewal.items.find((x) => x.isConfigurationChanged && !x.isExcluded));
+
 const issueColor = computed<VcAlertColorType>(() =>
   props.renewal.state === "Failed" || props.renewal.state === "RetryScheduled" ? "danger" : "warning",
 );
@@ -288,6 +329,12 @@ const lines = computed<PreparedLineItemType[]>(() =>
 
 function subscriptionOf(id: string): SubscriptionType | undefined {
   return props.subscriptionsById[id];
+}
+
+/** The delivery's own copy (it marks the options that can't be ordered any more), else the subscription's. */
+function configurationOf(id: string) {
+  const item = props.renewal.items.find((x) => x.subscriptionId === id);
+  return item?.configuration ?? subscriptionOf(id)?.configuration;
 }
 
 function frequencyOf(id: string): string {
@@ -360,6 +407,10 @@ function onChangeFrequency(id: string, event: MouseEvent): void {
 
   &__issue {
     @apply flex flex-wrap items-center justify-between gap-2;
+  }
+
+  &__issue-actions {
+    @apply flex flex-wrap gap-2;
   }
 
   &__quantity-title {

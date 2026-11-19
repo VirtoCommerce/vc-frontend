@@ -268,8 +268,10 @@ function estimate(amount: number, currency: string | null | undefined) {
 /** An upcoming delivery in the shape of a renewal, so the page shows every delivery with the same card. */
 function toUpcomingDelivery(day: string, items: SubscriptionType[]): RenewalFieldsFragment {
   const lines = items.map((x) => {
-    // The estimate is today's subscription price; the reminder before the delivery has the final one.
-    const unit = offerFor(x.productId)?.subscriptionPrice?.amount ?? x.referencePriceMoney?.amount ?? 0;
+    // The estimate is today's subscription price; the reminder before the delivery has the final one. A configured
+    // product is priced by its options, which the offer doesn't know: its price paid at sign-up is the estimate.
+    const offer = x.configuration ? undefined : offerFor(x.productId);
+    const unit = offer?.subscriptionPrice?.amount ?? x.referencePriceMoney?.amount ?? 0;
     return {
       subscriptionId: x.id,
       productId: x.productId,
@@ -277,12 +279,14 @@ function toUpcomingDelivery(day: string, items: SubscriptionType[]): RenewalFiel
       productName: x.productName,
       imageUrl: x.imageUrl,
       quantity: x.quantity,
-      listPrice: offerFor(x.productId)?.price?.amount ?? 0,
+      listPrice: offer?.price?.amount ?? 0,
       discountAmount: 0,
       totalMoney: estimate(unit * x.quantity, x.currency),
       isAvailable: true,
       isExcluded: false,
       message: undefined,
+      isConfigurationChanged: false,
+      configuration: x.configuration,
     };
   });
   const total = lines.reduce((sum, x) => sum + x.totalMoney.amount, 0);

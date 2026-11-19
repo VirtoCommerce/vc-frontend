@@ -1,5 +1,9 @@
 <template>
-  <div v-if="offer && subscription" class="cart-line-subscription">
+  <div
+    v-if="offer && subscription"
+    class="cart-line-subscription"
+    :class="{ 'cart-line-subscription--configured': lineItem.isConfigurable }"
+  >
     <SubscriptionSummary
       class="cart-line-subscription__summary"
       :label="currentLabel"
@@ -35,5 +39,10 @@ const { offer, subscription, currentLabel, nextDelivery, openPurchaseOptions } =
 <style lang="scss">
 .cart-line-subscription {
   @apply mt-3 flex flex-col gap-2;
+
+  // The cart's components list follows right below: keep them apart.
+  &--configured {
+    @apply mb-3;
+  }
 }
 </style>

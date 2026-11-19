@@ -1,3 +1,5 @@
+#import "./subscriptionConfigurationFields.graphql"
+
 fragment renewalFields on SubscriptionRenewal {
   id
   number
@@ -48,5 +50,9 @@ fragment renewalFields on SubscriptionRenewal {
     isAvailable
     isExcluded
     message
+    isConfigurationChanged
+    configuration {
+      ...subscriptionConfigurationFields
+    }
   }
 }

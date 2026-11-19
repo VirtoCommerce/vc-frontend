@@ -61,7 +61,8 @@
       "in_cart_once": "已作为一次性购买加入购物车",
       "deliver_every": "配送频率",
       "cancel": "取消",
-      "save": "保存"
+      "save": "保存",
+      "configuration_note": "每次配送都采用此配置。如需更改，请重新订阅。"
     },
     "how_it_works": {
       "link": "如何运作",
@@ -151,7 +152,8 @@
       "items_failed": "无法检查此购物车中的订阅。请重试以提交订单。",
       "terms_failed": "无法加载订阅条款。",
       "retry": "重试",
-      "no_payment_method": "订阅需使用已保存的银行卡付款，而本店没有可保存银行卡的付款方式。请移除订阅以一次性付款，或联系本店。"
+      "no_payment_method": "订阅需使用已保存的银行卡付款，而本店没有可保存银行卡的付款方式。请移除订阅以一次性付款，或联系本店。",
+      "composition": "包含：{items}"
     },
     "mock_payment": {
       "banner": "测试付款方式：不会从任何真实银行卡扣款。请使用下方任一测试卡。",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "此次配送中的部分商品目前无法提供。",
         "NO_SHIPPING_METHOD": "该收货地址没有可用的配送方式。",
         "PRICE_INCREASED": "总价已从 {from} 上涨至 {to}。请确认新价格。",
-        "UNHANDLED": "此次配送在提醒发出后有所变更。请查看。"
+        "UNHANDLED": "此次配送在提醒发出后有所变更。请查看。",
+        "CONFIGURATION_CHANGED": "您配置中的某个选项已无法订购。我们绝不会发送不同的配置：请使用新选项重新订阅或跳过本次配送。"
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "您的银行要求您确认此笔付款。",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "付款未在规定时间内确认。",
         "PROVIDER_UNAVAILABLE": "无法连接支付服务商。请稍后重试。",
         "UNHANDLED": "此次配送的付款出现问题。"
-      }
+      },
+      "subscribe_again": "重新订阅",
+      "skip_delivery": "跳过配送"
     },
     "deliveries": {
       "lead": "{count} 个有效 · 下次配送 {date}",
@@ -296,6 +301,9 @@
       "automatic": "由您的订阅为 {date} 的配送自动下单。",
       "subscriptions": "订阅 {numbers}。 | 订阅 {numbers}。",
       "manage": "管理订阅"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — 已不可用"
     }
   }
 }

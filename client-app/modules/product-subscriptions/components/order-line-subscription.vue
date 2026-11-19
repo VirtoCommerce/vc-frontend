@@ -7,6 +7,7 @@
     :number="subscription.number"
     :number-to="{ name: SUBSCRIPTIONS_ROUTE_NAME, query: { subscription: subscription.id } }"
     :number-test-id="`order-line-subscription-link-${lineItem.id}`"
+    :class="{ 'order-line-subscription--configured': lineItem.configurationItems?.length }"
     :data-test-id="`order-line-subscription-${lineItem.id}`"
   />
 </template>
@@ -46,5 +47,10 @@ onMounted(() => {
 <style lang="scss">
 .order-line-subscription {
   @apply mt-3;
+
+  // The order's components list follows right below: keep them apart.
+  &--configured {
+    @apply mb-3;
+  }
 }
 </style>

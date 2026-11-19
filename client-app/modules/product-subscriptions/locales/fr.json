@@ -61,7 +61,8 @@
       "in_cart_once": "Dans votre panier en achat unique",
       "deliver_every": "Fréquence de livraison",
       "cancel": "Annuler",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "configuration_note": "Chaque livraison arrive avec cette configuration. Pour la modifier, créez un nouvel abonnement."
     },
     "how_it_works": {
       "link": "Comment ça marche",
@@ -151,7 +152,8 @@
       "items_failed": "Nous n’avons pas pu vérifier les abonnements de ce panier. Réessayez de passer la commande.",
       "terms_failed": "Impossible de charger les conditions de l’abonnement.",
       "retry": "Réessayer",
-      "no_payment_method": "Les abonnements sont payés avec une carte enregistrée, et cette boutique n’a aucun moyen de paiement capable d’en enregistrer une. Retirez l’abonnement pour payer une seule fois, ou contactez la boutique."
+      "no_payment_method": "Les abonnements sont payés avec une carte enregistrée, et cette boutique n’a aucun moyen de paiement capable d’en enregistrer une. Retirez l’abonnement pour payer une seule fois, ou contactez la boutique.",
+      "composition": "Comprend : {items}"
     },
     "mock_payment": {
       "banner": "Moyen de paiement de test : aucune vraie carte n’est débitée. Utilisez l’une des cartes de test ci-dessous.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Certains articles de cette livraison ne sont pas disponibles pour le moment.",
         "NO_SHIPPING_METHOD": "Aucun mode de livraison n'est disponible pour l'adresse de livraison.",
         "PRICE_INCREASED": "Le total est passé de {from} à {to}. Veuillez confirmer le nouveau prix.",
-        "UNHANDLED": "Cette livraison a changé depuis votre rappel. Veuillez la vérifier."
+        "UNHANDLED": "Cette livraison a changé depuis votre rappel. Veuillez la vérifier.",
+        "CONFIGURATION_CHANGED": "Une option de votre configuration ne peut plus être commandée. Nous n'envoyons jamais une autre configuration : abonnez-vous à nouveau avec d'autres options ou sautez cette livraison."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Votre banque vous demande de confirmer ce paiement.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Le paiement n'a pas été confirmé à temps.",
         "PROVIDER_UNAVAILABLE": "Le prestataire de paiement est injoignable. Veuillez réessayer plus tard.",
         "UNHANDLED": "Un problème est survenu avec le paiement de cette livraison."
-      }
+      },
+      "subscribe_again": "Se réabonner",
+      "skip_delivery": "Sauter la livraison"
     },
     "deliveries": {
       "lead": "{count} actif(s) · prochaine livraison {date}",
@@ -296,6 +301,9 @@
       "automatic": "Passée automatiquement par votre abonnement pour la livraison du {date}.",
       "subscriptions": "Abonnement {numbers}. | Abonnements {numbers}.",
       "manage": "Gérer les abonnements"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — plus disponible"
     }
   }
 }

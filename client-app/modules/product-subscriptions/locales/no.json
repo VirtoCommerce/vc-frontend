@@ -61,7 +61,8 @@
       "in_cart_once": "I handlekurven som engangskjøp",
       "deliver_every": "Leveringsintervall",
       "cancel": "Avbryt",
-      "save": "Lagre"
+      "save": "Lagre",
+      "configuration_note": "Hver levering kommer med denne konfigurasjonen. For å endre den, start et nytt abonnement."
     },
     "how_it_works": {
       "link": "Slik fungerer det",
@@ -151,7 +152,8 @@
       "items_failed": "Vi kunne ikke sjekke handlekurven for abonnementer. Prøv igjen for å legge inn bestillingen.",
       "terms_failed": "Vi kunne ikke laste inn abonnementsvilkårene.",
       "retry": "Prøv igjen",
-      "no_payment_method": "Abonnementer betales med et lagret kort, og denne butikken har ingen betalingsmåte som kan lagre kort. Fjern abonnementet for å betale én gang, eller kontakt butikken."
+      "no_payment_method": "Abonnementer betales med et lagret kort, og denne butikken har ingen betalingsmåte som kan lagre kort. Fjern abonnementet for å betale én gang, eller kontakt butikken.",
+      "composition": "Inneholder: {items}"
     },
     "mock_payment": {
       "banner": "Testbetalingsmåte: ingen ekte kort belastes. Bruk et av testkortene nedenfor.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Noen varer i denne leveransen er ikke tilgjengelige akkurat nå.",
         "NO_SHIPPING_METHOD": "Ingen fraktmetode er tilgjengelig for leveringsadressen.",
         "PRICE_INCREASED": "Totalbeløpet har økt fra {from} til {to}. Bekreft den nye prisen.",
-        "UNHANDLED": "Denne leveransen er endret siden påminnelsen. Se gjennom den."
+        "UNHANDLED": "Denne leveransen er endret siden påminnelsen. Se gjennom den.",
+        "CONFIGURATION_CHANGED": "Et alternativ i konfigurasjonen din kan ikke lenger bestilles. Vi sender aldri en annen konfigurasjon: abonner på nytt med nye alternativer eller hopp over denne leveringen."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Banken din ba deg bekrefte denne betalingen.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Betalingen ble ikke bekreftet i tide.",
         "PROVIDER_UNAVAILABLE": "Vi fikk ikke kontakt med betalingsleverandøren. Prøv igjen senere.",
         "UNHANDLED": "Det oppstod et problem med betalingen for denne leveransen."
-      }
+      },
+      "subscribe_again": "Abonner på nytt",
+      "skip_delivery": "Hopp over levering"
     },
     "deliveries": {
       "lead": "{count} aktive · neste levering {date}",
@@ -296,6 +301,9 @@
       "automatic": "Lagt inn automatisk av abonnementet ditt for leveringen {date}.",
       "subscriptions": "Abonnement {numbers}. | Abonnementer {numbers}.",
       "manage": "Administrer abonnementer"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — ikke lenger tilgjengelig"
     }
   }
 }

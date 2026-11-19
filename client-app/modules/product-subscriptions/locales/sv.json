@@ -61,7 +61,8 @@
       "in_cart_once": "I varukorgen som engångsköp",
       "deliver_every": "Leveransintervall",
       "cancel": "Avbryt",
-      "save": "Spara"
+      "save": "Spara",
+      "configuration_note": "Varje leverans kommer med den här konfigurationen. För att ändra den, starta en ny prenumeration."
     },
     "how_it_works": {
       "link": "Så fungerar det",
@@ -151,7 +152,8 @@
       "items_failed": "Vi kunde inte kontrollera varukorgen för prenumerationer. Försök igen för att lägga beställningen.",
       "terms_failed": "Vi kunde inte läsa in prenumerationsvillkoren.",
       "retry": "Försök igen",
-      "no_payment_method": "Prenumerationer betalas med ett sparat kort, och den här butiken har ingen betalningsmetod som kan spara kort. Ta bort prenumerationen för att betala en gång, eller kontakta butiken."
+      "no_payment_method": "Prenumerationer betalas med ett sparat kort, och den här butiken har ingen betalningsmetod som kan spara kort. Ta bort prenumerationen för att betala en gång, eller kontakta butiken.",
+      "composition": "Innehåller: {items}"
     },
     "mock_payment": {
       "banner": "Testbetalningsmetod: inget riktigt kort debiteras. Använd ett av testkorten nedan.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Vissa artiklar i den här leveransen är inte tillgängliga just nu.",
         "NO_SHIPPING_METHOD": "Inget leveranssätt finns för leveransadressen.",
         "PRICE_INCREASED": "Totalbeloppet har ökat från {from} till {to}. Bekräfta det nya priset.",
-        "UNHANDLED": "Den här leveransen har ändrats sedan påminnelsen. Granska den."
+        "UNHANDLED": "Den här leveransen har ändrats sedan påminnelsen. Granska den.",
+        "CONFIGURATION_CHANGED": "Ett alternativ i din konfiguration kan inte längre beställas. Vi skickar aldrig en annan konfiguration: prenumerera igen med nya alternativ eller hoppa över den här leveransen."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Din bank bad dig bekräfta den här betalningen.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Betalningen bekräftades inte i tid.",
         "PROVIDER_UNAVAILABLE": "Vi kunde inte nå betalleverantören. Försök igen senare.",
         "UNHANDLED": "Det uppstod ett problem med betalningen för den här leveransen."
-      }
+      },
+      "subscribe_again": "Prenumerera igen",
+      "skip_delivery": "Hoppa över leverans"
     },
     "deliveries": {
       "lead": "{count} aktiva · nästa leverans {date}",
@@ -296,6 +301,9 @@
       "automatic": "Lagd automatiskt av din prenumeration för leveransen {date}.",
       "subscriptions": "Prenumeration {numbers}. | Prenumerationer {numbers}.",
       "manage": "Hantera prenumerationer"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — inte längre tillgänglig"
     }
   }
 }

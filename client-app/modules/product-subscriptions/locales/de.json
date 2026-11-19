@@ -61,7 +61,8 @@
       "in_cart_once": "Im Warenkorb als Einmalkauf",
       "deliver_every": "Lieferintervall",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "configuration_note": "Jede Lieferung kommt mit dieser Konfiguration. Um sie zu ändern, schließen Sie ein neues Abo ab."
     },
     "how_it_works": {
       "link": "So funktioniert's",
@@ -151,7 +152,8 @@
       "items_failed": "Wir konnten diesen Warenkorb nicht auf Abonnements prüfen. Versuchen Sie erneut, die Bestellung aufzugeben.",
       "terms_failed": "Die Abonnementbedingungen konnten nicht geladen werden.",
       "retry": "Erneut versuchen",
-      "no_payment_method": "Abonnements werden mit einer gespeicherten Karte bezahlt, und dieser Shop hat keine Zahlungsart, die eine Karte speichern kann. Entfernen Sie das Abonnement, um einmalig zu bezahlen, oder wenden Sie sich an den Shop."
+      "no_payment_method": "Abonnements werden mit einer gespeicherten Karte bezahlt, und dieser Shop hat keine Zahlungsart, die eine Karte speichern kann. Entfernen Sie das Abonnement, um einmalig zu bezahlen, oder wenden Sie sich an den Shop.",
+      "composition": "Enthält: {items}"
     },
     "mock_payment": {
       "banner": "Test-Zahlungsart: Es wird keine echte Karte belastet. Verwenden Sie eine der Testkarten unten.",
@@ -208,7 +210,8 @@
         "ITEMS_UNAVAILABLE": "Einige Artikel dieser Lieferung sind derzeit nicht verfügbar.",
         "NO_SHIPPING_METHOD": "Für die Lieferadresse ist keine Versandart verfügbar.",
         "PRICE_INCREASED": "Der Gesamtbetrag ist von {from} auf {to} gestiegen. Bitte bestätigen Sie den neuen Preis.",
-        "UNHANDLED": "Diese Lieferung hat sich seit Ihrer Erinnerung geändert. Bitte prüfen Sie sie."
+        "UNHANDLED": "Diese Lieferung hat sich seit Ihrer Erinnerung geändert. Bitte prüfen Sie sie.",
+        "CONFIGURATION_CHANGED": "Eine Option Ihrer Konfiguration kann nicht mehr bestellt werden. Wir senden nie eine andere Konfiguration: Schließen Sie das Abo mit neuen Optionen neu ab oder überspringen Sie diese Lieferung."
       },
       "errors": {
         "AUTHENTICATION_REQUIRED": "Ihre Bank hat Sie gebeten, diese Zahlung zu bestätigen.",
@@ -223,7 +226,9 @@
         "PAYMENT_NOT_CONFIRMED": "Die Zahlung wurde nicht rechtzeitig bestätigt.",
         "PROVIDER_UNAVAILABLE": "Der Zahlungsanbieter war nicht erreichbar. Bitte versuchen Sie es später erneut.",
         "UNHANDLED": "Bei der Zahlung für diese Lieferung ist ein Problem aufgetreten."
-      }
+      },
+      "subscribe_again": "Neu abonnieren",
+      "skip_delivery": "Lieferung überspringen"
     },
     "deliveries": {
       "lead": "{count} aktiv · nächste Lieferung {date}",
@@ -296,6 +301,9 @@
       "automatic": "Automatisch von Ihrem Abo für die Lieferung am {date} aufgegeben.",
       "subscriptions": "Abo {numbers}. | Abos {numbers}.",
       "manage": "Abos verwalten"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — nicht mehr verfügbar"
     }
   }
 }
