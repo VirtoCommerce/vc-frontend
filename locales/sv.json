@@ -1129,8 +1129,7 @@
       },
       "share_wishlist_modal": {
         "title": "Dela ”{listName}”",
-        "who_can_access_label": "Vem har åtkomst",
-        "scope_selected": "{label}, vald"
+        "who_can_access_label": "Vem har åtkomst"
       },
       "stop_sharing_modal": {
         "title": "Sluta dela den här listan?",

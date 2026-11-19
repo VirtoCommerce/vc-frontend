@@ -9,29 +9,26 @@
     class="share-wishlist-modal"
   >
     <div class="share-wishlist-modal__body">
-      <fieldset class="share-wishlist-modal__scope-group">
-        <legend class="share-wishlist-modal__scope-label">
+      <!-- No fieldset: around the radiogroup it would announce a second group with the same name. -->
+      <div class="share-wishlist-modal__scope-group">
+        <VcLabel :id="scopeLabelId" size="sm" class="share-wishlist-modal__scope-label">
           {{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}
-        </legend>
+        </VcLabel>
 
-        <div class="share-wishlist-modal__scopes">
+        <VcTabSwitchGroup v-model="sharingScope" :aria-labelledby="scopeLabelId" class="share-wishlist-modal__scopes">
           <VcTabSwitch
             v-for="scope in listSharingScopes"
             :key="scope.id"
-            :model-value="sharingScope"
             :value="scope.id"
             :label="scope.label"
             :icon="scope.icon"
             :disabled="saving"
-            :aria-label="scopeAriaLabel(scope)"
             :data-test-id="`wishlist-sharing-scope-${scope.id}`"
-            name="wishlist-sharing-scope"
             size="sm"
             class="share-wishlist-modal__scope"
-            @change="sharingScope = $event"
           />
-        </div>
-      </fieldset>
+        </VcTabSwitchGroup>
+      </div>
 
       <VcInput
         v-if="listSharingScopeSupportsLink"
@@ -108,6 +105,7 @@ import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
+import { useComponentId } from "@/ui-kit/composables";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
@@ -142,6 +140,7 @@ const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistS
 const saving = ref(false);
 
 const sharingScope = ref<string>(listSharingScope.value);
+const scopeLabelId = useComponentId("share-wishlist-scope-label");
 
 const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
 
@@ -164,14 +163,6 @@ const listSharingScopes = computed(() => {
     icon: scope.icon,
   }));
 });
-
-// `VcTabSwitch` renders its radio `display: none`, so the checked state never reaches the accessibility tree and the
-// button's own label is the only place left to say which scope the list is on.
-function scopeAriaLabel(scope: { id: string; label: string }): string {
-  return scope.id === sharingScope.value
-    ? t("shared.wishlists.share_wishlist_modal.scope_selected", { label: scope.label })
-    : scope.label;
-}
 
 const activeScope = computed(() => getSharingScope(sharingScope.value));
 // Such a scope stays listed but must not offer its controls.
@@ -319,23 +310,8 @@ async function copySharingLink() {
     @apply space-y-4;
   }
 
-  &__scope-group {
-    // A fieldset defaults to `min-inline-size: min-content`, which stops it shrinking inside the dialog.
-    @apply min-w-0;
-  }
-
-  &__scope-label {
-    // `VcLabel` renders a `div` without a `for-id` and `legend` takes phrasing content only, so its size-sm styling
-    // is spelled out here rather than nested inside.
-    @apply mb-0.5 text-sm font-bold text-neutral-950;
-  }
-
   &__scopes {
-    @apply mt-2 grid grid-cols-2 gap-4;
-
-    @media (min-width: theme("screens.md")) {
-      @apply flex flex-wrap;
-    }
+    @apply mt-2;
   }
 
   &__scope {
