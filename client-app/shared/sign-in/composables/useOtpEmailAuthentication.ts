@@ -1,11 +1,14 @@
 import { computed } from "vue";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_OTP, OTP_ENABLED_KEY } from "@/core/constants/modules";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+
+const OTP_AUTHENTICATION_TYPE = "OTP";
 
 export function useOtpEmailAuthentication() {
-  const { isEnabled: isOtpEnabled } = useModuleSettings(MODULE_ID_OTP);
+  const { themeContext } = useThemeContext();
 
-  const hasOtpEmailAuthentication = computed(() => isOtpEnabled(OTP_ENABLED_KEY));
+  const hasOtpEmailAuthentication = computed<boolean>(
+    () => themeContext.value.storeSettings?.authenticationTypes?.includes(OTP_AUTHENTICATION_TYPE) ?? false,
+  );
 
   return {
     hasOtpEmailAuthentication,
