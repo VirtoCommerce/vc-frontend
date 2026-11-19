@@ -1,5 +1,8 @@
+import { productImageMocks } from "@/ui-kit/mocks";
 import { VcShape } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
+const [productImage] = productImageMocks;
 
 const meta: Meta<typeof VcShape> = {
   title: "Components/Molecules/VcShape",
@@ -64,7 +67,7 @@ export const Large: StoryType = {
 
 export const Image: StoryType = {
   args: {
-    img: "main-banner.webp",
+    img: productImage,
     size: "300px",
   },
   parameters: {
@@ -80,7 +83,7 @@ export const Image: StoryType = {
 
 export const ImageIcon: StoryType = {
   args: {
-    img: "main-banner.webp",
+    img: productImage,
     size: "300px",
     icon: "adjustments",
   },
@@ -97,7 +100,7 @@ export const ImageIcon: StoryType = {
 
 export const Mask: StoryType = {
   args: {
-    img: "/static/images/home/main-banner.webp",
+    img: productImage,
     size: "300px",
     mask: "academic-cap",
   },

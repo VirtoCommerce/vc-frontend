@@ -1,8 +1,11 @@
 import { ref } from "vue";
+import { productImageMocks } from "@/ui-kit/mocks";
 import { VcVariantPicker, VcVariantPickerGroup } from "..";
 import type { Meta, StoryObj, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
+
+const [image1] = productImageMocks;
 
 const meta: Meta<typeof VcVariantPicker> = {
   title: "Components/Molecules/VcVariantPicker",
@@ -111,7 +114,7 @@ export const Unavailable: StoryType = {
 export const Image: StoryType = {
   args: {
     type: "image",
-    value: "product-example-1.webp",
+    value: image1,
     isAvailable: true,
   },
 };
@@ -126,7 +129,7 @@ export const UnavailableImage: StoryType = {
 export const Tooltip: StoryType = {
   args: {
     type: "image",
-    value: "product-example-1.webp",
+    value: image1,
     tooltip: "Tooltip",
     isAvailable: true,
   },
@@ -135,7 +138,7 @@ export const Tooltip: StoryType = {
 export const TooltipSlotWithImage: StoryType = {
   args: {
     type: "image",
-    value: "product-example-1.webp",
+    value: image1,
     isAvailable: true,
   },
   render: renderVariantPicker(`
