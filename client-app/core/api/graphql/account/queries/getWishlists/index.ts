@@ -2,7 +2,7 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
 import queryDocument from "./getWishlists.graphql";
-import type { WishlistsSearchParamsType } from "@/core/api/graphql/account";
+import type { WishlistsSearchParamsType } from "../../types";
 import type { Query, QueryWishlistsArgs, WishlistConnection } from "@/core/api/graphql/types";
 
 export async function getWishlists({

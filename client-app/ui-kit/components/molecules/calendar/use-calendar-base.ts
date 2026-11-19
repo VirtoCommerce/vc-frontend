@@ -9,8 +9,8 @@ import {
 } from "@internationalized/date";
 import { computed, nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
 import { tryParseDate } from "@/ui-kit/utilities/date";
+import { Logger } from "@/ui-kit/utilities/logger";
 import type { DateValue } from "@internationalized/date";
 import type { Ref } from "vue";
 

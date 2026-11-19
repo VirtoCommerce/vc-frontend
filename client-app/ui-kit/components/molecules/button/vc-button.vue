@@ -233,17 +233,22 @@ defineExpose({
 
   $prepend: "";
   $append: "";
-  $icon: "";
-  $square: "";
   $truncate: "";
   $disabled: "";
   $loading: "";
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+  // Base rules in :where(): a kit parent's single class beats them in any load order
+  :where(&) {
+    @apply relative inline-block px-[--px] min-w-[--min-w] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
-  appearance: button;
+    appearance: button;
+
+    @media (prefers-reduced-motion: no-preference) {
+      @apply transition-colors;
+    }
+  }
 
   &--truncate {
     $truncate: &;
@@ -257,19 +262,15 @@ defineExpose({
     $loading: &;
   }
 
-  &--icon {
-    $icon: &;
-
+  :where(&--icon) {
     @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
-  &--square {
-    $square: &;
-
+  :where(&--square) {
     @apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
-  &--full-width {
+  :where(&--full-width) {
     @apply w-full;
   }
 
@@ -289,10 +290,6 @@ defineExpose({
     $loaderIcon: &;
 
     @apply block rounded-full animate-spin border-2 size-[--vc-icon-size] border-[--loader-border] border-r-[--loader-border-r];
-  }
-
-  &:not(#{$icon}, #{$square}) {
-    @apply min-w-[--min-w];
   }
 
   &--size {
@@ -432,8 +429,6 @@ defineExpose({
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    @apply transition-colors;
-
     // The press should land at once; the release keeps the base duration.
     &:active:not(#{$loading}, #{$disabled}) {
       @apply duration-75;

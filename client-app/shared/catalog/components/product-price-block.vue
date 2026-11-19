@@ -123,7 +123,6 @@ import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { stringFormat } from "@/core/utilities";
 import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
 import { AddToList } from "@/shared/wishlists";
-import { VcIcon } from "@/ui-kit/components";
 import ProductConfigurationChecklist from "./configuration/product-configuration-checklist.vue";
 import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";

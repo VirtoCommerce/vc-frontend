@@ -1,7 +1,7 @@
 import { uniqBy } from "lodash-es";
 import { ContactStatus } from "../types";
+import type { ExtendedContactType } from "../types";
 import type { ContactType, RoleType } from "@/core/api/graphql/types";
-import type { ExtendedContactType } from "@/shared/company";
 
 export function getContactEmailAddresses(contact: ContactType): string[] {
   let emails: string[] = [];

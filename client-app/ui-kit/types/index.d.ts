@@ -10,10 +10,12 @@ declare global {
   type VcMainColorType = (typeof MAIN_COLORS)[number];
 
   type NonNullableSwiperOptionsType = {
-    [prop in keyof Omit<
-      SwiperOptions,
-      "navigation" | "pagination" | "createElements" | "onAny" | "swipeHandler" | "_emitClasses"
-    >]?: NonNullable<SwiperOptions[prop]>;
+    [
+      prop in keyof Omit<
+        SwiperOptions,
+        "navigation" | "pagination" | "createElements" | "onAny" | "swipeHandler" | "_emitClasses"
+      >
+    ]?: NonNullable<SwiperOptions[prop]>;
   };
 
   interface ICarouselOptions extends NonNullableSwiperOptionsType {
@@ -117,5 +119,53 @@ declare global {
   type VcTableItemType = {
     id?: string | number;
     [key: string]: unknown;
+  };
+
+  // Commerce data as ui-kit components read it: only the fields they use, shaped so the theme's GraphQL
+  // objects (MoneyType, PriceType, Property, CommonVendor, ImageType, PreparedLineItemType) fit as they are.
+
+  /** Money amount */
+  type VcMoneyType = {
+    amount: number;
+    formattedAmount: string;
+    formattedAmountWithoutCurrency?: string;
+    currency?: { symbol?: string };
+  };
+
+  /** List and actual price of a product */
+  type VcPriceType = {
+    list: VcMoneyType;
+    actual: VcMoneyType;
+  };
+
+  /** Product property shown as a label and a value */
+  type VcPropertyType = {
+    name: string;
+    label: string;
+    value?: string | number | boolean | null;
+  };
+
+  type VcVendorType = {
+    name: string;
+  };
+
+  type VcProductImageType = {
+    url: string;
+  };
+
+  /** Line item type */
+  type VcLineItemType = {
+    id: string;
+    name: string;
+    sku?: string;
+    imageUrl?: string;
+    route?: RouteLocationRaw;
+    properties?: VcPropertyType[];
+    listPrice?: VcMoneyType;
+    actualPrice?: VcMoneyType;
+    extendedPrice?: VcMoneyType;
+    listTotal?: VcMoneyType;
+    showPlacedPrice?: boolean;
+    deleted?: boolean;
   };
 }

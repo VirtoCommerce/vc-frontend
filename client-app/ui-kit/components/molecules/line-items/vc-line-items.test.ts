@@ -3,12 +3,11 @@ import { describe, expect, it } from "vitest";
 import { VcCheckbox } from "@/ui-kit/components/atoms";
 import VcLineItem from "../line-item/vc-line-item.vue";
 import VcLineItems from "./vc-line-items.vue";
-import type { PreparedLineItemType } from "@/core/types";
 
-const items = [
+const items: VcLineItemType[] = [
   { id: "line-1", name: "Fanta Mango Soda 6x330ml" },
   { id: "line-2", name: "Coca-Cola Zero 6x330ml" },
-] as PreparedLineItemType[];
+];
 
 const global = {
   components: { VcLineItem, VcCheckbox },
