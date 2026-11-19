@@ -1,0 +1,58 @@
+#import "./subscriptionConfigurationFields.graphql"
+
+fragment renewalFields on SubscriptionRenewal {
+  id
+  number
+  state
+  scheduledDate
+  cutoffDate
+  isManual
+  currency
+  previewTotalMoney {
+    amount
+    formattedAmount
+  }
+  notifiedTotalMoney {
+    amount
+    formattedAmount
+  }
+  orderTotalMoney {
+    amount
+    formattedAmount
+  }
+  discountTotal
+  shippingTotal
+  taxTotal
+  orderId
+  storedPaymentMethodId
+  orderNumber
+  attemptCount
+  nextAttemptDate
+  lastErrorCode
+  reviewReasonCode
+  canSkip
+  canAcceptReview
+  canRetryPayment
+  requiresPaymentAction
+  items {
+    subscriptionId
+    productId
+    sku
+    productName
+    imageUrl
+    quantity
+    listPrice
+    discountAmount
+    totalMoney {
+      amount
+      formattedAmount
+    }
+    isAvailable
+    isExcluded
+    message
+    isConfigurationChanged
+    configuration {
+      ...subscriptionConfigurationFields
+    }
+  }
+}

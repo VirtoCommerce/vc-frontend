@@ -1,0 +1,310 @@
+{
+  "product_subscriptions": {
+    "navigation": {
+      "subscriptions": "Suscripciones"
+    },
+    "intervals": {
+      "day": "Cada día | Cada {count} días",
+      "week": "Cada semana | Cada {count} semanas",
+      "month": "Cada mes | Cada {count} meses",
+      "year": "Cada año | Cada {count} años"
+    },
+    "intervals_short": {
+      "day": "1 día | {count} días",
+      "week": "1 semana | {count} semanas",
+      "month": "1 mes | {count} meses",
+      "year": "1 año | {count} años"
+    },
+    "discount": {
+      "percent": "Ahorra un {value} %",
+      "amount": "Ahorra {value}"
+    },
+    "statuses": {
+      "PendingActivation": "Iniciando",
+      "Active": "Activa",
+      "Paused": "Pausada",
+      "PastDue": "Pago pendiente",
+      "Cancelled": "Cancelada",
+      "Scheduled": "Programada",
+      "Notified": "Próxima",
+      "ReviewRequired": "Requiere revisión",
+      "Ordered": "En proceso",
+      "PaymentActionRequired": "Confirmar pago",
+      "RetryScheduled": "Reintento de pago",
+      "Authorized": "Confirmada",
+      "Completed": "Entregada",
+      "Failed": "Pago fallido",
+      "Skipped": "Omitida"
+    },
+    "card_status": {
+      "Active": "Activa",
+      "NeedsUpdate": "Requiere actualización",
+      "Expired": "Caducada",
+      "Revoked": "Eliminada"
+    },
+    "common": {
+      "retry": "Intentar de nuevo",
+      "subscription_number": "Suscripción {number}"
+    },
+    "errors": {
+      "generic": "Algo ha salido mal. Inténtalo de nuevo.",
+      "action_disabled": "Esta tienda no permite hacerlo. Ponte en contacto con la tienda."
+    },
+    "purchase_options": {
+      "title": "Opciones de compra",
+      "one_time": "Compra única",
+      "subscribe": "Suscríbete y ahorra",
+      "benefit_reminder": "Te enviamos un correo antes de cada entrega. Sin cargos inesperados.",
+      "benefit_cancel": "Omite, pausa o cancela cuando quieras.",
+      "sign_in_required": "Inicia sesión para suscribirte.",
+      "in_cart_subscription": "En tu carrito como suscripción · {interval}",
+      "in_cart_once": "En tu carrito como compra única",
+      "deliver_every": "Frecuencia de entrega",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "configuration_note": "Cada entrega llega con esta configuración. Para cambiarla, crea una nueva suscripción."
+    },
+    "how_it_works": {
+      "link": "Cómo funciona",
+      "title": "Cómo funcionan las suscripciones",
+      "lead": "Recibe los productos que compras con regularidad según tu calendario y a un precio más bajo. Tú tienes el control: omite, cambia o cancela cualquier entrega antes de la fecha límite.",
+      "steps": {
+        "title": "Cómo funciona",
+        "choose": {
+          "title": "Elige la frecuencia",
+          "text": "En la página del producto, elige «Suscríbete y ahorra» y una frecuencia de entrega. Tu primer pedido se envía como siempre."
+        },
+        "remind": {
+          "title": "Te avisamos antes",
+          "text": "Antes de cada entrega te enviamos un correo con los artículos, la fecha y el importe máximo que se te puede cobrar."
+        },
+        "deliver": {
+          "title": "Entregamos y cobramos",
+          "text": "El pedido se realiza en la fecha elegida y se cobra con tu descuento de suscripción en la tarjeta guardada al pagar."
+        }
+      },
+      "rules": {
+        "savings": {
+          "title": "Ahorro",
+          "items": [
+            "El descuento se muestra en la página del producto antes de suscribirte.",
+            "Algunos productos ahorran más si se entregan con más frecuencia.",
+            "El descuento se aplica a cada entrega mientras la suscripción esté activa."
+          ]
+        },
+        "prices": {
+          "title": "Precios",
+          "items": [
+            "Cada entrega se cobra al precio de la fecha del pedido, menos tu descuento.",
+            "Nunca te cobramos más que el importe de tu aviso.",
+            "Si el precio sube más de un 5 %, te pedimos que revises la entrega antes de pedirla."
+          ]
+        },
+        "changes": {
+          "title": "Omitir, pausar o cambiar",
+          "items": [
+            "Omite una entrega, pausa la suscripción o cambia la cantidad, la frecuencia o la próxima fecha en «Cuenta › Suscripciones».",
+            "Los cambios hechos antes de la fecha límite, un día antes de la fecha del pedido, se aplican a la próxima entrega.",
+            "Si necesitas los artículos antes, haz el pedido ahora."
+          ]
+        },
+        "payment": {
+          "title": "Pago",
+          "items": [
+            "Cobramos en la tarjeta que guardaste al pagar. Puedes cambiar de tarjeta en cualquier momento.",
+            "El pago se autoriza al realizar el pedido y se cobra al enviarlo.",
+            "Si un pago falla, lo reintentamos y te escribimos antes de pausar la suscripción."
+          ]
+        },
+        "cancel": {
+          "title": "Cancela cuando quieras",
+          "items": [
+            "Cancela en un solo paso en «Cuenta › Suscripciones». Sin llamadas ni comisiones.",
+            "Las entregas ya pedidas no se ven afectadas.",
+            "Una vez al año te enviamos un resumen de tus suscripciones activas."
+          ]
+        },
+        "availability": {
+          "title": "Sin stock",
+          "items": [
+            "Si un artículo no está disponible, te dejamos revisar la entrega y pedir el resto.",
+            "Si no respondes, esa entrega se omite y la siguiente se realiza según lo previsto."
+          ]
+        }
+      },
+      "manage": {
+        "title": "Gestiona tus suscripciones",
+        "text": "Consulta las próximas entregas y cambia cualquier suscripción desde tu cuenta.",
+        "button": "Ir a mis suscripciones"
+      }
+    },
+    "cart": {
+      "subscribe_button": "Suscribirse",
+      "subscribed": "Suscrito",
+      "change": "Cambiar",
+      "subscribed_hint": "Próxima entrega hacia el {date}. Te enviamos un correo antes de cada entrega."
+    },
+    "checkout": {
+      "title": "Tu suscripción",
+      "deliver_every": "Frecuencia de entrega",
+      "agree": "Acepto las condiciones de la suscripción y que se guarde mi tarjeta para pagos automáticos.",
+      "required": "Acepta las condiciones para realizar el pedido.",
+      "items_failed": "No hemos podido comprobar si este carrito contiene suscripciones. Vuelve a intentarlo para realizar el pedido.",
+      "terms_failed": "No hemos podido cargar las condiciones de la suscripción.",
+      "retry": "Intentar de nuevo",
+      "no_payment_method": "Las suscripciones se pagan con una tarjeta guardada y esta tienda no tiene ningún método de pago que permita guardarla. Elimina la suscripción para pagar una sola vez o ponte en contacto con la tienda.",
+      "composition": "Incluye: {items}"
+    },
+    "mock_payment": {
+      "banner": "Método de pago de prueba: no se cobra en ninguna tarjeta real. Usa una de las tarjetas de prueba de abajo.",
+      "test_cards": "Tarjetas de prueba",
+      "cards": {
+        "success": "Siempre aprobada",
+        "three_ds_on_save": "3-D Secure al pagar el pedido",
+        "three_ds_on_renewal": "3-D Secure en las renovaciones",
+        "insufficient_funds": "Renovaciones: fondos insuficientes",
+        "expired": "Tarjeta caducada",
+        "recurring_cancelled": "Renovaciones: pagos recurrentes cancelados"
+      },
+      "save_card": "Guardar esta tarjeta para futuros pagos",
+      "save_card_required": "Tu suscripción se paga con esta tarjeta, así que se guardará de forma segura. Puedes cambiarla cuando quieras.",
+      "pay": "Pagar {amount}",
+      "declined": "El pago ha sido rechazado. Prueba con otra tarjeta.",
+      "three_ds_title": "Confirma con tu banco",
+      "three_ds_text": "Tu banco te pide que confirmes el pago de {amount}. Es una verificación 3-D Secure simulada.",
+      "three_ds_verify_card": "Tu banco te pide que confirmes esta tarjeta. Es una verificación 3-D Secure simulada.",
+      "three_ds_approve": "Aprobar",
+      "three_ds_decline": "Rechazar",
+      "three_ds_failed": "El pago no se ha confirmado. Puedes volver a intentarlo."
+    },
+    "list": {
+      "title": "Suscripciones",
+      "load_failed": "No se pudieron cargar sus suscripciones.",
+      "browse": "Ver productos"
+    },
+    "renewal": {
+      "total": "Total",
+      "excluded": "No incluido en esta entrega",
+      "confirm_payment": "Confirmar pago",
+      "accept": "Confirmar entrega",
+      "retry": "Reintentar pago",
+      "skip": "Omitir esta entrega",
+      "view_order": "Pedido {number}",
+      "accepted": "Entrega confirmada.",
+      "retried": "Pago reintentado.",
+      "skipped": "Entrega omitida.",
+      "messages": {
+        "notified": "Puedes cambiar u omitir esta entrega hasta el {cutoff}.",
+        "review": "Algo ha cambiado desde tu aviso. Confirma u omite esta entrega.",
+        "ordered": "Tu pedido se ha realizado y el pago se está procesando.",
+        "action": "Tu banco te ha pedido que confirmes el pago.",
+        "retry": "La tarjeta ha sido rechazada. Lo volveremos a intentar el {date}.",
+        "retry_soon": "La tarjeta ha sido rechazada. Lo volveremos a intentar en breve.",
+        "authorized": "Tu tarjeta está aprobada. Se cobrará cuando se envíe el pedido.",
+        "completed": "Enviado y pagado.",
+        "failed": "No hemos podido cobrar en tu tarjeta. Elige otra tarjeta y vuelve a intentarlo.",
+        "skipped": "Esta entrega se ha omitido.",
+        "cancelled": "Esta entrega se ha cancelado."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Algunos artículos de esta entrega no están disponibles en este momento.",
+        "NO_SHIPPING_METHOD": "No hay ningún método de envío disponible para la dirección de entrega.",
+        "PRICE_INCREASED": "El total ha subido de {from} a {to}. Confirma el nuevo precio.",
+        "UNHANDLED": "Esta entrega ha cambiado desde tu recordatorio. Revísala.",
+        "CONFIGURATION_CHANGED": "Una opción de tu configuración ya no se puede pedir. Nunca enviamos una configuración diferente: suscríbete de nuevo con otras opciones u omite esta entrega.",
+        "NO_PAYMENT_METHOD": "El método de pago de esta suscripción ya no se puede usar. Elige otra tarjeta y confirma la entrega."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "Tu banco te ha pedido que confirmes este pago.",
+        "CARD_REQUIRED": "Añade una tarjeta para pagar esta entrega.",
+        "CARD_NEEDS_UPDATE": "Tienes que actualizar tu tarjeta guardada antes de que podamos cobrar esta entrega.",
+        "CARD_DECLINED": "Tu tarjeta ha sido rechazada. Actualiza tu método de pago.",
+        "CARD_DECLINED_WILL_RETRY": "Tu tarjeta ha sido rechazada. Lo volveremos a intentar automáticamente.",
+        "CARD_DECLINED_PROVIDER_RETRY": "Tu tarjeta ha sido rechazada. Tu proveedor de pagos lo volverá a intentar automáticamente.",
+        "CARD_DECLINED_ON_CAPTURE": "Tu tarjeta fue rechazada al enviar el pedido. Actualiza tu método de pago.",
+        "RETRIES_EXHAUSTED": "No hemos podido cobrar en tu tarjeta tras varios intentos. Actualiza tu método de pago.",
+        "PAYMENT_FAILED": "No hemos podido cobrar en tu tarjeta. Actualiza tu método de pago.",
+        "PAYMENT_NOT_CONFIRMED": "El pago no se confirmó a tiempo.",
+        "PROVIDER_UNAVAILABLE": "No hemos podido contactar con el proveedor de pagos. Inténtalo de nuevo más tarde.",
+        "UNHANDLED": "Ha habido un problema con el pago de esta entrega."
+      },
+      "subscribe_again": "Suscribirse de nuevo",
+      "skip_delivery": "Omitir entrega"
+    },
+    "deliveries": {
+      "lead": "{count} activas · próxima entrega: {date}",
+      "need_action": "{count} requiere tu atención | {count} requieren tu atención",
+      "in_days": "en {count} día | en {count} días",
+      "days_ago": "hace {count} día | hace {count} días",
+      "next_badge": "Próxima entrega",
+      "items": "{count} artículo | {count} artículos",
+      "skip": "Omitir entrega",
+      "change": "Cambiar",
+      "quantity": "Cantidad",
+      "settings": "Ajustes de la suscripción",
+      "pause": "Pausar suscripción",
+      "cancel": "Cancelar suscripción",
+      "pause_title": "¿Pausar la suscripción?",
+      "pause_text": "Las entregas y los cobros de {product} se detienen hasta que reanudes la suscripción. Las entregas ya pedidas seguirán llegando.",
+      "cancel_title": "¿Cancelar la suscripción?",
+      "cancel_text": "No habrá más entregas ni cobros de {product}. Las entregas ya pedidas seguirán llegando. Esta acción no se puede deshacer.",
+      "paused_done": "Suscripción pausada.",
+      "cancelled_done": "Suscripción cancelada. Las entregas ya pedidas seguirán llegando.",
+      "resumed": "Suscripción reanudada.",
+      "updated": "Suscripción actualizada.",
+      "skipped": "Entrega omitida. No se te cobrará nada por ella.",
+      "cutoff": "Puedes cambiarla u omitirla hasta el {date}.",
+      "upcoming_hint": "Puedes cambiar u omitir esta entrega hasta que te enviemos el aviso unos días antes.",
+      "cutoff_passed": "En preparación — los cambios se aplicarán a la próxima entrega.",
+      "needs_action": "Se enviará en cuanto se resuelva.",
+      "ordered_hint": "Pedido realizado — ya está en camino.",
+      "estimated_total": "Total estimado",
+      "total": "Total",
+      "ships_to": "Envío a {address}",
+      "idle_title": "Pausadas y canceladas ({count})",
+      "paused_until": "Pausada hasta el {date}",
+      "paused": "Pausada",
+      "cancelled_on": "Cancelada el {date}",
+      "qty_every": "Cant. {quantity} · {interval}",
+      "resume": "Reanudar ahora",
+      "subscribe_again": "Volver a suscribirse",
+      "empty": "Todavía no hay nada programado.",
+      "today": "hoy",
+      "tomorrow": "mañana",
+      "skip_title": "¿Omitir esta entrega?",
+      "skip_lead_one": "Omitiremos la entrega del {date} ({product}).",
+      "skip_lead_many": "Omitiremos la entrega del {date} con estos artículos:",
+      "skip_after": "No se te cobrará nada por ella. Tu próxima entrega será el {next}. Las demás entregas se mantienen según lo previsto.",
+      "skip_after_no_next": "No se te cobrará nada por ella. Las demás entregas se mantienen según lo previsto.",
+      "prices_estimate": "Los precios son estimaciones basadas en los precios actuales y pueden cambiar hasta la fecha del pedido.",
+      "pause_lead_many": "Las entregas y los cobros de estos productos se detienen hasta que reanudes la suscripción:",
+      "pause_after_many": "Las entregas ya pedidas seguirán llegando.",
+      "cancel_lead_many": "No habrá más entregas ni cobros de estos productos:",
+      "cancel_after_many": "Las entregas ya pedidas seguirán llegando. Esta acción no se puede deshacer.",
+      "order_now": "Pedir ahora",
+      "order_now_title": "¿Pedir ahora?",
+      "ordered": "Pedido realizado.",
+      "card_label": "Pagar con",
+      "choose_card": "Elige una tarjeta",
+      "manage_cards": "Gestionar tarjetas",
+      "order_now_lead_one": "Haremos un pedido de {product} ahora mismo y lo cargaremos a tu tarjeta guardada.",
+      "order_now_lead_many": "Haremos un pedido de estos productos ahora mismo y lo cargaremos a tu tarjeta guardada:",
+      "order_now_after": "El calendario se reinicia a partir de hoy.",
+      "change_card": "Cambiar tarjeta",
+      "card_title": "Cambiar tarjeta",
+      "card_lead_one": "Elige la tarjeta guardada para {product}.",
+      "card_lead_many": "Elige la tarjeta guardada para estos productos:",
+      "no_cards": "Todavía no tienes tarjetas guardadas.",
+      "card_changed": "Tarjeta actualizada."
+    },
+    "order": {
+      "badge": "Suscripción",
+      "automatic": "Realizado automáticamente por su suscripción para la entrega del {date}.",
+      "subscriptions": "Suscripción {numbers}. | Suscripciones {numbers}.",
+      "manage": "Gestionar suscripciones"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — ya no disponible"
+    }
+  }
+}

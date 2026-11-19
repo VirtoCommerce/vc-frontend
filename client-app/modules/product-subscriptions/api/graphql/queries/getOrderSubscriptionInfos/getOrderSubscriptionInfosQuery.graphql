@@ -1,0 +1,18 @@
+query GetOrderSubscriptionInfos($orderIds: [String!]!) {
+  orderSubscriptionInfos(orderIds: $orderIds) {
+    orderId
+    renewalId
+    renewalNumber
+    renewalScheduledDate
+    isManualRenewal
+    subscriptions {
+      subscriptionId
+      subscriptionNumber
+      productId
+      intervalUnit
+      intervalCount
+      status
+      isStartedByOrder
+    }
+  }
+}

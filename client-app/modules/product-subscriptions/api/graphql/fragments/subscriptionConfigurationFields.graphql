@@ -1,0 +1,28 @@
+fragment subscriptionConfigurationFields on SubscriptionConfiguration {
+  productId
+  capturedAt
+  configuredUnitPrice
+  configuredUnitPriceMoney {
+    amount
+    formattedAmount
+  }
+  capturedFrom {
+    orderId
+    orderNumber
+  }
+  sections {
+    sectionId
+    name
+    type
+    productId
+    sku
+    productName
+    quantity
+    customText
+    isAvailable
+    files {
+      name
+      url
+    }
+  }
+}

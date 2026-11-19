@@ -1,0 +1,6 @@
+fragment subscriptionIntervalFields on SubscriptionInterval {
+  unit
+  count
+  isDefault
+  label
+}

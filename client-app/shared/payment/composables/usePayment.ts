@@ -23,6 +23,19 @@ function _usePaymentFactory() {
     paymentProcessorInternal.value = paymentProcessor;
   };
 
+  /**
+   * Clears the processor and the card validity, but only while the given processor is still the registered one: by the
+   * time a form unmounts, the form that replaced it may already have registered its own.
+   */
+  const unregisterPaymentProcessor = (paymentProcessor: NonNullable<PaymentProcessorType>) => {
+    if (paymentProcessorInternal.value !== paymentProcessor) {
+      return;
+    }
+
+    paymentProcessorInternal.value = null;
+    isValidCardData.value = false;
+  };
+
   const finalizePayment = async (order: CustomerOrderType) => {
     return paymentProcessorInternal.value?.(order);
   };
@@ -33,6 +46,7 @@ function _usePaymentFactory() {
     setCardDataInvalid,
     isCanFinalizePayment,
     registerPaymentProcessor,
+    unregisterPaymentProcessor,
     finalizePayment,
   };
 }

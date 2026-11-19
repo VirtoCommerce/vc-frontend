@@ -27,6 +27,15 @@
     </template>
 
     <template #after-content="{ item }">
+      <ExtensionPointList
+        v-if="orderId"
+        category="orderLineItem"
+        :names="[EXTENSION_NAMES.orderLineItem.details]"
+        :condition-params="item"
+        :line-item="item"
+        :order-id="orderId"
+      />
+
       <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
     </template>
   </VcLineItems>
@@ -37,11 +46,14 @@ import { computed } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { prepareLineItems } from "@/core/utilities";
 import { ConfigurationItems } from "@/shared/common";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
   subtotalCurrencyCode?: string;
+  /** A placed order's id: its lines then show what modules add to them (`orderLineItem`); not set for a cart. */
+  orderId?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

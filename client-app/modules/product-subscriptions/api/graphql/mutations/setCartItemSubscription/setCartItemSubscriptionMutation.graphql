@@ -1,0 +1,7 @@
+#import "../../fragments/subscriptionCartItemFields.graphql"
+
+mutation SetCartItemSubscription($command: InputSetCartItemSubscription!) {
+  setCartItemSubscription(command: $command) {
+    ...subscriptionCartItemFields
+  }
+}

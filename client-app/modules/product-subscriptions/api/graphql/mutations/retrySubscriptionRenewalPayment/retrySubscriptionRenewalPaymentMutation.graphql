@@ -1,0 +1,7 @@
+#import "../../fragments/renewalFields.graphql"
+
+mutation RetrySubscriptionRenewalPayment($command: InputSubscriptionRenewalId!) {
+  retrySubscriptionRenewalPayment(command: $command) {
+    ...renewalFields
+  }
+}

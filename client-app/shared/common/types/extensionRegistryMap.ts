@@ -1,5 +1,5 @@
-import type { CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
-import type { ExtendedMenuLinkType } from "@/core/types";
+import type { CartType, CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
+import type { ExtendedMenuLinkType, PreparedLineItemType } from "@/core/types";
 import type { SignInMethodContributionType } from "@/shared/account/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
@@ -78,8 +78,46 @@ export type ExtensionCategoryMapType = {
     never,
     ({ paymentTypeName }: { paymentTypeName: string }) => boolean
   >;
+  /**
+   * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+   * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+   */
+  addCardForm: ExtensionEntryType<
+    { paymentMethodCode: string; setDefault: boolean },
+    never,
+    (paymentMethodCode: string) => boolean
+  >;
+  /**
+   * On each cart line item (`shared/cart/components/cart-line-items.vue`): `details` under the line, `actions` next to
+   * "Save for later" (`icons` when the line shows its actions as icons, `selected` when the line is selected).
+   * A provider decides from the line whether it has anything to show.
+   */
+  cartLineItem: ExtensionEntryType<
+    { lineItem: PreparedLineItemType; readonly?: boolean; icons?: boolean; selected?: boolean },
+    never,
+    (lineItem: PreparedLineItemType) => boolean
+  >;
+  /**
+   * On each line of a placed order (`shared/account/components/order-line-items.vue` with `orderId`): `details` under
+   * the line, as `cartLineItem.details` in the cart. A provider decides from the line whether it has anything to show.
+   */
+  orderLineItem: ExtensionEntryType<
+    { lineItem: PreparedLineItemType; orderId: string },
+    never,
+    (lineItem: PreparedLineItemType) => boolean
+  >;
+  /**
+   * Before placing the order: on the multi-step checkout's review step, above the order summary
+   * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+   */
+  checkoutReview: ExtensionEntryType<{ cart?: CartType }, never, (cart?: CartType) => boolean>;
   /** The order details page. A provider decides from the order whether it has anything to offer. */
   orderDetails: ExtensionEntryType<{ order?: CustomerOrderType }, never, (order?: CustomerOrderType) => boolean>;
+  /**
+   * Next to the order number in Order history (`shared/account/components/orders/orders-table.vue` and the mobile
+   * `order-card.vue`). A provider decides from the order whether it has anything to show.
+   */
+  orderListItem: ExtensionEntryType<{ order: CustomerOrderType }, never, (order: CustomerOrderType) => boolean>;
   /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
   sharedList: ExtensionEntryType<
     { sharingSetting?: SharingSettingType },

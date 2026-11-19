@@ -1,0 +1,7 @@
+#import "../../fragments/productSubscriptionFields.graphql"
+
+mutation ChangeProductSubscription($command: InputChangeProductSubscription!) {
+  changeProductSubscription(command: $command) {
+    ...productSubscriptionFields
+  }
+}

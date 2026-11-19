@@ -1,0 +1,310 @@
+{
+  "product_subscriptions": {
+    "navigation": {
+      "subscriptions": "Abbonamenti"
+    },
+    "intervals": {
+      "day": "Ogni giorno | Ogni {count} giorni",
+      "week": "Ogni settimana | Ogni {count} settimane",
+      "month": "Ogni mese | Ogni {count} mesi",
+      "year": "Ogni anno | Ogni {count} anni"
+    },
+    "intervals_short": {
+      "day": "1 giorno | {count} giorni",
+      "week": "1 settimana | {count} settimane",
+      "month": "1 mese | {count} mesi",
+      "year": "1 anno | {count} anni"
+    },
+    "discount": {
+      "percent": "Risparmia il {value}%",
+      "amount": "Risparmia {value}"
+    },
+    "statuses": {
+      "PendingActivation": "In attivazione",
+      "Active": "Attivo",
+      "Paused": "Sospeso",
+      "PastDue": "Pagamento richiesto",
+      "Cancelled": "Annullato",
+      "Scheduled": "Programmata",
+      "Notified": "In arrivo",
+      "ReviewRequired": "Da verificare",
+      "Ordered": "In lavorazione",
+      "PaymentActionRequired": "Conferma pagamento",
+      "RetryScheduled": "Nuovo tentativo di pagamento",
+      "Authorized": "Confermata",
+      "Completed": "Consegnata",
+      "Failed": "Pagamento non riuscito",
+      "Skipped": "Saltata"
+    },
+    "card_status": {
+      "Active": "Attiva",
+      "NeedsUpdate": "Da aggiornare",
+      "Expired": "Scaduta",
+      "Revoked": "Rimossa"
+    },
+    "common": {
+      "retry": "Riprova",
+      "subscription_number": "Abbonamento {number}"
+    },
+    "errors": {
+      "generic": "Si è verificato un errore. Riprova.",
+      "action_disabled": "Questo negozio non lo consente. Contatta il negozio."
+    },
+    "purchase_options": {
+      "title": "Opzioni di acquisto",
+      "one_time": "Acquisto singolo",
+      "subscribe": "Abbonati e risparmia",
+      "benefit_reminder": "Ti inviamo un’e-mail prima di ogni consegna. Nessun addebito a sorpresa.",
+      "benefit_cancel": "Salta, sospendi o annulla in qualsiasi momento.",
+      "sign_in_required": "Accedi per abbonarti.",
+      "in_cart_subscription": "Nel carrello come abbonamento · {interval}",
+      "in_cart_once": "Nel carrello come acquisto singolo",
+      "deliver_every": "Frequenza di consegna",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "configuration_note": "Ogni consegna arriva con questa configurazione. Per cambiarla, crea un nuovo abbonamento."
+    },
+    "how_it_works": {
+      "link": "Come funziona",
+      "title": "Come funzionano gli abbonamenti",
+      "lead": "Ricevi i prodotti che acquisti regolarmente secondo il tuo calendario, a un prezzo più basso. Hai sempre il controllo: salta, modifica o annulla una consegna in qualsiasi momento prima della scadenza.",
+      "steps": {
+        "title": "Come funziona",
+        "choose": {
+          "title": "Scegli la frequenza",
+          "text": "Nella pagina del prodotto scegli «Abbonati e risparmia» e una frequenza di consegna. Il primo ordine viene spedito come di consueto."
+        },
+        "remind": {
+          "title": "Ti avvisiamo prima",
+          "text": "Prima di ogni consegna ti inviamo un’e-mail con gli articoli, la data e l’importo massimo che può essere addebitato."
+        },
+        "deliver": {
+          "title": "Consegniamo e addebitiamo",
+          "text": "L’ordine viene effettuato nella data scelta e addebitato, con lo sconto dell’abbonamento, sulla carta salvata al checkout."
+        }
+      },
+      "rules": {
+        "savings": {
+          "title": "Risparmio",
+          "items": [
+            "Lo sconto è indicato nella pagina del prodotto prima dell’abbonamento.",
+            "Alcuni prodotti fanno risparmiare di più se consegnati più spesso.",
+            "Lo sconto si applica a ogni consegna finché l’abbonamento è attivo."
+          ]
+        },
+        "prices": {
+          "title": "Prezzi",
+          "items": [
+            "Ogni consegna ha il prezzo del giorno dell’ordine, meno il tuo sconto.",
+            "Non addebitiamo mai più dell’importo indicato nel promemoria.",
+            "Se il prezzo aumenta di oltre il 5%, ti chiediamo di verificare la consegna prima di ordinarla."
+          ]
+        },
+        "changes": {
+          "title": "Salta, sospendi o modifica",
+          "items": [
+            "Salta una consegna, sospendi l’abbonamento o modifica quantità, frequenza o data successiva in «Account › Abbonamenti».",
+            "Le modifiche fatte prima della scadenza, un giorno prima della data dell’ordine, valgono per la consegna successiva.",
+            "Se ti servono gli articoli prima, ordina subito."
+          ]
+        },
+        "payment": {
+          "title": "Pagamento",
+          "items": [
+            "Addebitiamo la carta salvata al checkout. Puoi cambiare carta in qualsiasi momento.",
+            "Il pagamento viene autorizzato quando l’ordine è effettuato e addebitato alla spedizione.",
+            "Se un pagamento non va a buon fine, riproviamo e ti scriviamo prima di sospendere l’abbonamento."
+          ]
+        },
+        "cancel": {
+          "title": "Annulla quando vuoi",
+          "items": [
+            "Annulla in un solo passaggio in «Account › Abbonamenti». Senza telefonate né costi.",
+            "Le consegne già ordinate non vengono modificate.",
+            "Una volta all’anno ti inviamo un riepilogo dei tuoi abbonamenti attivi."
+          ]
+        },
+        "availability": {
+          "title": "Non disponibile",
+          "items": [
+            "Se un articolo non è disponibile, puoi verificare la consegna e ordinare il resto.",
+            "Se non rispondi, quella consegna viene saltata e la successiva avviene come previsto."
+          ]
+        }
+      },
+      "manage": {
+        "title": "Gestisci i tuoi abbonamenti",
+        "text": "Visualizza le prossime consegne e modifica qualsiasi abbonamento dal tuo account.",
+        "button": "Vai ai miei abbonamenti"
+      }
+    },
+    "cart": {
+      "subscribe_button": "Abbonati",
+      "subscribed": "Abbonato",
+      "change": "Modifica",
+      "subscribed_hint": "Prossima consegna intorno al {date}. Ti inviamo un’e-mail prima di ogni consegna."
+    },
+    "checkout": {
+      "title": "Il tuo abbonamento",
+      "deliver_every": "Frequenza di consegna",
+      "agree": "Accetto i termini dell’abbonamento e il salvataggio della mia carta per i pagamenti automatici.",
+      "required": "Accetta i termini per effettuare l’ordine.",
+      "items_failed": "Non è stato possibile verificare gli abbonamenti in questo carrello. Riprova per effettuare l’ordine.",
+      "terms_failed": "Non è stato possibile caricare i termini dell’abbonamento.",
+      "retry": "Riprova",
+      "no_payment_method": "Gli abbonamenti si pagano con una carta salvata e questo negozio non ha un metodo di pagamento che permetta di salvarla. Rimuovi l’abbonamento per pagare una sola volta oppure contatta il negozio.",
+      "composition": "Include: {items}"
+    },
+    "mock_payment": {
+      "banner": "Metodo di pagamento di prova: nessuna carta reale viene addebitata. Usa una delle carte di prova qui sotto.",
+      "test_cards": "Carte di prova",
+      "cards": {
+        "success": "Sempre approvata",
+        "three_ds_on_save": "3-D Secure al checkout",
+        "three_ds_on_renewal": "3-D Secure ai rinnovi",
+        "insufficient_funds": "Rinnovi: fondi insufficienti",
+        "expired": "Carta scaduta",
+        "recurring_cancelled": "Rinnovi: pagamenti ricorrenti annullati"
+      },
+      "save_card": "Salva questa carta per i pagamenti futuri",
+      "save_card_required": "Il tuo abbonamento viene pagato con questa carta, che verrà quindi salvata in modo sicuro. Puoi cambiarla in qualsiasi momento.",
+      "pay": "Paga {amount}",
+      "declined": "Il pagamento è stato rifiutato. Prova con un’altra carta.",
+      "three_ds_title": "Conferma con la tua banca",
+      "three_ds_text": "La tua banca ti chiede di confermare il pagamento di {amount}. Si tratta di una verifica 3-D Secure simulata.",
+      "three_ds_verify_card": "La tua banca ti chiede di confermare questa carta. Si tratta di una verifica 3-D Secure simulata.",
+      "three_ds_approve": "Approva",
+      "three_ds_decline": "Rifiuta",
+      "three_ds_failed": "Il pagamento non è stato confermato. Puoi riprovare."
+    },
+    "list": {
+      "title": "Abbonamenti",
+      "load_failed": "Impossibile caricare i tuoi abbonamenti.",
+      "browse": "Sfoglia i prodotti"
+    },
+    "renewal": {
+      "total": "Totale",
+      "excluded": "Non incluso in questa consegna",
+      "confirm_payment": "Conferma pagamento",
+      "accept": "Conferma consegna",
+      "retry": "Riprova pagamento",
+      "skip": "Salta questa consegna",
+      "view_order": "Ordine {number}",
+      "accepted": "Consegna confermata.",
+      "retried": "Pagamento ritentato.",
+      "skipped": "Consegna saltata.",
+      "messages": {
+        "notified": "Puoi modificare o saltare questa consegna fino al {cutoff}.",
+        "review": "Qualcosa è cambiato dopo il promemoria. Conferma o salta questa consegna.",
+        "ordered": "L’ordine è stato effettuato e il pagamento è in elaborazione.",
+        "action": "La tua banca ti ha chiesto di confermare il pagamento.",
+        "retry": "La carta è stata rifiutata. Riproveremo il {date}.",
+        "retry_soon": "La carta è stata rifiutata. Riproveremo a breve.",
+        "authorized": "La tua carta è stata approvata. L’addebito avverrà alla spedizione dell’ordine.",
+        "completed": "Spedito e pagato.",
+        "failed": "Non siamo riusciti ad addebitare la tua carta. Scegli un’altra carta, poi riprova.",
+        "skipped": "Questa consegna è stata saltata.",
+        "cancelled": "Questa consegna è stata annullata."
+      },
+      "review_reasons": {
+        "ITEMS_UNAVAILABLE": "Alcuni articoli di questa consegna non sono al momento disponibili.",
+        "NO_SHIPPING_METHOD": "Nessun metodo di spedizione disponibile per l'indirizzo di consegna.",
+        "PRICE_INCREASED": "Il totale è passato da {from} a {to}. Conferma il nuovo prezzo.",
+        "UNHANDLED": "Questa consegna è cambiata dopo il promemoria. Controllala.",
+        "CONFIGURATION_CHANGED": "Un'opzione della tua configurazione non può più essere ordinata. Non inviamo mai una configurazione diversa: abbonati di nuovo con nuove opzioni o salta questa consegna.",
+        "NO_PAYMENT_METHOD": "Il metodo di pagamento di questo abbonamento non può più essere usato. Scegli un'altra carta, poi conferma la consegna."
+      },
+      "errors": {
+        "AUTHENTICATION_REQUIRED": "La tua banca ti ha chiesto di confermare questo pagamento.",
+        "CARD_REQUIRED": "Aggiungi una carta per pagare questa consegna.",
+        "CARD_NEEDS_UPDATE": "La carta salvata deve essere aggiornata prima che possiamo addebitare questa consegna.",
+        "CARD_DECLINED": "La tua carta è stata rifiutata. Aggiorna il metodo di pagamento.",
+        "CARD_DECLINED_WILL_RETRY": "La tua carta è stata rifiutata. Riproveremo automaticamente.",
+        "CARD_DECLINED_PROVIDER_RETRY": "La tua carta è stata rifiutata. Il tuo fornitore di pagamenti riproverà automaticamente.",
+        "CARD_DECLINED_ON_CAPTURE": "La tua carta è stata rifiutata alla spedizione dell'ordine. Aggiorna il metodo di pagamento.",
+        "RETRIES_EXHAUSTED": "Non siamo riusciti ad addebitare la tua carta dopo diversi tentativi. Aggiorna il metodo di pagamento.",
+        "PAYMENT_FAILED": "Non siamo riusciti ad addebitare la tua carta. Aggiorna il metodo di pagamento.",
+        "PAYMENT_NOT_CONFIRMED": "Il pagamento non è stato confermato in tempo.",
+        "PROVIDER_UNAVAILABLE": "Impossibile contattare il fornitore di pagamenti. Riprova più tardi.",
+        "UNHANDLED": "Si è verificato un problema con il pagamento di questa consegna."
+      },
+      "subscribe_again": "Abbonati di nuovo",
+      "skip_delivery": "Salta la consegna"
+    },
+    "deliveries": {
+      "lead": "{count} attivi · prossima consegna: {date}",
+      "need_action": "{count} richiede un tuo intervento | {count} richiedono un tuo intervento",
+      "in_days": "tra {count} giorno | tra {count} giorni",
+      "days_ago": "{count} giorno fa | {count} giorni fa",
+      "next_badge": "Prossima consegna",
+      "items": "{count} articolo | {count} articoli",
+      "skip": "Salta consegna",
+      "change": "Modifica",
+      "quantity": "Quantità",
+      "settings": "Impostazioni abbonamento",
+      "pause": "Sospendi abbonamento",
+      "cancel": "Annulla abbonamento",
+      "pause_title": "Sospendere l’abbonamento?",
+      "pause_text": "Le consegne e gli addebiti per {product} si interrompono finché non riattivi l’abbonamento. Le consegne già ordinate arriveranno comunque.",
+      "cancel_title": "Annullare l’abbonamento?",
+      "cancel_text": "Nessun’altra consegna o addebito per {product}. Le consegne già ordinate arriveranno comunque. L’operazione non può essere annullata.",
+      "paused_done": "Abbonamento sospeso.",
+      "cancelled_done": "Abbonamento annullato. Le consegne già ordinate arriveranno comunque.",
+      "resumed": "Abbonamento riattivato.",
+      "updated": "Abbonamento aggiornato.",
+      "skipped": "Consegna saltata. Non ti verrà addebitato nulla.",
+      "cutoff": "Puoi modificarla o saltarla fino al {date}.",
+      "upcoming_hint": "Puoi modificare o saltare questa consegna finché non ti inviamo il promemoria, qualche giorno prima.",
+      "cutoff_passed": "In preparazione — le modifiche varranno per la consegna successiva.",
+      "needs_action": "Verrà spedita non appena il problema sarà risolto.",
+      "ordered_hint": "Ordinata — è in arrivo.",
+      "estimated_total": "Totale stimato",
+      "total": "Totale",
+      "ships_to": "Spedizione a {address}",
+      "idle_title": "Sospesi e annullati ({count})",
+      "paused_until": "Sospeso fino al {date}",
+      "paused": "Sospeso",
+      "cancelled_on": "Annullato il {date}",
+      "qty_every": "Qtà {quantity} · {interval}",
+      "resume": "Riattiva ora",
+      "subscribe_again": "Abbonati di nuovo",
+      "empty": "Non c’è ancora nulla in programma.",
+      "today": "oggi",
+      "tomorrow": "domani",
+      "skip_title": "Saltare questa consegna?",
+      "skip_lead_one": "Salteremo la consegna del {date} ({product}).",
+      "skip_lead_many": "Salteremo la consegna del {date} con questi articoli:",
+      "skip_after": "Non ti verrà addebitato nulla. La prossima consegna sarà il {next}. Tutte le altre consegne restano invariate.",
+      "skip_after_no_next": "Non ti verrà addebitato nulla. Tutte le altre consegne restano invariate.",
+      "prices_estimate": "I prezzi sono stime basate sui prezzi attuali e possono cambiare entro la data dell’ordine.",
+      "pause_lead_many": "Le consegne e gli addebiti per questi prodotti si interrompono finché non riattivi l’abbonamento:",
+      "pause_after_many": "Le consegne già ordinate arriveranno comunque.",
+      "cancel_lead_many": "Nessun’altra consegna o addebito per questi prodotti:",
+      "cancel_after_many": "Le consegne già ordinate arriveranno comunque. L’operazione non può essere annullata.",
+      "order_now": "Ordina ora",
+      "order_now_title": "Ordinare ora?",
+      "ordered": "Ordine effettuato.",
+      "card_label": "Paga con",
+      "choose_card": "Scegli una carta",
+      "manage_cards": "Gestisci carte",
+      "order_now_lead_one": "Ordiniamo subito {product} e addebitiamo la tua carta salvata.",
+      "order_now_lead_many": "Ordiniamo subito questi prodotti e addebitiamo la tua carta salvata:",
+      "order_now_after": "Il programma riparte da oggi.",
+      "change_card": "Cambia carta",
+      "card_title": "Cambia carta",
+      "card_lead_one": "Scegli la carta salvata per {product}.",
+      "card_lead_many": "Scegli la carta salvata per questi prodotti:",
+      "no_cards": "Non hai ancora carte salvate.",
+      "card_changed": "Carta aggiornata."
+    },
+    "order": {
+      "badge": "Abbonamento",
+      "automatic": "Effettuato automaticamente dal tuo abbonamento per la consegna del {date}.",
+      "subscriptions": "Abbonamento {numbers}. | Abbonamenti {numbers}.",
+      "manage": "Gestisci abbonamenti"
+    },
+    "configuration": {
+      "unavailable_value": "{name} — non più disponibile"
+    }
+  }
+}

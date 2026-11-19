@@ -26,7 +26,14 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   productPage: {
     sidebarButton: "sidebar-button",
+    /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+    purchaseOptions: "purchase-options",
     variationItemButton: "variation-item-button",
+    /**
+     * Replaces a variation row's add-to-cart (variations table and list) when `variationItemButton` does not apply,
+     * the way `purchaseOptions` follows `sidebarButton` for a simple product (e.g. Subscribe & Save per variation).
+     */
+    variationPurchaseOptions: "variation-purchase-options",
   },
   paymentPage: {
     paymentMethods: "payment-methods",
@@ -36,9 +43,27 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   orderDetails: {
     actions: "actions",
+    /** Above the order's line items, under the title (e.g. "Placed automatically by your subscription"). */
+    notice: "notice",
+  },
+  /** Next to the order number in Order history (table row and mobile card). */
+  orderListItem: {
+    badge: "badge",
   },
   sharedList: {
     provenanceNote: "provenance-note",
+  },
+  cartLineItem: {
+    details: "details",
+    /** Next to "Save for later" on the cart line (Subscribe). */
+    actions: "actions",
+  },
+  /** Under an order line in Order history, as `cartLineItem.details` in the cart (Subscribed). */
+  orderLineItem: {
+    details: "details",
+  },
+  checkoutReview: {
+    beforePlaceOrder: "before-place-order",
   },
   checkout: {
     placeOrder: "place-order",
@@ -63,8 +88,13 @@ export const EXTENSION_CATEGORIES = {
   orderPaymentPage: "orderPaymentPage",
   cartPayment: "cartPayment",
   orderDetails: "orderDetails",
+  orderListItem: "orderListItem",
   sharedList: "sharedList",
+  cartLineItem: "cartLineItem",
+  orderLineItem: "orderLineItem",
+  checkoutReview: "checkoutReview",
   checkout: "checkout",
+  addCardForm: "addCardForm",
   identityProviders: "identityProviders",
   signInMethods: "signInMethods",
   accountSecurity: "accountSecurity",

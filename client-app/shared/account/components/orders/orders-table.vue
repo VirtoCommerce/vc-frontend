@@ -21,7 +21,16 @@
 
     <!-- Desktop columns -->
     <VcTableColumn id="number" v-slot="{ item }" :title="$t('pages.account.orders.order_number_label')" sortable>
-      {{ item.number }}
+      <span class="orders-table__number">
+        {{ item.number }}
+
+        <ExtensionPoint
+          v-if="$canRenderExtensionPoint('orderListItem', EXTENSION_NAMES.orderListItem.badge, item)"
+          :name="EXTENSION_NAMES.orderListItem.badge"
+          category="orderListItem"
+          :order="item"
+        />
+      </span>
     </VcTableColumn>
 
     <VcTableColumn
@@ -89,6 +98,7 @@
 
 <script setup lang="ts">
 import { getDisplayTotals } from "@/core/utilities";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import OrderCard from "../order-card.vue";
 import OrderStatus from "../order-status.vue";
 import type { OrderScopeType } from "../../types";
@@ -117,3 +127,11 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.orders-table {
+  &__number {
+    @apply inline-flex flex-wrap items-center gap-1.5;
+  }
+}
+</style>

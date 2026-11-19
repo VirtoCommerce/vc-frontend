@@ -112,6 +112,8 @@
       </div>
     </VcWidget>
 
+    <ExtensionPointList category="checkoutReview" :condition-params="cart" :cart="cart" />
+
     <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" class="mt-5" />
 
     <OrderCommentSection v-if="comment" :comment="comment" readonly class="mt-5" />
