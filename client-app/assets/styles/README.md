@@ -537,8 +537,9 @@ to its Classic value in the table below; soft sets them in `designs/soft/_tokens
 frame does not style the header or the footer: they keep their own look. VcFrame sets the space above the header and
 below the footer. VcFrame publishes the header width, `--vc-frame-header-width` =
 `min(100% - 2 × --vc-frame-header-offset-x, --vc-frame-max-width)`; `100%` resolves where it is read. The header slot
-has no wrapper, so each header piece sets `inline-size: var(--vc-frame-header-width)` with auto margins itself; a
-fork's own header does the same. The frame sizes the footer the same way, with `--vc-frame-footer-offset-x`.
+has no wrapper, so each header piece sets `inline-size: var(--vc-frame-header-width, 100%)` with auto margins itself;
+a fork's own header does the same. The `100%` keeps a header outside VcFrame full width. The frame sizes the footer the
+same way, with `--vc-frame-footer-offset-x`.
 
 | Token | What it changes | Read by | Classic | Soft |
 | --- | --- | --- | --- | --- |

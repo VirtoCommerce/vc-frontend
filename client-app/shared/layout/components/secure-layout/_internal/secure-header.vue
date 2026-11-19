@@ -40,7 +40,7 @@ watch(
 .secure-header {
   @apply sticky top-0 z-20 mx-auto flex h-14 items-center justify-between gap-3 bg-additional-50 px-6 shadow-md;
 
-  inline-size: var(--vc-frame-header-width);
+  inline-size: var(--vc-frame-header-width, 100%);
 
   @media (width >= theme("screens.lg")) {
     @apply h-auto px-12 py-5;

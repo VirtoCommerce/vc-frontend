@@ -148,7 +148,7 @@ syncRefs(isScrollLocked, scrollLock);
 .mobile-header {
   @apply sticky top-0 z-40 mx-auto shadow-md;
 
-  inline-size: var(--vc-frame-header-width);
+  inline-size: var(--vc-frame-header-width, 100%);
 
   @media print {
     @apply hidden;

@@ -21,8 +21,8 @@ defineSlots<{
   /**
    * The page header. Rendered with no wrapper: each root element of this slot is a direct child of the frame, so a
    * `position: sticky` piece sticks for the whole page. Wrapping the pieces in one block element kills sticky. A
-   * piece takes the frame's header width, `inline-size: var(--vc-frame-header-width)`, centred with auto margins;
-   * the frame sizes the footer the same way, with `--vc-frame-footer-offset-x`.
+   * piece takes the frame's header width, `inline-size: var(--vc-frame-header-width, 100%)`, centred with auto
+   * margins; the frame sizes the footer the same way, with `--vc-frame-footer-offset-x`.
    */
   header?: () => VNode[];
   /** The page content, inside the frame's `<main id="main-content">`, the skip-to-content target. */
