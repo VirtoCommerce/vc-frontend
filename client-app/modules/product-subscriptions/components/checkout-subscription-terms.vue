@@ -35,8 +35,8 @@
           </div>
         </template>
 
-        <!-- A configured product: what every delivery brings, so the customer knows what is subscribed to. -->
-        <template #after-title="{ item }">
+        <!-- A configured product: what every delivery brings. Below the line: a narrow card hides its after-title slot. -->
+        <template #after-content="{ item }">
           <span
             v-if="compositionOf(item.id)"
             class="checkout-subscription-terms__composition"
