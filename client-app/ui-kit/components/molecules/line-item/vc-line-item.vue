@@ -235,7 +235,6 @@ watchEffect(() => {
     @apply p-4 rounded-none border-0 shadow-none;
   }
 
-  // A selected line keeps its background; a 4px edge on the leading side marks it.
   &--selected {
     $selected: &;
 
