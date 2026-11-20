@@ -72,7 +72,7 @@
         v-if="confirmingStopSharing"
         :stopping="sharingScope === PRIVATE_SCOPE"
         @confirm="confirmStopSharing"
-        @close="confirmingStopSharing = false"
+        @close="dismissStopSharing"
       />
     </div>
 
@@ -89,6 +89,7 @@
       </VcButton>
 
       <VcButton
+        ref="saveButton"
         data-test-id="wishlist-sharing-save-button"
         :loading="saving"
         :disabled="!canSave || saving"
@@ -103,7 +104,7 @@
 
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, nextTick, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
@@ -113,6 +114,7 @@ import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
 import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
 import type { SharingTargetType, WishlistType } from "@/core/api/graphql/types";
+import type { VcButton } from "@/ui-kit/components";
 
 interface IProps {
   list: WishlistType;
@@ -144,6 +146,7 @@ const saving = ref(false);
 const sharingScope = ref<string>(listSharingScope.value);
 
 const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
+const saveButton = useTemplateRef<InstanceType<typeof VcButton>>("saveButton");
 
 const listSharingScopes = computed(() => {
   const persisted = listSharingScope.value;
@@ -236,6 +239,15 @@ function requestSave(closeHandle: () => void): void {
 
   pendingClose = closeHandle;
   confirmingStopSharing.value = true;
+}
+
+// Unmounted in place rather than closed through `useModal`, so nothing else returns the focus: it would fall to the
+// document. Save opened the confirmation, and stays inert until the confirmation has left the DOM.
+async function dismissStopSharing(): Promise<void> {
+  confirmingStopSharing.value = false;
+
+  await nextTick();
+  saveButton.value?.focus();
 }
 
 function confirmStopSharing(): void {
