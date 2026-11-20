@@ -1,0 +1,9 @@
+// The account menu floats over the header, which is the panel colour too.
+.top-header {
+  &__account-menu {
+    @apply border text-neutral-950;
+
+    border-color: var(--vc-raised-border);
+    background-color: var(--vc-raised-bg);
+  }
+}

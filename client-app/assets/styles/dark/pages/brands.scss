@@ -1,0 +1,10 @@
+// additional-950 is the page text in light mode and stays there; the dark ramp names text neutral-950.
+.brands {
+  &__link {
+    @apply text-neutral-950;
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
+  }
+}
