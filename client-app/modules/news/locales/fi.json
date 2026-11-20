@@ -4,7 +4,13 @@
       "title": "Viimeisimmät uutiset",
       "not-found": "Uutisia ei löytynyt",
       "search-placeholder": "Hae",
-      "written-by": "Kirjoittanut"
+      "written-by": "Kirjoittanut",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Kirjoittanut",

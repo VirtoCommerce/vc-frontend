@@ -9,7 +9,17 @@
     "list_details": {
       "empty_list": "Din lista är tom",
       "no_results_message": "Inga resultat hittades",
-      "empty_list_button": "Fortsätt bläddra"
+      "empty_list_button": "Fortsätt bläddra",
+      "empty_states": {
+        "no_data": {
+          "title": "No back-in-stock alerts yet",
+          "description": "Use “Notify me” on an out-of-stock product and it will appear here."
+        },
+        "no_results": {
+          "title": "No products match your search",
+          "description": "Check the spelling or try another keyword."
+        }
+      }
     },
     "messages": {
       "click_to_receive_alert": "Klicka för att få en avisering",

@@ -75,13 +75,20 @@
       <VcEmptyView
         v-else-if="!allLoading"
         :text="
-          keyword ? $t('back_in_stock.list_details.no_results_message') : $t('back_in_stock.list_details.empty_list')
+          keyword
+            ? $t('back_in_stock.list_details.empty_states.no_results.title')
+            : $t('back_in_stock.list_details.empty_states.no_data.title')
         "
-        icon="outline-lists"
-        :variant="!!keyword ? 'search' : 'empty'"
+        :description="
+          keyword
+            ? $t('back_in_stock.list_details.empty_states.no_results.description')
+            : $t('back_in_stock.list_details.empty_states.no_data.description')
+        "
+        :reason="keyword ? 'no-results' : 'no-data'"
+        entity="back-in-stock"
       >
         <template #button>
-          <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+          <VcButton v-if="keyword" variant="outline" color="secondary" prepend-icon="reset" @click="resetKeyword">
             {{ $t("pages.account.orders.buttons.reset_search") }}
           </VcButton>
 

@@ -178,7 +178,8 @@
       "other": "Outro",
       "vendor_name": "Fornecedor: {name}",
       "not_available": "N/D",
-      "product_reviews": "Avaliações de produtos"
+      "product_reviews": "Avaliações de produtos",
+      "error_code": "Error code: {code}"
     },
     "prefixes": {
       "please": "Por favor",
@@ -250,7 +251,13 @@
       "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas.",
       "content_failed_to_load": "Não foi possível carregar parte do site. Recarregue a página para continuar.",
       "page_loading": "Carregando a página…",
-      "page_loading_slow": "Esta página está a demorar mais do que o habitual a carregar. Pode continuar a aguardar ou recarregar a página."
+      "page_loading_slow": "Esta página está a demorar mais do que o habitual a carregar. Pode continuar a aguardar ou recarregar a página.",
+      "empty_states": {
+        "no_addresses": {
+          "title": "No saved addresses yet",
+          "description": "Addresses you add here or at checkout will appear here."
+        }
+      }
     },
     "placeholders": {
       "enter_value": "Por favor, insira um valor",
@@ -663,7 +670,19 @@
           "empty": "Ainda não há pedidos",
           "no_results": "Nenhum pedido com este status",
           "load_failed": "Falha ao carregar os pedidos",
-          "statuses_label": "Status a exibir"
+          "statuses_label": "Status a exibir",
+          "empty_states": {
+            "load_failed": {
+              "description": "Check your connection and try again."
+            },
+            "no_results": {
+              "description": "Pick another status to see more orders."
+            },
+            "no_data": {
+              "title": "No orders yet",
+              "description": "Orders you place will appear here."
+            }
+          }
         }
       }
     },
@@ -846,7 +865,13 @@
           },
           "list": "Listar",
           "table": "Tabela",
-          "no_results": "Nenhum resultado encontrado"
+          "no_results": "Nenhum resultado encontrado",
+          "empty_states": {
+            "no_results": {
+              "title": "No variations match these filters",
+              "description": "Remove a filter to see all options of this product."
+            }
+          }
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1089,7 +1114,13 @@
         "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Sua lista está vazia",
         "empty_list_button": "Continuar navegando",
-        "list_icon": "Ícone da lista"
+        "list_icon": "Ícone da lista",
+        "empty_states": {
+          "no_data": {
+            "title": "This list is empty",
+            "description": "Products you add to this list will appear here."
+          }
+        }
       },
       "add_to_wishlists_modal": {
         "title": "Por favor, selecione a lista",
@@ -1282,7 +1313,13 @@
         "revenue_to_date": "Receita até hoje",
         "vs_month": "vs {month}"
       },
-      "upcoming": "Por vir"
+      "upcoming": "Por vir",
+      "empty_states": {
+        "load_failed": {
+          "title": "Couldn’t load the report",
+          "description": "Check your connection and try again."
+        }
+      }
     }
   },
   "pages": {
@@ -1291,28 +1328,44 @@
       "error_text": "Pedido Incorrecto",
       "message": "O utilizador já não tem permissão para iniciar sessão. Por favor, contacte o administrador.",
       "img_alt": "Pedido Incorrecto",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You can’t sign in right now",
+        "description": "Your access was turned off. Ask your company admin or contact support to restore it."
+      }
     },
     "403": {
       "error_code": "403",
       "error_text": "Acesso negado",
       "message": "Você não tem permissões para acessar a página solicitada.",
       "img_alt": "Acesso negado",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You don’t have access to this page",
+        "description": "Ask your company admin to grant access, or sign in with another account."
+      }
     },
     "404": {
       "error_code": "404",
       "error_text": "Página Não Encontrada",
       "message": "Ocorreu um erro. Deveríamos levá-lo de volta para a página inicial?",
       "img_alt": "Página Não Encontrada",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "description": "The page may have moved or the link is out of date. Search the catalog or go back to the homepage."
+      }
     },
     "500": {
       "error_code": "500",
       "error_text": "Erro Interno do Servidor",
       "message": "Ocorreu um erro. Deveríamos levá-lo de volta para a página inicial?",
       "img_alt": "Erro Interno do Servidor",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "Couldn’t load this page",
+        "description": "Something went wrong on our side. Try again in a moment.",
+        "try_again_button": "Try again"
+      }
     },
     "home": {
       "meta": {
@@ -1465,6 +1518,16 @@
         "buttons": {
           "no_orders": "Continuar navegando",
           "reset_search": "Resetar pesquisa"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No orders yet",
+            "description": "Orders you place, or that your sales rep places for you, will appear here."
+          },
+          "no_results": {
+            "title": "No orders match your search",
+            "description": "Check the order number or search by product name or PO number."
+          }
         }
       },
       "order_details": {
@@ -1539,7 +1602,13 @@
         "no_lists": "Você ainda não criou nenhuma lista",
         "create_list_button": "Criar lista",
         "create_list_button_mobile": "Criar",
-        "lists_icon": "Ícone da lista"
+        "lists_icon": "Ícone da lista",
+        "empty_states": {
+          "no_data": {
+            "title": "No lists yet",
+            "description": "Create a list to save products you buy often and reorder them in one click."
+          }
+        }
       },
       "list_details": {
         "meta": {
@@ -1567,7 +1636,13 @@
       },
       "promotion_coupons": {
         "title": "Todos os cupons e promoções",
-        "no_lists": "Você não tem cupons ou promoções"
+        "no_lists": "Você não tem cupons ou promoções",
+        "empty_states": {
+          "no_data": {
+            "title": "No coupons or promotions yet",
+            "description": "Coupons and promotions available to your account will appear here."
+          }
+        }
       },
       "security": {
         "title": "@:common.links.security",
@@ -1614,6 +1689,12 @@
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "Adicionar novo"
+        },
+        "empty_states": {
+          "no_addresses": {
+            "title": "No company addresses yet",
+            "description": "Add shipping and billing addresses your members can use at checkout."
+          }
         }
       },
       "members": {
@@ -1660,6 +1741,16 @@
         "notifications": {
           "invite_revoked": "Convite revogado",
           "invite_resent": "Convite reenviado"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No members yet",
+            "description": "Invite colleagues to order, approve and manage your company account."
+          },
+          "no_results": {
+            "title": "No members match your search",
+            "description": "Check the name or email, or remove a role or status filter."
+          }
         }
       }
     },
@@ -1674,7 +1765,16 @@
       "save_for_later": "Salvar para mais tarde",
       "saved_for_later": "Salvo para mais tarde",
       "saved_for_later_not_found": "Você não salvou nenhum produto para mais tarde",
-      "move_to_cart": "Mover para o carrinho"
+      "move_to_cart": "Mover para o carrinho",
+      "empty_states": {
+        "saved_for_later": {
+          "title": "Nothing saved for later",
+          "description": "Use “Save for later” in the cart to keep products here without buying them now."
+        },
+        "empty_cart": {
+          "description": "Browse the catalog or reorder from a saved list — items you add will show up here."
+        }
+      }
     },
     "checkout": {
       "meta": {
@@ -1731,7 +1831,17 @@
       "show_all_results": "Mostrar todos os resultados",
       "load_previous_page": "Carregar página anterior",
       "load_next_page": "Carregar próxima página",
-      "available_variations": "Nenhuma variação disponível | 1 variação disponível | {count} variações disponíveis"
+      "available_variations": "Nenhuma variação disponível | 1 variação disponível | {count} variações disponíveis",
+      "empty_states": {
+        "no_data": {
+          "title": "No products in this category yet",
+          "description": "New items are added regularly. Try a related category or search the whole catalog."
+        },
+        "no_results": {
+          "title": "No products match your search or filters",
+          "description": "Check the spelling, try fewer filters, or turn off “Show in stock”."
+        }
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1866,14 +1976,28 @@
         "title": "Bloqueado"
       },
       "title": "Sua conta está bloqueada",
-      "message": "@:common.messages.blocked"
+      "message": "@:common.messages.blocked",
+      "empty_state": {
+        "description": "Contact your company admin or our support team to restore access.",
+        "contact_button": "Contact support"
+      }
     },
     "brands": {
       "top_brands_title": "Melhores marcas",
       "title": "Marcas",
       "search": "Pesquisar",
       "button_all": "Tudo",
-      "no_results": "Nenhum resultado encontrado"
+      "no_results": "Nenhum resultado encontrado",
+      "empty_states": {
+        "no_results": {
+          "title": "No brands match your search",
+          "description": "Check the spelling or try another keyword."
+        },
+        "not_found": {
+          "title": "Brand not found",
+          "description": "The brand may have been removed or the link is out of date."
+        }
+      }
     },
     "brand": {
       "products_title": "Produtos"

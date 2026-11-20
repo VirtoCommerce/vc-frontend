@@ -1,0 +1,12 @@
+// S / M circles: on the dark panel the -100 steps sit almost on the background. A lifted disc tinted with the
+// scale's 500 step and a pastel glyph keep the three tones apart in every preset.
+@each $tone, $glyph-mix in (primary: 45%, secondary: 40%, danger: 45%) {
+  .vc-empty-view--tone--#{$tone} {
+    --vc-empty-view-#{$tone}-bg-color: color-mix(in srgb, var(--color-#{$tone}-500) 22%, var(--color-additional-50));
+    --vc-empty-view-#{$tone}-icon-color: color-mix(
+      in srgb,
+      var(--color-#{$tone}-500) #{$glyph-mix},
+      var(--color-additional-950)
+    );
+  }
+}

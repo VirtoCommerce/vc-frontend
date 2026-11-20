@@ -15,6 +15,12 @@
     "view_all": "Visa alla meddelanden",
     "show_unread_only": "Visa endast olästa",
     "mark_as_read": "Markera som läst",
-    "mark_as_unread": "Markera som oläst"
+    "mark_as_unread": "Markera som oläst",
+    "empty_states": {
+      "caught_up": {
+        "title": "You’re all caught up",
+        "description": "New order, quote and account updates will appear here."
+      }
+    }
   }
 }

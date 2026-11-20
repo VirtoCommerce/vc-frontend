@@ -178,7 +178,8 @@
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
       "not_available": "N/A",
-      "product_reviews": "商品レビュー"
+      "product_reviews": "商品レビュー",
+      "error_code": "Error code: {code}"
     },
     "prefixes": {
       "please": "お願いします",
@@ -250,7 +251,13 @@
       "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。",
       "content_failed_to_load": "サイトの一部を読み込めませんでした。続行するにはページを再読み込みしてください。",
       "page_loading": "ページを読み込んでいます…",
-      "page_loading_slow": "このページの読み込みにいつもより時間がかかっています。このままお待ちいただくか、ページを再読み込みしてください。"
+      "page_loading_slow": "このページの読み込みにいつもより時間がかかっています。このままお待ちいただくか、ページを再読み込みしてください。",
+      "empty_states": {
+        "no_addresses": {
+          "title": "No saved addresses yet",
+          "description": "Addresses you add here or at checkout will appear here."
+        }
+      }
     },
     "placeholders": {
       "enter_value": "入力してください",
@@ -663,7 +670,19 @@
           "empty": "注文履歴がありません",
           "no_results": "このステータスの注文はありません",
           "load_failed": "注文を読み込めませんでした",
-          "statuses_label": "表示するステータス"
+          "statuses_label": "表示するステータス",
+          "empty_states": {
+            "load_failed": {
+              "description": "Check your connection and try again."
+            },
+            "no_results": {
+              "description": "Pick another status to see more orders."
+            },
+            "no_data": {
+              "title": "No orders yet",
+              "description": "Orders you place will appear here."
+            }
+          }
         }
       }
     },
@@ -846,7 +865,13 @@
           },
           "list": "リスト",
           "table": "テーブル",
-          "no_results": "該当する商品がありません"
+          "no_results": "該当する商品がありません",
+          "empty_states": {
+            "no_results": {
+              "title": "No variations match these filters",
+              "description": "Remove a filter to see all options of this product."
+            }
+          }
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1089,7 +1114,13 @@
         "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
-        "list_icon": "List icon"
+        "list_icon": "List icon",
+        "empty_states": {
+          "no_data": {
+            "title": "This list is empty",
+            "description": "Products you add to this list will appear here."
+          }
+        }
       },
       "add_to_wishlists_modal": {
         "title": "リストを選択してください",
@@ -1282,7 +1313,13 @@
         "revenue_to_date": "本日までの収益",
         "vs_month": "{month}比"
       },
-      "upcoming": "今後"
+      "upcoming": "今後",
+      "empty_states": {
+        "load_failed": {
+          "title": "Couldn’t load the report",
+          "description": "Check your connection and try again."
+        }
+      }
     }
   },
   "pages": {
@@ -1291,28 +1328,44 @@
       "error_text": "不正なリクエスト",
       "message": "ユーザーはサインインできなくなりました。管理者に連絡してください。",
       "img_alt": "不正なリクエスト",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You can’t sign in right now",
+        "description": "Your access was turned off. Ask your company admin or contact support to restore it."
+      }
     },
     "403": {
       "error_code": "403",
       "error_text": "アクセス拒否",
       "message": "要求されたページへのアクセス権限がありません。",
       "img_alt": "アクセス拒否",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You don’t have access to this page",
+        "description": "Ask your company admin to grant access, or sign in with another account."
+      }
     },
     "404": {
       "error_code": "404",
       "error_text": "ページが見つかりません",
       "message": "エラーが発生しました。ホームページに戻りますか？",
       "img_alt": "ページが見つかりません",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "description": "The page may have moved or the link is out of date. Search the catalog or go back to the homepage."
+      }
     },
     "500": {
       "error_code": "500",
       "error_text": "内部サーバーエラー",
       "message": "エラーが発生しました。ホームページに戻りますか？",
       "img_alt": "内部サーバーエラー",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "Couldn’t load this page",
+        "description": "Something went wrong on our side. Try again in a moment.",
+        "try_again_button": "Try again"
+      }
     },
     "home": {
       "meta": {
@@ -1465,6 +1518,16 @@
         "buttons": {
           "no_orders": "買い物を続ける",
           "reset_search": "検索をリセット"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No orders yet",
+            "description": "Orders you place, or that your sales rep places for you, will appear here."
+          },
+          "no_results": {
+            "title": "No orders match your search",
+            "description": "Check the order number or search by product name or PO number."
+          }
         }
       },
       "order_details": {
@@ -1539,7 +1602,13 @@
         "no_lists": "リストがまだ作成されていません",
         "create_list_button": "リストを作成",
         "create_list_button_mobile": "作成",
-        "lists_icon": "リストアイコン"
+        "lists_icon": "リストアイコン",
+        "empty_states": {
+          "no_data": {
+            "title": "No lists yet",
+            "description": "Create a list to save products you buy often and reorder them in one click."
+          }
+        }
       },
       "list_details": {
         "meta": {
@@ -1567,7 +1636,13 @@
       },
       "promotion_coupons": {
         "title": "すべてのクーポンとプロモーション",
-        "no_lists": "クーポンやプロモーションはありません"
+        "no_lists": "クーポンやプロモーションはありません",
+        "empty_states": {
+          "no_data": {
+            "title": "No coupons or promotions yet",
+            "description": "Coupons and promotions available to your account will appear here."
+          }
+        }
       },
       "security": {
         "title": "@:common.links.security",
@@ -1614,6 +1689,12 @@
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "新規追加"
+        },
+        "empty_states": {
+          "no_addresses": {
+            "title": "No company addresses yet",
+            "description": "Add shipping and billing addresses your members can use at checkout."
+          }
         }
       },
       "members": {
@@ -1660,6 +1741,16 @@
         "notifications": {
           "invite_revoked": "招待を取り消しました",
           "invite_resent": "招待を再送信しました"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No members yet",
+            "description": "Invite colleagues to order, approve and manage your company account."
+          },
+          "no_results": {
+            "title": "No members match your search",
+            "description": "Check the name or email, or remove a role or status filter."
+          }
         }
       }
     },
@@ -1674,7 +1765,16 @@
       "save_for_later": "後で保存",
       "saved_for_later": "後で保存",
       "saved_for_later_not_found": "後で保存した商品はありません",
-      "move_to_cart": "カートに入れる"
+      "move_to_cart": "カートに入れる",
+      "empty_states": {
+        "saved_for_later": {
+          "title": "Nothing saved for later",
+          "description": "Use “Save for later” in the cart to keep products here without buying them now."
+        },
+        "empty_cart": {
+          "description": "Browse the catalog or reorder from a saved list — items you add will show up here."
+        }
+      }
     },
     "checkout": {
       "meta": {
@@ -1731,7 +1831,17 @@
       "show_all_results": "すべての結果を表示",
       "load_previous_page": "前のページを読み込む",
       "load_next_page": "次のページを読み込む",
-      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション"
+      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション",
+      "empty_states": {
+        "no_data": {
+          "title": "No products in this category yet",
+          "description": "New items are added regularly. Try a related category or search the whole catalog."
+        },
+        "no_results": {
+          "title": "No products match your search or filters",
+          "description": "Check the spelling, try fewer filters, or turn off “Show in stock”."
+        }
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1866,14 +1976,28 @@
         "title": "ブロック"
       },
       "title": "アカウントがブロックされています",
-      "message": "@:common.messages.blocked"
+      "message": "@:common.messages.blocked",
+      "empty_state": {
+        "description": "Contact your company admin or our support team to restore access.",
+        "contact_button": "Contact support"
+      }
     },
     "brands": {
       "top_brands_title": "人気ブランド",
       "title": "ブランド",
       "search": "検索",
       "button_all": "すべて",
-      "no_results": "該当する情報は見つかりませんでした"
+      "no_results": "該当する情報は見つかりませんでした",
+      "empty_states": {
+        "no_results": {
+          "title": "No brands match your search",
+          "description": "Check the spelling or try another keyword."
+        },
+        "not_found": {
+          "title": "Brand not found",
+          "description": "The brand may have been removed or the link is out of date."
+        }
+      }
     },
     "brand": {
       "products_title": "製品"

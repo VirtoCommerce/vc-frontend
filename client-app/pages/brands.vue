@@ -114,8 +114,9 @@
 
       <VcEmptyView
         v-if="!loading && !sortedNavItems.length"
-        icon="outline-stock"
-        :text="$t('pages.brands.no_results')"
+        reason="no-results"
+        :text="$t('pages.brands.empty_states.no_results.title')"
+        :description="$t('pages.brands.empty_states.no_results.description')"
         data-test-id="brands-empty_view"
       />
     </VcWidget>

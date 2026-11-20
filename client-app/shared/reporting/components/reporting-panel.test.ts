@@ -151,7 +151,9 @@ describe("ReportingPanel", () => {
   it("replaces the report with an error once a failed request settles", () => {
     const wrapper = mountPanel({ error: true });
 
-    expect(wrapper.findComponent({ name: "VcEmptyView" }).props("text")).toBe("shared.reporting.load_failed");
+    expect(wrapper.findComponent({ name: "VcEmptyView" }).props("text")).toBe(
+      "shared.reporting.empty_states.load_failed.title",
+    );
     expect(wrapper.findComponent({ name: "ReportingChart" }).exists()).toBe(false);
   });
 

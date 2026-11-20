@@ -143,7 +143,13 @@
       "select_row_number": "Select row {number}",
       "select_all": "Выбрать все",
       "deselect_all": "Снять выбор со всех",
-      "selection_column": "Выбор строки"
+      "selection_column": "Выбор строки",
+      "empty_states": {
+        "no_data": {
+          "title": "No records yet",
+          "description": "New records will appear here."
+        }
+      }
     },
     "slider": {
       "tooltip": "{count} элементов",

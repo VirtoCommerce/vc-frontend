@@ -1,19 +1,22 @@
 <template>
-  <VcEmptyPage image="email.jpg" icon="outline-e-mail">
-    <VcTypography tag="h1" class="order-first mb-3">
-      {{ $t("pages.welcome.title") }}
-    </VcTypography>
+  <VcContainer :has-bg-image="false">
+    <VcEmptyView
+      size="xl"
+      reason="done"
+      :text="$t('pages.welcome.title')"
+      :description="$t('pages.welcome.description')"
+    >
+      <template #icon>
+        <VcEmptyIcon name="registration-completed" />
+      </template>
 
-    <VcTypography class="mb-8 max-w-md text-center sm:text-left">
-      {{ $t("pages.welcome.description") }}
-    </VcTypography>
-
-    <div class="flex justify-center sm:justify-start">
-      <VcButton to="/" min-width="12rem">
-        {{ $t("common.buttons.home") }}
-      </VcButton>
-    </div>
-  </VcEmptyPage>
+      <template #button>
+        <VcButton to="/">
+          {{ $t("common.buttons.home") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

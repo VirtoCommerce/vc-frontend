@@ -92,7 +92,12 @@
       {{ $t("pages.cart.saved_for_later") }}
     </VcTypography>
 
-    <VcEmptyView :text="$t('pages.cart.saved_for_later_not_found')" icon="list-v2" />
+    <VcEmptyView
+      reason="no-data"
+      entity="saved-for-later"
+      :text="$t('pages.cart.empty_states.saved_for_later.title')"
+      :description="$t('pages.cart.empty_states.saved_for_later.description')"
+    />
   </div>
 </template>
 

@@ -4,7 +4,13 @@
       "title": "最新消息",
       "not-found": "未找到任何消息",
       "search-placeholder": "搜索",
-      "written-by": "撰写人"
+      "written-by": "撰写人",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "撰写人",

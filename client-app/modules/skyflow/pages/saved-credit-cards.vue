@@ -22,7 +22,13 @@
     </div>
 
     <!-- Empty View -->
-    <VcEmptyView v-else :text="$t('skyflow.saved_credit_cards.no_cards')" icon="credit-card" />
+    <VcEmptyView
+      v-else
+      reason="no-data"
+      entity="payment-methods"
+      :text="$t('skyflow.saved_credit_cards.empty_states.no_data.title')"
+      :description="$t('skyflow.saved_credit_cards.empty_states.no_data.description')"
+    />
   </div>
 </template>
 

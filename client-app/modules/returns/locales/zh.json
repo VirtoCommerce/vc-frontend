@@ -60,7 +60,12 @@
         "quantity": "退货数量"
       },
       "quantity_for": "{name} 的退货数量",
-      "continue": "继续"
+      "continue": "继续",
+      "empty_states": {
+        "nothing_returnable": {
+          "description": "Items may be past the return window or not eligible for return."
+        }
+      }
     },
     "ineligibility": {
       "RETURNS_DISABLED": "此店铺已关闭退货功能",
@@ -97,6 +102,16 @@
         "status": "状态",
         "quantity": "数量"
       }
+    },
+    "empty_states": {
+      "no_data": {
+        "title": "No returns yet",
+        "description": "Returns you start from an order will appear here with their status."
+      },
+      "no_results": {
+        "title": "No returns match your search",
+        "description": "Try another keyword or remove the status or date filter."
+      }
     }
   },
   "return_details": {
@@ -115,7 +130,13 @@
       "requested": "申请数量",
       "approved": "批准数量"
     },
-    "table_description": "退货商品"
+    "table_description": "退货商品",
+    "empty_states": {
+      "not_found": {
+        "title": "Return not found",
+        "description": "It may have been canceled or belong to another account."
+      }
+    }
   },
   "return_cancel": {
     "title": "取消退货",

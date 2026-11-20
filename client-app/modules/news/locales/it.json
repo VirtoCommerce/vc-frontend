@@ -4,7 +4,13 @@
       "title": "Ultime notizie",
       "not-found": "Nessuna notizia trovata",
       "search-placeholder": "Cerca",
-      "written-by": "Scritto da"
+      "written-by": "Scritto da",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Scritto da",

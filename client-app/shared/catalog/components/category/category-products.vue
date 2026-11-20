@@ -74,14 +74,19 @@
       v-else
       :text="
         hasActiveFilters || keyword
-          ? $t('pages.catalog.no_products_filtered_message')
-          : $t('pages.catalog.no_products_message')
+          ? $t('pages.catalog.empty_states.no_results.title')
+          : $t('pages.catalog.empty_states.no_data.title')
       "
-      icon="outline-stock"
-      :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
+      :description="
+        hasActiveFilters || keyword
+          ? $t('pages.catalog.empty_states.no_results.description')
+          : $t('pages.catalog.empty_states.no_data.description')
+      "
+      :reason="hasActiveFilters || keyword ? 'no-results' : 'no-data'"
+      entity="catalog"
     >
       <template v-if="hasActiveFilters || keyword" #button>
-        <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
+        <VcButton variant="outline" color="secondary" prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
       </template>

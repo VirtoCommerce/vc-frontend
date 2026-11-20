@@ -143,7 +143,13 @@
       "select_row_number": "Select row {number}",
       "select_all": "すべて選択",
       "deselect_all": "すべて選択解除",
-      "selection_column": "行の選択"
+      "selection_column": "行の選択",
+      "empty_states": {
+        "no_data": {
+          "title": "No records yet",
+          "description": "New records will appear here."
+        }
+      }
     },
     "slider": {
       "tooltip": "{count} アイテム",

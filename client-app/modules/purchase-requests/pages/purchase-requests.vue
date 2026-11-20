@@ -6,8 +6,10 @@
     <!-- Empty view -->
     <VcEmptyView
       v-if="!loading && !purchaseRequests.length"
-      :text="$t('purchase_requests.no_purchase_requests_message')"
-      icon="outline-order"
+      reason="no-data"
+      entity="purchase-requests"
+      :text="$t('purchase_requests.empty_states.no_data.title')"
+      :description="$t('purchase_requests.empty_states.no_data.description')"
     />
 
     <div v-else>

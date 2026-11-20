@@ -12,6 +12,7 @@ declare module "vue" {
     VcCheckboxGroup: typeof Components.VcCheckboxGroup;
     VcContainer: typeof Components.VcContainer;
     VcInputDetails: typeof Components.VcInputDetails;
+    VcEmptyIcon: typeof Components.VcEmptyIcon;
     VcIcon: typeof Components.VcIcon;
     VcImage: typeof Components.VcImage;
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;

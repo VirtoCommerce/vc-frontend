@@ -15,6 +15,12 @@
     "view_all": "Visualizza tutte le notifiche",
     "show_unread_only": "Mostra solo non letti",
     "mark_as_read": "Segna come letto",
-    "mark_as_unread": "Segna come non letto"
+    "mark_as_unread": "Segna come non letto",
+    "empty_states": {
+      "caught_up": {
+        "title": "You’re all caught up",
+        "description": "New order, quote and account updates will appear here."
+      }
+    }
   }
 }

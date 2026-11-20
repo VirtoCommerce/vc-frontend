@@ -1,31 +1,28 @@
 <template>
-  <VcEmptyPage image="b2b.jpg" icon="outline-quotes">
-    <VcTypography tag="h1" class="order-first max-sm:mb-5">
-      {{ $t("pages.checkout_complete.title") }}
-    </VcTypography>
+  <VcContainer :has-bg-image="false">
+    <VcEmptyView
+      size="xl"
+      reason="done"
+      :text="$t('pages.checkout_complete.title')"
+      :description="$t('pages.checkout_complete.subtitle', [placedOrder?.number])"
+      :hint="$t('pages.checkout_complete.text')"
+      :data-order-number="placedOrder?.number"
+    >
+      <template #icon>
+        <VcEmptyIcon name="order-completed" />
+      </template>
 
-    <div class="sm:mt-3 lg:mt-8">
-      <div class="mb-4 font-bold" :data-order-number="placedOrder?.number">
-        {{ $t("pages.checkout_complete.subtitle", [placedOrder?.number]) }}
-      </div>
-
-      {{ $t("pages.checkout_complete.text") }}
-
-      <div class="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3 sm:justify-start">
-        <VcButton
-          :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
-          prepend-icon="document-text"
-          min-width="10rem"
-        >
+      <template #button>
+        <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }" prepend-icon="document-text">
           {{ $t("common.buttons.show_order") }}
         </VcButton>
 
-        <VcButton to="/" min-width="10rem">
+        <VcButton to="/" variant="outline" color="secondary">
           {{ $t("common.buttons.home") }}
         </VcButton>
-      </div>
-    </div>
-  </VcEmptyPage>
+      </template>
+    </VcEmptyView>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

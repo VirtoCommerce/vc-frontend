@@ -9,7 +9,17 @@
     "list_details": {
       "empty_list": "Your list is empty",
       "no_results_message": "There are no results found",
-      "empty_list_button": "Continue browsing"
+      "empty_list_button": "Continue browsing",
+      "empty_states": {
+        "no_data": {
+          "title": "No back-in-stock alerts yet",
+          "description": "Use “Notify me” on an out-of-stock product and it will appear here."
+        },
+        "no_results": {
+          "title": "No products match your search",
+          "description": "Check the spelling or try another keyword."
+        }
+      }
     },
     "messages": {
       "click_to_receive_alert": "Click to receive an alert",

@@ -8,11 +8,12 @@
 
     <VcEmptyView
       v-if="!(loading || changing) && !quote?.items?.length"
-      :text="$t('purchase_request.failed_or_used_description')"
-      icon="outline-order"
+      reason="error"
+      :text="$t('purchase_request.empty_states.failed.title')"
+      :description="$t('purchase_request.empty_states.failed.description')"
     >
       <template #button>
-        <VcButton :to="{ name: 'BulkOrder' }" size="lg">
+        <VcButton :to="{ name: 'BulkOrder' }" variant="outline" color="secondary">
           {{ $t("purchase_request.try_again") }}
         </VcButton>
       </template>

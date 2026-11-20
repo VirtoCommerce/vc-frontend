@@ -29,6 +29,16 @@
     },
     "errors": {
       "creating_quote_error": "Erro ao criar uma cotação"
+    },
+    "empty_states": {
+      "no_data": {
+        "title": "No quote requests yet",
+        "description": "Request a quote from the cart or a product page to get custom pricing."
+      },
+      "no_results": {
+        "title": "No quote requests match your search",
+        "description": "Check the quote number or try another keyword."
+      }
     }
   },
   "quote_details": {

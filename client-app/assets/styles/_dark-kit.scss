@@ -1,4 +1,5 @@
 @use "sass:meta";
+@use "dark/atoms/vc-empty-icon";
 
 // Dark mode overrides
 // Applied when html.dark class is present (set by useDarkMode composable).
@@ -13,10 +14,12 @@ html.dark {
   // 3:1 on every dark surface a ring lands on, in all 7 presets.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-600));
 
+  @include vc-empty-icon.root-tokens;
   @include meta.load-css("dark/atoms/vc-badge");
   @include meta.load-css("dark/molecules/vc-input");
   @include meta.load-css("dark/molecules/vc-button");
   @include meta.load-css("dark/molecules/vc-chip");
+  @include meta.load-css("dark/molecules/vc-empty-view");
   @include meta.load-css("dark/molecules/vc-alert");
   @include meta.load-css("dark/molecules/vc-menu-item");
   @include meta.load-css("dark/molecules/vc-range-calendar");
