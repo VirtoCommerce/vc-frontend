@@ -19,6 +19,7 @@ import {
   getTranslatedMenuLink,
   isActiveRoute,
 } from "@/core/utilities";
+import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import type { MenuLinkType } from "../api/graphql/types";
 import type {
@@ -153,6 +154,7 @@ export function withdrawDeclaredNavigation(linkIds: readonly string[], sectionId
 
 export function _useNavigations() {
   const { currentCurrency } = useCurrency();
+  const { isAuthenticated } = useUser();
 
   const matchingRouteName = ref("");
   const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -308,6 +310,11 @@ export function _useNavigations() {
 
     if (specialRoute) {
       return specialRoute;
+    }
+
+    // Account sections are shown to signed-in users only (main-menu.vue), even when they list a public page.
+    if (!isAuthenticated.value) {
+      return undefined;
     }
 
     // Then search in section children — registered sections (e.g. Sales Rep hub) lead, matching the

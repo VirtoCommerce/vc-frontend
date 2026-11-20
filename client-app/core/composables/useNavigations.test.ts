@@ -11,6 +11,8 @@ const hoisted = vi.hoisted(() => {
 
   const matchingRouteName = { value: "" };
 
+  const isAuthenticated = { value: true };
+
   const menuData = {
     header: {
       mobile: {
@@ -91,6 +93,7 @@ const hoisted = vi.hoisted(() => {
   return {
     mockRouter,
     matchingRouteName,
+    isAuthenticated,
     menuData,
   };
 });
@@ -109,6 +112,12 @@ vi.mock("@/config/menu.json", () => ({
 vi.mock("@/core/composables/useCurrency", () => ({
   useCurrency: () => ({
     currentCurrency: { value: { code: "USD" } },
+  }),
+}));
+
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({
+    isAuthenticated: hoisted.isAuthenticated,
   }),
 }));
 
@@ -151,6 +160,7 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
     vi.clearAllMocks();
     hoisted.mockRouter.currentRoute.value.matched = [];
     hoisted.matchingRouteName.value = "";
+    hoisted.isAuthenticated.value = true;
   });
 
   describe("Dashboard route", () => {
@@ -251,6 +261,52 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
       const navigations = await importComposable();
       expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
     });
+  });
+
+  const salesRepHub = {
+    id: "sales-rep-hub",
+    title: "Hub",
+    children: [{ id: "my-customers", route: { name: "MyCustomers" }, title: "My customers" }],
+  };
+
+  describe("Registered account sections", () => {
+    it("returns a registered section for its child route", async () => {
+      hoisted.mockRouter.currentRoute.value.matched = [{ name: "MyCustomers" }];
+      const navigations = await importComposable();
+      navigations.registerAccountSection(salesRepHub);
+      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("sales-rep-hub");
+    });
+  });
+
+  describe("Guest", () => {
+    beforeEach(() => {
+      hoisted.isAuthenticated.value = false;
+    });
+
+    it.each(["Orders", "Notifications", "Profile", "CompanyInfo"])(
+      "returns undefined for the %s route an account section lists",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
+      },
+    );
+
+    it("returns undefined for a registered section's child route", async () => {
+      hoisted.mockRouter.currentRoute.value.matched = [{ name: "MyCustomers" }];
+      const navigations = await importComposable();
+      navigations.registerAccountSection(salesRepHub);
+      expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
+    });
+
+    it.each(["Catalog", "Category", "Product"])(
+      "still returns mobileCatalogMenuItem for %s route",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("catalog");
+      },
+    );
   });
 });
 

@@ -3,11 +3,6 @@ import type { ExtensionRegistryStateType } from "@/shared/common/types/extension
 
 export const initialExtensionRegistry: ExtensionRegistryStateType = {
   headerMenu: {
-    compare: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
-      ),
-    },
     cart: {
       component: defineAsyncComponent(
         () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
@@ -23,11 +18,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
     cart: {
       component: defineAsyncComponent(
         () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue"),
-      ),
-    },
-    compare: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue"),
       ),
     },
   },
@@ -47,6 +37,7 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   topHeaderStatus: {},
   productCard: {},
   productPage: {},
+  productActions: {},
   paymentPage: {},
   orderPaymentPage: {},
   orderDetails: {},
