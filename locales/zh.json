@@ -178,7 +178,8 @@
       "other": "其他",
       "vendor_name": "供应商: {name}",
       "not_available": "不可用",
-      "product_reviews": "商品评论"
+      "product_reviews": "商品评论",
+      "error_code": "Error code: {code}"
     },
     "prefixes": {
       "please": "请",
@@ -250,7 +251,13 @@
       "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。",
       "content_failed_to_load": "网站的部分内容无法加载。请重新加载页面以继续。",
       "page_loading": "正在加载页面…",
-      "page_loading_slow": "此页面的加载时间比平常更长。您可以继续等待或重新加载页面。"
+      "page_loading_slow": "此页面的加载时间比平常更长。您可以继续等待或重新加载页面。",
+      "empty_states": {
+        "no_addresses": {
+          "title": "No saved addresses yet",
+          "description": "Addresses you add here or at checkout will appear here."
+        }
+      }
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -663,7 +670,19 @@
           "empty": "尚无订单",
           "no_results": "没有此状态的订单",
           "load_failed": "无法加载订单",
-          "statuses_label": "要显示的状态"
+          "statuses_label": "要显示的状态",
+          "empty_states": {
+            "load_failed": {
+              "description": "Check your connection and try again."
+            },
+            "no_results": {
+              "description": "Pick another status to see more orders."
+            },
+            "no_data": {
+              "title": "No orders yet",
+              "description": "Orders you place will appear here."
+            }
+          }
         }
       }
     },
@@ -846,7 +865,13 @@
           },
           "list": "列表",
           "table": "表格",
-          "no_results": "未找到结果"
+          "no_results": "未找到结果",
+          "empty_states": {
+            "no_results": {
+              "title": "No variations match these filters",
+              "description": "Remove a filter to see all options of this product."
+            }
+          }
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1089,7 +1114,13 @@
         "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
-        "list_icon": "清单图标"
+        "list_icon": "清单图标",
+        "empty_states": {
+          "no_data": {
+            "title": "This list is empty",
+            "description": "Products you add to this list will appear here."
+          }
+        }
       },
       "add_to_wishlists_modal": {
         "title": "请选择清单",
@@ -1282,7 +1313,13 @@
         "revenue_to_date": "截至今日收入",
         "vs_month": "较 {month}"
       },
-      "upcoming": "未开始"
+      "upcoming": "未开始",
+      "empty_states": {
+        "load_failed": {
+          "title": "Couldn’t load the report",
+          "description": "Check your connection and try again."
+        }
+      }
     }
   },
   "pages": {
@@ -1291,28 +1328,44 @@
       "error_text": "错误的请求",
       "message": "用户已不再允许登录。请联系管理员。",
       "img_alt": "错误的请求",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You can’t sign in right now",
+        "description": "Your access was turned off. Ask your company admin or contact support to restore it."
+      }
     },
     "403": {
       "error_code": "403",
       "error_text": "拒绝访问",
       "message": "您没有权限访问所请求的页面。",
       "img_alt": "拒绝访问",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You don’t have access to this page",
+        "description": "Ask your company admin to grant access, or sign in with another account."
+      }
     },
     "404": {
       "error_code": "404",
       "error_text": "页面未找到",
       "message": "发生错误。我们是否带您回到首页？",
       "img_alt": "页面未找到",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "description": "The page may have moved or the link is out of date. Search the catalog or go back to the homepage."
+      }
     },
     "500": {
       "error_code": "500",
       "error_text": "内部服务器错误",
       "message": "发生错误。我们是否带您回到首页？",
       "img_alt": "内部服务器错误",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "Couldn’t load this page",
+        "description": "Something went wrong on our side. Try again in a moment.",
+        "try_again_button": "Try again"
+      }
     },
     "home": {
       "meta": {
@@ -1465,6 +1518,16 @@
         "buttons": {
           "no_orders": "继续浏览",
           "reset_search": "重置搜索"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No orders yet",
+            "description": "Orders you place, or that your sales rep places for you, will appear here."
+          },
+          "no_results": {
+            "title": "No orders match your search",
+            "description": "Check the order number or search by product name or PO number."
+          }
         }
       },
       "order_details": {
@@ -1539,7 +1602,13 @@
         "no_lists": "您尚未创建任何清单",
         "create_list_button": "创建清单",
         "create_list_button_mobile": "创建",
-        "lists_icon": "清单图标"
+        "lists_icon": "清单图标",
+        "empty_states": {
+          "no_data": {
+            "title": "No lists yet",
+            "description": "Create a list to save products you buy often and reorder them in one click."
+          }
+        }
       },
       "list_details": {
         "meta": {
@@ -1567,7 +1636,13 @@
       },
       "promotion_coupons": {
         "title": "所有优惠券与促销",
-        "no_lists": "您目前没有任何优惠券或促销活动"
+        "no_lists": "您目前没有任何优惠券或促销活动",
+        "empty_states": {
+          "no_data": {
+            "title": "No coupons or promotions yet",
+            "description": "Coupons and promotions available to your account will appear here."
+          }
+        }
       },
       "security": {
         "title": "@:common.links.security",
@@ -1614,6 +1689,12 @@
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "添加新"
+        },
+        "empty_states": {
+          "no_addresses": {
+            "title": "No company addresses yet",
+            "description": "Add shipping and billing addresses your members can use at checkout."
+          }
         }
       },
       "members": {
@@ -1660,6 +1741,16 @@
         "notifications": {
           "invite_revoked": "邀请已撤销",
           "invite_resent": "邀请已重新发送"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No members yet",
+            "description": "Invite colleagues to order, approve and manage your company account."
+          },
+          "no_results": {
+            "title": "No members match your search",
+            "description": "Check the name or email, or remove a role or status filter."
+          }
         }
       }
     },
@@ -1674,7 +1765,16 @@
       "save_for_later": "稍后保存",
       "saved_for_later": "稍后购买",
       "saved_for_later_not_found": "您还没有保存任何商品以供稍后购买",
-      "move_to_cart": "加入购物车"
+      "move_to_cart": "加入购物车",
+      "empty_states": {
+        "saved_for_later": {
+          "title": "Nothing saved for later",
+          "description": "Use “Save for later” in the cart to keep products here without buying them now."
+        },
+        "empty_cart": {
+          "description": "Browse the catalog or reorder from a saved list — items you add will show up here."
+        }
+      }
     },
     "checkout": {
       "meta": {
@@ -1731,7 +1831,17 @@
       "show_all_results": "显示所有结果",
       "load_previous_page": "加载上一页",
       "load_next_page": "加载下一页",
-      "available_variations": "没有可用的款式 | 1 个可用的款式 | {count} 个可用的款式"
+      "available_variations": "没有可用的款式 | 1 个可用的款式 | {count} 个可用的款式",
+      "empty_states": {
+        "no_data": {
+          "title": "No products in this category yet",
+          "description": "New items are added regularly. Try a related category or search the whole catalog."
+        },
+        "no_results": {
+          "title": "No products match your search or filters",
+          "description": "Check the spelling, try fewer filters, or turn off “Show in stock”."
+        }
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1866,14 +1976,28 @@
         "title": "已封锁"
       },
       "title": "您的账户已被封锁",
-      "message": "@:common.messages.blocked"
+      "message": "@:common.messages.blocked",
+      "empty_state": {
+        "description": "Contact your company admin or our support team to restore access.",
+        "contact_button": "Contact support"
+      }
     },
     "brands": {
       "top_brands_title": "热门品牌",
       "title": "品牌",
       "search": "搜索",
       "button_all": "全部",
-      "no_results": "未找到结果"
+      "no_results": "未找到结果",
+      "empty_states": {
+        "no_results": {
+          "title": "No brands match your search",
+          "description": "Check the spelling or try another keyword."
+        },
+        "not_found": {
+          "title": "Brand not found",
+          "description": "The brand may have been removed or the link is out of date."
+        }
+      }
     },
     "brand": {
       "products_title": "商品"

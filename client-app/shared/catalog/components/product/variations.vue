@@ -77,8 +77,10 @@
 
     <VcEmptyView
       v-if="variations?.length === 0 && !fetchingVariations"
-      :text="$t('shared.catalog.product_details.variations.no_results')"
-      icon="outline-stock"
+      reason="no-results"
+      size="md"
+      :text="$t('shared.catalog.product_details.variations.empty_states.no_results.title')"
+      :description="$t('shared.catalog.product_details.variations.empty_states.no_results.description')"
     />
 
     <template v-else>

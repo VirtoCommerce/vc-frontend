@@ -9,7 +9,17 @@
     "list_details": {
       "empty_list": "您的列表为空",
       "no_results_message": "未找到结果",
-      "empty_list_button": "继续浏览"
+      "empty_list_button": "继续浏览",
+      "empty_states": {
+        "no_data": {
+          "title": "No back-in-stock alerts yet",
+          "description": "Use “Notify me” on an out-of-stock product and it will appear here."
+        },
+        "no_results": {
+          "title": "No products match your search",
+          "description": "Check the spelling or try another keyword."
+        }
+      }
     },
     "messages": {
       "click_to_receive_alert": "点击接收提醒",

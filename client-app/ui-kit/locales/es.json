@@ -143,7 +143,13 @@
       "select_row_number": "Select row {number}",
       "select_all": "Seleccionar todo",
       "deselect_all": "Deseleccionar todo",
-      "selection_column": "Selección de fila"
+      "selection_column": "Selección de fila",
+      "empty_states": {
+        "no_data": {
+          "title": "No records yet",
+          "description": "New records will appear here."
+        }
+      }
     },
     "slider": {
       "tooltip": "{count} artículos",

@@ -52,8 +52,10 @@
       <template #default-container>
         <VcEmptyView
           v-if="totalCount === 0 && !loading"
-          :text="$t('push_messages.empty_list')"
-          icon="outline-notifications"
+          reason="caught-up"
+          entity="notifications"
+          :text="$t('push_messages.empty_states.caught_up.title')"
+          :description="$t('push_messages.empty_states.caught_up.description')"
         />
 
         <div v-else class="p-3 lg:p-6">

@@ -4,6 +4,7 @@ export { default as VcCarouselPagination } from "./carousel-pagination/vc-carous
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.vue";
 export { default as VcContainer } from "./container/vc-container.vue";
+export { default as VcEmptyIcon } from "./empty-icon/vc-empty-icon.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";

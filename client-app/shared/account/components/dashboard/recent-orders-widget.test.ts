@@ -91,8 +91,8 @@ function mountWidget(inLayout = true) {
       stubs: {
         VcWidget: { template: '<div class="widget"><slot name="append" /><slot name="default-container" /></div>' },
         VcEmptyView: {
-          props: ["text", "variant", "icon"],
-          template: '<div class="empty-view" :data-variant="variant">{{ text }}<slot name="button" /></div>',
+          props: ["text", "reason", "entity"],
+          template: '<div class="empty-view" :data-reason="reason">{{ text }}<slot name="button" /></div>',
         },
         OrdersTable: true,
         VcLink: true,
@@ -324,7 +324,9 @@ describe("RecentOrdersWidget", () => {
     const wrapper = mountWidget();
     await flushPromises();
 
-    expect(wrapper.find(".empty-view").text()).toContain("shared.account.dashboard.recent_orders.empty");
+    expect(wrapper.find(".empty-view").text()).toContain(
+      "shared.account.dashboard.recent_orders.empty_states.no_data.title",
+    );
     expect(wrapper.find(".empty-view .cta").exists()).toBe(true);
     expect(wrapper.findComponent(OrdersTable).exists()).toBe(false);
   });
@@ -350,7 +352,7 @@ describe("RecentOrdersWidget", () => {
     await flushPromises();
 
     expect(getOrders).toHaveBeenCalledWith(expect.anything(), SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT);
-    expect(wrapper.find(".empty-view").attributes("data-variant")).toBe("error");
+    expect(wrapper.find(".empty-view").attributes("data-reason")).toBe("error");
     expect(wrapper.find(".empty-view").text()).toBe("shared.account.dashboard.recent_orders.load_failed");
     expect(wrapper.findComponent(OrdersTable).exists()).toBe(false);
   });

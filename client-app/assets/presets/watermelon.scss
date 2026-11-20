@@ -1,0 +1,12 @@
+// Watermelon's olive and green object parts disappear on the secondary-200 icon plate; light mode uses the
+// secondary-100 plate of the "nothing found" icon on every drawn empty-state icon.
+@layer vc.preset {
+  html[data-preset="watermelon"] {
+    --vc-empty-icon-plate-secondary-200-color: var(--color-secondary-100);
+  }
+
+  // The light rule matches in dark too, so dark puts the default plate back.
+  html.dark[data-preset="watermelon"] {
+    --vc-empty-icon-plate-secondary-200-color: var(--color-secondary-200);
+  }
+}

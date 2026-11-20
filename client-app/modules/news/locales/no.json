@@ -4,7 +4,13 @@
       "title": "Siste nyheter",
       "not-found": "Ingen nyheter funnet",
       "search-placeholder": "Søk",
-      "written-by": "Skrevet av"
+      "written-by": "Skrevet av",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Skrevet av",

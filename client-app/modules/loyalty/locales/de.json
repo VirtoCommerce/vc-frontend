@@ -95,6 +95,16 @@
           "count_requirement": "Gib {target} separate Bestellungen auf",
           "close": "Schließen",
           "redeem_products": "Produkte einlösen"
+        },
+        "empty_states": {
+          "load_error": {
+            "title": "Couldn’t load missions",
+            "description": "Check your connection and try again."
+          },
+          "no_data": {
+            "title": "No missions yet",
+            "description": "New ways to earn points will appear here. Check back soon."
+          }
         }
       }
     }

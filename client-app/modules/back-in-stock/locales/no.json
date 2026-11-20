@@ -9,7 +9,17 @@
     "list_details": {
       "empty_list": "Listen din er tom",
       "no_results_message": "Ingen resultater funnet",
-      "empty_list_button": "Fortsett å bla"
+      "empty_list_button": "Fortsett å bla",
+      "empty_states": {
+        "no_data": {
+          "title": "No back-in-stock alerts yet",
+          "description": "Use “Notify me” on an out-of-stock product and it will appear here."
+        },
+        "no_results": {
+          "title": "No products match your search",
+          "description": "Check the spelling or try another keyword."
+        }
+      }
     },
     "messages": {
       "click_to_receive_alert": "Klikk for å motta et varsel",

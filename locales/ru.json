@@ -178,7 +178,8 @@
       "other": "Другое",
       "vendor_name": "Поставщик: {name}",
       "not_available": "Н/Д",
-      "product_reviews": "Отзывы о товаре"
+      "product_reviews": "Отзывы о товаре",
+      "error_code": "Error code: {code}"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -250,7 +251,13 @@
       "pending_operations_leaving_page_confirmation": "Некоторые операции еще выполняются. Вы уверены, что хотите покинуть эту страницу? Несохраненные изменения могут быть потеряны.",
       "content_failed_to_load": "Не удалось загрузить часть сайта. Пожалуйста, обновите страницу, чтобы продолжить.",
       "page_loading": "Загрузка страницы…",
-      "page_loading_slow": "Страница загружается дольше обычного. Можно подождать или перезагрузить страницу."
+      "page_loading_slow": "Страница загружается дольше обычного. Можно подождать или перезагрузить страницу.",
+      "empty_states": {
+        "no_addresses": {
+          "title": "No saved addresses yet",
+          "description": "Addresses you add here or at checkout will appear here."
+        }
+      }
     },
     "placeholders": {
       "enter_value": "Введите значение",
@@ -663,7 +670,19 @@
           "empty": "Еще нет заказов",
           "no_results": "Нет заказов с этим статусом",
           "load_failed": "Не удалось загрузить заказы",
-          "statuses_label": "Отображаемые статусы"
+          "statuses_label": "Отображаемые статусы",
+          "empty_states": {
+            "load_failed": {
+              "description": "Check your connection and try again."
+            },
+            "no_results": {
+              "description": "Pick another status to see more orders."
+            },
+            "no_data": {
+              "title": "No orders yet",
+              "description": "Orders you place will appear here."
+            }
+          }
         }
       }
     },
@@ -846,7 +865,13 @@
           },
           "list": "Список",
           "table": "Таблица",
-          "no_results": "Результаты не найдены"
+          "no_results": "Результаты не найдены",
+          "empty_states": {
+            "no_results": {
+              "title": "No variations match these filters",
+              "description": "Remove a filter to see all options of this product."
+            }
+          }
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1089,7 +1114,13 @@
         "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Ваш список пуст",
         "empty_list_button": "Перейти в каталог",
-        "list_icon": "Иконка списка"
+        "list_icon": "Иконка списка",
+        "empty_states": {
+          "no_data": {
+            "title": "This list is empty",
+            "description": "Products you add to this list will appear here."
+          }
+        }
       },
       "add_to_wishlists_modal": {
         "title": "Выберите список",
@@ -1282,7 +1313,13 @@
         "revenue_to_date": "Выручка на сегодня",
         "vs_month": "К {month}"
       },
-      "upcoming": "Впереди"
+      "upcoming": "Впереди",
+      "empty_states": {
+        "load_failed": {
+          "title": "Couldn’t load the report",
+          "description": "Check your connection and try again."
+        }
+      }
     }
   },
   "pages": {
@@ -1291,28 +1328,44 @@
       "error_text": "Неверный запрос",
       "message": "Пользователю больше не разрешено входить в систему. Свяжитесь с администратором.",
       "img_alt": "Неверный запрос",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You can’t sign in right now",
+        "description": "Your access was turned off. Ask your company admin or contact support to restore it."
+      }
     },
     "403": {
       "error_code": "403",
       "error_text": "Доступ запрещен",
       "message": "У вас нет прав доступа к запрошенной странице.",
       "img_alt": "Доступ запрещен",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You don’t have access to this page",
+        "description": "Ask your company admin to grant access, or sign in with another account."
+      }
     },
     "404": {
       "error_code": "404",
       "error_text": "Страница не найдена",
       "message": "Произошла ошибка. Перенаправить вас на домашнюю страницу?",
       "img_alt": "Страница не найдена",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "description": "The page may have moved or the link is out of date. Search the catalog or go back to the homepage."
+      }
     },
     "500": {
       "error_code": "500",
       "error_text": "Внутренняя ошибка сервера",
       "message": "Произошла ошибка. Перенаправить вас на домашнюю страницу?",
       "img_alt": "Внутренняя ошибка сервера",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "Couldn’t load this page",
+        "description": "Something went wrong on our side. Try again in a moment.",
+        "try_again_button": "Try again"
+      }
     },
     "home": {
       "meta": {
@@ -1465,6 +1518,16 @@
         "buttons": {
           "no_orders": "Перейти в каталог",
           "reset_search": "Очистить поиск"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No orders yet",
+            "description": "Orders you place, or that your sales rep places for you, will appear here."
+          },
+          "no_results": {
+            "title": "No orders match your search",
+            "description": "Check the order number or search by product name or PO number."
+          }
         }
       },
       "order_details": {
@@ -1539,7 +1602,13 @@
         "no_lists": "Вы еще не создали списков",
         "create_list_button": "Создать список",
         "create_list_button_mobile": "Создать",
-        "lists_icon": "Иконка списка"
+        "lists_icon": "Иконка списка",
+        "empty_states": {
+          "no_data": {
+            "title": "No lists yet",
+            "description": "Create a list to save products you buy often and reorder them in one click."
+          }
+        }
       },
       "list_details": {
         "meta": {
@@ -1567,7 +1636,13 @@
       },
       "promotion_coupons": {
         "title": "Все купоны и акции",
-        "no_lists": "У вас нет купонов или акций"
+        "no_lists": "У вас нет купонов или акций",
+        "empty_states": {
+          "no_data": {
+            "title": "No coupons or promotions yet",
+            "description": "Coupons and promotions available to your account will appear here."
+          }
+        }
       },
       "security": {
         "title": "@:common.links.security",
@@ -1614,6 +1689,12 @@
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "Добавить новый"
+        },
+        "empty_states": {
+          "no_addresses": {
+            "title": "No company addresses yet",
+            "description": "Add shipping and billing addresses your members can use at checkout."
+          }
         }
       },
       "members": {
@@ -1660,6 +1741,16 @@
         "notifications": {
           "invite_revoked": "Приглашение отозвано",
           "invite_resent": "Приглашение отправлено повторно"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No members yet",
+            "description": "Invite colleagues to order, approve and manage your company account."
+          },
+          "no_results": {
+            "title": "No members match your search",
+            "description": "Check the name or email, or remove a role or status filter."
+          }
         }
       }
     },
@@ -1674,7 +1765,16 @@
       "save_for_later": "Сохранить на потом",
       "saved_for_later": "Сохранено на потом",
       "saved_for_later_not_found": "Вы не сохранили ни одного товара на потом",
-      "move_to_cart": "В корзину"
+      "move_to_cart": "В корзину",
+      "empty_states": {
+        "saved_for_later": {
+          "title": "Nothing saved for later",
+          "description": "Use “Save for later” in the cart to keep products here without buying them now."
+        },
+        "empty_cart": {
+          "description": "Browse the catalog or reorder from a saved list — items you add will show up here."
+        }
+      }
     },
     "checkout": {
       "meta": {
@@ -1731,7 +1831,17 @@
       "show_all_results": "Показать все результаты",
       "load_previous_page": "Загрузить предыдущую страницу",
       "load_next_page": "Загрузить следующую страницу",
-      "available_variations": "Нет доступных вариантов | 1 доступный вариант | {count} доступных вариантов"
+      "available_variations": "Нет доступных вариантов | 1 доступный вариант | {count} доступных вариантов",
+      "empty_states": {
+        "no_data": {
+          "title": "No products in this category yet",
+          "description": "New items are added regularly. Try a related category or search the whole catalog."
+        },
+        "no_results": {
+          "title": "No products match your search or filters",
+          "description": "Check the spelling, try fewer filters, or turn off “Show in stock”."
+        }
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1866,14 +1976,28 @@
         "title": "Заблокировано"
       },
       "title": "Ваш аккаунт заблокирован",
-      "message": "@:common.messages.blocked"
+      "message": "@:common.messages.blocked",
+      "empty_state": {
+        "description": "Contact your company admin or our support team to restore access.",
+        "contact_button": "Contact support"
+      }
     },
     "brands": {
       "top_brands_title": "Топ бренды",
       "title": "Бренды",
       "search": "Поиск",
       "button_all": "Все",
-      "no_results": "Ничего не найдено"
+      "no_results": "Ничего не найдено",
+      "empty_states": {
+        "no_results": {
+          "title": "No brands match your search",
+          "description": "Check the spelling or try another keyword."
+        },
+        "not_found": {
+          "title": "Brand not found",
+          "description": "The brand may have been removed or the link is out of date."
+        }
+      }
     },
     "brand": {
       "products_title": "Товары"

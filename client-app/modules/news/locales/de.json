@@ -4,7 +4,13 @@
       "title": "Neueste Nachrichten",
       "not-found": "Keine Nachrichten gefunden",
       "search-placeholder": "Suche",
-      "written-by": "Geschrieben von"
+      "written-by": "Geschrieben von",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Geschrieben von",

@@ -4,7 +4,13 @@
       "title": "Senaste nyheterna",
       "not-found": "Inga nyheter hittades",
       "search-placeholder": "Sök",
-      "written-by": "Skrivet av"
+      "written-by": "Skrivet av",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Skrivet av",

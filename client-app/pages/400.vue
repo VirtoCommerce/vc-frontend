@@ -1,23 +1,19 @@
 <template>
-  <VcEmptyPage icon="outline-pass-fail" image="lock.jpg">
-    <h1 class="text-5xl font-black text-primary max-sm:order-first lg:mb-5 lg:text-8xl">
-      {{ $t("pages.400.error_code") }}
-    </h1>
-
-    <VcTypography tag="h2" variant="h1" class="mb-5 max-sm:order-first sm:mb-2">
-      {{ $t("pages.400.error_text") }}
-    </VcTypography>
-
-    <p class="mb-7 text-base text-neutral-700 lg:text-xl">
-      {{ $t("pages.400.message") }}
-    </p>
-
-    <div>
-      <VcButton to="/" min-width="11rem">
-        {{ $t("pages.400.home_button") }}
-      </VcButton>
-    </div>
-  </VcEmptyPage>
+  <VcContainer :has-bg-image="false">
+    <VcEmptyView
+      size="xl"
+      reason="no-access"
+      :text="$t('pages.400.empty_state.title')"
+      :description="$t('pages.400.empty_state.description')"
+      :hint="$t('common.labels.error_code', { code: $t('pages.400.error_code') })"
+    >
+      <template #button>
+        <VcButton to="/" variant="outline" color="secondary">
+          {{ $t("pages.400.home_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
@@ -30,9 +26,3 @@ usePageHead({
   title: `${t("pages.400.error_code")} ${t("pages.400.error_text")}`,
 });
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>

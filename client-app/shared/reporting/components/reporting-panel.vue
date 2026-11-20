@@ -19,7 +19,12 @@
       </div>
     </div>
 
-    <VcEmptyView v-if="error && !loading" :text="t('shared.reporting.load_failed')" variant="error" />
+    <VcEmptyView
+      v-if="error && !loading"
+      reason="error"
+      :text="t('shared.reporting.empty_states.load_failed.title')"
+      :description="t('shared.reporting.empty_states.load_failed.description')"
+    />
 
     <template v-else>
       <div v-if="withTiles" class="reporting-panel__tiles" :data-test-id="`${testId}-tiles-section`">

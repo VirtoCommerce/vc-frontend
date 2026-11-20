@@ -592,14 +592,14 @@ describe("getAriaSort", () => {
 
 // ─── 8. Empty / Error states ────────────────────────────────
 
-// Expose VcEmptyView's text/icon + forward its `#button` slot, with a real <button>
+// Expose VcEmptyView's text/reason/icon + forward its `#button` slot, with a real <button>
 // for VcButton so retry clicks propagate to VcTable's `@retry` emit.
 const stateStubs = {
   ...sharedStubs,
   VcEmptyView: {
-    props: ["variant", "icon", "text"],
+    props: ["variant", "reason", "icon", "text"],
     template: `
-      <div class="empty-view-stub" :data-variant="variant" :data-icon="icon">
+      <div class="empty-view-stub" :data-variant="variant" :data-reason="reason" :data-icon="icon">
         <span class="empty-view-stub__text">{{ text }}</span>
         <slot name="button" />
       </div>
@@ -724,8 +724,8 @@ describe("empty state (desktop)", () => {
 
     const emptyView = wrapper.find(".empty-view-stub");
     expect(emptyView.exists()).toBe(true);
-    expect(emptyView.attributes("data-variant")).toBe("search");
-    expect(emptyView.find(".empty-view-stub__text").text()).toBe("ui_kit.table.empty");
+    expect(emptyView.attributes("data-reason")).toBe("no-data");
+    expect(emptyView.find(".empty-view-stub__text").text()).toBe("ui_kit.table.empty_states.no_data.title");
     expect(wrapper.find("td.vc-table__state-cell").exists()).toBe(true);
   });
 
@@ -782,8 +782,8 @@ describe("error / empty states (mobile)", () => {
 
     const emptyView = wrapper.find(".empty-view-stub");
     expect(emptyView.exists()).toBe(true);
-    expect(emptyView.attributes("data-variant")).toBe("search");
-    expect(emptyView.find(".empty-view-stub__text").text()).toBe("ui_kit.table.empty");
+    expect(emptyView.attributes("data-reason")).toBe("no-data");
+    expect(emptyView.find(".empty-view-stub__text").text()).toBe("ui_kit.table.empty_states.no_data.title");
   });
 });
 

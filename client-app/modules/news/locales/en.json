@@ -4,7 +4,13 @@
       "title": "Latest news",
       "not-found": "No news found",
       "search-placeholder": "Search",
-      "written-by": "Written by"
+      "written-by": "Written by",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Written by",

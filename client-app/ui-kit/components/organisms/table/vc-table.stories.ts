@@ -1181,7 +1181,7 @@ export const EmptyDefault: StoryType = {
     docs: {
       description: {
         story:
-          "Default empty state. When no `#desktop-empty`/`#mobile-empty` slot is provided, the table renders a built-in `VcEmptyView` (search variant) with the `ui_kit.table.empty` message.",
+          "Default empty state. When no `#desktop-empty`/`#mobile-empty` slot is provided, the table renders a built-in `VcEmptyView` (reason no-data, size md) with the `ui_kit.table.empty_states.no_data` copy.",
       },
       source: {
         code: `

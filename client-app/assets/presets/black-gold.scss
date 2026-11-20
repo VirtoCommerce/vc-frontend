@@ -1,0 +1,8 @@
+// Black & Gold dark: the grey secondary plates of the drawn empty-state icons take the primary tint of the quotes
+// icon plate, so the icons stay in the preset's own colours.
+@layer vc.preset {
+  html.dark[data-preset="black-gold"] {
+    --vc-empty-icon-plate-secondary-200-color: color-mix(in srgb, var(--color-primary-500) 22%, var(--color-additional-50));
+    --vc-empty-icon-plate-secondary-100-color: color-mix(in srgb, var(--color-primary-500) 22%, var(--color-additional-50));
+  }
+}

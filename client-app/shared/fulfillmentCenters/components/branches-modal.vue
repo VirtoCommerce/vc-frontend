@@ -36,12 +36,13 @@
           <VcEmptyView
             v-else
             :text="emptyViewText"
-            icon="outline-stock"
+            entity="branches"
+            size="sm"
             :variant="emptyViewVariant"
             class="h-[23.8rem] max-h-screen-60"
           >
             <template v-if="searchInput.length" #button>
-              <VcButton prepend-icon="reset" @click="searchInput = ''">
+              <VcButton variant="outline" color="secondary" prepend-icon="reset" @click="searchInput = ''">
                 {{ $t("shared.catalog.branches_modal.reset_search_button") }}
               </VcButton>
             </template>
@@ -135,9 +136,9 @@
           </template>
         </div>
 
-        <VcEmptyView v-else :text="emptyViewText" icon="outline-stock" :variant="emptyViewVariant">
+        <VcEmptyView v-else :text="emptyViewText" entity="branches" size="sm" :variant="emptyViewVariant">
           <template v-if="searchInput.length" #button>
-            <VcButton prepend-icon="reset" @click="searchInput = ''">
+            <VcButton variant="outline" color="secondary" prepend-icon="reset" @click="searchInput = ''">
               {{ $t("shared.catalog.branches_modal.reset_search_button") }}
             </VcButton>
           </template>

@@ -13,6 +13,12 @@
       "link": {
         "title": "Kaufanfragen"
       }
+    },
+    "empty_states": {
+      "no_data": {
+        "title": "No purchase requests yet",
+        "description": "Purchase requests you create from a file or the bulk order form will appear here."
+      }
     }
   },
   "purchase_request": {
@@ -37,7 +43,13 @@
         "cancel": "@:common.buttons.cancel"
       }
     },
-    "go_to_quote": "Zum Angebot gehen"
+    "go_to_quote": "Zum Angebot gehen",
+    "empty_states": {
+      "failed": {
+        "title": "Couldn’t create the purchase request",
+        "description": "It may have been used for an order already. Try again from the bulk order form."
+      }
+    }
   },
   "pages": {
     "bulk_order": {

@@ -10,9 +10,16 @@
       </p>
     </div>
 
-    <VcEmptyView v-if="loadError" variant="error" :text="$t('pages.account.missions.load_error')">
+    <VcEmptyView
+      v-if="loadError"
+      reason="error"
+      :text="$t('pages.account.missions.empty_states.load_error.title')"
+      :description="$t('pages.account.missions.empty_states.load_error.description')"
+    >
       <template #button>
-        <VcButton @click="loadData">{{ $t("pages.account.missions.retry_button") }}</VcButton>
+        <VcButton variant="outline" color="secondary" prepend-icon="refresh-cw" @click="loadData">{{
+          $t("pages.account.missions.retry_button")
+        }}</VcButton>
       </template>
     </VcEmptyView>
 
@@ -38,8 +45,10 @@
 
       <VcEmptyView
         v-if="!missionsLoading && !missions.length"
-        icon="outline-lists"
-        :text="$t('pages.account.missions.empty_list')"
+        reason="no-data"
+        entity="missions"
+        :text="$t('pages.account.missions.empty_states.no_data.title')"
+        :description="$t('pages.account.missions.empty_states.no_data.description')"
       />
 
       <template v-else>

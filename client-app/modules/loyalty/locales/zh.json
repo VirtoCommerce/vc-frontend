@@ -95,6 +95,16 @@
           "count_requirement": "下 {target} 个独立订单",
           "close": "关闭",
           "redeem_products": "兑换商品"
+        },
+        "empty_states": {
+          "load_error": {
+            "title": "Couldn’t load missions",
+            "description": "Check your connection and try again."
+          },
+          "no_data": {
+            "title": "No missions yet",
+            "description": "New ways to earn points will appear here. Check back soon."
+          }
         }
       }
     }

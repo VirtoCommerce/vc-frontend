@@ -95,6 +95,16 @@
           "count_requirement": "Сделайте {target} отдельных заказов",
           "close": "Закрыть",
           "redeem_products": "Получить товары"
+        },
+        "empty_states": {
+          "load_error": {
+            "title": "Couldn’t load missions",
+            "description": "Check your connection and try again."
+          },
+          "no_data": {
+            "title": "No missions yet",
+            "description": "New ways to earn points will appear here. Check back soon."
+          }
         }
       }
     }

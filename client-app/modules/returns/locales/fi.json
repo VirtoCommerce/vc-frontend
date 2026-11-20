@@ -60,7 +60,12 @@
         "quantity": "Määrä"
       },
       "quantity_for": "Palautusmäärä tuotteelle {name}",
-      "continue": "Jatka"
+      "continue": "Jatka",
+      "empty_states": {
+        "nothing_returnable": {
+          "description": "Items may be past the return window or not eligible for return."
+        }
+      }
     },
     "ineligibility": {
       "RETURNS_DISABLED": "Palautukset on poistettu käytöstä tässä kaupassa",
@@ -97,6 +102,16 @@
         "status": "Tila",
         "quantity": "Määrä"
       }
+    },
+    "empty_states": {
+      "no_data": {
+        "title": "No returns yet",
+        "description": "Returns you start from an order will appear here with their status."
+      },
+      "no_results": {
+        "title": "No returns match your search",
+        "description": "Try another keyword or remove the status or date filter."
+      }
     }
   },
   "return_details": {
@@ -115,7 +130,13 @@
       "requested": "Pyydetty",
       "approved": "Hyväksytty"
     },
-    "table_description": "palautetut tuotteet"
+    "table_description": "palautetut tuotteet",
+    "empty_states": {
+      "not_found": {
+        "title": "Return not found",
+        "description": "It may have been canceled or belong to another account."
+      }
+    }
   },
   "return_cancel": {
     "title": "Peruuta palautus",
