@@ -56,9 +56,14 @@ interface ISchemaWithSettings {
   includeShared?: string[];
 }
 
+interface ITemplateSchema {
+  previewMessage?: { templateKey?: string };
+}
+
 export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
   const catalog = {
     ...schemas,
+    templates: withBuiltInDocuments(schemas.templates),
     paletteTokens: { light: tokensOf(presets), dark: tokensOf(darkPresets) },
   };
 
@@ -70,6 +75,19 @@ export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<stri
     conditions: getTemplateConditionDescriptors(),
     builtInTemplates: Object.keys(BUILT_IN_TEMPLATES),
   };
+}
+
+/** A template without a theme file is the built-in one: the designer opens and copies it from `default`. */
+function withBuiltInDocuments(templates: PageBuilderSchemaType["templates"] | undefined): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(templates ?? {}).map(([name, schema]) => {
+      const key = (schema as ITemplateSchema).previewMessage?.templateKey;
+
+      return key && Object.hasOwn(BUILT_IN_TEMPLATES, key)
+        ? [name, { ...schema, default: BUILT_IN_TEMPLATES[key] }]
+        : [name, schema];
+    }),
+  );
 }
 
 /** A palette may set any token some built-in preset sets, because the styles read all of them. */

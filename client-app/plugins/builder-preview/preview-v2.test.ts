@@ -6,7 +6,7 @@ import { darkPresets, presets } from "@/assets/presets";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { PREVIEW_PROTOCOL, useThemeSnapshot } from "@/core/theme-snapshot";
 import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
-import { useTemplateResolution, useThemeTemplates } from "@/shared/static-content";
+import { BUILT_IN_TEMPLATES, useTemplateResolution, useThemeTemplates } from "@/shared/static-content";
 import { isPreviewV2Message } from "./builder-preview.protocol";
 import { findEditableElement, findEditableTexts, InlineTextEditor } from "./inline-text-editor";
 import { buildPreviewCatalog, createPreviewV2, findSchemaField, isPlainTextSetting } from "./preview-v2";
@@ -14,7 +14,7 @@ import { guardPreviewNavigation, installPageInputGuard } from "./utils";
 import type { IRenderMessage } from "./builder-preview.protocol";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
-import type { IThemeDraft } from "@/core/theme-snapshot";
+import type { IThemeDraft, IThemePageDocument } from "@/core/theme-snapshot";
 import type { ILanguage } from "@/core/types";
 import type { VueWrapper } from "@vue/test-utils";
 import type { EffectScope } from "vue";
@@ -121,6 +121,24 @@ describe("preview protocol 2", () => {
     expect((catalog.conditions as { name: string }[]).map(({ name }) => name)).toContain("inCategory");
     expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS).hash);
     expect(changed.hash).not.toBe(catalog.hash);
+  });
+
+  it("gives each template the document the storefront renders without a theme file as its default", () => {
+    const templates = {
+      product: { type: "themes", previewMessage: { templateKey: "product" }, default: true },
+      category: { type: "themes", previewMessage: { templateKey: "category" } },
+      custom: { type: "themes", previewMessage: { templateKey: "product.sale" } },
+      pages: { type: "pages" },
+    };
+
+    const catalog = buildPreviewCatalog({ ...SCHEMAS, templates });
+    const announced = catalog.templates as Record<string, { default?: unknown }>;
+
+    expect(announced.product.default).toEqual(BUILT_IN_TEMPLATES.product);
+    expect(announced.category.default).toEqual(BUILT_IN_TEMPLATES.category);
+    expect(announced.custom).toEqual(templates.custom);
+    expect(announced.pages).toEqual(templates.pages);
+    expect((announced.product.default as IThemePageDocument).content.length).toBeGreaterThan(1);
   });
 
   it("announces every token a built-in light or dark preset sets, sorted", () => {
