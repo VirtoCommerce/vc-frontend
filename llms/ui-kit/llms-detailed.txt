@@ -536,7 +536,7 @@
   - footer-container
   - footer
 - Features: header with actions, collapsible behavior, custom sizing, shadow/border control
-- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (default the per-size ladder), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
+- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0; at least 1px on a widget without its shadow, unless its border is off or it is seamless), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (md and lg only, default their per-size ladder; xs and sm keep 1rem), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
 
 **VcWidgetSkeleton** (`client-app/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue`)
 - Props: head?: boolean, foot?: boolean, noShadow?: boolean, size?: "xs" | "sm" | "md" | "lg" (default: "md")

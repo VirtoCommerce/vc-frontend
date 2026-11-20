@@ -225,12 +225,6 @@ overridden on that element's block, not on `html`: in the design's `blocks/<bloc
 (`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
 dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
 and `--vc-dropdown-menu-radius` instead, on `html` as usual.
-Soft's widget block sets two tokens on `.vc-widget` the same way: `--vc-widget-border-width` on
-`:shadow="false"` widgets and `--vc-widget-padding-x` on xs and sm widgets. A widget nested in another
-takes both back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from its parent,
-so your override on `html[data-design="soft"]` reaches it too. Override them on
-`html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
-small ones too.
 Soft's organization switcher sets `--vc-popover-padding` and `--vc-popover-border-width` on
 `.organization-switcher` the same way, and its panel subtracts both from the card's 20rem × 50vh.
 Override them on `html[data-design="soft"] .organization-switcher` in `_custom.scss`, as lengths
@@ -268,10 +262,7 @@ offsets and its canvas, which VcFrame resets (`--vc-frame-main-min-height` still
 1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
    and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy,
    delete the `blocks/` and `dark/` files and the lines that load them in `index.scss`, but keep
-   `blocks/vc-widget.scss`, and the `--design-widget-*` lines of `_tokens.scss` it reads, while you
-   keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives shadowless
-   ones an edge, gives a nested widget the plate's tokens instead of its parent's, and sets lg widget
-   titles to `fontSize.base`.
+   `blocks/vc-widget.scss` for soft's lg widget titles (`fontSize.base`).
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
 3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
    values with yours and set only the tokens that differ from classic: those from the
