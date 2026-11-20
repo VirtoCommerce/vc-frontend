@@ -339,8 +339,8 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
   block) wins: the footer keeps its transparent `VcWidget` plate. Never set a component's private variable
   (`--bg-color`, `--text-color`, …).
 - Soft's organizations panel paints with `--vc-plate-bg-color` (`additional-50` when unset), not
-  `--vc-widget-bg-color`: a preset that recolours its plates sets both, as paprika does
-  (`--vc-widget-bg-color: var(--vc-plate-bg-color)`).
+  `--vc-widget-bg-color`: a preset that recolours its plates sets only `--vc-plate-bg-color`, as
+  paprika does; soft derives `--vc-widget-bg-color` from it, and classic widgets keep `additional-50`.
 - Target a block or BEM part only for a part with no token, and set the property itself there: the
   rule sits below the preset's `html` and styles a BEM block, element or modifier, kit (`.vc-*`) or
   app, like `.vc-widget__title` above.

@@ -280,8 +280,10 @@ watch(
   }
 
   &__table {
-    // Flush in the widget body: the table's frame follows the widget's inner curve.
+    // Flush in the widget body: the table's frame follows the widget's inner curve and is drawn only where the
+    // widget draws none.
     --vc-table-radius: calc(var(--vc-widget-radius) - var(--vc-widget-border-width, 1px));
+    --vc-table-border-width: calc(1px - var(--vc-widget-border-width, 1px));
   }
 }
 </style>

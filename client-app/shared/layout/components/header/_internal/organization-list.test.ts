@@ -274,4 +274,18 @@ describe("OrganizationList: choosing", () => {
     expect(hoisted.trySwitch).toHaveBeenCalledWith("org-1");
     expect(wrapper.emitted("selected")).toHaveLength(1);
   });
+
+  it("stays open on the current organization when the switch fails", async () => {
+    hoisted.trySwitch.mockResolvedValue(false);
+    const wrapper = await mountList();
+    await resolveAll();
+
+    await options(wrapper)[1].trigger("click");
+    await flushPromises();
+
+    expect(hoisted.trySwitch).toHaveBeenCalledWith("org-1");
+    expect(wrapper.emitted("selected")).toBeUndefined();
+    expect(options(wrapper)[0].attributes("aria-selected")).toBe("true");
+    expect(options(wrapper)[1].attributes("aria-selected")).toBe("false");
+  });
 });

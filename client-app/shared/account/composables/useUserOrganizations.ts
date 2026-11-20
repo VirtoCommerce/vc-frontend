@@ -54,7 +54,7 @@ function _useUserOrganizations() {
         after,
         first: ORGANIZATIONS_PER_PAGE,
         sort: "name:asc",
-        searchPhrase: formattedSearchPhrase.value,
+        searchPhrase: phrase,
         statuses: [ContactStatus.Approved],
       });
 
@@ -67,7 +67,7 @@ function _useUserOrganizations() {
         endCursor.value = result.pageInfo.endCursor;
         totalCount.value = result.totalCount;
 
-        if (!searchPhrase.value) {
+        if (!phrase) {
           totalOrganizations.value = result.totalCount;
         }
 

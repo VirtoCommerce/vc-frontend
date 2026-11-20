@@ -1,6 +1,6 @@
 <template>
   <div ref="root" class="organization-list">
-    <VcAlert v-if="switchError" class="organization-list__error" color="danger" size="sm" variant="outline-dark" icon>
+    <VcAlert v-if="switchError" class="organization-list__error" color="danger" size="sm" variant="tonal" icon>
       {{ switchError }}
     </VcAlert>
 
@@ -28,7 +28,7 @@
           'aria-controls': listboxId,
           'aria-activedescendant': activeDescendantId ?? null,
         }"
-        @keydown.enter="onSearch"
+        @keydown.enter="search"
         @keydown.down.prevent="moveFocus(1)"
         @input="onSearchInput"
         @clear="onSearchClear"
@@ -39,7 +39,7 @@
             icon-size="1.25rem"
             :aria-label="$t('shared.layout.header.top_header.search_organizations')"
             data-test-id="organizations-search-button"
-            @click="onSearch"
+            @click="search"
           />
         </template>
       </VcInput>
@@ -199,10 +199,7 @@ function getOptionId(index: number): string {
 
 // Locked rows are disabled buttons that can't take focus, so they're left out and arrows step over them.
 function getOptionElements(): HTMLElement[] {
-  const elements = document.querySelectorAll<HTMLElement>(
-    `[data-vc-organization-option="${componentId}"] [tabindex='0']:not(:disabled)`,
-  );
-  return Array.from(elements);
+  return Array.from(root.value?.querySelectorAll<HTMLElement>("[role='option']:not(:disabled)") ?? []);
 }
 
 function moveFocus(step: 1 | -1): void {
@@ -248,10 +245,6 @@ async function selectOrganization(organizationId: string): Promise<void> {
   }
 
   emit("organizationSelected");
-}
-
-async function onSearch(): Promise<void> {
-  await search();
 }
 
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
