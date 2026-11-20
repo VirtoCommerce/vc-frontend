@@ -227,6 +227,7 @@ watchEffect(() => {
   $disabled: "";
 
   --bg-color: var(--color-additional-50);
+  --selected-edge-color: var(--vc-line-item-selected-edge-color, var(--color-primary-500));
 
   @apply relative flex flex-col gap-2 p-3 rounded-[--vc-radius] border shadow-md bg-[--bg-color];
 
@@ -234,9 +235,13 @@ watchEffect(() => {
     @apply p-4 rounded-none border-0 shadow-none;
   }
 
+  // A selected line keeps its background; a 4px edge on the leading side marks it.
   &--selected {
     $selected: &;
-    --bg-color: var(--color-secondary-50);
+
+    &::before {
+      @apply content-[''] absolute inset-y-0 start-0 z-[2] w-1 rounded-s-[inherit] bg-[--selected-edge-color] pointer-events-none;
+    }
   }
 
   &--removable {
