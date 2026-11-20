@@ -2,7 +2,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { filterActiveQueryNames, getFieldValidationErrors } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
-import { useReturnUrl, useSupportReports } from "@/core/composables";
+import { useAuth, useReturnUrl, useSupportReports } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { buildRedirectUrl, toSameOriginPath } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
@@ -23,6 +23,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useFieldErrors } from "@/shared/common";
+import { closeAllModals } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
@@ -42,7 +43,8 @@ export function setupBroadcastGlobalListeners() {
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
-  const { fetchUser, user } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
+  const { headers: authHeaders } = useAuth();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
@@ -85,6 +87,7 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
+      closeAllModals();
       await router.replace({
         name: route.params.cartId ? "SharedCart" : "Cart",
         params: { cartId: route.params.cartId },
@@ -96,17 +99,48 @@ export function setupBroadcastGlobalListeners() {
       client.cache.gc();
     }
   });
-  on(unauthorizedErrorEvent, async () => {
+  let signInRedirect: Promise<void> | undefined;
+
+  // A failed token refresh emits unauthorizedErrorEvent and lets the request go out without a token, so a
+  // forbiddenEvent follows. Both handlers share one run: one `me` request and one navigation, in either order.
+  function redirectToSignIn(): Promise<void> {
+    signInRedirect ??= reloadUserAndRedirectToSignIn().finally(() => {
+      signInRedirect = undefined;
+    });
+    return signInRedirect;
+  }
+
+  // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded first
+  async function reloadUserAndRedirectToSignIn(): Promise<void> {
+    const wasSignedIn = isAuthenticated.value;
+
     await fetchUser();
 
     if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
       return;
     }
 
-    const query = buildRedirectUrl(router.currentRoute.value);
-    if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
-      void router.push({ name: ROUTES.SIGN_IN.NAME, query });
+    const route = router.currentRoute.value;
+
+    if (route.name === ROUTES.SIGN_IN.NAME) {
+      return;
     }
+
+    const query = buildRedirectUrl(route);
+    // A page that can't be returned to is left only by a user whose session is gone: a guest stays on their checkout,
+    // and Sign In sends a user who is still signed in on to the catalog.
+    const sessionGone = wasSignedIn && !isAuthenticated.value;
+
+    if (query || (sessionGone && route.meta.redirectable === false && !route.meta.public)) {
+      const navigation = router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
+      closeAllModals();
+      // Awaited so that the run lasts until Sign In is open: the 403 of the same dead session then joins it
+      await navigation;
+    }
+  }
+
+  on(unauthorizedErrorEvent, async () => {
+    await redirectToSignIn();
   });
   on(graphqlErrorEvent, (errors) => {
     const graphQLErrors = errors as GraphQLFormattedError[];
@@ -156,8 +190,25 @@ export function setupBroadcastGlobalListeners() {
     location.href = toSameOriginPath(typeof returnUrl === "string" ? returnUrl : getReturnUrl());
   });
 
-  on(forbiddenEvent, () => {
-    void router.push({ name: "NoAccess" });
+  on(forbiddenEvent, async () => {
+    if (!authHeaders.value.Authorization) {
+      // No token while the user is still held as signed in, or while that user is on the way to Sign In: the session
+      // is gone, not the permission
+      if (isAuthenticated.value || signInRedirect) {
+        await redirectToSignIn();
+        return;
+      }
+
+      // The 403 of a dead session can also arrive after its redirect, when only the page tells it from a guest's
+      if (router.currentRoute.value.name === ROUTES.SIGN_IN.NAME) {
+        return;
+      }
+    }
+
+    if (router.currentRoute.value.name !== "NoAccess") {
+      void router.push({ name: "NoAccess" });
+      closeAllModals();
+    }
   });
 
   on(passwordExpiredEvent, () => {
@@ -165,6 +216,7 @@ export function setupBroadcastGlobalListeners() {
 
     if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
       void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
+      closeAllModals();
     }
   });
 
