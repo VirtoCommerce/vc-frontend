@@ -240,7 +240,7 @@ watchEffect(() => {
     $selected: &;
 
     &::before {
-      @apply content-[''] absolute inset-y-0 start-0 z-[2] w-1 rounded-s-[inherit] bg-[--selected-edge-color] pointer-events-none;
+      @apply content-[''] absolute inset-0 z-[2] rounded-[inherit] border-s-4 border-s-[--selected-edge-color] pointer-events-none;
     }
   }
 
