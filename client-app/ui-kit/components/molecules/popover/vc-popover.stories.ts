@@ -19,6 +19,25 @@ const PLACEMENTS = [
 const meta: Meta<typeof VcPopover> = {
   title: "Components/Molecules/VcPopover",
   component: VcPopover,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A floating panel tied to a trigger. A theme, a design or a component built on it restyles its card through these CSS variables, set on `html` or on the popover; a teleported panel reads only the page's. The `bgColor` and `radius` props win over the first two:",
+          "",
+          "| Variable | Classic value |",
+          "| --- | --- |",
+          "| `--vc-popover-bg-color` | none; the arrow: additional-50 |",
+          "| `--vc-popover-radius` | `var(--vc-radius)`, 0.5rem |",
+          "| `--vc-popover-padding` | 0px; one length for every side, so `0px` rather than `0` |",
+          "| `--vc-popover-border-width` | 0px, no border; a length, so `0px` rather than `0`. The arrow gets no border |",
+          "| `--vc-popover-border-color` | neutral-200 |",
+          "",
+          "VcDropdownMenu and VcTooltip set the padding and the border width back to `0px` on their own panels, so a padded card does not pass them on to a dropdown or a tooltip inside it.",
+        ].join("\n"),
+      },
+    },
+  },
   argTypes: {
     placement: {
       control: "select",
@@ -236,6 +255,47 @@ export const TopPlacement: StoryType = {
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">Top placement</div>
+            </template>
+          </VcPopover>
+        `,
+      },
+    },
+  },
+};
+
+export const CustomTokens: StoryType = {
+  args: {
+    shadow: true,
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcPopover
+      v-bind="args"
+      class="[--vc-popover-bg-color:var(--color-additional-50)] [--vc-popover-border-color:var(--color-secondary-200)] [--vc-popover-border-width:1px] [--vc-popover-padding:1rem]"
+    >
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Click to open</VcButton>
+      </template>
+      <template #content>
+        <div class="w-56 text-sm">
+          The card's background, padding and border come from the popover's CSS variables.
+        </div>
+      </template>
+    </VcPopover>`,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcPopover
+            shadow
+            class="[--vc-popover-bg-color:var(--color-additional-50)] [--vc-popover-border-color:var(--color-secondary-200)] [--vc-popover-border-width:1px] [--vc-popover-padding:1rem]"
+          >
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Click to open</VcButton>
+            </template>
+            <template #content>
+              <div class="w-56">Popover content</div>
             </template>
           </VcPopover>
         `,
