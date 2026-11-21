@@ -71,6 +71,4 @@ export const EXTENSION_CATEGORIES = {
   pageBuilderSection: "pageBuilderSection",
   accountSecurity: "accountSecurity",
   companyInfo: "companyInfo",
-  customSectionTag: "customSectionTag",
-  customSectionBehavior: "customSectionBehavior",
 } as const satisfies { [C in ExtensionCategoryType]: C };

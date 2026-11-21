@@ -1,5 +1,5 @@
 import guide from "../guide.md?raw";
-import { getKitBehaviors, getKitTags } from "./index";
+import { getSectionBehaviors, getSectionTags } from "./registry";
 import type { ICustomSectionField } from "../types";
 
 /** What the designer's catalog says of the kit, for the agent and the server: no components, no loaders. */
@@ -29,11 +29,11 @@ const SECTION_CONTAINER_NAME = "sb-section";
 
 /** Copies only data, so the catalog can be posted and hashed. */
 export function getKitCatalog(): ICustomSectionKitCatalog {
-  const tags = Object.entries(getKitTags()).map(([name, { description, attributes }]) => [
+  const tags = Object.entries(getSectionTags()).map(([name, { description, attributes }]) => [
     name,
     { description, attributes },
   ]);
-  const behaviors = Object.entries(getKitBehaviors()).map(([name, { description, value, options, writes }]) => [
+  const behaviors = Object.entries(getSectionBehaviors()).map(([name, { description, value, options, writes }]) => [
     name,
     { description, value, options, writes },
   ]);

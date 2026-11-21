@@ -1,8 +1,8 @@
 import { defineAsyncComponent, markRaw } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
-import { registerBuiltIn } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import { MAIN_COLORS } from "@/ui-kit/constants";
+import { registerBuiltInKitEntries } from "./registry";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
 
 const COLOR: ICustomSectionField = { type: "select", options: [...MAIN_COLORS], description: "A palette color." };
@@ -157,11 +157,7 @@ export function registerBuiltInKit(): void {
   }
 
   isKitRegistered = true;
-
-  Object.entries(BUILT_IN_TAGS).forEach(([name, tag]) => registerBuiltIn("customSectionTag", name, tag));
-  Object.entries(BUILT_IN_BEHAVIORS).forEach(([name, behavior]) =>
-    registerBuiltIn("customSectionBehavior", name, behavior),
-  );
+  registerBuiltInKitEntries(BUILT_IN_TAGS, BUILT_IN_BEHAVIORS);
 }
 
 function toText(value: CustomSectionValueType | undefined): string | undefined {

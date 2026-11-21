@@ -34,28 +34,6 @@ describe("register", () => {
   });
 });
 
-describe("register for the custom section kit", () => {
-  it("takes a tag with its attributes and a behavior with its directive", () => {
-    expectTypeOf<Parameters<typeof register<"customSectionBehavior">>[2]>().toExtend<{ directive: unknown }>();
-
-    register("customSectionTag", "vc-rating", { component: Widget, description: "Stars.", attributes: {} });
-    register("customSectionBehavior", "confetti", { directive: () => Promise.resolve({}), description: "Confetti." });
-
-    // @ts-expect-error -- a kit tag says which attributes it takes
-    register("customSectionTag", "vc-rating", { component: Widget });
-
-    // @ts-expect-error -- a behavior is a directive, not a component
-    register("customSectionBehavior", "confetti", { component: Widget });
-  });
-
-  it("still refuses a component-less entry elsewhere", () => {
-    expectTypeOf<Parameters<typeof register<"accountMenu">>[2]>().toExtend<{ component: unknown }>();
-
-    // @ts-expect-error -- accountMenu renders components
-    register("accountMenu", "name", { directive: () => Promise.resolve({}), description: "x" });
-  });
-});
-
 describe("registerContribution", () => {
   it("takes only a category that declared a contributed shape — today, the two menus and signInMethods", () => {
     expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"headerMenu" | "mobileMenu" | "signInMethods">();

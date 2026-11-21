@@ -11,31 +11,11 @@ import type {
   ExtensionCategoryMapType,
   ContributionType,
   DecorateCapableCategoryType,
-  DefinitionEntryOfType,
   ReplaceEntryOfType,
   ReplacePropsType,
 } from "@/shared/common/types/extensionRegistryMap";
 
 type AnyEntryType = ExtensionCategoryMapType[ExtensionCategoryType];
-
-/** Names a template writes as they are: a kit tag is a custom element, a behavior's attribute is `data-{name}`. */
-const ENTRY_NAME_RULES: Partial<Record<ExtensionCategoryType, RegExp>> = {
-  customSectionTag: /^vc-[a-z0-9]+(?:-[a-z0-9]+)*$/,
-  // `data-each`, `data-if` and `data-html` are the template's own; `data-sb-*` and `data-pb-*` the storefront's.
-  customSectionBehavior: /^(?!(?:each|if|html|sb|pb)(?:-|$))[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
-};
-
-/** The storefront's own kit: registered lazily, so its names are held here for it against an earlier claim. */
-export const RESERVED_ENTRY_NAMES: Partial<Record<ExtensionCategoryType, ReadonlySet<string>>> = {
-  customSectionTag: new Set(["vc-button", "vc-icon", "vc-badge", "vc-products"]),
-  customSectionBehavior: new Set(["inview", "scroll-progress", "pointer", "count-up", "countdown", "copy", "marquee"]),
-};
-
-let isRegisteringBuiltIn = false;
-
-function isReserved(category: ExtensionCategoryType, name: string): boolean {
-  return !isRegisteringBuiltIn && !!RESERVED_ENTRY_NAMES[category]?.has(name);
-}
 
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
@@ -46,16 +26,6 @@ function _useExtensionRegistry() {
   function add(category: ExtensionCategoryType, name: string, item: AnyEntryType) {
     const store = entries.value as Record<string, Record<string, AnyEntryType> | undefined>;
     const bucket = (store[category] ??= {});
-
-    if (ENTRY_NAME_RULES[category]?.test(name) === false) {
-      Logger.warn(`useExtensionRegistry: "${category}/${name}" is not a name this category takes`);
-      return;
-    }
-
-    if (isReserved(category, name)) {
-      Logger.warn(`useExtensionRegistry: "${category}/${name}" is the storefront's own`);
-      return;
-    }
 
     if (bucket[name]) {
       Logger.warn(`useExtensionRegistry: Component "${category}/${name}" already registered`);
@@ -68,15 +38,8 @@ function _useExtensionRegistry() {
     triggerRef(entries);
   }
 
-  /**
-   * Registers a component that REPLACES the host's markup at this extension point, or, for a category of
-   * definitions such as `customSectionBehavior`, the definition the host reads.
-   */
-  function register<C extends ExtensionCategoryType>(
-    category: C,
-    name: string,
-    item: ReplaceEntryOfType<C> | DefinitionEntryOfType<C>,
-  ) {
+  /** Registers a component that REPLACES the host's markup at this extension point. */
+  function register<C extends ExtensionCategoryType>(category: C, name: string, item: ReplaceEntryOfType<C>) {
     add(category, name, item);
   }
 
@@ -97,11 +60,6 @@ function _useExtensionRegistry() {
 
   function unregister<C extends ExtensionCategoryType>(category: C, name: string) {
     if (!entries.value[category]?.[name]) {
-      return;
-    }
-
-    if (isReserved(category, name)) {
-      Logger.warn(`useExtensionRegistry: "${category}/${name}" is the storefront's own`);
       return;
     }
 
@@ -222,21 +180,3 @@ function _useExtensionRegistry() {
 }
 
 export const useExtensionRegistry = createGlobalState(_useExtensionRegistry);
-
-/**
- * Registers one of the storefront's own entries under its reserved name. Not in the facade: a plugin cannot
- * claim a reserved name, nor remove the entry.
- */
-export function registerBuiltIn<C extends ExtensionCategoryType>(
-  category: C,
-  name: string,
-  item: ReplaceEntryOfType<C> | DefinitionEntryOfType<C>,
-): void {
-  isRegisteringBuiltIn = true;
-
-  try {
-    useExtensionRegistry().register(category, name, item);
-  } finally {
-    isRegisteringBuiltIn = false;
-  }
-}

@@ -34,8 +34,6 @@ export interface ICustomSectionTag {
   mapProps?: (attributes: Record<string, CustomSectionValueType>) => Record<string, unknown>;
   /** The attribute whose text fills the component's default slot, such as a button's `label`. */
   slotAttribute?: string;
-  condition?: never;
-  props?: never;
 }
 
 /** A behavior a custom section template switches on with the attribute `data-{name}`. */
@@ -54,7 +52,4 @@ export interface ICustomSectionBehavior {
   textAttributes?: string[];
   /** The renderer repeats the element's children once, the copies marked `data-sb-repeat` and hidden from assistive technology. */
   repeatsChildren?: boolean;
-  component?: never;
-  condition?: never;
-  props?: never;
 }

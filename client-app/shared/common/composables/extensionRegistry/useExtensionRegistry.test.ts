@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
-import {
-  registerBuiltIn,
-  useExtensionRegistry,
-} from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Product } from "@/core/api/graphql/types";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
@@ -85,58 +82,6 @@ describe("useExtensionRegistry", () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'useExtensionRegistry: Component "productCard/warnTest" already registered',
       );
-    });
-  });
-
-  describe("custom section kit", () => {
-    const BEHAVIOR = { directive: () => Promise.resolve({}), description: "Throws confetti." };
-    const TAG = {
-      component: DummyComponent,
-      description: "Stars.",
-      attributes: { value: { type: "number" as const } },
-    };
-
-    it("takes a kit tag named vc-*", () => {
-      registry.register("customSectionTag", "vc-rating", TAG);
-      registry.register("customSectionTag", "rating", TAG);
-      registry.register("customSectionTag", "vc-Rating", TAG);
-
-      expect(Object.keys(registry.getEntries("customSectionTag"))).toEqual(["vc-rating"]);
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        'useExtensionRegistry: "customSectionTag/rating" is not a name this category takes',
-      );
-    });
-
-    it("takes a behavior by a name no template attribute of its own uses", () => {
-      ["confetti", "each", "if", "html", "sb-type", "pb-field", "Confetti"].forEach((name) =>
-        registry.register("customSectionBehavior", name, BEHAVIOR),
-      );
-
-      expect(registry.getEntries("customSectionBehavior")).toEqual({ confetti: BEHAVIOR });
-    });
-
-    it("refuses the storefront's own names to anyone else, and keeps its entries from removal", () => {
-      const ownButton = { ...TAG, description: "The storefront's button." };
-
-      registry.register("customSectionTag", "vc-button", TAG);
-      registry.register("customSectionBehavior", "count-up", BEHAVIOR);
-      registerBuiltIn("customSectionTag", "vc-button", ownButton);
-      registry.unregister("customSectionTag", "vc-button");
-
-      expect(registry.getEntries("customSectionTag")["vc-button"]).toBe(ownButton);
-      expect(registry.getEntries("customSectionBehavior")["count-up"]).toBeUndefined();
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        'useExtensionRegistry: "customSectionTag/vc-button" is the storefront\'s own',
-      );
-    });
-
-    it("keeps the first registration of a name", () => {
-      const other = { ...BEHAVIOR, description: "Other." };
-
-      registry.register("customSectionBehavior", "sparkle", BEHAVIOR);
-      registry.register("customSectionBehavior", "sparkle", other);
-
-      expect(registry.getEntries("customSectionBehavior").sparkle).toBe(BEHAVIOR);
     });
   });
 

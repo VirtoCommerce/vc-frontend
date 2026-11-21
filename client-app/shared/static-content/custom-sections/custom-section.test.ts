@@ -2,9 +2,9 @@ import { mount, RouterLinkStub } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import CustomSection from "./custom-section.vue";
+import { registerSectionBehavior, registerSectionTag, unregisterSectionBehavior, unregisterSectionTag } from "./kit";
 import type { ICustomSectionType, IThemeSchemaField } from "@/core/theme-snapshot";
 
 const frame = vi.hoisted(() => ({ isPreview: false }));
@@ -500,12 +500,12 @@ describe("CustomSection", () => {
     });
 
     afterEach(() => {
-      useExtensionRegistry().unregister("customSectionTag", "vc-rating");
-      useExtensionRegistry().unregister("customSectionBehavior", "glow");
+      unregisterSectionTag("vc-rating");
+      unregisterSectionBehavior("glow");
     });
 
     it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
-      useExtensionRegistry().register("customSectionTag", "vc-rating", {
+      registerSectionTag("vc-rating", {
         component: Rating,
         description: "Stars.",
         attributes: {
@@ -529,7 +529,7 @@ describe("CustomSection", () => {
 
     it("switches on a behavior a module registered, with its options in the template", async () => {
       const mounted = vi.fn();
-      useExtensionRegistry().register("customSectionBehavior", "glow", {
+      registerSectionBehavior("glow", {
         directive: () =>
           Promise.resolve({
             mounted: (element: HTMLElement, binding) => mounted(element.dataset.glowColor, binding.value),

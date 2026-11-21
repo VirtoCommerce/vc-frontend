@@ -8,7 +8,7 @@
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { preloadBehaviors } from "./behaviors";
-import { getKitBehaviors, getKitTags, registerBuiltInKit } from "./kit";
+import { getSectionBehaviors, getSectionTags, registerBuiltInKit } from "./kit";
 import { renderCustomSection } from "./render";
 import { compileTemplate } from "./template";
 import { isCustomSectionType } from "./type-name";
@@ -33,7 +33,7 @@ const definition = computed(() =>
 
 const compiled = computed(() =>
   typeof definition.value?.template === "string"
-    ? compileTemplate(definition.value.template, { tags: getKitTags(), behaviors: getKitBehaviors() })
+    ? compileTemplate(definition.value.template, { tags: getSectionTags(), behaviors: getSectionBehaviors() })
     : undefined,
 );
 
@@ -42,7 +42,7 @@ watch(
   compiled,
   (value) => {
     if (value) {
-      const behaviors = getKitBehaviors();
+      const behaviors = getSectionBehaviors();
       preloadBehaviors(
         [...value.behaviors].filter((name) => Object.hasOwn(behaviors, name)).map((name) => behaviors[name]),
       );

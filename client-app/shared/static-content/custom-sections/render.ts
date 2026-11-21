@@ -14,7 +14,7 @@ import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml } from "../sections";
 import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
-import { getKitBehaviors, getKitTags, toTagProps } from "./kit";
+import { getSectionBehaviors, getSectionTags, toTagProps } from "./kit";
 import { getSettingVariables } from "./setting-variables";
 import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
@@ -99,7 +99,7 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
     mergeProps(renderAttributes(node, scope), getFieldAttributes(node, scope), props),
     renderChildren(node, scope),
   );
-  const behaviors = getKitBehaviors();
+  const behaviors = getSectionBehaviors();
   const directives: DirectiveArguments = node.behaviors
     .filter((name) => Object.hasOwn(behaviors, name))
     .map((name) => [
@@ -112,7 +112,7 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
 
 /** A tag that throws on its attributes renders nothing rather than the whole section failing. */
 function renderKitTag(node: ICompiledElement, scope: IBindingScope, props: Record<string, unknown>): VNode {
-  const tags = getKitTags();
+  const tags = getSectionTags();
   const tag = Object.hasOwn(tags, node.tag) ? tags[node.tag] : undefined;
 
   if (!tag) {

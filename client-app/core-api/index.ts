@@ -94,7 +94,13 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // What the host passes to a `productActions` entry, and the count a `headerMenu` or `mobileMenu` entry contributes.
 export type { MenuCountContributionType, ProductActionPropsType } from "@/shared/common/types/extensionRegistryMap";
-// The `customSectionTag` and `customSectionBehavior` entries: what a custom section template may use.
+// The custom section kit: tags and behaviors a Site Builder section template may use.
+export {
+  registerSectionBehavior,
+  registerSectionTag,
+  unregisterSectionBehavior,
+  unregisterSectionTag,
+} from "@/shared/static-content/custom-sections/kit/registry";
 export type {
   CustomSectionDirectiveType,
   CustomSectionValueType,

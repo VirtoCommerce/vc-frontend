@@ -7,7 +7,6 @@ import type {
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { SignInMethodContributionType } from "@/shared/account/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
-import type { ICustomSectionBehavior, ICustomSectionTag } from "@/shared/static-content/custom-sections/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
 /** What a menu link entry contributes to the link the host draws: a count, shown as a badge. */
@@ -119,19 +118,7 @@ export type ExtensionCategoryMapType = {
   accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
   /** Widgets on Company › Info, between the company name and the addresses. */
   companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
-  /** The kit tags a custom section template places, by tag name: `vc-` and lowercase words joined by `-`. */
-  customSectionTag: ICustomSectionTag;
-  /** The behaviors a custom section template switches on with `data-{name}`, by name. */
-  customSectionBehavior: ICustomSectionBehavior;
 };
-
-/** Categories of definitions the host reads, with no component of their own. */
-type DefinitionCategoryType = "customSectionBehavior";
-
-/** A definition category's entry: `register()` takes it as it is. */
-export type DefinitionEntryOfType<C extends keyof ExtensionCategoryMapType> = C extends DefinitionCategoryType
-  ? ExtensionCategoryMapType[C]
-  : never;
 
 /** The parameter a category's `condition` accepts. */
 export type ConditionParamType<C extends keyof ExtensionCategoryMapType> =
