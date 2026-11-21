@@ -25,6 +25,18 @@ const ENTRY_NAME_RULES: Partial<Record<ExtensionCategoryType, RegExp>> = {
   customSectionBehavior: /^(?!(?:each|if|html|sb|pb)(?:-|$))[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
 };
 
+/** The storefront's own kit: registered lazily, so its names are held here for it against an earlier claim. */
+export const RESERVED_ENTRY_NAMES: Partial<Record<ExtensionCategoryType, ReadonlySet<string>>> = {
+  customSectionTag: new Set(["vc-button", "vc-icon", "vc-badge", "vc-products"]),
+  customSectionBehavior: new Set(["inview", "scroll-progress", "pointer", "count-up", "countdown", "copy", "marquee"]),
+};
+
+let isRegisteringBuiltIn = false;
+
+function isReserved(category: ExtensionCategoryType, name: string): boolean {
+  return !isRegisteringBuiltIn && !!RESERVED_ENTRY_NAMES[category]?.has(name);
+}
+
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
 
@@ -37,6 +49,11 @@ function _useExtensionRegistry() {
 
     if (ENTRY_NAME_RULES[category]?.test(name) === false) {
       Logger.warn(`useExtensionRegistry: "${category}/${name}" is not a name this category takes`);
+      return;
+    }
+
+    if (isReserved(category, name)) {
+      Logger.warn(`useExtensionRegistry: "${category}/${name}" is the storefront's own`);
       return;
     }
 
@@ -80,6 +97,11 @@ function _useExtensionRegistry() {
 
   function unregister<C extends ExtensionCategoryType>(category: C, name: string) {
     if (!entries.value[category]?.[name]) {
+      return;
+    }
+
+    if (isReserved(category, name)) {
+      Logger.warn(`useExtensionRegistry: "${category}/${name}" is the storefront's own`);
       return;
     }
 
@@ -200,3 +222,21 @@ function _useExtensionRegistry() {
 }
 
 export const useExtensionRegistry = createGlobalState(_useExtensionRegistry);
+
+/**
+ * Registers one of the storefront's own entries under its reserved name. Not in the facade: a plugin cannot
+ * claim a reserved name, nor remove the entry.
+ */
+export function registerBuiltIn<C extends ExtensionCategoryType>(
+  category: C,
+  name: string,
+  item: ReplaceEntryOfType<C> | DefinitionEntryOfType<C>,
+): void {
+  isRegisteringBuiltIn = true;
+
+  try {
+    useExtensionRegistry().register(category, name, item);
+  } finally {
+    isRegisteringBuiltIn = false;
+  }
+}

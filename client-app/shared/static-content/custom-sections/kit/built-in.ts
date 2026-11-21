@@ -1,6 +1,6 @@
 import { defineAsyncComponent, markRaw } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { registerBuiltIn } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import { MAIN_COLORS } from "@/ui-kit/constants";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
@@ -137,7 +137,7 @@ const BUILT_IN_BEHAVIORS: Record<string, ICustomSectionBehavior> = {
 
 let isKitRegistered = false;
 
-/** Once; a tag or behavior someone registered first keeps theirs, as the registry has it. */
+/** Once, under the names the registry reserves for them. */
 export function registerBuiltInKit(): void {
   if (isKitRegistered) {
     return;
@@ -145,10 +145,10 @@ export function registerBuiltInKit(): void {
 
   isKitRegistered = true;
 
-  const { register } = useExtensionRegistry();
-
-  Object.entries(BUILT_IN_TAGS).forEach(([name, tag]) => register("customSectionTag", name, tag));
-  Object.entries(BUILT_IN_BEHAVIORS).forEach(([name, behavior]) => register("customSectionBehavior", name, behavior));
+  Object.entries(BUILT_IN_TAGS).forEach(([name, tag]) => registerBuiltIn("customSectionTag", name, tag));
+  Object.entries(BUILT_IN_BEHAVIORS).forEach(([name, behavior]) =>
+    registerBuiltIn("customSectionBehavior", name, behavior),
+  );
 }
 
 function toText(value: CustomSectionValueType | undefined): string | undefined {
