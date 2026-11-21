@@ -112,11 +112,6 @@ export const Errored: StoryType = {
     message: "Error message",
     value: 5,
   },
-  decorators: [
-    () => ({
-      template: '<div id="popover-host"></div><story />',
-    }),
-  ],
 };
 
 export const SelectOnClick: StoryType = {

@@ -1,0 +1,18 @@
+@use "sass:meta";
+@use "swiper";
+
+// ui-kit's global styles, each in its layer, swiper's CSS (VcCarousel, VcProductImage) in vc.vendor:
+// an app's entry stylesheet loads this file as is, after `@use "layers"`.
+@layer theme {
+  @include meta.load-css("fallback-palette");
+  @include meta.load-css("ui-kit-tokens");
+}
+
+@layer vc.kit {
+  @include meta.load-css("popover-host");
+  @include meta.load-css("dark-kit");
+}
+
+@layer vc.print {
+  @include meta.load-css("print-kit");
+}

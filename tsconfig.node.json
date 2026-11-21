@@ -6,6 +6,7 @@
     "client-app/core/constants/tailwind.ts",
     "client-app/core/federation/switch.ts",
     "client-app/ui-kit/constants/tailwind.ts",
+    "client-app/ui-kit/tailwind-preset.ts",
     "client-app/ui-kit/utilities/icon-aliases.ts",
     "*",
     "scripts",

@@ -21,7 +21,6 @@ import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
 
-import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
 import "../storybook-styles/main.scss";
 
@@ -103,10 +102,7 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
   loadingPreset = presetName;
 
   try {
-    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
-      default: IThemeConfigPreset;
-    };
-    const preset = module.default;
+    const preset: IThemeConfigPreset | undefined = presets[presetName];
 
     if (preset) {
       if (currentStyleElement && currentStyleElement.parentNode) {

@@ -26,10 +26,10 @@ Hence: colours only from the palette and semantic tokens; low specificity — on
 us; renaming or removing a BEM class or token is a breaking change (alias the token per `ui-kit/DEPRECATION.md`,
 list it under Breaking changes in the PR). Where a change goes (the component, a design, a preset, `_custom.scss`):
 the table at the top of `client-app/assets/styles/README.md`. Check visual changes in Storybook's Design, Theme
-preset and dark toolbars (presets: `client-app/assets/presets/index.ts`, each with a `.dark.json`).
+preset and dark toolbars (presets: `client-app/ui-kit/presets/index.ts` plus the theme's own in `client-app/assets/presets/index.ts`, each with a `.dark.json`).
 
 `yarn lint` does not parse SCSS; `yarn check:designs`, `yarn check:css-layers` and `yarn check:css-important` check
-design folders, preset stylesheets (`assets/presets/<name>.scss`), layer names and `!important` (§18)
+design folders, preset stylesheets (`ui-kit/presets/<name>.scss`, `assets/presets/<name>.scss`), layer names and `!important` (§18)
 (`client-app/assets/styles/README.md`, "Checks"), and `scripts/design-token-table.test.ts` checks the README's token
 table against the shape and type tokens the styles read. Beyond them, only the Sass/Tailwind compile in `yarn build`
 catches anything, so everything else below is review-only. Severity guide: breaks the build or renders visibly wrong
@@ -47,19 +47,19 @@ catches anything, so everything else below is review-only. Severity guide: break
    Block order: `<template>` → `<script setup>` → `<style>`.
 4. Global files:
    - `_colors.scss` and `preflight.scss`: their "DO NOT EDIT" header is for client forks; the theme edits them rarely and deliberately.
-   - `assets/presets/<name>.scss`: an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
+   - `ui-kit/presets/<name>.scss` (kit blocks) and `assets/presets/<name>.scss` (app blocks, the theme's own presets): an optional preset recolour stylesheet in `@layer vc.preset`: a component's colour
      token on the preset root `html[data-preset]` (inherited, so a block's own setting wins), a block or BEM part
      only for a part with no token; `check:designs` checks it.
    - `_custom.scss` is reserved for client forks; the theme itself never adds rules there.
    - Variant colour tokens (the `--vc-<comp>-<variant>-<color>-<part>` matrix, `ui-kit-internals.md` §5) go to `:root`
-     in `assets/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
+     in `ui-kit/styles/_ui-kit-tokens.scss`. Any other component colour token is read inside the component, today's
      colour as its fallback (`--bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"))`). Shape and
      typography tokens follow the styles README ("Shape and typography tokens"), where classic sets none but
      `--vc-radius`.
-   - Dark-mode fixes for a component: `assets/styles/dark/<atoms|molecules|organisms|shared/...>/<name>.scss`.
-     Kit files (`atoms|molecules|organisms`) are registered in `_dark-kit.scss` (layer `vc.kit`);
-     `dark/shared/**` files in `_dark-app.scss` (layer `vc.app`). Print fixes: files in `assets/styles/print/...`
-     are registered in `_print.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
+   - Dark-mode fixes for a component: a kit one in `ui-kit/styles/dark/<atoms|molecules|organisms>/<name>.scss`,
+     registered in `ui-kit/styles/_dark-kit.scss` (layer `vc.kit`); an app one in
+     `assets/styles/dark/shared/.../<name>.scss`, registered in `_dark-app.scss` (layer `vc.app`). Print fixes for
+     the kit: files in `ui-kit/styles/print/...`, registered in `ui-kit/styles/_print-kit.scss` (layer `vc.print`); a component's top-level print-only `@media` lands in
      `vc.print` automatically. A new file that is not registered is dead; one registered in the wrong file lands
      in the wrong cascade layer.
    - Never `html.dark` / `.dark` selectors inside an SFC (there are none today).
@@ -116,6 +116,14 @@ catches anything, so everything else below is review-only. Severity guide: break
     the rule they modify. Keep elements flat at block level (one level of `&__x`, then pseudo/media inside).
 
 ## 3. Tailwind inside `@apply`
+
+The Tailwind theme lives in the ui-kit preset (`client-app/ui-kit/tailwind-preset.ts`): palette names, `screens`,
+the font, radius, shadow and spacing scales, `containers`. The root `tailwind.config.ts` takes it as a preset and
+adds only under `theme.extend` (`tailwind.config.test.ts`): a key set directly under `theme` replaces the preset's
+whole scale, so the theme and ui-kit drift apart without an error. A design-system scale (radius, shadow, font size,
+breakpoint), or anything a ui-kit file uses as a class or in `@apply` → the preset; something only pages or modules
+use → `theme.extend` in the root config. An app plugin that brings its own theme (`tw-elements`) goes into a preset
+listed before the kit's, so the kit's scales win.
 
 15. Anything a Tailwind utility expresses goes through `@apply` (arbitrary values like `rounded-[--vc-radius]`,
     `text-[--link-color]`, `size-[--icon-size]` included). Raw CSS only where no utility exists
@@ -240,7 +248,7 @@ catches anything, so everything else below is review-only. Severity guide: break
 44. New animations and transitions run only under `@media (prefers-reduced-motion: no-preference)` unless they are
     the shared named transitions. Animate `transform`/`opacity`, not layout properties.
 45. Print: pages users print (orders, quotes, invoices, cart) hide chrome with `@media print` inside the block
-    (`print:hidden` in utility templates is legacy-accepted). UI-kit print fixes live in `assets/styles/print/**`.
+    (`print:hidden` in utility templates is legacy-accepted). UI-kit print fixes live in `ui-kit/styles/print/**`.
 
 ## 9. CSS custom properties and `v-bind`
 

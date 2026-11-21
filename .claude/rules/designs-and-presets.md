@@ -2,11 +2,12 @@
 paths:
   - "client-app/designs/**"
   - "client-app/assets/presets/**"
+  - "client-app/ui-kit/presets/**"
   - "client-app/config/settings_data.json"
   - "scripts/check-designs.ts"
 ---
 
-# Designs and presets (`client-app/designs`, `client-app/assets/presets`)
+# Designs and presets (`client-app/designs`, `client-app/ui-kit/presets`, `client-app/assets/presets`)
 
 Which file a change goes in, the full rules and the checks: `client-app/assets/styles/README.md`, starting with its
 "Where does my change go?" table. BEM and colour rules are in `styles.md`. `yarn check:designs` enforces most of
@@ -21,18 +22,29 @@ what follows; the rest is review-only.
    inherited, so a block that sets the same token on its own element wins. It targets a block or BEM part only for
    a part with no token.
 3. A design's `blocks/<block>.scss` and `dark/<block>.scss` style only their own BEM block (block, elements,
-   modifiers), and restate every state that should look different (hover, disabled, modifiers).
-4. **Block order in `index.scss`:** kit blocks (`vc-*`) first, then app blocks. At equal specificity the later rule
-   wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block.
+   modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
+   block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
+   block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are kit tokens, so its
+   `_tokens.scss` sits in the kit folder too, with palette values; a value taken from an app colour
+   (`--vc-frame-bg-color: var(--body-bg-color)`) goes in the design's own `_tokens.scss`, loaded after the kit's.
+   A fork's own design keeps its `_tokens.scss` in its own folder.
+   The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder
+   whole (`@include meta.load-css("@/ui-kit/styles/designs/<design>")`) and its own files, never a kit file
+   by name.
+4. **Layers in the two `index.scss`:** kit blocks (`vc-*`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
+   which wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block
+   whichever file loads first.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
-   `blocks/vc-widget.scss`).
+   `ui-kit/styles/designs/soft/blocks/vc-widget.scss`).
 6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so
    classic computes exactly as before. A new token is public API: agree its name with the developer first.
-7. **Preset stylesheet** (`assets/presets/<preset>.scss`): every rule inside `@layer vc.preset`; colours only.
+7. **Preset stylesheet** (`<preset>.scss` next to its JSON): every rule inside `@layer vc.preset`; colours only.
    Public `--vc-*` colour tokens on `html[data-preset="<preset>"]` or `html.dark[data-preset="<preset>"]` itself
-   (rule 2), and a rule below it only for a block or BEM part with no token. Only a preset bundled here
-   with its `<preset>.json` can have one; a preset fetched from the platform cannot. A bundled preset is listed in
-   `presets/index.ts`: its JSON in `presets`, its `.dark.json` in `darkPresets`.
+   (rule 2), and a rule below it only for a block or BEM part with no token. Stock presets live in
+   `ui-kit/presets/` and their stylesheets name kit blocks only; the theme's own presets live in `assets/presets/`,
+   where a `<preset>.scss` may also add app blocks to a stock preset (loaded after ui-kit's). A preset fetched
+   from the platform has no stylesheet. A bundled preset is listed in its folder's `index.ts`: its JSON in
+   `presets`, its `.dark.json` in `darkPresets`.
 8. **Dark lives in the same file:** a design's dark token values on `html.dark[data-design="<design>"]` in
    `_tokens.scss`, a preset's dark rules in `<preset>.scss` (never a `<preset>.dark.scss`). The one exception: a
    design block's dark values go in `dark/<block>.scss`.

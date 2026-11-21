@@ -1,39 +1,13 @@
-import blackGoldDark from './black-gold.dark.json'
-import blackGold from './black-gold.json'
-import coffeeDark from './coffee.dark.json'
-import coffee from './coffee.json'
-import defaultDark from './default.dark.json'
-import defaultPreset from './default.json'
-import mercuryDark from './mercury.dark.json'
-import mercury from './mercury.json'
-import paprikaDark from './paprika.dark.json'
-import paprika from './paprika.json'
-import purplePinkDark from './purple-pink.dark.json'
-import purplePink from './purple-pink.json'
-import redDark from './red.dark.json'
-import red from './red.json'
-import watermelonDark from './watermelon.dark.json'
-import watermelon from './watermelon.json'
+import { darkPresets as kitDarkPresets, presets as kitPresets } from "@/ui-kit/presets";
 import type { IThemeConfigPreset } from "@/core/types";
 
+// The stock presets come from ui-kit. A theme's own bundled preset goes in this folder: <name>.json, an optional
+// <name>.dark.json and <name>.scss, imported and listed here after the stock ones. A JSON with a stock preset's name
+// replaces its palette; a <name>.scss with that name loads after ui-kit's stylesheet and adds to it.
 export const presets: Record<string, IThemeConfigPreset> = {
-  ['black-gold']: blackGold,
-  default: defaultPreset,
-  mercury: mercury,
-  ['purple-pink']: purplePink,
-  watermelon: watermelon,
-  coffee: coffee,
-  red: red,
-  paprika: paprika,
+  ...kitPresets,
 };
 
 export const darkPresets: Record<string, IThemeConfigPreset> = {
-  ['black-gold']: blackGoldDark,
-  default: defaultDark,
-  coffee: coffeeDark,
-  mercury: mercuryDark,
-  watermelon: watermelonDark,
-  ['purple-pink']: purplePinkDark,
-  red: redDark,
-  paprika: paprikaDark,
+  ...kitDarkPresets,
 };

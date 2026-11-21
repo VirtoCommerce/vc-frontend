@@ -18,7 +18,8 @@
       "see_less": "Vedi meno",
       "show_hide_password": "Mostra/nascondi password",
       "toggle_dropdown": "Attiva/disattiva menu a tendina",
-      "update_cart": "Aggiorna carrello"
+      "update_cart": "Aggiorna carrello",
+      "scroll_to_top": "Torna su"
     },
     "accessibility": {
       "close_alert": "Chiudi avviso",

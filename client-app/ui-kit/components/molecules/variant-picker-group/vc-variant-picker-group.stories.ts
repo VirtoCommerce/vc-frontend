@@ -1,6 +1,9 @@
 import { ref } from "vue";
+import { productImageMocks } from "@/ui-kit/mocks";
 import { VcVariantPickerGroup } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
+const [image1, image2, image3, image4, image5] = productImageMocks;
 
 const meta: Meta<typeof VcVariantPickerGroup> = {
   title: "Components/Molecules/VcVariantPickerGroup",
@@ -83,22 +86,22 @@ export const Images: StoryType = {
   args: {
     type: "image",
     multiple: false,
-    modelValue: "product-example-1.webp",
+    modelValue: image1,
   },
   render: (args) => ({
     setup: () => {
       const model = ref<string | string[]>(args.modelValue ?? "");
-      return { args, model };
+      return { args, model, images: productImageMocks };
     },
     template: `
       <div class="mb-3">Selected: {{ model }}</div>
 
       <VcVariantPickerGroup v-model="model" v-bind="args">
-        <VcVariantPicker type="image" value="product-example-1.webp" is-available />
-        <VcVariantPicker type="image" value="product-example-2.webp" is-available />
-        <VcVariantPicker type="image" value="product-example-3.webp" />
-        <VcVariantPicker type="image" value="product-example-4.webp" />
-        <VcVariantPicker type="image" value="product-example-5.webp" is-available />
+        <VcVariantPicker type="image" :value="images[0]" is-available />
+        <VcVariantPicker type="image" :value="images[1]" is-available />
+        <VcVariantPicker type="image" :value="images[2]" />
+        <VcVariantPicker type="image" :value="images[3]" />
+        <VcVariantPicker type="image" :value="images[4]" is-available />
       </VcVariantPickerGroup>
     `,
   }),
@@ -413,27 +416,27 @@ export const MixedTypes: StoryType = {
       const items = [
         { type: "color", value: "red", isAvailable: true },
         { type: "text", value: "Small Text", isAvailable: true },
-        { type: "image", value: "product-example-1.webp", isAvailable: false },
+        { type: "image", value: image1, isAvailable: false },
         { type: "text", value: "Very Long Text Option Here", isAvailable: false },
         { type: "color", value: "green", isAvailable: true },
         { type: "text", value: "A", isAvailable: true },
-        { type: "image", value: "product-example-2.webp", isAvailable: true },
+        { type: "image", value: image2, isAvailable: true },
         { type: "text", value: "Extended Size Name", isAvailable: true },
         { type: "color", value: "yellow", isAvailable: false },
         { type: "text", value: "XL", isAvailable: false },
-        { type: "image", value: "product-example-3.webp", isAvailable: true },
+        { type: "image", value: image3, isAvailable: true },
         { type: "text", value: "Ultra-Wide Option with Maximum Text Length", isAvailable: true },
         { type: "color", value: "orange", isAvailable: true },
         { type: "text", value: "S", isAvailable: true },
-        { type: "image", value: "product-example-4.webp", isAvailable: false },
+        { type: "image", value: image4, isAvailable: false },
         { type: "color", value: "purple", isAvailable: true },
         { type: "text", value: "Mega Wide Professional Enterprise Level Option", isAvailable: false },
         { type: "color", value: "pink", isAvailable: false },
-        { type: "image", value: "product-example-5.webp", isAvailable: true },
+        { type: "image", value: image5, isAvailable: true },
         { type: "text", value: "B", isAvailable: true },
         { type: "color", value: "teal", isAvailable: true },
         { type: "text", value: "Premium Grade Extended", isAvailable: false },
-        { type: "image", value: "product-example-1.webp", isAvailable: false },
+        { type: "image", value: image1, isAvailable: false },
         { type: "color", value: "brown", isAvailable: false },
         { type: "text", value: "Z", isAvailable: true },
         {
@@ -441,26 +444,26 @@ export const MixedTypes: StoryType = {
           value: "Commercial Professional Ultra Wide Text Option with Maximum Length",
           isAvailable: true,
         },
-        { type: "image", value: "product-example-2.webp", isAvailable: false },
+        { type: "image", value: image2, isAvailable: false },
         { type: "color", value: "gray", isAvailable: false },
         { type: "text", value: "Tiny", isAvailable: false },
         { type: "color", value: "black", isAvailable: true },
-        { type: "image", value: "product-example-3.webp", isAvailable: true },
+        { type: "image", value: image3, isAvailable: true },
         { type: "text", value: "Industrial Grade Maximum Size Configuration", isAvailable: true },
         { type: "color", value: "white", isAvailable: false },
         { type: "text", value: "C", isAvailable: false },
-        { type: "image", value: "product-example-4.webp", isAvailable: true },
+        { type: "image", value: image4, isAvailable: true },
         { type: "color", value: "cyan", isAvailable: true },
         { type: "text", value: "Ultimate Professional Enterprise Level Ultra Wide Premium Option", isAvailable: true },
         { type: "color", value: "magenta", isAvailable: false },
-        { type: "image", value: "product-example-5.webp", isAvailable: false },
+        { type: "image", value: image5, isAvailable: false },
         { type: "text", value: "Q", isAvailable: false },
         { type: "color", value: "lime", isAvailable: true },
         { type: "text", value: "Gigantic Commercial Grade Professional Extended Size", isAvailable: false },
-        { type: "image", value: "product-example-1.webp", isAvailable: true },
+        { type: "image", value: image1, isAvailable: true },
         { type: "color", value: "blue", isAvailable: false },
         { type: "text", value: "Extra Wide Professional Commercial Text", isAvailable: true },
-        { type: "image", value: "product-example-2.webp", isAvailable: false },
+        { type: "image", value: image2, isAvailable: false },
       ];
       return { args, model, items };
     },
@@ -650,7 +653,7 @@ export const Tooltips: StoryType = {
       const model = ref<string | string[]>(args.modelValue ?? "");
       const items = [
         { type: "color", value: "red", isAvailable: true, tooltip: "Red" },
-        { type: "image", value: "product-example-1.webp", isAvailable: true, tooltip: "Image 1" },
+        { type: "image", value: image1, isAvailable: true, tooltip: "Image 1" },
         { type: "text", value: "XL", isAvailable: false, tooltip: "Extra Large" },
         { type: "color", value: "blue", isAvailable: false, tooltip: "Custom Blue" },
       ];

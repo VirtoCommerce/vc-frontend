@@ -177,7 +177,7 @@ describe("VcButton", () => {
     ],
     [
       "print/atoms/vc-button.scss",
-      readSource("../../../../assets/styles/print/atoms/vc-button.scss"),
+      readSource("../../../styles/print/atoms/vc-button.scss"),
       [{ media: "", selector: ":where(.vc-button)", styles: ["@apply hidden"] }],
     ],
   ])("%s styles", (_, scss, whereRules: CompiledRuleType[]) => {

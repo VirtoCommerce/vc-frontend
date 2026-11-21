@@ -882,7 +882,8 @@ step("generating the tailwind preset snapshot…");
 
 // Tailwind plugins are functions — they cannot be serialized into the snapshot. They are
 // re-emitted as require()s that resolve from the CONSUMER's node_modules (the plugin
-// scaffold installs them). Keep this list in sync with tailwind.config.ts `plugins`.
+// scaffold installs them). Keep this list in sync with the plugins of tailwind.config.ts and
+// its presets (the ui-kit one: client-app/ui-kit/tailwind-preset.ts).
 const PRESET_PLUGIN_REQUIRES = ["@tailwindcss/container-queries", "tw-elements/dist/plugin.cjs"];
 
 const PRESET_OUT_FILE = resolve(CONTRACT_DIR, "tailwind-preset.cjs");
@@ -900,23 +901,39 @@ function generateTailwindPreset() {
   // (jiti under the hood) is how Tailwind itself loads the TS config — identical semantics.
   const hostRequire = createRequire(resolve(REPO_ROOT, "package.json"));
   const loadConfig = hostRequire("tailwindcss/loadConfig");
-  const hostConfig = loadConfig(resolve(REPO_ROOT, "tailwind.config.ts"));
+  const { presets = [], plugins = [], ...rootConfig } = loadConfig(resolve(REPO_ROOT, "tailwind.config.ts"));
 
-  const pluginCount = hostConfig.plugins?.length ?? 0;
+  // loadConfig does not resolve `presets`, so flatten them here the way Tailwind does for this
+  // config: the presets set the theme, and the root config only extends it (tailwind.config.test.ts).
+  const theme = {};
+  const extend = {};
+  for (const config of [...presets, rootConfig]) {
+    const { extend: configExtend = {}, ...scales } = config.theme ?? {};
+    Object.assign(theme, scales);
+    for (const [key, value] of Object.entries(configExtend)) {
+      extend[key] = { ...extend[key], ...value };
+    }
+  }
+  const hostConfig = { ...rootConfig, theme: { ...theme, extend } };
+  const allPlugins = [...presets.flatMap((preset) => preset.plugins ?? []), ...plugins];
+
+  const pluginCount = allPlugins.length;
   if (pluginCount !== PRESET_PLUGIN_REQUIRES.length) {
     fail(
-      `tailwind.config.ts declares ${pluginCount} plugin(s) but the preset snapshot emits ` +
+      `tailwind.config.ts and its presets declare ${pluginCount} plugin(s) but the preset snapshot emits ` +
         `${PRESET_PLUGIN_REQUIRES.length} (PRESET_PLUGIN_REQUIRES in build-types.mjs) — update the list.`,
     );
   }
   // The count guard alone is blind to a same-count plugin SWAP (loaded plugins are
   // opaque functions), so also require each emitted id to still be referenced in the
-  // config source — a swapped-out plugin fails here instead of shipping stale requires.
-  const tailwindConfigSource = readFileSync(resolve(REPO_ROOT, "tailwind.config.ts"), "utf8");
+  // config sources — a swapped-out plugin fails here instead of shipping stale requires.
+  const tailwindConfigSource = ["tailwind.config.ts", "client-app/ui-kit/tailwind-preset.ts"]
+    .map((file) => readFileSync(resolve(REPO_ROOT, file), "utf8"))
+    .join("\n");
   for (const id of PRESET_PLUGIN_REQUIRES) {
-    if (!tailwindConfigSource.includes(`require("${id}")`)) {
+    if (!tailwindConfigSource.includes(`"${id}"`)) {
       fail(
-        `tailwind.config.ts no longer references plugin "${id}" but the preset snapshot ` +
+        `tailwind.config.ts and the ui-kit preset no longer reference plugin "${id}" but the preset snapshot ` +
           `still emits it — update PRESET_PLUGIN_REQUIRES in build-types.mjs.`,
       );
     }
@@ -927,12 +944,13 @@ function generateTailwindPreset() {
   // JSON.stringify — fail instead of shipping a lossy snapshot.
   const presetData = { ...hostConfig };
   delete presetData.content;
-  delete presetData.plugins;
   const presetJson = JSON.stringify(
     presetData,
     (key, value) => {
       if (typeof value === "function") {
-        fail(`tailwind.config.ts contains a function at "${key}" — the preset snapshot cannot serialize it.`);
+        fail(
+          `tailwind.config.ts or its presets contain a function at "${key}" — the preset snapshot cannot serialize it.`,
+        );
       }
       return value;
     },

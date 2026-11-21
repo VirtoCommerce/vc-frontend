@@ -9,6 +9,7 @@ import {
   loadDesignFonts,
   loadDesignStyles,
   loadPresetStyles,
+  mergeStyles,
   resolveDesign,
   setDesignAttribute,
   setPresetAttribute,
@@ -289,6 +290,18 @@ describe("design", () => {
       const load = vi.fn(async () => Promise.reject(new Error("offline")));
 
       await expect(loadPresetStyles("mercury", { mercury: load })).resolves.toBeUndefined();
+    });
+
+    it("loads every stylesheet a preset has, in the order of the merged sets", async () => {
+      const order: string[] = [];
+      const kit = vi.fn(async () => order.push("kit"));
+      const app = vi.fn(async () => order.push("app"));
+      const other = vi.fn();
+
+      await loadPresetStyles("mercury", mergeStyles({ mercury: kit, red: other }, { mercury: app }));
+
+      expect(order).toEqual(["kit", "app"]);
+      expect(other).not.toHaveBeenCalled();
     });
 
     it("keys the preset stylesheets by file name", () => {

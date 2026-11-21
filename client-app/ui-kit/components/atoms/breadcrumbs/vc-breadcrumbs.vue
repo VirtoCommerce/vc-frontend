@@ -34,6 +34,9 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-breadcrumbs {
+  --link-color: var(--vc-breadcrumbs-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-breadcrumbs-link-hover-color, theme("colors.accent.700"));
+
   &__list {
     @apply flex flex-wrap text-sm font-normal;
   }

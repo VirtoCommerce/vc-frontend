@@ -146,7 +146,10 @@ module.exports = {
         "from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
       from: {
         path: "^(client-app)",
-        pathNot: "[.](spec|test|test-d|mock)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$",
+        pathNot: [
+          "[.](spec|test|test-d|mock)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$",
+          "^client-app/ui-kit/tailwind-preset[.]ts$", // build-time Tailwind config, never bundled
+        ],
       },
       to: {
         dependencyTypes: ["npm-dev"],
@@ -236,7 +239,7 @@ module.exports = {
       comment:
         "A file outside ui-kit imported a ui-kit file past its public entries. Once ui-kit is a package, " +
         "every such file becomes package API. Import from @/ui-kit, its components / atoms / molecules / " +
-        "organisms / templates, composables, constants, enums, types or utilities index, or an asset in " +
+        "organisms / templates, composables, constants, enums, presets, types or utilities index, or an asset in " +
         "icons, images, locales or styles; add a missing export to the index. Tests and stories are exempt.",
       severity: "error",
       from: {
@@ -247,7 +250,7 @@ module.exports = {
         path: "^client-app/ui-kit/",
         pathNot: [
           "^client-app/ui-kit/index[.]ts$",
-          "^client-app/ui-kit/(components|composables|constants|enums|utilities)/index[.]ts$",
+          "^client-app/ui-kit/(components|composables|constants|enums|presets|utilities)/index[.]ts$",
           "^client-app/ui-kit/components/(atoms|molecules|organisms|templates)/index[.]ts$",
           "^client-app/ui-kit/types/index[.]d[.]ts$",
           "^client-app/ui-kit/(icons|images|locales|styles)/",

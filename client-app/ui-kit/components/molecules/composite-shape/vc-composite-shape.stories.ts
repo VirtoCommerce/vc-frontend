@@ -1,5 +1,8 @@
+import { productImageMocks } from "@/ui-kit/mocks";
 import { VcCompositeShape } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
+const [productImage] = productImageMocks;
 
 const meta: Meta<typeof VcCompositeShape> = {
   title: "Components/Molecules/VcCompositeShape",
@@ -28,7 +31,7 @@ export const Basic: StoryType = {
 export const IconImage: StoryType = {
   args: {
     icon: "academic-cap",
-    img: "basket.jpg",
+    img: productImage,
   },
   parameters: {
     docs: {
@@ -43,7 +46,7 @@ export const IconImage: StoryType = {
 
 export const Mask: StoryType = {
   args: {
-    img: "basket.jpg",
+    img: productImage,
     mask: "emoji-happy",
     iconMask: "ai",
   },

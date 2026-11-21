@@ -7,6 +7,9 @@
 // `display:none` span, so that variant has none.
 
 :root {
+  // Classic's corner radius; recommended maximum 10px (0.625rem).
+  --vc-radius: 0.5rem;
+
   // ============================================================
   // Focus ring — shared by every component
   // ============================================================

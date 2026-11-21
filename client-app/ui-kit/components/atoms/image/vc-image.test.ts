@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import { uiKitOptionsKey } from "@/ui-kit/composables/useUiKitOptions";
+import { NO_IMAGE_URL } from "@/ui-kit/constants";
 import VcImage from "./vc-image.vue";
 import type { IUiKitOptions } from "@/ui-kit/composables/useUiKitOptions";
 
@@ -59,5 +60,13 @@ describe("VcImage thumbnails", () => {
     await wrapper.trigger("error");
 
     expect(wrapper.classes()).toContain("vc-image--fallback");
+  });
+});
+
+describe("VcImage fallback", () => {
+  it("shows ui-kit's own no-image without src", () => {
+    const wrapper = mount(VcImage);
+
+    expect(wrapper.attributes("src")).toBe(NO_IMAGE_URL);
   });
 });

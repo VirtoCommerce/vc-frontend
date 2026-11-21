@@ -101,8 +101,8 @@ Never edit `contract/` by hand. The output is deterministic, so its diff in a PR
                                             packages stay as imports
 ```
 
-The same run snapshots the root `tailwind.config.ts` as `contract/tailwind-preset.cjs`, so plugins use the host's
-design tokens.
+The same run snapshots the root `tailwind.config.ts`, merged with its presets (the ui-kit one,
+`ui-kit/tailwind-preset.ts`), as `contract/tailwind-preset.cjs`, so plugins use the host's design tokens.
 
 What fails the build:
 

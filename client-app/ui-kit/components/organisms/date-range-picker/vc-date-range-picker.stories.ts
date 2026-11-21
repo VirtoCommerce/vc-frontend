@@ -22,7 +22,6 @@ const PLACEMENTS = [
 const meta: Meta<typeof VcDateRangePicker> = {
   title: "Components/Organisms/VcDateRangePicker",
   component: VcDateRangePicker,
-  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
   parameters: {
     docs: {
       description: {
@@ -372,7 +371,7 @@ export const Teleport: StoryType = {
     docs: {
       description: {
         story:
-          "`enable-teleport` renders the calendar popover into `#popover-host` (the app-level host element). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. This story wraps the picker in an `overflow: hidden` box to demonstrate the escape.",
+          "`enable-teleport` renders the calendar popover into `#popover-host` (the host the `uiKit` plugin adds to `body`). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. This story wraps the picker in an `overflow: hidden` box to demonstrate the escape.",
       },
       source: {
         code: `

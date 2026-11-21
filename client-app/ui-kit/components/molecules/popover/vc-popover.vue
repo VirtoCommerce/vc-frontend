@@ -58,6 +58,7 @@ import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-u
 import { onClickOutside, useEventListener } from "@vueuse/core";
 import { ref, toRefs, computed, watch, inject, nextTick } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
+import { POPOVER_HOST_ID } from "@/ui-kit/constants";
 import { findFirstFocusableElement, getColorValue } from "@/ui-kit/utilities";
 import { vcPopoverKey } from "./vc-popover-context";
 
@@ -115,7 +116,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   zIndex: 1,
   placement: "bottom",
-  teleportSelector: "[id='popover-host']",
+  teleportSelector: `[id='${POPOVER_HOST_ID}']`,
   enableTeleport: null,
 });
 

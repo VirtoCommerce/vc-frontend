@@ -1,11 +1,4 @@
 @use "../client-app/assets/styles/layers";
 @use "sass:meta";
 
-@layer theme {
-  @include meta.load-css("../client-app/assets/styles/colors");
-  @include meta.load-css("../client-app/assets/styles/ui-kit-tokens");
-}
-
-@layer vc.kit {
-  @include meta.load-css("../client-app/assets/styles/dark-kit");
-}
+@include meta.load-css("../client-app/ui-kit/styles");

@@ -18,7 +18,8 @@
       "see_less": "Visa mindre",
       "show_hide_password": "Visa/dölj lösenord",
       "toggle_dropdown": "Växla rullgardinsmeny",
-      "update_cart": "Uppdater kundvagn"
+      "update_cart": "Uppdater kundvagn",
+      "scroll_to_top": "Rulla till toppen"
     },
     "accessibility": {
       "close_alert": "Stäng varning",
