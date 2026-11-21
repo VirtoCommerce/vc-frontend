@@ -89,7 +89,7 @@ function readArgument(value: string, start: number): string {
 }
 
 /** The index after the string that opens at `start`, its escapes skipped. */
-function skipString(value: string, start: number): number {
+export function skipString(value: string, start: number): number {
   const quote = value[start];
   let index = start + 1;
 

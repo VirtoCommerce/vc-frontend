@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
 const PATTERN_REGEX = /```html\n([\s\S]*?)```/g;
+const CSS_REGEX = /```css\n([\s\S]*?)```/g;
 
 function collectClasses(node: CompiledNodeType): string[] {
   if ("text" in node) {
@@ -24,6 +26,7 @@ function getWrittenBehaviors(pattern: string): string[] {
 describe("the section authors' guide", () => {
   registerBuiltInKit();
   const patterns = [...guide.matchAll(PATTERN_REGEX)].map((match) => match[1]);
+  const styles = [...guide.matchAll(CSS_REGEX)].map((match) => match[1]);
 
   it("has the three patterns", () => {
     expect(patterns).toHaveLength(3);
@@ -39,6 +42,19 @@ describe("the section authors' guide", () => {
       expect(compiled).toBeDefined();
       expect(collectClasses(root).every((name) => name === type || name.startsWith(`${type}__`))).toBe(true);
       expect(compiled?.behaviors).toEqual(new Set(getWrittenBehaviors(pattern)));
+    },
+  );
+
+  it.each(styles.map((css, index) => [index + 1, css]))(
+    "pattern %i's CSS passes the storefront's filter whole",
+    (_, css) => {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(css);
+
+      expect(styles).toHaveLength(patterns.length);
+      expect(filterSectionCss("custom-guide", css, "https://cdn.example.com/assets")?.rules).toBe(
+        [...sheet.cssRules].map((rule) => rule.cssText).join("\n"),
+      );
     },
   );
 });

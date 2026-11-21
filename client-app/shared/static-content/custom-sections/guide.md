@@ -9,6 +9,8 @@ storefront does not allow, it leaves out.
 - Classes are the section's own: `{type}`, `{type}__part`, `{type}--modifier`. The storefront's utility classes are
   not available, and any other class is dropped.
 - CSS reaches only the section; `:scope` is the root. Keyframes are named `{type}__…`.
+- A selector that could look outside the section is dropped: `:scope` (or `&`) only at its start, no sibling in
+  `:has()` (`+`, `~`), no combinator inside `:is()`, `:where()` or `:not()`.
 
 ## Layout: mobile first
 

@@ -72,6 +72,49 @@ describe("filterSectionCss", () => {
     expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
   });
 
+  it.each([
+    '*:has([data-search-query^="a"]) :scope',
+    "div :scope",
+    String.raw`div :sc\6fpe`,
+    ":scope :scope",
+    "div &",
+    ".a:not(:scope)",
+    ":is(:scope, .x) .y",
+    ":scope:has(~ .x)",
+    ".a:has(+ .b)",
+    ".a:has(> .b, ~ .c)",
+    ":scope:nth-child(1 of .promo)",
+    ":scope:nth-last-child(2n of .x)",
+    ":scope:is(:nth-child(1 of .x))",
+    '.a:is(:has([data-search-query^="a"]) *)',
+    ".a:not(.b .c)",
+    ".a:where(.b > .c)",
+    ".a:nth-child(2 of .b .c)",
+  ])("drops a rule whose selector can match outside the section: %s", (selector) => {
+    expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
+  });
+
+  it("drops a nested rule whose selector reaches outside the section", () => {
+    expect(rulesOf(".a { color: red; *:has([data-q]) & { color: blue; } }")).not.toContain("blue");
+  });
+
+  it.each([
+    ":scope",
+    ":scope > .a",
+    "& .a",
+    ":scope:nth-child(2)",
+    ":scope:has(> .a .b)",
+    ".a:nth-child(2n + 1 of .b)",
+    ".a:has(> .b, .c)",
+    ".a:is(.b, .c):not(.d)",
+    ":dir(rtl) .a",
+    ":lang(en, fr) .a",
+    '[data-x=":scope"] .a',
+    "> .a",
+  ])("keeps a rule whose selector stays in the section: %s", (selector) => {
+    expect(rulesOf(`${selector} { color: red; }`)).toContain("color: red");
+  });
+
   it("keeps a class that only contains a refused name", () => {
     expect(rulesOf(".html-note, .body { margin: 0; }")).toBe(".html-note, .body { margin: 0px; }");
   });

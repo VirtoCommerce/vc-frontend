@@ -1,3 +1,4 @@
+import { isContainedSelector } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
 
 export interface IFilteredCss {
@@ -57,7 +58,7 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
 
 function keepRule(rule: CSSRule, assetsBaseUrl: string | undefined): boolean {
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
-    if (REFUSED_SELECTOR_REGEX.test(rule.selectorText)) {
+    if (REFUSED_SELECTOR_REGEX.test(rule.selectorText) || !isContainedSelector(rule.selectorText)) {
       return false;
     }
 
