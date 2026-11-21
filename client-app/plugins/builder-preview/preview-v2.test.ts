@@ -125,12 +125,12 @@ describe("preview protocol 2", () => {
 
   it("carries the custom section kit, in the hash too", () => {
     const design = { breakpoints: {}, containerMaxWidth: "1280px", tokens: {}, containerName: "sb-section" };
-    const kit = { tags: { "vc-rating": { description: "Stars.", attributes: {} } }, behaviors: {}, design };
+    const kit = { tags: { "vc-rating": { description: "Stars.", attributes: {} } }, behaviors: {}, design, guide: "" };
 
     const catalog = buildPreviewCatalog(SCHEMAS, kit);
 
     expect(catalog.kit).toEqual(kit);
-    expect(catalog.hash).not.toBe(buildPreviewCatalog(SCHEMAS, { tags: {}, behaviors: {}, design }).hash);
+    expect(catalog.hash).not.toBe(buildPreviewCatalog(SCHEMAS, { ...kit, guide: "# Guide" }).hash);
   });
 
   it("gives each template the document the storefront renders without a theme file as its default", () => {

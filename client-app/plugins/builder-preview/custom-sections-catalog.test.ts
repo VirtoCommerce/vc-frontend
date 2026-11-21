@@ -108,6 +108,7 @@ describe("watchCustomSectionCatalog", () => {
       writes: ["data-ended", "text"],
     });
     expect(JSON.stringify(kit)).not.toContain("directive");
+    expect(kit?.guide).toMatch(/^# Writing a custom section/);
     expect(kit?.design).toMatchObject({
       containerName: "sb-section",
       containerMaxWidth: "1280px",

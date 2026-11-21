@@ -1,3 +1,4 @@
+import guide from "../guide.md?raw";
 import { getKitBehaviors, getKitTags } from "./index";
 import type { ICustomSectionField } from "../types";
 
@@ -17,6 +18,8 @@ export interface ICustomSectionKitCatalog {
     /** The container every custom section stands in, for `@container sb-section (min-width: …)`. */
     containerName: string;
   };
+  /** How to write a section that fits the storefront, in Markdown, for the agent that writes them. */
+  guide: string;
 }
 
 /** The name `.sb-section` in `custom-section.vue` gives its container. */
@@ -36,6 +39,7 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
     tags: Object.fromEntries(tags),
     behaviors: Object.fromEntries(behaviors),
     design: { ...__SB_DESIGN_FACTS__, containerName: SECTION_CONTAINER_NAME },
+    guide,
   };
 
   return JSON.parse(JSON.stringify(catalog)) as ICustomSectionKitCatalog;

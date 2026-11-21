@@ -1,0 +1,182 @@
+# Writing a custom section
+
+A custom section is an HTML template, its CSS and its settings. The storefront renders it from data: no script runs.
+Anything that needs logic comes from the kit: a tag (`kit.tags`) or a behavior (`kit.behaviors`). What the
+storefront does not allow, it leaves out.
+
+- One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
+  it in a box of its own: nothing the section draws leaves that box.
+- Classes are the section's own: `{type}`, `{type}__part`, `{type}--modifier`. The storefront's utility classes are
+  not available, and any other class is dropped.
+- CSS reaches only the section; `:scope` is the root. Keyframes are named `{type}__…`.
+
+## Layout: mobile first
+
+- Write the narrow layout first, then widen it with `@container sb-section (min-width: …)`. The container is the
+  place the section stands in: a full-width page or a narrow column. Take the widths from `kit.design.breakpoints`.
+- Keep content within `kit.design.containerMaxWidth` and center it, as the built-in sections do.
+- Lay out with grid and flex and `gap`; let rows wrap (`repeat(auto-fill, minmax(min(100%, 16rem), 1fr))`).
+- No fixed widths or heights on anything that holds text.
+
+## Right to left
+
+The page may read right to left. Source: vc-frontend `.claude/rules/styles.md`, rule 39.
+
+- Logical properties only: `margin-inline-start`, `padding-inline`, `inset-inline-start`, `border-inline-start`,
+  `text-align: start | end`, `float: inline-start`. Never assume that left is the start.
+- What has no logical form (`translate`, a gradient's direction, an arrow) is mirrored under `:dir(rtl)`.
+- `--pointer-inline` and `--marquee-shift` already follow the direction.
+
+## Design tokens and colors
+
+- Sizes, type, corners and shadows come from `kit.design.tokens`, by variable name. A design may leave a token
+  unset, so write it with its fallback: `var(<token>, <fallback>)`. A shadow comes in parts
+  (`--vc-shadow-md-1`, `--vc-shadow-md-2`): list them all, separated by commas.
+- Colors come from the palette only: `var(--color-<family>-<shade>)` (`paletteTokens` in the catalog lists them,
+  `_` written as `-`), a `color-token` setting's `--setting-<id>`, `transparent` or `currentColor`. A literal color
+  breaks the shop's presets and dark theme.
+
+## Type and headings
+
+- The page owns the `h1`. A section starts at `h2`; its parts use `h3`. Do not skip levels.
+- Headings read the heading role tokens (`--vc-heading-*`) on their own. Set their size from the font size tokens
+  with the matching line height.
+- Body text stays at the base size or larger.
+
+## Images
+
+- `alt` comes from a setting when the image says something, and is `""` when it only decorates.
+- Below the fold: `loading="lazy"`. Give `width` and `height` (or `aspect-ratio`) so nothing shifts as it loads.
+- Use the asset library's images at the size shown; no huge originals.
+
+## Links and buttons
+
+- An action is a `vc-button`; a link is an `a` with an `href` of a `url` setting. Both carry visible text, and an
+  accessible name, when given, starts with that text.
+- `target` is `_self` or `_blank`; `_blank` gets `rel="noopener noreferrer"` from the storefront.
+
+## Keyboard and focus
+
+- Only kit tags and behaviors are interactive; a `div` that acts on a click does not reach the keyboard.
+- Never remove the focus ring (`outline: none`, `outline: 0`).
+- Keep the reading order the visual order.
+
+## Motion
+
+- Move things only through behaviors (`data-inview`, `data-scroll-progress`, `data-count-up`, `data-marquee`) and
+  the CSS that reads what they write. Animate `transform` and `opacity`.
+- Put transitions and animations under `@media (prefers-reduced-motion: no-preference)`. Behaviors already show
+  their end state at once when motion is reduced.
+
+## Text and languages
+
+- Every word a customer reads comes from a translatable setting. Text written in the template is the same in every
+  language.
+- Leave room: German and French run about 30% longer than English. No fixed widths on text; let it wrap.
+
+## Contrast
+
+- Name the text and background `color-token` settings `color` and `background`. Publication checks that pair against
+  both the light and the dark palette.
+- Text over an image needs a scrim or a mask between them.
+
+## Performance
+
+- Few, right-sized images. No background video unless the section is about it.
+- Behaviors load on their own the first time a template uses them; add only those the section needs.
+
+## Patterns
+
+### Hero with an image mask
+
+```html
+<section class="custom-hero">
+  <img class="custom-hero__image" src="{{ settings.image }}" alt="{{ settings.image_alt }}" width="1600" height="900" />
+  <div class="custom-hero__body">
+    <h2 class="custom-hero__title">{{ settings.title }}</h2>
+    <vc-button data-if="settings.link" label="{{ settings.link_label }}" to="{{ settings.link }}"></vc-button>
+  </div>
+</section>
+```
+
+```css
+:scope {
+  display: grid;
+  color: var(--setting-color);
+  background: var(--setting-background);
+}
+.custom-hero__image,
+.custom-hero__body {
+  grid-area: 1 / 1;
+}
+.custom-hero__image {
+  inline-size: 100%;
+  block-size: auto;
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+.custom-hero__body {
+  align-self: end;
+  padding-inline: 1.5rem;
+  padding-block-end: 1.5rem;
+}
+```
+
+### Stats band with count-up
+
+```html
+<section class="custom-stats">
+  <h2 class="custom-stats__title">{{ settings.title }}</h2>
+  <ul class="custom-stats__list">
+    <li class="custom-stats__item" data-each="settings.stats" data-inview data-inview-once>
+      <span class="custom-stats__value" data-count-up="{{ item.value }}"></span>
+      <span class="custom-stats__label">{{ item.label }}</span>
+    </li>
+  </ul>
+</section>
+```
+
+```css
+.custom-stats__list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .custom-stats__item {
+    opacity: 0;
+    transition: opacity 0.4s calc(var(--i) * 0.08s);
+  }
+  .custom-stats__item[data-visible] {
+    opacity: 1;
+  }
+}
+```
+
+### Card grid
+
+```html
+<section class="custom-cards">
+  <h2 class="custom-cards__title">{{ settings.title }}</h2>
+  <div class="custom-cards__grid">
+    <a class="custom-cards__card" data-each="settings.cards" href="{{ item.link }}">
+      <img class="custom-cards__image" src="{{ item.image }}" alt="" loading="lazy" width="400" height="300" />
+      <h3 class="custom-cards__name">{{ item.title }}</h3>
+      <p data-if="item.text">{{ item.text }}</p>
+    </a>
+  </div>
+</section>
+```
+
+```css
+.custom-cards__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+.custom-cards__card {
+  display: grid;
+  gap: 0.5rem;
+  border-radius: var(--vc-radius);
+  color: inherit;
+}
+```
