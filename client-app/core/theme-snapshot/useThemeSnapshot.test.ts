@@ -114,16 +114,21 @@ describe("useThemeSnapshot", () => {
       expect(theme.value?.customSections).toEqual({});
     });
 
-    it("names the asset library as the draft does, else as the snapshot does", async () => {
+    it("names the asset library only as the published snapshot does", async () => {
       const { theme, setPublished, setDraft } = await loadThemeSnapshot();
       setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: "https://cdn/published" } });
       expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
 
-      setDraft({ assetsBaseUrl: "https://cdn/draft" });
-      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/draft");
-
-      setDraft({ brand: {} });
+      const draftNamingAnother = { brand: {}, assetsBaseUrl: "https://evil.example/" };
+      setDraft(draftNamingAnother);
       expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+    });
+
+    it.each([[""], [1]])("names no asset library for a snapshot base of %j", async (assetsBaseUrl) => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: assetsBaseUrl as string } });
+
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
     });
 
     it("is empty for a snapshot without custom sections", async () => {

@@ -124,7 +124,6 @@ export interface IThemeDraft {
   palette?: IThemePalette | null;
   /** Every custom section type of the theme: replaces the published ones. */
   customSections?: Record<string, ICustomSectionDefinition>;
-  assetsBaseUrl?: string;
 }
 
 export interface IThemeSlugPage {
@@ -164,7 +163,7 @@ export interface IThemeView {
   brand: IThemeBrand;
   palette?: IThemePalette;
   customSections: Record<string, ICustomSectionDefinition>;
-  /** As the draft or the snapshot names it; absent from a server that does not yet. */
+  /** Only the published snapshot's: a draft cannot widen where images come from. */
   assetsBaseUrl?: string;
   menus: IThemeMenu[];
   isDraft: boolean;

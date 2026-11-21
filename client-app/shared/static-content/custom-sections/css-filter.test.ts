@@ -2,9 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { filterSectionCss } from "./css-filter";
 
 const TYPE = "custom-hero";
+const ASSETS = "https://cdn.example.com/assets";
 
 function rulesOf(css: string): string {
-  return filterSectionCss(TYPE, css)?.rules.replaceAll(/\s+/g, " ") ?? "";
+  return filterSectionCss(TYPE, css, ASSETS)?.rules.replaceAll(/\s+/g, " ") ?? "";
 }
 
 describe("filterSectionCss", () => {
@@ -76,15 +77,15 @@ describe("filterSectionCss", () => {
 
   it("keeps url() of an asset or an inline image and drops any other, in custom properties too", () => {
     const rules = rulesOf(`
-      .a { background-image: url("/cms-content/assets/a.png"); }
+      .a { background-image: url("${ASSETS}/a.png"); }
       .b { background-image: url("https://cdn.example.com/b.png"); }
       .c { background-image: url("javascript:alert(1)"); }
       .d { --bg: url(data:image/png;base64,AAAA); }
       .e { --bg: url(data:text/html,x); }
     `);
 
-    expect(rules).toContain('url("/cms-content/assets/a.png")');
-    expect(rules).toContain('url("https://cdn.example.com/b.png")');
+    expect(rules).toContain(`url("${ASSETS}/a.png")`);
+    expect(rules).not.toContain("https://cdn.example.com/b.png");
     expect(rules).toContain("url(data:image/png;base64,AAAA)");
     expect(rules).not.toContain("javascript");
     expect(rules).not.toContain("text/html");
@@ -92,13 +93,14 @@ describe("filterSectionCss", () => {
 
   it("keeps an image function naming allowed images, and drops one naming any other", () => {
     const rules = rulesOf(`
-      .a { --bg: image-set("/a.png" 1x, url("/b.png") 2x); }
-      .b { --bg: cross-fade(url("/a.png"), url("javascript:x")); }
+      .a { --bg: image-set("${ASSETS}/a.png" 1x, url("${ASSETS}/b.png") 2x); }
+      .b { --bg: cross-fade(url("${ASSETS}/a.png"), url("javascript:x")); }
       .c { --bg: src("https://evil.example/x.png"); }
       .d { --bg: image("data:text/html,x"); }
     `);
 
-    expect(rules).toMatch(/^\.a \{ --bg: image-set\("\/a\.png" ?1x, ?url\("?\/b\.png"?\) ?2x\); \}/);
+    expect(rules).toMatch(/^\.a \{ --bg: image-set\(/);
+    expect(rules).toContain(`${ASSETS}/b.png`);
     expect(rules).not.toContain("javascript");
     expect(rules).not.toContain("text/html");
   });

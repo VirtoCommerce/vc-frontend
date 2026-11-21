@@ -40,14 +40,14 @@ export function findFunctionCalls(value: string): IFunctionCall[] {
   }));
 }
 
-/** An image the section may show: its own site's or the asset library's, or an inline `data:image/`. */
-export function isAllowedImageUrl(url: string, assetsBaseUrl?: string): boolean {
+/** An image the section may show: the asset library's, or an inline `data:image/`. */
+export function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined): boolean {
   const trimmed = url.trim();
   return !!toAssetUrl(trimmed, assetsBaseUrl) || DATA_IMAGE_REGEX.test(trimmed);
 }
 
 /** Whether a declaration's value loads only allowed images and runs nothing. */
-export function isAllowedValue(value: string, assetsBaseUrl?: string): boolean {
+export function isAllowedValue(value: string, assetsBaseUrl: string | undefined): boolean {
   return findFunctionCalls(decodeCssEscapes(value)).every(({ name, argument }) => {
     if (REFUSED_FUNCTIONS.has(name)) {
       return false;

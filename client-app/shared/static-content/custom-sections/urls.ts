@@ -2,7 +2,8 @@
 const SITE_PATH_REGEX = /^\/(?![/\\])/;
 const LINK_SCHEME_REGEX = /^(?:https|mailto|tel):/i;
 const ANCHOR_REGEX = /^#[A-Za-z][\w-]*$/;
-const ASSET_URL_REGEX = /^https?:\/\//i;
+/** An escaped dot or slash could step out of the library once the server or the browser decodes it. */
+const ESCAPED_PATH_REGEX = /%(?:2e|2f|5c)/i;
 /** Browsers drop these from a URL before reading it, so `/\t/host` would leave the site. */
 const URL_NOISE_REGEX = /[\t\n\r\\]/;
 
@@ -15,20 +16,24 @@ export function toSectionLink(value: string): string | undefined {
 }
 
 /**
- * An image of a custom section: one of the asset library's, under `assetsBaseUrl`. A theme from a server that
- * does not name the library yet takes a path on this site or an `http(s):` URL.
+ * An image of a custom section: one of the asset library's, under `assetsBaseUrl` once `..` resolves, as the
+ * server reads it. Without the base, no image.
  */
-export function toAssetUrl(value: string, assetsBaseUrl?: string): string | undefined {
+export function toAssetUrl(value: string, assetsBaseUrl: string | undefined): string | undefined {
   const url = value.trim();
-  const isAllowed = assetsBaseUrl
-    ? url.startsWith(toFolder(assetsBaseUrl))
-    : SITE_PATH_REGEX.test(url) || ASSET_URL_REGEX.test(url);
 
-  return !URL_NOISE_REGEX.test(url) && isAllowed ? url : undefined;
+  if (!assetsBaseUrl || URL_NOISE_REGEX.test(url) || ESCAPED_PATH_REGEX.test(url)) {
+    return undefined;
+  }
+
+  const href = resolveUrl(url);
+  const folder = resolveUrl(toFolder(assetsBaseUrl));
+
+  return href && folder && href.startsWith(folder) ? url : undefined;
 }
 
 /** `undefined` when any candidate breaks the rule: the attribute is left out whole. */
-export function toAssetSrcset(value: string, assetsBaseUrl?: string): string | undefined {
+export function toAssetSrcset(value: string, assetsBaseUrl: string | undefined): string | undefined {
   const candidates = value
     .split(",")
     .map((candidate) => candidate.trim())
@@ -42,4 +47,12 @@ export function toAssetSrcset(value: string, assetsBaseUrl?: string): string | u
 /** `https://cdn/assets` must not admit `https://cdn/assets-of-another-store/`. */
 function toFolder(url: string): string {
   return url.endsWith("/") ? url : `${url}/`;
+}
+
+function resolveUrl(url: string): string | undefined {
+  try {
+    return new URL(url, document.baseURI).href;
+  } catch {
+    return undefined;
+  }
 }

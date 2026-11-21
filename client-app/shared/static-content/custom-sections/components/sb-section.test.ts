@@ -32,6 +32,7 @@ vi.mock("./sb-products.vue", async () => {
 });
 
 const TYPE = "custom-test";
+const ASSETS = "https://cdn.example.com/assets";
 /** Apart, since check-css-important reads `!word` in markup as an important utility. */
 const NOT = "!";
 
@@ -58,10 +59,16 @@ function mountSection(
   template: string,
   settings: Record<string, unknown> = {},
   definition?: Partial<ICustomSectionDefinition>,
-  assetsBaseUrl?: string,
+  assetsBaseUrl = ASSETS,
 ) {
+  useThemeSnapshot().setPublished({
+    storeId: "store",
+    cultureName: "en-US",
+    publication: 1,
+    snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {}, assetsBaseUrl },
+    menus: [],
+  });
   useThemeSnapshot().setDraft({
-    assetsBaseUrl,
     customSections: {
       [TYPE]: { format: 1, name: "Test", schema: { settings: FIELDS }, css: "", template, ...definition },
     },
@@ -116,7 +123,7 @@ describe("SbSection", () => {
     it("gets the type and a variable per setting the CSS can use", () => {
       const wrapper = mountSection("<section></section>", {
         accent: "color_primary_500",
-        image: "/assets/hero.png",
+        image: `${ASSETS}/hero.png`,
         speed: 3,
         show_badge: true,
       });
@@ -124,7 +131,7 @@ describe("SbSection", () => {
 
       expect(root.attributes("data-sb-type")).toBe(TYPE);
       expect(root.element.style.getPropertyValue("--setting-accent")).toBe("var(--color-primary-500)");
-      expect(root.element.style.getPropertyValue("--setting-image")).toBe('url("/assets/hero.png")');
+      expect(root.element.style.getPropertyValue("--setting-image")).toBe(`url("${ASSETS}/hero.png")`);
       expect(root.element.style.getPropertyValue("--setting-speed")).toBe("3");
       expect(root.element.style.getPropertyValue("--setting-show-badge")).toBe("1");
     });
@@ -319,8 +326,10 @@ describe("SbSection", () => {
     });
 
     it.each([
-      { src: "/cms-content/assets/a.png", isKept: true },
-      { src: "https://cdn.example.com/a.png", isKept: true },
+      { src: `${ASSETS}/a.png`, isKept: true },
+      { src: "https://cdn.example.com/a.png", isKept: false },
+      { src: `${ASSETS}/../other/a.png`, isKept: false },
+      { src: "/a.png", isKept: false },
       { src: "data:image/svg+xml,<svg onload=alert(1)>", isKept: false },
       { src: "javascript:alert(1)", isKept: false },
     ])("keeps the src $src: $isKept", ({ src, isKept }) => {
@@ -331,8 +340,8 @@ describe("SbSection", () => {
 
     it("keeps a video's playback attributes and poster, a source's type and media, and an open details", () => {
       const wrapper = mountSection(
-        '<section><video autoplay muted loop playsinline controls preload="none" poster="/cms-content/assets/p.jpg">' +
-          '<source src="/cms-content/assets/v.mp4" type="video/mp4" media="(min-width: 600px)"></video>' +
+        `<section><video autoplay muted loop playsinline controls preload="none" poster="${ASSETS}/p.jpg">` +
+          `<source src="${ASSETS}/v.mp4" type="video/mp4" media="(min-width: 600px)"></video>` +
           "<details open><summary>More</summary>Text</details></section>",
       );
       const video = wrapper.find("video").element as HTMLVideoElement;
@@ -340,9 +349,9 @@ describe("SbSection", () => {
       expect([video.autoplay, video.muted, video.loop, video.controls]).toEqual([true, true, true, true]);
       expect(video.getAttribute("playsinline")).toBe("");
       expect(video.getAttribute("preload")).toBe("none");
-      expect(video.getAttribute("poster")).toBe("/cms-content/assets/p.jpg");
+      expect(video.getAttribute("poster")).toBe(`${ASSETS}/p.jpg`);
       expect(wrapper.find("source").attributes()).toEqual({
-        src: "/cms-content/assets/v.mp4",
+        src: `${ASSETS}/v.mp4`,
         type: "video/mp4",
         media: "(min-width: 600px)",
       });
@@ -360,26 +369,26 @@ describe("SbSection", () => {
       expect(wrapper.find("q").attributes("cite")).toBeUndefined();
     });
 
-    it("takes images only from the asset library once the theme names it", () => {
+    it("shows no image when the published theme names no asset library", () => {
       const wrapper = mountSection(
-        '<section><img src="https://cdn.example.com/assets/a.png" alt=""><img src="https://example.com/b.png" alt=""></section>',
-        {},
+        `<section><img src="${ASSETS}/a.png" alt=""></section>`,
+        { image: `${ASSETS}/hero.png` },
         undefined,
-        "https://cdn.example.com/assets",
+        "",
       );
-      const [library, other] = wrapper.findAll("img");
 
-      expect(library.attributes("src")).toBe("https://cdn.example.com/assets/a.png");
-      expect(other.attributes("src")).toBeUndefined();
+      expect(wrapper.find("img").attributes("src")).toBeUndefined();
+      expect(wrapper.find("section").element.style.getPropertyValue("--setting-image")).toBe("");
     });
 
     it("leaves out a srcset with any candidate that breaks the rule", () => {
       const wrapper = mountSection(
-        '<section><img srcset="/a.png 1x, /b.png 2x" alt=""><img srcset="/a.png 1x, javascript:x 2x" alt=""></section>',
+        `<section><img srcset="${ASSETS}/a.png 1x, ${ASSETS}/b.png 2x" alt="">` +
+          `<img srcset="${ASSETS}/a.png 1x, javascript:x 2x" alt=""></section>`,
       );
       const [kept, dropped] = wrapper.findAll("img");
 
-      expect(kept.attributes("srcset")).toBe("/a.png 1x, /b.png 2x");
+      expect(kept.attributes("srcset")).toBe(`${ASSETS}/a.png 1x, ${ASSETS}/b.png 2x`);
       expect(dropped.attributes("srcset")).toBeUndefined();
     });
   });

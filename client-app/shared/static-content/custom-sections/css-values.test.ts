@@ -18,31 +18,40 @@ describe("findFunctionCalls", () => {
 });
 
 describe("isAllowedValue", () => {
+  const base = "https://cdn.example.com/assets";
+
   it.each([
-    ['url("/a)b.png")', true],
+    [`url("${base}/a)b.png")`, true],
     ["linear-gradient(var(--color-primary-500), transparent)", true],
-    ['image-set("/a.png" 1x)', true],
+    [`image-set("${base}/a.png" 1x)`, true],
     ["image-set(var(--x) 1x)", false],
-    ["url(https://example.com/a.png)", true],
+    [`url(${base}/a.png)`, true],
+    ["url(https://example.com/a.png)", false],
+    ['image-set("/a.png" 1x)', false],
+    ['url("data:image/png;base64,AAAA")', true],
     ["url(javascript:alert(1))", false],
     ["-moz-element(#secret)", false],
   ])("judges %s: %s", (value, isAllowed) => {
-    expect(isAllowedValue(value)).toBe(isAllowed);
+    expect(isAllowedValue(value, base)).toBe(isAllowed);
   });
 
-  it("takes only the asset library's images, and inline ones, once the theme names the library", () => {
-    const base = "https://cdn.example.com/assets/";
+  it.each([
+    String.raw`url("${base}/\2e\2e/\2e\2e/other/a.png")`,
+    String.raw`url(${base}/\2e\2e\2f\2e\2e\2fother/a.png)`,
+    String.raw`image-set("${base}/../other/a.png" 1x)`,
+  ])("refuses an image that steps out of the library, escapes decoded: %s", (value) => {
+    expect(isAllowedValue(value, base)).toBe(false);
+  });
 
-    expect(isAllowedValue(`url("${base}a.png")`, base)).toBe(true);
-    expect(isAllowedValue('url("data:image/png;base64,AAAA")', base)).toBe(true);
-    expect(isAllowedValue('url("https://example.com/a.png")', base)).toBe(false);
-    expect(isAllowedValue('image-set("/a.png" 1x)', base)).toBe(false);
+  it("allows only inline images when the theme names no asset library", () => {
+    expect(isAllowedValue(`url("${base}/a.png")`, undefined)).toBe(false);
+    expect(isAllowedValue('url("data:image/png;base64,AAAA")', undefined)).toBe(true);
   });
 
   it("reads a long word in one pass, not one per letter", () => {
     const startedAt = performance.now();
 
-    expect(isAllowedValue("a".repeat(60_000))).toBe(true);
+    expect(isAllowedValue("a".repeat(60_000), base)).toBe(true);
     expect(performance.now() - startedAt).toBeLessThan(500);
   });
 });
