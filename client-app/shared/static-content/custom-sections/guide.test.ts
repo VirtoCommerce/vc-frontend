@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import guide from "./guide.md?raw";
-import { getCustomSectionKit, registerBuiltInKit } from "./kit";
+import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
@@ -13,6 +13,12 @@ function collectClasses(node: CompiledNodeType): string[] {
 
   const own = node.attributes.find(([name]) => name === "class")?.[1].join("") ?? "";
   return [...own.split(/\s+/).filter(Boolean), ...node.children.flatMap(collectClasses)];
+}
+
+function getWrittenBehaviors(pattern: string): string[] {
+  return Object.keys(getCustomSectionBehaviors()).filter((name) =>
+    new RegExp(String.raw`\sdata-${name}(?![\w-])`).test(pattern),
+  );
 }
 
 describe("the section authors' guide", () => {
@@ -32,9 +38,7 @@ describe("the section authors' guide", () => {
 
       expect(compiled).toBeDefined();
       expect(collectClasses(root).every((name) => name === type || name.startsWith(`${type}__`))).toBe(true);
-      expect(pattern.includes("data-count-up") ? [...(compiled?.behaviors ?? [])] : []).toEqual(
-        pattern.includes("data-count-up") ? ["inview", "count-up"] : [],
-      );
+      expect(compiled?.behaviors).toEqual(new Set(getWrittenBehaviors(pattern)));
     },
   );
 });
