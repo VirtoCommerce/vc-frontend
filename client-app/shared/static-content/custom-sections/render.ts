@@ -111,11 +111,12 @@ function renderElement(
 /** By the rows' own ids when every row has a different one, so a reordered row keeps what its element holds. */
 function toRowKeys(rows: Record<string, unknown>[]): (string | number)[] {
   const ids = rows.map((row) => row.id);
-  const hasOwnIds =
-    ids.every((id) => (typeof id === "string" && id !== "") || typeof id === "number") &&
-    new Set(ids).size === ids.length;
 
-  return hasOwnIds ? (ids as (string | number)[]) : rows.map((_, index) => index);
+  return ids.every(isRowId) && new Set(ids).size === ids.length ? ids : rows.map((_, index) => index);
+}
+
+function isRowId(id: unknown): id is string | number {
+  return (typeof id === "string" && id !== "") || typeof id === "number";
 }
 
 /** A comment holds the place of an element `data-if` hides, so its siblings keep theirs. */

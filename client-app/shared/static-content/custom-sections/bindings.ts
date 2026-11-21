@@ -83,7 +83,7 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
   }
 
   const owner = scope.settings[key];
-  const subField = toFieldMap(field.element).get(subKey);
+  const subField = field.element?.find(({ id }) => id === subKey);
 
   return subField && isRecord(owner) ? { value: owner[subKey], field: subField, path: [key, subKey] } : undefined;
 }
