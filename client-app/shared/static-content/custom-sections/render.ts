@@ -27,18 +27,18 @@ export interface IRenderOptions {
   /** The placed section: its settings by id. */
   settings: Record<string, unknown>;
   fields: readonly IThemeSchemaField[];
-  /** Go on the root, as a section's own attributes: the anchor id and the preview's attributes. */
-  rootAttributes: Record<string, unknown>;
 }
 
 const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
+const LINK_TARGETS = new Set(["_self", "_blank"]);
+const OPENER_REGEX = /(?:^|\s)opener(?:\s|$)/i;
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
-  const scope: IBindingScope = { settings: options.settings, fields: toFieldMap(options.fields) };
-  const rootProps = mergeProps(options.rootAttributes, {
+  const scope: IBindingScope = { type: options.type, settings: options.settings, fields: toFieldMap(options.fields) };
+  const rootProps = {
     "data-sb-type": options.type,
     style: getSettingVariables(options.fields, options.settings),
-  });
+  };
   const [root] = renderElement(template.root, scope, rootProps);
 
   return isVNode(root) ? root : null;
@@ -159,7 +159,7 @@ function renderAttributes(node: ICompiledElement, scope: IBindingScope): Record<
   const attributes: Record<string, string> = {};
 
   for (const [name, value] of Object.entries(renderAttributeValues(node.attributes, scope))) {
-    const safeValue = toSafeAttributeValue(name, value);
+    const safeValue = toSafeAttributeValue(name, value, scope.type);
 
     if (safeValue !== undefined) {
       attributes[name] = safeValue;
@@ -184,8 +184,14 @@ function renderAttributes(node: ICompiledElement, scope: IBindingScope): Record<
   return attributes;
 }
 
-function toSafeAttributeValue(name: string, value: string): string | undefined {
+function toSafeAttributeValue(name: string, value: string, type: string): string | undefined {
   switch (name) {
+    case "class":
+      return toOwnClasses(value, type);
+    case "target":
+      return LINK_TARGETS.has(value.trim()) ? value.trim() : undefined;
+    case "rel":
+      return OPENER_REGEX.test(value) ? undefined : value;
     case "href":
       return toSectionLink(value);
     case "src":
@@ -195,6 +201,15 @@ function toSafeAttributeValue(name: string, value: string): string | undefined {
     default:
       return value;
   }
+}
+
+/** Only the type's own classes, `{type}`, `{type}__…`, `{type}--…` or `{type}-…`: no utility of the storefront's build. */
+function toOwnClasses(value: string, type: string): string | undefined {
+  const classes = value
+    .split(/\s+/)
+    .filter((name) => name === type || name.startsWith(`${type}-`) || name.startsWith(`${type}__`));
+
+  return classes.length ? classes.join(" ") : undefined;
 }
 
 /** Names the setting an element shows as its whole text, so the designer edits it in place. */

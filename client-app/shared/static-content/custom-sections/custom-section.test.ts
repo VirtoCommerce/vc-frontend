@@ -116,8 +116,8 @@ describe("CustomSection", () => {
   });
 
   describe("the root", () => {
-    it("gets the type, the section's attributes and a variable per setting the CSS can use", () => {
-      const wrapper = mountSection("<section class='hero'></section>", {
+    it("gets the type and a variable per setting the CSS can use", () => {
+      const wrapper = mountSection("<section></section>", {
         accent: "color_primary_500",
         image: "/assets/hero.png",
         speed: 3,
@@ -126,8 +126,6 @@ describe("CustomSection", () => {
       const root = wrapper.find("section");
 
       expect(root.attributes("data-sb-type")).toBe(TYPE);
-      expect(root.attributes("id")).toBe("anchor-1");
-      expect(root.classes()).toEqual(["hero"]);
       expect(root.element.style.getPropertyValue("--setting-accent")).toBe("var(--color-primary-500)");
       expect(root.element.style.getPropertyValue("--setting-image")).toBe('url("/assets/hero.png")');
       expect(root.element.style.getPropertyValue("--setting-speed")).toBe("3");
@@ -151,7 +149,38 @@ describe("CustomSection", () => {
 
       const wrapper = mount(CustomSection, { props: { model: { id: "section-1", type: TYPE } } });
 
-      expect(wrapper.find("*").exists()).toBe(false);
+      expect(wrapper.find("[data-sb-type]").exists()).toBe(false);
+    });
+  });
+
+  describe("containment", () => {
+    it("puts the section in a box of the storefront's, outside the root its CSS is scoped to, with the section's attributes", () => {
+      const wrapper = mountSection("<section></section>");
+
+      expect(wrapper.element.className).toBe("sb-section");
+      expect(wrapper.attributes("id")).toBe("anchor-1");
+      expect(wrapper.attributes("data-sb-type")).toBeUndefined();
+      expect(wrapper.element.firstElementChild?.getAttribute("data-sb-type")).toBe(TYPE);
+    });
+
+    it("keeps only the type's own classes, none of the storefront's utilities", () => {
+      const wrapper = mountSection(
+        `<section class="${TYPE} ${TYPE}--dark fixed z-50"><p class="${TYPE}__title inset-0 {{ settings.title }}">a</p><p class="top-0">b</p></section>`,
+        { title: `${TYPE}-bound bg-black` },
+      );
+      const [title, utility] = wrapper.findAll("p");
+
+      expect(wrapper.find("section").classes()).toEqual([TYPE, `${TYPE}--dark`]);
+      expect(title.classes()).toEqual([`${TYPE}__title`, `${TYPE}-bound`]);
+      expect(utility.attributes("class")).toBeUndefined();
+    });
+
+    it("leaves out what is nested more than 32 elements deep, the root included", () => {
+      const depth = 40;
+      const wrapper = mountSection(`<section>${"<div>".repeat(depth)}deep${"</div>".repeat(depth)}</section>`);
+
+      expect(wrapper.findAll("section div")).toHaveLength(31);
+      expect(wrapper.text()).not.toContain("deep");
     });
   });
 
@@ -195,12 +224,12 @@ describe("CustomSection", () => {
       { value: undefined, isShown: false },
     ])("renders the element for $value: $isShown, and its negation the other way", ({ value, isShown }) => {
       const wrapper = mountSection(
-        `<section><p data-if="settings.title" class="set">a</p><p data-if="${NOT}settings.title" class="unset">b</p></section>`,
+        `<section><p data-if="settings.title" title="set">a</p><p data-if="${NOT}settings.title" title="unset">b</p></section>`,
         { title: value },
       );
 
-      expect(wrapper.find(".set").exists()).toBe(isShown);
-      expect(wrapper.find(".unset").exists()).toBe(!isShown);
+      expect(wrapper.find('[title="set"]').exists()).toBe(isShown);
+      expect(wrapper.find('[title="unset"]').exists()).toBe(!isShown);
     });
 
     it("reads a row's field", () => {
@@ -219,7 +248,7 @@ describe("CustomSection", () => {
       const wrapper = mountSection('<section><div data-html="settings.body">ignored</div></section>', {
         body: '<p>Hi <b>there</b></p><img src="x" onerror="alert(1)"><script>alert(1)</script>',
       });
-      const html = wrapper.find("div");
+      const html = wrapper.find("section div");
 
       expect(html.find("b").text()).toBe("there");
       expect(html.find("script").exists()).toBe(false);
@@ -230,7 +259,7 @@ describe("CustomSection", () => {
     it("shows nothing for a setting that is not rich text", () => {
       const wrapper = mountSection('<section><div data-html="settings.title"></div></section>', { title: "<b>x</b>" });
 
-      expect(wrapper.find("div").html()).toBe("<div></div>");
+      expect(wrapper.find("section div").html()).toBe("<div></div>");
     });
   });
 
@@ -268,6 +297,17 @@ describe("CustomSection", () => {
       const wrapper = mountSection('<section><a href="{{ settings.link }}">Go</a></section>', { link: href });
 
       expect(wrapper.find("a").attributes("href")).toBe(isKept ? href : undefined);
+    });
+
+    it("keeps only the _self and _blank targets, and no rel that hands this window over", () => {
+      const wrapper = mountSection(
+        '<section><a href="/a" target="_top">A</a><a href="/b" target="_self" rel="opener">B</a></section>',
+      );
+      const [top, opener] = wrapper.findAll("a");
+
+      expect(top.attributes("target")).toBeUndefined();
+      expect(opener.attributes()).toMatchObject({ target: "_self" });
+      expect(opener.attributes("rel")).toBeUndefined();
     });
 
     it("keeps a link that opens a new window from reaching this one", () => {

@@ -60,6 +60,7 @@ const DATA_PREFIX = "data-";
 const EACH_REGEX = /^settings\.([\w-]+)$/;
 const CONDITION_REGEX = /^(!?)\s*(\S+)$/;
 const MAX_CACHED_TEMPLATES = 32;
+const MAX_DEPTH = 32;
 
 const cache = new Map<string, ICompiledTemplate | undefined>();
 let purifier: ReturnType<typeof DOMPurify> | undefined;
@@ -98,7 +99,7 @@ function compile(template: string, kit: IKitType): ICompiledTemplate | undefined
   }
 
   const behaviors = new Set<string>();
-  const root = compileElement(elements[0], { kit, isRoot: true, isInEach: false, behaviors });
+  const root = compileElement(elements[0], { kit, depth: 0, isRoot: true, isInEach: false, behaviors });
 
   return { root, behaviors };
 }
@@ -147,13 +148,16 @@ function getKitSignature(kit: IKitType): string {
 
 interface ICompileContext {
   kit: IKitType;
+  /** Of the element whose children compile. */
+  depth: number;
   isRoot: boolean;
   isInEach: boolean;
   behaviors: Set<string>;
 }
 
+/** Content nested deeper than `MAX_DEPTH` is left out, so a hostile draft cannot exhaust the stack. */
 function compileChildren(parent: Node, context: ICompileContext): CompiledNodeType[] {
-  return [...parent.childNodes].flatMap((node) => compileNode(node, context));
+  return context.depth < MAX_DEPTH ? [...parent.childNodes].flatMap((node) => compileNode(node, context)) : [];
 }
 
 function compileNode(node: Node, context: ICompileContext): CompiledNodeType[] {
@@ -190,6 +194,7 @@ function compileElement(element: Element, context: ICompileContext): ICompiledEl
   if (!compiled.isKitTag && !compiled.html) {
     compiled.children = compileChildren(element, {
       ...context,
+      depth: context.depth + 1,
       isRoot: false,
       isInEach: context.isInEach || !!compiled.each,
     });

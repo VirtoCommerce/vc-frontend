@@ -65,6 +65,13 @@ describe("filterSectionCss", () => {
     );
   });
 
+  it("drops image-set(), in a custom property too", () => {
+    const rules = rulesOf('.a { --bg: image-set(url("https://evil.example/x.png") 1x); color: red; }');
+
+    expect(rules).not.toContain("evil");
+    expect(rules).toContain("color: red");
+  });
+
   it("keeps url() of the asset library and drops any other, in custom properties too", () => {
     const rules = rulesOf(`
       .a { background-image: url("/cms-content/assets/a.png"); }

@@ -1,9 +1,11 @@
 <template>
-  <component :is="renderSection()" />
+  <div class="sb-section">
+    <component :is="renderSection()" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs, watch } from "vue";
+import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { preloadBehaviors } from "./behaviors";
 import { getKitBehaviors, getKitTags, registerBuiltInKit } from "./kit";
@@ -19,11 +21,8 @@ interface IProps {
   model: IThemeItem;
 }
 
-defineOptions({ inheritAttrs: false });
-
 const props = defineProps<IProps>();
 
-const attrs = useAttrs();
 const { theme } = useThemeSnapshot();
 
 registerBuiltInKit();
@@ -57,7 +56,7 @@ useCustomSectionStyle(
   () => definition.value?.css,
 );
 
-/** Called by the template on every render: the VNodes depend on the settings, the template and the attributes. */
+/** Called by the template on every render: the VNodes depend on the settings and the template. */
 function renderSection(): VNode | null {
   const template = compiled.value;
   const fields = definition.value?.schema?.settings;
@@ -67,8 +66,15 @@ function renderSection(): VNode | null {
         type: props.model.type,
         settings: props.model,
         fields: Array.isArray(fields) ? fields : [],
-        rootAttributes: attrs,
       })
     : null;
 }
 </script>
+
+<style lang="scss">
+// Outside the scope the type's CSS reaches: nothing the section draws, fixed or stacked, escapes its box.
+.sb-section {
+  contain: paint;
+  isolation: isolate;
+}
+</style>

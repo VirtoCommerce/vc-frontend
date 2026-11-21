@@ -13,6 +13,8 @@ export interface IRowScope {
 }
 
 export interface IBindingScope {
+  /** The section type, whose own classes a template may use. */
+  type: string;
   settings: Record<string, unknown>;
   fields: ReadonlyMap<string, IThemeSchemaField>;
   row?: IRowScope;
