@@ -132,39 +132,31 @@ describe("filterSectionCss", () => {
     expect(rules).toContain(".b { color: red; }");
   });
 
-  it("drops behavior and -moz-binding, and an image shorthand holding var() checked whole", () => {
-    const declarations: Record<string, string> = {
-      behavior: "url(/x.htc)",
-      "-moz-binding": "url(/x.xml#y)",
-      background: 'var(--a,) url("data:text/html,x")',
-      "background-image": "",
-      color: "red",
-    };
-    const style = {
-      ...Object.keys(declarations).filter((name) => name !== "background"),
-      length: 4,
-      getPropertyValue: (name: string) => declarations[name] ?? "",
-      removeProperty: vi.fn((name: string) => delete declarations[name]),
-    };
-    class FakeStyleRule {
-      selectorText = ".a";
-      style = style;
-      cssRules: CSSRule[] = [];
-      cssText = ".a {}";
-      deleteRule(): void {}
-    }
-    vi.stubGlobal("CSSStyleRule", FakeStyleRule);
-    vi.stubGlobal(
-      "CSSStyleSheet",
-      class {
-        cssRules = [new FakeStyleRule()];
-        replaceSync(): void {}
-      },
+  it("drops behavior and -moz-binding", () => {
+    const declarations = filterFakeStyle({ behavior: "url(/x.htc)", "-moz-binding": "url(/x.xml#y)", color: "red" });
+
+    expect(declarations).toEqual({ color: "red" });
+  });
+
+  it.each(["background", "-webkit-mask-box-image", "marker"])(
+    "drops the whole block when a %s shorthand holding var() names any other image",
+    (shorthand) => {
+      const declarations = filterFakeStyle(
+        { [shorthand]: 'url("https://evil.example/p.png") var(--e,)', [`${shorthand}-source`]: "", color: "red" },
+        shorthand,
+      );
+
+      expect(declarations).toEqual({});
+    },
+  );
+
+  it("keeps a shorthand holding var() that names an asset", () => {
+    const declarations = filterFakeStyle(
+      { background: `var(--a,) url("${ASSETS}/a.png")`, color: "red" },
+      "background",
     );
 
-    filterSectionCss(TYPE, ".a {}");
-
-    expect(Object.keys(declarations)).toEqual(["background-image", "color"]);
+    expect(declarations).toEqual({ background: `var(--a,) url("${ASSETS}/a.png")`, color: "red" });
   });
 
   it("keeps @starting-style, which the browser parses as a group of rules", () => {
@@ -201,3 +193,40 @@ describe("filterSectionCss", () => {
     expect(filterSectionCss(TYPE, ".a { color: red; }")).toBeUndefined();
   });
 });
+
+/** As the browser holds a shorthand with `var()`: kept as written, unlisted, and its longhands read empty. */
+function filterFakeStyle(declarations: Record<string, string>, shorthand?: string): Record<string, string> {
+  const listed = Object.keys(declarations).filter((name) => name !== shorthand);
+  const style = {
+    ...listed,
+    length: listed.length,
+    get cssText(): string {
+      return Object.entries(declarations)
+        .map(([name, value]) => `${name}: ${value};`)
+        .join(" ");
+    },
+    set cssText(_: string) {
+      Object.keys(declarations).forEach((name) => delete declarations[name]);
+    },
+    getPropertyValue: (name: string) => declarations[name] ?? "",
+    removeProperty: (name: string) => delete declarations[name],
+  };
+  class FakeStyleRule {
+    selectorText = ".a";
+    style = style;
+    cssRules: CSSRule[] = [];
+    cssText = ".a {}";
+    deleteRule(): void {}
+  }
+  vi.stubGlobal("CSSStyleRule", FakeStyleRule);
+  vi.stubGlobal(
+    "CSSStyleSheet",
+    class {
+      cssRules = [new FakeStyleRule()];
+      replaceSync(): void {}
+    },
+  );
+
+  filterSectionCss(TYPE, ".a {}", ASSETS);
+  return declarations;
+}
