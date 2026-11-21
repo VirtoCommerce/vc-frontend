@@ -1,3 +1,4 @@
+import { toFiniteNumber } from "../numbers";
 import { toSectionLink } from "../urls";
 import type { CustomSectionValueType, ICustomSectionField } from "../types";
 
@@ -8,11 +9,13 @@ const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:$|T)/;
 export function toFieldValue(field: ICustomSectionField, value: string): CustomSectionValueType | undefined {
   switch (field.type) {
     case "number": {
-      const number = value.trim() ? Number(value) : Number.NaN;
+      const number = toFiniteNumber(value);
       const isInRange =
-        (field.min === undefined || number >= field.min) && (field.max === undefined || number <= field.max);
+        number !== undefined &&
+        (field.min === undefined || number >= field.min) &&
+        (field.max === undefined || number <= field.max);
 
-      return Number.isFinite(number) && isInRange ? number : undefined;
+      return isInRange ? number : undefined;
     }
     case "boolean":
       return value !== "false";

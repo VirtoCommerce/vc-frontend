@@ -4,21 +4,7 @@ import { fileURLToPath } from "node:url";
 import loadConfig from "tailwindcss/loadConfig.js";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
 import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
-
-export interface IDesignToken {
-  /** The value when the active design sets none; a template writes `var(<token>, <fallback>)`. */
-  fallback: string;
-  description: string;
-}
-
-/** What a custom section's CSS can rely on, as the storefront's own build defines it. */
-export interface IDesignFacts {
-  /** Tailwind's `screens`: name → min width. */
-  breakpoints: Record<string, string>;
-  /** The width the built-in sections' content keeps to (`max-w-screen-xl`). */
-  containerMaxWidth: string;
-  tokens: Record<string, IDesignToken>;
-}
+import type { IDesignFacts, IDesignToken } from "./client-app/shared/static-content/custom-sections/design-facts.js";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 

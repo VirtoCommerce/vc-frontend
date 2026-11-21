@@ -11,8 +11,34 @@ const ICON: ICustomSectionField = {
   optionsFrom: "icons",
   description: "An icon of the storefront's set.",
 };
-const VARIANTS = ["solid", "outline", "soft", "surface", "ghost", "tonal"];
-const ICON_SIZES = new Set(["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]);
+const BUTTON_VARIANTS = [
+  "solid",
+  "outline",
+  "soft",
+  "surface",
+  "ghost",
+  "tonal",
+] as const satisfies readonly VcButtonVariantType[];
+const BADGE_VARIANTS = [
+  "solid",
+  "outline",
+  "soft",
+  "surface",
+  "ghost",
+  "tonal",
+] as const satisfies readonly VcBadgeVariantType[];
+const BUTTON_SIZES = ["xxs", "xs", "sm", "md", "lg"] as const satisfies readonly VcButtonSizeType[];
+const BADGE_SIZES = ["xs", "sm", "md", "lg"] as const satisfies readonly VcBadgeSizeType[];
+const ICON_SIZES: ReadonlySet<string> = new Set([
+  "xxs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+] satisfies VcIconSizeType[]);
+const PRODUCT_VIEWS = ["grid", "carousel"] as const;
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
 const PIXELS_REGEX = /^\d+$/;
 
@@ -24,8 +50,8 @@ const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
       label: { type: "string" },
       to: { type: "link" },
       color: COLOR,
-      variant: { type: "select", options: VARIANTS },
-      size: { type: "select", options: ["xxs", "xs", "sm", "md", "lg"] },
+      variant: { type: "select", options: [...BUTTON_VARIANTS] },
+      size: { type: "select", options: [...BUTTON_SIZES] },
       "prepend-icon": ICON,
       "append-icon": ICON,
       "full-width": { type: "boolean" },
@@ -61,8 +87,8 @@ const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
     attributes: {
       label: { type: "string" },
       color: COLOR,
-      variant: { type: "select", options: VARIANTS },
-      size: { type: "select", options: ["xs", "sm", "md", "lg"] },
+      variant: { type: "select", options: [...BADGE_VARIANTS] },
+      size: { type: "select", options: [...BADGE_SIZES] },
     },
     slotAttribute: "label",
   },
@@ -75,7 +101,7 @@ const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
       query: { type: "string", description: "A search phrase." },
       filter: { type: "string", description: "A catalog filter expression." },
       take: { type: "number", min: 1, max: 24, description: "How many products, 4 by default." },
-      view: { type: "select", options: ["grid", "carousel"] },
+      view: { type: "select", options: [...PRODUCT_VIEWS] },
       columns: { type: "number", min: 1, max: 6, description: "The most products in a row, 4 by default." },
     },
   },

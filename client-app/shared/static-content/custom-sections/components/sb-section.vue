@@ -57,7 +57,7 @@ useCustomSectionStyle(
   () => theme.value?.assetsBaseUrl,
 );
 
-/** Called by the template on every render: the VNodes depend on the settings and the template. */
+/** Not a computed: VNodes must be fresh on every render. */
 function renderSection(): VNode | null {
   const template = compiled.value;
   const fields = definition.value?.schema?.settings;

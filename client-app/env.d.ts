@@ -12,11 +12,7 @@ interface Window {
 declare const __MF_HOST__: boolean;
 
 /** The breakpoints and design tokens a custom section's CSS can use; built by vite.site-builder-design.ts. */
-declare const __SB_DESIGN_FACTS__: {
-  breakpoints: Record<string, string>;
-  containerMaxWidth: string;
-  tokens: Record<string, { fallback: string; description: string }>;
-};
+declare const __SB_DESIGN_FACTS__: import("./shared/static-content/custom-sections/design-facts").IDesignFacts;
 
 /** Every icon name `VcIcon` draws; built by vite.site-builder-design.ts, read only by the preview's catalog. */
 declare const __SB_ICON_NAMES__: string[];

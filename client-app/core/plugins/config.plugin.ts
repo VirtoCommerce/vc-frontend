@@ -4,8 +4,17 @@ import type { App, Plugin } from "vue";
 
 export const THEME_VARIABLES_ID = "vc-theme-variables";
 
+const PALETTE_TOKEN_REGEX = /^[a-z][a-z0-9_]*$/;
+
 export function getThemeVariableName(token: string): string {
   return `--${token.replaceAll("_", "-")}`;
+}
+
+/** `var(--color-…)` for a palette token such as `color_primary_500`; `undefined` for anything else. */
+export function toPaletteVariable(token: unknown): string | undefined {
+  return typeof token === "string" && PALETTE_TOKEN_REGEX.test(token)
+    ? `var(${getThemeVariableName(token)})`
+    : undefined;
 }
 
 // A theme's palette comes from the backend, so its values are set one by one and never parsed as stylesheet text.

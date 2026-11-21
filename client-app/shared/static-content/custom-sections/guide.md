@@ -20,7 +20,7 @@ storefront does not allow, it leaves out.
 
 ## Right to left
 
-The page may read right to left. Source: vc-frontend `.claude/rules/styles.md`, rule 39.
+The page may read right to left.
 
 - Logical properties only: `margin-inline-start`, `padding-inline`, `inset-inline-start`, `border-inline-start`,
   `text-align: start | end`, `float: inline-start`. Never assume that left is the start.

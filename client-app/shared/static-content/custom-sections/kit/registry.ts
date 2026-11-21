@@ -100,7 +100,6 @@ export function getSectionTags(): Readonly<Record<string, ICustomSectionTag>> {
   return useKitRegistry().value.tags;
 }
 
-/** Reactive, as the tags. */
 export function getSectionBehaviors(): Readonly<Record<string, ICustomSectionBehavior>> {
   return useKitRegistry().value.behaviors;
 }

@@ -50,7 +50,7 @@ const { products, fetchProducts } = useProducts();
 const count = computed(() => Math.round(props.take));
 const columnCount = computed(() => Math.round(props.columns));
 
-/** As the built-in carousel steps up, measured on the element the tag stands in, `columns` at most. */
+/** Steps like products-carousel, measured on the container, never above `columns`. */
 const carouselOptions = computed<ICarouselOptions>(() => {
   const steps: [string, number][] = [
     [BREAKPOINTS.xs, 2],
