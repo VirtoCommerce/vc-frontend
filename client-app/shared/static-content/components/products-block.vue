@@ -8,11 +8,11 @@
     :data-list-name="title"
   >
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <VcTypography v-if="title" tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
+      <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
         {{ title }}
       </VcTypography>
 
-      <div v-if="subtitle" class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
+      <div class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
 
       <VcProductsGrid
         :columns="{
