@@ -1,4 +1,4 @@
-import { mount, RouterLinkStub } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount, RouterLinkStub } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
@@ -73,6 +73,8 @@ function mountSection(
     global: { stubs: { RouterLink: RouterLinkStub, VcIcon: true } },
   });
 }
+
+enableAutoUnmount(afterEach);
 
 describe("SbSection", () => {
   beforeEach(() => {
@@ -685,6 +687,47 @@ describe("SbSection", () => {
       );
 
       expect(wrapper.find("section div").attributes()).toEqual({});
+    });
+  });
+
+  describe("a behavior a setting switches on or off", () => {
+    const hooks = { mounted: vi.fn(), unmounted: vi.fn() };
+
+    beforeEach(() => {
+      hooks.mounted.mockReset();
+      hooks.unmounted.mockReset();
+      registerCustomSectionBehavior("glow", {
+        directive: () => Promise.resolve({ mounted: hooks.mounted, unmounted: hooks.unmounted }),
+        description: "Glows.",
+        value: { type: "string" },
+      });
+    });
+
+    afterEach(() => {
+      unregisterCustomSectionBehavior("glow");
+    });
+
+    it("starts when its setting is set, beside a behavior that stays", async () => {
+      const wrapper = mountSection('<section><p data-inview data-glow="{{ settings.title }}">x</p></section>', {
+        title: "",
+      });
+      await flushPromises();
+      expect(hooks.mounted).not.toHaveBeenCalled();
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, title: "gold" } });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledOnce());
+
+      expect(wrapper.find("p").attributes()).toMatchObject({ "data-inview": "", "data-glow": "gold" });
+    });
+
+    it("stops when its setting is cleared", async () => {
+      const wrapper = mountSection('<section><p data-glow="{{ settings.title }}">x</p></section>', { title: "gold" });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledOnce());
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, title: "" } });
+
+      expect(hooks.unmounted).toHaveBeenCalledOnce();
+      expect(wrapper.find("p").attributes("data-glow")).toBeUndefined();
     });
   });
 });

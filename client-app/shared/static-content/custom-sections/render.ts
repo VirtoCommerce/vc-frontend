@@ -139,9 +139,11 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
   const hasText = kept.some(({ name }) => textAttributes.has(name));
   const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
 
+  // Vue pairs an element's directives by position: a behavior a setting switches on or off mounts it afresh.
+  const key = applied.length ? `${String(props.key ?? "")}:${applied.join(" ")}` : props.key;
   const vnode = h(
     node.tag,
-    mergeProps(renderAttributes(node, kept, scope), getFieldAttributes(node, scope), props),
+    mergeProps(renderAttributes(node, kept, scope), getFieldAttributes(node, scope), props, { key }),
     renderChildren(node, scope, hasText, isRepeated),
   );
   const directives: DirectiveArguments = applied.map((name) => [
