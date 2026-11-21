@@ -1,6 +1,7 @@
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
-import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml, withNewWindowRel } from "../sections";
+import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
+import { toSafeAttributeValue } from "./allowlist";
 import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
 import {
@@ -10,8 +11,8 @@ import {
   toFieldValue,
   toTagProps,
 } from "./kit";
+import { sanitizeRichText } from "./rich-text";
 import { getSettingVariables } from "./setting-variables";
-import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
 import type { CompiledNodeType, ICompiledElement, ICompiledTemplate } from "./template";
 import type { ICustomSectionBehavior, ICustomSectionField } from "./types";
@@ -40,8 +41,6 @@ interface IBehaviorAttributes {
   textAttributes: Set<string>;
 }
 
-const LINK_TARGETS = new Set(["_self", "_blank"]);
-const OPENER_REGEX = /(?:^|\s)opener(?:\s|$)/i;
 /** The copies a repeating behavior adds: out of the tab order and hidden from assistive technology. */
 const COPY_PROPS = { "aria-hidden": "true", inert: "", [REPEATED_COPY_ATTRIBUTE]: "" };
 
@@ -272,41 +271,11 @@ function renderAttributes(
 
     return {
       ...attributes,
-      innerHTML: binding?.field.type === "text" && typeof value === "string" ? sanitizeSectionHtml(value) : "",
+      innerHTML: binding?.field.type === "text" && typeof value === "string" ? sanitizeRichText(value, scope) : "",
     };
   }
 
   return attributes;
-}
-
-function toSafeAttributeValue(name: string, value: string, scope: IBindingScope): string | undefined {
-  switch (name) {
-    case "class":
-      return toOwnClasses(value, scope.type);
-    case "target":
-      return LINK_TARGETS.has(value.trim()) ? value.trim() : undefined;
-    case "rel":
-      return OPENER_REGEX.test(value) ? undefined : value;
-    case "href":
-    case "cite":
-      return toSectionLink(value);
-    case "src":
-    case "poster":
-      return toAssetUrl(value, scope.assetsBaseUrl);
-    case "srcset":
-      return toAssetSrcset(value, scope.assetsBaseUrl);
-    default:
-      return value;
-  }
-}
-
-/** Only the type's own classes, `{type}`, `{type}__…`, `{type}--…` or `{type}-…`: no utility of the storefront's build. */
-function toOwnClasses(value: string, type: string): string | undefined {
-  const classes = value
-    .split(/\s+/)
-    .filter((name) => name === type || name.startsWith(`${type}-`) || name.startsWith(`${type}__`));
-
-  return classes.length ? classes.join(" ") : undefined;
 }
 
 /** Names the setting an element shows as its whole text, so the designer edits it in place. */

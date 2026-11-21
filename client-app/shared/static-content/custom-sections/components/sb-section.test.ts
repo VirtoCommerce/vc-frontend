@@ -269,6 +269,26 @@ describe("SbSection", () => {
       expect(html.text()).not.toContain("ignored");
     });
 
+    it("holds rich text to the section's rules: no styles, controls or foreign classes, images and links as in the template", () => {
+      const wrapper = mountSection('<section><div data-html="settings.body"></div></section>', {
+        body:
+          '<style>body { display: none }</style><p style="color: red" id="x" data-sb-type="other" ' +
+          `class="fixed ${TYPE}__note">A</p><img src="https://evil.example/pixel" alt=""><img src="${ASSETS}/a.png" alt="">` +
+          '<a href="javascript:alert(1)">J</a><a href="/c" target="_blank">C</a><input><button>B</button>',
+      });
+      const html = wrapper.find("section div");
+      const [foreign, asset] = html.findAll("img");
+      const [script, link] = html.findAll("a");
+
+      expect(html.find("style").exists()).toBe(false);
+      expect(html.find("p").attributes()).toEqual({ class: `${TYPE}__note` });
+      expect(foreign.attributes("src")).toBeUndefined();
+      expect(asset.attributes("src")).toBe(`${ASSETS}/a.png`);
+      expect(script.attributes("href")).toBeUndefined();
+      expect(link.attributes()).toEqual({ href: "/c", target: "_blank", rel: "noopener noreferrer" });
+      expect(html.findAll("input, button")).toHaveLength(0);
+    });
+
     it("shows nothing for a setting that is not rich text", () => {
       const wrapper = mountSection('<section><div data-html="settings.title"></div></section>', { title: "<b>x</b>" });
 

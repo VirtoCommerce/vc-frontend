@@ -1,5 +1,12 @@
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
+import {
+  FORBIDDEN_CONTENTS,
+  isAttributeOfElement,
+  SECTION_ELEMENTS,
+  TEXT_ATTRIBUTES,
+  URL_ATTRIBUTES,
+} from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
 import { getBehaviorAttributeNames } from "./kit/registry";
 import type { TemplatePartType } from "./bindings";
@@ -32,34 +39,6 @@ export interface ICompiledTemplate {
   behaviors: Set<string>;
 }
 
-/** The server sanitizer's element allowlist minus form controls; `svg`, `script`, `style` and the like go with their content. */
-const ELEMENTS = (
-  "a abbr acronym address area article aside audio b bdi bdo big blink blockquote br canvas caption center cite " +
-  "code col colgroup data dd del details dfn dialog dir div dl dt em figcaption figure font footer h1 h2 h3 h4 h5 " +
-  "h6 header hgroup hr i img ins kbd li main map mark marquee menu menuitem meter nav nobr ol p picture pre " +
-  "progress q rp rt ruby s samp section small source spacer span strike strong sub summary sup table tbody td " +
-  "tfoot th thead time tr track tt u ul var video wbr"
-).split(" ");
-
-const TEXT_ATTRIBUTES = (
-  "class role alt title lang dir hidden target rel sizes loading decoding width height datetime colspan rowspan " +
-  "scope autoplay muted loop playsinline controls preload type media open"
-).split(" ");
-const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
-/** The attributes only some elements take. */
-const ELEMENT_ATTRIBUTES: Readonly<Record<string, readonly string[]>> = {
-  autoplay: ["video"],
-  muted: ["video"],
-  loop: ["video"],
-  playsinline: ["video"],
-  controls: ["video"],
-  preload: ["video"],
-  poster: ["video"],
-  open: ["details"],
-  type: ["source"],
-  media: ["source"],
-  cite: ["blockquote", "q"],
-};
 const CONTROL_ATTRIBUTES = ["data-each", "data-if", "data-html"];
 const DATA_PREFIX = "data-";
 
@@ -128,11 +107,10 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
   purifier ??= DOMPurify();
 
   return purifier.sanitize(template, {
-    ALLOWED_TAGS: ELEMENTS,
+    ALLOWED_TAGS: SECTION_ELEMENTS,
     ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
     ALLOW_DATA_ATTR: false,
-    // As the server sanitizer: these go with their content.
-    ADD_FORBID_CONTENTS: ["form", "frame", "frameset", "object", "embed", "applet"],
+    ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
     // Only names matter here: the renderer checks each value after its bindings resolve.
     ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
     CUSTOM_ELEMENT_HANDLING: {
@@ -243,7 +221,7 @@ function compileAttribute(compiled: ICompiledElement, name: string, value: strin
 }
 
 function compileOtherAttribute(compiled: ICompiledElement, name: string, value: string, context: ICompileContext) {
-  if (Object.hasOwn(ELEMENT_ATTRIBUTES, name) && !ELEMENT_ATTRIBUTES[name].includes(compiled.tag)) {
+  if (!isAttributeOfElement(name, compiled.tag)) {
     return;
   }
 
