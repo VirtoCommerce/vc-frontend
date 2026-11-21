@@ -1,9 +1,9 @@
 import { defineAsyncComponent, markRaw, watch } from "vue";
 import { isSiteBuilderEnabled, useThemeSnapshot } from "@/core/theme-snapshot";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
+import { getPageBuilderSection } from "../sections";
 import { isCustomSectionType } from "./type-name";
-
-const SECTION_CATEGORY = "pageBuilderSection";
 
 /**
  * Registers each custom type of the shown theme as it comes and unregisters it as it goes.
@@ -15,7 +15,7 @@ export function registerCustomSections(): void {
   }
 
   const component = markRaw(defineAsyncComponent(() => import("./components/sb-section.vue")));
-  const { getEntries, register, unregister } = useExtensionRegistry();
+  const { register, unregister } = useExtensionRegistry();
   const { theme } = useThemeSnapshot();
   const registered = new Set<string>();
 
@@ -31,15 +31,15 @@ export function registerCustomSections(): void {
       [...registered]
         .filter((type) => !types.has(type))
         .forEach((type) => {
-          unregister(SECTION_CATEGORY, type);
+          unregister(EXTENSION_CATEGORIES.pageBuilderSection, type);
           registered.delete(type);
         });
 
       // A type someone else registered keeps their component.
       [...types]
-        .filter((type) => !registered.has(type) && !Object.hasOwn(getEntries(SECTION_CATEGORY), type))
+        .filter((type) => !registered.has(type) && !getPageBuilderSection(type))
         .forEach((type) => {
-          register(SECTION_CATEGORY, type, { component });
+          register(EXTENSION_CATEGORIES.pageBuilderSection, type, { component });
           registered.add(type);
         });
     },
