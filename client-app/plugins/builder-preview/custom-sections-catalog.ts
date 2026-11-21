@@ -1,10 +1,11 @@
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { getKitCatalog, registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
+import { registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
+import { getKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import { isCustomSectionType } from "@/shared/static-content/custom-sections/type-name";
 import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionType } from "@/core/theme-snapshot";
-import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 
 /** The custom types as section schemas, `custom: true`, each named in the page's language. */
 export function toCustomSectionSchemas(

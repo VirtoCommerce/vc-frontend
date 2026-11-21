@@ -11,6 +11,13 @@ interface Window {
 /** Whether this build is an MF host (`module_federation_enabled`); see vite.federation.ts. */
 declare const __MF_HOST__: boolean;
 
+/** The breakpoints and design tokens a custom section's CSS can use; built by vite.site-builder-design.ts. */
+declare const __SB_DESIGN_FACTS__: {
+  breakpoints: Record<string, string>;
+  containerMaxWidth: string;
+  tokens: Record<string, { fallback: string; description: string }>;
+};
+
 interface ImportMetaEnv {
   /** JSON map of remote name -> mf-manifest.json URL. Inlined at BUILD time (see core/federation/README.md). */
   readonly APP_MODULES_FEDERATION_REMOTES?: string;

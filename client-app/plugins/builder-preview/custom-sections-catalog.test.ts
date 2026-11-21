@@ -5,7 +5,7 @@ import { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sections-catalog";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionType } from "@/core/theme-snapshot";
-import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 
 vi.mock("@/core/composables/useLanguages", async () => {
   const { ref } = await import("vue");
@@ -108,6 +108,12 @@ describe("watchCustomSectionCatalog", () => {
       writes: ["data-ended", "text"],
     });
     expect(JSON.stringify(kit)).not.toContain("directive");
+    expect(kit?.design).toMatchObject({
+      containerName: "sb-section",
+      containerMaxWidth: "1280px",
+      breakpoints: expect.objectContaining({ md: "768px" }),
+      tokens: expect.objectContaining({ "--vc-font-size-2xl": expect.objectContaining({ fallback: "1.5rem" }) }),
+    });
 
     useExtensionRegistry().register("customSectionBehavior", "confetti", {
       directive: () => Promise.resolve({}),

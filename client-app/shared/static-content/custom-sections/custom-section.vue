@@ -73,8 +73,10 @@ function renderSection(): VNode | null {
 
 <style lang="scss">
 // Outside the scope the type's CSS reaches: nothing the section draws, fixed or stacked, escapes its box.
+// The section's CSS adapts to the place it stands in with `@container sb-section (…)`.
 .sb-section {
   contain: paint;
   isolation: isolate;
+  container: sb-section / inline-size;
 }
 </style>

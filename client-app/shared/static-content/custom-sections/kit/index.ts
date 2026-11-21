@@ -1,23 +1,9 @@
 import { camelize } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { checkFieldValue } from "./fields";
-import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
+import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionTag } from "../types";
 
 export { registerBuiltInKit } from "./built-in";
-
-/** What the designer's catalog says of the kit, for the agent and the server: no components, no loaders. */
-export interface ICustomSectionKitCatalog {
-  tags: Record<string, { description: string; attributes: Record<string, ICustomSectionField> }>;
-  behaviors: Record<
-    string,
-    {
-      description: string;
-      value?: ICustomSectionField;
-      options?: Record<string, ICustomSectionField>;
-      writes?: string[];
-    }
-  >;
-}
 
 /** Reactive: a tag registered later reaches the templates already shown. */
 export function getKitTags(): Readonly<Record<string, ICustomSectionTag>> {
@@ -27,22 +13,6 @@ export function getKitTags(): Readonly<Record<string, ICustomSectionTag>> {
 /** Reactive, as the tags. */
 export function getKitBehaviors(): Readonly<Record<string, ICustomSectionBehavior>> {
   return useExtensionRegistry().getEntries("customSectionBehavior");
-}
-
-/** Copies only data, so the catalog can be posted and hashed. */
-export function getKitCatalog(): ICustomSectionKitCatalog {
-  const tags = Object.entries(getKitTags()).map(([name, { description, attributes }]) => [
-    name,
-    { description, attributes },
-  ]);
-  const behaviors = Object.entries(getKitBehaviors()).map(([name, { description, value, options, writes }]) => [
-    name,
-    { description, value, options, writes },
-  ]);
-
-  return JSON.parse(
-    JSON.stringify({ tags: Object.fromEntries(tags), behaviors: Object.fromEntries(behaviors) }),
-  ) as ICustomSectionKitCatalog;
 }
 
 /** The checked attributes as the tag's props and the text of its default slot. */

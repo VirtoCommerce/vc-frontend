@@ -34,7 +34,7 @@ import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
-import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import type { Router } from "vue-router";
 
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
