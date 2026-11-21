@@ -142,6 +142,15 @@ describe("SbSection", () => {
       expect(root.element.style.getPropertyValue("--setting-image")).toBe("");
     });
 
+    it.each([
+      ["primary_500", "var(--color-primary-500)"],
+      ["", ""],
+    ])("gives the colour token %j the variable %j", (token, variable) => {
+      const root = mountSection("<section></section>", { accent: token }).find("section");
+
+      expect(root.element.style.getPropertyValue("--setting-accent")).toBe(variable);
+    });
+
     it("renders nothing for a template without exactly one root element", () => {
       const wrapper = mountSection("<section></section><section></section>");
 

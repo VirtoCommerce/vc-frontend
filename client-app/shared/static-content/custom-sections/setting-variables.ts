@@ -1,4 +1,4 @@
-import { toPaletteVariable } from "@/core/plugins/config.plugin";
+import { getThemeVariableName, toPaletteVariable } from "@/core/plugins/config.plugin";
 import { toFiniteNumber } from "./numbers";
 import { toAssetUrl } from "./urls";
 import type { IThemeSchemaField } from "@/core/theme-snapshot";
@@ -18,7 +18,7 @@ export function getSettingVariables(
       const value =
         id && FIELD_ID_REGEX.test(id) ? toVariableValue(field.type, settings[id], assetsBaseUrl) : undefined;
 
-      return id && value !== undefined ? [[`--setting-${id.replaceAll("_", "-")}`, value]] : [];
+      return id && value !== undefined ? [[getThemeVariableName(`setting_${id}`), value]] : [];
     }),
   );
 }
@@ -47,7 +47,9 @@ function toVariableValue(
 
 /** The designer stores palette tokens as `color_primary_500`; a token without the prefix gets it. */
 function toColorVariable(token: unknown): string | undefined {
-  return typeof token === "string" && !token.startsWith(COLOR_TOKEN_PREFIX)
-    ? toPaletteVariable(`${COLOR_TOKEN_PREFIX}${token}`)
-    : toPaletteVariable(token);
+  if (typeof token !== "string" || !token) {
+    return undefined;
+  }
+
+  return toPaletteVariable(token.startsWith(COLOR_TOKEN_PREFIX) ? token : `${COLOR_TOKEN_PREFIX}${token}`);
 }
