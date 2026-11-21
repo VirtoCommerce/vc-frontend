@@ -61,6 +61,13 @@ describe("filterSectionCss", () => {
     expect(rules).toBe(".kept { color: currentcolor; }");
   });
 
+  it("keeps outline text: a transparent fill and a stroke in the text's color", () => {
+    const outline =
+      "color: var(--color-primary-500); -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px currentColor;";
+
+    expect(rulesOf(`.title { ${outline} }`)).toBe(`.title { ${outline} }`);
+  });
+
   it.each([":root", "html", "body .card", ".card, html .x", ":is(body) .y"])("drops a rule naming %s", (selector) => {
     expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
   });

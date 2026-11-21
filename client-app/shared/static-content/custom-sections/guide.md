@@ -35,6 +35,8 @@ The page may read right to left.
 - Colors come from the palette only: `var(--color-<family>-<shade>)` (`paletteTokens` in the catalog lists them,
   `_` written as `-`), a `color-token` setting's `--setting-<id>`, `transparent` or `currentColor`. A literal color
   breaks the shop's presets and dark theme.
+- Outline text keeps its `color` and hides its fill with `-webkit-text-fill-color: transparent`, so a
+  `-webkit-text-stroke` in `currentColor` draws in that color. A transparent `color` hides the stroke too.
 
 ## Type and headings
 
