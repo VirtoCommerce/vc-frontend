@@ -52,8 +52,10 @@ describe("SbProducts", () => {
 
     expect(options.breakpointsBase).toBe("container");
     expect(options.slidesPerView).toBe(1.5);
-    const steps = Object.values(options.breakpoints ?? {});
-
-    expect(steps.map((step) => step.slidesPerView)).toEqual([2, 2, 2]);
+    expect(Object.values(options.breakpoints ?? {})).toEqual([
+      { slidesPerView: 2 },
+      { slidesPerView: 2 },
+      { slidesPerView: 2 },
+    ]);
   });
 });
