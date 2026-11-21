@@ -1,8 +1,9 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import loadConfig from "tailwindcss/loadConfig.js";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
+import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
 
 export interface IDesignToken {
   /** The value when the active design sets none; a template writes `var(<token>, <fallback>)`. */
@@ -20,6 +21,10 @@ export interface IDesignFacts {
 }
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
+
+/** The set `VcIcon` draws by default; legacy names reach it through the aliases. */
+const ICON_FOLDER = "client-app/ui-kit/icons/outline";
+const ICON_FILE_REGEX = /\.svg$/;
 
 /** The stylesheets that declare or read the tokens outside the Tailwind theme. */
 const STYLE_SOURCES = ["client-app/assets/styles/main.scss", "client-app/assets/styles/_typography-roles.scss"];
@@ -92,7 +97,19 @@ export function collectDesignFacts(): IDesignFacts {
   return { breakpoints: { ...BREAKPOINTS }, containerMaxWidth: BREAKPOINTS.xl, tokens };
 }
 
+/** Every name `VcIcon` draws: the outline set's files and the legacy names aliased to them. */
+export function collectIconNames(): string[] {
+  const files = readdirSync(path.join(ROOT, ICON_FOLDER))
+    .filter((file) => ICON_FILE_REGEX.test(file))
+    .map((file) => file.replace(ICON_FILE_REGEX, ""));
+
+  return [...new Set([...files, ...Object.keys(ICON_ALIASES)])].sort((a, b) => a.localeCompare(b));
+}
+
 /** Inlined where the preview builds its catalog. */
 export function designFactsDefine(): Record<string, string> {
-  return { __SB_DESIGN_FACTS__: JSON.stringify(collectDesignFacts()) };
+  return {
+    __SB_DESIGN_FACTS__: JSON.stringify(collectDesignFacts()),
+    __SB_ICON_NAMES__: JSON.stringify(collectIconNames()),
+  };
 }

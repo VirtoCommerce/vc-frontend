@@ -17,6 +17,11 @@ export function checkFieldValue(field: ICustomSectionField, value: string): Cust
     case "boolean":
       return value !== "false";
     case "select":
+      // The icon names stay with the catalog; an unknown one draws nothing.
+      if (field.optionsFrom) {
+        return value.trim() || undefined;
+      }
+
       return field.options?.includes(value) ? value : undefined;
     case "link":
       return toSectionLink(value);

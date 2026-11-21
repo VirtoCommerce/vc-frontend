@@ -108,6 +108,11 @@ describe("watchCustomSectionCatalog", () => {
       writes: ["data-ended", "text"],
     });
     expect(JSON.stringify(kit)).not.toContain("directive");
+    expect(JSON.stringify(kit)).not.toContain("optionsFrom");
+    expect(kit?.tags["vc-icon"].attributes.name).toMatchObject({ type: "select", options: __SB_ICON_NAMES__ });
+    expect(kit?.tags["vc-icon"].attributes.name.options).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
+    expect(kit?.tags["vc-button"].attributes["prepend-icon"].options).toEqual(__SB_ICON_NAMES__);
+    expect(kit?.tags["vc-button"].attributes["append-icon"].options).toEqual(__SB_ICON_NAMES__);
     expect(kit?.guide).toMatch(/^# Writing a custom section/);
     expect(kit?.design).toMatchObject({
       containerName: "sb-section",

@@ -6,7 +6,11 @@ import { MAIN_COLORS } from "@/ui-kit/constants";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
 
 const COLOR: ICustomSectionField = { type: "select", options: [...MAIN_COLORS], description: "A palette color." };
-const ICON: ICustomSectionField = { type: "string", description: "An icon name of the storefront's icon set." };
+const ICON: ICustomSectionField = {
+  type: "select",
+  optionsFrom: "icons",
+  description: "An icon of the storefront's set.",
+};
 const VARIANTS = ["solid", "outline", "soft", "surface", "ghost", "tonal"];
 const ICON_SIZES = new Set(["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;

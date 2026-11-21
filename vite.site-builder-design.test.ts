@@ -1,7 +1,13 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
-import { collectDesignFacts, designFactsDefine, readTokenFallbacks } from "./vite.site-builder-design.js";
+import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
+import {
+  collectDesignFacts,
+  collectIconNames,
+  designFactsDefine,
+  readTokenFallbacks,
+} from "./vite.site-builder-design.js";
 
 describe("readTokenFallbacks", () => {
   it("reads each token's fallback, nested parentheses and commas included", () => {
@@ -42,8 +48,21 @@ describe("collectDesignFacts", () => {
   });
 });
 
+describe("collectIconNames", () => {
+  const names = collectIconNames();
+
+  it("lists the outline set's icons and the legacy names aliased to them, once each, sorted", () => {
+    expect(names).toEqual(expect.arrayContaining(["star", "shopping-cart", ...Object.keys(ICON_ALIASES)]));
+    expect(new Set(names).size).toBe(names.length);
+    expect([...names].sort((a, b) => a.localeCompare(b))).toEqual(names);
+  });
+});
+
 describe("designFactsDefine", () => {
-  it("inlines the facts as JSON", () => {
-    expect(JSON.parse(designFactsDefine().__SB_DESIGN_FACTS__)).toEqual(collectDesignFacts());
+  it("inlines the facts and the icon names as JSON", () => {
+    const defined = designFactsDefine();
+
+    expect(JSON.parse(defined.__SB_DESIGN_FACTS__)).toEqual(collectDesignFacts());
+    expect(JSON.parse(defined.__SB_ICON_NAMES__)).toEqual(collectIconNames());
   });
 });

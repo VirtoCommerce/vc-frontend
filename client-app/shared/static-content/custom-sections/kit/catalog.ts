@@ -29,11 +29,11 @@ const SECTION_CONTAINER_NAME = "sb-section";
 export function getKitCatalog(): ICustomSectionKitCatalog {
   const tags = Object.entries(getKitTags()).map(([name, { description, attributes }]) => [
     name,
-    { description, attributes },
+    { description, attributes: withOptions(attributes) },
   ]);
   const behaviors = Object.entries(getKitBehaviors()).map(([name, { description, value, options, writes }]) => [
     name,
-    { description, value, options, writes },
+    { description, value: value && toCatalogField(value), options: options && withOptions(options), writes },
   ]);
   const catalog = {
     tags: Object.fromEntries(tags),
@@ -43,4 +43,13 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
   };
 
   return JSON.parse(JSON.stringify(catalog)) as ICustomSectionKitCatalog;
+}
+
+function withOptions(fields: Record<string, ICustomSectionField>): Record<string, ICustomSectionField> {
+  return Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, toCatalogField(field)]));
+}
+
+/** A field as the agent and the server read it: a `select` of icon names lists them. */
+function toCatalogField({ optionsFrom, ...field }: ICustomSectionField): ICustomSectionField {
+  return optionsFrom === "icons" ? { ...field, options: __SB_ICON_NAMES__ } : field;
 }

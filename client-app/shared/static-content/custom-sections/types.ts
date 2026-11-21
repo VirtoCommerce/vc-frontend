@@ -15,6 +15,8 @@ export interface ICustomSectionField {
   type: "string" | "number" | "boolean" | "select" | "link" | "date";
   /** The values a `select` takes. */
   options?: string[];
+  /** A `select` of the storefront's icon names: the catalog lists them as `options`, too many to carry along here. */
+  optionsFrom?: "icons";
   min?: number;
   max?: number;
   description?: string;
