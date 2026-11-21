@@ -3,8 +3,14 @@ import type { Component, ObjectDirective } from "vue";
 /** A checked attribute value: a `number` field gives a number, a `boolean` one a boolean. */
 export type CustomSectionValueType = string | number | boolean;
 
-/** The directive a behavior's attribute switches on; its value is the attribute's, bindings resolved. */
-export type CustomSectionDirectiveType = ObjectDirective<HTMLElement, string | undefined>;
+/**
+ * The directive a behavior's attribute switches on; its value is the attribute's, bindings resolved. It loads
+ * lazily, after its element may already be in the page, so it has the hooks from `mounted` on.
+ */
+export type CustomSectionDirectiveType = Pick<
+  ObjectDirective<HTMLElement, string | undefined>,
+  "mounted" | "beforeUpdate" | "updated" | "beforeUnmount" | "unmounted"
+>;
 
 /**
  * An attribute of a kit tag, or the value or an option of a behavior, as the agent that writes templates and the

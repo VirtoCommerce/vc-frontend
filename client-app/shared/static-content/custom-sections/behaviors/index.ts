@@ -61,6 +61,8 @@ async function importDirective(
 function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDirectiveType {
   /** The latest binding of an element mounted before its behavior loaded. */
   const waiting = new WeakMap<HTMLElement, MountArgumentsType>();
+  /** Elements that left the page before their behavior loaded: the behavior never saw them. */
+  const gone = new WeakSet<HTMLElement>();
 
   function getLoaded(): CustomSectionDirectiveType | undefined {
     return loadedBehaviors.get(behavior)?.loaded;
@@ -88,6 +90,11 @@ function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDir
       waiting.set(element, [element, binding, vnode, prevVNode]);
       void mountWhenLoaded(element);
     },
+    beforeUpdate(element, binding, vnode, prevVNode) {
+      if (!waiting.has(element)) {
+        getLoaded()?.beforeUpdate?.(element, binding, vnode, prevVNode);
+      }
+    },
     updated(element, binding, vnode, prevVNode) {
       if (waiting.has(element)) {
         waiting.set(element, [element, binding, vnode, null]);
@@ -96,8 +103,16 @@ function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDir
 
       getLoaded()?.updated?.(element, binding, vnode, prevVNode);
     },
+    beforeUnmount(element, binding, vnode, prevVNode) {
+      if (waiting.delete(element)) {
+        gone.add(element);
+        return;
+      }
+
+      getLoaded()?.beforeUnmount?.(element, binding, vnode, prevVNode);
+    },
     unmounted(element, binding, vnode, prevVNode) {
-      if (!waiting.delete(element)) {
+      if (!gone.delete(element)) {
         getLoaded()?.unmounted?.(element, binding, vnode, prevVNode);
       }
     },
