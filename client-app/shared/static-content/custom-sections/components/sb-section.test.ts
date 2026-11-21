@@ -491,6 +491,17 @@ describe("SbSection", () => {
       expect(items.map((item) => item.attributes("aria-hidden"))).toEqual([undefined, undefined, "true", "true"]);
     });
 
+    it("hides a repeated text from assistive technology too", () => {
+      const wrapper = mountSection("<section><p data-marquee>Free shipping • <b>Today</b></p></section>");
+      const copies = wrapper.findAll("[data-marquee] > [data-sb-repeat]");
+
+      expect(wrapper.find("[data-marquee]").text()).toBe("Free shipping • TodayFree shipping • Today");
+      expect(copies.map((copy) => [copy.element.tagName, copy.text(), copy.attributes("aria-hidden")])).toEqual([
+        ["SPAN", "Free shipping •", "true"],
+        ["B", "Today", "true"],
+      ]);
+    });
+
     it("leaves the text of a counter to its behavior", () => {
       const wrapper = mountSection('<section><span data-count-up="{{ settings.speed }}">placeholder</span></section>', {
         speed: 5,

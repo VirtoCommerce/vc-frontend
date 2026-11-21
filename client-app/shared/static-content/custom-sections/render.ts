@@ -64,14 +64,17 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
   return isVNode(root) ? root : null;
 }
 
-function renderNodes(
-  nodes: readonly CompiledNodeType[],
-  scope: IBindingScope,
-  props: Record<string, unknown> = {},
-): VNodeArrayChildren {
-  return nodes.flatMap((node) =>
-    "text" in node ? [createTextVNode(renderParts(node.text, scope))] : renderElement(node, scope, props),
-  );
+function renderNodes(nodes: readonly CompiledNodeType[], scope: IBindingScope, isCopy = false): VNodeArrayChildren {
+  return nodes.flatMap((node) => {
+    if (!("text" in node)) {
+      return renderElement(node, scope, isCopy ? COPY_PROPS : {});
+    }
+
+    const text = renderParts(node.text, scope);
+
+    // Only an element can be hidden from assistive technology. Blank text stays bare: as an element, it would take a gap.
+    return [isCopy && text.trim() ? h("span", COPY_PROPS, text) : createTextVNode(text)];
+  });
 }
 
 function renderElement(
@@ -190,10 +193,7 @@ function renderChildren(
   const children = renderNodes(node.children, scope);
 
   return isRepeated
-    ? [
-        h(Fragment, { key: "run" }, children),
-        h(Fragment, { key: "copy" }, renderNodes(node.children, scope, COPY_PROPS)),
-      ]
+    ? [h(Fragment, { key: "run" }, children), h(Fragment, { key: "copy" }, renderNodes(node.children, scope, true))]
     : children;
 }
 
