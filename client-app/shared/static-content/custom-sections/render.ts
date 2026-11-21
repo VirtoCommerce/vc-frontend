@@ -3,7 +3,13 @@ import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml, withNewWindowRel } from "../sections";
 import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
-import { getSectionBehaviors, getSectionTags, toFieldValue, toTagProps } from "./kit";
+import {
+  getBehaviorAttributeNames,
+  getCustomSectionBehaviors,
+  getCustomSectionTags,
+  toFieldValue,
+  toTagProps,
+} from "./kit";
 import { getSettingVariables } from "./setting-variables";
 import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
@@ -125,7 +131,7 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
     return renderKitTag(node, rendered, props);
   }
 
-  const behaviors = getSectionBehaviors();
+  const behaviors = getCustomSectionBehaviors();
   const { fields, textAttributes } = getBehaviorAttributes(behaviors);
   const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
   const values = new Map(kept.map(({ name, value }) => [name, value]));
@@ -148,7 +154,7 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
 
 /** A tag that throws on its attributes renders nothing rather than the whole section failing. */
 function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], props: Record<string, unknown>): VNode {
-  const tags = getSectionTags();
+  const tags = getCustomSectionTags();
   const tag = Object.hasOwn(tags, node.tag) ? tags[node.tag] : undefined;
 
   if (!tag) {
@@ -221,8 +227,11 @@ function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSection
     const fields = new Map<string, ICustomSectionField | undefined>();
 
     for (const [name, behavior] of Object.entries(behaviors)) {
-      fields.set(`data-${name}`, behavior.value);
-      Object.entries(behavior.options ?? {}).forEach(([option, field]) => fields.set(`data-${name}-${option}`, field));
+      const [own, ...options] = getBehaviorAttributeNames(name, behavior);
+      const optionFields = Object.values(behavior.options ?? {});
+
+      fields.set(own, behavior.value);
+      options.forEach((attribute, index) => fields.set(attribute, optionFields[index]));
     }
 
     attributes = {

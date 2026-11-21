@@ -1,8 +1,9 @@
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 import { isBindingPath, parseBindings } from "./bindings";
+import { getBehaviorAttributeNames } from "./kit/registry";
 import type { TemplatePartType } from "./bindings";
-import type { ICustomSectionBehavior, ICustomSectionTag } from "./types";
+import type { IKit } from "./kit/registry";
 
 export interface ICompiledText {
   text: TemplatePartType[];
@@ -29,12 +30,6 @@ export interface ICompiledTemplate {
   id: number;
   root: ICompiledElement;
   behaviors: Set<string>;
-}
-
-/** The kit tags and behaviors registered when the template compiles. */
-export interface IKit {
-  tags: Readonly<Record<string, ICustomSectionTag>>;
-  behaviors: Readonly<Record<string, ICustomSectionBehavior>>;
 }
 
 /** The server sanitizer's element allowlist minus form controls; `svg`, `script`, `style` and the like go with their content. */
@@ -91,7 +86,8 @@ export function compileTemplate(template: string, kit: IKit): ICompiledTemplate 
   const compiled = compile(template, kit);
 
   if (cache.size >= MAX_CACHED_TEMPLATES) {
-    cache.delete(cache.keys().next().value as string);
+    const [oldestKey] = cache.keys();
+    cache.delete(oldestKey);
   }
   cache.set(key, compiled);
 
@@ -124,10 +120,9 @@ function compile(template: string, kit: IKit): ICompiledTemplate | undefined {
 }
 
 function sanitize(template: string, kit: IKit): DocumentFragment {
-  const behaviorAttributes = Object.entries(kit.behaviors).flatMap(([name, behavior]) => [
-    `${DATA_PREFIX}${name}`,
-    ...Object.keys(behavior.options ?? {}).map((option) => `${DATA_PREFIX}${name}-${option}`),
-  ]);
+  const behaviorAttributes = Object.entries(kit.behaviors).flatMap(([name, behavior]) =>
+    getBehaviorAttributeNames(name, behavior),
+  );
   const nameAttributes = [...TEXT_ATTRIBUTES, ...CONTROL_ATTRIBUTES, ...behaviorAttributes];
 
   purifier ??= DOMPurify();

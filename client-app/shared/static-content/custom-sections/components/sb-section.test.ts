@@ -3,7 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
-import { registerSectionBehavior, registerSectionTag, unregisterSectionBehavior, unregisterSectionTag } from "../kit";
+import {
+  registerCustomSectionBehavior,
+  registerCustomSectionTag,
+  unregisterCustomSectionBehavior,
+  unregisterCustomSectionTag,
+} from "../kit";
 import SbSection from "./sb-section.vue";
 import type { ICustomSectionDefinition, IThemeSchemaField } from "@/core/theme-snapshot";
 
@@ -515,12 +520,12 @@ describe("SbSection", () => {
     });
 
     afterEach(() => {
-      unregisterSectionTag("vc-rating");
-      unregisterSectionBehavior("glow");
+      unregisterCustomSectionTag("vc-rating");
+      unregisterCustomSectionBehavior("glow");
     });
 
     it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
-      registerSectionTag("vc-rating", {
+      registerCustomSectionTag("vc-rating", {
         component: Rating,
         description: "Stars.",
         attributes: {
@@ -544,7 +549,7 @@ describe("SbSection", () => {
 
     it("switches on a behavior a module registered, with its options in the template", async () => {
       const mounted = vi.fn();
-      registerSectionBehavior("glow", {
+      registerCustomSectionBehavior("glow", {
         directive: () =>
           Promise.resolve({
             mounted: (element: HTMLElement, binding) => mounted(element.dataset.glowColor, binding.value),
@@ -572,7 +577,7 @@ describe("SbSection", () => {
 
   describe("against a hostile or changing draft", () => {
     afterEach(() => {
-      unregisterSectionTag("vc-promo-link");
+      unregisterCustomSectionTag("vc-promo-link");
     });
 
     it("does not nest a repeating behavior in another, so the copies cannot double at every level", () => {
@@ -638,7 +643,7 @@ describe("SbSection", () => {
 
     it("checks a module tag's address attributes as links, whatever type it declares", async () => {
       const PromoLink = defineComponent({ name: "PromoLinkStub", props: ["href"], setup: () => () => h("a") });
-      registerSectionTag("vc-promo-link", {
+      registerCustomSectionTag("vc-promo-link", {
         component: PromoLink,
         description: "A link.",
         attributes: { href: { type: "string" } },

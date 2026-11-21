@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import guide from "./guide.md?raw";
-import { getSectionBehaviors, getSectionTags, registerBuiltInKit } from "./kit";
+import { getCustomSectionKit, registerBuiltInKit } from "./kit";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
@@ -26,7 +26,7 @@ describe("the section authors' guide", () => {
   it.each(patterns.map((pattern, index) => [index + 1, pattern]))(
     "pattern %i compiles as written, with the kit tags and behaviors it uses",
     (_, pattern) => {
-      const compiled = compileTemplate(pattern, { tags: getSectionTags(), behaviors: getSectionBehaviors() });
+      const compiled = compileTemplate(pattern, getCustomSectionKit());
       const root = compiled?.root as ICompiledElement;
       const type = collectClasses(root)[0];
 

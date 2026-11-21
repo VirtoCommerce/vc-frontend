@@ -2,7 +2,9 @@ import { defineAsyncComponent, markRaw } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import { MAIN_COLORS } from "@/ui-kit/constants";
+import { PRODUCT_VIEWS } from "./constants";
 import { registerBuiltInKitEntries } from "./registry";
+import type { BuiltInBehaviorNameType, BuiltInTagNameType } from "./registry";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
 
 const COLOR: ICustomSectionField = { type: "select", options: [...MAIN_COLORS], description: "A palette color." };
@@ -38,11 +40,10 @@ const ICON_SIZES: ReadonlySet<string> = new Set([
   "xl",
   "xxl",
 ] satisfies VcIconSizeType[]);
-const PRODUCT_VIEWS = ["grid", "carousel"] as const;
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
 const PIXELS_REGEX = /^\d+$/;
 
-const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
+const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
   "vc-button": {
     component: markRaw(VcButton),
     description: "A button; with `to`, a link that looks like one.",
@@ -107,7 +108,7 @@ const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
   },
 };
 
-const BUILT_IN_BEHAVIORS: Record<string, ICustomSectionBehavior> = {
+const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior> = {
   inview: {
     directive: async () => (await import("../behaviors/inview")).vInview,
     description: "Sets data-visible while the element is on screen.",

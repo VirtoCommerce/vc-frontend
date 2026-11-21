@@ -1,25 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { defineComponent } from "vue";
 import { registerBuiltInKit } from "./built-in";
-import { getSectionBehaviors, getSectionTags, registerSectionTag } from "./registry";
+import {
+  BUILT_IN_BEHAVIOR_NAMES,
+  BUILT_IN_TAG_NAMES,
+  getCustomSectionBehaviors,
+  getCustomSectionTags,
+  unregisterCustomSectionTag,
+} from "./registry";
 
 describe("registerBuiltInKit", () => {
-  it("registers the storefront's kit over an earlier claim to one of its names", () => {
-    const Imposter = defineComponent({ template: "<button />" });
-    registerSectionTag("vc-button", { component: Imposter, description: "Not the storefront's.", attributes: {} });
-
+  it("registers the storefront's kit under its reserved names, which nobody can remove", () => {
     registerBuiltInKit();
+    unregisterCustomSectionTag("vc-button");
 
-    expect(Object.keys(getSectionTags())).toEqual(["vc-button", "vc-icon", "vc-badge", "vc-products"]);
-    expect(Object.keys(getSectionBehaviors())).toEqual([
-      "inview",
-      "scroll-progress",
-      "pointer",
-      "count-up",
-      "countdown",
-      "copy",
-      "marquee",
-    ]);
-    expect(getSectionTags()["vc-button"]?.component).not.toBe(Imposter);
+    expect(Object.keys(getCustomSectionTags())).toEqual([...BUILT_IN_TAG_NAMES]);
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual([...BUILT_IN_BEHAVIOR_NAMES]);
   });
 });

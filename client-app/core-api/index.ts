@@ -96,10 +96,10 @@ export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants
 export type { MenuCountContributionType, ProductActionPropsType } from "@/shared/common/types/extensionRegistryMap";
 // The custom section kit: tags and behaviors a Site Builder section template may use.
 export {
-  registerSectionBehavior,
-  registerSectionTag,
-  unregisterSectionBehavior,
-  unregisterSectionTag,
+  registerCustomSectionBehavior,
+  registerCustomSectionTag,
+  unregisterCustomSectionBehavior,
+  unregisterCustomSectionTag,
 } from "@/shared/static-content/custom-sections/kit/registry";
 export type {
   CustomSectionDirectiveType,

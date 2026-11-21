@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import {
-  registerSectionBehavior,
-  unregisterSectionBehavior,
+  registerCustomSectionBehavior,
+  unregisterCustomSectionBehavior,
 } from "@/shared/static-content/custom-sections/kit/registry";
 import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sections-catalog";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -145,13 +145,13 @@ describe("watchCustomSectionCatalog", () => {
       tokens: expect.objectContaining({ "--vc-font-size-2xl": expect.objectContaining({ fallback: "1.5rem" }) }),
     });
 
-    registerSectionBehavior("confetti", {
+    registerCustomSectionBehavior("confetti", {
       directive: () => Promise.resolve({}),
       description: "Throws confetti.",
     });
     await nextTick();
 
     expect(apply.mock.lastCall?.[1].behaviors.confetti).toEqual({ description: "Throws confetti." });
-    unregisterSectionBehavior("confetti");
+    unregisterCustomSectionBehavior("confetti");
   });
 });
