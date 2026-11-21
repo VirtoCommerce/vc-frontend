@@ -134,12 +134,14 @@ register("customSectionBehavior", "confetti", {
 ```
 
 - A tag is `vc-` and lowercase words; a behavior's name is what follows `data-`, and its options are
-  `data-{name}-{option}`. The registry refuses other names, and the first registration of a name wins.
+  `data-{name}-{option}`. The registry refuses other names, and the first registration of a name wins. The
+  storefront's own tags and behaviors (`vc-button`, `count-up`…) are reserved: nobody else registers or removes them.
 - The template sanitizer allows exactly what is registered, and the renderer checks each tag attribute against its
   field (`string`, `number`, `boolean`, `select`, `link`, `date`) before it reaches the component; without
   `mapProps`, each attribute goes as the prop of its camelCase name.
 - The designer's catalog lists the tags and behaviors under `kit`, without components or loaders, so the agent
-  that writes templates and the server that checks them learn a new one from the next `loaded`.
+  that writes templates and the server that checks them learn a new one from the next `loaded`. `kit` also carries
+  the design facts (`design`) and the section authors' guide (`guide`).
 - Keep the component and the directive lazy: a store pays for them only on a page that shows them.
 
 > **Recommendation**
