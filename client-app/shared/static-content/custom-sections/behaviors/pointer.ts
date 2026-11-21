@@ -1,9 +1,11 @@
-import { useEventListener } from "@vueuse/core";
+import { createSharedComposable, useEventListener, useMediaQuery } from "@vueuse/core";
 import { clamp, round } from "lodash-es";
-import { defineBehavior, isRightToLeft, useTouchScreen } from "./define-behavior";
+import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const CENTER = 0.5;
 const PRECISION = 3;
+
+const useTouchScreen = createSharedComposable(() => useMediaQuery("(hover: none)"));
 
 /**
  * `--pointer-x` and `--pointer-y` (0–1 inside the element), `--pointer-inline` (0 at the inline start, so it flips

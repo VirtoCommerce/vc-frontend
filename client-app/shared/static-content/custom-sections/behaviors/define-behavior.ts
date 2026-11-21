@@ -1,4 +1,4 @@
-import { createSharedComposable, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
+import { createSharedComposable, usePreferredReducedMotion } from "@vueuse/core";
 import { effectScope, shallowRef } from "vue";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
@@ -12,9 +12,6 @@ export interface IBehaviorContext {
 
 /** One media query listener for the page, however many elements behave. */
 const useReducedMotion = createSharedComposable(() => usePreferredReducedMotion());
-
-/** As the reduced motion query: shared by every element. */
-export const useTouchScreen = createSharedComposable(() => useMediaQuery("(hover: none)"));
 
 interface IBehaviorState {
   scope: EffectScope;
