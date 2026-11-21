@@ -51,7 +51,7 @@ const { products, fetchProducts } = useProducts();
 const count = computed(() => Math.round(props.take));
 const columnCount = computed(() => Math.round(props.columns));
 
-/** Steps like products-carousel, measured on the container, never above `columns`. */
+/** Measured on the container, never above `columns`. */
 const carouselOptions = computed<ICarouselOptions>(() => {
   const steps: [string, number][] = [
     [BREAKPOINTS.xs, 2],
@@ -77,7 +77,7 @@ watchEffect(async () => {
 </script>
 
 <style lang="scss">
-// Bare, unlike the built-in product sections: the section around it sets the width, the spacing and the heading.
+// The section around it sets the width, the spacing and the heading.
 .sb-products {
   &__grid {
     // The narrowest card before the row drops a column; `--columns` is the most the row holds.

@@ -6,8 +6,7 @@ interface IAppliedStyle {
   element: HTMLStyleElement;
   /** Mounted sections of the type. */
   users: number;
-  /** What the text was written from: the CSS and the asset library it may take images from. */
-  css?: string;
+  sourceKey?: string;
 }
 
 export const CUSTOM_SECTION_STYLE_ATTRIBUTE = "data-sb-custom-section";
@@ -63,10 +62,10 @@ export function useCustomSectionStyle(
     const applied = appliedStyles.get(usedType);
     const source = toValue(css) ?? "";
     const base = toValue(assetsBaseUrl);
-    const key = `${base ?? ""}\n${source}`;
+    const sourceKey = `${base ?? ""}\n${source}`;
 
-    if (applied && applied.css !== key) {
-      applied.css = key;
+    if (applied && applied.sourceKey !== sourceKey) {
+      applied.sourceKey = sourceKey;
       applied.element.textContent = toScopedCss(usedType, source, base);
     }
   }

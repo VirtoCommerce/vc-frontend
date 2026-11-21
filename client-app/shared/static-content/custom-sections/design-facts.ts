@@ -1,4 +1,4 @@
-/** Shared with the Vite config, which builds the facts under Node, so this file stays import-free. */
+// Shared with the Vite config, which builds the facts under Node, so this file stays import-free.
 
 export interface IDesignToken {
   /** The value when the active design sets none; a template writes `var(<token>, <fallback>)`. */

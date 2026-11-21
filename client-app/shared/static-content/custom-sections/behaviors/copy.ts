@@ -9,7 +9,7 @@ const COPIED_MESSAGE_KEY = "common.messages.copied_to_clipboard";
 const NOTIFICATION_DURATION = 4000;
 const NOTIFICATION_GROUP = "custom-section-copy";
 
-/** A click, or Enter or Space, copies the text, sets `data-copied` for 2 seconds and says so in a notification. */
+/** A click, or Enter or Space, copies the text, sets `data-copied` for `COPIED_DURATION` and says so in a notification. */
 export const vCopy = defineBehavior((element, { value }) => {
   const { copy, copied } = useClipboard({ copiedDuring: COPIED_DURATION, legacy: true });
   const isLink = element instanceof HTMLAnchorElement && element.hasAttribute("href");
