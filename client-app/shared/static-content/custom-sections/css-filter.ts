@@ -1,21 +1,17 @@
-import { toAssetUrl } from "./urls";
+import { decodeCssEscapes, isAllowedValue } from "./css-values";
 
 export interface IFilteredCss {
-  /** Top level: a keyframes name is not scoped, so it starts with the type. */
+  /** Top level: a keyframes name is not scoped, so it starts with `{type}__`. */
   keyframes: string;
   rules: string;
 }
 
 type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
 
-const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule"];
+const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", "CSSStartingStyleRule"];
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
 const POSITION_VALUES = new Set(["static", "relative", "absolute", "sticky", "inherit", "initial", "unset", "revert"]);
 const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\w-])/i;
-/** Functions that load what they name without `url()`, and IE's script in CSS. */
-const REFUSED_FUNCTION_REGEX = /(?:^|[^\w-])(?:expression|image-set|-webkit-image-set|image|cross-fade|element|src)\(/i;
-const URL_REGEX = /url\(([^)]*)\)/gi;
-const QUOTED_REGEX = /^(["'])(.*)\1$/s;
 
 /**
  * Keeps the at-rules and declarations the custom section contract allows, as the browser parsed them.
@@ -35,7 +31,7 @@ export function filterSectionCss(type: string, css: string): IFilteredCss | unde
     if (isRuleOf(rule, "CSSKeyframesRule")) {
       const keyframesRule = rule as CSSKeyframesRule;
 
-      if (keyframesRule.name === type || keyframesRule.name.startsWith(`${type}-`)) {
+      if (keyframesRule.name.startsWith(`${type}__`)) {
         [...keyframesRule.cssRules].forEach((keyframe) => filterDeclarations((keyframe as CSSKeyframeRule).style));
         keyframes.push(keyframesRule.cssText);
       }
@@ -109,20 +105,16 @@ function filterDeclarations(style: CSSStyleDeclaration): void {
 }
 
 function isAllowedDeclaration(property: string, value: string): boolean {
-  if (REFUSED_PROPERTIES.has(property) || REFUSED_FUNCTION_REGEX.test(value)) {
+  if (REFUSED_PROPERTIES.has(property)) {
     return false;
   }
 
-  // No `fixed`, also not through a variable.
-  if (property === "position" && !POSITION_VALUES.has(value.trim().toLowerCase())) {
+  // No `fixed`, also not through `var()`, `env()` or `if()`.
+  if (property === "position" && !POSITION_VALUES.has(decodeCssEscapes(value).trim().toLowerCase())) {
     return false;
   }
 
-  // A quoted URL holding `)` is cut short here, so it fails the check: refused rather than misread.
-  return [...value.matchAll(URL_REGEX)].every((match) => {
-    const argument = match[1].trim();
-    return !!toAssetUrl(QUOTED_REGEX.exec(argument)?.[2] ?? argument);
-  });
+  return isAllowedValue(value);
 }
 
 /** By the browser's own classes, which an older browser may not have. */

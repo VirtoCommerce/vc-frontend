@@ -1,15 +1,17 @@
 /** Not `//`, which leaves the site, nor `/\`, which browsers read as `//`. */
 const SITE_PATH_REGEX = /^\/(?![/\\])/;
 const LINK_SCHEME_REGEX = /^(?:https|mailto|tel):/i;
+const ANCHOR_REGEX = /^#[A-Za-z][\w-]*$/;
 const ASSET_URL_REGEX = /^https?:\/\//i;
 /** Browsers drop these from a URL before reading it, so `/\t/host` would leave the site. */
 const URL_NOISE_REGEX = /[\t\n\r\\]/;
 
-/** A link of a custom section: a path on this site, or an `https:`, `mailto:` or `tel:` URL. */
+/** A link of a custom section: a path on this site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. */
 export function toSectionLink(value: string): string | undefined {
   const url = value.trim();
+  const isAllowed = SITE_PATH_REGEX.test(url) || ANCHOR_REGEX.test(url) || LINK_SCHEME_REGEX.test(url);
 
-  return !URL_NOISE_REGEX.test(url) && (SITE_PATH_REGEX.test(url) || LINK_SCHEME_REGEX.test(url)) ? url : undefined;
+  return !URL_NOISE_REGEX.test(url) && isAllowed ? url : undefined;
 }
 
 /** An image of a custom section: a path on this site or an `http(s):` URL, as the asset library gives them. */

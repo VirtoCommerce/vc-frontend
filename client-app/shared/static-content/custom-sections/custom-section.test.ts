@@ -293,6 +293,9 @@ describe("CustomSection", () => {
       { href: "//evil.example", isKept: false },
       { href: "/\\evil.example", isKept: false },
       { href: "data:text/html,x", isKept: false },
+      { href: "#pricing", isKept: true },
+      { href: "#1st", isKept: false },
+      { href: "#a b", isKept: false },
     ])("keeps the href $href: $isKept", ({ href, isKept }) => {
       const wrapper = mountSection('<section><a href="{{ settings.link }}">Go</a></section>', { link: href });
 
@@ -327,6 +330,37 @@ describe("CustomSection", () => {
       const wrapper = mountSection('<section><img src="{{ settings.image }}" alt=""></section>', { image: src });
 
       expect(wrapper.find("img").attributes("src")).toBe(isKept ? src : undefined);
+    });
+
+    it("keeps a video's playback attributes and poster, a source's type and media, and an open details", () => {
+      const wrapper = mountSection(
+        '<section><video autoplay muted loop playsinline controls preload="none" poster="/cms-content/assets/p.jpg">' +
+          '<source src="/cms-content/assets/v.mp4" type="video/mp4" media="(min-width: 600px)"></video>' +
+          "<details open><summary>More</summary>Text</details></section>",
+      );
+      const video = wrapper.find("video").element as HTMLVideoElement;
+
+      expect([video.autoplay, video.muted, video.loop, video.controls]).toEqual([true, true, true, true]);
+      expect(video.getAttribute("playsinline")).toBe("");
+      expect(video.getAttribute("preload")).toBe("none");
+      expect(video.getAttribute("poster")).toBe("/cms-content/assets/p.jpg");
+      expect(wrapper.find("source").attributes()).toEqual({
+        src: "/cms-content/assets/v.mp4",
+        type: "video/mp4",
+        media: "(min-width: 600px)",
+      });
+      expect((wrapper.find("details").element as HTMLDetailsElement).open).toBe(true);
+    });
+
+    it("puts a poster through the image rule and a cite through the link rule", () => {
+      const wrapper = mountSection(
+        '<section><video poster="javascript:x"></video><blockquote cite="https://example.com/q">A</blockquote>' +
+          '<q cite="javascript:alert(1)">B</q></section>',
+      );
+
+      expect(wrapper.find("video").attributes("poster")).toBeUndefined();
+      expect(wrapper.find("blockquote").attributes("cite")).toBe("https://example.com/q");
+      expect(wrapper.find("q").attributes("cite")).toBeUndefined();
     });
 
     it("leaves out a srcset with any candidate that breaks the rule", () => {

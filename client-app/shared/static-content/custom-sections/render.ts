@@ -193,8 +193,10 @@ function toSafeAttributeValue(name: string, value: string, type: string): string
     case "rel":
       return OPENER_REGEX.test(value) ? undefined : value;
     case "href":
+    case "cite":
       return toSectionLink(value);
     case "src":
+    case "poster":
       return toAssetUrl(value);
     case "srcset":
       return toAssetSrcset(value);

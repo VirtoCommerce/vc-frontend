@@ -49,11 +49,11 @@ const ELEMENTS = (
   "tfoot th thead time tr track tt u ul var video wbr"
 ).split(" ");
 
-const TEXT_ATTRIBUTES =
-  "class role alt title lang dir hidden target rel sizes loading decoding width height datetime colspan rowspan scope".split(
-    " ",
-  );
-const URL_ATTRIBUTES = ["href", "src", "srcset"];
+const TEXT_ATTRIBUTES = (
+  "class role alt title lang dir hidden target rel sizes loading decoding width height datetime colspan rowspan " +
+  "scope autoplay muted loop playsinline controls preload type media open"
+).split(" ");
+const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
 const CONTROL_ATTRIBUTES = ["data-each", "data-if", "data-html"];
 const DATA_PREFIX = "data-";
 
