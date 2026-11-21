@@ -2,6 +2,7 @@ import { enableAutoUnmount, flushPromises, mount, RouterLinkStub } from "@vue/te
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { Logger } from "@/core/utilities";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import {
   registerCustomSectionBehavior,
@@ -253,6 +254,29 @@ describe("SbSection", () => {
 
       expect(wrapper.findAll("b")).toHaveLength(1);
       expect(wrapper.findAll("li")[0].text()).toBe("★One");
+    });
+  });
+
+  describe("the render budget", () => {
+    const LIST =
+      '<section><ul><li data-each="settings.cards"{behavior}><span>{{ item.title }}</span></li></ul></section>';
+
+    function toCards(count: number) {
+      return Array.from({ length: count }, (_, index) => ({ id: String(index), title: "Card" }));
+    }
+
+    it.each([
+      { rows: 2499, behavior: "", isRendered: true, warnings: 0 },
+      { rows: 2500, behavior: "", isRendered: false, warnings: 1 },
+      { rows: 1666, behavior: " data-inview", isRendered: true, warnings: 0 },
+      { rows: 1667, behavior: " data-inview", isRendered: false, warnings: 1 },
+    ])("renders $rows rows of two elements$behavior only within the budget", (row) => {
+      const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+      const wrapper = mountSection(LIST.replace("{behavior}", row.behavior), { cards: toCards(row.rows) });
+
+      expect(wrapper.find("section").exists()).toBe(row.isRendered);
+      expect(warn.mock.calls.filter(([message]) => String(message).includes(TYPE))).toHaveLength(row.warnings);
+      warn.mockRestore();
     });
   });
 

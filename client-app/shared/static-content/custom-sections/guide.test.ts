@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
+import { RENDER_BUDGET } from "./render";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
@@ -27,6 +28,10 @@ describe("the section authors' guide", () => {
   registerBuiltInKit();
   const patterns = [...guide.matchAll(PATTERN_REGEX)].map((match) => match[1]);
   const styles = [...guide.matchAll(CSS_REGEX)].map((match) => match[1]);
+
+  it("tells the render budget", () => {
+    expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
+  });
 
   it("has the three patterns", () => {
     expect(patterns).toHaveLength(3);
