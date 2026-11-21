@@ -2,7 +2,9 @@
 
 A custom section is an HTML template, its CSS and its settings. The storefront renders it from data: no script runs.
 Anything that needs logic comes from the kit: a tag (`kit.tags`) or a behavior (`kit.behaviors`). What the
-storefront does not allow, it leaves out.
+storefront does not allow, it leaves out. The storefront holds the safety rules (code, links, images, the section's
+box, its size); the server, when a section is saved or published, also refuses one that breaks the accessibility
+rules below.
 
 - One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
   it in a box of its own: nothing the section draws leaves that box.
