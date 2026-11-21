@@ -6,6 +6,7 @@ interface IAppliedStyle {
   element: HTMLStyleElement;
   /** Mounted sections of the type. */
   users: number;
+  /** What the text was written from: the CSS and the asset library it may take images from. */
   css?: string;
 }
 
@@ -17,7 +18,11 @@ const appliedStyles = new Map<string, IAppliedStyle>();
  * Puts a type's CSS in the page once, while any section of the type is mounted, so it reaches only them:
  * `@layer sections { @scope ([data-sb-type="{type}"]) { … } }`.
  */
-export function useCustomSectionStyle(type: MaybeRefOrGetter<string>, css: MaybeRefOrGetter<string | undefined>): void {
+export function useCustomSectionStyle(
+  type: MaybeRefOrGetter<string>,
+  css: MaybeRefOrGetter<string | undefined>,
+  assetsBaseUrl?: MaybeRefOrGetter<string | undefined>,
+): void {
   let usedType: string | undefined;
 
   function acquire(nextType: string): void {
@@ -57,10 +62,12 @@ export function useCustomSectionStyle(type: MaybeRefOrGetter<string>, css: Maybe
 
     const applied = appliedStyles.get(usedType);
     const source = toValue(css) ?? "";
+    const base = toValue(assetsBaseUrl);
+    const key = `${base ?? ""}\n${source}`;
 
-    if (applied && applied.css !== source) {
-      applied.css = source;
-      applied.element.textContent = toScopedCss(usedType, source);
+    if (applied && applied.css !== key) {
+      applied.css = key;
+      applied.element.textContent = toScopedCss(usedType, source, base);
     }
   }
 
@@ -69,7 +76,7 @@ export function useCustomSectionStyle(type: MaybeRefOrGetter<string>, css: Maybe
     write();
   });
 
-  watch([() => toValue(type), () => toValue(css)], ([nextType]) => {
+  watch([() => toValue(type), () => toValue(css), () => toValue(assetsBaseUrl)], ([nextType]) => {
     if (usedType === undefined) {
       return;
     }
@@ -85,8 +92,8 @@ export function useCustomSectionStyle(type: MaybeRefOrGetter<string>, css: Maybe
   onBeforeUnmount(release);
 }
 
-function toScopedCss(type: string, css: string): string {
-  const filtered = filterSectionCss(type, css);
+function toScopedCss(type: string, css: string, assetsBaseUrl: string | undefined): string {
+  const filtered = filterSectionCss(type, css, assetsBaseUrl);
 
   if (!filtered || (!filtered.rules && !filtered.keyframes)) {
     return "";

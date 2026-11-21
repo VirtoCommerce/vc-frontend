@@ -94,8 +94,10 @@ export interface IThemeSnapshot {
   footer?: IThemeSectionGroup;
   brand?: IThemeBrand;
   palette?: IThemePalette;
-  /** By type. */
+  /** Keyed by section type. */
   customSections?: Record<string, ICustomSectionDefinition>;
+  /** The asset library's public base URL: a custom section's images come only from under it. */
+  assetsBaseUrl?: string;
   menus?: string[];
 }
 
@@ -122,6 +124,7 @@ export interface IThemeDraft {
   palette?: IThemePalette | null;
   /** Every custom section type of the theme: replaces the published ones. */
   customSections?: Record<string, ICustomSectionDefinition>;
+  assetsBaseUrl?: string;
 }
 
 export interface IThemeSlugPage {
@@ -161,6 +164,8 @@ export interface IThemeView {
   brand: IThemeBrand;
   palette?: IThemePalette;
   customSections: Record<string, ICustomSectionDefinition>;
+  /** As the draft or the snapshot names it; absent from a server that does not yet. */
+  assetsBaseUrl?: string;
   menus: IThemeMenu[];
   isDraft: boolean;
 }

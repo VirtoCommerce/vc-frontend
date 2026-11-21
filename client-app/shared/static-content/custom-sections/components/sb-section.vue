@@ -54,6 +54,7 @@ watch(
 useCustomSectionStyle(
   () => props.model.type,
   () => definition.value?.css,
+  () => theme.value?.assetsBaseUrl,
 );
 
 /** Called by the template on every render: the VNodes depend on the settings and the template. */
@@ -66,6 +67,7 @@ function renderSection(): VNode | null {
         type: props.model.type,
         settings: props.model,
         fields: Array.isArray(fields) ? fields : [],
+        assetsBaseUrl: theme.value?.assetsBaseUrl,
       })
     : null;
 }

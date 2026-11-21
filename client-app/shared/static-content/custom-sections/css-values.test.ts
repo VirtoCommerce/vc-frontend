@@ -30,6 +30,15 @@ describe("isAllowedValue", () => {
     expect(isAllowedValue(value)).toBe(isAllowed);
   });
 
+  it("takes only the asset library's images, and inline ones, once the theme names the library", () => {
+    const base = "https://cdn.example.com/assets/";
+
+    expect(isAllowedValue(`url("${base}a.png")`, base)).toBe(true);
+    expect(isAllowedValue('url("data:image/png;base64,AAAA")', base)).toBe(true);
+    expect(isAllowedValue('url("https://example.com/a.png")', base)).toBe(false);
+    expect(isAllowedValue('image-set("/a.png" 1x)', base)).toBe(false);
+  });
+
   it("reads a long word in one pass, not one per letter", () => {
     const startedAt = performance.now();
 

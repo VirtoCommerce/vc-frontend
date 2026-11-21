@@ -41,13 +41,13 @@ export function findFunctionCalls(value: string): IFunctionCall[] {
 }
 
 /** An image the section may show: its own site's or the asset library's, or an inline `data:image/`. */
-export function isAllowedImageUrl(url: string): boolean {
+export function isAllowedImageUrl(url: string, assetsBaseUrl?: string): boolean {
   const trimmed = url.trim();
-  return !!toAssetUrl(trimmed) || DATA_IMAGE_REGEX.test(trimmed);
+  return !!toAssetUrl(trimmed, assetsBaseUrl) || DATA_IMAGE_REGEX.test(trimmed);
 }
 
 /** Whether a declaration's value loads only allowed images and runs nothing. */
-export function isAllowedValue(value: string): boolean {
+export function isAllowedValue(value: string, assetsBaseUrl?: string): boolean {
   return findFunctionCalls(decodeCssEscapes(value)).every(({ name, argument }) => {
     if (REFUSED_FUNCTIONS.has(name)) {
       return false;
@@ -63,8 +63,10 @@ export function isAllowedValue(value: string): boolean {
 
     // `url()` holds one address; the others name theirs as strings, and their nested `url()` is a call of its own.
     return name === "url"
-      ? isAllowedImageUrl(QUOTED_REGEX.exec(argument.trim())?.[2] ?? argument)
-      : [...argument.matchAll(STRING_REGEX)].every((match) => isAllowedImageUrl(match[1] ?? match[2] ?? ""));
+      ? isAllowedImageUrl(QUOTED_REGEX.exec(argument.trim())?.[2] ?? argument, assetsBaseUrl)
+      : [...argument.matchAll(STRING_REGEX)].every((match) =>
+          isAllowedImageUrl(match[1] ?? match[2] ?? "", assetsBaseUrl),
+        );
   });
 }
 

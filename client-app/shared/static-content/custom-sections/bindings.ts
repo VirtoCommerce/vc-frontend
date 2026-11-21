@@ -15,6 +15,8 @@ export interface IRowScope {
 export interface IBindingScope {
   /** The section type, whose own classes a template may use. */
   type: string;
+  /** Where the asset library's images are, when the theme names it. */
+  assetsBaseUrl?: string;
   settings: Record<string, unknown>;
   fields: ReadonlyMap<string, IThemeSchemaField>;
   row?: IRowScope;

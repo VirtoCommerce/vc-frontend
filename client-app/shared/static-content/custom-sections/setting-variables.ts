@@ -10,23 +10,29 @@ const COLOR_TOKEN_PREFIX = "color_";
 export function getSettingVariables(
   fields: readonly IThemeSchemaField[],
   settings: Record<string, unknown>,
+  assetsBaseUrl?: string,
 ): Record<string, string> {
   return Object.fromEntries(
     fields.flatMap((field) => {
       const id = field.id;
-      const value = id && FIELD_ID_REGEX.test(id) ? toVariableValue(field.type, settings[id]) : undefined;
+      const value =
+        id && FIELD_ID_REGEX.test(id) ? toVariableValue(field.type, settings[id], assetsBaseUrl) : undefined;
 
       return id && value !== undefined ? [[`--setting-${id.replaceAll("_", "-")}`, value]] : [];
     }),
   );
 }
 
-function toVariableValue(type: string | undefined, value: unknown): string | undefined {
+function toVariableValue(
+  type: string | undefined,
+  value: unknown,
+  assetsBaseUrl: string | undefined,
+): string | undefined {
   switch (type) {
     case "color-token":
       return typeof value === "string" && TOKEN_REGEX.test(value) ? `var(${toColorVariableName(value)})` : undefined;
     case "images": {
-      const url = typeof value === "string" ? toAssetUrl(value) : undefined;
+      const url = typeof value === "string" ? toAssetUrl(value, assetsBaseUrl) : undefined;
       return url ? `url("${url.replaceAll('"', "%22")}")` : undefined;
     }
     case "number":

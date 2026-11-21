@@ -114,6 +114,18 @@ describe("useThemeSnapshot", () => {
       expect(theme.value?.customSections).toEqual({});
     });
 
+    it("names the asset library as the draft does, else as the snapshot does", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: "https://cdn/published" } });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+
+      setDraft({ assetsBaseUrl: "https://cdn/draft" });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/draft");
+
+      setDraft({ brand: {} });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+    });
+
     it("is empty for a snapshot without custom sections", async () => {
       const { theme, setPublished } = await loadThemeSnapshot();
       setPublished(THEME);

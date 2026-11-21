@@ -53,8 +53,10 @@ function mountSection(
   template: string,
   settings: Record<string, unknown> = {},
   definition?: Partial<ICustomSectionDefinition>,
+  assetsBaseUrl?: string,
 ) {
   useThemeSnapshot().setDraft({
+    assetsBaseUrl,
     customSections: {
       [TYPE]: { format: 1, name: "Test", schema: { settings: FIELDS }, css: "", template, ...definition },
     },
@@ -349,6 +351,19 @@ describe("SbSection", () => {
       expect(wrapper.find("video").attributes("poster")).toBeUndefined();
       expect(wrapper.find("blockquote").attributes("cite")).toBe("https://example.com/q");
       expect(wrapper.find("q").attributes("cite")).toBeUndefined();
+    });
+
+    it("takes images only from the asset library once the theme names it", () => {
+      const wrapper = mountSection(
+        '<section><img src="https://cdn.example.com/assets/a.png" alt=""><img src="https://example.com/b.png" alt=""></section>',
+        {},
+        undefined,
+        "https://cdn.example.com/assets",
+      );
+      const [library, other] = wrapper.findAll("img");
+
+      expect(library.attributes("src")).toBe("https://cdn.example.com/assets/a.png");
+      expect(other.attributes("src")).toBeUndefined();
     });
 
     it("leaves out a srcset with any candidate that breaks the rule", () => {

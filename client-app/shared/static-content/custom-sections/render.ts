@@ -17,6 +17,8 @@ export interface IRenderOptions {
   /** The placed section: its settings by id. */
   settings: Record<string, unknown>;
   fields: readonly IThemeSchemaField[];
+  /** Images come only from under it, when the theme names it. */
+  assetsBaseUrl?: string;
 }
 
 interface IRenderedAttribute {
@@ -40,11 +42,16 @@ const COPY_PROPS = { "aria-hidden": "true", inert: "", [REPEATED_COPY_ATTRIBUTE]
 const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
-  const scope: IBindingScope = { type: options.type, settings: options.settings, fields: toFieldMap(options.fields) };
+  const scope: IBindingScope = {
+    type: options.type,
+    assetsBaseUrl: options.assetsBaseUrl,
+    settings: options.settings,
+    fields: toFieldMap(options.fields),
+  };
   const rootProps = {
     key: template.id,
     "data-sb-type": options.type,
-    style: getSettingVariables(options.fields, options.settings),
+    style: getSettingVariables(options.fields, options.settings, options.assetsBaseUrl),
   };
   const [root] = renderElement(template.root, scope, rootProps);
 
@@ -236,7 +243,7 @@ function renderAttributes(
   const attributes: Record<string, string> = {};
 
   for (const { name, value } of rendered) {
-    const safeValue = toSafeAttributeValue(name, value, scope.type);
+    const safeValue = toSafeAttributeValue(name, value, scope);
 
     if (safeValue !== undefined) {
       attributes[name] = safeValue;
@@ -260,10 +267,10 @@ function renderAttributes(
   return attributes;
 }
 
-function toSafeAttributeValue(name: string, value: string, type: string): string | undefined {
+function toSafeAttributeValue(name: string, value: string, scope: IBindingScope): string | undefined {
   switch (name) {
     case "class":
-      return toOwnClasses(value, type);
+      return toOwnClasses(value, scope.type);
     case "target":
       return LINK_TARGETS.has(value.trim()) ? value.trim() : undefined;
     case "rel":
@@ -273,9 +280,9 @@ function toSafeAttributeValue(name: string, value: string, type: string): string
       return toSectionLink(value);
     case "src":
     case "poster":
-      return toAssetUrl(value);
+      return toAssetUrl(value, scope.assetsBaseUrl);
     case "srcset":
-      return toAssetSrcset(value);
+      return toAssetSrcset(value, scope.assetsBaseUrl);
     default:
       return value;
   }

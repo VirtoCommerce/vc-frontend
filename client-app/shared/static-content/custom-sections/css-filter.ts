@@ -18,7 +18,7 @@ const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\
  * Keeps the at-rules and declarations the custom section contract allows, as the browser parsed them.
  * `undefined` where the browser cannot parse a stylesheet on its own: the section then has no CSS.
  */
-export function filterSectionCss(type: string, css: string): IFilteredCss | undefined {
+export function filterSectionCss(type: string, css: string, assetsBaseUrl?: string): IFilteredCss | undefined {
   const sheet = parseStyleSheet(css);
 
   if (!sheet) {
@@ -31,10 +31,10 @@ export function filterSectionCss(type: string, css: string): IFilteredCss | unde
   for (const rule of sheet.cssRules) {
     if (isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule")) {
       if (rule.name.startsWith(`${type}__`)) {
-        [...rule.cssRules].filter(hasStyle).forEach((keyframe) => filterDeclarations(keyframe.style));
+        [...rule.cssRules].filter(hasStyle).forEach((keyframe) => filterDeclarations(keyframe.style, assetsBaseUrl));
         keyframes.push(rule.cssText);
       }
-    } else if (keepRule(rule)) {
+    } else if (keepRule(rule, assetsBaseUrl)) {
       rules.push(rule.cssText);
     }
   }
@@ -56,24 +56,24 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
   }
 }
 
-function keepRule(rule: CSSRule): boolean {
+function keepRule(rule: CSSRule, assetsBaseUrl: string | undefined): boolean {
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
     if (REFUSED_SELECTOR_REGEX.test(rule.selectorText)) {
       return false;
     }
 
-    filterDeclarations(rule.style);
-    filterRules(rule);
+    filterDeclarations(rule.style, assetsBaseUrl);
+    filterRules(rule, assetsBaseUrl);
     return true;
   }
 
   if (isRuleOf(rule, "CSSNestedDeclarations") && hasStyle(rule)) {
-    filterDeclarations(rule.style);
+    filterDeclarations(rule.style, assetsBaseUrl);
     return true;
   }
 
   if (isConditionRule(rule)) {
-    filterRules(rule);
+    filterRules(rule, assetsBaseUrl);
     return true;
   }
 
@@ -81,21 +81,21 @@ function keepRule(rule: CSSRule): boolean {
 }
 
 /** Nested rules too: a style rule holds them with CSS nesting. */
-function filterRules(owner: Partial<RuleOwnerType>): void {
+function filterRules(owner: Partial<RuleOwnerType>, assetsBaseUrl: string | undefined): void {
   if (!owner.cssRules || typeof owner.deleteRule !== "function") {
     return;
   }
 
   for (let index = owner.cssRules.length - 1; index >= 0; index--) {
-    if (!keepRule(owner.cssRules[index])) {
+    if (!keepRule(owner.cssRules[index], assetsBaseUrl)) {
       owner.deleteRule(index);
     }
   }
 }
 
-function filterDeclarations(style: CSSStyleDeclaration): void {
+function filterDeclarations(style: CSSStyleDeclaration, assetsBaseUrl: string | undefined): void {
   for (const property of Array.from(style)) {
-    if (!isAllowedDeclaration(property.toLowerCase(), style.getPropertyValue(property))) {
+    if (!isAllowedDeclaration(property.toLowerCase(), style.getPropertyValue(property), assetsBaseUrl)) {
       style.removeProperty(property);
     }
   }
@@ -104,13 +104,13 @@ function filterDeclarations(style: CSSStyleDeclaration): void {
   for (const shorthand of IMAGE_SHORTHANDS) {
     const value = style.getPropertyValue(shorthand);
 
-    if (value && !isAllowedValue(value)) {
+    if (value && !isAllowedValue(value, assetsBaseUrl)) {
       style.removeProperty(shorthand);
     }
   }
 }
 
-function isAllowedDeclaration(property: string, value: string): boolean {
+function isAllowedDeclaration(property: string, value: string, assetsBaseUrl: string | undefined): boolean {
   if (REFUSED_PROPERTIES.has(property)) {
     return false;
   }
@@ -120,7 +120,7 @@ function isAllowedDeclaration(property: string, value: string): boolean {
     return false;
   }
 
-  return isAllowedValue(value);
+  return isAllowedValue(value, assetsBaseUrl);
 }
 
 /** By the browser's own classes, which an older browser may not have. */

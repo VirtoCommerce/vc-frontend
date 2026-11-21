@@ -31,6 +31,7 @@ function _useThemeSnapshot() {
       brand: parts?.brand ?? snapshot?.brand ?? {},
       palette: parts?.palette === undefined ? snapshot?.palette : (parts.palette ?? undefined),
       customSections: parts?.customSections ?? snapshot?.customSections ?? {},
+      assetsBaseUrl: parts?.assetsBaseUrl ?? snapshot?.assetsBaseUrl,
       menus: published.value?.menus ?? [],
       isDraft: !!parts,
     };
