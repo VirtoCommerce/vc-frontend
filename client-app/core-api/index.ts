@@ -94,6 +94,14 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 // What the host passes to a `productActions` entry, and the count a `headerMenu` or `mobileMenu` entry contributes.
 export type { MenuCountContributionType, ProductActionPropsType } from "@/shared/common/types/extensionRegistryMap";
+// The `customSectionTag` and `customSectionBehavior` entries: what a custom section template may use.
+export type {
+  CustomSectionDirectiveType,
+  CustomSectionValueType,
+  ICustomSectionBehavior,
+  ICustomSectionField,
+  ICustomSectionTag,
+} from "@/shared/static-content/custom-sections/types";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
