@@ -125,7 +125,13 @@ describe("preview protocol 2", () => {
 
   it("carries the custom section kit, in the hash too", () => {
     const design = { breakpoints: {}, containerMaxWidth: "1280px", tokens: {}, containerName: "sb-section" };
-    const kit = { tags: { "vc-rating": { description: "Stars.", attributes: {} } }, behaviors: {}, design, guide: "" };
+    const kit = {
+      tags: { "vc-rating": { description: "Stars.", attributes: {} } },
+      behaviors: {},
+      design,
+      icons: ["star"],
+      guide: "",
+    };
 
     const catalog = buildPreviewCatalog(SCHEMAS, kit);
 

@@ -108,11 +108,16 @@ describe("watchCustomSectionCatalog", () => {
       writes: ["data-ended", "text"],
     });
     expect(JSON.stringify(kit)).not.toContain("directive");
-    expect(JSON.stringify(kit)).not.toContain("optionsFrom");
-    expect(kit?.tags["vc-icon"].attributes.name).toMatchObject({ type: "select", options: __SB_ICON_NAMES__ });
-    expect(kit?.tags["vc-icon"].attributes.name.options).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
-    expect(kit?.tags["vc-button"].attributes["prepend-icon"].options).toEqual(__SB_ICON_NAMES__);
-    expect(kit?.tags["vc-button"].attributes["append-icon"].options).toEqual(__SB_ICON_NAMES__);
+    expect(kit?.icons).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
+    expect(kit?.icons).toEqual([...new Set(kit?.icons)].sort((a, b) => a.localeCompare(b)));
+    expect(JSON.stringify(kit).match(/"shopping-cart"/g)).toHaveLength(1);
+    for (const field of [
+      kit?.tags["vc-icon"].attributes.name,
+      kit?.tags["vc-button"].attributes["prepend-icon"],
+      kit?.tags["vc-button"].attributes["append-icon"],
+    ]) {
+      expect(field).toEqual({ type: "select", optionsFrom: "icons", description: expect.any(String) });
+    }
     expect(kit?.guide).toMatch(/^# Writing a custom section/);
     expect(kit?.design).toMatchObject({
       containerName: "sb-section",

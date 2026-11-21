@@ -18,6 +18,8 @@ export interface ICustomSectionKitCatalog {
     /** The container every custom section stands in, for `@container sb-section (min-width: …)`. */
     containerName: string;
   };
+  /** Every icon name `VcIcon` draws, sorted: the values of a `select` with `optionsFrom: "icons"`. */
+  icons: string[];
   /** How to write a section that fits the storefront, in Markdown, for the agent that writes them. */
   guide: string;
 }
@@ -29,27 +31,19 @@ const SECTION_CONTAINER_NAME = "sb-section";
 export function getKitCatalog(): ICustomSectionKitCatalog {
   const tags = Object.entries(getKitTags()).map(([name, { description, attributes }]) => [
     name,
-    { description, attributes: withOptions(attributes) },
+    { description, attributes },
   ]);
   const behaviors = Object.entries(getKitBehaviors()).map(([name, { description, value, options, writes }]) => [
     name,
-    { description, value: value && toCatalogField(value), options: options && withOptions(options), writes },
+    { description, value, options, writes },
   ]);
   const catalog = {
     tags: Object.fromEntries(tags),
     behaviors: Object.fromEntries(behaviors),
     design: { ...__SB_DESIGN_FACTS__, containerName: SECTION_CONTAINER_NAME },
+    icons: __SB_ICON_NAMES__,
     guide,
   };
 
   return JSON.parse(JSON.stringify(catalog)) as ICustomSectionKitCatalog;
-}
-
-function withOptions(fields: Record<string, ICustomSectionField>): Record<string, ICustomSectionField> {
-  return Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, toCatalogField(field)]));
-}
-
-/** A field as the agent and the server read it: a `select` of icon names lists them. */
-function toCatalogField({ optionsFrom, ...field }: ICustomSectionField): ICustomSectionField {
-  return optionsFrom === "icons" ? { ...field, options: __SB_ICON_NAMES__ } : field;
 }

@@ -141,7 +141,8 @@ register("customSectionBehavior", "confetti", {
   `mapProps`, each attribute goes as the prop of its camelCase name.
 - The designer's catalog lists the tags and behaviors under `kit`, without components or loaders, so the agent
   that writes templates and the server that checks them learn a new one from the next `loaded`. `kit` also carries
-  the design facts (`design`) and the section authors' guide (`guide`).
+  the design facts (`design`), the icon names (`icons`) a `select` with `optionsFrom: "icons"` takes, and the
+  section authors' guide (`guide`).
 - Keep the component and the directive lazy: a store pays for them only on a page that shows them.
 
 > **Recommendation**

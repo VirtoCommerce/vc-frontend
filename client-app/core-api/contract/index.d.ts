@@ -4854,7 +4854,7 @@ interface ICustomSectionField {
     type: "string" | "number" | "boolean" | "select" | "link" | "date";
     /** The values a `select` takes. */
     options?: string[];
-    /** A `select` of the storefront's icon names: the catalog lists them as `options`, too many to carry along here. */
+    /** A `select` of the storefront's icon names, which the catalog lists once, as `kit.icons`. */
     optionsFrom?: "icons";
     min?: number;
     max?: number;
