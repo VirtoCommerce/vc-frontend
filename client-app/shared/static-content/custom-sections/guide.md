@@ -112,7 +112,7 @@ The page may read right to left.
 .custom-hero__image {
   inline-size: 100%;
   block-size: auto;
-  mask-image: linear-gradient(to bottom, black 55%, transparent);
+  mask-image: linear-gradient(to bottom, currentColor 55%, transparent);
 }
 .custom-hero__body {
   align-self: end;
@@ -176,7 +176,7 @@ The page may read right to left.
 .custom-cards__card {
   display: grid;
   gap: 0.5rem;
-  border-radius: var(--vc-radius);
+  border-radius: var(--vc-radius, 0.5rem);
   color: inherit;
 }
 ```
