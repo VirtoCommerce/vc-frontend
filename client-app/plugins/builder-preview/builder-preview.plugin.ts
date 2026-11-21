@@ -1,5 +1,5 @@
 import { shallowRef } from "vue";
-import { useGlobalInterceptors } from "@/core/api/common";
+import { useFetch, useGlobalInterceptors } from "@/core/api/common";
 import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
@@ -30,7 +30,7 @@ import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./b
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
-import type { IThemeConfig } from "@/core/types";
+import type { ConnectTokenResponseType, IThemeConfig } from "@/core/types";
 import type { IPageContent } from "@/shared/static-content/types";
 import type { App, ShallowRef } from "vue";
 import type { Router } from "vue-router";
@@ -177,6 +177,10 @@ let originalUserId: string | undefined;
 let originalOrganizationId: string | undefined;
 let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
+let authRenewTimer: ReturnType<typeof setTimeout> | undefined;
+
+const PREVIEW_GRANT_TYPE = "site_builder_preview";
+const AUTH_RENEW_LEAD_SECONDS = 60;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
@@ -420,8 +424,10 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
 }
 
 async function applyAuth(context: IPreviewContext, message: TransferDataType): Promise<void> {
-  const token = message.token?.access_token || null;
-  const userId = message.userId || null;
+  clearTimeout(authRenewTimer);
+  authRenewTimer = undefined;
+
+  const { token, userId } = await resolvePreviewAuth(context, message);
 
   // A renewed token of the user shown: their organization, branding and loaded data stay right.
   if (userId === previewUserId && !!token === !!previewToken) {
@@ -448,6 +454,58 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   staticPagePreview.value = undefined;
   context.sharedComponentOverlay?.update([], []);
   await context.previewV2?.reload();
+}
+
+async function resolvePreviewAuth(
+  context: IPreviewContext,
+  message: TransferDataType,
+): Promise<{ token: string | null; userId: string | null }> {
+  const userId = message.userId || null;
+
+  if (!message.code || !userId) {
+    return { token: message.token?.access_token || null, userId };
+  }
+
+  const response = await exchangePreviewCode(message.code);
+
+  if (!response) {
+    postAuthRenew(context, userId);
+    return { token: null, userId: null };
+  }
+
+  authRenewTimer = setTimeout(
+    () => postAuthRenew(context, userId),
+    Math.max(0, response.expiresIn - AUTH_RENEW_LEAD_SECONDS) * 1000,
+  );
+  return { token: response.accessToken, userId };
+}
+
+/** The storefront host must mint the token: one minted on the platform host fails its issuer check here. */
+async function exchangePreviewCode(code: string): Promise<{ accessToken: string; expiresIn: number } | null> {
+  try {
+    const { error, data } = await useFetch("/connect/token", {
+      onFetchError: (context) => context,
+      updateDataOnError: true,
+    })
+      .post(new URLSearchParams({ grant_type: PREVIEW_GRANT_TYPE, code }), "application/x-www-form-urlencoded")
+      .json<ConnectTokenResponseType>();
+    const accessToken = data.value?.access_token;
+    const expiresIn = data.value?.expires_in;
+
+    if (error.value || !accessToken || !expiresIn) {
+      Logger.error("[builder-preview] Failed to exchange the preview code", data.value?.error);
+      return null;
+    }
+
+    return { accessToken, expiresIn };
+  } catch (e) {
+    Logger.error("[builder-preview] Failed to exchange the preview code", e);
+    return null;
+  }
+}
+
+function postAuthRenew(context: IPreviewContext, userId: string): void {
+  window.parent.postMessage({ source: "preview", type: "authRenew", data: { userId } }, context.builderOrigin);
 }
 
 async function getPreviewUserOrganizationId(userId: string): Promise<string | undefined> {

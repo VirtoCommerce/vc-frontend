@@ -22,6 +22,8 @@ export type TransferDataType = {
   url?: string;
   settings?: IThemeConfig;
   token?: { access_token?: string } | null;
+  /** On `auth`: a one-time code the storefront exchanges at its own `/connect/token` instead of taking `token`. */
+  code?: string;
   cultureName?: string;
   sharedComponentBoundaries?: unknown;
   /** The preview protocol the designer speaks, on `connect`; the Angular designer sends none. */
@@ -122,6 +124,9 @@ export function isBuilderMessage(value: unknown): value is TransferDataType {
     case "settings":
       return isRecord(value.settings);
     case "auth":
+      if (value.code !== undefined) {
+        return isNonEmptyString(value.code) && isNonEmptyString(value.userId);
+      }
       return isAuthToken(value.token) && (value.userId === null || isOptionalString(value.userId));
     default:
       return false;
