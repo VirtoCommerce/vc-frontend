@@ -1,25 +1,27 @@
 <template>
-  <!-- Mobile header -->
-  <MobileHeader v-if="isMobile" />
+  <div class="app-header">
+    <!-- Mobile header -->
+    <MobileHeader v-if="isMobile" />
 
-  <!-- Desktop header -->
-  <template v-else>
-    <AnnouncementBar />
+    <!-- Desktop header -->
+    <template v-else>
+      <AnnouncementBar class="app-header__announcement" />
 
-    <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
+      <TopHeader class="app-header__top" />
 
-    <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
-      <BottomHeader :is-menu-shown="isCatalogMenuShown && desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
+      <div ref="stickyHeader" class="app-header__sticky">
+        <BottomHeader :is-menu-shown="isCatalogMenuShown && desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
-      <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />
-    </div>
+        <MegaMenu v-if="isMegamenuShown" />
+      </div>
 
-    <div class="hidden items-start justify-between print:flex">
-      <VcImage :src="logoUrl" :alt="$context.storeName" class="h-12" />
+      <div class="app-header__print">
+        <VcImage :src="logoUrl" :alt="$context.storeName" class="app-header__print-logo" />
 
-      <Created />
-    </div>
-  </template>
+        <Created />
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -89,3 +91,44 @@ onDeactivated(() => {
   isShown.value = false;
 });
 </script>
+
+<style lang="scss">
+// `contents`: no box of its own, so each piece stays a flex item of the page frame and the sticky part sticks.
+.app-header {
+  @apply contents;
+
+  &__announcement {
+    @apply mx-auto;
+
+    inline-size: var(--vc-frame-header-width, 100%);
+  }
+
+  &__top {
+    @apply relative z-[21] mx-auto;
+
+    inline-size: var(--vc-frame-header-width, 100%);
+  }
+
+  &__sticky {
+    @apply sticky top-0 z-20 mx-auto shadow-md;
+
+    inline-size: var(--vc-frame-header-width, 100%);
+
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__print {
+    @apply hidden items-start justify-between;
+
+    @media print {
+      @apply flex;
+    }
+  }
+
+  &__print-logo {
+    @apply h-12;
+  }
+}
+</style>

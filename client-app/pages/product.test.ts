@@ -70,6 +70,7 @@ vi.mock("@/shared/catalog", async () => {
       };
     },
     useConfigurableProduct: () => ({ fetchProductConfiguration: vi.fn(), configuration: createRef([]) }),
+    useProductConfigurationSources: () => ({ initialConfiguration: createRef(undefined) }),
     useProducts: () => ({
       fetchingProducts: createRef(false),
       products: createRef([]),

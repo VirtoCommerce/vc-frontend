@@ -387,8 +387,6 @@ export interface IThemeConfigSettings {
   site_builder_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
-  product_compare_enabled?: boolean;
-  product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirectionType;
   product_quantity_control?: "stepper" | "button";
