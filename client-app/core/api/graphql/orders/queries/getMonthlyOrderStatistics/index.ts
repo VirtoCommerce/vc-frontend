@@ -12,8 +12,12 @@ import type { Ref } from "vue";
  * - `cache-and-network`: the month windows are stable within a day, so a revisit renders from the cache at once.
  * - `keepPreviousResult`: a new period keeps the figures on screen until its own arrive.
  */
-export function useGetMonthlyOrderStatisticsQuery(variables: Ref<GetMonthlyOrderStatisticsQueryVariables>) {
+export function useGetMonthlyOrderStatisticsQuery(
+  variables: Ref<GetMonthlyOrderStatisticsQueryVariables>,
+  enabled?: Ref<boolean>,
+) {
   return useQuery(GetMonthlyOrderStatisticsDocument, variables, {
+    enabled,
     fetchPolicy: "cache-and-network",
     keepPreviousResult: true,
     context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,

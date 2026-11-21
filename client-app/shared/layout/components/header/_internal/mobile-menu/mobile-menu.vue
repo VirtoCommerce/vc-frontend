@@ -105,7 +105,7 @@ defineEmits<IEmits>();
 const { t } = useI18n();
 
 const { supportedLanguages } = useLanguages();
-const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
+const { isAuthenticated, organization, isCorporateMember, isMultiOrganization, checkPermissions } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
@@ -140,6 +140,9 @@ const sortedFilteredChildren = computed(() => {
 
 function canShowItem(item: ExtendedMenuLinkType) {
   if (item.id === "addresses" && isCorporateMember.value) {
+    return false;
+  }
+  if (item.permission && !checkPermissions(item.permission)) {
     return false;
   }
   return !(item.id === "contact-organizations" && !isMultiOrganization.value);

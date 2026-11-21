@@ -28,7 +28,7 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 type RenderSectionType = { id: string; title?: string; priority: number; children: ExtendedMenuLinkType[] };
 
-const { isCorporateMember } = useUser();
+const { isCorporateMember, checkPermissions } = useUser();
 const {
   desktopPurchasingMenuItems,
   desktopMarketingMenuItems,
@@ -43,6 +43,11 @@ function canShowUserItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);
 }
 
+// A link may name a permission (menu.json `permission`); without it the user does not see the link.
+function isPermitted(item: ExtendedMenuLinkType) {
+  return !item.permission || checkPermissions(item.permission);
+}
+
 // The built-in sections plus any module-registered ones (e.g. the Sales Rep hub), each keeping its
 // own visibility rule, rendered as one priority-ordered list of widgets.
 const sections = computed<RenderSectionType[]>(() => {
@@ -54,17 +59,18 @@ const sections = computed<RenderSectionType[]>(() => {
       id: "purchasing",
       title: purchasing.title,
       priority: purchasing.priority ?? 10,
-      children: purchasing.children ?? [],
+      children: (purchasing.children ?? []).filter(isPermitted),
     });
   }
 
   const marketing = desktopMarketingMenuItems.value;
-  if (marketing?.children?.length) {
+  const marketingChildren = (marketing?.children ?? []).filter(isPermitted);
+  if (marketing && marketingChildren.length) {
     result.push({
       id: "marketing",
       title: marketing.title,
       priority: marketing.priority ?? 20,
-      children: marketing.children,
+      children: marketingChildren,
     });
   }
 
@@ -75,7 +81,7 @@ const sections = computed<RenderSectionType[]>(() => {
         id: "corporate",
         title: corporate.title,
         priority: corporate.priority ?? 30,
-        children: corporate.children ?? [],
+        children: (corporate.children ?? []).filter(isPermitted),
       });
     }
   }
@@ -86,7 +92,7 @@ const sections = computed<RenderSectionType[]>(() => {
       id: "user",
       title: user.title,
       priority: user.priority ?? 40,
-      children: (user.children ?? []).filter(canShowUserItem),
+      children: (user.children ?? []).filter((item) => canShowUserItem(item) && isPermitted(item)),
     });
   }
 
@@ -103,7 +109,7 @@ const sections = computed<RenderSectionType[]>(() => {
       id: section.id,
       title: translated.title,
       priority: section.priority ?? 100,
-      children: translated.children ?? [],
+      children: (translated.children ?? []).filter(isPermitted),
     });
   }
 
