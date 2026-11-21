@@ -18,6 +18,7 @@ import {
 } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
+import { watchCustomSectionSchemas } from "./custom-sections-catalog";
 import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
 import { getRegisteredComponents } from "./register-components";
 import {
@@ -538,9 +539,19 @@ export default {
       };
       handleMessages(context);
 
-      const customComponents = await getRegisteredComponents();
-      context.schemas.value = customComponents;
-      loadedNotifier.setData(isPreviewV2Frame() ? buildPreviewCatalog(customComponents) : customComponents);
+      const registeredSchemas = await getRegisteredComponents();
+
+      if (isPreviewV2Frame()) {
+        // The theme's custom types join the catalog; a change to them sends `loaded` again.
+        watchCustomSectionSchemas(registeredSchemas, (schemas) => {
+          context.schemas.value = schemas;
+          loadedNotifier.setData(buildPreviewCatalog(schemas));
+        });
+      } else {
+        context.schemas.value = registeredSchemas;
+        loadedNotifier.setData(registeredSchemas);
+      }
+
       await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
