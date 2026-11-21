@@ -28,6 +28,7 @@ export const PageBuilderComponents: PageBuilderComponentDescriptorType[] = [
         id: "alttext",
         label: "Alternative Text",
         type: "string",
+        translatable: true,
         tab: "Content",
       },
     ],

@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, onBeforeUnmount, ref, watch } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import Matcher from "./matcher.vue";
 import type { UpdateStateEventArgs } from "./priorityManager";
@@ -52,6 +53,7 @@ vi.mock("@/pages/404.vue", () => ({
 
 vi.mock("vue-router", () => ({
   useRouter: () => ({ replace: vi.fn() }),
+  useRoute: () => ({ path: "/", hash: "" }),
 }));
 
 vi.mock("@/core/composables", () => ({
@@ -325,5 +327,21 @@ describe("Matcher search scope hand-over", () => {
     wrapper = undefined;
 
     expect(isScopePending.value).toBe(false);
+  });
+});
+
+describe("Matcher page layout", () => {
+  const { pageLayout, setPageLayout } = usePageLayout();
+
+  it("leaves the layout to the slug content and sets the full one when the slug resolves to nothing", async () => {
+    await mountMatcher();
+    setPageLayout("minimal");
+
+    await setSlugContentState("ready");
+    expect(pageLayout.value).toBe("minimal");
+
+    await setSlugContentState("empty");
+    expect(wrapper!.text()).toContain("not found");
+    expect(pageLayout.value).toBe("full");
   });
 });

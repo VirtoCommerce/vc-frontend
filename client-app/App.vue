@@ -40,40 +40,42 @@ const { favIcons } = useWhiteLabeling();
 const { initRouteGuard } = useQueuedMutations();
 const i18n = useI18n();
 
-// If favIcons.value is an empty array, the default favicon from index.html will be used.
+// Computed because a theme favicon can arrive after boot.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({
-  link: favIcons.value?.length
-    ? // Skip malformed favicons (schema allows null entries / missing href); normalize the rest for unhead.
-      favIcons.value
-        .filter((icon) => icon?.href)
-        .map((icon) =>
-          defineLink({
-            rel: icon.rel ?? "icon",
-            href: icon.href ?? "",
-            sizes: icon.sizes ?? undefined,
-            type: icon.type ?? undefined,
-          }),
-        )
-    : [
-        {
-          rel: "icon",
-          type: "image/svg+xml",
-          href: faviconSVG,
-        },
-        {
-          rel: "icon",
-          type: "image/png",
-          sizes: "16x16",
-          href: favicon16,
-        },
-        {
-          rel: "icon",
-          type: "image/png",
-          sizes: "32x32",
-          href: favicon32,
-        },
-      ],
+  link: computed(() =>
+    favIcons.value?.length
+      ? // The schema allows null entries and a missing href.
+        favIcons.value
+          .filter((icon) => icon?.href)
+          .map((icon) =>
+            defineLink({
+              rel: icon.rel ?? "icon",
+              href: icon.href ?? "",
+              sizes: icon.sizes ?? undefined,
+              type: icon.type ?? undefined,
+            }),
+          )
+      : [
+          {
+            rel: "icon",
+            type: "image/svg+xml",
+            href: faviconSVG,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "16x16",
+            href: favicon16,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "32x32",
+            href: favicon32,
+          },
+        ],
+  ),
 });
 
 useOrganizationSchema();
