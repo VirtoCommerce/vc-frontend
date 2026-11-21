@@ -11,7 +11,7 @@
 
     "module_federation_enabled": true,
 
-    "site_builder_enabled": false,
+    "site_builder_enabled": true,
 
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
