@@ -14,25 +14,13 @@ vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
   isPreviewV2Frame: () => frame.isPreview,
 }));
 
-vi.mock("../components/products-block.vue", async () => {
+vi.mock("./kit/sb-products.vue", async () => {
   const vue = await import("vue");
   return {
     __esModule: true,
     default: vue.defineComponent({
-      name: "ProductsBlockStub",
-      props: ["query", "filter", "count", "columnsAmountDesktop", "columnsAmountTablet"],
-      setup: () => () => vue.h("div"),
-    }),
-  };
-});
-
-vi.mock("../components/products-carousel.vue", async () => {
-  const vue = await import("vue");
-  return {
-    __esModule: true,
-    default: vue.defineComponent({
-      name: "ProductsCarouselStub",
-      props: ["query", "filter", "count", "slidesPerView"],
+      name: "SbProductsStub",
+      props: ["query", "filter", "take", "view", "columns"],
       setup: () => () => vue.h("div"),
     }),
   };
@@ -423,22 +411,20 @@ describe("CustomSection", () => {
       expect(wrapper.find("p").text()).toBe("Rated");
     });
 
-    it("renders vc-products as the product grid, or as the carousel", async () => {
+    it("renders vc-products with its checked attributes", async () => {
       const wrapper = mountSection(
         '<section><vc-products query="drill" take="6" columns="5"></vc-products><vc-products view="carousel" filter="brand:acme" take="40" columns="3"></vc-products></section>',
       );
-      await vi.waitFor(() => expect(wrapper.findComponent({ name: "ProductsCarouselStub" }).exists()).toBe(true));
+      await vi.waitFor(() => expect(wrapper.findAllComponents({ name: "SbProductsStub" })).toHaveLength(2));
+      const [grid, carousel] = wrapper.findAllComponents({ name: "SbProductsStub" });
 
-      expect(wrapper.findComponent({ name: "ProductsBlockStub" }).props()).toMatchObject({
-        query: "drill",
-        count: 6,
-        columnsAmountDesktop: "5",
-        columnsAmountTablet: "3",
-      });
-      expect(wrapper.findComponent({ name: "ProductsCarouselStub" }).props()).toMatchObject({
+      expect(grid.props()).toEqual({ query: "drill", filter: undefined, take: 6, view: undefined, columns: 5 });
+      expect(carousel.props()).toEqual({
+        query: undefined,
         filter: "brand:acme",
-        count: 4,
-        slidesPerView: 3,
+        take: undefined,
+        view: "carousel",
+        columns: 3,
       });
     });
   });
