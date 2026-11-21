@@ -92,12 +92,16 @@ const BUILT_IN_BEHAVIORS: Record<string, ICustomSectionBehavior> = {
   },
   pointer: {
     directive: async () => (await import("../behaviors/pointer")).vPointer,
-    description: "Where the pointer is inside the element, 0 to 1 each way; off on touch screens.",
-    writes: ["--pointer-x", "--pointer-y", "--pointer-active"],
+    description:
+      "Where the pointer is inside the element, 0 to 1 each way; --pointer-inline is 0 at the inline start, " +
+      "so it flips in right-to-left text. Off on touch screens.",
+    writes: ["--pointer-x", "--pointer-y", "--pointer-inline", "--pointer-active"],
   },
   "count-up": {
     directive: async () => (await import("../behaviors/count-up")).vCountUp,
-    description: "The text counts up to the number, in the page's language, when the element first shows.",
+    description:
+      "The text counts up to the number, in the page's language, when the element first shows; " +
+      "screen readers get the number at once.",
     value: { type: "number" },
     options: {
       duration: { type: "number", min: 0, max: 5000, description: "In milliseconds." },
@@ -123,14 +127,17 @@ const BUILT_IN_BEHAVIORS: Record<string, ICustomSectionBehavior> = {
   },
   copy: {
     directive: async () => (await import("../behaviors/copy")).vCopy,
-    description: "A click copies the text and sets data-copied for 2 seconds.",
+    description: "A click copies the text, sets data-copied for 2 seconds and tells screen readers it did.",
     value: { type: "string" },
     writes: ["data-copied"],
   },
   marquee: {
     directive: async () => (await import("../behaviors/marquee")).vMarquee,
-    description: "The children are repeated once for a seamless loop; --marquee-width is the width of one run.",
-    writes: ["--marquee-width"],
+    description:
+      "The children are repeated once for a seamless loop. --marquee-width is the width of one run; animate " +
+      "translate from 0 to var(--marquee-shift), which moves toward the inline start and reverses in " +
+      "right-to-left text. The loop pauses, with data-paused set, while the pointer is over it or the focus inside.",
+    writes: ["--marquee-width", "--marquee-shift", "data-paused"],
     repeatsChildren: true,
   },
 };

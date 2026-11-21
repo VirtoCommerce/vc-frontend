@@ -55,3 +55,8 @@ export function readNumberAttribute(element: HTMLElement, name: string, min: num
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
+
+/** From the element's computed `direction`, so a `dir` anywhere above it counts. */
+export function isRightToLeft(element: HTMLElement): boolean {
+  return getComputedStyle(element).direction === "rtl";
+}

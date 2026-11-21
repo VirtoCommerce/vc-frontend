@@ -1,10 +1,13 @@
 import { useMediaQuery, useMouseInElement } from "@vueuse/core";
 import { watchEffect } from "vue";
-import { clamp, defineBehavior } from "./define-behavior";
+import { clamp, defineBehavior, isRightToLeft } from "./define-behavior";
 
 const CENTER = 0.5;
 
-/** `--pointer-x` and `--pointer-y` (0–1 inside the element) and `--pointer-active`; off on touch screens. */
+/**
+ * `--pointer-x` and `--pointer-y` (0–1 inside the element), `--pointer-inline` (0 at the inline start, so it flips
+ * in right-to-left text) and `--pointer-active`; off on touch screens.
+ */
 export const vPointer = defineBehavior((element, { isReducedMotion }) => {
   const isTouchScreen = useMediaQuery("(hover: none)");
 
@@ -32,6 +35,7 @@ function toShare(offset: number, size: number): number {
 
 function writePointer(element: HTMLElement, x: number, y: number, isActive: boolean): void {
   element.style.setProperty("--pointer-x", String(x));
+  element.style.setProperty("--pointer-inline", String(isRightToLeft(element) ? Math.round((1 - x) * 1000) / 1000 : x));
   element.style.setProperty("--pointer-y", String(y));
   element.style.setProperty("--pointer-active", isActive ? "1" : "0");
 }

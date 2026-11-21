@@ -19,9 +19,19 @@ export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => 
     disabled: isReducedMotion,
   });
 
+  // Assistive technology reads the number it counts to at once, not each step of the count.
+  const steps = element.ownerDocument.createElement("span");
+  const result = element.ownerDocument.createElement("span");
+  steps.setAttribute("aria-hidden", "true");
+  result.className = "sr-only";
+  element.replaceChildren(steps, result);
+
   // A value that is no number shows as it is.
   watchEffect(() => {
-    element.textContent = Number.isFinite(target.value) ? formatNumber(shown.value, decimals) : value.value;
+    const isNumber = Number.isFinite(target.value);
+
+    steps.textContent = isNumber ? formatNumber(shown.value, decimals) : value.value;
+    result.textContent = isNumber ? formatNumber(target.value, decimals) : value.value;
   });
 
   if (!isReducedMotion) {

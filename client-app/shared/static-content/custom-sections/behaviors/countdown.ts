@@ -18,6 +18,12 @@ const UNITS = [
 export const vCountdown = defineBehavior((element, { value }) => {
   const now = useNow({ interval: TICK });
 
+  // A timer is announced when asked for, never at every tick.
+  if (!element.hasAttribute("role")) {
+    element.setAttribute("role", "timer");
+  }
+  element.setAttribute("aria-live", "off");
+
   watchEffect(() => {
     const end = Date.parse(value.value);
     const timeLeft = Number.isNaN(end) ? 0 : Math.max(0, end - now.value.getTime());

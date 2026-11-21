@@ -21,6 +21,10 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
   },
 }));
 
+function readCount(wrapper: ReturnType<typeof mountCounter>): { shown: string; read: string } {
+  return { shown: wrapper.find('[aria-hidden="true"]').text(), read: wrapper.find(".sr-only").text() };
+}
+
 function mountCounter(value: string, attributes: Record<string, string> = {}) {
   return mount(
     defineComponent({
@@ -56,18 +60,25 @@ describe("vCountUp", () => {
   it("shows zero until the element shows, then counts up to the number in the page's language", async () => {
     const wrapper = mountCounter("1234.5", { "data-count-up-decimals": "1", "data-count-up-duration": "1000" });
     await nextTick();
-    expect(wrapper.text()).toBe("0,0");
+    expect(readCount(wrapper).shown).toBe("0,0");
 
     mocks.onIntersect?.([{ isIntersecting: true }]);
     await nextTick();
     await vi.advanceTimersByTimeAsync(500);
-    const halfway = Number(wrapper.text().replaceAll(".", "").replace(",", "."));
+    const halfway = Number(readCount(wrapper).shown.replaceAll(".", "").replace(",", "."));
     expect(halfway).toBeGreaterThan(0);
     expect(halfway).toBeLessThan(1234.5);
 
     await vi.advanceTimersByTimeAsync(600);
-    expect(wrapper.text()).toBe("1.234,5");
+    expect(readCount(wrapper).shown).toBe("1.234,5");
     expect(mocks.stop).toHaveBeenCalled();
+  });
+
+  it("gives screen readers the number it counts to at once, and hides the count from them", async () => {
+    const wrapper = mountCounter("1234.5", { "data-count-up-decimals": "1" });
+    await nextTick();
+
+    expect(readCount(wrapper)).toEqual({ shown: "0,0", read: "1.234,5" });
   });
 
   it("does not count before the element shows", async () => {
@@ -75,7 +86,7 @@ describe("vCountUp", () => {
     mocks.onIntersect?.([{ isIntersecting: false }]);
     await vi.advanceTimersByTimeAsync(2000);
 
-    expect(wrapper.text()).toBe("0");
+    expect(readCount(wrapper).shown).toBe("0");
   });
 
   it("shows the number at once with reduced motion", async () => {
@@ -84,7 +95,7 @@ describe("vCountUp", () => {
     const wrapper = mountCounter("50");
     await nextTick();
 
-    expect(wrapper.text()).toBe("50");
+    expect(readCount(wrapper).shown).toBe("50");
     expect(mocks.onIntersect).toBeUndefined();
   });
 
@@ -92,6 +103,6 @@ describe("vCountUp", () => {
     const wrapper = mountCounter("many");
     await nextTick();
 
-    expect(wrapper.text()).toBe("many");
+    expect(readCount(wrapper)).toEqual({ shown: "many", read: "many" });
   });
 });

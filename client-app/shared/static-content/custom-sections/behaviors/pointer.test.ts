@@ -31,12 +31,30 @@ vi.mock("@vueuse/core", async (importOriginal) => {
   };
 });
 
-function mountTracked() {
-  return mount(defineComponent({ setup: () => () => withDirectives(h("div"), [[vPointer, ""]]) }));
+function mountTracked(direction?: "rtl") {
+  return mount(
+    defineComponent({
+      setup: () => () => h("div", { dir: direction }, [withDirectives(h("div", { id: "tracked" }), [[vPointer, ""]])]),
+    }),
+  );
 }
 
-function readPointer(element: HTMLElement) {
-  return ["--pointer-x", "--pointer-y", "--pointer-active"].map((name) => element.style.getPropertyValue(name));
+function readPointer(wrapper: ReturnType<typeof mountTracked>) {
+  const element = wrapper.find("#tracked").element as HTMLElement;
+  return ["--pointer-x", "--pointer-y", "--pointer-inline", "--pointer-active"].map((name) =>
+    element.style.getPropertyValue(name),
+  );
+}
+
+async function movePointer(x: number, y: number): Promise<void> {
+  const mouse = mocks.mouse;
+  if (!mouse) {
+    throw new Error("The pointer is not tracked");
+  }
+  mouse.elementX.value = x;
+  mouse.elementY.value = y;
+  mouse.isOutside.value = false;
+  await nextTick();
 }
 
 describe("vPointer", () => {
@@ -48,18 +66,19 @@ describe("vPointer", () => {
 
   it("writes where the pointer is inside the element, and whether it is", async () => {
     const wrapper = mountTracked();
-    expect(readPointer(wrapper.element as HTMLElement)).toEqual(["0", "0", "0"]);
+    expect(readPointer(wrapper)).toEqual(["0", "0", "0", "0"]);
 
-    const mouse = mocks.mouse;
-    if (!mouse) {
-      throw new Error("The pointer is not tracked");
-    }
-    mouse.elementX.value = 50;
-    mouse.elementY.value = 75;
-    mouse.isOutside.value = false;
-    await nextTick();
+    await movePointer(50, 75);
 
-    expect(readPointer(wrapper.element as HTMLElement)).toEqual(["0.25", "0.75", "1"]);
+    expect(readPointer(wrapper)).toEqual(["0.25", "0.75", "0.25", "1"]);
+  });
+
+  it("measures --pointer-inline from the inline start, the right edge in right-to-left text", async () => {
+    const wrapper = mountTracked("rtl");
+
+    await movePointer(50, 75);
+
+    expect(readPointer(wrapper)).toEqual(["0.25", "0.75", "0.75", "1"]);
   });
 
   it.each([
@@ -71,7 +90,7 @@ describe("vPointer", () => {
 
     const wrapper = mountTracked();
 
-    expect(readPointer(wrapper.element as HTMLElement)).toEqual(["0.5", "0.5", "0"]);
+    expect(readPointer(wrapper)).toEqual(["0.5", "0.5", "0.5", "0"]);
     expect(mocks.mouse).toBeUndefined();
   });
 });

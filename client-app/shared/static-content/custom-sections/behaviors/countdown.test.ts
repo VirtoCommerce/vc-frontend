@@ -44,6 +44,13 @@ describe("vCountdown", () => {
     expect(readParts(wrapper)).toEqual(["1", "02", "03", "03"]);
   });
 
+  it("is a timer screen readers read when asked, never at each tick", async () => {
+    const wrapper = mountCountdown(IN_A_DAY, ["seconds"]);
+    await nextTick();
+
+    expect(wrapper.attributes()).toMatchObject({ role: "timer", "aria-live": "off" });
+  });
+
   it("counts the larger units into the largest part shown", async () => {
     const wrapper = mountCountdown(IN_A_DAY, ["hours", "minutes"]);
     await nextTick();
