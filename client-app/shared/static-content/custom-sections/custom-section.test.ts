@@ -1,0 +1,429 @@
+import { flushPromises, mount, RouterLinkStub } from "@vue/test-utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
+import CustomSection from "./custom-section.vue";
+import type { ICustomSectionType, IThemeSchemaField } from "@/core/theme-snapshot";
+
+const frame = vi.hoisted(() => ({ isPreview: false }));
+
+vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
+  isPreviewV2Frame: () => frame.isPreview,
+}));
+
+vi.mock("../components/products-block.vue", async () => {
+  const { defineComponent, h } = await import("vue");
+  return {
+    __esModule: true,
+    default: defineComponent({
+      name: "ProductsBlockStub",
+      props: ["query", "filter", "count", "columnsAmountDesktop", "columnsAmountTablet"],
+      setup: () => () => h("div"),
+    }),
+  };
+});
+
+vi.mock("../components/products-carousel.vue", async () => {
+  const { defineComponent, h } = await import("vue");
+  return {
+    __esModule: true,
+    default: defineComponent({
+      name: "ProductsCarouselStub",
+      props: ["query", "filter", "count", "slidesPerView"],
+      setup: () => () => h("div"),
+    }),
+  };
+});
+
+const TYPE = "custom-test";
+/** Apart, since check-css-important reads `!word` in markup as an important utility. */
+const NOT = "!";
+
+const FIELDS: IThemeSchemaField[] = [
+  { id: "title", type: "string" },
+  { id: "link", type: "string", format: "url" },
+  { id: "body", type: "text" },
+  { id: "image", type: "images" },
+  { id: "accent", type: "color-token" },
+  { id: "speed", type: "slider" },
+  { id: "show_badge", type: "checkbox" },
+  {
+    id: "cards",
+    type: "list",
+    element: [
+      { id: "title", type: "string" },
+      { id: "link", type: "string", format: "url" },
+      { id: "featured", type: "checkbox" },
+    ],
+  },
+];
+
+function mountSection(
+  template: string,
+  settings: Record<string, unknown> = {},
+  definition?: Partial<ICustomSectionType>,
+) {
+  useThemeSnapshot().setDraft({
+    customSections: {
+      [TYPE]: { format: 1, name: "Test", schema: { settings: FIELDS }, css: "", template, ...definition },
+    },
+  });
+
+  return mount(CustomSection, {
+    props: { model: { id: "section-1", type: TYPE, ...settings } },
+    attrs: { id: "anchor-1" },
+    global: { stubs: { RouterLink: RouterLinkStub, VcIcon: true } },
+  });
+}
+
+describe("CustomSection", () => {
+  beforeEach(() => {
+    frame.isPreview = false;
+    useThemeSnapshot().setDraft(undefined);
+  });
+
+  describe("bindings", () => {
+    it("inserts a setting as text, never as HTML", () => {
+      const wrapper = mountSection("<section><h2>{{ settings.title }}!</h2></section>", {
+        title: "<b>Bold</b>",
+      });
+
+      expect(wrapper.find("h2").text()).toBe("<b>Bold</b>!");
+      expect(wrapper.find("b").exists()).toBe(false);
+    });
+
+    it("binds a setting in an attribute value", () => {
+      const wrapper = mountSection('<section><img alt="{{ settings.title }} photo" src="/a.png"></section>', {
+        title: "Team",
+      });
+
+      expect(wrapper.find("img").attributes("alt")).toBe("Team photo");
+    });
+
+    it("leaves out a binding of a setting the schema does not declare", () => {
+      const wrapper = mountSection(
+        "<section><p>[{{ settings.secret }}][{{ item.title }}][{{ window }}]</p></section>",
+        {
+          secret: "hidden",
+        },
+      );
+
+      expect(wrapper.find("p").text()).toBe("[][][]");
+    });
+  });
+
+  describe("the root", () => {
+    it("gets the type, the section's attributes and a variable per setting the CSS can use", () => {
+      const wrapper = mountSection("<section class='hero'></section>", {
+        accent: "color_primary_500",
+        image: "/assets/hero.png",
+        speed: 3,
+        show_badge: true,
+      });
+      const root = wrapper.find("section");
+
+      expect(root.attributes("data-sb-type")).toBe(TYPE);
+      expect(root.attributes("id")).toBe("anchor-1");
+      expect(root.classes()).toEqual(["hero"]);
+      expect(root.element.style.getPropertyValue("--setting-accent")).toBe("var(--color-primary-500)");
+      expect(root.element.style.getPropertyValue("--setting-image")).toBe('url("/assets/hero.png")');
+      expect(root.element.style.getPropertyValue("--setting-speed")).toBe("3");
+      expect(root.element.style.getPropertyValue("--setting-show-badge")).toBe("1");
+    });
+
+    it("sets no variable for an image that breaks the image rule", () => {
+      const root = mountSection("<section></section>", { image: "javascript:alert(1)" }).find("section");
+
+      expect(root.element.style.getPropertyValue("--setting-image")).toBe("");
+    });
+
+    it("renders nothing for a template without exactly one root element", () => {
+      const wrapper = mountSection("<section></section><section></section>");
+
+      expect(wrapper.find("section").exists()).toBe(false);
+    });
+
+    it("renders nothing for a type the theme does not hold", () => {
+      useThemeSnapshot().setDraft({ customSections: {} });
+
+      const wrapper = mount(CustomSection, { props: { model: { id: "section-1", type: TYPE } } });
+
+      expect(wrapper.find("*").exists()).toBe(false);
+    });
+  });
+
+  describe("data-each", () => {
+    it("repeats the element per row, with the row's fields and its position", () => {
+      const wrapper = mountSection('<ul><li data-each="settings.cards" class="card">{{ item.title }}</li></ul>', {
+        cards: [{ title: "One" }, { title: "Two" }, "not a row"],
+      });
+      const cards = wrapper.findAll("li");
+
+      expect(cards.map((card) => card.text())).toEqual(["One", "Two"]);
+      expect(cards.map((card) => card.element.style.getPropertyValue("--i"))).toEqual(["0", "1"]);
+      expect(cards.map((card) => card.element.style.getPropertyValue("--n"))).toEqual(["2", "2"]);
+      expect(cards[0].attributes("data-each")).toBeUndefined();
+    });
+
+    it("renders a nested repeat once, in the row of the outer one", () => {
+      const wrapper = mountSection(
+        '<ul><li data-each="settings.cards"><span data-each="settings.cards">{{ item.title }}</span></li></ul>',
+        { cards: [{ title: "One" }, { title: "Two" }] },
+      );
+
+      expect(wrapper.findAll("span").map((span) => span.text())).toEqual(["One", "Two"]);
+    });
+
+    it("renders nothing for a setting that is not a list", () => {
+      const wrapper = mountSection('<ul><li data-each="settings.title">x</li></ul>', { title: "Text" });
+
+      expect(wrapper.find("li").exists()).toBe(false);
+    });
+  });
+
+  describe("data-if", () => {
+    it.each([
+      { value: "Shown", isShown: true },
+      { value: 0, isShown: true },
+      { value: "", isShown: false },
+      { value: false, isShown: false },
+      { value: null, isShown: false },
+      { value: [], isShown: false },
+      { value: undefined, isShown: false },
+    ])("renders the element for $value: $isShown, and its negation the other way", ({ value, isShown }) => {
+      const wrapper = mountSection(
+        `<section><p data-if="settings.title" class="set">a</p><p data-if="${NOT}settings.title" class="unset">b</p></section>`,
+        { title: value },
+      );
+
+      expect(wrapper.find(".set").exists()).toBe(isShown);
+      expect(wrapper.find(".unset").exists()).toBe(!isShown);
+    });
+
+    it("reads a row's field", () => {
+      const wrapper = mountSection(
+        '<ul><li data-each="settings.cards"><b data-if="item.featured">★</b>{{ item.title }}</li></ul>',
+        { cards: [{ title: "One", featured: true }, { title: "Two" }] },
+      );
+
+      expect(wrapper.findAll("b")).toHaveLength(1);
+      expect(wrapper.findAll("li")[0].text()).toBe("★One");
+    });
+  });
+
+  describe("data-html", () => {
+    it("shows a text setting as sanitized HTML", () => {
+      const wrapper = mountSection('<section><div data-html="settings.body">ignored</div></section>', {
+        body: '<p>Hi <b>there</b></p><img src="x" onerror="alert(1)"><script>alert(1)</script>',
+      });
+      const html = wrapper.find("div");
+
+      expect(html.find("b").text()).toBe("there");
+      expect(html.find("script").exists()).toBe(false);
+      expect(html.find("img").attributes("onerror")).toBeUndefined();
+      expect(html.text()).not.toContain("ignored");
+    });
+
+    it("shows nothing for a setting that is not rich text", () => {
+      const wrapper = mountSection('<section><div data-html="settings.title"></div></section>', { title: "<b>x</b>" });
+
+      expect(wrapper.find("div").html()).toBe("<div></div>");
+    });
+  });
+
+  describe("sanitizing", () => {
+    it("drops elements the contract refuses, with the content of those that hold code", () => {
+      const wrapper = mountSection(
+        "<section><script>alert(1)</script><style>p{}</style><svg><circle /></svg>" +
+          "<iframe src='https://evil.example'></iframe><form><input><button>Go</button></form><p>Kept</p></section>",
+      );
+
+      expect(wrapper.find("section").element.innerHTML).toBe("<p>Kept</p>");
+    });
+
+    it("drops attributes the contract refuses", () => {
+      const wrapper = mountSection(
+        '<section><p id="x" style="color:red" onclick="alert(1)" data-secret="1" title="Kept" aria-label="Kept">a</p></section>',
+      );
+
+      expect(wrapper.find("p").attributes()).toEqual({ title: "Kept", "aria-label": "Kept" });
+    });
+  });
+
+  describe("links and images", () => {
+    it.each([
+      { href: "/catalog", isKept: true },
+      { href: "https://example.com", isKept: true },
+      { href: "mailto:sales@example.com", isKept: true },
+      { href: "tel:+100", isKept: true },
+      { href: "javascript:alert(1)", isKept: false },
+      { href: "http://example.com", isKept: false },
+      { href: "//evil.example", isKept: false },
+      { href: "/\\evil.example", isKept: false },
+      { href: "data:text/html,x", isKept: false },
+    ])("keeps the href $href: $isKept", ({ href, isKept }) => {
+      const wrapper = mountSection('<section><a href="{{ settings.link }}">Go</a></section>', { link: href });
+
+      expect(wrapper.find("a").attributes("href")).toBe(isKept ? href : undefined);
+    });
+
+    it("keeps a link that opens a new window from reaching this one", () => {
+      const wrapper = mountSection(
+        '<section><a href="https://example.com" target="_blank" rel="external">Go</a></section>',
+      );
+
+      expect(wrapper.find("a").attributes("rel")).toBe("external noopener noreferrer");
+    });
+
+    it.each([
+      { src: "/cms-content/assets/a.png", isKept: true },
+      { src: "https://cdn.example.com/a.png", isKept: true },
+      { src: "data:image/svg+xml,<svg onload=alert(1)>", isKept: false },
+      { src: "javascript:alert(1)", isKept: false },
+    ])("keeps the src $src: $isKept", ({ src, isKept }) => {
+      const wrapper = mountSection('<section><img src="{{ settings.image }}" alt=""></section>', { image: src });
+
+      expect(wrapper.find("img").attributes("src")).toBe(isKept ? src : undefined);
+    });
+
+    it("leaves out a srcset with any candidate that breaks the rule", () => {
+      const wrapper = mountSection(
+        '<section><img srcset="/a.png 1x, /b.png 2x" alt=""><img srcset="/a.png 1x, javascript:x 2x" alt=""></section>',
+      );
+      const [kept, dropped] = wrapper.findAll("img");
+
+      expect(kept.attributes("srcset")).toBe("/a.png 1x, /b.png 2x");
+      expect(dropped.attributes("srcset")).toBeUndefined();
+    });
+  });
+
+  describe("kit tags", () => {
+    it("renders vc-button as VcButton, a path as a route", () => {
+      const wrapper = mountSection(
+        '<section><vc-button label="{{ settings.title }}" to="/catalog" color="secondary" variant="outline" size="sm" full-width></vc-button></section>',
+        { title: "Shop" },
+      );
+      const button = wrapper.findComponent(VcButton);
+
+      expect(button.props()).toMatchObject({
+        to: "/catalog",
+        color: "secondary",
+        variant: "outline",
+        size: "sm",
+        fullWidth: true,
+      });
+      expect(button.text()).toBe("Shop");
+    });
+
+    it("gives VcButton an external link and leaves out values it does not take", () => {
+      const wrapper = mountSection(
+        '<section><vc-button label="Go" to="https://example.com" color="hotpink" variant="weird"></vc-button><vc-button label="No" to="javascript:alert(1)"></vc-button></section>',
+      );
+      const [external, unsafe] = wrapper.findAllComponents(VcButton);
+
+      expect(external.props()).toMatchObject({
+        externalLink: "https://example.com",
+        color: "primary",
+        variant: "solid",
+      });
+      expect(unsafe.props()).toMatchObject({ to: null, externalLink: undefined });
+    });
+
+    it("renders vc-icon and vc-badge", () => {
+      const wrapper = mountSection(
+        '<section><vc-icon name="star" size="lg" color="accent"></vc-icon><vc-badge label="New" color="success" size="sm"></vc-badge></section>',
+      );
+
+      expect(wrapper.findComponent(VcIcon).props()).toMatchObject({ name: "star", size: "lg", color: "accent" });
+      expect(wrapper.findComponent(VcBadge).props()).toMatchObject({ color: "success", size: "sm" });
+      expect(wrapper.findComponent(VcBadge).text()).toBe("New");
+    });
+
+    it("renders what follows a kit tag written as self-closing", () => {
+      const wrapper = mountSection('<section><p><vc-icon name="star" /> Rated</p></section>');
+
+      expect(wrapper.findComponent(VcIcon).exists()).toBe(true);
+      expect(wrapper.find("p").text()).toBe("Rated");
+    });
+
+    it("renders vc-products as the product grid, or as the carousel", async () => {
+      const wrapper = mountSection(
+        '<section><vc-products query="drill" take="6" columns="5"></vc-products><vc-products view="carousel" filter="brand:acme" take="40" columns="3"></vc-products></section>',
+      );
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: "ProductsBlockStub" }).props()).toMatchObject({
+        query: "drill",
+        count: 6,
+        columnsAmountDesktop: "5",
+        columnsAmountTablet: "3",
+      });
+      expect(wrapper.findComponent({ name: "ProductsCarouselStub" }).props()).toMatchObject({
+        filter: "brand:acme",
+        count: 4,
+        slidesPerView: 3,
+      });
+    });
+  });
+
+  describe("in the designer preview", () => {
+    beforeEach(() => {
+      frame.isPreview = true;
+    });
+
+    it("names the string setting an element shows as its whole text, so it can be edited in place", () => {
+      const wrapper = mountSection(
+        '<section><h2> {{ settings.title }} </h2><p>Hi {{ settings.title }}</p><a href="/x">{{ settings.link }}</a>' +
+          '<ul><li data-each="settings.cards">{{ item.title }}</li></ul></section>',
+        { title: "Hello", link: "/x", cards: [{ title: "One" }, { title: "Two" }] },
+      );
+
+      expect(wrapper.find("h2").attributes("data-pb-field")).toBe("title");
+      expect(wrapper.find("p").attributes("data-pb-field")).toBeUndefined();
+      expect(wrapper.find("a").attributes("data-pb-field")).toBeUndefined();
+      expect(wrapper.findAll("li").map((item) => item.attributes("data-pb-field"))).toEqual([
+        "cards.0.title",
+        "cards.1.title",
+      ]);
+    });
+  });
+
+  describe("behaviors", () => {
+    it("repeats a marquee's children once, the copies hidden from assistive technology", () => {
+      const wrapper = mountSection("<section><div data-marquee><span>A</span><span>B</span></div></section>");
+      const items = wrapper.findAll("[data-marquee] > span");
+
+      expect(items.map((item) => item.text())).toEqual(["A", "B", "A", "B"]);
+      expect(items.map((item) => item.attributes("aria-hidden"))).toEqual([undefined, undefined, "true", "true"]);
+    });
+
+    it("leaves the text of a counter to its behavior", () => {
+      const wrapper = mountSection('<section><span data-count-up="{{ settings.speed }}">placeholder</span></section>', {
+        speed: 5,
+      });
+
+      expect(wrapper.find("span").attributes("data-count-up")).toBe("5");
+      expect(wrapper.find("span").text()).not.toContain("placeholder");
+    });
+
+    it("applies a behavior once its chunk loads", async () => {
+      const wrapper = mountSection('<section><span data-copy="{{ settings.title }}">Copy</span></section>', {
+        title: "CODE10",
+      });
+
+      await vi.waitFor(() => expect(wrapper.find("span").attributes("role")).toBe("button"));
+      expect(wrapper.find("span").attributes("tabindex")).toBe("0");
+    });
+
+    it("follows a changed setting", async () => {
+      const wrapper = mountSection("<section><h2>{{ settings.title }}</h2></section>", { title: "Before" });
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, title: "After" } });
+      await nextTick();
+
+      expect(wrapper.find("h2").text()).toBe("After");
+    });
+  });
+});
