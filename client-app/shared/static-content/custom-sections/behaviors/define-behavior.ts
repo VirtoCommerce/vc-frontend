@@ -1,7 +1,5 @@
 import { createSharedComposable, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
-import { clamp } from "lodash-es";
 import { effectScope, shallowRef } from "vue";
-import { toFiniteNumber } from "../numbers";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 
@@ -50,12 +48,6 @@ export function defineBehavior(
       states.delete(element);
     },
   };
-}
-
-/** A number attribute within its range; `undefined` when absent or not a number. */
-export function readNumberAttribute(element: HTMLElement, name: string, min: number, max: number): number | undefined {
-  const value = toFiniteNumber(element.getAttribute(name));
-  return value === undefined ? undefined : clamp(value, min, max);
 }
 
 /** A boolean attribute: present and not `false`. */

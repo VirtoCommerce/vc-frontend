@@ -2,16 +2,14 @@ import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueu
 import { computed, shallowRef, watchEffect } from "vue";
 import { globals } from "@/core/globals";
 import { toFiniteNumber } from "../numbers";
-import { defineBehavior, readNumberAttribute } from "./define-behavior";
+import { defineBehavior } from "./define-behavior";
 
 const DEFAULT_DURATION = 1500;
-const MAX_DURATION = 5000;
-const MAX_DECIMALS = 4;
 
 /** The text counts up to the number, in the page's language, when the element first shows. */
 export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => {
-  const decimals = Math.round(readNumberAttribute(element, "data-count-up-decimals", 0, MAX_DECIMALS) ?? 0);
-  const duration = readNumberAttribute(element, "data-count-up-duration", 0, MAX_DURATION) ?? DEFAULT_DURATION;
+  const decimals = Math.round(toFiniteNumber(element.getAttribute("data-count-up-decimals")) ?? 0);
+  const duration = toFiniteNumber(element.getAttribute("data-count-up-duration")) ?? DEFAULT_DURATION;
   const target = computed(() => toFiniteNumber(value.value) ?? Number.NaN);
   const hasShown = shallowRef(isReducedMotion);
   const shown = useTransition(() => (hasShown.value && Number.isFinite(target.value) ? target.value : 0), {
