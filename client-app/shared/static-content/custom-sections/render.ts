@@ -26,6 +26,12 @@ export interface IRenderOptions {
   fields: readonly IThemeSchemaField[];
   /** Images come only from under it, when the theme names it. */
   assetsBaseUrl?: string;
+  /** The visitor's motion preference: an element with behaviors mounts afresh when it changes. */
+  isReducedMotion?: boolean;
+}
+
+interface IRenderScope extends IBindingScope {
+  isReducedMotion: boolean;
 }
 
 interface IRenderedAttribute {
@@ -50,11 +56,12 @@ const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
 const overBudgetTemplates = new WeakSet<ICompiledTemplate>();
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
-  const scope: IBindingScope = {
+  const scope: IRenderScope = {
     type: options.type,
     assetsBaseUrl: options.assetsBaseUrl,
     settings: options.settings,
     fields: toFieldMap(options.fields),
+    isReducedMotion: !!options.isReducedMotion,
   };
 
   // Rows multiply what they hold: a short template with a long list could otherwise build millions of nodes.
@@ -78,7 +85,7 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
   return isVNode(root) ? root : null;
 }
 
-function renderNodes(nodes: readonly CompiledNodeType[], scope: IBindingScope, isCopy = false): VNodeArrayChildren {
+function renderNodes(nodes: readonly CompiledNodeType[], scope: IRenderScope, isCopy = false): VNodeArrayChildren {
   return nodes.flatMap((node) => {
     if (!("text" in node)) {
       return renderElement(node, scope, isCopy ? COPY_PROPS : {});
@@ -93,7 +100,7 @@ function renderNodes(nodes: readonly CompiledNodeType[], scope: IBindingScope, i
 
 function renderElement(
   node: ICompiledElement,
-  scope: IBindingScope,
+  scope: IRenderScope,
   props: Record<string, unknown> = {},
 ): VNodeArrayChildren {
   const listId = node.each;
@@ -148,7 +155,7 @@ function isRowId(id: unknown): id is string | number {
 }
 
 /** A comment holds the place of an element `data-if` hides, so its siblings keep theirs. */
-function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record<string, unknown>): VNode {
+function renderShown(node: ICompiledElement, scope: IRenderScope, props: Record<string, unknown>): VNode {
   if (node.condition) {
     const isSet = isSetValue(resolveBinding(node.condition.path, scope)?.value);
 
@@ -171,8 +178,12 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
   const hasText = kept.some(({ name }) => textAttributes.has(name));
   const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
 
-  // Vue pairs an element's directives by position: a behavior a setting switches on or off mounts it afresh.
-  const behaviorKey = applied.length ? { key: `${String(props.key ?? "")}:${applied.join(" ")}` } : {};
+  // Vue pairs an element's directives by position, and a behavior reads its options and the motion preference
+  // once: a setting that changes any of them mounts the element afresh.
+  const behaviorValues = kept.filter(({ name }) => fields.has(name)).map(({ name, value }) => [name, value]);
+  const behaviorKey = applied.length
+    ? { key: JSON.stringify([props.key ?? null, scope.isReducedMotion, behaviorValues]) }
+    : {};
   const vnode = h(
     node.tag,
     mergeProps(renderAttributes(node, kept, scope), getFieldAttributes(node, scope), props, behaviorKey),
@@ -211,7 +222,7 @@ function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], pr
 
 function renderChildren(
   node: ICompiledElement,
-  scope: IBindingScope,
+  scope: IRenderScope,
   hasText: boolean,
   isRepeated: boolean,
 ): VNodeArrayChildren | undefined {

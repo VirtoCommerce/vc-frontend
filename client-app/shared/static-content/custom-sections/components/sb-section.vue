@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { preloadBehaviors } from "../behaviors";
+import { preloadBehaviors, useReducedMotion } from "../behaviors";
 import { useCustomSectionStyle } from "../composables/useCustomSectionStyle";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "../kit";
 import { renderCustomSection } from "../render";
@@ -24,6 +24,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { theme } = useThemeSnapshot();
+const reducedMotion = useReducedMotion();
 
 registerBuiltInKit();
 
@@ -68,6 +69,7 @@ function renderSection(): VNode | null {
         settings: props.model,
         fields: Array.isArray(fields) ? fields : [],
         assetsBaseUrl: theme.value?.assetsBaseUrl,
+        isReducedMotion: reducedMotion.value === "reduce",
       })
     : null;
 }

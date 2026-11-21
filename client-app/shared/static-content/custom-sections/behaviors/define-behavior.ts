@@ -1,17 +1,17 @@
-import { createSharedComposable, usePreferredReducedMotion } from "@vueuse/core";
 import { effectScope, shallowRef } from "vue";
+import { useReducedMotion } from "./reduced-motion";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 
 export interface IBehaviorContext {
   /** The attribute's value, bindings resolved; follows the settings. */
   value: Readonly<ShallowRef<string>>;
-  /** With `prefers-reduced-motion: reduce` a behavior shows its end state at once. */
+  /**
+   * With `prefers-reduced-motion: reduce` a behavior shows its end state at once. The element mounts afresh when
+   * the preference or one of the behavior's options changes, so a behavior reads both once.
+   */
   isReducedMotion: boolean;
 }
-
-/** One media query listener for the page, however many elements behave. */
-const useReducedMotion = createSharedComposable(() => usePreferredReducedMotion());
 
 interface IBehaviorState {
   scope: EffectScope;

@@ -3,6 +3,7 @@ import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { CustomSectionDirectiveType, ICustomSectionBehavior } from "../types";
 
 export { REPEATED_COPY_ATTRIBUTE } from "./constants";
+export { useReducedMotion } from "./reduced-motion";
 
 type MountArgumentsType = Parameters<NonNullable<CustomSectionDirectiveType["mounted"]>>;
 

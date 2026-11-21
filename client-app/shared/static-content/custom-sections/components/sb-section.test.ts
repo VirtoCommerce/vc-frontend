@@ -763,7 +763,7 @@ describe("SbSection", () => {
     });
   });
 
-  describe("a behavior a setting switches on or off", () => {
+  describe("a behavior whose setting changes", () => {
     const hooks = { mounted: vi.fn(), unmounted: vi.fn() };
 
     beforeEach(() => {
@@ -773,11 +773,13 @@ describe("SbSection", () => {
         directive: () => Promise.resolve({ mounted: hooks.mounted, unmounted: hooks.unmounted }),
         description: "Glows.",
         value: { type: "string" },
+        options: { size: { type: "number" } },
       });
     });
 
     afterEach(() => {
       unregisterCustomSectionBehavior("glow");
+      vi.unstubAllGlobals();
     });
 
     it("starts when its setting is set, beside a behavior that stays", async () => {
@@ -801,6 +803,34 @@ describe("SbSection", () => {
 
       expect(hooks.unmounted).toHaveBeenCalledOnce();
       expect(wrapper.find("p").attributes("data-glow")).toBeUndefined();
+    });
+
+    it.each([
+      ["its value", { title: "silver" }],
+      ["an option", { speed: 3 }],
+    ])("starts afresh when %s changes", async (_, change) => {
+      const template =
+        '<section><p data-glow="{{ settings.title }}" data-glow-size="{{ settings.speed }}">x</p></section>';
+      const wrapper = mountSection(template, { title: "gold", speed: 2 });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledOnce());
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, title: "gold", speed: 2, ...change } });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledTimes(2));
+
+      expect(hooks.unmounted).toHaveBeenCalledOnce();
+    });
+
+    it("starts afresh when the visitor's motion preference changes", async () => {
+      const query = Object.assign(new EventTarget(), { matches: false, media: "(prefers-reduced-motion: reduce)" });
+      vi.stubGlobal("matchMedia", () => query);
+      mountSection('<section><p data-glow="{{ settings.title }}">x</p></section>', { title: "gold" });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledOnce());
+
+      query.matches = true;
+      query.dispatchEvent(Object.assign(new Event("change"), { matches: true }));
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledTimes(2));
+
+      expect(hooks.unmounted).toHaveBeenCalledOnce();
     });
   });
 });
