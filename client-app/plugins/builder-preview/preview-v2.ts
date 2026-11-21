@@ -34,6 +34,7 @@ import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
 import type { Router } from "vue-router";
 
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
@@ -60,11 +61,16 @@ interface ITemplateSchema {
   previewMessage?: { templateKey?: string };
 }
 
-export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
+/** `kit`: the tags and behaviors custom section templates may use, so the agent and the server learn them. */
+export function buildPreviewCatalog(
+  schemas: PageBuilderSchemaType,
+  kit?: ICustomSectionKitCatalog,
+): Record<string, unknown> {
   const catalog = {
     ...schemas,
     templates: withBuiltInDocuments(schemas.templates),
     paletteTokens: { light: tokensOf(presets), dark: tokensOf(darkPresets) },
+    ...(kit && { kit }),
   };
 
   return {

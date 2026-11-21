@@ -44,4 +44,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   pageBuilderSection: {},
   accountSecurity: {},
   companyInfo: {},
+  customSectionTag: {},
+  customSectionBehavior: {},
 };

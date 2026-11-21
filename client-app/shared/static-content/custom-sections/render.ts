@@ -10,11 +10,11 @@ import {
   Text,
   withDirectives,
 } from "vue";
-import { isRecord } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml } from "../sections";
-import { getBehaviorDirective, MARQUEE_COPY_ATTRIBUTE } from "./behaviors";
+import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
-import { renderKitTag } from "./kit-tags";
+import { getKitBehaviors, getKitTags, toTagProps } from "./kit";
 import { getSettingVariables } from "./setting-variables";
 import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
@@ -31,8 +31,6 @@ export interface IRenderOptions {
   rootAttributes: Record<string, unknown>;
 }
 
-/** The behaviors whose directive writes the element's text, so the template's text there is not rendered. */
-const TEXT_OWNING_ATTRIBUTES = ["data-count-up", "data-countdown-part"];
 const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
@@ -92,8 +90,8 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
     }
   }
 
-  if (node.kit) {
-    return renderKitTag(node.kit, renderAttributeValues(node.attributes, scope), props);
+  if (node.isKitTag) {
+    return renderKitTag(node, scope, props);
   }
 
   const vnode = h(
@@ -101,28 +99,49 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
     mergeProps(renderAttributes(node, scope), getFieldAttributes(node, scope), props),
     renderChildren(node, scope),
   );
-  const directives: DirectiveArguments = node.behaviors.map((behavior) => [
-    getBehaviorDirective(behavior),
-    renderParts(node.attributes.find(([name]) => name === behavior)?.[1] ?? [], scope),
-  ]);
+  const behaviors = getKitBehaviors();
+  const directives: DirectiveArguments = node.behaviors
+    .filter((name) => Object.hasOwn(behaviors, name))
+    .map((name) => [
+      getBehaviorDirective(behaviors[name]),
+      renderParts(node.attributes.find(([attribute]) => attribute === `data-${name}`)?.[1] ?? [], scope),
+    ]);
 
   return directives.length ? withDirectives(vnode, directives) : vnode;
 }
 
+/** A tag that throws on its attributes renders nothing rather than the whole section failing. */
+function renderKitTag(node: ICompiledElement, scope: IBindingScope, props: Record<string, unknown>): VNode {
+  const tags = getKitTags();
+  const tag = Object.hasOwn(tags, node.tag) ? tags[node.tag] : undefined;
+
+  if (!tag) {
+    return createCommentVNode("", true);
+  }
+
+  try {
+    const { props: tagProps, slotText } = toTagProps(tag, renderAttributeValues(node.attributes, scope));
+    return h(tag.component, { ...tagProps, ...props }, slotText === undefined ? undefined : () => slotText);
+  } catch (error) {
+    Logger.error(`[custom-sections] The ${node.tag} tag failed to map its attributes`, error);
+    return createCommentVNode("", true);
+  }
+}
+
 function renderChildren(node: ICompiledElement, scope: IBindingScope): VNodeArrayChildren | undefined {
-  if (node.html || node.attributes.some(([name]) => TEXT_OWNING_ATTRIBUTES.includes(name))) {
+  if (node.html || node.hasBehaviorText) {
     return undefined;
   }
 
   const children = renderNodes(node.children, scope);
 
-  if (!node.behaviors.includes("data-marquee")) {
+  if (!node.repeatsChildren) {
     return children;
   }
 
   const copies = renderNodes(node.children, scope).map((child) =>
     isVNode(child) && child.type !== Text && child.type !== Comment
-      ? cloneVNode(child, { "aria-hidden": "true", [MARQUEE_COPY_ATTRIBUTE]: "" })
+      ? cloneVNode(child, { "aria-hidden": "true", [REPEATED_COPY_ATTRIBUTE]: "" })
       : child,
   );
 

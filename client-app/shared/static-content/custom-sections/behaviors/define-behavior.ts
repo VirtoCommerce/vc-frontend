@@ -1,8 +1,7 @@
 import { usePreferredReducedMotion } from "@vueuse/core";
 import { effectScope, shallowRef } from "vue";
-import type { EffectScope, ObjectDirective, ShallowRef } from "vue";
-
-export type BehaviorDirectiveType = ObjectDirective<HTMLElement, string | undefined>;
+import type { CustomSectionDirectiveType } from "../types";
+import type { EffectScope, ShallowRef } from "vue";
 
 export interface IBehaviorContext {
   /** The attribute's value, bindings resolved; follows the settings. */
@@ -19,7 +18,7 @@ interface IBehaviorState {
 /** Runs the setup in an effect scope of its own per element, so what it starts stops when the element goes. */
 export function defineBehavior(
   setup: (element: HTMLElement, context: IBehaviorContext) => void,
-): BehaviorDirectiveType {
+): CustomSectionDirectiveType {
   const states = new WeakMap<HTMLElement, IBehaviorState>();
 
   return {

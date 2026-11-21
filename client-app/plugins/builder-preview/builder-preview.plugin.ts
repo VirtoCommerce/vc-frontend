@@ -18,7 +18,7 @@ import {
 } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
-import { watchCustomSectionSchemas } from "./custom-sections-catalog";
+import { watchCustomSectionCatalog } from "./custom-sections-catalog";
 import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
 import { getRegisteredComponents } from "./register-components";
 import {
@@ -542,10 +542,10 @@ export default {
       const registeredSchemas = await getRegisteredComponents();
 
       if (isPreviewV2Frame()) {
-        // The theme's custom types join the catalog; a change to them sends `loaded` again.
-        watchCustomSectionSchemas(registeredSchemas, (schemas) => {
+        // The theme's custom types and the kit join the catalog; a change to either sends `loaded` again.
+        watchCustomSectionCatalog(registeredSchemas, (schemas, kit) => {
           context.schemas.value = schemas;
-          loadedNotifier.setData(buildPreviewCatalog(schemas));
+          loadedNotifier.setData(buildPreviewCatalog(schemas, kit));
         });
       } else {
         context.schemas.value = registeredSchemas;

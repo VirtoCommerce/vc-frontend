@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { toCustomSectionSchemas, watchCustomSectionSchemas } from "./custom-sections-catalog";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sections-catalog";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionType } from "@/core/theme-snapshot";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
 
 vi.mock("@/core/composables/useLanguages", async () => {
   const { ref } = await import("vue");
@@ -62,13 +64,13 @@ describe("toCustomSectionSchemas", () => {
   });
 });
 
-describe("watchCustomSectionSchemas", () => {
+describe("watchCustomSectionCatalog", () => {
   it("adds the theme's custom types to the schemas, and applies again only when they change", async () => {
-    const apply = vi.fn<(schemas: PageBuilderSchemaType) => void>();
+    const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
     const { setDraft } = useThemeSnapshot();
     setDraft(undefined);
 
-    watchCustomSectionSchemas(BUILT_IN, apply);
+    watchCustomSectionCatalog(BUILT_IN, apply);
     expect(apply).toHaveBeenCalledTimes(1);
     expect(Object.keys(apply.mock.lastCall?.[0].sections ?? {})).toEqual(["text-block"]);
 
@@ -85,5 +87,35 @@ describe("watchCustomSectionSchemas", () => {
     setDraft({ customSections: { "custom-stats": { ...STATS, schema: { ...STATS.schema, limit: 1 } } } });
     await nextTick();
     expect(apply).toHaveBeenCalledTimes(3);
+  });
+
+  it("gives the kit's tags and behaviors as data, and applies again when the registry changes", async () => {
+    const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
+    watchCustomSectionCatalog(BUILT_IN, apply);
+
+    const kit = apply.mock.lastCall?.[1];
+    expect(Object.keys(kit?.tags ?? {})).toEqual(["vc-button", "vc-icon", "vc-badge", "vc-products"]);
+    expect(kit?.tags["vc-products"].attributes.take).toEqual({
+      type: "number",
+      min: 1,
+      max: 24,
+      description: expect.any(String),
+    });
+    expect(kit?.behaviors.countdown).toEqual({
+      description: expect.any(String),
+      value: { type: "date" },
+      options: { part: expect.objectContaining({ type: "select" }) },
+      writes: ["data-ended", "text"],
+    });
+    expect(JSON.stringify(kit)).not.toContain("directive");
+
+    useExtensionRegistry().register("customSectionBehavior", "confetti", {
+      directive: () => Promise.resolve({}),
+      description: "Throws confetti.",
+    });
+    await nextTick();
+
+    expect(apply.mock.lastCall?.[1].behaviors.confetti).toEqual({ description: "Throws confetti." });
+    useExtensionRegistry().unregister("customSectionBehavior", "confetti");
   });
 });

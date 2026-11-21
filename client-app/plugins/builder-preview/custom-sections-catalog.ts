@@ -1,8 +1,10 @@
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { getKitCatalog, registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
 import { isCustomSectionType } from "@/shared/static-content/custom-sections/type-name";
 import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionType } from "@/core/theme-snapshot";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit";
 
 /** The custom types as section schemas, `custom: true`, each named in the page's language. */
 export function toCustomSectionSchemas(
@@ -32,17 +34,24 @@ export function toCustomSectionSchemas(
   ) as unknown as PageBuilderSchemaItemType;
 }
 
-/** Calls `apply` with the schemas and the theme's custom types now, and again whenever those change. */
-export function watchCustomSectionSchemas(
+/**
+ * Calls `apply` with the schemas, the theme's custom types among the sections, and the kit their templates use, now
+ * and again whenever the custom types or the registered kit change.
+ */
+export function watchCustomSectionCatalog(
   schemas: PageBuilderSchemaType,
-  apply: (schemas: PageBuilderSchemaType) => void,
+  apply: (schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void,
 ): void {
   const { theme, localizeThemeDraft } = useThemeSnapshot();
+
+  registerBuiltInKit();
+
   const customSchemas = computed(() => toCustomSectionSchemas(theme.value?.customSections ?? {}, localizeThemeDraft));
+  const kit = computed(() => getKitCatalog());
 
   watch(
-    () => JSON.stringify(customSchemas.value),
-    () => apply({ ...schemas, sections: { ...customSchemas.value, ...schemas.sections } }),
+    () => JSON.stringify([customSchemas.value, kit.value]),
+    () => apply({ ...schemas, sections: { ...customSchemas.value, ...schemas.sections } }, kit.value),
     { immediate: true },
   );
 }

@@ -1,7 +1,8 @@
-import { flushPromises, mount, RouterLinkStub } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { nextTick } from "vue";
+import { mount, RouterLinkStub } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import CustomSection from "./custom-section.vue";
 import type { ICustomSectionType, IThemeSchemaField } from "@/core/theme-snapshot";
@@ -14,25 +15,25 @@ vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
 }));
 
 vi.mock("../components/products-block.vue", async () => {
-  const { defineComponent, h } = await import("vue");
+  const vue = await import("vue");
   return {
     __esModule: true,
-    default: defineComponent({
+    default: vue.defineComponent({
       name: "ProductsBlockStub",
       props: ["query", "filter", "count", "columnsAmountDesktop", "columnsAmountTablet"],
-      setup: () => () => h("div"),
+      setup: () => () => vue.h("div"),
     }),
   };
 });
 
 vi.mock("../components/products-carousel.vue", async () => {
-  const { defineComponent, h } = await import("vue");
+  const vue = await import("vue");
   return {
     __esModule: true,
-    default: defineComponent({
+    default: vue.defineComponent({
       name: "ProductsCarouselStub",
       props: ["query", "filter", "count", "slidesPerView"],
-      setup: () => () => h("div"),
+      setup: () => () => vue.h("div"),
     }),
   };
 });
@@ -352,7 +353,7 @@ describe("CustomSection", () => {
       const wrapper = mountSection(
         '<section><vc-products query="drill" take="6" columns="5"></vc-products><vc-products view="carousel" filter="brand:acme" take="40" columns="3"></vc-products></section>',
       );
-      await flushPromises();
+      await vi.waitFor(() => expect(wrapper.findComponent({ name: "ProductsCarouselStub" }).exists()).toBe(true));
 
       expect(wrapper.findComponent({ name: "ProductsBlockStub" }).props()).toMatchObject({
         query: "drill",
@@ -424,6 +425,73 @@ describe("CustomSection", () => {
       await nextTick();
 
       expect(wrapper.find("h2").text()).toBe("After");
+    });
+  });
+
+  describe("a kit extended through the registry", () => {
+    const Rating = defineComponent({
+      name: "RatingStub",
+      props: { value: { type: Number, default: 0 }, maxValue: { type: Number, default: 5 } },
+
+      setup:
+        (props, { slots }) =>
+        () =>
+          h("div", { "data-test-id": "rating" }, [`${props.value}/${props.maxValue}`, slots.default?.()]),
+    });
+
+    afterEach(() => {
+      useExtensionRegistry().unregister("customSectionTag", "vc-rating");
+      useExtensionRegistry().unregister("customSectionBehavior", "glow");
+    });
+
+    it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
+      useExtensionRegistry().register("customSectionTag", "vc-rating", {
+        component: Rating,
+        description: "Stars.",
+        attributes: {
+          value: { type: "number", min: 0, max: 5 },
+          "max-value": { type: "number" },
+          label: { type: "string" },
+        },
+        slotAttribute: "label",
+      });
+
+      const wrapper = mountSection(
+        '<section><vc-rating value="{{ settings.speed }}" max-value="10" label="Great" onclick="x"></vc-rating><vc-rating value="9"></vc-rating></section>',
+        { speed: 4 },
+      );
+      const [rated, outOfRange] = wrapper.findAllComponents(Rating);
+
+      expect(rated.props()).toEqual({ value: 4, maxValue: 10 });
+      expect(rated.text()).toBe("4/10Great");
+      expect(outOfRange.props("value")).toBe(0);
+    });
+
+    it("switches on a behavior a module registered, with its options in the template", async () => {
+      const mounted = vi.fn();
+      useExtensionRegistry().register("customSectionBehavior", "glow", {
+        directive: () =>
+          Promise.resolve({
+            mounted: (element: HTMLElement, binding) => mounted(element.dataset.glowColor, binding.value),
+          }),
+        description: "Glows.",
+        options: { color: { type: "string" } },
+      });
+
+      mountSection(
+        '<section><p data-glow="{{ settings.title }}" data-glow-color="gold" data-glow-other="x">a</p></section>',
+        {
+          title: "strong",
+        },
+      );
+
+      await vi.waitFor(() => expect(mounted).toHaveBeenCalledWith("gold", "strong"));
+    });
+
+    it("leaves out a tag nobody registered", () => {
+      const wrapper = mountSection("<section><vc-rating value='3'></vc-rating><p>Kept</p></section>");
+
+      expect(wrapper.find("section").element.innerHTML).toBe("<p>Kept</p>");
     });
   });
 });

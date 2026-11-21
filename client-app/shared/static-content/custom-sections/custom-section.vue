@@ -6,6 +6,7 @@
 import { computed, useAttrs, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { preloadBehaviors } from "./behaviors";
+import { getKitBehaviors, getKitTags, registerBuiltInKit } from "./kit";
 import { renderCustomSection } from "./render";
 import { compileTemplate } from "./template";
 import { isCustomSectionType } from "./type-name";
@@ -25,12 +26,16 @@ const props = defineProps<IProps>();
 const attrs = useAttrs();
 const { theme } = useThemeSnapshot();
 
+registerBuiltInKit();
+
 const definition = computed(() =>
   isCustomSectionType(props.model.type) ? theme.value?.customSections[props.model.type] : undefined,
 );
 
 const compiled = computed(() =>
-  typeof definition.value?.template === "string" ? compileTemplate(definition.value.template) : undefined,
+  typeof definition.value?.template === "string"
+    ? compileTemplate(definition.value.template, { tags: getKitTags(), behaviors: getKitBehaviors() })
+    : undefined,
 );
 
 // The behavior chunks load while the section renders, not after it mounts.
@@ -38,7 +43,10 @@ watch(
   compiled,
   (value) => {
     if (value) {
-      preloadBehaviors(value.behaviors);
+      const behaviors = getKitBehaviors();
+      preloadBehaviors(
+        [...value.behaviors].filter((name) => Object.hasOwn(behaviors, name)).map((name) => behaviors[name]),
+      );
     }
   },
   { immediate: true },

@@ -123,6 +123,15 @@ describe("preview protocol 2", () => {
     expect(changed.hash).not.toBe(catalog.hash);
   });
 
+  it("carries the custom section kit, in the hash too", () => {
+    const kit = { tags: { "vc-rating": { description: "Stars.", attributes: {} } }, behaviors: {} };
+
+    const catalog = buildPreviewCatalog(SCHEMAS, kit);
+
+    expect(catalog.kit).toEqual(kit);
+    expect(catalog.hash).not.toBe(buildPreviewCatalog(SCHEMAS, { tags: {}, behaviors: {} }).hash);
+  });
+
   it("gives each template the document the storefront renders without a theme file as its default", () => {
     const templates = {
       product: { type: "themes", previewMessage: { templateKey: "product" }, default: true },

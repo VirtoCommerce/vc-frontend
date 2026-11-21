@@ -1,2 +1,2 @@
-/** Marks the children the renderer repeats for a seamless `data-marquee` loop. */
-export const MARQUEE_COPY_ATTRIBUTE = "data-marquee-copy";
+/** Marks the children the renderer repeats for a behavior that loops them, such as `data-marquee`. */
+export const REPEATED_COPY_ATTRIBUTE = "data-sb-repeat";
