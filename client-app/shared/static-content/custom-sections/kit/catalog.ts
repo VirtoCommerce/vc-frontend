@@ -24,7 +24,7 @@ export interface ICustomSectionKitCatalog {
   guide: string;
 }
 
-/** The name `.sb-section` in `custom-section.vue` gives its container. */
+/** The name `.sb-section` in `sb-section.vue` gives its container. */
 const SECTION_CONTAINER_NAME = "sb-section";
 
 /** Copies only data, so the catalog can be posted and hashed. */

@@ -30,7 +30,7 @@ interface IProps {
   query?: string;
   filter?: string;
   take?: number;
-  view?: string;
+  view?: "grid" | "carousel";
   columns?: number;
 }
 

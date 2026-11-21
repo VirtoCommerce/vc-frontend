@@ -3,14 +3,14 @@ import { defineComponent, effectScope, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { registerCustomSections } from "./register";
-import type { ICustomSectionType } from "@/core/theme-snapshot";
+import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { EffectScope } from "vue";
 
 const flag = vi.hoisted(() => ({ isEnabled: true }));
 
 vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => flag.isEnabled }));
 
-const TYPE: ICustomSectionType = {
+const TYPE: ICustomSectionDefinition = {
   format: 1,
   name: "Stats",
   schema: { settings: [] },

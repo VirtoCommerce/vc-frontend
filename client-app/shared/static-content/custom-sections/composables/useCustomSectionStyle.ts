@@ -1,5 +1,6 @@
-import { onBeforeUnmount, onMounted, watch } from "vue";
-import { filterSectionCss } from "./css-filter";
+import { onBeforeUnmount, onMounted, toValue, watch } from "vue";
+import { filterSectionCss } from "../css-filter";
+import type { MaybeRefOrGetter } from "vue";
 
 interface IAppliedStyle {
   element: HTMLStyleElement;
@@ -16,10 +17,10 @@ const appliedStyles = new Map<string, IAppliedStyle>();
  * Puts a type's CSS in the page once, while any section of the type is mounted, so it reaches only them:
  * `@layer sections { @scope ([data-sb-type="{type}"]) { … } }`.
  */
-export function useCustomSectionStyle(type: () => string, css: () => string | undefined): void {
+export function useCustomSectionStyle(type: MaybeRefOrGetter<string>, css: MaybeRefOrGetter<string | undefined>): void {
   let usedType: string | undefined;
 
-  function use(nextType: string): void {
+  function acquire(nextType: string): void {
     let applied = appliedStyles.get(nextType);
 
     if (!applied) {
@@ -55,7 +56,7 @@ export function useCustomSectionStyle(type: () => string, css: () => string | un
     }
 
     const applied = appliedStyles.get(usedType);
-    const source = css() ?? "";
+    const source = toValue(css) ?? "";
 
     if (applied && applied.css !== source) {
       applied.css = source;
@@ -64,18 +65,18 @@ export function useCustomSectionStyle(type: () => string, css: () => string | un
   }
 
   onMounted(() => {
-    use(type());
+    acquire(toValue(type));
     write();
   });
 
-  watch([type, css], ([nextType]) => {
+  watch([() => toValue(type), () => toValue(css)], ([nextType]) => {
     if (usedType === undefined) {
       return;
     }
 
     if (nextType !== usedType) {
       release();
-      use(nextType);
+      acquire(nextType);
     }
 
     write();

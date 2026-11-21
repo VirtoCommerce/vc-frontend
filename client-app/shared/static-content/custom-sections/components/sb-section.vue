@@ -7,12 +7,12 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { preloadBehaviors } from "./behaviors";
-import { getSectionBehaviors, getSectionTags, registerBuiltInKit } from "./kit";
-import { renderCustomSection } from "./render";
-import { compileTemplate } from "./template";
-import { isCustomSectionType } from "./type-name";
-import { useCustomSectionStyle } from "./useCustomSectionStyle";
+import { preloadBehaviors } from "../behaviors";
+import { useCustomSectionStyle } from "../composables/useCustomSectionStyle";
+import { getSectionBehaviors, getSectionTags, registerBuiltInKit } from "../kit";
+import { renderCustomSection } from "../render";
+import { compileTemplate } from "../template";
+import { isCustomSectionType } from "../type-name";
 import type { IThemeItem } from "@/core/theme-snapshot";
 import type { VNode } from "vue";
 
@@ -72,11 +72,10 @@ function renderSection(): VNode | null {
 </script>
 
 <style lang="scss">
-// Outside the scope the type's CSS reaches: nothing the section draws, fixed or stacked, escapes its box.
-// The section's CSS adapts to the place it stands in with `@container sb-section (…)`.
+// Keeps fixed and stacked parts inside the box; `sb-section` is the container name the guide publishes.
 .sb-section {
+  @apply isolate @container/sb-section;
+
   contain: paint;
-  isolation: isolate;
-  container: sb-section / inline-size;
 }
 </style>

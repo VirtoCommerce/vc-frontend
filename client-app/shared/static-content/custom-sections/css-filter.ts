@@ -28,12 +28,10 @@ export function filterSectionCss(type: string, css: string): IFilteredCss | unde
   const rules: string[] = [];
 
   for (const rule of sheet.cssRules) {
-    if (isRuleOf(rule, "CSSKeyframesRule")) {
-      const keyframesRule = rule as CSSKeyframesRule;
-
-      if (keyframesRule.name.startsWith(`${type}__`)) {
-        [...keyframesRule.cssRules].forEach((keyframe) => filterDeclarations((keyframe as CSSKeyframeRule).style));
-        keyframes.push(keyframesRule.cssText);
+    if (isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule")) {
+      if (rule.name.startsWith(`${type}__`)) {
+        [...rule.cssRules].filter(hasStyle).forEach((keyframe) => filterDeclarations(keyframe.style));
+        keyframes.push(rule.cssText);
       }
     } else if (keepRule(rule)) {
       rules.push(rule.cssText);
@@ -58,25 +56,23 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
 }
 
 function keepRule(rule: CSSRule): boolean {
-  if (isRuleOf(rule, "CSSStyleRule")) {
-    const styleRule = rule as CSSStyleRule;
-
-    if (REFUSED_SELECTOR_REGEX.test(styleRule.selectorText)) {
+  if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
+    if (REFUSED_SELECTOR_REGEX.test(rule.selectorText)) {
       return false;
     }
 
-    filterDeclarations(styleRule.style);
-    filterRules(styleRule);
+    filterDeclarations(rule.style);
+    filterRules(rule);
     return true;
   }
 
-  if (isRuleOf(rule, "CSSNestedDeclarations")) {
-    filterDeclarations((rule as CSSRule & { style: CSSStyleDeclaration }).style);
+  if (isRuleOf(rule, "CSSNestedDeclarations") && hasStyle(rule)) {
+    filterDeclarations(rule.style);
     return true;
   }
 
-  if (CONDITION_RULES.some((name) => isRuleOf(rule, name))) {
-    filterRules(rule as CSSGroupingRule);
+  if (isConditionRule(rule)) {
+    filterRules(rule);
     return true;
   }
 
@@ -118,7 +114,15 @@ function isAllowedDeclaration(property: string, value: string): boolean {
 }
 
 /** By the browser's own classes, which an older browser may not have. */
-function isRuleOf(rule: CSSRule, name: string): boolean {
+function isRuleOf<T extends CSSRule>(rule: CSSRule, name: string): rule is T {
   const ruleClass = (globalThis as unknown as Record<string, unknown>)[name];
   return typeof ruleClass === "function" && rule instanceof ruleClass;
+}
+
+function hasStyle(rule: CSSRule): rule is CSSRule & { style: CSSStyleDeclaration } {
+  return "style" in rule && rule.style instanceof CSSStyleDeclaration;
+}
+
+function isConditionRule(rule: CSSRule): rule is CSSGroupingRule {
+  return CONDITION_RULES.some((name) => isRuleOf(rule, name));
 }

@@ -14,7 +14,7 @@ export function registerCustomSections(): void {
     return;
   }
 
-  const component = markRaw(defineAsyncComponent(() => import("./custom-section.vue")));
+  const component = markRaw(defineAsyncComponent(() => import("./components/sb-section.vue")));
   const { getEntries, register, unregister } = useExtensionRegistry();
   const { theme } = useThemeSnapshot();
   const registered = new Set<string>();

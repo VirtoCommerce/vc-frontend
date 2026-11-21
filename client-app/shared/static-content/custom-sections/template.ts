@@ -22,7 +22,7 @@ export interface ICompiledElement {
   /** A behavior writes the element's text. */
   hasBehaviorText: boolean;
   /** A behavior loops the element's children. */
-  repeatsChildren: boolean;
+  hasRepeatedChildren: boolean;
   children: CompiledNodeType[];
 }
 
@@ -35,7 +35,7 @@ export interface ICompiledTemplate {
 }
 
 /** The kit tags and behaviors registered when the template compiles. */
-export interface IKitType {
+export interface IKit {
   tags: Readonly<Record<string, ICustomSectionTag>>;
   behaviors: Readonly<Record<string, ICustomSectionBehavior>>;
 }
@@ -69,7 +69,7 @@ let purifier: ReturnType<typeof DOMPurify> | undefined;
  * Keeps only what the custom section contract and the registered kit allow, and reads it once per template
  * and kit. `undefined` for a template without exactly one root element.
  */
-export function compileTemplate(template: string, kit: IKitType): ICompiledTemplate | undefined {
+export function compileTemplate(template: string, kit: IKit): ICompiledTemplate | undefined {
   const key = `${getKitSignature(kit)}\n${template}`;
 
   if (cache.has(key)) {
@@ -86,9 +86,9 @@ export function compileTemplate(template: string, kit: IKitType): ICompiledTempl
   return compiled;
 }
 
-function compile(template: string, kit: IKitType): ICompiledTemplate | undefined {
+function compile(template: string, kit: IKit): ICompiledTemplate | undefined {
   const fragment = sanitize(template, kit);
-  const elements = [...fragment.childNodes].filter((node) => node.nodeType === Node.ELEMENT_NODE) as Element[];
+  const elements = [...fragment.childNodes].filter((node): node is Element => node instanceof Element);
   const hasStrayText = [...fragment.childNodes].some(
     (node) => node.nodeType === Node.TEXT_NODE && !!node.textContent?.trim(),
   );
@@ -104,7 +104,7 @@ function compile(template: string, kit: IKitType): ICompiledTemplate | undefined
   return { root, behaviors };
 }
 
-function sanitize(template: string, kit: IKitType): DocumentFragment {
+function sanitize(template: string, kit: IKit): DocumentFragment {
   const behaviorAttributes = Object.entries(kit.behaviors).flatMap(([name, behavior]) => [
     `${DATA_PREFIX}${name}`,
     ...Object.keys(behavior.options ?? {}).map((option) => `${DATA_PREFIX}${name}-${option}`),
@@ -134,7 +134,7 @@ function sanitize(template: string, kit: IKitType): DocumentFragment {
 }
 
 /** Changes when a tag, a behavior or what the compiler reads of them changes. */
-function getKitSignature(kit: IKitType): string {
+function getKitSignature(kit: IKit): string {
   return JSON.stringify([
     Object.entries(kit.tags).map(([name, tag]) => [name, Object.keys(tag.attributes)]),
     Object.entries(kit.behaviors).map(([name, behavior]) => [
@@ -147,7 +147,7 @@ function getKitSignature(kit: IKitType): string {
 }
 
 interface ICompileContext {
-  kit: IKitType;
+  kit: IKit;
   /** Of the element whose children compile. */
   depth: number;
   isRoot: boolean;
@@ -165,11 +165,11 @@ function compileNode(node: Node, context: ICompileContext): CompiledNodeType[] {
     return [{ text: parseBindings(node.textContent ?? "") }];
   }
 
-  if (node.nodeType !== Node.ELEMENT_NODE) {
+  if (!(node instanceof Element)) {
     return [];
   }
 
-  const element = compileElement(node as Element, context);
+  const element = compileElement(node, context);
 
   // A kit tag has no content: what the parser put in one written as `<vc-icon />` follows it.
   return element.isKitTag ? [element, ...compileChildren(node, context)] : [element];
@@ -183,7 +183,7 @@ function compileElement(element: Element, context: ICompileContext): ICompiledEl
     attributes: [],
     behaviors: [],
     hasBehaviorText: false,
-    repeatsChildren: false,
+    hasRepeatedChildren: false,
     children: [],
   };
 
@@ -235,7 +235,7 @@ function compileBehaviorAttribute(compiled: ICompiledElement, name: string, cont
 
   if (name.startsWith(DATA_PREFIX) && Object.hasOwn(context.kit.behaviors, behaviorName)) {
     compiled.behaviors.push(behaviorName);
-    compiled.repeatsChildren ||= !!context.kit.behaviors[behaviorName].repeatsChildren;
+    compiled.hasRepeatedChildren ||= !!context.kit.behaviors[behaviorName].repeatsChildren;
     context.behaviors.add(behaviorName);
   }
 

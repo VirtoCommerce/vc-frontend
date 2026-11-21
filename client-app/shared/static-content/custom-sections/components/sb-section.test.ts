@@ -3,9 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
-import CustomSection from "./custom-section.vue";
-import { registerSectionBehavior, registerSectionTag, unregisterSectionBehavior, unregisterSectionTag } from "./kit";
-import type { ICustomSectionType, IThemeSchemaField } from "@/core/theme-snapshot";
+import { registerSectionBehavior, registerSectionTag, unregisterSectionBehavior, unregisterSectionTag } from "../kit";
+import SbSection from "./sb-section.vue";
+import type { ICustomSectionDefinition, IThemeSchemaField } from "@/core/theme-snapshot";
 
 const frame = vi.hoisted(() => ({ isPreview: false }));
 
@@ -14,7 +14,7 @@ vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
   isPreviewV2Frame: () => frame.isPreview,
 }));
 
-vi.mock("./kit/sb-products.vue", async () => {
+vi.mock("./sb-products.vue", async () => {
   const vue = await import("vue");
   return {
     __esModule: true,
@@ -52,7 +52,7 @@ const FIELDS: IThemeSchemaField[] = [
 function mountSection(
   template: string,
   settings: Record<string, unknown> = {},
-  definition?: Partial<ICustomSectionType>,
+  definition?: Partial<ICustomSectionDefinition>,
 ) {
   useThemeSnapshot().setDraft({
     customSections: {
@@ -60,14 +60,14 @@ function mountSection(
     },
   });
 
-  return mount(CustomSection, {
+  return mount(SbSection, {
     props: { model: { id: "section-1", type: TYPE, ...settings } },
     attrs: { id: "anchor-1" },
     global: { stubs: { RouterLink: RouterLinkStub, VcIcon: true } },
   });
 }
 
-describe("CustomSection", () => {
+describe("SbSection", () => {
   beforeEach(() => {
     frame.isPreview = false;
     useThemeSnapshot().setDraft(undefined);
@@ -135,7 +135,7 @@ describe("CustomSection", () => {
     it("renders nothing for a type the theme does not hold", () => {
       useThemeSnapshot().setDraft({ customSections: {} });
 
-      const wrapper = mount(CustomSection, { props: { model: { id: "section-1", type: TYPE } } });
+      const wrapper = mount(SbSection, { props: { model: { id: "section-1", type: TYPE } } });
 
       expect(wrapper.find("[data-sb-type]").exists()).toBe(false);
     });

@@ -542,7 +542,6 @@ export default {
       const registeredSchemas = await getRegisteredComponents();
 
       if (isPreviewV2Frame()) {
-        // The theme's custom types and the kit join the catalog; a change to either sends `loaded` again.
         watchCustomSectionCatalog(registeredSchemas, (schemas, kit) => {
           context.schemas.value = schemas;
           loadedNotifier.setData(buildPreviewCatalog(schemas, kit));

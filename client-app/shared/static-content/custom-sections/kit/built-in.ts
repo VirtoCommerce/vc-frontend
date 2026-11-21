@@ -67,7 +67,7 @@ const BUILT_IN_TAGS: Record<string, ICustomSectionTag> = {
     slotAttribute: "label",
   },
   "vc-products": {
-    component: markRaw(defineAsyncComponent(() => import("./sb-products.vue"))),
+    component: markRaw(defineAsyncComponent(() => import("../components/sb-products.vue"))),
     description:
       "Products of a search or a filter as a grid or a carousel, bare: it fills the element it stands in, and the " +
       "grid fits as many columns as that element's width allows, columns at most.",

@@ -135,7 +135,7 @@ function renderChildren(node: ICompiledElement, scope: IBindingScope): VNodeArra
 
   const children = renderNodes(node.children, scope);
 
-  if (!node.repeatsChildren) {
+  if (!node.hasRepeatedChildren) {
     return children;
   }
 

@@ -3,20 +3,20 @@ import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
 import { getKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import { isCustomSectionType } from "@/shared/static-content/custom-sections/type-name";
+import type { PageBuilderDescriptorType } from "./models/PageBuilderComponentType";
 import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
-import type { ICustomSectionType } from "@/core/theme-snapshot";
+import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 
 /** The custom types as section schemas, `custom: true`, each named in the page's language. */
 export function toCustomSectionSchemas(
-  types: Record<string, ICustomSectionType>,
-  localize: (name: ICustomSectionType["name"]) => unknown,
+  types: Record<string, ICustomSectionDefinition>,
+  localize: (name: ICustomSectionDefinition["name"]) => unknown,
 ): PageBuilderSchemaItemType {
-  // The fields go as declared, wider than the descriptor type the built-in schemas are read with.
   return Object.fromEntries(
     Object.entries(types)
       .filter(([type, definition]) => isCustomSectionType(type) && Array.isArray(definition?.schema?.settings))
-      .map(([type, { name, schema }]) => {
+      .map(([type, { name, schema }]): [string, PageBuilderDescriptorType] => {
         const shownName = localize(name);
 
         return [
@@ -32,13 +32,10 @@ export function toCustomSectionSchemas(
           },
         ];
       }),
-  ) as unknown as PageBuilderSchemaItemType;
+  );
 }
 
-/**
- * Calls `apply` with the schemas, the theme's custom types among the sections, and the kit their templates use, now
- * and again whenever the custom types or the registered kit change.
- */
+/** Calls `apply` now and whenever the theme's custom types or the registered kit change. */
 export function watchCustomSectionCatalog(
   schemas: PageBuilderSchemaType,
   apply: (schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void,

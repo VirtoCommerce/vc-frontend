@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { checkFieldValue } from "./fields";
+import { toFieldValue } from "./fields";
 import type { ICustomSectionField } from "../types";
 
-describe("checkFieldValue", () => {
+describe("toFieldValue", () => {
   it.each<[ICustomSectionField, string, unknown]>([
     [{ type: "string" }, "Any text", "Any text"],
     [{ type: "number", min: 1, max: 24 }, "24", 24],
@@ -24,6 +24,6 @@ describe("checkFieldValue", () => {
     [{ type: "date" }, "next friday", undefined],
     [{ type: "date" }, "2026-13-45", undefined],
   ])("checks %j against %j: %j", (field, value, expected) => {
-    expect(checkFieldValue(field, value)).toBe(expected);
+    expect(toFieldValue(field, value)).toBe(expected);
   });
 });

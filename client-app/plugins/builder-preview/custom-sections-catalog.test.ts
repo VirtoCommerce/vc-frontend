@@ -7,7 +7,7 @@ import {
 } from "@/shared/static-content/custom-sections/kit/registry";
 import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sections-catalog";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
-import type { ICustomSectionType } from "@/core/theme-snapshot";
+import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 
 vi.mock("@/core/composables/useLanguages", async () => {
@@ -17,7 +17,7 @@ vi.mock("@/core/composables/useLanguages", async () => {
   };
 });
 
-const STATS: ICustomSectionType = {
+const STATS: ICustomSectionDefinition = {
   format: 1,
   name: { "en-US": "Stats", "de-DE": "Statistik" },
   schema: {
@@ -55,7 +55,7 @@ describe("toCustomSectionSchemas", () => {
   });
 
   it("leaves out a type with a name the storefront refuses or without settings", () => {
-    const broken = { ...STATS, schema: {} } as unknown as ICustomSectionType;
+    const broken = { ...STATS, schema: {} } as unknown as ICustomSectionDefinition;
 
     expect(toCustomSectionSchemas({ stats: STATS, "custom-broken": broken }, () => "Stats")).toEqual({});
   });

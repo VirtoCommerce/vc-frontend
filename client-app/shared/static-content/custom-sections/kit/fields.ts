@@ -5,7 +5,7 @@ import type { CustomSectionValueType, ICustomSectionField } from "../types";
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:$|T)/;
 
 /** `undefined` for a value the field does not take: the attribute is left out. */
-export function checkFieldValue(field: ICustomSectionField, value: string): CustomSectionValueType | undefined {
+export function toFieldValue(field: ICustomSectionField, value: string): CustomSectionValueType | undefined {
   switch (field.type) {
     case "number": {
       const number = value.trim() ? Number(value) : Number.NaN;

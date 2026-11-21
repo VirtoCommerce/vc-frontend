@@ -1,5 +1,5 @@
 import { camelize } from "vue";
-import { checkFieldValue } from "./fields";
+import { toFieldValue } from "./fields";
 import type { CustomSectionValueType, ICustomSectionTag } from "../types";
 
 /** The checked attributes as the tag's props and the text of its default slot. */
@@ -10,7 +10,7 @@ export function toTagProps(
   const checked: Record<string, CustomSectionValueType> = {};
 
   for (const [name, field] of Object.entries(tag.attributes)) {
-    const value = Object.hasOwn(values, name) ? checkFieldValue(field, values[name]) : undefined;
+    const value = Object.hasOwn(values, name) ? toFieldValue(field, values[name]) : undefined;
 
     if (value !== undefined) {
       checked[name] = value;
