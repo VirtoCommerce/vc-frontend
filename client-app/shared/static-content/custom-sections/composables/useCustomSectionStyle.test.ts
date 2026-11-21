@@ -27,14 +27,14 @@ describe("useCustomSectionStyle", () => {
     document.head.innerHTML = "";
   });
 
-  it("puts a type's CSS in the page once, scoped to its sections in the sections layer", () => {
+  it("puts a type's CSS in the page once, scoped to its sections in the custom-sections layer", () => {
     const first = mount(Section, { props: { type: "custom-hero" } });
     const second = mount(Section, { props: { type: "custom-hero" } });
     const styles = findStyles("custom-hero");
 
     expect(styles).toHaveLength(1);
     expect(styles[0].textContent?.replaceAll(/\s+/g, " ")).toBe(
-      '@layer sections { @scope ([data-sb-type="custom-hero"]) { .card { color: var(--color-primary-500); } } }',
+      '@layer custom-sections { @scope ([data-sb-type="custom-hero"]) { .card { color: var(--color-primary-500); } } }',
     );
 
     first.unmount();

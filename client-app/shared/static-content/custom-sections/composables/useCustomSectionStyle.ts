@@ -16,7 +16,7 @@ const appliedStyles = new Map<string, IAppliedStyle>();
 
 /**
  * Puts a type's CSS in the page once, while any section of the type is mounted, so it reaches only them:
- * `@layer sections { @scope ([data-sb-type="{type}"]) { … } }`.
+ * `@layer custom-sections { @scope ([data-sb-type="{type}"]) { … } }`.
  */
 export function useCustomSectionStyle(
   type: MaybeRefOrGetter<string>,
@@ -100,5 +100,5 @@ function toScopedCss(type: string, css: string, assetsBaseUrl: string | undefine
   }
 
   // Keyframes go beside the scope: `@scope` holds style rules only.
-  return `@layer sections {\n${filtered.keyframes}\n@scope ([data-sb-type="${type}"]) {\n${filtered.rules}\n}\n}`;
+  return `@layer custom-sections {\n${filtered.keyframes}\n@scope ([data-sb-type="${type}"]) {\n${filtered.rules}\n}\n}`;
 }
