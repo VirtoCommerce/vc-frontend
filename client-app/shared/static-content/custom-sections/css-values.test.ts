@@ -25,7 +25,15 @@ describe("isAllowedValue", () => {
     ["image-set(var(--x) 1x)", false],
     ["url(https://example.com/a.png)", true],
     ["url(javascript:alert(1))", false],
+    ["-moz-element(#secret)", false],
   ])("judges %s: %s", (value, isAllowed) => {
     expect(isAllowedValue(value)).toBe(isAllowed);
+  });
+
+  it("reads a long word in one pass, not one per letter", () => {
+    const startedAt = performance.now();
+
+    expect(isAllowedValue("a".repeat(60_000))).toBe(true);
+    expect(performance.now() - startedAt).toBeLessThan(500);
   });
 });

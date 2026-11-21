@@ -133,7 +133,7 @@ const BUILT_IN_BEHAVIORS: Record<string, ICustomSectionBehavior> = {
   },
   copy: {
     directive: async () => (await import("../behaviors/copy")).vCopy,
-    description: "A click copies the text, sets data-copied for 2 seconds and tells screen readers it did.",
+    description: "A click copies the text, sets data-copied for 2 seconds and shows a notification that it did.",
     value: { type: "string" },
     writes: ["data-copied"],
   },

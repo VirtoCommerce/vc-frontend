@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { nextTick } from "vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { effectScope, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import {
   registerSectionBehavior,
@@ -9,6 +9,7 @@ import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sect
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
+import type { EffectScope } from "vue";
 
 vi.mock("@/core/composables/useLanguages", async () => {
   const { ref } = await import("vue");
@@ -68,12 +69,26 @@ describe("toCustomSectionSchemas", () => {
 });
 
 describe("watchCustomSectionCatalog", () => {
+  let scope: EffectScope;
+
+  function watchCatalog(apply: (schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void): void {
+    scope.run(() => watchCustomSectionCatalog(BUILT_IN, apply));
+  }
+
+  beforeEach(() => {
+    scope = effectScope();
+  });
+
+  afterEach(() => {
+    scope.stop();
+  });
+
   it("adds the theme's custom types to the schemas, and applies again only when they change", async () => {
     const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
     const { setDraft } = useThemeSnapshot();
     setDraft(undefined);
 
-    watchCustomSectionCatalog(BUILT_IN, apply);
+    watchCatalog(apply);
     expect(apply).toHaveBeenCalledTimes(1);
     expect(Object.keys(apply.mock.lastCall?.[0].sections ?? {})).toEqual(["text-block"]);
 
@@ -94,7 +109,7 @@ describe("watchCustomSectionCatalog", () => {
 
   it("gives the kit's tags and behaviors as data, and applies again when the registry changes", async () => {
     const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
-    watchCustomSectionCatalog(BUILT_IN, apply);
+    watchCatalog(apply);
 
     const kit = apply.mock.lastCall?.[1];
     expect(Object.keys(kit?.tags ?? {})).toEqual(["vc-button", "vc-icon", "vc-badge", "vc-products"]);
@@ -104,6 +119,7 @@ describe("watchCustomSectionCatalog", () => {
       max: 24,
       description: expect.any(String),
     });
+    expect(kit?.behaviors.marquee.repeatsChildren).toBe(true);
     expect(kit?.behaviors.countdown).toEqual({
       description: expect.any(String),
       value: { type: "date" },

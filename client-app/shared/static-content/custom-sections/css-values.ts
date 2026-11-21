@@ -8,10 +8,11 @@ interface IFunctionCall {
 /** Functions whose argument names what the browser loads. */
 const IMAGE_FUNCTIONS = new Set(["url", "image-set", "-webkit-image-set", "image", "cross-fade", "src"]);
 /** IE's script in CSS, and Firefox's live picture of any element of the page. */
-const REFUSED_FUNCTIONS = new Set(["expression", "element"]);
+const REFUSED_FUNCTIONS = new Set(["expression", "element", "-moz-element"]);
 /** Whatever would decide an image's address only when the page renders. */
 const DYNAMIC_CALL_REGEX = /(?:^|[^\w-])(?:var|attr|env|if|--[\w-]*)\(/i;
-const FUNCTION_START_REGEX = /([-\w]+)\(/g;
+/** Starts only at a name's start, so a long word costs one pass, not one per letter. */
+const FUNCTION_START_REGEX = /(?<![-\w])([-\w]+)\(/g;
 const ESCAPE_REGEX = /\\(?:([\da-f]{1,6})\s?|(.))/gis;
 const STRING_REGEX = /"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'/g;
 const QUOTED_REGEX = /^(["'])(.*)\1$/s;

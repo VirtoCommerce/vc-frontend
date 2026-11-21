@@ -554,4 +554,117 @@ describe("SbSection", () => {
       expect(wrapper.find("section").element.innerHTML).toBe("<p>Kept</p>");
     });
   });
+
+  describe("against a hostile or changing draft", () => {
+    afterEach(() => {
+      unregisterSectionTag("vc-promo-link");
+    });
+
+    it("does not nest a repeating behavior in another, so the copies cannot double at every level", () => {
+      const wrapper = mountSection(
+        "<section><div data-marquee><div data-marquee><div data-marquee><span>x</span></div></div></div></section>",
+      );
+
+      expect(wrapper.findAll("span")).toHaveLength(2);
+      expect(wrapper.findAll("[data-marquee]")).toHaveLength(1);
+    });
+
+    it("marks the copies of a repeated list's rows, out of the tab order and hidden from assistive technology", () => {
+      const wrapper = mountSection(
+        '<section><ul data-marquee><li data-each="settings.cards"><a href="{{ item.link }}">{{ item.title }}</a></li></ul></section>',
+        {
+          cards: [
+            { title: "One", link: "/one" },
+            { title: "Two", link: "/two" },
+          ],
+        },
+      );
+      const rows = wrapper.findAll("li");
+
+      expect(rows.map((row) => row.text())).toEqual(["One", "Two", "One", "Two"]);
+      expect(rows.map((row) => row.attributes("data-sb-repeat"))).toEqual([undefined, undefined, "", ""]);
+      expect(rows.map((row) => row.attributes("aria-hidden"))).toEqual([undefined, undefined, "true", "true"]);
+      expect(rows.map((row) => row.attributes("inert"))).toEqual([undefined, undefined, "", ""]);
+    });
+
+    it("mounts a changed template afresh, so an added behavior starts instead of breaking the patch", async () => {
+      const wrapper = mountSection('<section><div data-copy="a">x</div></section>');
+      const before = wrapper.find("section").element;
+
+      useThemeSnapshot().setDraft({
+        customSections: {
+          [TYPE]: {
+            format: 1,
+            name: "Test",
+            schema: { settings: FIELDS },
+            css: "",
+            template: '<section><div data-copy="a" data-inview>x</div></section>',
+          },
+        },
+      });
+      await nextTick();
+
+      expect(wrapper.find("section").element).not.toBe(before);
+      expect(wrapper.find("[data-inview]").exists()).toBe(true);
+    });
+
+    it("keeps a row's element with the row when the rows are reordered", async () => {
+      const cards = [
+        { id: "a", title: "One" },
+        { id: "b", title: "Two" },
+      ];
+      const wrapper = mountSection('<ul><li data-each="settings.cards">{{ item.title }}</li></ul>', { cards });
+      const first = wrapper.find("li").element;
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, cards: [...cards].reverse() } });
+
+      expect(wrapper.findAll("li")[1].element).toBe(first);
+    });
+
+    it("checks a module tag's address attributes as links, whatever type it declares", async () => {
+      const PromoLink = defineComponent({ name: "PromoLinkStub", props: ["href"], setup: () => () => h("a") });
+      registerSectionTag("vc-promo-link", {
+        component: PromoLink,
+        description: "A link.",
+        attributes: { href: { type: "string" } },
+      });
+
+      const wrapper = mountSection(
+        '<section><vc-promo-link href="javascript:alert(document.domain)"></vc-promo-link><vc-promo-link href="/sale"></vc-promo-link></section>',
+      );
+      const [unsafe, safe] = wrapper.findAllComponents(PromoLink);
+
+      expect(unsafe.props("href")).toBeUndefined();
+      expect(safe.props("href")).toBe("/sale");
+    });
+
+    it("turns a kit boolean bound to an unset setting off", () => {
+      const wrapper = mountSection(
+        '<section><vc-button label="A" full-width="{{ settings.title }}"></vc-button><vc-button label="B" full-width></vc-button></section>',
+        { title: "" },
+      );
+      const [bound, written] = wrapper.findAllComponents(VcButton);
+
+      expect(bound.props("fullWidth")).toBe(false);
+      expect(written.props("fullWidth")).toBe(true);
+    });
+
+    it("leaves out a behavior's value or option its field does not take, and then its text stays", () => {
+      const wrapper = mountSection(
+        '<section><span data-count-up="many">many</span><p data-inview data-inview-threshold="2">x</p></section>',
+      );
+
+      expect(wrapper.find("span").attributes("data-count-up")).toBeUndefined();
+      expect(wrapper.find("span").text()).toBe("many");
+      expect(wrapper.find("p").attributes()).toEqual({ "data-inview": "" });
+    });
+
+    it("keeps an attribute only some elements take off every other element", () => {
+      const wrapper = mountSection(
+        '<section><div open autoplay muted poster="/p.jpg" cite="https://example.com" type="x" media="print">a</div></section>',
+      );
+
+      expect(wrapper.find("section div").attributes()).toEqual({});
+    });
+  });
 });

@@ -105,6 +105,10 @@ export function getSectionBehaviors(): Readonly<Record<string, ICustomSectionBeh
   return useKitRegistry().value.behaviors;
 }
 
+export function isDeniedTagAttribute(name: string): boolean {
+  return DENIED_TAG_ATTRIBUTE_REGEX.test(name);
+}
+
 /** The storefront's own entries, under their reserved names. Not in the facade. */
 export function registerBuiltInKitEntries(
   tags: Readonly<Record<string, ICustomSectionTag>>,
@@ -130,7 +134,7 @@ function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined
   }
 
   const refused = Object.keys(tag.attributes).find(
-    (attribute) => !ATTRIBUTE_NAME_REGEX.test(attribute) || DENIED_TAG_ATTRIBUTE_REGEX.test(attribute),
+    (attribute) => !ATTRIBUTE_NAME_REGEX.test(attribute) || isDeniedTagAttribute(attribute),
   );
 
   return refused ? `takes the attribute "${refused}", which a kit tag may not` : undefined;

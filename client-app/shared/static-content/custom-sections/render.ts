@@ -1,24 +1,14 @@
-import {
-  cloneVNode,
-  Comment,
-  createCommentVNode,
-  createTextVNode,
-  Fragment,
-  h,
-  isVNode,
-  mergeProps,
-  Text,
-  withDirectives,
-} from "vue";
+import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
-import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml } from "../sections";
+import { getPreviewFieldAttrs, opensNewWindow, sanitizeSectionHtml, withNewWindowRel } from "../sections";
 import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
-import { getSectionBehaviors, getSectionTags, toTagProps } from "./kit";
+import { getSectionBehaviors, getSectionTags, toFieldValue, toTagProps } from "./kit";
 import { getSettingVariables } from "./setting-variables";
 import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
 import type { CompiledNodeType, ICompiledElement, ICompiledTemplate } from "./template";
+import type { ICustomSectionBehavior, ICustomSectionField } from "./types";
 import type { IThemeSchemaField } from "@/core/theme-snapshot";
 import type { DirectiveArguments, VNode, VNodeArrayChildren } from "vue";
 
@@ -29,13 +19,30 @@ export interface IRenderOptions {
   fields: readonly IThemeSchemaField[];
 }
 
-const NEW_WINDOW_REL_TOKENS = ["noopener", "noreferrer"];
+interface IRenderedAttribute {
+  name: string;
+  value: string;
+  /** Its value comes from a binding, so an empty one means the setting is unset. */
+  isBound: boolean;
+}
+
+interface IBehaviorAttributes {
+  /** Every behavior's attribute, its own and its options', with the field its value must fit, if any. */
+  fields: Map<string, ICustomSectionField | undefined>;
+  textAttributes: Set<string>;
+}
+
 const LINK_TARGETS = new Set(["_self", "_blank"]);
 const OPENER_REGEX = /(?:^|\s)opener(?:\s|$)/i;
+/** The copies a repeating behavior adds: out of the tab order and hidden from assistive technology. */
+const COPY_PROPS = { "aria-hidden": "true", inert: "", [REPEATED_COPY_ATTRIBUTE]: "" };
+
+const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
   const scope: IBindingScope = { type: options.type, settings: options.settings, fields: toFieldMap(options.fields) };
   const rootProps = {
+    key: template.id,
     "data-sb-type": options.type,
     style: getSettingVariables(options.fields, options.settings),
   };
@@ -44,9 +51,13 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
   return isVNode(root) ? root : null;
 }
 
-function renderNodes(nodes: readonly CompiledNodeType[], scope: IBindingScope): VNodeArrayChildren {
+function renderNodes(
+  nodes: readonly CompiledNodeType[],
+  scope: IBindingScope,
+  props: Record<string, unknown> = {},
+): VNodeArrayChildren {
   return nodes.flatMap((node) =>
-    "text" in node ? [createTextVNode(renderParts(node.text, scope))] : renderElement(node, scope),
+    "text" in node ? [createTextVNode(renderParts(node.text, scope))] : renderElement(node, scope, props),
   );
 }
 
@@ -65,6 +76,7 @@ function renderElement(
   const value = scope.settings[listId];
   const rows = field?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
   const fields = toFieldMap(field?.element);
+  const keys = toRowKeys(rows);
 
   return [
     h(
@@ -73,11 +85,21 @@ function renderElement(
         renderShown(
           node,
           { ...scope, row: { listId, index, values, fields } },
-          { ...props, key: index, style: { "--i": String(index), "--n": String(rows.length) } },
+          { ...props, key: keys[index], style: { "--i": String(index), "--n": String(rows.length) } },
         ),
       ),
     ),
   ];
+}
+
+/** By the rows' own ids when every row has a different one, so a reordered row keeps what its element holds. */
+function toRowKeys(rows: Record<string, unknown>[]): (string | number)[] {
+  const ids = rows.map((row) => row.id);
+  const hasOwnIds =
+    ids.every((id) => (typeof id === "string" && id !== "") || typeof id === "number") &&
+    new Set(ids).size === ids.length;
+
+  return hasOwnIds ? (ids as (string | number)[]) : rows.map((_, index) => index);
 }
 
 /** A comment holds the place of an element `data-if` hides, so its siblings keep theirs. */
@@ -90,28 +112,35 @@ function renderShown(node: ICompiledElement, scope: IBindingScope, props: Record
     }
   }
 
+  const rendered = renderAttributeEntries(node.attributes, scope);
+
   if (node.isKitTag) {
-    return renderKitTag(node, scope, props);
+    return renderKitTag(node, rendered, props);
   }
+
+  const behaviors = getSectionBehaviors();
+  const { fields, textAttributes } = getBehaviorAttributes(behaviors);
+  const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
+  const values = new Map(kept.map(({ name, value }) => [name, value]));
+  const applied = node.behaviors.filter((name) => Object.hasOwn(behaviors, name) && values.has(`data-${name}`));
+  const hasText = kept.some(({ name }) => textAttributes.has(name));
+  const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
 
   const vnode = h(
     node.tag,
-    mergeProps(renderAttributes(node, scope), getFieldAttributes(node, scope), props),
-    renderChildren(node, scope),
+    mergeProps(renderAttributes(node, kept, scope), getFieldAttributes(node, scope), props),
+    renderChildren(node, scope, hasText, isRepeated),
   );
-  const behaviors = getSectionBehaviors();
-  const directives: DirectiveArguments = node.behaviors
-    .filter((name) => Object.hasOwn(behaviors, name))
-    .map((name) => [
-      getBehaviorDirective(behaviors[name]),
-      renderParts(node.attributes.find(([attribute]) => attribute === `data-${name}`)?.[1] ?? [], scope),
-    ]);
+  const directives: DirectiveArguments = applied.map((name) => [
+    getBehaviorDirective(behaviors[name]),
+    values.get(`data-${name}`),
+  ]);
 
   return directives.length ? withDirectives(vnode, directives) : vnode;
 }
 
 /** A tag that throws on its attributes renders nothing rather than the whole section failing. */
-function renderKitTag(node: ICompiledElement, scope: IBindingScope, props: Record<string, unknown>): VNode {
+function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], props: Record<string, unknown>): VNode {
   const tags = getSectionTags();
   const tag = Object.hasOwn(tags, node.tag) ? tags[node.tag] : undefined;
 
@@ -119,8 +148,13 @@ function renderKitTag(node: ICompiledElement, scope: IBindingScope, props: Recor
     return createCommentVNode("", true);
   }
 
+  // An attribute bound to an unset setting is as if it were not written: a boolean one is then off.
+  const values = Object.fromEntries(
+    rendered.filter(({ value, isBound }) => !isBound || value !== "").map(({ name, value }) => [name, value]),
+  );
+
   try {
-    const { props: tagProps, slotText } = toTagProps(tag, renderAttributeValues(node.attributes, scope));
+    const { props: tagProps, slotText } = toTagProps(tag, values);
     return h(tag.component, { ...tagProps, ...props }, slotText === undefined ? undefined : () => slotText);
   } catch (error) {
     Logger.error(`[custom-sections] The ${node.tag} tag failed to map its attributes`, error);
@@ -128,37 +162,80 @@ function renderKitTag(node: ICompiledElement, scope: IBindingScope, props: Recor
   }
 }
 
-function renderChildren(node: ICompiledElement, scope: IBindingScope): VNodeArrayChildren | undefined {
-  if (node.html || node.hasBehaviorText) {
+function renderChildren(
+  node: ICompiledElement,
+  scope: IBindingScope,
+  hasText: boolean,
+  isRepeated: boolean,
+): VNodeArrayChildren | undefined {
+  if (node.html || hasText) {
     return undefined;
   }
 
   const children = renderNodes(node.children, scope);
 
-  if (!node.hasRepeatedChildren) {
-    return children;
-  }
-
-  const copies = renderNodes(node.children, scope).map((child) =>
-    isVNode(child) && child.type !== Text && child.type !== Comment
-      ? cloneVNode(child, { "aria-hidden": "true", [REPEATED_COPY_ATTRIBUTE]: "" })
-      : child,
-  );
-
-  return [h(Fragment, { key: "run" }, children), h(Fragment, { key: "copy" }, copies)];
+  return isRepeated
+    ? [
+        h(Fragment, { key: "run" }, children),
+        h(Fragment, { key: "copy" }, renderNodes(node.children, scope, COPY_PROPS)),
+      ]
+    : children;
 }
 
-function renderAttributeValues(
+function renderAttributeEntries(
   attributes: ICompiledElement["attributes"],
   scope: IBindingScope,
-): Record<string, string> {
-  return Object.fromEntries(attributes.map(([name, parts]) => [name, renderParts(parts, scope)]));
+): IRenderedAttribute[] {
+  return attributes.map(([name, parts]) => ({
+    name,
+    value: renderParts(parts, scope),
+    isBound: parts.some((part) => typeof part !== "string"),
+  }));
 }
 
-function renderAttributes(node: ICompiledElement, scope: IBindingScope): Record<string, unknown> {
+/** A behavior's attribute bound to an unset setting, or holding a value its field does not take, is left out. */
+function fitsBehaviorField(
+  { name, value, isBound }: IRenderedAttribute,
+  fields: IBehaviorAttributes["fields"],
+): boolean {
+  if (!fields.has(name)) {
+    return true;
+  }
+
+  const field = fields.get(name);
+
+  return !(isBound && value === "") && (!field || toFieldValue(field, value) !== undefined);
+}
+
+function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSectionBehavior>>): IBehaviorAttributes {
+  let attributes = behaviorAttributes.get(behaviors);
+
+  if (!attributes) {
+    const fields = new Map<string, ICustomSectionField | undefined>();
+
+    for (const [name, behavior] of Object.entries(behaviors)) {
+      fields.set(`data-${name}`, behavior.value);
+      Object.entries(behavior.options ?? {}).forEach(([option, field]) => fields.set(`data-${name}-${option}`, field));
+    }
+
+    attributes = {
+      fields,
+      textAttributes: new Set(Object.values(behaviors).flatMap((behavior) => behavior.textAttributes ?? [])),
+    };
+    behaviorAttributes.set(behaviors, attributes);
+  }
+
+  return attributes;
+}
+
+function renderAttributes(
+  node: ICompiledElement,
+  rendered: IRenderedAttribute[],
+  scope: IBindingScope,
+): Record<string, unknown> {
   const attributes: Record<string, string> = {};
 
-  for (const [name, value] of Object.entries(renderAttributeValues(node.attributes, scope))) {
+  for (const { name, value } of rendered) {
     const safeValue = toSafeAttributeValue(name, value, scope.type);
 
     if (safeValue !== undefined) {
@@ -167,8 +244,7 @@ function renderAttributes(node: ICompiledElement, scope: IBindingScope): Record<
   }
 
   if (opensNewWindow(attributes.target ?? null)) {
-    const rel = new Set([...(attributes.rel?.split(/\s+/).filter(Boolean) ?? []), ...NEW_WINDOW_REL_TOKENS]);
-    attributes.rel = [...rel].join(" ");
+    attributes.rel = withNewWindowRel(attributes.rel);
   }
 
   if (node.html) {

@@ -118,15 +118,51 @@ describe("filterSectionCss", () => {
     },
   );
 
-  it("drops what runs: expression(), element(), behavior and -moz-binding", () => {
+  it("drops what paints or runs other content: expression(), element() and -moz-element()", () => {
     const rules = rulesOf(`
       .a { --bg: element(#secret); color: red; }
-      .b { width: expression(alert(1)); }
+      .b { --bg: -moz-element(#secret); color: red; }
+      .c { width: expression(alert(1)); }
     `);
 
     expect(rules).not.toContain("element(");
     expect(rules).not.toContain("expression");
-    expect(rules).toContain("color: red");
+    expect(rules).toContain(".b { color: red; }");
+  });
+
+  it("drops behavior and -moz-binding, and an image shorthand holding var() checked whole", () => {
+    const declarations: Record<string, string> = {
+      behavior: "url(/x.htc)",
+      "-moz-binding": "url(/x.xml#y)",
+      background: 'var(--a,) url("data:text/html,x")',
+      "background-image": "",
+      color: "red",
+    };
+    const style = {
+      ...Object.keys(declarations).filter((name) => name !== "background"),
+      length: 4,
+      getPropertyValue: (name: string) => declarations[name] ?? "",
+      removeProperty: vi.fn((name: string) => delete declarations[name]),
+    };
+    class FakeStyleRule {
+      selectorText = ".a";
+      style = style;
+      cssRules: CSSRule[] = [];
+      cssText = ".a {}";
+      deleteRule(): void {}
+    }
+    vi.stubGlobal("CSSStyleRule", FakeStyleRule);
+    vi.stubGlobal(
+      "CSSStyleSheet",
+      class {
+        cssRules = [new FakeStyleRule()];
+        replaceSync(): void {}
+      },
+    );
+
+    filterSectionCss(TYPE, ".a {}");
+
+    expect(Object.keys(declarations)).toEqual(["background-image", "color"]);
   });
 
   it("keeps @starting-style, which the browser parses as a group of rules", () => {

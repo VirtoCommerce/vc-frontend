@@ -19,18 +19,15 @@ export interface ICompiledElement {
   html?: string;
   /** By name: the element has `data-{name}`. */
   behaviors: string[];
-  /** A behavior writes the element's text. */
-  hasBehaviorText: boolean;
-  /** A behavior loops the element's children. */
-  hasRepeatedChildren: boolean;
   children: CompiledNodeType[];
 }
 
 export type CompiledNodeType = ICompiledElement | ICompiledText;
 
 export interface ICompiledTemplate {
+  /** New for each compile, so a changed template mounts afresh instead of patching what it rendered. */
+  id: number;
   root: ICompiledElement;
-  /** The names of the behaviors the template switches on. */
   behaviors: Set<string>;
 }
 
@@ -40,7 +37,7 @@ export interface IKit {
   behaviors: Readonly<Record<string, ICustomSectionBehavior>>;
 }
 
-/** The builder's sanitizer elements without form controls; `svg`, `script`, `style` and the like go with their content. */
+/** The server sanitizer's element allowlist minus form controls; `svg`, `script`, `style` and the like go with their content. */
 const ELEMENTS = (
   "a abbr acronym address area article aside audio b bdi bdo big blink blockquote br canvas caption center cite " +
   "code col colgroup data dd del details dfn dialog dir div dl dt em figcaption figure font footer h1 h2 h3 h4 h5 " +
@@ -54,6 +51,20 @@ const TEXT_ATTRIBUTES = (
   "scope autoplay muted loop playsinline controls preload type media open"
 ).split(" ");
 const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
+/** The attributes only some elements take. */
+const ELEMENT_ATTRIBUTES: Readonly<Record<string, readonly string[]>> = {
+  autoplay: ["video"],
+  muted: ["video"],
+  loop: ["video"],
+  playsinline: ["video"],
+  controls: ["video"],
+  preload: ["video"],
+  poster: ["video"],
+  open: ["details"],
+  type: ["source"],
+  media: ["source"],
+  cite: ["blockquote", "q"],
+};
 const CONTROL_ATTRIBUTES = ["data-each", "data-if", "data-html"];
 const DATA_PREFIX = "data-";
 
@@ -63,6 +74,7 @@ const MAX_CACHED_TEMPLATES = 32;
 const MAX_DEPTH = 32;
 
 const cache = new Map<string, ICompiledTemplate | undefined>();
+let compiledCount = 0;
 let purifier: ReturnType<typeof DOMPurify> | undefined;
 
 /**
@@ -99,9 +111,16 @@ function compile(template: string, kit: IKit): ICompiledTemplate | undefined {
   }
 
   const behaviors = new Set<string>();
-  const root = compileElement(elements[0], { kit, depth: 0, isRoot: true, isInEach: false, behaviors });
+  const root = compileElement(elements[0], {
+    kit,
+    depth: 0,
+    isRoot: true,
+    isInEach: false,
+    isInRepeat: false,
+    behaviors,
+  });
 
-  return { root, behaviors };
+  return { id: ++compiledCount, root, behaviors };
 }
 
 function sanitize(template: string, kit: IKit): DocumentFragment {
@@ -117,7 +136,7 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
     ALLOWED_TAGS: ELEMENTS,
     ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
     ALLOW_DATA_ATTR: false,
-    // As the builder's sanitizer: these go with what they hold.
+    // As the server sanitizer: these go with their content.
     ADD_FORBID_CONTENTS: ["form", "frame", "frameset", "object", "embed", "applet"],
     // Only names matter here: the renderer checks each value after its bindings resolve.
     ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
@@ -152,6 +171,8 @@ interface ICompileContext {
   depth: number;
   isRoot: boolean;
   isInEach: boolean;
+  /** Inside an element a behavior repeats: a repeating behavior here would double again at every level. */
+  isInRepeat: boolean;
   behaviors: Set<string>;
 }
 
@@ -182,8 +203,6 @@ function compileElement(element: Element, context: ICompileContext): ICompiledEl
     isKitTag: Object.hasOwn(context.kit.tags, tag),
     attributes: [],
     behaviors: [],
-    hasBehaviorText: false,
-    hasRepeatedChildren: false,
     children: [],
   };
 
@@ -197,6 +216,8 @@ function compileElement(element: Element, context: ICompileContext): ICompiledEl
       depth: context.depth + 1,
       isRoot: false,
       isInEach: context.isInEach || !!compiled.each,
+      isInRepeat:
+        context.isInRepeat || compiled.behaviors.some((name) => !!context.kit.behaviors[name].repeatsChildren),
     });
   }
 
@@ -222,24 +243,29 @@ function compileAttribute(compiled: ICompiledElement, name: string, value: strin
       compiled.html = isBindingPath(trimmed) ? trimmed : undefined;
       break;
     default:
-      compiled.attributes.push([name, parseBindings(value)]);
-
-      if (!compiled.isKitTag) {
-        compileBehaviorAttribute(compiled, name, context);
-      }
+      compileOtherAttribute(compiled, name, value, context);
   }
 }
 
-function compileBehaviorAttribute(compiled: ICompiledElement, name: string, context: ICompileContext): void {
-  const behaviorName = name.slice(DATA_PREFIX.length);
-
-  if (name.startsWith(DATA_PREFIX) && Object.hasOwn(context.kit.behaviors, behaviorName)) {
-    compiled.behaviors.push(behaviorName);
-    compiled.hasRepeatedChildren ||= !!context.kit.behaviors[behaviorName].repeatsChildren;
-    context.behaviors.add(behaviorName);
+function compileOtherAttribute(compiled: ICompiledElement, name: string, value: string, context: ICompileContext) {
+  if (Object.hasOwn(ELEMENT_ATTRIBUTES, name) && !ELEMENT_ATTRIBUTES[name].includes(compiled.tag)) {
+    return;
   }
 
-  compiled.hasBehaviorText ||= Object.values(context.kit.behaviors).some((candidate) =>
-    candidate.textAttributes?.includes(name),
-  );
+  const behaviorName = name.slice(DATA_PREFIX.length);
+  const behavior =
+    !compiled.isKitTag && name.startsWith(DATA_PREFIX) && Object.hasOwn(context.kit.behaviors, behaviorName)
+      ? context.kit.behaviors[behaviorName]
+      : undefined;
+
+  if (behavior?.repeatsChildren && context.isInRepeat) {
+    return;
+  }
+
+  compiled.attributes.push([name, parseBindings(value)]);
+
+  if (behavior) {
+    compiled.behaviors.push(behaviorName);
+    context.behaviors.add(behaviorName);
+  }
 }

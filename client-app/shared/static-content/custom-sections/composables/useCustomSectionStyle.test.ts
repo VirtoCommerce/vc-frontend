@@ -61,4 +61,15 @@ describe("useCustomSectionStyle", () => {
     expect(findStyles("custom-hero")[0].textContent).toContain(".card { margin: 0px; }");
     wrapper.unmount();
   });
+
+  it("moves a mounted section's CSS when its type changes, and lets the old one go", async () => {
+    const wrapper = mount(Section, { props: { type: "custom-hero" } });
+
+    await wrapper.setProps({ type: "custom-stats" });
+
+    expect(findStyles("custom-hero")).toHaveLength(0);
+    expect(findStyles("custom-stats")[0].textContent).toContain('[data-sb-type="custom-stats"]');
+    wrapper.unmount();
+    expect(findStyles("custom-stats")).toHaveLength(0);
+  });
 });

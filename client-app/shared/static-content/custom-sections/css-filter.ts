@@ -10,6 +10,7 @@ type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
 
 const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", "CSSStartingStyleRule"];
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
+const IMAGE_SHORTHANDS = ["background", "mask", "-webkit-mask", "list-style", "border-image", "mask-border"];
 const POSITION_VALUES = new Set(["static", "relative", "absolute", "sticky", "inherit", "initial", "unset", "revert"]);
 const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\w-])/i;
 
@@ -96,6 +97,15 @@ function filterDeclarations(style: CSSStyleDeclaration): void {
   for (const property of Array.from(style)) {
     if (!isAllowedDeclaration(property.toLowerCase(), style.getPropertyValue(property))) {
       style.removeProperty(property);
+    }
+  }
+
+  // A shorthand holding `var()` keeps its value as written while its longhands read empty, so it is checked whole.
+  for (const shorthand of IMAGE_SHORTHANDS) {
+    const value = style.getPropertyValue(shorthand);
+
+    if (value && !isAllowedValue(value)) {
+      style.removeProperty(shorthand);
     }
   }
 }

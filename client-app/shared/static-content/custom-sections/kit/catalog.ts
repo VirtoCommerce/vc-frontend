@@ -12,6 +12,8 @@ export interface ICustomSectionKitCatalog {
       value?: ICustomSectionField;
       options?: Record<string, ICustomSectionField>;
       writes?: string[];
+      /** The renderer repeats the element's children once; such a behavior is not nested in another. */
+      repeatsChildren?: boolean;
     }
   >;
   design: typeof __SB_DESIGN_FACTS__ & {
@@ -33,10 +35,12 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
     name,
     { description, attributes },
   ]);
-  const behaviors = Object.entries(getSectionBehaviors()).map(([name, { description, value, options, writes }]) => [
-    name,
-    { description, value, options, writes },
-  ]);
+  const behaviors = Object.entries(getSectionBehaviors()).map(
+    ([name, { description, value, options, writes, repeatsChildren }]) => [
+      name,
+      { description, value, options, writes, repeatsChildren },
+    ],
+  );
   const catalog = {
     tags: Object.fromEntries(tags),
     behaviors: Object.fromEntries(behaviors),

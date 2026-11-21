@@ -1,8 +1,11 @@
 import { camelize } from "vue";
 import { toFieldValue } from "./fields";
+import { isDeniedTagAttribute } from "./registry";
 import type { CustomSectionValueType, ICustomSectionTag } from "../types";
 
-/** The checked attributes as the tag's props and the text of its default slot. */
+/** Whatever type a tag declares them, these hold an address. */
+const LINK_ATTRIBUTES = new Set(["to", "href", "src"]);
+
 export function toTagProps(
   tag: ICustomSectionTag,
   values: Record<string, string>,
@@ -10,7 +13,9 @@ export function toTagProps(
   const checked: Record<string, CustomSectionValueType> = {};
 
   for (const [name, field] of Object.entries(tag.attributes)) {
-    const value = Object.hasOwn(values, name) ? toFieldValue(field, values[name]) : undefined;
+    const checkedField = LINK_ATTRIBUTES.has(name) ? { ...field, type: "link" as const } : field;
+    const value =
+      Object.hasOwn(values, name) && !isDeniedTagAttribute(name) ? toFieldValue(checkedField, values[name]) : undefined;
 
     if (value !== undefined) {
       checked[name] = value;
