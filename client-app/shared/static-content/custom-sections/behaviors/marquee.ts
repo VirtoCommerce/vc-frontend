@@ -5,10 +5,8 @@ import { defineBehavior, isRightToLeft } from "./define-behavior";
 const PAUSED_ATTRIBUTE = "data-paused";
 
 /**
- * The renderer repeats the children once, the copies marked with `data-sb-repeat`. `--marquee-width` is the width
- * of one run, gap included; `--marquee-shift` is that distance toward the inline start, negative in left-to-right
- * text and positive in right-to-left. With reduced motion both are 0, so the loop stands still. The loop pauses
- * while the pointer is over it or the focus inside, and `data-paused` is set meanwhile.
+ * Writes `--marquee-width` (one run, gap included) and `--marquee-shift` (toward the inline start), 0 under reduced
+ * motion; pauses on hover or focus within, setting `data-paused`.
  */
 export const vMarquee = defineBehavior((element, { isReducedMotion }) => {
   if (isReducedMotion) {
@@ -29,15 +27,22 @@ export const vMarquee = defineBehavior((element, { isReducedMotion }) => {
 
   let isHovered = false;
   let isFocused = false;
+  let paused: Animation[] = [];
 
+  /** Resumes only what it paused, so a finished or a CSS-paused animation stays as it is. */
   function applyPause(): void {
     const isPaused = isHovered || isFocused;
 
     element.toggleAttribute(PAUSED_ATTRIBUTE, isPaused);
-    // Whatever element the section's CSS animates.
-    element
-      .getAnimations?.({ subtree: true })
-      .forEach((animation) => (isPaused ? animation.pause() : animation.play()));
+
+    if (isPaused && !paused.length) {
+      // Whatever element the section's CSS animates.
+      paused = (element.getAnimations?.({ subtree: true }) ?? []).filter(({ playState }) => playState === "running");
+      paused.forEach((animation) => animation.pause());
+    } else if (!isPaused) {
+      paused.forEach((animation) => animation.play());
+      paused = [];
+    }
   }
 
   measure();

@@ -1,84 +1,77 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, withDirectives } from "vue";
+import { defineComponent, h, withDirectives } from "vue";
 import { vPointer } from "./pointer";
 
-const mocks = vi.hoisted(() => ({
-  motion: "no-preference",
-  isTouchScreen: false,
-  mouse: undefined as
-    | Record<"elementX" | "elementY" | "elementWidth" | "elementHeight" | "isOutside", { value: number | boolean }>
-    | undefined,
-}));
+const mocks = vi.hoisted(() => ({ motion: "no-preference", isTouchScreen: false }));
 
-vi.mock("@vueuse/core", async (importOriginal) => {
-  const { ref: createRef } = await import("vue");
-
-  return {
-    ...(await importOriginal<typeof import("@vueuse/core")>()),
-    usePreferredReducedMotion: () => ({ value: mocks.motion }),
-    useMediaQuery: () => ({ value: mocks.isTouchScreen }),
-    useMouseInElement: () => {
-      mocks.mouse = {
-        elementX: createRef(0),
-        elementY: createRef(0),
-        elementWidth: createRef(200),
-        elementHeight: createRef(100),
-        isOutside: createRef(true),
-      };
-      return mocks.mouse;
+vi.mock("@vueuse/core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@vueuse/core")>()),
+  usePreferredReducedMotion: () => ({
+    get value() {
+      return mocks.motion;
     },
-  };
-});
+  }),
+  useMediaQuery: () => ({
+    get value() {
+      return mocks.isTouchScreen;
+    },
+  }),
+}));
 
 function mountTracked(direction?: "rtl") {
   return mount(
     defineComponent({
       setup: () => () => h("div", { dir: direction }, [withDirectives(h("div", { id: "tracked" }), [[vPointer, ""]])]),
     }),
+    { attachTo: document.body },
   );
 }
 
-function readPointer(wrapper: ReturnType<typeof mountTracked>) {
+function getTracked(wrapper: ReturnType<typeof mountTracked>): HTMLElement {
   const element = wrapper.find("#tracked").element as HTMLElement;
+  element.getBoundingClientRect = () => ({ left: 100, top: 50, width: 200, height: 100 }) as DOMRect;
+  return element;
+}
+
+function readPointer(element: HTMLElement): string[] {
   return ["--pointer-x", "--pointer-y", "--pointer-inline", "--pointer-active"].map((name) =>
     element.style.getPropertyValue(name),
   );
-}
-
-async function movePointer(x: number, y: number): Promise<void> {
-  const mouse = mocks.mouse;
-  if (!mouse) {
-    throw new Error("The pointer is not tracked");
-  }
-  mouse.elementX.value = x;
-  mouse.elementY.value = y;
-  mouse.isOutside.value = false;
-  await nextTick();
 }
 
 describe("vPointer", () => {
   beforeEach(() => {
     mocks.motion = "no-preference";
     mocks.isTouchScreen = false;
-    mocks.mouse = undefined;
+    document.body.innerHTML = "";
   });
 
-  it("writes where the pointer is inside the element, and whether it is", async () => {
-    const wrapper = mountTracked();
-    expect(readPointer(wrapper)).toEqual(["0", "0", "0", "0"]);
+  it("writes where the pointer is inside the element while it is, from the element's own events", () => {
+    const element = getTracked(mountTracked());
+    expect(readPointer(element)).toEqual(["0.5", "0.5", "0.5", "0"]);
 
-    await movePointer(50, 75);
+    element.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
+    expect(readPointer(element)).toEqual(["0.25", "0.75", "0.25", "1"]);
 
-    expect(readPointer(wrapper)).toEqual(["0.25", "0.75", "0.25", "1"]);
+    element.dispatchEvent(new MouseEvent("pointerleave"));
+    expect(readPointer(element)).toEqual(["0.25", "0.75", "0.25", "0"]);
   });
 
-  it("measures --pointer-inline from the inline start, the right edge in right-to-left text", async () => {
-    const wrapper = mountTracked("rtl");
+  it("does not follow the pointer elsewhere on the page", () => {
+    const element = getTracked(mountTracked());
 
-    await movePointer(50, 75);
+    document.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
 
-    expect(readPointer(wrapper)).toEqual(["0.25", "0.75", "0.75", "1"]);
+    expect(readPointer(element)).toEqual(["0.5", "0.5", "0.5", "0"]);
+  });
+
+  it("measures --pointer-inline from the inline start, the right edge in right-to-left text", () => {
+    const element = getTracked(mountTracked("rtl"));
+
+    element.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
+
+    expect(readPointer(element)).toEqual(["0.25", "0.75", "0.75", "1"]);
   });
 
   it.each([
@@ -87,10 +80,10 @@ describe("vPointer", () => {
   ])("stays centered and inactive $case", ({ isTouchScreen, motion }) => {
     mocks.isTouchScreen = isTouchScreen;
     mocks.motion = motion;
+    const element = getTracked(mountTracked());
 
-    const wrapper = mountTracked();
+    element.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
 
-    expect(readPointer(wrapper)).toEqual(["0.5", "0.5", "0.5", "0"]);
-    expect(mocks.mouse).toBeUndefined();
+    expect(readPointer(element)).toEqual(["0.5", "0.5", "0.5", "0"]);
   });
 });

@@ -1,5 +1,7 @@
-import { usePreferredReducedMotion } from "@vueuse/core";
+import { createSharedComposable, useMediaQuery, usePreferredReducedMotion } from "@vueuse/core";
+import { clamp } from "lodash-es";
 import { effectScope, shallowRef } from "vue";
+import { toFiniteNumber } from "../numbers";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 
@@ -9,6 +11,12 @@ export interface IBehaviorContext {
   /** With `prefers-reduced-motion: reduce` a behavior shows its end state at once. */
   isReducedMotion: boolean;
 }
+
+/** One media query listener for the page, however many elements behave. */
+const useReducedMotion = createSharedComposable(() => usePreferredReducedMotion());
+
+/** As the reduced motion query: shared by every element. */
+export const useTouchScreen = createSharedComposable(() => useMediaQuery("(hover: none)"));
 
 interface IBehaviorState {
   scope: EffectScope;
@@ -27,7 +35,7 @@ export function defineBehavior(
 
       states.set(element, state);
       state.scope.run(() =>
-        setup(element, { value: state.value, isReducedMotion: usePreferredReducedMotion().value === "reduce" }),
+        setup(element, { value: state.value, isReducedMotion: useReducedMotion().value === "reduce" }),
       );
     },
     updated(element, binding) {
@@ -46,14 +54,13 @@ export function defineBehavior(
 
 /** A number attribute within its range; `undefined` when absent or not a number. */
 export function readNumberAttribute(element: HTMLElement, name: string, min: number, max: number): number | undefined {
-  const text = element.getAttribute(name)?.trim();
-  const value = text ? Number(text) : Number.NaN;
-
-  return Number.isFinite(value) ? clamp(value, min, max) : undefined;
+  const value = toFiniteNumber(element.getAttribute(name));
+  return value === undefined ? undefined : clamp(value, min, max);
 }
 
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
+/** A boolean attribute: present and not `false`. */
+export function readBooleanAttribute(element: HTMLElement, name: string): boolean {
+  return element.hasAttribute(name) && element.getAttribute(name) !== "false";
 }
 
 /** From the element's computed `direction`, so a `dir` anywhere above it counts. */

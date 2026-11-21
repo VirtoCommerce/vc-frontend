@@ -6,9 +6,14 @@ export { REPEATED_COPY_ATTRIBUTE } from "./constants";
 
 type MountArgumentsType = Parameters<NonNullable<CustomSectionDirectiveType["mounted"]>>;
 
-const loadedDirectives = new WeakMap<ICustomSectionBehavior, CustomSectionDirectiveType>();
-const pendingDirectives = new WeakMap<ICustomSectionBehavior, Promise<CustomSectionDirectiveType | undefined>>();
-const lazyDirectives = new WeakMap<ICustomSectionBehavior, CustomSectionDirectiveType>();
+interface ILoadedBehavior {
+  /** Applies the behavior once its directive loads; an element gone by then is left alone. */
+  lazy: CustomSectionDirectiveType;
+  pending?: Promise<CustomSectionDirectiveType | undefined>;
+  loaded?: CustomSectionDirectiveType;
+}
+
+const loadedBehaviors = new WeakMap<ICustomSectionBehavior, ILoadedBehavior>();
 
 export function preloadBehaviors(behaviors: Iterable<ICustomSectionBehavior>): void {
   for (const behavior of behaviors) {
@@ -16,38 +21,39 @@ export function preloadBehaviors(behaviors: Iterable<ICustomSectionBehavior>): v
   }
 }
 
-/** Applies the behavior once its directive loads; an element gone by then is left alone. */
 export function getBehaviorDirective(behavior: ICustomSectionBehavior): CustomSectionDirectiveType {
-  let directive = lazyDirectives.get(behavior);
+  return getLoadedBehavior(behavior).lazy;
+}
 
-  if (!directive) {
-    directive = createLazyDirective(behavior);
-    lazyDirectives.set(behavior, directive);
+function getLoadedBehavior(behavior: ICustomSectionBehavior): ILoadedBehavior {
+  let entry = loadedBehaviors.get(behavior);
+
+  if (!entry) {
+    entry = { lazy: createLazyDirective(behavior) };
+    loadedBehaviors.set(behavior, entry);
   }
 
-  return directive;
+  return entry;
 }
 
 function loadDirective(behavior: ICustomSectionBehavior): Promise<CustomSectionDirectiveType | undefined> {
-  let pending = pendingDirectives.get(behavior);
+  const entry = getLoadedBehavior(behavior);
+  entry.pending ??= importDirective(behavior, entry);
 
-  if (!pending) {
-    pending = importDirective(behavior);
-    pendingDirectives.set(behavior, pending);
-  }
-
-  return pending;
+  return entry.pending;
 }
 
-async function importDirective(behavior: ICustomSectionBehavior): Promise<CustomSectionDirectiveType | undefined> {
+async function importDirective(
+  behavior: ICustomSectionBehavior,
+  entry: ILoadedBehavior,
+): Promise<CustomSectionDirectiveType | undefined> {
   try {
-    const directive = await behavior.directive();
-    loadedDirectives.set(behavior, directive);
-    return directive;
+    entry.loaded = await behavior.directive();
+    return entry.loaded;
   } catch (error) {
     ignoreChunkLoadFailure(error);
     Logger.error("[custom-sections] Failed to load a behavior", error);
-    pendingDirectives.delete(behavior);
+    entry.pending = undefined;
     return undefined;
   }
 }
@@ -55,6 +61,10 @@ async function importDirective(behavior: ICustomSectionBehavior): Promise<Custom
 function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDirectiveType {
   /** The latest binding of an element mounted before its behavior loaded. */
   const waiting = new WeakMap<HTMLElement, MountArgumentsType>();
+
+  function getLoaded(): CustomSectionDirectiveType | undefined {
+    return loadedBehaviors.get(behavior)?.loaded;
+  }
 
   async function mountWhenLoaded(element: HTMLElement): Promise<void> {
     const directive = await loadDirective(behavior);
@@ -68,7 +78,7 @@ function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDir
 
   return {
     mounted(element, binding, vnode, prevVNode) {
-      const directive = loadedDirectives.get(behavior);
+      const directive = getLoaded();
 
       if (directive) {
         directive.mounted?.(element, binding, vnode, prevVNode);
@@ -84,11 +94,11 @@ function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDir
         return;
       }
 
-      loadedDirectives.get(behavior)?.updated?.(element, binding, vnode, prevVNode);
+      getLoaded()?.updated?.(element, binding, vnode, prevVNode);
     },
     unmounted(element, binding, vnode, prevVNode) {
       if (!waiting.delete(element)) {
-        loadedDirectives.get(behavior)?.unmounted?.(element, binding, vnode, prevVNode);
+        getLoaded()?.unmounted?.(element, binding, vnode, prevVNode);
       }
     },
   };

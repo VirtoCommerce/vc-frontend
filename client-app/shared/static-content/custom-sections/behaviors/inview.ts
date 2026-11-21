@@ -1,5 +1,5 @@
 import { useIntersectionObserver } from "@vueuse/core";
-import { defineBehavior, readNumberAttribute } from "./define-behavior";
+import { defineBehavior, readBooleanAttribute, readNumberAttribute } from "./define-behavior";
 
 const DEFAULT_THRESHOLD = 0.2;
 const VISIBLE_ATTRIBUTE = "data-visible";
@@ -11,7 +11,7 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
     return;
   }
 
-  const isOnce = element.hasAttribute("data-inview-once");
+  const isOnce = readBooleanAttribute(element, "data-inview-once");
   const threshold = readNumberAttribute(element, "data-inview-threshold", 0, 1) ?? DEFAULT_THRESHOLD;
 
   const { stop } = useIntersectionObserver(

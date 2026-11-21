@@ -14,7 +14,11 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@vueuse/core")>()),
-  usePreferredReducedMotion: () => ({ value: mocks.motion }),
+  usePreferredReducedMotion: () => ({
+    get value() {
+      return mocks.motion;
+    },
+  }),
   useIntersectionObserver: (
     _target: unknown,
     callback: (entries: EntryType[]) => void,
@@ -63,6 +67,15 @@ describe("vInview", () => {
 
     expect(wrapper.attributes("data-visible")).toBe("");
     expect(mocks.stop).toHaveBeenCalled();
+  });
+
+  it("lets data-visible go again when data-inview-once is false", () => {
+    const wrapper = mountObserved({ "data-inview-once": "false" });
+
+    mocks.onIntersect?.([{ isIntersecting: true, intersectionRatio: 1 }]);
+    mocks.onIntersect?.([{ isIntersecting: false, intersectionRatio: 0 }]);
+
+    expect(wrapper.attributes("data-visible")).toBeUndefined();
   });
 
   it("sets data-visible at once with reduced motion", () => {

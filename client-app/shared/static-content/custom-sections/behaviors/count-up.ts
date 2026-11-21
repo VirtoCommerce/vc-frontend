@@ -1,6 +1,7 @@
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { computed, shallowRef, watchEffect } from "vue";
 import { globals } from "@/core/globals";
+import { toFiniteNumber } from "../numbers";
 import { defineBehavior, readNumberAttribute } from "./define-behavior";
 
 const DEFAULT_DURATION = 1500;
@@ -11,7 +12,7 @@ const MAX_DECIMALS = 4;
 export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => {
   const decimals = Math.round(readNumberAttribute(element, "data-count-up-decimals", 0, MAX_DECIMALS) ?? 0);
   const duration = readNumberAttribute(element, "data-count-up-duration", 0, MAX_DURATION) ?? DEFAULT_DURATION;
-  const target = computed(() => (value.value.trim() ? Number(value.value) : Number.NaN));
+  const target = computed(() => toFiniteNumber(value.value) ?? Number.NaN);
   const hasShown = shallowRef(isReducedMotion);
   const shown = useTransition(() => (hasShown.value && Number.isFinite(target.value) ? target.value : 0), {
     duration,
@@ -46,5 +47,5 @@ export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => 
 
 function formatNumber(value: number, decimals: number): string {
   const options = { key: "decimal", minimumFractionDigits: decimals, maximumFractionDigits: decimals };
-  return globals.i18n ? globals.i18n.global.n(value, options) : value.toFixed(decimals);
+  return globals.i18n?.global.n(value, options) ?? String(value);
 }

@@ -14,7 +14,11 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@vueuse/core")>()),
-  usePreferredReducedMotion: () => ({ value: mocks.motion }),
+  usePreferredReducedMotion: () => ({
+    get value() {
+      return mocks.motion;
+    },
+  }),
   useIntersectionObserver: (_target: unknown, callback: (entries: { isIntersecting: boolean }[]) => void) => {
     mocks.onIntersect = callback;
     return { stop: mocks.stop };

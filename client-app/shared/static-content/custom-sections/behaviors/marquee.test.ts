@@ -7,7 +7,11 @@ const mocks = vi.hoisted(() => ({ motion: "no-preference" }));
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@vueuse/core")>()),
-  usePreferredReducedMotion: () => ({ value: mocks.motion }),
+  usePreferredReducedMotion: () => ({
+    get value() {
+      return mocks.motion;
+    },
+  }),
 }));
 
 function mountMarquee(direction?: "rtl") {
@@ -28,7 +32,7 @@ function mountMarquee(direction?: "rtl") {
   );
 }
 
-function stubLayout(element: HTMLElement, animation: { pause: () => void; play: () => void }): void {
+function stubLayout(element: HTMLElement, animation: object): void {
   const [first, copy] = [...element.children] as HTMLElement[];
   Object.defineProperty(first, "offsetLeft", { value: 0 });
   Object.defineProperty(copy, "offsetLeft", { value: 120 });
@@ -64,24 +68,28 @@ describe("vMarquee", () => {
     vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
   });
 
-  it("pauses while the pointer is over it or the focus inside", async () => {
+  it("pauses while the pointer is over it or the focus inside, and resumes only what it paused", async () => {
     const wrapper = mountMarquee();
     const marquee = wrapper.find("#marquee");
-    const animation = { pause: vi.fn(), play: vi.fn() };
-    stubLayout(marquee.element as HTMLElement, animation);
+    const running = { playState: "running", pause: vi.fn(), play: vi.fn() };
+    const finished = { playState: "finished", pause: vi.fn(), play: vi.fn() };
+    stubLayout(marquee.element as HTMLElement, running);
+    Object.assign(marquee.element, { getAnimations: () => [running, finished] });
 
     await marquee.trigger("mouseenter");
     expect(marquee.attributes("data-paused")).toBe("");
-    expect(animation.pause).toHaveBeenCalled();
-
-    await marquee.trigger("mouseleave");
-    expect(marquee.attributes("data-paused")).toBeUndefined();
-    expect(animation.play).toHaveBeenCalled();
+    expect(running.pause).toHaveBeenCalledOnce();
 
     await marquee.trigger("focusin");
+    await marquee.trigger("mouseleave");
     expect(marquee.attributes("data-paused")).toBe("");
+    expect(running.play).not.toHaveBeenCalled();
+
     await marquee.trigger("focusout", { relatedTarget: null });
     expect(marquee.attributes("data-paused")).toBeUndefined();
+    expect(running.play).toHaveBeenCalledOnce();
+    expect(finished.pause).not.toHaveBeenCalled();
+    expect(finished.play).not.toHaveBeenCalled();
     wrapper.unmount();
   });
 
