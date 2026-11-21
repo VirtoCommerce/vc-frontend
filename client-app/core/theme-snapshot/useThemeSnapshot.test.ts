@@ -89,4 +89,36 @@ describe("useThemeSnapshot", () => {
       expect(theme.value?.palette).toBeUndefined();
     });
   });
+
+  describe("theme customSections", () => {
+    const TYPE = {
+      format: 1 as const,
+      name: "Stats",
+      schema: { settings: [{ id: "title", type: "string" }] },
+      template: "<section>{{ settings.title }}</section>",
+      css: "",
+    };
+
+    it("takes the draft's types in place of every published one, and the published ones when the draft leaves them out", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, customSections: { "custom-stats": TYPE } } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ brand: {} });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ customSections: { "custom-hero": TYPE } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-hero"]);
+
+      setDraft({ customSections: {} });
+      expect(theme.value?.customSections).toEqual({});
+    });
+
+    it("is empty for a snapshot without custom sections", async () => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished(THEME);
+
+      expect(theme.value?.customSections).toEqual({});
+    });
+  });
 });

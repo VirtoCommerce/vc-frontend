@@ -53,6 +53,34 @@ export interface IThemePalette {
   dark?: Record<string, string>;
 }
 
+/** A setting of a section schema, as the designer builds its form from it. */
+export interface IThemeSchemaField {
+  id?: string;
+  type?: string;
+  format?: string;
+  translatable?: boolean;
+  /** The fields of a `list` row or an `object`. */
+  element?: IThemeSchemaField[];
+  [key: string]: unknown;
+}
+
+/** A section type the theme defines: rendered from its template, with no code of its own. */
+export interface ICustomSectionType {
+  format: 1;
+  /** The name in the designer's section picker; a draft may hold it per language. */
+  name: string | Record<string, string>;
+  schema: {
+    settings: IThemeSchemaField[];
+    /** Any template when left out. */
+    targetTemplates?: string[];
+    limit?: number;
+    icon?: string;
+  };
+  /** HTML with one root element and `{{ settings.<id> }}` bindings. */
+  template: string;
+  css: string;
+}
+
 export interface IThemeSnapshot {
   format: 1;
   publication: number;
@@ -66,6 +94,8 @@ export interface IThemeSnapshot {
   footer?: IThemeSectionGroup;
   brand?: IThemeBrand;
   palette?: IThemePalette;
+  /** By type. */
+  customSections?: Record<string, ICustomSectionType>;
   menus?: string[];
 }
 
@@ -90,6 +120,8 @@ export interface IThemeDraft {
   brand?: IThemeBrand;
   /** `null`: the theme has no palette (the preset shows), as its next publication will have none. */
   palette?: IThemePalette | null;
+  /** Every custom section type of the theme: replaces the published ones. */
+  customSections?: Record<string, ICustomSectionType>;
 }
 
 export interface IThemeSlugPage {
@@ -128,6 +160,7 @@ export interface IThemeView {
   footer?: IThemeSectionGroup;
   brand: IThemeBrand;
   palette?: IThemePalette;
+  customSections: Record<string, ICustomSectionType>;
   menus: IThemeMenu[];
   isDraft: boolean;
 }

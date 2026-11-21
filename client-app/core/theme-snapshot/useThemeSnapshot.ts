@@ -30,6 +30,7 @@ function _useThemeSnapshot() {
       footer: parts?.footer ?? snapshot?.footer,
       brand: parts?.brand ?? snapshot?.brand ?? {},
       palette: parts?.palette === undefined ? snapshot?.palette : (parts.palette ?? undefined),
+      customSections: parts?.customSections ?? snapshot?.customSections ?? {},
       menus: published.value?.menus ?? [],
       isDraft: !!parts,
     };
