@@ -1,22 +1,16 @@
 import guide from "../guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionTags } from "./registry";
-import type { ICustomSectionField } from "../types";
+import type { IDesignFacts } from "../design-facts";
+import type { ICustomSectionBehavior, ICustomSectionTag } from "../types";
 
 /** What the designer's catalog says of the kit, for the agent and the server: no components, no loaders. */
 export interface ICustomSectionKitCatalog {
-  tags: Record<string, { description: string; attributes: Record<string, ICustomSectionField> }>;
+  tags: Record<string, Pick<ICustomSectionTag, "description" | "attributes">>;
   behaviors: Record<
     string,
-    {
-      description: string;
-      value?: ICustomSectionField;
-      options?: Record<string, ICustomSectionField>;
-      writes?: string[];
-      /** The renderer repeats the element's children once; such a behavior is not nested in another. */
-      repeatsChildren?: boolean;
-    }
+    Pick<ICustomSectionBehavior, "description" | "value" | "options" | "writes" | "repeatsChildren">
   >;
-  design: typeof __SB_DESIGN_FACTS__ & {
+  design: IDesignFacts & {
     /** The container every custom section stands in, for `@container sb-section (min-width: …)`. */
     containerName: string;
   };

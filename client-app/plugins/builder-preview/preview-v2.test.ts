@@ -16,6 +16,7 @@ import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
 import type { IThemeDraft, IThemePageDocument } from "@/core/theme-snapshot";
 import type { ILanguage } from "@/core/types";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import type { VueWrapper } from "@vue/test-utils";
 import type { EffectScope } from "vue";
 
@@ -65,6 +66,14 @@ const SCHEMAS = {
   settingsSchema: {},
 } as unknown as PageBuilderSchemaType;
 
+const KIT: ICustomSectionKitCatalog = {
+  tags: { "vc-rating": { description: "Stars.", attributes: {} } },
+  behaviors: {},
+  design: { breakpoints: {}, containerMaxWidth: "1280px", tokens: {}, containerName: "sb-section" },
+  icons: ["star"],
+  guide: "",
+};
+
 const DOCUMENT = { settings: {}, content: [{ id: "s1", type: "banner", title: "Hello" }] };
 
 function createPreview(options: { hasPreviewToken?: boolean; schemas?: () => PageBuilderSchemaType | undefined } = {}) {
@@ -112,31 +121,22 @@ describe("preview protocol 2", () => {
   });
 
   it("announces the protocol, the capabilities, the conditions, the built-in templates and a catalog hash", () => {
-    const catalog = buildPreviewCatalog(SCHEMAS);
-    const changed = buildPreviewCatalog({ ...SCHEMAS, sections: {} });
+    const catalog = buildPreviewCatalog(SCHEMAS, KIT);
+    const changed = buildPreviewCatalog({ ...SCHEMAS, sections: {} }, KIT);
 
     expect(catalog).toMatchObject({ protocol: PREVIEW_PROTOCOL, sections: SCHEMAS.sections });
     expect(catalog.capabilities).toEqual(expect.arrayContaining(["templates", "inline-edit", "inspector"]));
     expect(catalog.builtInTemplates).toEqual(expect.arrayContaining(["product", "product.b2c"]));
     expect((catalog.conditions as { name: string }[]).map(({ name }) => name)).toContain("inCategory");
-    expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS).hash);
+    expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS, KIT).hash);
     expect(changed.hash).not.toBe(catalog.hash);
   });
 
   it("carries the custom section kit, in the hash too", () => {
-    const design = { breakpoints: {}, containerMaxWidth: "1280px", tokens: {}, containerName: "sb-section" };
-    const kit = {
-      tags: { "vc-rating": { description: "Stars.", attributes: {} } },
-      behaviors: {},
-      design,
-      icons: ["star"],
-      guide: "",
-    };
+    const catalog = buildPreviewCatalog(SCHEMAS, KIT);
 
-    const catalog = buildPreviewCatalog(SCHEMAS, kit);
-
-    expect(catalog.kit).toEqual(kit);
-    expect(catalog.hash).not.toBe(buildPreviewCatalog(SCHEMAS, { ...kit, guide: "# Guide" }).hash);
+    expect(catalog.kit).toEqual(KIT);
+    expect(catalog.hash).not.toBe(buildPreviewCatalog(SCHEMAS, { ...KIT, guide: "# Guide" }).hash);
   });
 
   it("gives each template the document the storefront renders without a theme file as its default", () => {
@@ -147,7 +147,7 @@ describe("preview protocol 2", () => {
       pages: { type: "pages" },
     };
 
-    const catalog = buildPreviewCatalog({ ...SCHEMAS, templates });
+    const catalog = buildPreviewCatalog({ ...SCHEMAS, templates }, KIT);
     const announced = catalog.templates as Record<string, { default?: unknown }>;
 
     expect(announced.product.default).toEqual(BUILT_IN_TEMPLATES.product);
@@ -158,7 +158,7 @@ describe("preview protocol 2", () => {
   });
 
   it("announces every token a built-in light or dark preset sets, sorted", () => {
-    const { light, dark } = buildPreviewCatalog(SCHEMAS).paletteTokens as { light: string[]; dark: string[] };
+    const { light, dark } = buildPreviewCatalog(SCHEMAS, KIT).paletteTokens as { light: string[]; dark: string[] };
 
     expect(light).toEqual(expect.arrayContaining(["color_primary_500", "color_body_bg", "color_empty_list_icon"]));
     expect(dark).toEqual(expect.arrayContaining(["color_footer_bottom_bg", "color_vc_icon_surface_primary"]));

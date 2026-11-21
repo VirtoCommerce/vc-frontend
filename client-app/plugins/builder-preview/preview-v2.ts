@@ -64,13 +64,13 @@ interface ITemplateSchema {
 /** `kit`: the tags and behaviors custom section templates may use, so the agent and the server learn them. */
 export function buildPreviewCatalog(
   schemas: PageBuilderSchemaType,
-  kit?: ICustomSectionKitCatalog,
+  kit: ICustomSectionKitCatalog,
 ): Record<string, unknown> {
   const catalog = {
     ...schemas,
     templates: withBuiltInDocuments(schemas.templates),
     paletteTokens: { light: tokensOf(presets), dark: tokensOf(darkPresets) },
-    ...(kit && { kit }),
+    kit,
   };
 
   return {
