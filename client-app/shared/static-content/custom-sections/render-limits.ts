@@ -3,19 +3,26 @@ import { getCustomSectionBehaviors, getCustomSectionTags } from "./kit";
 import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { getRichText } from "./rich-text";
 import type { IBindingScope, TemplatePartType } from "./bindings";
+import type { IRichText } from "./rich-text";
 import type { ICompiledElement } from "./template";
 
 interface IRenderSize {
   elements: number;
   characters: number;
+  /** The rich texts read, handed on to the render. */
+  richTexts: Map<string, IRichText>;
 }
 
 /**
  * Whether the section stays within the render budget and the text cap, counted before anything renders, as
  * written, whatever `data-if` hides. Rows multiply what they hold, a short template with a long list included.
  */
-export function fitsRenderLimits(root: ICompiledElement, scope: IBindingScope): boolean {
-  const size: IRenderSize = { elements: 0, characters: 0 };
+export function fitsRenderLimits(
+  root: ICompiledElement,
+  scope: IBindingScope,
+  richTexts: Map<string, IRichText>,
+): boolean {
+  const size: IRenderSize = { elements: 0, characters: 0, richTexts };
 
   addElementSize(root, scope, size, 1);
   return !isOverLimits(size);
@@ -47,7 +54,7 @@ function addOwnSize(node: ICompiledElement, scope: IBindingScope, size: IRenderS
   const behaviors = getCustomSectionBehaviors();
   const tags = getCustomSectionTags();
   const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? 1) : 1;
-  const richText = node.html ? getRichText(node.html, scope) : undefined;
+  const richText = node.html ? getRichText(node.html, scope, size.richTexts) : undefined;
   const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
   const boundText = countBoundText(
     node.attributes.flatMap(([, parts]) => parts),

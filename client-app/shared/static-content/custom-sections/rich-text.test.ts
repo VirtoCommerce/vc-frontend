@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { sanitizeSectionHtml } from "../sections";
 import { sanitizeRichText } from "./rich-text";
 
@@ -17,6 +17,27 @@ describe("sanitizeRichText", () => {
     expect(sanitizeRichText(html, SCOPE).elements).toBe(2);
     expect(sanitizeRichText(html, SCOPE)).toBe(sanitizeRichText(html, SCOPE));
     expect(sanitizeRichText(html, { ...SCOPE, type: "custom-y" })).not.toBe(sanitizeRichText(html, SCOPE));
+  });
+
+  it("finds a value it read before by the string itself, never by a key built from it", () => {
+    const html = `<p data-note="${"x".repeat(1_000_000)}">Hi</p>`;
+    sanitizeRichText(html, SCOPE);
+    const startedAt = performance.now();
+
+    for (let index = 0; index < 2000; index++) {
+      sanitizeRichText(html, SCOPE);
+    }
+
+    expect(performance.now() - startedAt).toBeLessThan(500);
+  });
+
+  it("works in DOMPurify's inert document, so no image of it loads in the page", () => {
+    const createElement = vi.spyOn(document, "createElement");
+
+    sanitizeRichText('<img src="https://cdn.example.com/assets/a.png" alt="">', { ...SCOPE, type: "custom-z" });
+
+    expect(createElement).not.toHaveBeenCalled();
+    createElement.mockRestore();
   });
 
   it("leaves the built-in sections' rich text as it was", () => {

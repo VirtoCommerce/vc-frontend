@@ -16,6 +16,7 @@ import { fitsRenderLimits } from "./render-limits";
 import { getRichText } from "./rich-text";
 import { getSettingVariables } from "./setting-variables";
 import type { IBindingScope } from "./bindings";
+import type { IRichText } from "./rich-text";
 import type { CompiledNodeType, ICompiledElement, ICompiledTemplate } from "./template";
 import type { ICustomSectionBehavior, ICustomSectionField } from "./types";
 import type { IThemeSchemaField } from "@/core/theme-snapshot";
@@ -34,6 +35,8 @@ export interface IRenderOptions {
 
 interface IRenderScope extends IBindingScope {
   isReducedMotion: boolean;
+  /** Read while counting, so the render reads none again. */
+  richTexts: Map<string, IRichText>;
 }
 
 interface IRenderedAttribute {
@@ -63,9 +66,10 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
     settings: options.settings,
     fields: toFieldMap(options.fields),
     isReducedMotion: !!options.isReducedMotion,
+    richTexts: new Map(),
   };
 
-  if (!fitsRenderLimits(template.root, scope)) {
+  if (!fitsRenderLimits(template.root, scope, scope.richTexts)) {
     if (!overBudgetTemplates.has(template)) {
       overBudgetTemplates.add(template);
       Logger.warn(
@@ -309,7 +313,7 @@ function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSection
 function renderAttributes(
   node: ICompiledElement,
   rendered: IRenderedAttribute[],
-  scope: IBindingScope,
+  scope: IRenderScope,
 ): Record<string, unknown> {
   const attributes: Record<string, string> = {};
 
@@ -327,7 +331,7 @@ function renderAttributes(
   }
 
   if (node.html) {
-    return { ...attributes, innerHTML: getRichText(node.html, scope)?.html ?? "" };
+    return { ...attributes, innerHTML: getRichText(node.html, scope, scope.richTexts)?.html ?? "" };
   }
 
   return attributes;
