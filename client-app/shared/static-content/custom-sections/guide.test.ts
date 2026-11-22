@@ -62,6 +62,13 @@ describe("the section authors' guide", () => {
     );
   });
 
+  it("says which placements the color pair is checked in", () => {
+    expect(guide.replaceAll(/\s+/g, " ")).toContain(
+      "Publishing the theme checks that pair in its templates, header and footer against both the light and the dark " +
+        "palette; a page is not checked, so pick a pair that holds in both.",
+    );
+  });
+
   it("keeps the focus style of an item at the section's edge inside its box", () => {
     expect(guide.replaceAll(/\s+/g, " ")).toContain(
       "The section clips what paints past its edge: give an item flush with that edge a focus style inside its box",

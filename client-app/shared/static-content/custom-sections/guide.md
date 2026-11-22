@@ -99,8 +99,9 @@ The page may read right to left.
 
 ## Contrast
 
-- Name the text and background `color-token` settings `color` and `background`. Publication checks that pair against
-  both the light and the dark palette.
+- Name the text and background `color-token` settings `color` and `background`. Publishing the theme checks that
+  pair in its templates, header and footer against both the light and the dark palette; a page is not checked, so
+  pick a pair that holds in both.
 - Text over an image needs a scrim or a mask between them.
 
 ## Performance
