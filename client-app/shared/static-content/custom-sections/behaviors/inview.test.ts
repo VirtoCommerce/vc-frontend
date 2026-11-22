@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, withDirectives } from "vue";
 import { vInview } from "./inview";
 
@@ -8,12 +8,15 @@ type EntryType = Pick<
   "isIntersecting" | "intersectionRatio" | "intersectionRect" | "boundingClientRect" | "rootBounds"
 >;
 
-const VIEWPORT_HEIGHT = 800;
+interface IBox {
+  width: number;
+  height: number;
+}
 
 const mocks = vi.hoisted(() => ({
   motion: "no-preference",
   onIntersect: undefined as ((entries: EntryType[]) => void) | undefined,
-  options: undefined as { threshold?: number | number[] } | undefined,
+  thresholds: [] as number[],
   stop: vi.fn(),
 }));
 
@@ -30,85 +33,118 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
     options: { threshold?: number | number[] },
   ) => {
     mocks.onIntersect = callback;
-    mocks.options = options;
+    mocks.thresholds = [options.threshold ?? []].flat();
     return { stop: mocks.stop };
   },
 }));
 
-/** An element `height` tall, `visibleHeight` of it on screen. */
-function toEntry(visibleHeight: number, height = 400): EntryType {
+const VIEWPORT: IBox = { width: window.innerWidth, height: window.innerHeight };
+
+/** An element of `box`, `visible` of it on screen, in a root of `root`; `null` for a root the frame cannot see. */
+function toEntry(visible: IBox, box: IBox, root: IBox | null = VIEWPORT): EntryType {
   return {
-    isIntersecting: visibleHeight > 0,
-    intersectionRatio: visibleHeight / height,
-    intersectionRect: { height: visibleHeight } as DOMRectReadOnly,
-    boundingClientRect: { height } as DOMRectReadOnly,
-    rootBounds: { height: VIEWPORT_HEIGHT } as DOMRectReadOnly,
+    isIntersecting: visible.width > 0 && visible.height > 0,
+    intersectionRatio: (visible.width * visible.height) / (box.width * box.height),
+    intersectionRect: visible as DOMRectReadOnly,
+    boundingClientRect: box as DOMRectReadOnly,
+    rootBounds: root as DOMRectReadOnly | null,
   };
 }
 
-function mountObserved(attributes: Record<string, string> = {}) {
+function mountObserved(attributes: Record<string, string> = {}, box: IBox = { width: 400, height: 400 }) {
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(box as DOMRect);
+
   return mount(defineComponent({ setup: () => () => withDirectives(h("div", attributes), [[vInview, ""]]) }));
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vInview", () => {
   beforeEach(() => {
     mocks.motion = "no-preference";
     mocks.onIntersect = undefined;
-    mocks.options = undefined;
+    mocks.thresholds = [];
     mocks.stop.mockClear();
   });
 
-  it("sets data-visible while the threshold's share of the element is on screen", () => {
-    const wrapper = mountObserved({ "data-inview-threshold": "0.5" });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
-    mocks.onIntersect?.([toEntry(240)]);
+  it("sets data-visible while the threshold's share of the element is on screen", () => {
+    const box = { width: 400, height: 400 };
+    const wrapper = mountObserved({ "data-inview-threshold": "0.5" }, box);
+
+    mocks.onIntersect?.([toEntry({ width: 400, height: 240 }, box)]);
     expect(wrapper.attributes("data-visible")).toBe("");
 
-    mocks.onIntersect?.([toEntry(120)]);
+    mocks.onIntersect?.([toEntry({ width: 400, height: 120 }, box)]);
     expect(wrapper.attributes("data-visible")).toBeUndefined();
   });
 
   it("takes 0.2 for a threshold that is missing", () => {
-    const wrapper = mountObserved();
+    const box = { width: 400, height: 400 };
+    const wrapper = mountObserved({}, box);
 
-    mocks.onIntersect?.([toEntry(60)]);
+    mocks.onIntersect?.([toEntry({ width: 400, height: 60 }, box)]);
     expect(wrapper.attributes("data-visible")).toBeUndefined();
 
-    mocks.onIntersect?.([toEntry(100)]);
+    mocks.onIntersect?.([toEntry({ width: 400, height: 100 }, box)]);
     expect(wrapper.attributes("data-visible")).toBe("");
   });
 
-  it("takes the viewport's share for an element taller than the viewport, and hears of it in time", () => {
-    const height = 3 * VIEWPORT_HEIGHT;
-    const wrapper = mountObserved();
-    const thresholds = [mocks.options?.threshold ?? []].flat();
+  it("takes the screen's share for an element three screens tall, and hears of it even at a threshold of 1", () => {
+    const box = { width: 400, height: 3 * VIEWPORT.height };
+    const wrapper = mountObserved({ "data-inview-threshold": "1" }, box);
 
-    mocks.onIntersect?.([toEntry(0.15 * VIEWPORT_HEIGHT, height)]);
+    expect(mocks.thresholds.some((threshold) => Math.abs(threshold - 1 / 3) < 1e-9)).toBe(true);
+
+    mocks.onIntersect?.([toEntry({ width: 400, height: 0.99 * VIEWPORT.height }, box)]);
     expect(wrapper.attributes("data-visible")).toBeUndefined();
 
-    mocks.onIntersect?.([toEntry(0.25 * VIEWPORT_HEIGHT, height)]);
+    mocks.onIntersect?.([toEntry({ width: 400, height: VIEWPORT.height }, box)]);
     expect(wrapper.attributes("data-visible")).toBe("");
-    expect(thresholds.some((threshold) => threshold > 0.05 && threshold <= (0.2 * VIEWPORT_HEIGHT) / height)).toBe(
-      true,
-    );
+  });
+
+  it("counts both axes, so a card mostly beside the screen in a scrolled row stays hidden", () => {
+    const box = { width: 400, height: 400 };
+    const wrapper = mountObserved({}, box);
+
+    mocks.onIntersect?.([toEntry({ width: 40, height: 400 }, box)]);
+    expect(wrapper.attributes("data-visible")).toBeUndefined();
+
+    mocks.onIntersect?.([toEntry({ width: 100, height: 400 }, box)]);
+    expect(wrapper.attributes("data-visible")).toBe("");
+  });
+
+  it("reads the window's size when the root's is unknown, as in a frame of another origin", () => {
+    const box = { width: 400, height: 2 * VIEWPORT.height };
+    const wrapper = mountObserved({}, box);
+
+    mocks.onIntersect?.([toEntry({ width: 400, height: 0.25 * VIEWPORT.height }, box, null)]);
+
+    expect(wrapper.attributes("data-visible")).toBe("");
   });
 
   it("keeps data-visible once set with data-inview-once", () => {
-    const wrapper = mountObserved({ "data-inview-once": "" });
+    const box = { width: 400, height: 400 };
+    const wrapper = mountObserved({ "data-inview-once": "" }, box);
 
-    mocks.onIntersect?.([toEntry(400)]);
-    mocks.onIntersect?.([toEntry(0)]);
+    mocks.onIntersect?.([toEntry(box, box)]);
+    mocks.onIntersect?.([toEntry({ width: 0, height: 0 }, box)]);
 
     expect(wrapper.attributes("data-visible")).toBe("");
     expect(mocks.stop).toHaveBeenCalled();
   });
 
   it("lets data-visible go again when data-inview-once is false", () => {
-    const wrapper = mountObserved({ "data-inview-once": "false" });
+    const box = { width: 400, height: 400 };
+    const wrapper = mountObserved({ "data-inview-once": "false" }, box);
 
-    mocks.onIntersect?.([toEntry(400)]);
-    mocks.onIntersect?.([toEntry(0)]);
+    mocks.onIntersect?.([toEntry(box, box)]);
+    expect(wrapper.attributes("data-visible")).toBe("");
 
+    mocks.onIntersect?.([toEntry({ width: 0, height: 0 }, box)]);
     expect(wrapper.attributes("data-visible")).toBeUndefined();
   });
 

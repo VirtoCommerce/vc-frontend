@@ -120,7 +120,7 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
         min: 0,
         max: 1,
         description:
-          "The share of the element on screen, or of the screen for an element taller than it; 0.2 by default.",
+          "The share of the element on screen, each axis against the screen where the element is larger; 0.2 by default.",
       },
       once: { type: "boolean", description: "data-visible stays once set." },
     },

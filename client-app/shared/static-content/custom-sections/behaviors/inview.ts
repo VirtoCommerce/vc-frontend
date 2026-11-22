@@ -1,15 +1,17 @@
-import { useIntersectionObserver } from "@vueuse/core";
+import { useEventListener, useIntersectionObserver, useResizeObserver } from "@vueuse/core";
+import { effectScope, onScopeDispose, shallowRef, watch } from "vue";
 import { toFiniteNumber } from "../numbers";
 import { defineBehavior, readBooleanAttribute } from "./define-behavior";
+import type { EffectScope } from "vue";
 
 const DEFAULT_THRESHOLD = 0.2;
 const VISIBLE_ATTRIBUTE = "data-visible";
-/** Every hundredth of the element: one taller than the viewport is never seen whole, so it is heard of in steps. */
-const OBSERVED_SHARES = Array.from({ length: 101 }, (_, index) => index / 100);
+/** The browser measures in fractions of a pixel. */
+const SHARE_TOLERANCE = 1e-3;
 
 /**
- * Sets `data-visible` while the threshold's share of the element is on screen, or of the viewport for an element
- * taller than it; with `-once` it stays.
+ * Sets `data-visible` while the threshold's share of the element is on screen, each axis counted against the smaller
+ * of the element and the screen, so an element taller or wider than the screen shows too; with `-once` it stays.
  */
 export const vInview = defineBehavior((element, { isReducedMotion }) => {
   if (isReducedMotion) {
@@ -19,28 +21,70 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
 
   const isOnce = readBooleanAttribute(element, "data-inview-once");
   const threshold = toFiniteNumber(element.getAttribute("data-inview-threshold")) ?? DEFAULT_THRESHOLD;
+  // The observer calls back only as the element's own ratio crosses a threshold: the one that means the share.
+  const observedRatio = shallowRef(toObservedRatio(element, threshold));
+  let observerScope: EffectScope | undefined;
 
-  const { stop } = useIntersectionObserver(
-    element,
-    ([entry]) => {
-      // An element leaving still intersects below the threshold, so the visible share decides.
-      const isVisible = !!entry?.isIntersecting && getVisibleShare(entry) >= threshold;
+  function onIntersect([entry]: IntersectionObserverEntry[]): void {
+    const isVisible = !!entry?.isIntersecting && getVisibleShare(entry) >= threshold - SHARE_TOLERANCE;
 
-      if (isVisible) {
-        element.setAttribute(VISIBLE_ATTRIBUTE, "");
-        if (isOnce) {
-          stop();
-        }
-      } else if (!isOnce) {
-        element.removeAttribute(VISIBLE_ATTRIBUTE);
+    if (isVisible) {
+      element.setAttribute(VISIBLE_ATTRIBUTE, "");
+      if (isOnce) {
+        observerScope?.stop();
       }
+    } else if (!isOnce) {
+      element.removeAttribute(VISIBLE_ATTRIBUTE);
+    }
+  }
+
+  watch(
+    observedRatio,
+    (ratio) => {
+      observerScope?.stop();
+      observerScope = effectScope(true);
+      observerScope.run(() => {
+        const { stop } = useIntersectionObserver(element, onIntersect, { threshold: [0, ratio] });
+        onScopeDispose(stop);
+      });
     },
-    { threshold: [...OBSERVED_SHARES, threshold] },
+    { immediate: true },
   );
+
+  function measure(): void {
+    observedRatio.value = toObservedRatio(element, threshold);
+  }
+
+  useResizeObserver(element, measure);
+  useEventListener(window, "resize", measure, { passive: true });
+  onScopeDispose(() => observerScope?.stop());
 });
 
-/** Of the element, or of the viewport when the element is taller. */
+/** The element's own ratio at which the share reaches the threshold. */
+function toObservedRatio(element: HTMLElement, threshold: number): number {
+  const { width, height } = element.getBoundingClientRect();
+  const excess = toExcess(width, window.innerWidth) * toExcess(height, window.innerHeight);
+
+  return Math.min(1, threshold / excess);
+}
+
+/** How many screens the element spans on an axis, at least 1. */
+function toExcess(size: number, rootSize: number): number {
+  return size > rootSize && rootSize > 0 ? size / rootSize : 1;
+}
+
+/** Per axis, of the element or of the screen when the element is larger, multiplied. */
 function getVisibleShare(entry: IntersectionObserverEntry): number {
-  const height = Math.min(entry.boundingClientRect.height, entry.rootBounds?.height ?? window.innerHeight);
-  return height > 0 ? entry.intersectionRect.height / height : entry.intersectionRatio;
+  const rootWidth = entry.rootBounds?.width ?? window.innerWidth;
+  const rootHeight = entry.rootBounds?.height ?? window.innerHeight;
+
+  return (
+    getAxisShare(entry.intersectionRect.width, entry.boundingClientRect.width, rootWidth) *
+    getAxisShare(entry.intersectionRect.height, entry.boundingClientRect.height, rootHeight)
+  );
+}
+
+function getAxisShare(visible: number, size: number, rootSize: number): number {
+  const span = Math.min(size, rootSize);
+  return span > 0 ? visible / span : 1;
 }
