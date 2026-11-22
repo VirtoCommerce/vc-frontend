@@ -1,44 +1,32 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, withDirectives } from "vue";
+import { defineComponent, h, withDirectives } from "vue";
 import { createI18n } from "vue-i18n";
 import { globals, setGlobals } from "@/core/globals";
 import { vCopy } from "./copy";
 import type { I18n } from "@/i18n";
 
-const mocks = vi.hoisted(() => ({
-  copy: vi.fn(),
-  copied: { value: false },
-  options: undefined as { copiedDuring?: number } | undefined,
-  success: vi.fn(),
-}));
-
-vi.mock("@vueuse/core", async (importOriginal) => {
-  const { ref } = await import("vue");
-
-  return {
-    ...(await importOriginal<typeof import("@vueuse/core")>()),
-    useClipboard: (options: { copiedDuring?: number }) => {
-      mocks.options = options;
-      mocks.copied = ref(false);
-      return mocks;
-    },
-  };
-});
+const mocks = vi.hoisted(() => ({ success: vi.fn(), writeText: vi.fn() }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ success: mocks.success }) }));
 
 function mountCopy(tag = "span", attributes: Record<string, string> = {}) {
-  return mount(defineComponent({ setup: () => () => withDirectives(h(tag, attributes, "Copy"), [[vCopy, "CODE10"]]) }));
+  return mount(
+    defineComponent({
+      setup: () => () =>
+        withDirectives(h(tag, attributes, ["Copy", h("a", { href: "/terms" }, "Terms")]), [[vCopy, "CODE10"]]),
+    }),
+  );
 }
 
 describe("vCopy", () => {
   const initialI18n = globals.i18n;
 
   beforeEach(() => {
-    mocks.copy.mockReset();
+    vi.useFakeTimers();
     mocks.success.mockReset();
-    mocks.options = undefined;
+    mocks.writeText.mockReset().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: mocks.writeText }, configurable: true });
     setGlobals({
       i18n: createI18n({
         legacy: false,
@@ -49,6 +37,8 @@ describe("vCopy", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
+    Reflect.deleteProperty(navigator, "clipboard");
     setGlobals({ i18n: initialI18n });
   });
 
@@ -56,15 +46,11 @@ describe("vCopy", () => {
     const wrapper = mountCopy();
 
     await wrapper.trigger("click");
-    expect(mocks.copy).toHaveBeenCalledWith("CODE10");
-    expect(mocks.options).toMatchObject({ copiedDuring: 2000 });
-
-    mocks.copied.value = true;
-    await nextTick();
+    await flushPromises();
+    expect(mocks.writeText).toHaveBeenCalledWith("CODE10");
     expect(wrapper.attributes("data-copied")).toBe("");
 
-    mocks.copied.value = false;
-    await nextTick();
+    await vi.advanceTimersByTimeAsync(2000);
     expect(wrapper.attributes("data-copied")).toBeUndefined();
   });
 
@@ -72,9 +58,20 @@ describe("vCopy", () => {
     const wrapper = mountCopy();
 
     await wrapper.trigger("click");
-    await nextTick();
+    await flushPromises();
 
     expect(mocks.success).toHaveBeenCalledWith(expect.objectContaining({ text: "Kopiert", singleInGroup: true }));
+  });
+
+  it("says nothing and marks nothing when the browser refuses the copy", async () => {
+    mocks.writeText.mockRejectedValue(new DOMException("Denied", "NotAllowedError"));
+    const wrapper = mountCopy();
+
+    await wrapper.trigger("click");
+    await flushPromises();
+
+    expect(mocks.success).not.toHaveBeenCalled();
+    expect(wrapper.attributes("data-copied")).toBeUndefined();
   });
 
   it.each(["Enter", " "])("is a button for the keyboard: %j copies", async (key) => {
@@ -83,7 +80,15 @@ describe("vCopy", () => {
     await wrapper.trigger("keydown", { key });
 
     expect(wrapper.attributes()).toMatchObject({ role: "button", tabindex: "0" });
-    expect(mocks.copy).toHaveBeenCalledWith("CODE10");
+    expect(mocks.writeText).toHaveBeenCalledWith("CODE10");
+  });
+
+  it("leaves Enter on a link inside it to the link", async () => {
+    const wrapper = mountCopy();
+
+    await wrapper.find("a").trigger("keydown", { key: "Enter" });
+
+    expect(mocks.writeText).not.toHaveBeenCalled();
   });
 
   it("leaves a link's role and keys alone", async () => {
@@ -93,6 +98,6 @@ describe("vCopy", () => {
 
     expect(wrapper.attributes("role")).toBeUndefined();
     expect(wrapper.attributes("tabindex")).toBeUndefined();
-    expect(mocks.copy).not.toHaveBeenCalled();
+    expect(mocks.writeText).not.toHaveBeenCalled();
   });
 });
