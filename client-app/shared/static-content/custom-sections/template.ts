@@ -9,6 +9,7 @@ import {
 } from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
 import { BINDING_NAMES, getBehaviorAttributeNames } from "./kit/registry";
+import { MAX_TEMPLATE_ATTRIBUTES } from "./limits";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
 import type { UponSanitizeAttributeHookEvent } from "dompurify";
@@ -120,10 +121,20 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
     }
   }
 
+  // Counted as written, before DOMPurify drops any; taken out once it is done, as content past the depth is.
+  const overwritten = new Set<Element>();
+
+  function countAttributes(node: Element): void {
+    if (node instanceof Element && node.attributes.length > MAX_TEMPLATE_ATTRIBUTES) {
+      overwritten.add(node);
+    }
+  }
+
   purifier.addHook("uponSanitizeAttribute", keepDeclaredFor);
+  purifier.addHook("beforeSanitizeAttributes", countAttributes);
 
   try {
-    return purifier.sanitize(template, {
+    const fragment = purifier.sanitize(template, {
       ALLOWED_TAGS: SECTION_ELEMENTS,
       ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
       ALLOW_DATA_ATTR: false,
@@ -140,8 +151,12 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
       SANITIZE_DOM: false,
       RETURN_DOM_FRAGMENT: true,
     });
+
+    overwritten.forEach((element) => element.remove());
+    return fragment;
   } finally {
     purifier.removeHook("uponSanitizeAttribute", keepDeclaredFor);
+    purifier.removeHook("beforeSanitizeAttributes", countAttributes);
   }
 }
 

@@ -379,6 +379,13 @@ describe("SbSection", () => {
       expect(wrapper.find("section").element.innerHTML).toBe("<p>Kept</p>");
     });
 
+    it("leaves out an element written with more than 64 attributes", () => {
+      const attributes = (count: number) => Array.from({ length: count }, (_, index) => ` a${index}=""`).join("");
+      const wrapper = mountSection(`<section><p${attributes(65)}>Dropped</p><p${attributes(64)}>Kept</p></section>`);
+
+      expect(wrapper.find("section").text()).toBe("Kept");
+    });
+
     it("drops attributes the contract refuses", () => {
       const wrapper = mountSection(
         '<section><p id="x" style="color:red" onclick="alert(1)" data-secret="1" title="Kept" aria-label="Kept">a</p></section>',

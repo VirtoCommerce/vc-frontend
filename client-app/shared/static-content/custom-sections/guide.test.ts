@@ -3,7 +3,7 @@ import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
 import { MAX_GUIDE_LENGTH } from "./kit/limits";
-import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { MAX_RENDERED_TEXT, MAX_TEMPLATE_ATTRIBUTES, RENDER_BUDGET } from "./limits";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
@@ -34,6 +34,7 @@ describe("the section authors' guide", () => {
     expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
     expect(guide).toMatch(/children of a repeating behavior \(`data-marquee`\) count twice/);
     expect(guide).toContain(`at most ${MAX_RENDERED_TEXT.toLocaleString("en-US")} characters of settings`);
+    expect(guide).toContain(`written with at most ${MAX_TEMPLATE_ATTRIBUTES} attributes`);
   });
 
   it("tells what the server refuses and what it only warns about", () => {
