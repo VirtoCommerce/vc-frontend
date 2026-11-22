@@ -555,6 +555,23 @@ describe("SbSection", () => {
       ]);
     });
 
+    it("runs a marquee track that starts with text the width of one run", async () => {
+      vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
+        return this.hasAttribute("data-sb-repeat") ? 120 : 0;
+      });
+      const wrapper = mountSection("<section><p data-marquee>{{ settings.title }}</p></section>", { title: "Sale" });
+      const track = wrapper.find("[data-marquee]");
+
+      await vi.waitFor(() => expect(track.element.getAttribute("style")).toContain("--marquee-width"));
+
+      expect([...track.element.children].map((child) => child.outerHTML)).toEqual([
+        "<span>Sale</span>",
+        '<span aria-hidden="true" inert="" data-sb-repeat="">Sale</span>',
+      ]);
+      expect((track.element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("120px");
+      vi.restoreAllMocks();
+    });
+
     it("leaves the text of a counter to its behavior", () => {
       const wrapper = mountSection('<section><span data-count-up="{{ settings.speed }}">placeholder</span></section>', {
         speed: 5,

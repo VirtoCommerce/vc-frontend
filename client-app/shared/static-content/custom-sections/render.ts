@@ -85,16 +85,26 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
   return isVNode(root) ? root : null;
 }
 
-function renderNodes(nodes: readonly CompiledNodeType[], scope: IRenderScope, isCopy = false): VNodeArrayChildren {
+/**
+ * `repeat`: the children of an element a behavior repeats, as the run or its copy. Their text goes in a span in
+ * both, so the run and the copy hold the same items and the copy's can be hidden from assistive technology.
+ * Blank text stays bare: as an element, it would take a gap.
+ */
+function renderNodes(
+  nodes: readonly CompiledNodeType[],
+  scope: IRenderScope,
+  repeat?: "run" | "copy",
+): VNodeArrayChildren {
+  const props = repeat === "copy" ? COPY_PROPS : {};
+
   return nodes.flatMap((node) => {
     if (!("text" in node)) {
-      return renderElement(node, scope, isCopy ? COPY_PROPS : {});
+      return renderElement(node, scope, props);
     }
 
     const text = renderParts(node.text, scope);
 
-    // Only an element can be hidden from assistive technology. Blank text stays bare: as an element, it would take a gap.
-    return [isCopy && text.trim() ? h("span", COPY_PROPS, text) : createTextVNode(text)];
+    return [repeat && text.trim() ? h("span", props, text) : createTextVNode(text)];
   });
 }
 
@@ -230,11 +240,12 @@ function renderChildren(
     return undefined;
   }
 
-  const children = renderNodes(node.children, scope);
-
   return isRepeated
-    ? [h(Fragment, { key: "run" }, children), h(Fragment, { key: "copy" }, renderNodes(node.children, scope, true))]
-    : children;
+    ? [
+        h(Fragment, { key: "run" }, renderNodes(node.children, scope, "run")),
+        h(Fragment, { key: "copy" }, renderNodes(node.children, scope, "copy")),
+      ]
+    : renderNodes(node.children, scope);
 }
 
 function renderAttributeEntries(
