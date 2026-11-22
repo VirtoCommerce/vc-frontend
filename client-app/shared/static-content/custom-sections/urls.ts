@@ -2,12 +2,12 @@
 const SITE_PATH_REGEX = /^\/(?![/\\])/;
 const LINK_SCHEME_REGEX = /^(?:https|mailto|tel):/i;
 const ANCHOR_REGEX = /^#[A-Za-z][\w-]*$/;
-/** An escaped dot or slash could step out of the library once the server or the browser decodes it. */
+/** An escaped dot, slash or backslash could step out of the library once the server or the browser decodes it. */
 const ESCAPED_PATH_REGEX = /%(?:2e|2f|5c)/i;
 /** Not JavaScript's `\s`, which also takes U+00A0 and the like: those stay inside a URL. */
 const ASCII_WHITESPACE_REGEX = /[\t\n\f\r ]+/;
 const ASCII_WHITESPACE = new Set(["\t", "\n", "\f", "\r", " "]);
-/** Browsers drop these from a URL before reading it, so `/\t/host` would leave the site. */
+/** Browsers drop a tab or a newline from a URL and read `\` as `/`, so `/\t/host` or `/\host` would leave the site. */
 const URL_NOISE_REGEX = /[\t\n\r\\]/;
 
 /** A link of a custom section: a path on this site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. */

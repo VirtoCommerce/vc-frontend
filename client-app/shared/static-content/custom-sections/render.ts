@@ -180,7 +180,7 @@ function renderShown(
   const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
   const values = new Map(kept.map(({ name, value }) => [name, value]));
   const applied = node.behaviors.filter((name) => Object.hasOwn(behaviors, name) && values.has(`data-${name}`));
-  // Until its chunk loads, a behavior that failed to load leaves the template's text in place.
+  // A behavior whose chunk failed to load leaves the template's text in place until a later load succeeds.
   const hasText = kept.some(({ name }) => {
     const behavior = textAttributes.get(name);
     return !!behavior && !hasBehaviorFailed(behavior);

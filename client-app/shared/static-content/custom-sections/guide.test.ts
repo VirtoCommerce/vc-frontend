@@ -30,9 +30,11 @@ describe("the section authors' guide", () => {
   const patterns = [...guide.matchAll(PATTERN_REGEX)].map((match) => match[1]);
   const styles = [...guide.matchAll(CSS_REGEX)].map((match) => match[1]);
 
-  it("tells the render budget, the children of a repeating behavior counted twice", () => {
+  it("tells the render budget, what a repeating behavior's element holds counted twice", () => {
     expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
-    expect(guide).toMatch(/children of a repeating behavior \(`data-marquee`\) count twice/);
+    expect(guide.replaceAll(/\s+/g, " ")).toContain(
+      "what an element with a repeating behavior (`data-marquee`) holds counts twice",
+    );
     expect(guide).toContain(`at most ${MAX_RENDERED_TEXT.toLocaleString("en-US")} characters of settings`);
     expect(guide).toContain(`written with at most ${MAX_TEMPLATE_ATTRIBUTES} attributes`);
   });

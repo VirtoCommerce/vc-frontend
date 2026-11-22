@@ -105,10 +105,10 @@ The page may read right to left.
 - Behaviors load on their own the first time a template uses them; add only those the section needs.
 - An element is written with at most 64 attributes; one with more is left out, with its content.
 - A section renders at most 5,000 elements and behaviors, each counted as written (whatever `data-if` hides) and
-  once per row of its list; the children of a repeating behavior (`data-marquee`) count twice, a kit tag counts
-  its `cost` from the kit (`vc-products` counts as many as its products may render), and rich text counts its
-  elements. It also renders at most 262,144 characters of settings: every bound value in its text and attributes,
-  and its rich text, counted the same way. A section over either renders nothing.
+  once per row of its list; what an element with a repeating behavior (`data-marquee`) holds counts twice, a kit
+  tag counts its `cost` from the kit (`vc-products` counts as many as its products may render), and rich text
+  counts its elements. It also renders at most 262,144 characters of settings: every bound value in its text and
+  attributes, and its rich text, counted the same way. A section over either renders nothing.
 
 ## Patterns
 

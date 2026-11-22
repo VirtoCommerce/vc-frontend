@@ -112,7 +112,7 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
 
   purifier ??= DOMPurify();
 
-  // DOMPurify drops `for` off anything but a label; a kit tag becomes a component, never this element in the page.
+  // DOMPurify drops `for` off anything but a label or an output; a kit tag becomes a component, never this element.
   function keepDeclaredFor(node: Element, event: UponSanitizeAttributeHookEvent): void {
     const tag = Object.hasOwn(kit.tags, node.localName) ? kit.tags[node.localName] : undefined;
 
@@ -175,7 +175,7 @@ function getKitSignature(kit: IKit): string {
 
 interface ICompileContext {
   kit: IKit;
-  /** Of the element whose children compile. */
+  /** Of the nodes compiling: the root's children are at 1. */
   depth: number;
   isRoot: boolean;
   isInEach: boolean;

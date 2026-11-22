@@ -18,9 +18,12 @@ export type CustomSectionDirectiveType = Pick<
  * server that checks them read it. The storefront drops a tag attribute that breaks it.
  */
 export interface ICustomSectionField {
-  /** `link`: a path on the site, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601 date or date-time. */
+  /**
+   * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
+   * date or date-time.
+   */
   type: "string" | "number" | "boolean" | "select" | "link" | "date";
-  /** The values a `select` takes. */
+  /** The values a `select` takes; a select has these or `optionsFrom`. */
   options?: string[];
   /** A `select` of the storefront's icon names, which the catalog lists once, as `kit.icons`. */
   optionsFrom?: "icons";
