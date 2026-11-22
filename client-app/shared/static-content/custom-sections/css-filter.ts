@@ -20,6 +20,7 @@ type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
 const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", "CSSStartingStyleRule"];
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
 const POSITION_VALUES = new Set(["static", "relative", "absolute", "sticky", "inherit", "initial", "unset", "revert"]);
+const SCOPE_PRELUDE = "@scope ([data-sb-type])";
 const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\w-])/i;
 
 /**
@@ -27,7 +28,7 @@ const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\
  * `undefined` where the browser cannot parse a stylesheet on its own: the section then has no CSS.
  */
 export function filterSectionCss(type: string, css: string, assetsBaseUrl?: string): IFilteredCss | undefined {
-  const sheet = parseStyleSheet(css);
+  const sheet = parseScoped(css);
 
   if (!sheet) {
     return undefined;
@@ -53,6 +54,19 @@ export function filterSectionCss(type: string, css: string, assetsBaseUrl?: stri
   }
 
   return { keyframes: keyframes.join("\n"), rules: rules.join("\n") };
+}
+
+/**
+ * Read in the scope it is put in, where a relative selector such as `> .card` is a rule; at the top level the
+ * browser drops it. What a stray `}` lets out of the wrapper is not read.
+ */
+function parseScoped(css: string): RuleOwnerType | undefined {
+  if (typeof CSSScopeRule === "undefined") {
+    return parseStyleSheet(css);
+  }
+
+  const [scope] = parseStyleSheet(`${SCOPE_PRELUDE} {\n${css}\n}`)?.cssRules ?? [];
+  return scope && isRuleOf<CSSScopeRule>(scope, "CSSScopeRule") ? scope : undefined;
 }
 
 function parseStyleSheet(css: string): CSSStyleSheet | undefined {

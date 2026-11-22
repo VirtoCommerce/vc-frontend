@@ -113,6 +113,12 @@ describe("filterSectionCss", () => {
     expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
   });
 
+  it("reads the CSS inside the section's scope: a relative selector stays, and a stray brace escapes nothing", () => {
+    expect(rulesOf("> .a { color: red; } .b { color: blue; } } .c { color: green; }")).toBe(
+      "> .a { color: red; } .b { color: blue; }",
+    );
+  });
+
   it("drops a nested rule whose selector reaches outside the section", () => {
     expect(rulesOf(".a { color: red; *:has([data-q]) & { color: blue; } }")).not.toContain("blue");
   });
@@ -129,7 +135,6 @@ describe("filterSectionCss", () => {
     ":dir(rtl) .a",
     ":lang(en, fr) .a",
     '[data-x=":scope"] .a',
-    "> .a",
   ])("keeps a rule whose selector stays in the section: %s", (selector) => {
     expect(rulesOf(`${selector} { color: red; }`)).toContain("color: red");
   });
@@ -245,13 +250,7 @@ describe("filterSectionCss", () => {
     inner.replaceSync(".a { opacity: 0; }");
     const rule = new FakeStartingStyleRule([...inner.cssRules]);
     vi.stubGlobal("CSSStartingStyleRule", FakeStartingStyleRule);
-    vi.stubGlobal(
-      "CSSStyleSheet",
-      class {
-        cssRules = [rule];
-        replaceSync(): void {}
-      },
-    );
+    stubParsedRules([rule]);
 
     expect(filterSectionCss(TYPE, "@starting-style { .a { opacity: 0; } }")?.rules).toBe(rule.cssText);
   });
@@ -273,13 +272,7 @@ describe("filterSectionCss", () => {
     inner.replaceSync("@keyframes custom-hero__in { from { opacity: 0; } } .a { opacity: 0; }");
     const rule = new FakeStartingStyleRule([...inner.cssRules]);
     vi.stubGlobal("CSSStartingStyleRule", FakeStartingStyleRule);
-    vi.stubGlobal(
-      "CSSStyleSheet",
-      class {
-        cssRules = [rule];
-        replaceSync(): void {}
-      },
-    );
+    stubParsedRules([rule]);
 
     const filtered = filterSectionCss(TYPE, "@starting-style { }");
 
@@ -319,14 +312,28 @@ function filterFakeStyle(declarations: Record<string, string>, shorthand?: strin
     deleteRule(): void {}
   }
   vi.stubGlobal("CSSStyleRule", FakeStyleRule);
-  vi.stubGlobal(
-    "CSSStyleSheet",
-    class {
-      cssRules = [new FakeStyleRule()];
-      replaceSync(): void {}
-    },
-  );
+  stubParsedRules([new FakeStyleRule()]);
 
   filterSectionCss(TYPE, ".a {}", ASSETS);
   return declarations;
+}
+
+/** The browser parses the section's CSS inside a scope rule: the given rules stand in for what it holds. */
+function stubParsedRules(rules: object[]): void {
+  class FakeScopeRule {
+    cssRules = rules;
+
+    deleteRule(index: number): void {
+      this.cssRules.splice(index, 1);
+    }
+  }
+
+  vi.stubGlobal("CSSScopeRule", FakeScopeRule);
+  vi.stubGlobal(
+    "CSSStyleSheet",
+    class {
+      cssRules = [new FakeScopeRule()];
+      replaceSync(): void {}
+    },
+  );
 }
