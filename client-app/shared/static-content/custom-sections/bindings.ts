@@ -68,7 +68,7 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
     const field = scope.row?.fields.get(key);
 
     return scope.row && field
-      ? { value: scope.row.values[key], field, path: [scope.row.listId, scope.row.index, key] }
+      ? { value: readOwn(scope.row.values, key), field, path: [scope.row.listId, scope.row.index, key] }
       : undefined;
   }
 
@@ -79,18 +79,20 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
   }
 
   if (!subKey) {
-    return { value: scope.settings[key], field, path: [key] };
+    return { value: readOwn(scope.settings, key), field, path: [key] };
   }
 
-  const owner = scope.settings[key];
+  const owner = readOwn(scope.settings, key);
   const subField = field.element?.find(({ id }) => id === subKey);
 
-  return subField && isRecord(owner) ? { value: owner[subKey], field: subField, path: [key, subKey] } : undefined;
+  return subField && isRecord(owner)
+    ? { value: readOwn(owner, subKey), field: subField, path: [key, subKey] }
+    : undefined;
 }
 
 /** The rows of a `list` setting: its objects, in order. */
 export function getListRows(listId: string, scope: IBindingScope): Record<string, unknown>[] {
-  const value = scope.settings[listId];
+  const value = readOwn(scope.settings, listId);
   return scope.fields.get(listId)?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
 }
 
@@ -110,4 +112,9 @@ export function isSetValue(value: unknown): boolean {
   return (
     value !== false && value !== "" && value !== null && value !== undefined && !(Array.isArray(value) && !value.length)
   );
+}
+
+/** An id such as `constructor` names a setting, never what every object inherits. */
+function readOwn(values: Record<string, unknown>, key: string): unknown {
+  return Object.hasOwn(values, key) ? values[key] : undefined;
 }

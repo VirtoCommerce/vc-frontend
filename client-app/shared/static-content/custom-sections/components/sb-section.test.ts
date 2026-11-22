@@ -108,6 +108,18 @@ describe("SbSection", () => {
       expect(wrapper.find("img").attributes("alt")).toBe("Team photo");
     });
 
+    it("reads a setting's own value only, never one an object inherits", () => {
+      const fields = [...FIELDS, { id: "constructor", type: "string" }, { id: "rows", type: "list", element: [] }];
+      const wrapper = mountSection(
+        '<section><p data-if="settings.constructor">Shown</p><i data-each="settings.rows">Row</i>{{ item.toString }}</section>',
+        {},
+        { schema: { settings: fields } },
+      );
+
+      expect(wrapper.find("p").exists()).toBe(false);
+      expect(wrapper.find("section").text()).toBe("");
+    });
+
     it("leaves out a binding of a setting the schema does not declare", () => {
       const wrapper = mountSection(
         "<section><p>[{{ settings.secret }}][{{ item.title }}][{{ window }}]</p></section>",
