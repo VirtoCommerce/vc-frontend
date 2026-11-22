@@ -47,9 +47,9 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
   }
 
   // Its items too: a late image or a font swap resizes them inside a track whose own width is fixed.
-  const items = shallowRef([...element.children]);
+  const items = shallowRef(getItems(element));
   watch(updates, () => {
-    items.value = [...element.children];
+    items.value = getItems(element);
   });
 
   measure();
@@ -75,4 +75,8 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 function writeRun(element: HTMLElement, width: number): void {
   element.style.setProperty("--marquee-width", `${width}px`);
   element.style.setProperty("--marquee-shift", `${isRightToLeft(element) ? width : -width}px`);
+}
+
+function getItems(element: HTMLElement): HTMLElement[] {
+  return [...element.children].filter((child): child is HTMLElement => child instanceof HTMLElement);
 }
