@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, withDirectives } from "vue";
+import { defineComponent, h, nextTick, withDirectives } from "vue";
 import { vInview } from "./inview";
 
 type EntryType = Pick<
@@ -18,6 +18,8 @@ const mocks = vi.hoisted(() => ({
   onIntersect: undefined as ((entries: EntryType[]) => void) | undefined,
   thresholds: [] as number[],
   stop: vi.fn(),
+  /** Every observer made, in order. */
+  observers: [] as { thresholds: number[]; stop: () => void }[],
 }));
 
 vi.mock("@vueuse/core", async (importOriginal) => ({
@@ -32,9 +34,12 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
     callback: (entries: EntryType[]) => void,
     options: { threshold?: number | number[] },
   ) => {
+    const observer = { thresholds: [options.threshold ?? []].flat(), stop: vi.fn(() => mocks.stop()) };
+
     mocks.onIntersect = callback;
-    mocks.thresholds = [options.threshold ?? []].flat();
-    return { stop: mocks.stop };
+    mocks.thresholds = observer.thresholds;
+    mocks.observers.push(observer);
+    return { stop: observer.stop };
   },
 }));
 
@@ -64,11 +69,13 @@ describe("vInview", () => {
     mocks.motion = "no-preference";
     mocks.onIntersect = undefined;
     mocks.thresholds = [];
+    mocks.observers = [];
     mocks.stop.mockClear();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     Reflect.deleteProperty(document.documentElement, "clientWidth");
     Reflect.deleteProperty(document.documentElement, "clientHeight");
   });
@@ -125,6 +132,67 @@ describe("vInview", () => {
 
     const [, observed] = mocks.thresholds;
     expect(observed).toBeLessThan(rootWidth / VIEWPORT.width);
+  });
+
+  it("takes the screen's share for an element three screens wide too", () => {
+    const box = { width: 3 * VIEWPORT.width, height: 400 };
+    const wrapper = mountObserved({ "data-inview-threshold": "1" }, box);
+
+    expect(mocks.thresholds.some((threshold) => Math.abs(threshold - 1 / 3) < 1e-3)).toBe(true);
+
+    mocks.onIntersect?.([toEntry({ width: 0.99 * VIEWPORT.width, height: 400 }, box)]);
+    expect(wrapper.attributes("data-visible")).toBeUndefined();
+
+    mocks.onIntersect?.([toEntry({ width: VIEWPORT.width, height: 400 }, box)]);
+    expect(wrapper.attributes("data-visible")).toBe("");
+  });
+
+  it("listens anew when the screen resizes the element, and stops the observer it had", async () => {
+    const box = { width: 400, height: 400 };
+    mountObserved({ "data-inview-threshold": "1" }, box);
+
+    box.height = 3 * VIEWPORT.height;
+    window.dispatchEvent(new Event("resize"));
+    await nextTick();
+
+    const [first, second] = mocks.observers;
+    expect(mocks.observers).toHaveLength(2);
+    expect(first.thresholds[1]).toBeGreaterThan(0.99);
+    expect(Math.abs(second.thresholds[1] - 1 / 3)).toBeLessThan(1e-3);
+    expect(first.stop).toHaveBeenCalledOnce();
+    expect(second.stop).not.toHaveBeenCalled();
+  });
+
+  it("listens anew when the element itself resizes", async () => {
+    const onResize: ResizeObserverCallback[] = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          onResize.push(callback);
+        }
+        observe(): void {}
+        unobserve(): void {}
+        disconnect(): void {}
+      },
+    );
+    const box = { width: 400, height: 400 };
+    mountObserved({ "data-inview-threshold": "1" }, box);
+
+    box.width = 3 * VIEWPORT.width;
+    onResize.forEach((callback) => callback([], {} as ResizeObserver));
+    await nextTick();
+
+    expect(mocks.observers.map(({ thresholds }) => Math.abs(thresholds[1] - 1 / 3) < 1e-3)).toEqual([false, true]);
+  });
+
+  it("keeps a wide element in a root the frame cannot see hidden below its threshold", () => {
+    const box = { width: 3 * VIEWPORT.width, height: 400 };
+    const wrapper = mountObserved({ "data-inview-threshold": "0.6" }, box);
+
+    mocks.onIntersect?.([toEntry({ width: 0.5 * VIEWPORT.width, height: 400 }, box, null)]);
+
+    expect(wrapper.attributes("data-visible")).toBeUndefined();
   });
 
   it("counts both axes, so a card mostly beside the screen in a scrolled row stays hidden", () => {
