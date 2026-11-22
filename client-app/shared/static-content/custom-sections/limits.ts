@@ -10,7 +10,10 @@ export const RENDER_BUDGET = 5000;
  */
 export const MAX_RENDERED_TEXT = 262_144;
 
-/** The most attributes an element of a template is written with, as the server counts them; one with more is left out. */
+/**
+ * The most attributes an element of a template has, counted as the parser leaves them, before the sanitizer drops
+ * any; one with more is left out. The server counts the raw text, where a repeated attribute counts again.
+ */
 export const MAX_TEMPLATE_ATTRIBUTES = 64;
 
 /** How deep a template's elements nest; what lies deeper is left out, so a hostile draft cannot exhaust the stack. */

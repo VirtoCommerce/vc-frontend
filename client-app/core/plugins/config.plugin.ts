@@ -10,7 +10,7 @@ export function getThemeVariableName(token: string): string {
   return `--${token.replaceAll("_", "-")}`;
 }
 
-/** `var(--color-…)` for a palette token such as `color_primary_500`; `undefined` for anything else. */
+/** `var(--…)` for a lowercase snake_case token such as `color_primary_500`; `undefined` for anything else. */
 export function toPaletteVariable(token: unknown): string | undefined {
   return typeof token === "string" && PALETTE_TOKEN_REGEX.test(token)
     ? `var(${getThemeVariableName(token)})`

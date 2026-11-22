@@ -54,8 +54,8 @@ export interface ICustomSectionTag {
   /** The attribute whose text fills the component's default slot, such as a button's `label`. */
   slotAttribute?: string;
   /**
-   * The most elements one instance renders, a whole number from 1 to the render budget; 1 when left out. The
-   * section's render budget counts it for every instance, list rows included.
+   * The most elements one instance renders, a whole number from 1 to 5,000, the section's render budget; 1 when
+   * left out. The budget counts it for every instance, list rows included.
    */
   cost?: number;
   /**

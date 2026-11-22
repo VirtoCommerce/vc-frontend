@@ -112,7 +112,8 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
     }
   }
 
-  // Counted as written, before DOMPurify drops any; taken out once it is done, as content past the depth is.
+  // Counted as the parser leaves them, before DOMPurify drops any; taken out once it is done, as content past the
+  // depth is.
   const overwritten = new Set<Element>();
 
   function countAttributes(node: Element): void {

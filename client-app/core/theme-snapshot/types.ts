@@ -165,7 +165,7 @@ export interface IThemeView {
   brand: IThemeBrand;
   palette?: IThemePalette;
   customSections: Record<string, ICustomSectionDefinition>;
-  /** The published snapshot's; a draft's only while none is published, so a draft cannot widen where images come from. */
+  /** The published snapshot's; while it names none, the draft's, so a draft cannot widen where images come from. */
   assetsBaseUrl?: string;
   menus: IThemeMenu[];
   isDraft: boolean;
