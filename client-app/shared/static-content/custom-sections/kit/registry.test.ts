@@ -51,6 +51,12 @@ describe("the kit registry", () => {
     "srcset",
     "poster",
     "action",
+    "data-each",
+    "data-if",
+    "data-html",
+    "data-sb",
+    "data-sb-type",
+    "data-pb-field",
   ])("refuses a tag that takes the attribute %s", (attribute) => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { [attribute]: { type: "string" } } });
 
@@ -64,8 +70,10 @@ describe("the kit registry", () => {
     ["optionsFrom on a string", { type: "string", optionsFrom: "icons" }],
     ["another optionsFrom", { type: "select", optionsFrom: "colors" }],
     ["a min that is not a number", { type: "number", min: "1" }],
+    ["a max out of the server's range", { type: "number", max: 1e29 }],
+    ["a min that is not finite", { type: "number", min: Number.NEGATIVE_INFINITY }],
     ["a description that is not text", { type: "string", description: 42 }],
-    ["a description too long", { type: "string", description: "x".repeat(501) }],
+    ["a description too long", { type: "string", description: "x".repeat(1025) }],
   ])("refuses a field with %s, as the server would refuse the whole kit for it", (_, field) => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { label: field as ICustomSectionField } });
     registerCustomSectionBehavior("glow", { ...BEHAVIOR, options: { color: field as ICustomSectionField } });
@@ -75,9 +83,25 @@ describe("the kit registry", () => {
     expect(getCustomSectionBehaviors()).toEqual({});
   });
 
+  it("refuses a select with neither options nor optionsFrom, whose value nothing could fit", () => {
+    registerCustomSectionTag("vc-promo", { ...TAG, attributes: { size: { type: "select" } } });
+
+    expect(getCustomSectionTags()).toEqual({});
+  });
+
+  it.each<[string, Partial<ICustomSectionBehavior>]>([
+    ["writes that are not a list of names", { writes: ["text", 1] as string[] }],
+    ["a repeatsChildren that is not true or false", { repeatsChildren: "yes" as unknown as boolean }],
+  ])("refuses a behavior with %s, as the server would refuse the whole kit for it", (_, shape) => {
+    registerCustomSectionBehavior("glow", { ...BEHAVIOR, ...shape });
+
+    expect(getCustomSectionBehaviors()).toEqual({});
+  });
+
   it("takes a field of every shape the server reads", () => {
     registerCustomSectionTag("vc-promo", {
       ...TAG,
+      description: "x".repeat(1024),
       attributes: {
         icon: { type: "select", optionsFrom: "icons", description: "An icon." },
         size: { type: "select", options: ["sm", "lg"] },

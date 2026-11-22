@@ -34,11 +34,15 @@ const BEHAVIOR_NAME_REGEX = /^(?!(?:each|if|html|sb|pb)(?:-|$))[a-z][a-z0-9]*(?:
 const ATTRIBUTE_NAME_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** As the server refuses them on any kit tag, whatever the tag declares. */
 const DENIED_TAG_ATTRIBUTE_REGEX = /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|ping|srcset|poster|action)$/;
+/** The template's bindings' and the storefront's own, which the server refuses on a kit tag too. */
+const RESERVED_DATA_ATTRIBUTE_REGEX = /^data-(?:(?:each|if|html|sb|pb)$|(?:sb|pb)-)/;
 
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<ICustomSectionField["type"]>(["string", "number", "boolean", "select", "link", "date"]);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
-const MAX_DESCRIPTION_LENGTH = 500;
+const MAX_DESCRIPTION_LENGTH = 1024;
+/** The server holds a bound as a decimal, so it refuses the whole kit for one past this. */
+const MAX_BOUND = 7.9e28;
 
 const RESERVED_TAG_NAMES = new Set<string>(BUILT_IN_TAG_NAMES);
 const RESERVED_BEHAVIOR_NAMES = new Set<string>(BUILT_IN_BEHAVIOR_NAMES);
@@ -120,7 +124,7 @@ export function getBehaviorAttributeNames(name: string, behavior: ICustomSection
 }
 
 export function isDeniedTagAttribute(name: string): boolean {
-  return DENIED_TAG_ATTRIBUTE_REGEX.test(name);
+  return DENIED_TAG_ATTRIBUTE_REGEX.test(name) || RESERVED_DATA_ATTRIBUTE_REGEX.test(name);
 }
 
 /** The storefront's own entries, under their reserved names: nobody else can hold them, so they merge in. */
@@ -167,6 +171,14 @@ function getBehaviorRefusal(
 ): string | undefined {
   if (!BEHAVIOR_NAME_REGEX.test(name)) {
     return "is not a behavior name";
+  }
+
+  if (behavior.writes !== undefined && !(Array.isArray(behavior.writes) && behavior.writes.every(isText))) {
+    return "has writes that are not a list of names";
+  }
+
+  if (behavior.repeatsChildren !== undefined && typeof behavior.repeatsChildren !== "boolean") {
+    return "has a repeatsChildren that is not true or false";
   }
 
   const options = Object.entries(behavior.options ?? {});
@@ -225,8 +237,13 @@ function getFieldRefusal(field: unknown): string | undefined {
     return 'has an optionsFrom other than "icons" of a select';
   }
 
-  if ([field.min, field.max].some((bound) => bound !== undefined && !Number.isFinite(bound))) {
-    return "has a min or a max that is not a number";
+  // No value of such a select could be taken.
+  if (field.type === "select" && field.options === undefined && field.optionsFrom === undefined) {
+    return "is a select with neither options nor optionsFrom";
+  }
+
+  if ([field.min, field.max].some((bound) => bound !== undefined && !isBound(bound))) {
+    return "has a min or a max that is not a number within range";
   }
 
   return field.description === undefined ? undefined : getDescriptionRefusal(field.description);
@@ -245,6 +262,10 @@ function isReservedPrefix(attribute: string, taken: string): boolean {
 
 function getTakenRefusal(name: string, entries: Readonly<Record<string, unknown>>): string | undefined {
   return Object.hasOwn(entries, name) ? "is already registered" : undefined;
+}
+
+function isBound(value: unknown): boolean {
+  return typeof value === "number" && Number.isFinite(value) && Math.abs(value) < MAX_BOUND;
 }
 
 function isText(value: unknown): value is string {
