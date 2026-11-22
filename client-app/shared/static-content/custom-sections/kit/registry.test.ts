@@ -148,6 +148,12 @@ describe("the kit registry", () => {
     expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow"]);
   });
 
+  it("takes a behavior whose name only starts like a binding's", () => {
+    ["if-visible", "each-row", "html-clamp", "sbx"].forEach((name) => registerCustomSectionBehavior(name, BEHAVIOR));
+
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual(["if-visible", "each-row", "html-clamp", "sbx"]);
+  });
+
   it("takes a behavior by a name no template attribute of its own uses", () => {
     ["glow", "each", "if", "html", "sb-type", "pb-field", "Glow"].forEach((name) =>
       registerCustomSectionBehavior(name, BEHAVIOR),

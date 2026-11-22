@@ -30,18 +30,20 @@ export type BuiltInBehaviorNameType = (typeof BUILT_IN_BEHAVIOR_NAMES)[number];
 
 /** A custom element of lowercase words; the template writes it as it is. */
 const TAG_NAME_REGEX = /^vc-[a-z0-9]+(?:-[a-z0-9]+)*$/;
-/** What follows `data-`; `data-each`, `data-if` and `data-html` are the template's own, `data-sb-*` and `data-pb-*` the storefront's. */
-const BEHAVIOR_NAME_REGEX = /^(?!(?:each|if|html|sb|pb)(?:-|$))[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const ATTRIBUTE_NAME_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
+/** Bound by the template itself: `data-each`, `data-if` and `data-html`. */
+export const BINDING_NAMES = ["each", "if", "html"] as const;
+/** The storefront's own `data-sb-*` and `data-pb-*` attributes, and bare `data-sb` and `data-pb`. */
+const RESERVED_NAME_PREFIXES = ["sb", "pb"];
+/** Lowercase words joined by `-`: a behavior's, an attribute's or an option's name. */
+const NAME_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** As the server refuses them on any kit tag, whatever the tag declares. */
 const DENIED_TAG_ATTRIBUTE_REGEX = /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|ping|srcset|poster|action)$/;
-/** The template's bindings' and the storefront's own, which the server refuses on a kit tag too. */
-const RESERVED_DATA_ATTRIBUTE_REGEX = /^data-(?:(?:each|if|html|sb|pb)$|(?:sb|pb)-)/;
 
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<ICustomSectionField["type"]>(["string", "number", "boolean", "select", "link", "date"]);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
 const MAX_DESCRIPTION_LENGTH = 1024;
+const DATA_PREFIX = "data-";
 /** The server holds a bound as a decimal, so it refuses the whole kit for one past this. */
 const MAX_BOUND = 7.9e28;
 
@@ -124,8 +126,20 @@ export function getBehaviorAttributeNames(name: string, behavior: ICustomSection
   return [`data-${name}`, ...Object.keys(behavior.options ?? {}).map((option) => `data-${name}-${option}`)];
 }
 
+/** The server refuses these on any kit tag too, the reserved `data-` attributes included. */
 export function isDeniedTagAttribute(name: string): boolean {
-  return DENIED_TAG_ATTRIBUTE_REGEX.test(name) || RESERVED_DATA_ATTRIBUTE_REGEX.test(name);
+  return (
+    DENIED_TAG_ATTRIBUTE_REGEX.test(name) ||
+    (name.startsWith(DATA_PREFIX) && isReservedName(name.slice(DATA_PREFIX.length)))
+  );
+}
+
+/** What follows `data-` in an attribute the template or the storefront writes itself. */
+export function isReservedName(name: string): boolean {
+  return (
+    (BINDING_NAMES as readonly string[]).includes(name) ||
+    RESERVED_NAME_PREFIXES.some((prefix) => name === prefix || name.startsWith(`${prefix}-`))
+  );
 }
 
 /** The storefront's own entries, under their reserved names: nobody else can hold them, so they merge in. */
@@ -151,7 +165,7 @@ function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined
   }
 
   for (const [attribute, field] of Object.entries(tag.attributes)) {
-    if (!ATTRIBUTE_NAME_REGEX.test(attribute) || isDeniedTagAttribute(attribute)) {
+    if (!NAME_REGEX.test(attribute) || isDeniedTagAttribute(attribute)) {
       return `takes the attribute "${attribute}", which a kit tag may not`;
     }
 
@@ -178,7 +192,7 @@ function getBehaviorRefusal(
   behavior: ICustomSectionBehavior,
   registered: IKit["behaviors"],
 ): string | undefined {
-  if (!BEHAVIOR_NAME_REGEX.test(name)) {
+  if (!NAME_REGEX.test(name) || isReservedName(name)) {
     return "is not a behavior name";
   }
 
@@ -225,7 +239,7 @@ function getBehaviorRefusal(
 }
 
 function getOptionRefusal(option: string, field: ICustomSectionField): string | undefined {
-  if (!ATTRIBUTE_NAME_REGEX.test(option)) {
+  if (!NAME_REGEX.test(option)) {
     return `has the option "${option}", which is not lowercase words`;
   }
 

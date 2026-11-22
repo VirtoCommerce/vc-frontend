@@ -8,7 +8,7 @@ import {
   URL_ATTRIBUTES,
 } from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
-import { getBehaviorAttributeNames } from "./kit/registry";
+import { BINDING_NAMES, getBehaviorAttributeNames } from "./kit/registry";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
 import type { UponSanitizeAttributeHookEvent } from "dompurify";
@@ -40,7 +40,7 @@ export interface ICompiledTemplate {
   behaviors: Set<string>;
 }
 
-const CONTROL_ATTRIBUTES = ["data-each", "data-if", "data-html"];
+const CONTROL_ATTRIBUTES = BINDING_NAMES.map((name) => `data-${name}`);
 const DATA_PREFIX = "data-";
 
 const EACH_REGEX = /^settings\.([\w-]+)$/;
