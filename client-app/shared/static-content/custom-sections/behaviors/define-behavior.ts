@@ -1,6 +1,6 @@
 import { effectScope, shallowRef } from "vue";
 import { isBooleanAttributeOn } from "../allowlist";
-import { useReducedMotion } from "./useReducedMotion";
+import { useReducedMotion } from "../composables/useReducedMotion";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 

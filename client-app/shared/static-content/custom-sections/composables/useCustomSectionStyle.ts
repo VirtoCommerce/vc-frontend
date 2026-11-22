@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted, toValue, watch } from "vue";
-import { SECTION_TYPE_ATTRIBUTE } from "../behaviors/constants";
+import { SECTION_TYPE_ATTRIBUTE } from "../constants";
 import { filterSectionCss } from "../css-filter";
 import type { MaybeRefOrGetter } from "vue";
 

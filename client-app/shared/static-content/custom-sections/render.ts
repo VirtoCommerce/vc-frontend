@@ -2,8 +2,9 @@ import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, 
 import { Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
 import { BOOLEAN_ATTRIBUTES, isBooleanAttributeOn, isUnsetBinding, toSafeAttributeValue } from "./allowlist";
-import { getBehaviorDirective, hasBehaviorFailed, REPEATED_COPY_ATTRIBUTE, SECTION_TYPE_ATTRIBUTE } from "./behaviors";
+import { getBehaviorDirective, hasBehaviorFailed } from "./behaviors";
 import { getListRows, isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
+import { REPEATED_COPY_ATTRIBUTE, SECTION_TYPE_ATTRIBUTE } from "./constants";
 import {
   getBehaviorAttributeNames,
   getCustomSectionBehaviors,

@@ -1,6 +1,6 @@
 import { useEventListener, useMutationObserver, useResizeObserver } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
-import { REPEATED_COPY_ATTRIBUTE } from "./constants";
+import { REPEATED_COPY_ATTRIBUTE } from "../constants";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const PAUSED_ATTRIBUTE = "data-paused";

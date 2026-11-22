@@ -4,9 +4,6 @@ import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { CustomSectionDirectiveType, ICustomSectionBehavior } from "../types";
 
-export { REPEATED_COPY_ATTRIBUTE, SECTION_TYPE_ATTRIBUTE } from "./constants";
-export { useReducedMotion } from "./useReducedMotion";
-
 type MountArgumentsType = Parameters<NonNullable<CustomSectionDirectiveType["mounted"]>>;
 
 interface ILoadedBehavior {

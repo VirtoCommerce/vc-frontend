@@ -1,3 +1,4 @@
+import { SECTION_TYPE_ATTRIBUTE } from "./constants";
 import { isContainedSelector } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
 
@@ -20,7 +21,7 @@ type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
 const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", "CSSStartingStyleRule"];
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
 const POSITION_VALUES = new Set(["static", "relative", "absolute", "sticky", "inherit", "initial", "unset", "revert"]);
-const SCOPE_PRELUDE = "@scope ([data-sb-type])";
+const SCOPE_PRELUDE = `@scope ([${SECTION_TYPE_ATTRIBUTE}])`;
 const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\w-])/i;
 
 /**

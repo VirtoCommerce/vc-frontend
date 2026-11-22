@@ -7,8 +7,9 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { preloadBehaviors, useReducedMotion } from "../behaviors";
+import { preloadBehaviors } from "../behaviors";
 import { useCustomSectionStyle } from "../composables/useCustomSectionStyle";
+import { useReducedMotion } from "../composables/useReducedMotion";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "../kit";
 import { renderCustomSection } from "../render";
 import { compileTemplate } from "../template";
