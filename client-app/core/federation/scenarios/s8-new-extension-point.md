@@ -18,6 +18,9 @@ the product action buttons, the payment steps, order details, the shared list. T
 `ExtensionCategoryMapType` in `shared/common/types/extensionRegistryMap.ts`. The header and mobile menus also take a
 data contribution: a count, shown as a badge on a link the host draws.
 
+A custom section kit name is shared by every plugin, so the first registration of a name wins, unlike rule 2 below:
+call `unregisterCustomSectionTag()` or `unregisterCustomSectionBehavior()` first to replace it.
+
 ## Pick the kind of change
 
 ```
