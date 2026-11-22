@@ -1,3 +1,5 @@
+import { createGlobalState } from "@vueuse/core";
+import { shallowRef } from "vue";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { CustomSectionDirectiveType, ICustomSectionBehavior } from "../types";
@@ -10,11 +12,14 @@ type MountArgumentsType = Parameters<NonNullable<CustomSectionDirectiveType["mou
 interface ILoadedBehavior {
   /** Applies the behavior once its directive loads; an element gone by then is left alone. */
   lazy: CustomSectionDirectiveType;
+  /** Elements in the page before the directive loaded, with their latest binding. */
+  waiting: Map<HTMLElement, MountArgumentsType>;
   pending?: Promise<CustomSectionDirectiveType | undefined>;
   loaded?: CustomSectionDirectiveType;
 }
 
 const loadedBehaviors = new WeakMap<ICustomSectionBehavior, ILoadedBehavior>();
+const useFailedBehaviors = createGlobalState(() => shallowRef<ReadonlySet<ICustomSectionBehavior>>(new Set()));
 
 export function preloadBehaviors(behaviors: Iterable<ICustomSectionBehavior>): void {
   for (const behavior of behaviors) {
@@ -26,11 +31,17 @@ export function getBehaviorDirective(behavior: ICustomSectionBehavior): CustomSe
   return getLoadedBehavior(behavior).lazy;
 }
 
+/** Reactive: until a later load succeeds, a text behavior's elements show the template's text. */
+export function hasBehaviorFailed(behavior: ICustomSectionBehavior): boolean {
+  return useFailedBehaviors().value.has(behavior);
+}
+
 function getLoadedBehavior(behavior: ICustomSectionBehavior): ILoadedBehavior {
   let entry = loadedBehaviors.get(behavior);
 
   if (!entry) {
-    entry = { lazy: createLazyDirective(behavior) };
+    const waiting = new Map<HTMLElement, MountArgumentsType>();
+    entry = { waiting, lazy: createLazyDirective(behavior, waiting) };
     loadedBehaviors.set(behavior, entry);
   }
 
@@ -44,39 +55,47 @@ function loadDirective(behavior: ICustomSectionBehavior): Promise<CustomSectionD
   return entry.pending;
 }
 
+/** A failed load is tried again by the next element or section that needs the behavior. */
 async function importDirective(
   behavior: ICustomSectionBehavior,
   entry: ILoadedBehavior,
 ): Promise<CustomSectionDirectiveType | undefined> {
   try {
-    entry.loaded = await behavior.directive();
-    return entry.loaded;
+    const loaded = await behavior.directive();
+
+    entry.loaded = loaded;
+    setFailed(behavior, false);
+    entry.waiting.forEach((args) => loaded.mounted?.(...args));
+    entry.waiting.clear();
+    return loaded;
   } catch (error) {
     ignoreChunkLoadFailure(error);
     Logger.error("[custom-sections] Failed to load a behavior", error);
     entry.pending = undefined;
+    setFailed(behavior, true);
     return undefined;
   }
 }
 
-function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDirectiveType {
-  /** The latest binding of an element mounted before its behavior loaded. */
-  const waiting = new WeakMap<HTMLElement, MountArgumentsType>();
+function setFailed(behavior: ICustomSectionBehavior, isFailed: boolean): void {
+  const failed = useFailedBehaviors();
+
+  if (failed.value.has(behavior) !== isFailed) {
+    const next = new Set(failed.value);
+    next[isFailed ? "add" : "delete"](behavior);
+    failed.value = next;
+  }
+}
+
+function createLazyDirective(
+  behavior: ICustomSectionBehavior,
+  waiting: Map<HTMLElement, MountArgumentsType>,
+): CustomSectionDirectiveType {
   /** Elements that left the page before their behavior loaded: the behavior never saw them. */
   const gone = new WeakSet<HTMLElement>();
 
   function getLoaded(): CustomSectionDirectiveType | undefined {
     return loadedBehaviors.get(behavior)?.loaded;
-  }
-
-  async function mountWhenLoaded(element: HTMLElement): Promise<void> {
-    const directive = await loadDirective(behavior);
-    const args = waiting.get(element);
-
-    if (directive && args) {
-      waiting.delete(element);
-      directive.mounted?.(...args);
-    }
   }
 
   return {
@@ -89,7 +108,7 @@ function createLazyDirective(behavior: ICustomSectionBehavior): CustomSectionDir
       }
 
       waiting.set(element, [element, binding, vnode, prevVNode]);
-      void mountWhenLoaded(element);
+      void loadDirective(behavior);
     },
     beforeUpdate(element, binding, vnode, prevVNode) {
       if (!waiting.has(element)) {

@@ -700,6 +700,23 @@ describe("SbSection", () => {
       expect(wrapper.findComponent(Video).props()).toEqual({ autoplay: true, open: true, type: "hero", for: "intro" });
     });
 
+    it("shows a text behavior's own text when the behavior fails to load", async () => {
+      vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+      registerCustomSectionBehavior("tally", {
+        directive: () => Promise.reject(new Error("chunk")),
+        description: "Counts.",
+        value: { type: "number" },
+        textAttributes: ["data-tally"],
+      });
+
+      const wrapper = mountSection('<section><span data-tally="5">five</span></section>');
+      expect(wrapper.find("span").text()).toBe("");
+
+      await vi.waitFor(() => expect(wrapper.find("span").text()).toBe("five"));
+      unregisterCustomSectionBehavior("tally");
+      vi.restoreAllMocks();
+    });
+
     it("leaves out a tag nobody registered", () => {
       const wrapper = mountSection("<section><vc-rating value='3'></vc-rating><p>Kept</p></section>");
 

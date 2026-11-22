@@ -2,7 +2,7 @@ import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, 
 import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
 import { BOOLEAN_ATTRIBUTES, toSafeAttributeValue } from "./allowlist";
-import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
+import { getBehaviorDirective, hasBehaviorFailed, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
 import {
   getBehaviorAttributeNames,
@@ -45,7 +45,8 @@ interface IRenderedAttribute {
 interface IBehaviorAttributes {
   /** Every behavior's attribute, its own and its options', with the field its value must fit, if any. */
   fields: Map<string, ICustomSectionField | undefined>;
-  textAttributes: Set<string>;
+  /** The attributes of elements whose text a behavior writes, with that behavior. */
+  textAttributes: Map<string, ICustomSectionBehavior>;
 }
 
 /** The copies a repeating behavior adds: out of the tab order and hidden from assistive technology. */
@@ -186,7 +187,11 @@ function renderShown(node: ICompiledElement, scope: IRenderScope, props: Record<
   const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
   const values = new Map(kept.map(({ name, value }) => [name, value]));
   const applied = node.behaviors.filter((name) => Object.hasOwn(behaviors, name) && values.has(`data-${name}`));
-  const hasText = kept.some(({ name }) => textAttributes.has(name));
+  // Until its chunk loads, a behavior that failed to load leaves the template's text in place.
+  const hasText = kept.some(({ name }) => {
+    const behavior = textAttributes.get(name);
+    return !!behavior && !hasBehaviorFailed(behavior);
+  });
   const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
 
   // Vue pairs an element's directives by position, and a behavior reads its options and the motion preference
@@ -290,7 +295,11 @@ function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSection
 
     attributes = {
       fields,
-      textAttributes: new Set(Object.values(behaviors).flatMap((behavior) => behavior.textAttributes ?? [])),
+      textAttributes: new Map(
+        Object.values(behaviors).flatMap((behavior) =>
+          (behavior.textAttributes ?? []).map((attribute) => [attribute, behavior] as const),
+        ),
+      ),
     };
     behaviorAttributes.set(behaviors, attributes);
   }

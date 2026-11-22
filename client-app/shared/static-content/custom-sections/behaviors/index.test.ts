@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
+import { Logger } from "@/core/utilities";
 import { getBehaviorDirective } from "./index";
 import type { CustomSectionDirectiveType, ICustomSectionBehavior } from "../types";
 
@@ -61,6 +62,24 @@ describe("a behavior's lazy directive", () => {
     await flushPromises();
 
     expect(calls).toEqual(["mounted b"]);
+  });
+
+  it("mounts an element left waiting by a failed load once a later load succeeds", async () => {
+    vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+    const mounted = vi.fn();
+    const directive = vi
+      .fn<() => Promise<CustomSectionDirectiveType>>()
+      .mockRejectedValueOnce(new Error("chunk"))
+      .mockResolvedValue({ mounted: (_element, binding) => mounted(binding.value) });
+    const behavior: ICustomSectionBehavior = { description: "Test.", directive };
+
+    mountWith(behavior);
+    await flushPromises();
+    mountWith(behavior).value.value = "b";
+    await flushPromises();
+
+    expect(mounted.mock.calls).toEqual([["a"], ["b"]]);
+    vi.restoreAllMocks();
   });
 
   it("never mounts an element that unmounts before its behavior loads", async () => {
