@@ -65,7 +65,7 @@ The page may read right to left.
 
 ## Links and buttons
 
-- An action is a `vc-button`; a link is an `a` with an `href` of a `url` setting. Both carry visible text, and an
+- A call to action is a `vc-button` with `to`; a link is an `a` with an `href` of a `url` setting. Both carry visible text, and an
   accessible name, when given, starts with that text.
 - `target` is `_self` or `_blank`; `_blank` gets `rel="noopener noreferrer"` from the storefront.
 

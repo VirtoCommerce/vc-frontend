@@ -32,4 +32,17 @@ describe("registerBuiltInKit", () => {
       ]),
     ).toEqual(BUILT_IN_BEHAVIOR_NAMES.map((name) => [name, undefined]));
   });
+
+  it("tells the agent the facts and defaults it writes by", () => {
+    registerBuiltInKit();
+    const tags = getCustomSectionTags();
+    const behaviors = getCustomSectionBehaviors();
+
+    expect(tags["vc-button"].description).toContain("without `to` it does nothing");
+    expect(tags["vc-icon"].attributes.size.description).toContain("a whole number of pixels, such as 24");
+    expect(tags["vc-products"].attributes.view.description).toContain("grid by default");
+    expect(behaviors["count-up"].options?.duration.description).toContain("1500 by default");
+    expect(behaviors["count-up"].options?.decimals.description).toContain("0 by default");
+    expect(behaviors.copy.description).toMatch(/Enter or Space.*button.*says nothing/);
+  });
 });

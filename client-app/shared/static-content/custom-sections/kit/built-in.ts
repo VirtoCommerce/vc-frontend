@@ -2,7 +2,15 @@ import { defineAsyncComponent, markRaw } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import { MAIN_COLORS } from "@/ui-kit/constants";
-import { MAX_PRODUCTS, PRODUCT_CARD_ELEMENTS, PRODUCT_VIEWS } from "./constants";
+import { COPIED_DURATION, DEFAULT_COUNT_UP_DURATION, DEFAULT_INVIEW_THRESHOLD } from "../behaviors/constants";
+import {
+  DEFAULT_PRODUCT_COLUMNS,
+  DEFAULT_PRODUCT_VIEW,
+  DEFAULT_PRODUCTS,
+  MAX_PRODUCTS,
+  PRODUCT_CARD_ELEMENTS,
+  PRODUCT_VIEWS,
+} from "./constants";
 import { registerBuiltInKitEntries } from "./registry";
 import type { BuiltInBehaviorNameType, BuiltInTagNameType } from "./registry";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
@@ -13,45 +21,26 @@ const ICON: ICustomSectionField = {
   optionsFrom: "icons",
   description: "An icon of the storefront's set.",
 };
-const BUTTON_VARIANTS = [
-  "solid",
-  "outline",
-  "soft",
-  "surface",
-  "ghost",
-  "tonal",
-] as const satisfies readonly VcButtonVariantType[];
-const BADGE_VARIANTS = [
-  "solid",
-  "outline",
-  "soft",
-  "surface",
-  "ghost",
-  "tonal",
-] as const satisfies readonly VcBadgeVariantType[];
+/** A button's and a badge's variants are the same list. */
+const VARIANTS = ["solid", "outline", "soft", "surface", "ghost", "tonal"] as const satisfies readonly (
+  VcButtonVariantType | VcBadgeVariantType
+)[];
 const BUTTON_SIZES = ["xxs", "xs", "sm", "md", "lg"] as const satisfies readonly VcButtonSizeType[];
 const BADGE_SIZES = ["xs", "sm", "md", "lg"] as const satisfies readonly VcBadgeSizeType[];
-const ICON_SIZES: ReadonlySet<string> = new Set([
-  "xxs",
-  "xs",
-  "sm",
-  "md",
-  "lg",
-  "xl",
-  "xxl",
-] satisfies VcIconSizeType[]);
+const ICON_SIZES: ReadonlySet<string> = new Set(["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
 const PIXELS_REGEX = /^\d+$/;
 
 const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
   "vc-button": {
     component: markRaw(VcButton),
-    description: "A button; with `to`, a link that looks like one.",
+    description:
+      "A button; with `to`, a link that looks like one. A call to action needs `to`: without `to` it does nothing.",
     attributes: {
       label: { type: "string" },
       to: { type: "link" },
       color: COLOR,
-      variant: { type: "select", options: [...BUTTON_VARIANTS] },
+      variant: { type: "select", options: [...VARIANTS] },
       size: { type: "select", options: [...BUTTON_SIZES] },
       "prepend-icon": ICON,
       "append-icon": ICON,
@@ -73,7 +62,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
     description: "An icon of the storefront's icon set.",
     attributes: {
       name: ICON,
-      size: { type: "string", description: "xxs, xs, sm, md, lg, xl, xxl, or a size in pixels." },
+      size: { type: "string", description: "xxs, xs, sm, md, lg, xl, xxl, or a whole number of pixels, such as 24." },
       color: { type: "string", description: "A palette color, or a palette variable such as --color-primary-700." },
     },
     mapProps: ({ name, size, color }) => ({
@@ -89,7 +78,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
     attributes: {
       label: { type: "string" },
       color: COLOR,
-      variant: { type: "select", options: [...BADGE_VARIANTS] },
+      variant: { type: "select", options: [...VARIANTS] },
       size: { type: "select", options: [...BADGE_SIZES] },
     },
     slotAttribute: "label",
@@ -102,9 +91,19 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
     attributes: {
       query: { type: "string", description: "A search phrase." },
       filter: { type: "string", description: "A catalog filter expression." },
-      take: { type: "number", min: 1, max: MAX_PRODUCTS, description: "How many products, 4 by default." },
-      view: { type: "select", options: [...PRODUCT_VIEWS] },
-      columns: { type: "number", min: 1, max: 6, description: "The most products in a row, 4 by default." },
+      take: {
+        type: "number",
+        min: 1,
+        max: MAX_PRODUCTS,
+        description: `How many products, ${DEFAULT_PRODUCTS} by default.`,
+      },
+      view: { type: "select", options: [...PRODUCT_VIEWS], description: `${DEFAULT_PRODUCT_VIEW} by default.` },
+      columns: {
+        type: "number",
+        min: 1,
+        max: 6,
+        description: `The most products in a row, ${DEFAULT_PRODUCT_COLUMNS} by default.`,
+      },
     },
     cost: 1 + MAX_PRODUCTS * PRODUCT_CARD_ELEMENTS,
     hasSideEffects: true,
@@ -121,7 +120,8 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
         min: 0,
         max: 1,
         description:
-          "The share of the element on screen, each axis against the screen where the element is larger; 0.2 by default.",
+          "The share of the element on screen, each axis against the screen where the element is larger; " +
+          `${DEFAULT_INVIEW_THRESHOLD} by default.`,
       },
       once: { type: "boolean", description: "data-visible stays once set." },
     },
@@ -146,8 +146,13 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
       "screen readers get the number at once.",
     value: { type: "number" },
     options: {
-      duration: { type: "number", min: 0, max: 5000, description: "In milliseconds." },
-      decimals: { type: "number", min: 0, max: 4 },
+      duration: {
+        type: "number",
+        min: 0,
+        max: 5000,
+        description: `In milliseconds, ${DEFAULT_COUNT_UP_DURATION} by default.`,
+      },
+      decimals: { type: "number", min: 0, max: 4, description: "0 by default." },
     },
     writes: ["text"],
     textAttributes: ["data-count-up"],
@@ -169,7 +174,10 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
   },
   copy: {
     directive: async () => (await import("../behaviors/copy")).vCopy,
-    description: "A click copies the text, sets data-copied for 2 seconds and shows a notification that it did.",
+    description:
+      "A click, or Enter or Space while it has focus, copies the text. Unless it is a link, it takes the button " +
+      `role and the focus. Once copied, it sets data-copied for ${COPIED_DURATION / 1000} seconds and shows a ` +
+      "notification; a copy the browser refuses says nothing.",
     value: { type: "string" },
     writes: ["data-copied"],
   },

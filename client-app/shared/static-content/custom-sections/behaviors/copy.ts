@@ -2,9 +2,9 @@ import { useEventListener, useTimeoutFn } from "@vueuse/core";
 import { shallowRef, watchEffect } from "vue";
 import { globals } from "@/core/globals";
 import { useNotifications } from "@/shared/notification";
+import { COPIED_DURATION } from "./constants";
 import { defineBehavior } from "./define-behavior";
 
-const COPIED_DURATION = 2000;
 const COPIED_MESSAGE_KEY = "common.messages.copied_to_clipboard";
 const NOTIFICATION_DURATION = 4000;
 const NOTIFICATION_GROUP = "custom-section-copy";

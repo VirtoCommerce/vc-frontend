@@ -1,10 +1,10 @@
 import { useEventListener, useIntersectionObserver, useResizeObserver } from "@vueuse/core";
 import { effectScope, onScopeDispose, shallowRef, watch } from "vue";
 import { toFiniteNumber } from "../numbers";
+import { DEFAULT_INVIEW_THRESHOLD } from "./constants";
 import { defineBehavior, readBooleanAttribute } from "./define-behavior";
 import type { EffectScope } from "vue";
 
-const DEFAULT_THRESHOLD = 0.2;
 const VISIBLE_ATTRIBUTE = "data-visible";
 /** The browser measures in fractions of a pixel. */
 const SHARE_TOLERANCE = 1e-3;
@@ -20,7 +20,7 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
   }
 
   const isOnce = readBooleanAttribute(element, "data-inview-once");
-  const threshold = toFiniteNumber(element.getAttribute("data-inview-threshold")) ?? DEFAULT_THRESHOLD;
+  const threshold = toFiniteNumber(element.getAttribute("data-inview-threshold")) ?? DEFAULT_INVIEW_THRESHOLD;
   // The observer calls back only as the element's own ratio crosses a threshold: the one that means the share.
   const observedRatio = shallowRef(toObservedRatio(element, threshold));
   let observerScope: EffectScope | undefined;

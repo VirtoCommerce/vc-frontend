@@ -7,3 +7,8 @@ export const PRODUCT_CARD_ELEMENTS = 100;
 export const PRODUCT_VIEWS = ["grid", "carousel"] as const;
 
 export type ProductViewType = (typeof PRODUCT_VIEWS)[number];
+
+/** What `vc-products` shows when its attribute is left out. */
+export const DEFAULT_PRODUCTS = 4;
+export const DEFAULT_PRODUCT_COLUMNS = 4;
+export const DEFAULT_PRODUCT_VIEW: ProductViewType = "grid";
