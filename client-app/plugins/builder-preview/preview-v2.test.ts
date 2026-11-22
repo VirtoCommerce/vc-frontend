@@ -635,6 +635,17 @@ describe("inline editing", () => {
     expect(found?.text.path).toEqual(["buttons", 1, "label"]);
   });
 
+  it("edits a repeated text only where its run shows it, never its copy or the element around them", () => {
+    document.body.innerHTML = `
+      <section data-pb-section="s1">
+        <p id="track"><span data-pb-field="title" id="run">Sale</span><span inert aria-hidden="true" data-sb-repeat>Sale</span></p>
+      </section>`;
+    const texts = [{ itemId: "s1", path: ["title"], value: "Sale" }];
+
+    expect(findEditableElement(document.getElementById("track"), texts)).toBeNull();
+    expect(findEditableElement(document.getElementById("run"), texts)?.element.id).toBe("run");
+  });
+
   it("tells the same setting of two blocks apart by the block its text is in", () => {
     document.body.innerHTML = `
       <section data-pb-section="s1">

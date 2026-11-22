@@ -96,6 +96,7 @@ function renderNodes(
   nodes: readonly CompiledNodeType[],
   scope: IRenderScope,
   repeat?: "run" | "copy",
+  textProps: Record<string, string> = {},
 ): VNodeArrayChildren {
   const props = repeat === "copy" ? COPY_PROPS : {};
 
@@ -106,7 +107,7 @@ function renderNodes(
 
     const text = renderParts(node.text, scope);
 
-    return [repeat && text.trim() ? h("span", props, text) : createTextVNode(text)];
+    return [repeat && text.trim() ? h("span", { ...props, ...textProps }, text) : createTextVNode(text)];
   });
 }
 
@@ -195,7 +196,13 @@ function renderShown(
     : {};
   const vnode = h(
     node.tag,
-    mergeProps(renderAttributes(node, kept, scope), getFieldAttributes(node, scope), props, behaviorKey),
+    // The designer edits a text where it shows alone: not where a behavior writes it, nor beside its copy.
+    mergeProps(
+      renderAttributes(node, kept, scope),
+      isRepeated || hasText ? {} : getFieldAttributes(node, scope),
+      props,
+      behaviorKey,
+    ),
     renderChildren(node, scope, hasText, isRepeated),
   );
   const directives: DirectiveArguments = applied.map((name) => [
@@ -241,7 +248,7 @@ function renderChildren(
 
   return isRepeated
     ? [
-        h(Fragment, { key: "run" }, renderNodes(node.children, scope, "run")),
+        h(Fragment, { key: "run" }, renderNodes(node.children, scope, "run", getFieldAttributes(node, scope))),
         h(Fragment, { key: "copy" }, renderNodes(node.children, scope, "copy")),
       ]
     : renderNodes(node.children, scope);

@@ -605,6 +605,19 @@ describe("SbSection", () => {
         "cards.1.title",
       ]);
     });
+
+    it("names a repeated text's setting on the run's span alone, never on the copy or the element", () => {
+      const wrapper = mountSection(
+        '<section><p data-marquee>{{ settings.title }}</p><span data-count-up="5">{{ settings.title }}</span></section>',
+        { title: "Sale" },
+      );
+      const [run, copy] = wrapper.findAll("p > span");
+
+      expect(wrapper.find("p").attributes("data-pb-field")).toBeUndefined();
+      expect(run.attributes("data-pb-field")).toBe("title");
+      expect(copy.attributes("data-pb-field")).toBeUndefined();
+      expect(wrapper.find("section > span").attributes("data-pb-field")).toBeUndefined();
+    });
   });
 
   describe("behaviors", () => {
