@@ -4,6 +4,8 @@ const LINK_SCHEME_REGEX = /^(?:https|mailto|tel):/i;
 const ANCHOR_REGEX = /^#[A-Za-z][\w-]*$/;
 /** An escaped dot or slash could step out of the library once the server or the browser decodes it. */
 const ESCAPED_PATH_REGEX = /%(?:2e|2f|5c)/i;
+/** Not JavaScript's `\s`, which also takes U+00A0 and the like: those stay inside a URL. */
+const ASCII_WHITESPACE_REGEX = /[\t\n\f\r ]+/;
 /** Browsers drop these from a URL before reading it, so `/\t/host` would leave the site. */
 const URL_NOISE_REGEX = /[\t\n\r\\]/;
 
@@ -32,16 +34,23 @@ export function toAssetUrl(value: string, assetsBaseUrl: string | undefined): st
   return href && folder && href.startsWith(folder) ? url : undefined;
 }
 
-/** `undefined` when any candidate breaks the rule: the attribute is left out whole. */
+/**
+ * `undefined` when any candidate breaks the rule: the attribute is left out whole. A candidate splits on ASCII
+ * whitespace only, as the browser reads it, and is written back as it was checked.
+ */
 export function toAssetSrcset(value: string, assetsBaseUrl: string | undefined): string | undefined {
   const candidates = value
     .split(",")
-    .map((candidate) => candidate.trim())
-    .filter(Boolean);
-  const isSafe =
-    candidates.length > 0 && candidates.every((candidate) => !!toAssetUrl(candidate.split(/\s+/)[0], assetsBaseUrl));
+    .map((candidate) => candidate.split(ASCII_WHITESPACE_REGEX).filter(Boolean))
+    .filter((parts) => parts.length > 0);
+  const safeCandidates = candidates.map(([url, ...descriptors]) => {
+    const safeUrl = toAssetUrl(url, assetsBaseUrl);
+    return safeUrl === undefined ? undefined : [safeUrl, ...descriptors].join(" ");
+  });
 
-  return isSafe ? candidates.join(", ") : undefined;
+  return safeCandidates.length > 0 && safeCandidates.every((candidate) => candidate !== undefined)
+    ? safeCandidates.join(", ")
+    : undefined;
 }
 
 /** `https://cdn/assets` must not admit `https://cdn/assets-of-another-store/`. */

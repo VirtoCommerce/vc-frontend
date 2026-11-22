@@ -32,4 +32,9 @@ describe("toAssetSrcset", () => {
     expect(toAssetSrcset(`${BASE}/a.png 1x, https://evil.example/b.png 2x`, BASE)).toBeUndefined();
     expect(toAssetSrcset(`${BASE}/a.png 1x, ${BASE}/../b.png 2x`, BASE)).toBeUndefined();
   });
+
+  it("reads a candidate as the browser does, split on ASCII whitespace only", () => {
+    expect(toAssetSrcset(`${BASE}/a.png\u00A0/../../x.png 2x`, BASE)).toBeUndefined();
+    expect(toAssetSrcset(`\u00A0${BASE}/a.png\t2x`, BASE)).toBe(`${BASE}/a.png 2x`);
+  });
 });
