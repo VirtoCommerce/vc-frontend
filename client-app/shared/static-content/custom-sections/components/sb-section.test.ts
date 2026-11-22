@@ -900,6 +900,19 @@ describe("SbSection", () => {
       expect(hooks.unmounted).toHaveBeenCalledOnce();
     });
 
+    it("gives siblings with the same behaviors keys of their own", () => {
+      const wrapper = mountSection(
+        '<section><p data-glow="{{ settings.title }}">a</p><p data-glow="{{ settings.title }}">b</p></section>',
+        { title: "gold" },
+      );
+      const keys = wrapper
+        .findAll("p")
+        .map((p) => (p.element as HTMLElement & { __vnode?: { key: unknown } }).__vnode?.key);
+
+      expect(keys).toHaveLength(2);
+      expect(new Set(keys).size).toBe(2);
+    });
+
     it("starts afresh when the visitor's motion preference changes", async () => {
       const query = Object.assign(new EventTarget(), { matches: false, media: "(prefers-reduced-motion: reduce)" });
       vi.stubGlobal("matchMedia", () => query);

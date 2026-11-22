@@ -99,9 +99,9 @@ function renderNodes(
 ): VNodeArrayChildren {
   const props = repeat === "copy" ? COPY_PROPS : {};
 
-  return nodes.flatMap((node) => {
+  return nodes.flatMap((node, position) => {
     if (!("text" in node)) {
-      return renderElement(node, scope, props);
+      return renderElement(node, scope, props, position);
     }
 
     const text = renderParts(node.text, scope);
@@ -110,15 +110,17 @@ function renderNodes(
   });
 }
 
+/** `position`: among the element's siblings in the template, so siblings alike never share a key. */
 function renderElement(
   node: ICompiledElement,
   scope: IRenderScope,
   props: Record<string, unknown> = {},
+  position = 0,
 ): VNodeArrayChildren {
   const listId = node.each;
 
   if (!listId) {
-    return [renderShown(node, scope, props)];
+    return [renderShown(node, scope, props, position)];
   }
 
   const field = scope.fields.get(listId);
@@ -134,6 +136,7 @@ function renderElement(
           node,
           { ...scope, row: { listId, index, values, fields } },
           { ...props, key: keys[index], style: { "--i": String(index), "--n": String(rows.length) } },
+          position,
         ),
       ),
     ),
@@ -167,7 +170,12 @@ function isRowId(id: unknown): id is string | number {
 }
 
 /** A comment holds the place of an element `data-if` hides, so its siblings keep theirs. */
-function renderShown(node: ICompiledElement, scope: IRenderScope, props: Record<string, unknown>): VNode {
+function renderShown(
+  node: ICompiledElement,
+  scope: IRenderScope,
+  props: Record<string, unknown>,
+  position: number,
+): VNode {
   if (node.condition) {
     const isSet = isSetValue(resolveBinding(node.condition.path, scope)?.value);
 
@@ -198,7 +206,7 @@ function renderShown(node: ICompiledElement, scope: IRenderScope, props: Record<
   // once: a setting that changes any of them mounts the element afresh.
   const behaviorValues = kept.filter(({ name }) => fields.has(name)).map(({ name, value }) => [name, value]);
   const behaviorKey = applied.length
-    ? { key: JSON.stringify([props.key ?? null, scope.isReducedMotion, behaviorValues]) }
+    ? { key: JSON.stringify([props.key ?? null, position, scope.isReducedMotion, behaviorValues]) }
     : {};
   const vnode = h(
     node.tag,
