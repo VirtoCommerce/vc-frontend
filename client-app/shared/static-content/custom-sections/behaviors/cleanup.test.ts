@@ -100,6 +100,8 @@ describe("a behavior, once its element unmounts", () => {
     });
     vi.stubGlobal("IntersectionObserver", FakeObserver);
     vi.stubGlobal("ResizeObserver", FakeObserver);
+    // A media query list is an event target, so its listeners count as the window's and the elements' do.
+    vi.stubGlobal("matchMedia", (media: string) => Object.assign(new EventTarget(), { matches: false, media }));
     observers.length = 0;
 
     for (const owner of [EventTarget.prototype, window]) {

@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { vPointer } from "./pointer";
 
@@ -51,6 +51,8 @@ function mountWithDirection() {
 
   return { element: getTracked(wrapper), direction };
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vPointer", () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, withDirectives } from "vue";
 import { vScrollProgress } from "./scroll-progress";
@@ -29,6 +29,8 @@ function mountTracked() {
 
   return { element, moveTo: (value: number) => (top = value) };
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vScrollProgress", () => {
   beforeEach(() => {

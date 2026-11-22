@@ -1,4 +1,4 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, withDirectives } from "vue";
 import { createI18n } from "vue-i18n";
@@ -18,6 +18,8 @@ function mountCopy(tag = "span", attributes: Record<string, string> = {}) {
     }),
   );
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vCopy", () => {
   const initialI18n = globals.i18n;
@@ -39,6 +41,7 @@ describe("vCopy", () => {
   afterEach(() => {
     vi.useRealTimers();
     Reflect.deleteProperty(navigator, "clipboard");
+    Reflect.deleteProperty(document, "execCommand");
     setGlobals({ i18n: initialI18n });
   });
 
@@ -50,7 +53,10 @@ describe("vCopy", () => {
     expect(mocks.writeText).toHaveBeenCalledWith("CODE10");
     expect(wrapper.attributes("data-copied")).toBe("");
 
-    await vi.advanceTimersByTimeAsync(2000);
+    await vi.advanceTimersByTimeAsync(1999);
+    expect(wrapper.attributes("data-copied")).toBe("");
+
+    await vi.advanceTimersByTimeAsync(1);
     expect(wrapper.attributes("data-copied")).toBeUndefined();
   });
 
@@ -62,6 +68,32 @@ describe("vCopy", () => {
 
     expect(mocks.success).toHaveBeenCalledWith(expect.objectContaining({ text: "Kopiert", singleInGroup: true }));
   });
+
+  it.each([
+    { clipboard: "refuses", isCopied: true, isAnnounced: true },
+    { clipboard: "refuses", isCopied: false, isAnnounced: false },
+    { clipboard: "is missing", isCopied: true, isAnnounced: true },
+    { clipboard: "is missing", isCopied: false, isAnnounced: false },
+  ])(
+    "falls back to the selection when the clipboard API $clipboard, and believes its answer: $isCopied",
+    async ({ clipboard, isCopied, isAnnounced }) => {
+      if (clipboard === "refuses") {
+        mocks.writeText.mockRejectedValue(new DOMException("Denied", "NotAllowedError"));
+      } else {
+        Reflect.deleteProperty(navigator, "clipboard");
+      }
+      const execCommand = vi.fn(() => isCopied);
+      Object.defineProperty(document, "execCommand", { value: execCommand, configurable: true });
+      const wrapper = mountCopy();
+
+      await wrapper.trigger("click");
+      await flushPromises();
+
+      expect(execCommand).toHaveBeenCalledWith("copy");
+      expect(mocks.success.mock.calls.length > 0).toBe(isAnnounced);
+      expect(wrapper.attributes("data-copied") !== undefined).toBe(isAnnounced);
+    },
+  );
 
   it("says nothing and marks nothing when the browser refuses the copy", async () => {
     mocks.writeText.mockRejectedValue(new DOMException("Denied", "NotAllowedError"));

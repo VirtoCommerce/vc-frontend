@@ -139,14 +139,14 @@ describe("vMarquee", () => {
   });
 
   it("measures again when an item of the track resizes, an item added later included, with one observer", async () => {
-    const observers: { targets: Element[]; isConnected: boolean }[] = [];
+    const observers: { targets: Element[]; isConnected: boolean; callback: () => void }[] = [];
     vi.stubGlobal(
       "ResizeObserver",
       class {
         targets: Element[] = [];
         isConnected = true;
 
-        constructor() {
+        constructor(readonly callback: () => void) {
           observers.push(this);
         }
 
@@ -182,6 +182,13 @@ describe("vMarquee", () => {
 
     expect(connected).toHaveLength(1);
     expect(connected[0].targets).toEqual([element, ...element.children]);
+
+    const [first, , firstCopy] = [...element.children] as HTMLElement[];
+    [first, firstCopy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
+    Object.defineProperty(firstCopy, "offsetLeft", { value: 180 });
+    connected[0].callback();
+
+    expect((element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("180px");
     wrapper.unmount();
   });
 

@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, withDirectives } from "vue";
 import { createI18n } from "vue-i18n";
@@ -38,6 +38,8 @@ function mountCounter(value: string, attributes: Record<string, string> = {}) {
     { props: { value } },
   );
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vCountUp", () => {
   const initialI18n = globals.i18n;

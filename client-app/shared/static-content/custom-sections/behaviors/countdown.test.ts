@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, withDirectives } from "vue";
 import { vCountdown } from "./countdown";
@@ -24,6 +24,8 @@ function mountCountdown(end: string, units: string[]) {
 function readParts(wrapper: ReturnType<typeof mountCountdown>): string[] {
   return wrapper.findAll("span").map((part) => part.text());
 }
+
+enableAutoUnmount(afterEach);
 
 describe("vCountdown", () => {
   beforeEach(() => {
