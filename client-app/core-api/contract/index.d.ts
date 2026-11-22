@@ -5322,7 +5322,8 @@ declare const EXTENSION_CATEGORIES: {
 type CustomSectionValueType = string | number | boolean;
 /**
  * The directive a behavior's attribute switches on; its value is the attribute's, bindings resolved. It loads
- * lazily, after its element may already be in the page, so it has the hooks from `mounted` on.
+ * lazily, after its element may already be in the page, so it has the hooks from `mounted` on. The element mounts
+ * afresh when the value, an option or the visitor's motion preference changes, so `mounted` reads them all.
  */
 type CustomSectionDirectiveType = Pick<ObjectDirective<HTMLElement, string | undefined>, "mounted" | "beforeUpdate" | "updated" | "beforeUnmount" | "unmounted">;
 /**
@@ -5330,9 +5331,12 @@ type CustomSectionDirectiveType = Pick<ObjectDirective<HTMLElement, string | und
  * server that checks them read it. The storefront drops a tag attribute that breaks it.
  */
 interface ICustomSectionField {
-    /** `link`: a path on the site, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601 date or date-time. */
+    /**
+     * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
+     * date or date-time.
+     */
     type: "string" | "number" | "boolean" | "select" | "link" | "date";
-    /** The values a `select` takes. */
+    /** The values a `select` takes; a select has these or `optionsFrom`. */
     options?: string[];
     /** A `select` of the storefront's icon names, which the catalog lists once, as `kit.icons`. */
     optionsFrom?: "icons";
@@ -5342,7 +5346,10 @@ interface ICustomSectionField {
 }
 /** A storefront component a custom section template places as a `vc-*` tag. A kit tag has no content. */
 interface ICustomSectionTag {
-    /** Load it lazily with `defineAsyncComponent`, unless the host loads it anyway. */
+    /**
+     * Load it lazily with `defineAsyncComponent`, unless the host loads it anyway. It renders one root element that
+     * takes the attributes passed through: a repeated copy hides itself from assistive technology through them.
+     */
     component: Component;
     /** What the tag shows, for the agent that writes templates. */
     description: string;
@@ -5352,8 +5359,21 @@ interface ICustomSectionTag {
     mapProps?: (attributes: Record<string, CustomSectionValueType>) => Record<string, unknown>;
     /** The attribute whose text fills the component's default slot, such as a button's `label`. */
     slotAttribute?: string;
+    /**
+     * The most elements one instance renders, a whole number from 1 to the render budget; 1 when left out. The
+     * section's render budget counts it for every instance, list rows included.
+     */
+    cost?: number;
+    /**
+     * An instance does work beyond drawing, such as a request or an analytics view, which a copy would do again: the
+     * tag is left out of an element whose behavior repeats its children.
+     */
+    hasSideEffects?: boolean;
 }
-/** A behavior a custom section template switches on with the attribute `data-{name}`. */
+/**
+ * A behavior a custom section template switches on with the attribute `data-{name}`. Under
+ * `prefers-reduced-motion: reduce` it shows its end state at once.
+ */
 interface ICustomSectionBehavior {
     /** Loads the directive, the first time a template uses the behavior. */
     directive: () => Promise<CustomSectionDirectiveType>;
@@ -5365,7 +5385,10 @@ interface ICustomSectionBehavior {
     options?: Record<string, ICustomSectionField>;
     /** What the directive writes for the section's CSS: a `--variable`, a `data-` attribute, or `text`. */
     writes?: string[];
-    /** Attributes of the elements whose text the directive writes: the template's text in them is not rendered. */
+    /**
+     * Attributes of the elements whose text the directive writes, each `data-{name}` or `data-{name}-…`: the
+     * template's text in them is not rendered.
+     */
     textAttributes?: string[];
     /** The renderer repeats the element's children once, the copies marked `data-sb-repeat` and hidden from assistive technology. */
     repeatsChildren?: boolean;
@@ -5374,8 +5397,9 @@ interface ICustomSectionBehavior {
 /**
  * Adds a tag a custom section template places as `<name>`: `vc-` and lowercase words joined by `-`. Its
  * attributes are lowercase words too, none the server refuses on a kit tag (`on*`, `style`, `id`, `class`,
- * `srcset`, `poster`…), each a field the server reads. The storefront's own tags are reserved; the first
- * registration of a name wins. A tag that breaks a rule is ignored with a warning.
+ * `srcset`, `poster`, the invokers `command`, `commandfor` and `interestfor`…), each a field the server reads.
+ * The storefront's own tags are reserved; the first registration of a name wins. A tag that breaks a rule is
+ * ignored with a warning.
  */
 declare function registerCustomSectionTag(name: string, tag: ICustomSectionTag): void;
 /**
@@ -5383,7 +5407,8 @@ declare function registerCustomSectionTag(name: string, tag: ICustomSectionTag):
  * `data-{name}-{option}`, its value and options each a field the server reads. No attribute of it may be another
  * behavior's, and `data-each`, `data-if`, `data-html`, `data-sb-*` and `data-pb-*` are taken. The storefront's own
  * behaviors are reserved; the first registration of a name wins. A behavior that breaks a rule is ignored with a
- * warning.
+ * warning. Under reduced motion a behavior shows its end state at once; its element mounts afresh when the value,
+ * an option or the motion preference changes.
  */
 declare function registerCustomSectionBehavior(name: string, behavior: ICustomSectionBehavior): void;
 /** The storefront's own tags stay. */
