@@ -411,6 +411,23 @@ describe("SbSection", () => {
       expect((wrapper.find("details").element as HTMLDetailsElement).open).toBe(true);
     });
 
+    it.each([
+      { showBadge: true, isOn: true },
+      { showBadge: false, isOn: false },
+      { showBadge: "", isOn: false },
+      { showBadge: undefined, isOn: false },
+    ])("turns a native boolean bound to $showBadge on: $isOn", ({ showBadge, isOn }) => {
+      const wrapper = mountSection(
+        '<section><details open="{{ settings.show_badge }}"><summary>S</summary>x</details>' +
+          '<video loop="{{ settings.show_badge }}" playsinline="{{ settings.show_badge }}"></video></section>',
+        { show_badge: showBadge },
+      );
+      const video = wrapper.find("video").element as HTMLVideoElement;
+
+      expect((wrapper.find("details").element as HTMLDetailsElement).open).toBe(isOn);
+      expect([video.loop, video.hasAttribute("playsinline")]).toEqual([isOn, isOn]);
+    });
+
     it("puts a poster through the image rule and a cite through the link rule", () => {
       const wrapper = mountSection(
         '<section><video poster="javascript:x"></video><blockquote cite="https://example.com/q">A</blockquote>' +

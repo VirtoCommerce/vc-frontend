@@ -1,13 +1,14 @@
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
-import { toSafeAttributeValue } from "./allowlist";
+import { BOOLEAN_ATTRIBUTES, toSafeAttributeValue } from "./allowlist";
 import { getBehaviorDirective, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
 import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
 import {
   getBehaviorAttributeNames,
   getCustomSectionBehaviors,
   getCustomSectionTags,
+  isBooleanAttributeOn,
   toFieldValue,
   toTagProps,
 } from "./kit";
@@ -304,8 +305,9 @@ function renderAttributes(
 ): Record<string, unknown> {
   const attributes: Record<string, string> = {};
 
-  for (const { name, value } of rendered) {
-    const safeValue = toSafeAttributeValue(name, value, scope);
+  for (const { name, value, isBound } of rendered) {
+    const isOff = BOOLEAN_ATTRIBUTES.has(name) && ((isBound && value === "") || !isBooleanAttributeOn(value));
+    const safeValue = isOff ? undefined : toSafeAttributeValue(name, value, scope);
 
     if (safeValue !== undefined) {
       attributes[name] = safeValue;

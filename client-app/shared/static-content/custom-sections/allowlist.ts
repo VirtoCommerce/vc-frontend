@@ -15,6 +15,8 @@ export const TEXT_ATTRIBUTES = (
   "scope autoplay muted loop playsinline controls preload type media open"
 ).split(" ");
 export const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
+/** Of `TEXT_ATTRIBUTES`, those the browser reads as on whatever their value. */
+export const BOOLEAN_ATTRIBUTES = new Set(["hidden", "autoplay", "muted", "loop", "playsinline", "controls", "open"]);
 /** As the server sanitizer: these go with their content. */
 export const FORBIDDEN_CONTENTS = ["form", "frame", "frameset", "object", "embed", "applet"];
 

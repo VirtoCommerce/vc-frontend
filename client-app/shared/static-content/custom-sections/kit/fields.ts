@@ -5,6 +5,14 @@ import type { CustomSectionValueType, ICustomSectionField } from "../types";
 /** The date part; the browser's parser takes the rest of an ISO 8601 date-time. */
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:$|T)/;
 
+/**
+ * A boolean attribute, a kit tag's or a native one, is on unless it says `false`. One bound to an unset setting is
+ * left out before, as if not written, so it is off too.
+ */
+export function isBooleanAttributeOn(value: string): boolean {
+  return value !== "false";
+}
+
 /** `undefined` for a value the field does not take: the attribute is left out. */
 export function toFieldValue(field: ICustomSectionField, value: string): CustomSectionValueType | undefined {
   switch (field.type) {
@@ -18,7 +26,7 @@ export function toFieldValue(field: ICustomSectionField, value: string): CustomS
       return isInRange ? number : undefined;
     }
     case "boolean":
-      return value !== "false";
+      return isBooleanAttributeOn(value);
     case "select":
       // The icon names stay with the catalog; an unknown one draws nothing.
       if (field.optionsFrom) {
