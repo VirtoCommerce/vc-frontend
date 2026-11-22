@@ -119,7 +119,9 @@ describe("a behavior, once its element unmounts", () => {
     const element = wrapper.element as HTMLElement;
     await nextTick();
 
-    observers.forEach(({ callback }) => callback([{ isIntersecting: true, intersectionRatio: 1, target: element }]));
+    const rect = element.getBoundingClientRect();
+    const entry = { isIntersecting: true, intersectionRatio: 1, target: element, intersectionRect: rect };
+    observers.forEach(({ callback }) => callback([{ ...entry, boundingClientRect: rect, rootBounds: rect }]));
     ["pointermove", "mouseenter", "focusin"].forEach((type) => element.dispatchEvent(new Event(type)));
     window.dispatchEvent(new Event("scroll"));
     await nextTick();
