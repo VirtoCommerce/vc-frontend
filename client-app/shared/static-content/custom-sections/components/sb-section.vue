@@ -76,10 +76,19 @@ function renderSection(): VNode | null {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 // Keeps fixed and stacked parts inside the box; `sb-section` is the container name the guide publishes.
 .sb-section {
   @apply isolate @container/sb-section;
 
   contain: paint;
+  // Lets a focus ring at the edge show past the clip where supported. Chrome drops a bare `calc()` here.
+  overflow-clip-margin: padding-box calc(var(--vc-focus-ring-width) + var(--vc-focus-ring-offset));
+
+  // The strip a marquee makes focusable often fills the box, which would clip a ring drawn outside it.
+  [data-marquee]:focus-visible {
+    @include focus-ring($inset: true);
+  }
 }
 </style>

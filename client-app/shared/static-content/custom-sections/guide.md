@@ -73,6 +73,8 @@ The page may read right to left.
 
 - Only kit tags and behaviors are interactive; a `div` that acts on a click does not reach the keyboard.
 - Never remove the focus ring (`outline: none`, `outline: 0`).
+- The section clips what paints past its edge: give an item flush with that edge a focus style inside its box,
+  such as a negative `outline-offset`. A marquee that takes the focus itself already has its ring inside.
 - Keep the reading order the visual order.
 
 ## Motion

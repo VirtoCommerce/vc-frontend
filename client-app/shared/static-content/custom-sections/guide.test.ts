@@ -62,6 +62,12 @@ describe("the section authors' guide", () => {
     );
   });
 
+  it("keeps the focus style of an item at the section's edge inside its box", () => {
+    expect(guide.replaceAll(/\s+/g, " ")).toContain(
+      "The section clips what paints past its edge: give an item flush with that edge a focus style inside its box",
+    );
+  });
+
   it("names the design facts and the palette without the catalog's key paths, which the agent does not see", () => {
     expect(guide).not.toMatch(/kit\.(?:tags|behaviors|design)|paletteTokens/);
     expect(guide).toContain("`--vc-font-weight-*`");
