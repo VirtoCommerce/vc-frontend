@@ -1,6 +1,5 @@
 import { computed, watch } from "vue";
-import { useThemeSnapshot } from "@/core/theme-snapshot";
-import { isRecord } from "@/core/utilities";
+import { isTranslatableDictionary, useThemeSnapshot } from "@/core/theme-snapshot";
 import { registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
 import { getKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import { isCustomSectionType } from "@/shared/static-content/custom-sections/type-name";
@@ -50,8 +49,9 @@ export function watchCustomSectionCatalog(
   );
 }
 
+/** As the server reads a type's name: a text, or a text per language, none of them blank. */
 function isTypeName(name: unknown): name is ICustomSectionDefinition["name"] {
   return typeof name === "string"
-    ? name !== ""
-    : isRecord(name) && Object.keys(name).length > 0 && Object.values(name).every((text) => typeof text === "string");
+    ? name.trim() !== ""
+    : isTranslatableDictionary(name) && Object.values(name).every((text) => text.trim() !== "");
 }

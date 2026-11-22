@@ -65,6 +65,9 @@ describe("toCustomSectionSchemas", () => {
     ["no name", undefined],
     ["an empty name", ""],
     ["a name that is not text", { "en-US": 1 }],
+    ["a blank name", " "],
+    ["a name keyed by no language", { label: "Stats" }],
+    ["a name blank in a language", { "en-US": "Stats", "de-DE": "" }],
   ])("names a type by its type when it has %s", (_, name) => {
     const definition = { ...STATS, name } as ICustomSectionDefinition;
 
