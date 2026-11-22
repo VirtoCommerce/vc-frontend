@@ -74,6 +74,9 @@ The page may read right to left.
   the CSS that reads what they write. Animate `transform` and `opacity`.
 - Put transitions and animations under `@media (prefers-reduced-motion: no-preference)`. Behaviors already show
   their end state at once when motion is reduced.
+- A behavior that writes an element's text (`data-count-up`, `data-countdown`) replaces what the template writes
+  there; write the value as the text too, as the stats pattern does. That text shows until the behavior loads, and
+  stays if it fails to load.
 
 ## Text and languages
 
@@ -140,7 +143,7 @@ The page may read right to left.
   <h2 class="custom-stats__title">{{ settings.title }}</h2>
   <ul class="custom-stats__list">
     <li class="custom-stats__item" data-each="settings.stats" data-inview data-inview-once>
-      <span class="custom-stats__value" data-count-up="{{ item.value }}"></span>
+      <span class="custom-stats__value" data-count-up="{{ item.value }}">{{ item.value }}</span>
       <span class="custom-stats__label">{{ item.label }}</span>
     </li>
   </ul>

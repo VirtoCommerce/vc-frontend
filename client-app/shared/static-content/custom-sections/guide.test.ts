@@ -44,6 +44,13 @@ describe("the section authors' guide", () => {
     expect(intro).toContain("a literal color, a physical side, a skipped heading level and motion");
   });
 
+  it("writes a counter's value as its text too, shown until the behavior loads", () => {
+    expect(guide).toContain('data-count-up="{{ item.value }}">{{ item.value }}</span>');
+    expect(guide.replaceAll(/\s+/g, " ")).toContain(
+      "That text shows until the behavior loads, and stays if it fails to load.",
+    );
+  });
+
   it("has the three patterns", () => {
     expect(patterns).toHaveLength(3);
   });
