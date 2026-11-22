@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toAssetSrcset, toAssetUrl } from "./urls";
+import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 
 const BASE = "https://cdn.example.com/stores/b2b/assets";
 
@@ -20,9 +20,26 @@ describe("toAssetUrl", () => {
     expect(toAssetUrl(url, BASE)).toBe(isKept ? url : undefined);
   });
 
+  it("trims ASCII whitespace only, as the URL parser does", () => {
+    expect(toAssetUrl(` ${BASE}/hero.png\t`, BASE)).toBe(`${BASE}/hero.png`);
+    expect(toAssetUrl(`\u00A0${BASE}/hero.png`, BASE)).toBeUndefined();
+  });
+
   it("takes no image when the theme names no asset library", () => {
     expect(toAssetUrl(`${BASE}/hero.png`, undefined)).toBeUndefined();
     expect(toAssetUrl("/cms-content/assets/hero.png", undefined)).toBeUndefined();
+  });
+});
+
+describe("toSectionLink", () => {
+  it.each([
+    ["/catalog", "/catalog"],
+    [" /catalog\n", "/catalog"],
+    ["\u00A0/catalog", undefined],
+    ["/\t/evil.example", undefined],
+    ["/\n/evil.example", undefined],
+  ])("reads %j as the link %j, trimmed of ASCII whitespace only", (value, link) => {
+    expect(toSectionLink(value)).toBe(link);
   });
 });
 
@@ -35,6 +52,7 @@ describe("toAssetSrcset", () => {
 
   it("reads a candidate as the browser does, split on ASCII whitespace only", () => {
     expect(toAssetSrcset(`${BASE}/a.png\u00A0/../../x.png 2x`, BASE)).toBeUndefined();
-    expect(toAssetSrcset(`\u00A0${BASE}/a.png\t2x`, BASE)).toBe(`${BASE}/a.png 2x`);
+    expect(toAssetSrcset(`${BASE}/a.png\t2x`, BASE)).toBe(`${BASE}/a.png 2x`);
+    expect(toAssetSrcset(`\u00A0${BASE}/a.png 2x`, BASE)).toBeUndefined();
   });
 });

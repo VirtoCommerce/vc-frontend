@@ -1,4 +1,4 @@
-import { toAssetUrl } from "./urls";
+import { toAssetUrl, trimAsciiWhitespace } from "./urls";
 
 interface IValueState {
   /** The calls and parentheses open at the reader's place, innermost last. */
@@ -23,8 +23,9 @@ const ESCAPE_REGEX = /\\(?:([\da-f]{1,6})\s?|(.))/gis;
 /** One escape at the reader's place: a `\` before a newline is none. */
 const ONE_ESCAPE_REGEX = /\\(?:[\da-f]{1,6}\s?|[^\n])/iy;
 const NAME_CHAR_REGEX = /^[-\w]$|^[^\0-\x7f]$/;
-const WHITESPACE_REGEX = /^\s$/;
-const SPACES_REGEX = /\s*/y;
+/** CSS whitespace, after the line breaks are read as `\n`. */
+const WHITESPACE_REGEX = /^[\t\n ]$/;
+const SPACES_REGEX = /[\t\n ]*/y;
 const URL_STOP_REGEX = /^["'(]$/;
 const DATA_IMAGE_REGEX = /^data:image\//i;
 const LINE_BREAK_REGEX = /\r\n?|\f/g;
@@ -45,7 +46,7 @@ export function decodeCssEscapes(text: string): string {
 
 /** An image the section may show: the asset library's, or an inline `data:image/`. */
 export function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined): boolean {
-  const trimmed = url.trim();
+  const trimmed = trimAsciiWhitespace(url);
   // An image needs no fragment; `data:image/svg+xml,…#id` may load as a document whose images reach any host.
   return !!toAssetUrl(trimmed, assetsBaseUrl) || (DATA_IMAGE_REGEX.test(trimmed) && !trimmed.includes("#"));
 }

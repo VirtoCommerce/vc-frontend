@@ -6,12 +6,13 @@ const ANCHOR_REGEX = /^#[A-Za-z][\w-]*$/;
 const ESCAPED_PATH_REGEX = /%(?:2e|2f|5c)/i;
 /** Not JavaScript's `\s`, which also takes U+00A0 and the like: those stay inside a URL. */
 const ASCII_WHITESPACE_REGEX = /[\t\n\f\r ]+/;
+const ASCII_WHITESPACE = new Set(["\t", "\n", "\f", "\r", " "]);
 /** Browsers drop these from a URL before reading it, so `/\t/host` would leave the site. */
 const URL_NOISE_REGEX = /[\t\n\r\\]/;
 
 /** A link of a custom section: a path on this site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. */
 export function toSectionLink(value: string): string | undefined {
-  const url = value.trim();
+  const url = trimAsciiWhitespace(value);
   const isAllowed = SITE_PATH_REGEX.test(url) || ANCHOR_REGEX.test(url) || LINK_SCHEME_REGEX.test(url);
 
   return !URL_NOISE_REGEX.test(url) && isAllowed ? url : undefined;
@@ -22,7 +23,7 @@ export function toSectionLink(value: string): string | undefined {
  * server reads it. Without the base, no image.
  */
 export function toAssetUrl(value: string, assetsBaseUrl: string | undefined): string | undefined {
-  const url = value.trim();
+  const url = trimAsciiWhitespace(value);
 
   if (!assetsBaseUrl || URL_NOISE_REGEX.test(url) || ESCAPED_PATH_REGEX.test(url)) {
     return undefined;
@@ -64,4 +65,20 @@ function resolveUrl(url: string): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** As the URL parser and CSS trim: U+00A0 and the like stay, and make the URL another one. */
+export function trimAsciiWhitespace(value: string): string {
+  let start = 0;
+  let end = value.length;
+
+  while (start < end && ASCII_WHITESPACE.has(value[start])) {
+    start++;
+  }
+
+  while (end > start && ASCII_WHITESPACE.has(value[end - 1])) {
+    end--;
+  }
+
+  return value.slice(start, end);
 }
