@@ -1,10 +1,13 @@
-import { useEventListener, useResizeObserver } from "@vueuse/core";
+import { useEventListener, useMutationObserver, useResizeObserver } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
 import { REPEATED_COPY_ATTRIBUTE } from "./constants";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const PAUSED_ATTRIBUTE = "data-paused";
-const FOCUSABLE_SELECTOR = "a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]";
+const FOCUSABLE_SELECTOR =
+  "a[href], area[href], button, input, select, textarea, summary, audio[controls], video[controls], [tabindex], " +
+  "[contenteditable]";
+const FOCUS_ATTRIBUTES = ["tabindex", "href", "disabled", "controls", "contenteditable"];
 
 /**
  * Writes `--marquee-width` (one run, gap included) and `--marquee-shift` (toward the inline start), 0 under reduced
@@ -49,18 +52,35 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 
   // Its items too: a late image or a font swap resizes them inside a track whose own width is fixed.
   const items = shallowRef(getItems(element));
+  // Focus within pauses it: with nothing to focus in its run, the keyboard reaches the strip itself.
+  const isOwnTabStop = !element.hasAttribute("tabindex");
+
+  /** Also later: an item's own behavior may load after this one and make the item focusable. */
+  function placeTabStop(): void {
+    const isNeeded = !hasFocusableItem(element);
+
+    // Only on a change: the observer below sees this element's own `tabindex` too.
+    if (!isOwnTabStop || isNeeded === element.hasAttribute("tabindex")) {
+      return;
+    }
+
+    if (isNeeded) {
+      element.tabIndex = 0;
+    } else {
+      element.removeAttribute("tabindex");
+    }
+  }
+
   // The items, or a bound `dir`, may change without a remount.
   watch(updates, () => {
     items.value = getItems(element);
     measure();
+    placeTabStop();
   });
 
-  // Focus within pauses it: with nothing to focus in its run, the keyboard reaches the strip itself.
-  if (!element.hasAttribute("tabindex") && !hasFocusableItem(element)) {
-    element.tabIndex = 0;
-  }
-
+  placeTabStop();
   measure();
+  useMutationObserver(element, placeTabStop, { subtree: true, childList: true, attributeFilter: FOCUS_ATTRIBUTES });
   useResizeObserver(() => [element, ...items.value], measure);
   useEventListener(element, "mouseenter", () => {
     isHovered = true;
@@ -93,9 +113,12 @@ function hasBox(element: HTMLElement): boolean {
   return element.getClientRects().length > 0;
 }
 
-/** The copies are inert, so only the run counts. */
+/** In the tab order: the copies are inert, so only the run counts, and a negative tabindex or a disabled control not. */
 function hasFocusableItem(element: HTMLElement): boolean {
   return [...element.querySelectorAll(FOCUSABLE_SELECTOR)].some(
-    (item) => !item.closest(`[${REPEATED_COPY_ATTRIBUTE}]`),
+    (item) =>
+      !item.closest(`[${REPEATED_COPY_ATTRIBUTE}]`) &&
+      !item.matches(":disabled") &&
+      Number(item.getAttribute("tabindex")) >= 0,
   );
 }

@@ -211,6 +211,47 @@ describe("vMarquee", () => {
     },
   );
 
+  it.each([
+    { content: "a disabled button", item: { tag: "button", props: { disabled: true } }, tabindex: "0" },
+    {
+      content: "a link out of the tab order",
+      item: { tag: "a", props: { href: "/sale", tabindex: "-1" } },
+      tabindex: "0",
+    },
+    { content: "a video with controls", item: { tag: "video", props: { controls: true } }, tabindex: undefined },
+  ])("lets the keyboard reach the strip by what its run holds, $content: tabindex $tabindex", ({ item, tabindex }) => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          withDirectives(h("div", [h(item.tag, item.props), h(item.tag, { ...item.props, "data-sb-repeat": "" })]), [
+            [vMarquee, ""],
+          ]),
+      }),
+    );
+
+    expect(wrapper.attributes("tabindex")).toBe(tabindex);
+    wrapper.unmount();
+  });
+
+  it("gives the tab stop to an item that becomes focusable later, as one whose behavior loads after it", async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          withDirectives(h("div", [h("span", "CODE10"), h("span", { "data-sb-repeat": "" }, "CODE10")]), [
+            [vMarquee, ""],
+          ]),
+      }),
+    );
+    const [item] = wrapper.element.children;
+
+    item.setAttribute("tabindex", "0");
+    await vi.waitFor(() => expect(wrapper.attributes("tabindex")).toBeUndefined());
+
+    item.removeAttribute("tabindex");
+    await vi.waitFor(() => expect(wrapper.attributes("tabindex")).toBe("0"));
+    wrapper.unmount();
+  });
+
   it("stands still with reduced motion", () => {
     mocks.motion = "reduce";
 
