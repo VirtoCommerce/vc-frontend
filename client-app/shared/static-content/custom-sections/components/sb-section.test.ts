@@ -917,11 +917,12 @@ describe("SbSection", () => {
       unregisterCustomSectionTag("vc-promo-link");
     });
 
-    it("leaves out a kit tag with side effects inside an element whose behavior repeats its children", () => {
+    it("leaves out a kit tag with side effects inside an element whose behavior repeats its children", async () => {
       const wrapper = mountSection(
         '<section><div data-marquee><span>A</span><vc-products query="a"></vc-products></div><vc-products query="b"></vc-products></section>',
       );
 
+      await vi.waitFor(() => expect(wrapper.findAllComponents({ name: "SbProductsStub" })).toHaveLength(1));
       expect(wrapper.findAll("[data-marquee] > span").map((item) => item.text())).toEqual(["A", "A"]);
       expect(wrapper.findAllComponents({ name: "SbProductsStub" }).map((item) => item.props("query"))).toEqual(["b"]);
     });
