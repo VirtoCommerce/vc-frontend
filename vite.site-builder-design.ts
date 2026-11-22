@@ -21,6 +21,8 @@ const TOKEN_DESCRIPTIONS: [RegExp, (key: string) => string][] = [
   [/^--vc-heading-(.+)$/, (key) => `The ${key.replaceAll("-", " ")} of headings.`],
   [/^--vc-font-size-(.+)$/, (key) => `The font size of the ${key} text step.`],
   [/^--vc-line-height-(.+)$/, (key) => `The ${key} line height; a text step's own where a font size has its key.`],
+  [/^--vc-font-weight-(.+)$/, (key) => `The ${key} font weight.`],
+  [/^--vc-letter-spacing-(.+)$/, (key) => `The ${key} letter spacing.`],
   [/^--vc-radius$/, () => "The default corner radius of controls."],
   [/^--vc-radius-(.+)$/, (key) => `The ${key} corner radius.`],
   [/^--vc-shadow-(.+)-\d+$/, (key) => `A part of the ${key} shadow; join its parts with commas.`],

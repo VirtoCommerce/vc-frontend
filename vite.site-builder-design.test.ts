@@ -45,6 +45,8 @@ describe("collectDesignFacts", () => {
       "--vc-radius": { fallback: "0.5rem" },
       "--vc-radius-md": { fallback: "0.375rem" },
       "--vc-shadow-md-2": { fallback: expect.stringContaining("rgb(from var(--color-additional-950)") },
+      "--vc-font-weight-bold": { fallback: "700" },
+      "--vc-letter-spacing-wide": { fallback: "0.025em" },
     });
     expect(Object.values(facts.tokens).every(({ description }) => description.length > 0)).toBe(true);
   });
