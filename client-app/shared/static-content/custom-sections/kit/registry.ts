@@ -47,7 +47,8 @@ const RESERVED_NAME_PREFIXES = ["sb", "pb"];
 /** Lowercase words joined by `-`: a behavior's, an attribute's or an option's name. */
 const NAME_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** As the server refuses them on any kit tag, whatever the tag declares. */
-const DENIED_TAG_ATTRIBUTE_REGEX = /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|ping|srcset|poster|action)$/;
+const DENIED_TAG_ATTRIBUTE_REGEX =
+  /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|command|commandfor|interestfor|ping|srcset|poster|action)$/;
 
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<ICustomSectionField["type"]>(["string", "number", "boolean", "select", "link", "date"]);
@@ -64,8 +65,9 @@ const useKitRegistry = createGlobalState(() => shallowRef<IKit>({ tags: {}, beha
 /**
  * Adds a tag a custom section template places as `<name>`: `vc-` and lowercase words joined by `-`. Its
  * attributes are lowercase words too, none the server refuses on a kit tag (`on*`, `style`, `id`, `class`,
- * `srcset`, `poster`…), each a field the server reads. The storefront's own tags are reserved; the first
- * registration of a name wins. A tag that breaks a rule is ignored with a warning.
+ * `srcset`, `poster`, the invokers `command`, `commandfor` and `interestfor`…), each a field the server reads.
+ * The storefront's own tags are reserved; the first registration of a name wins. A tag that breaks a rule is
+ * ignored with a warning.
  */
 export function registerCustomSectionTag(name: string, tag: ICustomSectionTag): void {
   const registry = useKitRegistry();

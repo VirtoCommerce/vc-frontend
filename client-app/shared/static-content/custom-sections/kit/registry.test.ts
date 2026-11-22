@@ -67,6 +67,9 @@ describe("the kit registry", () => {
     "data-sb",
     "data-sb-type",
     "data-pb-field",
+    "command",
+    "commandfor",
+    "interestfor",
   ])("refuses a tag that takes the attribute %s", (attribute) => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { [attribute]: { type: "string" } } });
 
