@@ -64,4 +64,14 @@ describe("fitsRenderLimits", () => {
     expect(fits(template, { rows: rows(RENDER_BUDGET - 1) })).toBe(true);
     expect(fits(template, { rows: rows(RENDER_BUDGET) })).toBe(false);
   });
+
+  it("counts the span each text of a repeating behavior's element renders in, in the run and the copy", () => {
+    // The section, the strip, its behavior, then the span of its text and its `b`, each in the run and in the copy.
+    const template =
+      '<section><p data-marquee> {{ settings.title }} <b> </b></p><i data-each="settings.rows"></i></section>';
+    const own = 1 + 1 + 1 + 2 + 2;
+
+    expect(fits(template, { title: "Sale", rows: rows(RENDER_BUDGET - own) })).toBe(true);
+    expect(fits(template, { title: "Sale", rows: rows(RENDER_BUDGET - own + 1) })).toBe(false);
+  });
 });

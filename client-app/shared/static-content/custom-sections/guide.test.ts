@@ -33,7 +33,8 @@ describe("the section authors' guide", () => {
   it("tells the render budget, what a repeating behavior's element holds counted twice", () => {
     expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
     expect(guide.replaceAll(/\s+/g, " ")).toContain(
-      "what an element with a repeating behavior (`data-marquee`) holds counts twice",
+      "what an element with a repeating behavior (`data-marquee`) holds counts twice, a text right inside it as an " +
+        "element too",
     );
     expect(guide).toContain(`at most ${MAX_RENDERED_TEXT.toLocaleString("en-US")} characters of settings`);
     expect(guide).toContain(`written with at most ${MAX_TEMPLATE_ATTRIBUTES} attributes`);

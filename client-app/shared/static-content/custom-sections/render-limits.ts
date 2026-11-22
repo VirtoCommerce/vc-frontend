@@ -1,4 +1,4 @@
-import { getListRows, resolveBinding, toBindingText, toFieldMap } from "./bindings";
+import { getListRows, renderParts, resolveBinding, toBindingText, toFieldMap } from "./bindings";
 import { getCustomSectionBehaviors, getCustomSectionTags } from "./kit";
 import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { getRichText } from "./rich-text";
@@ -64,16 +64,33 @@ function addOwnSize(node: ICompiledElement, scope: IBindingScope, size: IRenderS
   size.elements += (own + node.behaviors.length + (richText?.elements ?? 0)) * times;
   size.characters += (boundText + (richText?.html.length ?? 0)) * times;
 
+  const childTimes = (isRepeated ? 2 : 1) * times;
+
   for (const child of node.children) {
     if (isOverLimits(size)) {
       return;
     }
 
     if ("text" in child) {
-      size.characters += countBoundText(child.text, scope) * (isRepeated ? 2 : 1) * times;
+      addTextSize(child.text, scope, size, childTimes, isRepeated);
     } else {
-      addElementSize(child, scope, size, (isRepeated ? 2 : 1) * times);
+      addElementSize(child, scope, size, childTimes);
     }
+  }
+}
+
+/** Repeated, a text that is not blank renders in a span, in the run and in the copy. */
+function addTextSize(
+  text: readonly TemplatePartType[],
+  scope: IBindingScope,
+  size: IRenderSize,
+  times: number,
+  isRepeated: boolean,
+): void {
+  size.characters += countBoundText(text, scope) * times;
+
+  if (isRepeated && renderParts(text, scope).trim()) {
+    size.elements += times;
   }
 }
 
