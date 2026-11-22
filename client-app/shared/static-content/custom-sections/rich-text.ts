@@ -10,6 +10,7 @@ import {
   URL_ATTRIBUTES,
 } from "./allowlist";
 import { resolveBinding } from "./bindings";
+import { createLruCache } from "./lru-cache";
 import type { IBindingScope } from "./bindings";
 
 export interface IRichText {
@@ -33,7 +34,7 @@ const EMPTY_RICH_TEXT: IRichText = { html: "", elements: 0 };
 /** Its own instance: the hook below must never run for the built-in sections' rich text. */
 const purifier = DOMPurify();
 /** By the value itself: every row passes the same string, and a key built from it would cost its whole length. */
-const cache = new Map<string, ICachedRichText>();
+const cache = createLruCache<string, ICachedRichText>(MAX_CACHED_RICH_TEXTS);
 
 /**
  * A `text` setting shown with `data-html`, held to the same elements, attributes, links and images as the template.
@@ -43,18 +44,12 @@ export function sanitizeRichText(html: string, scope: RichTextScopeType): IRichT
   const cached = cache.get(html);
 
   if (cached && cached.type === scope.type && cached.assetsBaseUrl === scope.assetsBaseUrl) {
-    cache.delete(html);
-    cache.set(html, cached);
     return cached.richText;
   }
 
   const body = sanitize(html, scope);
   const richText = body ? { html: body.innerHTML, elements: body.querySelectorAll("*").length } : EMPTY_RICH_TEXT;
 
-  if (!cached && cache.size >= MAX_CACHED_RICH_TEXTS) {
-    const [oldestKey] = cache.keys();
-    cache.delete(oldestKey);
-  }
   cache.set(html, { type: scope.type, assetsBaseUrl: scope.assetsBaseUrl, richText });
 
   return richText;

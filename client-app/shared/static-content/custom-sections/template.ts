@@ -10,6 +10,7 @@ import {
 import { isBindingPath, parseBindings } from "./bindings";
 import { BINDING_NAMES, getBehaviorAttributeNames } from "./kit/registry";
 import { MAX_TEMPLATE_ATTRIBUTES } from "./limits";
+import { createLruCache } from "./lru-cache";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
 import type { UponSanitizeAttributeHookEvent } from "dompurify";
@@ -49,7 +50,8 @@ const CONDITION_REGEX = /^(!?)\s*(\S+)$/;
 const MAX_CACHED_TEMPLATES = 32;
 const MAX_DEPTH = 32;
 
-const cache = new Map<string, ICompiledTemplate | undefined>();
+/** A section still shown keeps its compiled template, so it does not remount. */
+const cache = createLruCache<string, ICompiledTemplate | undefined>(MAX_CACHED_TEMPLATES);
 let compiledCount = 0;
 let purifier: ReturnType<typeof DOMPurify> | undefined;
 
@@ -60,20 +62,11 @@ let purifier: ReturnType<typeof DOMPurify> | undefined;
 export function compileTemplate(template: string, kit: IKit): ICompiledTemplate | undefined {
   const key = `${getKitSignature(kit)}\n${template}`;
 
-  // The least recently used goes first: a section still shown keeps its compiled template, so it does not remount.
   if (cache.has(key)) {
-    const cached = cache.get(key);
-    cache.delete(key);
-    cache.set(key, cached);
-    return cached;
+    return cache.get(key);
   }
 
   const compiled = compile(template, kit);
-
-  if (cache.size >= MAX_CACHED_TEMPLATES) {
-    const [oldestKey] = cache.keys();
-    cache.delete(oldestKey);
-  }
   cache.set(key, compiled);
 
   return compiled;
