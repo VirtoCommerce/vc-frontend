@@ -37,6 +37,8 @@ interface IRenderScope extends IBindingScope {
   isReducedMotion: boolean;
   /** Read while counting, so the render reads none again. */
   richTexts: Map<string, IRichText>;
+  /** Inside the copy a repeating behavior adds, which the designer never edits. */
+  isCopy?: boolean;
 }
 
 interface IRenderedAttribute {
@@ -202,7 +204,7 @@ function renderShown(
     // The designer edits a text where it shows alone: not where a behavior writes it, nor beside its copy.
     mergeProps(
       renderAttributes(node, kept, scope),
-      isRepeated || hasText ? {} : getFieldAttributes(node, scope),
+      isRepeated || hasText || scope.isCopy ? {} : getFieldAttributes(node, scope),
       props,
       behaviorKey,
     ),
@@ -252,7 +254,7 @@ function renderChildren(
   return isRepeated
     ? [
         h(Fragment, { key: "run" }, renderNodes(node.children, scope, "run", getFieldAttributes(node, scope))),
-        h(Fragment, { key: "copy" }, renderNodes(node.children, scope, "copy")),
+        h(Fragment, { key: "copy" }, renderNodes(node.children, { ...scope, isCopy: true }, "copy")),
       ]
     : renderNodes(node.children, scope);
 }

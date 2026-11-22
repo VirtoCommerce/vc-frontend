@@ -731,6 +731,17 @@ describe("SbSection", () => {
       expect(copy.attributes("data-pb-field")).toBeUndefined();
       expect(wrapper.find("section > span").attributes("data-pb-field")).toBeUndefined();
     });
+
+    it("names no setting anywhere in a repeated copy, so an edit lands only in the run", () => {
+      const wrapper = mountSection(
+        '<section><div data-marquee><b>{{ settings.title }}</b><i data-each="settings.cards"><em>{{ item.title }}</em></i></div></section>',
+        { title: "Sale", cards: [{ title: "One" }] },
+      );
+      const named = wrapper.findAll("[data-pb-field]");
+
+      expect(named.map((element) => element.attributes("data-pb-field"))).toEqual(["title", "cards.0.title"]);
+      expect(named.every((element) => !element.element.closest("[data-sb-repeat]"))).toBe(true);
+    });
   });
 
   describe("behaviors", () => {
