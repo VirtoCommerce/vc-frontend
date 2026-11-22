@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
+import { MAX_GUIDE_LENGTH } from "./kit/limits";
 import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
@@ -49,6 +50,10 @@ describe("the section authors' guide", () => {
     expect(guide.replaceAll(/\s+/g, " ")).toContain(
       "That text shows until the behavior loads, and stays if it fails to load.",
     );
+  });
+
+  it("stays within the server's cap on the guide it takes", () => {
+    expect(guide.length).toBeLessThanOrEqual(MAX_GUIDE_LENGTH);
   });
 
   it("has the three patterns", () => {

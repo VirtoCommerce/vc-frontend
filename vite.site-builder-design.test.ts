@@ -1,5 +1,11 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
+import {
+  MAX_DESIGN_ENTRIES,
+  MAX_DESIGN_TEXT_LENGTH,
+  MAX_ICON_NAME_LENGTH,
+  MAX_ICONS,
+} from "./client-app/shared/static-content/custom-sections/kit/limits.js";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
 import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
 import {
@@ -43,6 +49,19 @@ describe("collectDesignFacts", () => {
     expect(Object.values(facts.tokens).every(({ description }) => description.length > 0)).toBe(true);
   });
 
+  it("stays within the server's caps on the design it takes", () => {
+    const texts = [
+      facts.containerMaxWidth,
+      ...Object.entries(facts.breakpoints).flat(),
+      ...Object.entries(facts.tokens).flatMap(([name, { fallback, description }]) => [name, fallback, description]),
+    ];
+
+    expect(Math.max(Object.keys(facts.breakpoints).length, Object.keys(facts.tokens).length)).toBeLessThanOrEqual(
+      MAX_DESIGN_ENTRIES,
+    );
+    expect(texts.filter((text) => text.length > MAX_DESIGN_TEXT_LENGTH)).toEqual([]);
+  });
+
   it("leaves out the tokens of single components", () => {
     expect(Object.keys(facts.tokens).filter((name) => /button|input|card/.test(name))).toEqual([]);
   });
@@ -55,6 +74,11 @@ describe("collectIconNames", () => {
     expect(names).toEqual(expect.arrayContaining(["star", "shopping-cart", ...Object.keys(ICON_ALIASES)]));
     expect(new Set(names).size).toBe(names.length);
     expect([...names].sort((a, b) => a.localeCompare(b))).toEqual(names);
+  });
+
+  it("stays within the server's caps on the icons it takes", () => {
+    expect(names.length).toBeLessThanOrEqual(MAX_ICONS);
+    expect(names.filter((name) => name.length === 0 || name.length > MAX_ICON_NAME_LENGTH)).toEqual([]);
   });
 });
 
