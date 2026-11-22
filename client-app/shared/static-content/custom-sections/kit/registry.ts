@@ -6,6 +6,16 @@ import { omit } from "lodash-es";
 import { shallowRef } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
 import { RENDER_BUDGET } from "../limits";
+import {
+  MAX_DESCRIPTION_LENGTH,
+  MAX_ENTRY_FIELDS,
+  MAX_KIT_ENTRIES,
+  MAX_NAME_LENGTH,
+  MAX_OPTION_LENGTH,
+  MAX_SELECT_OPTIONS,
+  MAX_WRITE_LENGTH,
+  MAX_WRITES,
+} from "./limits";
 import type { ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
 
 export interface IKit {
@@ -42,7 +52,6 @@ const DENIED_TAG_ATTRIBUTE_REGEX = /^(?:on.*|style|id|is|class|srcdoc|form.*|pop
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<ICustomSectionField["type"]>(["string", "number", "boolean", "select", "link", "date"]);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
-const MAX_DESCRIPTION_LENGTH = 1024;
 const DATA_PREFIX = "data-";
 /** The server holds a bound as a decimal, so it refuses the whole kit for one past this. */
 const MAX_BOUND = 7.9e28;
@@ -60,7 +69,10 @@ const useKitRegistry = createGlobalState(() => shallowRef<IKit>({ tags: {}, beha
  */
 export function registerCustomSectionTag(name: string, tag: ICustomSectionTag): void {
   const registry = useKitRegistry();
-  const refusal = getTakenRefusal(name, registry.value.tags) ?? getTagRefusal(name, tag);
+  const refusal =
+    getTakenRefusal(name, registry.value.tags) ??
+    getRoomRefusal(registry.value.tags, RESERVED_TAG_NAMES) ??
+    getTagRefusal(name, tag);
 
   if (refusal) {
     Logger.warn(`registerCustomSectionTag: "${name}" ${refusal}; ignoring.`);
@@ -81,7 +93,9 @@ export function registerCustomSectionTag(name: string, tag: ICustomSectionTag): 
 export function registerCustomSectionBehavior(name: string, behavior: ICustomSectionBehavior): void {
   const registry = useKitRegistry();
   const refusal =
-    getTakenRefusal(name, registry.value.behaviors) ?? getBehaviorRefusal(name, behavior, registry.value.behaviors);
+    getTakenRefusal(name, registry.value.behaviors) ??
+    getRoomRefusal(registry.value.behaviors, RESERVED_BEHAVIOR_NAMES) ??
+    getBehaviorRefusal(name, behavior, registry.value.behaviors);
 
   if (refusal) {
     Logger.warn(`registerCustomSectionBehavior: "${name}" ${refusal}; ignoring.`);
@@ -157,16 +171,23 @@ export function registerBuiltInKitEntries(
 }
 
 function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined {
-  if (!TAG_NAME_REGEX.test(name)) {
+  if (!TAG_NAME_REGEX.test(name) || name.length > MAX_NAME_LENGTH) {
     return "is not a kit tag name";
   }
 
-  if (RESERVED_TAG_NAMES.has(name)) {
-    return "is the storefront's own";
+  return RESERVED_TAG_NAMES.has(name) ? "is the storefront's own" : getTagShapeRefusal(tag);
+}
+
+/** What the server would refuse in a tag, whatever its name: the storefront's own tags are held to it too. */
+export function getTagShapeRefusal(tag: ICustomSectionTag): string | undefined {
+  const attributes = Object.entries(tag.attributes);
+
+  if (attributes.length > MAX_ENTRY_FIELDS) {
+    return `has more than ${MAX_ENTRY_FIELDS} attributes`;
   }
 
-  for (const [attribute, field] of Object.entries(tag.attributes)) {
-    if (!NAME_REGEX.test(attribute) || isDeniedTagAttribute(attribute)) {
+  for (const [attribute, field] of attributes) {
+    if (!isName(attribute) || isDeniedTagAttribute(attribute)) {
       return `takes the attribute "${attribute}", which a kit tag may not`;
     }
 
@@ -193,37 +214,14 @@ function getBehaviorRefusal(
   behavior: ICustomSectionBehavior,
   registered: IKit["behaviors"],
 ): string | undefined {
-  if (!NAME_REGEX.test(name) || isReservedName(name)) {
+  if (!isName(name) || isReservedName(name)) {
     return "is not a behavior name";
   }
 
-  if (behavior.writes !== undefined && !(Array.isArray(behavior.writes) && behavior.writes.every(isText))) {
-    return "has writes that are not a list of names";
-  }
+  const shapeRefusal = getBehaviorShapeRefusal(name, behavior);
 
-  if (behavior.repeatsChildren !== undefined && typeof behavior.repeatsChildren !== "boolean") {
-    return "has a repeatsChildren that is not true or false";
-  }
-
-  // The renderer leaves out the template's text in any element with one of these, whatever its behavior.
-  if (
-    behavior.textAttributes !== undefined &&
-    !(
-      Array.isArray(behavior.textAttributes) &&
-      behavior.textAttributes.every((attribute) => isOwnAttribute(name, attribute))
-    )
-  ) {
-    return "has text attributes that are not a list of its own data-{name} attributes";
-  }
-
-  const options = Object.entries(behavior.options ?? {});
-  const fieldRefusal =
-    (behavior.value === undefined ? undefined : getFieldRefusal(behavior.value)) ??
-    options.map(([option, field]) => getOptionRefusal(option, field)).find(Boolean) ??
-    getDescriptionRefusal(behavior.description);
-
-  if (fieldRefusal) {
-    return fieldRefusal;
+  if (shapeRefusal) {
+    return shapeRefusal;
   }
 
   // `count` with the option `up` would write the attribute of `count-up`, and the reverse.
@@ -239,8 +237,46 @@ function getBehaviorRefusal(
   return clash ? `would write ${clash}, which another behavior takes` : undefined;
 }
 
+/** What the server or the renderer would refuse in a behavior: the storefront's own behaviors are held to it too. */
+export function getBehaviorShapeRefusal(name: string, behavior: ICustomSectionBehavior): string | undefined {
+  const options = Object.entries(behavior.options ?? {});
+
+  if (options.length + (behavior.value === undefined ? 0 : 1) > MAX_ENTRY_FIELDS) {
+    return `has more than ${MAX_ENTRY_FIELDS} fields in its value and options`;
+  }
+
+  return (
+    getBehaviorListRefusal(name, behavior) ??
+    (behavior.value === undefined ? undefined : getFieldRefusal(behavior.value)) ??
+    options.map(([option, field]) => getOptionRefusal(option, field)).find(Boolean) ??
+    getDescriptionRefusal(behavior.description)
+  );
+}
+
+function getBehaviorListRefusal(name: string, behavior: ICustomSectionBehavior): string | undefined {
+  const { writes, repeatsChildren, textAttributes } = behavior;
+
+  if (writes !== undefined && !isTextList(writes, MAX_WRITES, MAX_WRITE_LENGTH)) {
+    return `has writes that are not a list of at most ${MAX_WRITES} names of ${MAX_WRITE_LENGTH} characters`;
+  }
+
+  if (repeatsChildren !== undefined && typeof repeatsChildren !== "boolean") {
+    return "has a repeatsChildren that is not true or false";
+  }
+
+  // The renderer leaves out the template's text in any element with one of these, whatever its behavior.
+  if (
+    textAttributes !== undefined &&
+    !(Array.isArray(textAttributes) && textAttributes.every((attribute) => isOwnAttribute(name, attribute)))
+  ) {
+    return "has text attributes that are not a list of its own data-{name} attributes";
+  }
+
+  return undefined;
+}
+
 function getOptionRefusal(option: string, field: ICustomSectionField): string | undefined {
-  if (!NAME_REGEX.test(option)) {
+  if (!isName(option)) {
     return `has the option "${option}", which is not lowercase words`;
   }
 
@@ -264,8 +300,8 @@ function getFieldRefusal(field: unknown): string | undefined {
     return "has no type of string, number, boolean, select, link or date";
   }
 
-  if (field.options !== undefined && !(Array.isArray(field.options) && field.options.every(isText))) {
-    return "has options that are not a list of strings";
+  if (field.options !== undefined && !isTextList(field.options, MAX_SELECT_OPTIONS, MAX_OPTION_LENGTH)) {
+    return `has options that are not a list of at most ${MAX_SELECT_OPTIONS} texts of ${MAX_OPTION_LENGTH} characters`;
   }
 
   if (field.optionsFrom !== undefined && !(field.type === "select" && field.optionsFrom === "icons")) {
@@ -299,6 +335,26 @@ function getTakenRefusal(name: string, entries: Readonly<Record<string, unknown>
   return Object.hasOwn(entries, name) ? "is already registered" : undefined;
 }
 
+/** The storefront's own entries register later, so room is kept for them. */
+function getRoomRefusal(entries: Readonly<Record<string, unknown>>, reserved: ReadonlySet<string>): string | undefined {
+  const othersCount = Object.keys(entries).filter((name) => !reserved.has(name)).length;
+  return othersCount + reserved.size >= MAX_KIT_ENTRIES
+    ? `would take the kit past ${MAX_KIT_ENTRIES} entries`
+    : undefined;
+}
+
+function isName(name: string): boolean {
+  return NAME_REGEX.test(name) && name.length <= MAX_NAME_LENGTH;
+}
+
+function isTextList(value: unknown, maxCount: number, maxLength: number): boolean {
+  return (
+    Array.isArray(value) &&
+    value.length <= maxCount &&
+    value.every((text) => typeof text === "string" && text.length <= maxLength)
+  );
+}
+
 function isOwnAttribute(behaviorName: string, attribute: unknown): boolean {
   return (
     typeof attribute === "string" &&
@@ -308,8 +364,4 @@ function isOwnAttribute(behaviorName: string, attribute: unknown): boolean {
 
 function isBound(value: unknown): boolean {
   return typeof value === "number" && Number.isFinite(value) && Math.abs(value) < MAX_BOUND;
-}
-
-function isText(value: unknown): value is string {
-  return typeof value === "string";
 }

@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { Logger } from "@/core/utilities";
 import {
+  BUILT_IN_BEHAVIOR_NAMES,
+  BUILT_IN_TAG_NAMES,
   getCustomSectionBehaviors,
   getCustomSectionTags,
   getBehaviorAttributeNames,
@@ -18,6 +20,14 @@ const TAG: ICustomSectionTag = {
   attributes: { value: { type: "number" } },
 };
 const BEHAVIOR: ICustomSectionBehavior = { directive: () => Promise.resolve({}), description: "Glows." };
+
+function toFields(count: number): Record<string, ICustomSectionField> {
+  return Object.fromEntries(Array.from({ length: count }, (_, index) => [`field-${index}`, { type: "string" }]));
+}
+
+function toOptions(count: number): string[] {
+  return Array.from({ length: count }, (_, index) => `option-${index}`);
+}
 
 describe("the kit registry", () => {
   beforeEach(() => {
@@ -99,6 +109,46 @@ describe("the kit registry", () => {
     registerCustomSectionTag("vc-promo", { ...TAG, cost: 5000 });
 
     expect(getCustomSectionTags()["vc-promo"]?.cost).toBe(5000);
+  });
+
+  it.each<[string, Partial<ICustomSectionTag>]>([
+    ["more than 64 attributes", { attributes: toFields(65) }],
+    ["an attribute name longer than 64 characters", { attributes: { [`a${"b".repeat(64)}`]: { type: "string" } } }],
+    ["a select of more than 256 options", { attributes: { size: { type: "select", options: toOptions(257) } } }],
+    ["an option longer than 256 characters", { attributes: { size: { type: "select", options: ["x".repeat(257)] } } }],
+  ])("refuses a tag with %s, past the server's caps", (_, shape) => {
+    registerCustomSectionTag("vc-promo", { ...TAG, ...shape });
+
+    expect(getCustomSectionTags()).toEqual({});
+  });
+
+  it.each<[string, Partial<ICustomSectionBehavior>]>([
+    ["a value and 64 options", { value: { type: "string" }, options: toFields(64) }],
+    ["more than 32 writes", { writes: Array.from({ length: 33 }, (_, index) => `--w${index}`) }],
+    ["a write longer than 128 characters", { writes: [`--${"w".repeat(127)}`] }],
+  ])("refuses a behavior with %s, past the server's caps", (_, shape) => {
+    registerCustomSectionBehavior("glow", { ...BEHAVIOR, ...shape });
+
+    expect(getCustomSectionBehaviors()).toEqual({});
+  });
+
+  it("refuses a name longer than 64 characters", () => {
+    registerCustomSectionTag(`vc-${"a".repeat(62)}`, TAG);
+    registerCustomSectionBehavior(`g${"a".repeat(64)}`, BEHAVIOR);
+
+    expect([getCustomSectionTags(), getCustomSectionBehaviors()]).toEqual([{}, {}]);
+  });
+
+  it("keeps room for the storefront's own tags and behaviors within the server's caps of 256 each", () => {
+    for (let index = 0; index < 253; index++) {
+      registerCustomSectionTag(`vc-tag-${index}`, TAG);
+      registerCustomSectionBehavior(`glow-${index}`, BEHAVIOR);
+    }
+
+    expect([Object.keys(getCustomSectionTags()).length, Object.keys(getCustomSectionBehaviors()).length]).toEqual([
+      256 - BUILT_IN_TAG_NAMES.length,
+      256 - BUILT_IN_BEHAVIOR_NAMES.length,
+    ]);
   });
 
   it("refuses a select with neither options nor optionsFrom, whose value nothing could fit", () => {
