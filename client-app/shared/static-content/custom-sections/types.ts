@@ -20,7 +20,8 @@ export type CustomSectionDirectiveType = Pick<
 export interface ICustomSectionField {
   /**
    * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
-   * date or date-time.
+   * date or date-time; a date alone means 00:00 UTC of that day, the same moment for every visitor, and a date-time
+   * names another moment with its offset.
    */
   type: "string" | "number" | "boolean" | "select" | "link" | "date";
   /** The values a `select` takes; a select has these or `optionsFrom`. */

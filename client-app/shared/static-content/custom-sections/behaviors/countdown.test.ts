@@ -70,4 +70,15 @@ describe("vCountdown", () => {
     expect(wrapper.attributes("data-ended")).toBe("");
     expect(readParts(wrapper)).toEqual(["0"]);
   });
+
+  it("ends a date with no time at 00:00 UTC of that day, the same moment for every visitor", async () => {
+    vi.setSystemTime(new Date("2026-12-23T23:59:59Z"));
+    const wrapper = mountCountdown("2026-12-24", ["seconds"]);
+    await nextTick();
+    expect([wrapper.attributes("data-ended"), readParts(wrapper)]).toEqual([undefined, ["1"]]);
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(wrapper.attributes("data-ended")).toBe("");
+  });
 });

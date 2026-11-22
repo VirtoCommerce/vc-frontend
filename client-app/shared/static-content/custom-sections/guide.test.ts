@@ -82,6 +82,12 @@ describe("the section authors' guide", () => {
     expect(styles).toHaveLength(3);
   });
 
+  it("tells what moment a date with no time means", () => {
+    expect(guide.replaceAll(/\s+/g, " ")).toContain(
+      "A countdown's date with no time ends at 00:00 UTC of that day, the same moment for every visitor.",
+    );
+  });
+
   it("has the three patterns", () => {
     expect(patterns).toHaveLength(3);
   });
