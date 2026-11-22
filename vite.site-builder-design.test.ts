@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   MAX_DESIGN_ENTRIES,
@@ -10,6 +11,7 @@ import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
 import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
 import {
   collectDesignFacts,
+  collectIconElements,
   collectIconNames,
   designFactsDefine,
   readTokenFallbacks,
@@ -84,12 +86,21 @@ describe("collectIconNames", () => {
   });
 });
 
+describe("collectIconElements", () => {
+  it("counts the elements of the largest icon the storefront draws, its own svg included", () => {
+    const largest = readFileSync("client-app/ui-kit/icons/outline/text-select.svg", "utf8").match(/<[a-z][\w:-]*/gi);
+
+    expect(collectIconElements()).toBe(largest?.length);
+  });
+});
+
 describe("designFactsDefine", () => {
   it("inlines the facts and the icon names as JSON the preview reads as they are", () => {
     const defined = designFactsDefine();
     const facts = JSON.parse(defined.__SB_DESIGN_FACTS__) as ReturnType<typeof collectDesignFacts>;
 
-    expect(Object.keys(defined)).toEqual(["__SB_DESIGN_FACTS__", "__SB_ICON_NAMES__"]);
+    expect(Object.keys(defined)).toEqual(["__SB_DESIGN_FACTS__", "__SB_ICON_NAMES__", "__SB_ICON_ELEMENTS__"]);
+    expect(JSON.parse(defined.__SB_ICON_ELEMENTS__)).toBe(collectIconElements());
     expect(facts.tokens["--vc-radius"]).toEqual({ fallback: "0.5rem", description: expect.any(String) });
     expect(JSON.parse(defined.__SB_ICON_NAMES__)).toEqual(expect.arrayContaining(["star"]));
   });

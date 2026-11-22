@@ -28,6 +28,12 @@ const VARIANTS = ["solid", "outline", "soft", "surface", "ghost", "tonal"] as co
 const BUTTON_SIZES = ["xxs", "xs", "sm", "md", "lg"] as const satisfies readonly VcButtonSizeType[];
 const BADGE_SIZES = ["xs", "sm", "md", "lg"] as const satisfies readonly VcBadgeSizeType[];
 const ICON_SIZES: ReadonlySet<string> = new Set(["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]);
+/** Its span and the largest icon of the set. */
+const ICON_COST = 1 + __SB_ICON_ELEMENTS__;
+/** Its root, its content, prepend, label and append spans, and two icons. */
+const BUTTON_COST = 5 + 2 * ICON_COST;
+/** Its span and its content's. */
+const BADGE_COST = 2;
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
 const PIXELS_REGEX = /^\d+$/;
 
@@ -56,6 +62,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
       appendIcon: attributes["append-icon"],
       fullWidth: attributes["full-width"] === true,
     }),
+    cost: BUTTON_COST,
   },
   "vc-icon": {
     component: markRaw(VcIcon),
@@ -71,6 +78,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
       size: toIconSize(toText(size)),
       color: toIconColor(toText(color)),
     }),
+    cost: ICON_COST,
   },
   "vc-badge": {
     component: markRaw(VcBadge),
@@ -82,6 +90,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
       size: { type: "select", options: [...BADGE_SIZES] },
     },
     slotAttribute: "label",
+    cost: BADGE_COST,
   },
   "vc-products": {
     component: markRaw(defineAsyncComponent(() => import("../components/sb-products.vue"))),

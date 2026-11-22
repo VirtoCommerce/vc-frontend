@@ -16,6 +16,8 @@ declare const __SB_DESIGN_FACTS__: import("./shared/static-content/custom-sectio
 
 /** Every icon name `VcIcon` draws; built by vite.site-builder-design.ts, read only by the preview's catalog. */
 declare const __SB_ICON_NAMES__: string[];
+/** The most elements an icon of `VcIcon`'s set draws, its own `svg` included. */
+declare const __SB_ICON_ELEMENTS__: number;
 
 interface ImportMetaEnv {
   /** JSON map of remote name -> mf-manifest.json URL. Inlined at BUILD time (see core/federation/README.md). */

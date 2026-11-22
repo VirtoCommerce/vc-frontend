@@ -11,6 +11,7 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 /** The set `VcIcon` draws by default; legacy names reach it through the aliases. */
 const ICON_FOLDER = "client-app/ui-kit/icons/outline";
 const ICON_FILE_REGEX = /\.svg$/;
+const ELEMENT_START_REGEX = /<[a-z][\w:-]*/gi;
 
 /** The stylesheets that declare or read the tokens outside the Tailwind theme. */
 const STYLE_SOURCES = ["client-app/assets/styles/main.scss", "client-app/assets/styles/_typography-roles.scss"];
@@ -94,10 +95,20 @@ export function collectIconNames(): string[] {
   return [...new Set([...files, ...Object.keys(ICON_ALIASES)])].sort((a, b) => a.localeCompare(b));
 }
 
+/** The most elements an icon draws, its own `svg` included: a kit tag's cost counts it. */
+export function collectIconElements(): number {
+  return Math.max(
+    ...readdirSync(path.join(ROOT, ICON_FOLDER))
+      .filter((file) => ICON_FILE_REGEX.test(file))
+      .map((file) => readFileSync(path.join(ROOT, ICON_FOLDER, file), "utf8").match(ELEMENT_START_REGEX)?.length ?? 0),
+  );
+}
+
 /** Inlined where the preview builds its catalog. */
 export function designFactsDefine(): Record<string, string> {
   return {
     __SB_DESIGN_FACTS__: JSON.stringify(collectDesignFacts()),
     __SB_ICON_NAMES__: JSON.stringify(collectIconNames()),
+    __SB_ICON_ELEMENTS__: JSON.stringify(collectIconElements()),
   };
 }
