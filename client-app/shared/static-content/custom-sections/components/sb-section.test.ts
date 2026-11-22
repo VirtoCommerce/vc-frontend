@@ -113,16 +113,22 @@ describe("SbSection", () => {
       expect(wrapper.find("img").attributes("alt")).toBe("Team photo");
     });
 
-    it("reads a setting's own value only, never one an object inherits", () => {
-      const fields = [...FIELDS, { id: "constructor", type: "string" }, { id: "rows", type: "list", element: [] }];
+    it("reads a setting's own value only, never one an object inherits, in a row or an object too", () => {
+      const inherited = [{ id: "constructor", type: "string" }];
+      const fields = [
+        ...inherited,
+        { id: "rows", type: "list", element: inherited },
+        { id: "hero", type: "object", element: inherited },
+      ];
       const wrapper = mountSection(
-        '<section><p data-if="settings.constructor">Shown</p><i data-each="settings.rows">Row</i>{{ item.toString }}</section>',
-        {},
+        '<section><p data-if="settings.constructor">Shown</p><i data-each="settings.rows">{{ item.constructor }}</i>' +
+          "<b>{{ settings.hero.constructor }}</b></section>",
+        { rows: [{}], hero: {} },
         { schema: { settings: fields } },
       );
 
       expect(wrapper.find("p").exists()).toBe(false);
-      expect(wrapper.find("section").text()).toBe("");
+      expect([wrapper.find("i").text(), wrapper.find("b").text()]).toEqual(["", ""]);
     });
 
     it("takes a field's default where the placed section has no value of its own, as the designer shows", () => {
