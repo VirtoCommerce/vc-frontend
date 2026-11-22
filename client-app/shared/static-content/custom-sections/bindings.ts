@@ -68,7 +68,7 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
     const field = scope.row?.fields.get(key);
 
     return scope.row && field
-      ? { value: readOwn(scope.row.values, key), field, path: [scope.row.listId, scope.row.index, key] }
+      ? { value: readSetting(scope.row.values, key, field), field, path: [scope.row.listId, scope.row.index, key] }
       : undefined;
   }
 
@@ -79,21 +79,22 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
   }
 
   if (!subKey) {
-    return { value: readOwn(scope.settings, key), field, path: [key] };
+    return { value: readSetting(scope.settings, key, field), field, path: [key] };
   }
 
-  const owner = readOwn(scope.settings, key);
+  const owner = readSetting(scope.settings, key, field);
   const subField = field.element?.find(({ id }) => id === subKey);
 
-  return subField && isRecord(owner)
-    ? { value: readOwn(owner, subKey), field: subField, path: [key, subKey] }
+  return subField
+    ? { value: readSetting(isRecord(owner) ? owner : {}, subKey, subField), field: subField, path: [key, subKey] }
     : undefined;
 }
 
 /** The rows of a `list` setting: its objects, in order. */
 export function getListRows(listId: string, scope: IBindingScope): Record<string, unknown>[] {
-  const value = readOwn(scope.settings, listId);
-  return scope.fields.get(listId)?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
+  const field = scope.fields.get(listId);
+  const value = field ? readSetting(scope.settings, listId, field) : undefined;
+  return field?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
 }
 
 /** Inserted as text, never as HTML. */
@@ -114,7 +115,11 @@ export function isSetValue(value: unknown): boolean {
   );
 }
 
-/** An id such as `constructor` names a setting, never what every object inherits. */
-function readOwn(values: Record<string, unknown>, key: string): unknown {
-  return Object.hasOwn(values, key) ? values[key] : undefined;
+/**
+ * The placed value, or the field's default where the placed item has none of its own, as a setting added to the
+ * type after the section was placed. Own keys only: an id such as `constructor` names a setting, never what every
+ * object inherits.
+ */
+export function readSetting(values: Record<string, unknown>, key: string, field: IThemeSchemaField): unknown {
+  return Object.hasOwn(values, key) ? values[key] : field.default;
 }

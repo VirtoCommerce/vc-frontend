@@ -1,4 +1,5 @@
 import { getThemeVariableName, toPaletteVariable } from "@/core/plugins/config.plugin";
+import { readSetting } from "./bindings";
 import { toFiniteNumber } from "./numbers";
 import { toAssetUrl } from "./urls";
 import type { IThemeSchemaField } from "@/core/theme-snapshot";
@@ -16,7 +17,9 @@ export function getSettingVariables(
     fields.flatMap((field) => {
       const id = field.id;
       const value =
-        id && FIELD_ID_REGEX.test(id) ? toVariableValue(field.type, settings[id], assetsBaseUrl) : undefined;
+        id && FIELD_ID_REGEX.test(id)
+          ? toVariableValue(field.type, readSetting(settings, id, field), assetsBaseUrl)
+          : undefined;
 
       return id && value !== undefined ? [[getThemeVariableName(`setting_${id}`), value]] : [];
     }),

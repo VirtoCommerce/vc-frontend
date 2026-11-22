@@ -125,6 +125,37 @@ describe("SbSection", () => {
       expect(wrapper.find("section").text()).toBe("");
     });
 
+    it("takes a field's default where the placed section has no value of its own, as the designer shows", () => {
+      const fields = [
+        { id: "badge", type: "checkbox", default: true },
+        { id: "title", type: "string", default: "Fresh" },
+        { id: "size", type: "slider", default: 3 },
+        { id: "hero", type: "object", element: [{ id: "caption", type: "string", default: "Look" }] },
+        {
+          id: "rows",
+          type: "list",
+          default: [{ label: "One" }],
+          element: [
+            { id: "label", type: "string" },
+            { id: "note", type: "string", default: "Note" },
+          ],
+        },
+      ];
+      const wrapper = mountSection(
+        '<section><b data-if="settings.badge">New</b><h2>{{ settings.title }}</h2><i>{{ settings.hero.caption }}</i>' +
+          '<p data-each="settings.rows">{{ item.label }}/{{ item.note }}</p></section>',
+        { hero: {}, title: "Own" },
+        { schema: { settings: fields } },
+      );
+
+      expect(wrapper.find("b").exists()).toBe(true);
+      expect(wrapper.find("h2").text()).toBe("Own");
+      expect(wrapper.find("i").text()).toBe("Look");
+      expect(wrapper.findAll("p").map((row) => row.text())).toEqual(["One/Note"]);
+      expect(wrapper.find("section").element.style.getPropertyValue("--setting-size")).toBe("3");
+      expect(wrapper.find("section").element.style.getPropertyValue("--setting-badge")).toBe("1");
+    });
+
     it("leaves out a binding of a setting the schema does not declare", () => {
       const wrapper = mountSection(
         "<section><p>[{{ settings.secret }}][{{ item.title }}][{{ window }}]</p></section>",
