@@ -7,6 +7,7 @@ export {
   getCustomSectionTags,
   registerCustomSectionBehavior,
   registerCustomSectionTag,
+  toBehaviorAttribute,
   unregisterCustomSectionBehavior,
   unregisterCustomSectionTag,
 } from "./registry";

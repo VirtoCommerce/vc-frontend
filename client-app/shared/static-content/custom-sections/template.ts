@@ -8,7 +8,7 @@ import {
   URL_ATTRIBUTES,
 } from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
-import { BINDING_NAMES, getBehaviorAttributeNames } from "./kit/registry";
+import { BINDING_NAMES, fromBehaviorAttribute, getBehaviorAttributeNames, toBehaviorAttribute } from "./kit/registry";
 import { MAX_TEMPLATE_ATTRIBUTES } from "./limits";
 import { createLruCache } from "./lru-cache";
 import type { TemplatePartType } from "./bindings";
@@ -42,8 +42,7 @@ export interface ICompiledTemplate {
   behaviors: Set<string>;
 }
 
-const CONTROL_ATTRIBUTES = BINDING_NAMES.map((name) => `data-${name}`);
-const DATA_PREFIX = "data-";
+const CONTROL_ATTRIBUTES = BINDING_NAMES.map(toBehaviorAttribute);
 
 const EACH_REGEX = /^settings\.([\w-]+)$/;
 const CONDITION_REGEX = /^(!?)\s*(\S+)$/;
@@ -263,9 +262,9 @@ function compileOtherAttribute(
     return;
   }
 
-  const behaviorName = name.slice(DATA_PREFIX.length);
+  const behaviorName = fromBehaviorAttribute(name);
   const behavior =
-    !compiled.isKitTag && name.startsWith(DATA_PREFIX) && Object.hasOwn(context.kit.behaviors, behaviorName)
+    !compiled.isKitTag && behaviorName !== undefined && Object.hasOwn(context.kit.behaviors, behaviorName)
       ? context.kit.behaviors[behaviorName]
       : undefined;
 
@@ -275,7 +274,7 @@ function compileOtherAttribute(
 
   compiled.attributes.push([name, parseBindings(value)]);
 
-  if (behavior) {
+  if (behavior && behaviorName !== undefined) {
     compiled.behaviors.push(behaviorName);
     context.behaviors.add(behaviorName);
   }

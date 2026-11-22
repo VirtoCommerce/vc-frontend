@@ -140,15 +140,24 @@ export function getCustomSectionBehaviors(): IKit["behaviors"] {
 
 /** The attributes a behavior writes in a template: its own `data-{name}` first, then its options'. */
 export function getBehaviorAttributeNames(name: string, behavior: ICustomSectionBehavior): string[] {
-  return [`data-${name}`, ...Object.keys(behavior.options ?? {}).map((option) => `data-${name}-${option}`)];
+  const own = toBehaviorAttribute(name);
+  return [own, ...Object.keys(behavior.options ?? {}).map((option) => `${own}-${option}`)];
+}
+
+/** `data-{name}`: the attribute that switches a behavior or a binding on. */
+export function toBehaviorAttribute(name: string): string {
+  return `${DATA_PREFIX}${name}`;
+}
+
+/** What follows `data-`, for an attribute that has it. */
+export function fromBehaviorAttribute(attribute: string): string | undefined {
+  return attribute.startsWith(DATA_PREFIX) ? attribute.slice(DATA_PREFIX.length) : undefined;
 }
 
 /** The server refuses these on any kit tag too, the reserved `data-` attributes included. */
 export function isDeniedTagAttribute(name: string): boolean {
-  return (
-    DENIED_TAG_ATTRIBUTE_REGEX.test(name) ||
-    (name.startsWith(DATA_PREFIX) && isReservedName(name.slice(DATA_PREFIX.length)))
-  );
+  const dataName = fromBehaviorAttribute(name);
+  return DENIED_TAG_ATTRIBUTE_REGEX.test(name) || (dataName !== undefined && isReservedName(dataName));
 }
 
 /** What follows `data-` in an attribute the template or the storefront writes itself. */
@@ -229,7 +238,7 @@ function getBehaviorRefusal(
   // `count` with the option `up` would write the attribute of `count-up`, and the reverse.
   const attributes = getBehaviorAttributeNames(name, behavior);
   const takenAttributes = [
-    ...[...RESERVED_BEHAVIOR_NAMES].map((reserved) => `data-${reserved}`),
+    ...[...RESERVED_BEHAVIOR_NAMES].map(toBehaviorAttribute),
     ...Object.entries(registered).flatMap(([other, otherBehavior]) => getBehaviorAttributeNames(other, otherBehavior)),
   ];
   const clash = attributes.find((attribute) =>
@@ -330,7 +339,7 @@ function getDescriptionRefusal(description: unknown): string | undefined {
 
 /** A built-in behavior may add an option later, so its name is held as a prefix too. */
 function isReservedPrefix(attribute: string, taken: string): boolean {
-  return RESERVED_BEHAVIOR_NAMES.has(taken.slice("data-".length)) && attribute.startsWith(`${taken}-`);
+  return RESERVED_BEHAVIOR_NAMES.has(fromBehaviorAttribute(taken) ?? "") && attribute.startsWith(`${taken}-`);
 }
 
 function getTakenRefusal(name: string, entries: Readonly<Record<string, unknown>>): string | undefined {
@@ -360,7 +369,7 @@ function isTextList(value: unknown, maxCount: number, maxLength: number): boolea
 function isOwnAttribute(behaviorName: string, attribute: unknown): boolean {
   return (
     typeof attribute === "string" &&
-    (attribute === `data-${behaviorName}` || attribute.startsWith(`data-${behaviorName}-`))
+    (attribute === toBehaviorAttribute(behaviorName) || attribute.startsWith(`${toBehaviorAttribute(behaviorName)}-`))
   );
 }
 

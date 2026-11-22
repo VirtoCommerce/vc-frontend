@@ -9,6 +9,7 @@ import {
   getBehaviorAttributeNames,
   getCustomSectionBehaviors,
   getCustomSectionTags,
+  toBehaviorAttribute,
   toFieldValue,
   toTagProps,
 } from "./kit";
@@ -186,7 +187,9 @@ function renderShown(
   const { fields, textAttributes } = getBehaviorAttributes(behaviors);
   const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
   const values = new Map(kept.map(({ name, value }) => [name, value]));
-  const applied = node.behaviors.filter((name) => Object.hasOwn(behaviors, name) && values.has(`data-${name}`));
+  const applied = node.behaviors.filter(
+    (name) => Object.hasOwn(behaviors, name) && values.has(toBehaviorAttribute(name)),
+  );
   // A behavior whose chunk failed to load leaves the template's text in place until a later load succeeds.
   const hasText = kept.some(({ name }) => {
     const behavior = textAttributes.get(name);
@@ -213,7 +216,7 @@ function renderShown(
   );
   const directives: DirectiveArguments = applied.map((name) => [
     getBehaviorDirective(behaviors[name]),
-    values.get(`data-${name}`),
+    values.get(toBehaviorAttribute(name)),
   ]);
 
   return directives.length ? withDirectives(vnode, directives) : vnode;
