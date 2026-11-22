@@ -91,6 +91,28 @@ describe("vMarquee", () => {
     vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
   });
 
+  it("shifts the other way when a setting turns the direction, without a remount", async () => {
+    const direction = ref("ltr");
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          withDirectives(
+            h("div", { dir: direction.value }, [h("span", "A"), h("span", { "data-sb-repeat": "" }, "A")]),
+            [[vMarquee, ""]],
+          ),
+      }),
+      { attachTo: document.body },
+    );
+    const element = wrapper.element as HTMLElement;
+    stubLayout(element, {});
+
+    direction.value = "rtl";
+    await nextTick();
+
+    expect(element.style.getPropertyValue("--marquee-shift")).toBe("120px");
+    wrapper.unmount();
+  });
+
   it("pauses while the pointer is over it or the focus inside, and resumes only what it paused", async () => {
     const wrapper = mountMarquee();
     const marquee = wrapper.find("#marquee");

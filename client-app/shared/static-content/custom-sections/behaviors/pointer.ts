@@ -1,5 +1,6 @@
 import { createSharedComposable, useEventListener, useMediaQuery } from "@vueuse/core";
 import { clamp, round } from "lodash-es";
+import { watch } from "vue";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const CENTER = 0.5;
@@ -11,8 +12,12 @@ const useTouchScreen = createSharedComposable(() => useMediaQuery("(hover: none)
  * `--pointer-x` and `--pointer-y` (0–1 inside the element), `--pointer-inline` (0 at the inline start, so it flips
  * in right-to-left text) and `--pointer-active`; off on touch screens.
  */
-export const vPointer = defineBehavior((element, { isReducedMotion }) => {
-  const isRtl = isRightToLeft(element);
+export const vPointer = defineBehavior((element, { isReducedMotion, updates }) => {
+  // A bound `dir` changes without a remount: read again after every update.
+  let isRtl = isRightToLeft(element);
+  watch(updates, () => {
+    isRtl = isRightToLeft(element);
+  });
 
   writePointer(element, CENTER, CENTER, isRtl);
   element.style.setProperty("--pointer-active", "0");

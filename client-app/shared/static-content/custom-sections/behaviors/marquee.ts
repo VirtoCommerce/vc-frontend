@@ -49,8 +49,10 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 
   // Its items too: a late image or a font swap resizes them inside a track whose own width is fixed.
   const items = shallowRef(getItems(element));
+  // The items, or a bound `dir`, may change without a remount.
   watch(updates, () => {
     items.value = getItems(element);
+    measure();
   });
 
   // Focus within pauses it: with nothing to focus in its run, the keyboard reaches the strip itself.

@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, withDirectives } from "vue";
+import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { vPointer } from "./pointer";
 
 const mocks = vi.hoisted(() => ({ motion: "no-preference", isTouchScreen: false }));
@@ -38,6 +38,18 @@ function readPointer(element: HTMLElement): string[] {
   return ["--pointer-x", "--pointer-y", "--pointer-inline", "--pointer-active"].map((name) =>
     element.style.getPropertyValue(name),
   );
+}
+
+function mountWithDirection() {
+  const direction = ref("ltr");
+  const wrapper = mount(
+    defineComponent({
+      setup: () => () => withDirectives(h("div", { id: "tracked", dir: direction.value }), [[vPointer, ""]]),
+    }),
+    { attachTo: document.body },
+  );
+
+  return { element: getTracked(wrapper), direction };
 }
 
 describe("vPointer", () => {
@@ -85,5 +97,15 @@ describe("vPointer", () => {
     element.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
 
     expect(readPointer(element)).toEqual(["0.5", "0.5", "0.5", "0"]);
+  });
+
+  it("follows a direction a setting changes, without a remount", async () => {
+    const { element, direction } = mountWithDirection();
+
+    direction.value = "rtl";
+    await nextTick();
+    element.dispatchEvent(new MouseEvent("pointermove", { clientX: 150, clientY: 125 }));
+
+    expect(element.style.getPropertyValue("--pointer-inline")).toBe("0.75");
   });
 });
