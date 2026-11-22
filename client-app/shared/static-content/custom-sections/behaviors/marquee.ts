@@ -15,13 +15,13 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
     return;
   }
 
+  /** From the first item with a box to its copy: the section's CSS may hide the first at some widths. */
   function measure(): void {
-    const first = element.firstElementChild;
-    const firstCopy = element.querySelector(`:scope > [${REPEATED_COPY_ATTRIBUTE}]`);
-    const width =
-      first instanceof HTMLElement && firstCopy instanceof HTMLElement
-        ? Math.abs(firstCopy.offsetLeft - first.offsetLeft)
-        : element.scrollWidth / 2;
+    const items = getItems(element);
+    const run = items.filter((item) => !item.hasAttribute(REPEATED_COPY_ATTRIBUTE));
+    const copies = items.filter((item) => item.hasAttribute(REPEATED_COPY_ATTRIBUTE));
+    const index = run.findIndex((item, position) => hasBox(item) && !!copies[position] && hasBox(copies[position]));
+    const width = index >= 0 ? Math.abs(copies[index].offsetLeft - run[index].offsetLeft) : element.scrollWidth / 2;
 
     writeRun(element, width);
   }
@@ -79,4 +79,8 @@ function writeRun(element: HTMLElement, width: number): void {
 
 function getItems(element: HTMLElement): HTMLElement[] {
   return [...element.children].filter((child): child is HTMLElement => child instanceof HTMLElement);
+}
+
+function hasBox(element: HTMLElement): boolean {
+  return element.getClientRects().length > 0;
 }

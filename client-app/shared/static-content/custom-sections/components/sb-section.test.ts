@@ -644,6 +644,7 @@ describe("SbSection", () => {
       vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
         return this.hasAttribute("data-sb-repeat") ? 120 : 0;
       });
+      vi.spyOn(HTMLElement.prototype, "getClientRects").mockReturnValue([{}] as unknown as DOMRectList);
       const wrapper = mountSection("<section><p data-marquee>{{ settings.title }}</p></section>", { title: "Sale" });
       const track = wrapper.find("[data-marquee]");
 

@@ -34,6 +34,7 @@ function mountMarquee(direction?: "rtl") {
 
 function stubLayout(element: HTMLElement, animation: object): void {
   const [first, copy] = [...element.children] as HTMLElement[];
+  [first, copy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
   Object.defineProperty(first, "offsetLeft", { value: 0 });
   Object.defineProperty(copy, "offsetLeft", { value: 120 });
   Object.assign(element, { getAnimations: () => [animation] });
@@ -69,6 +70,24 @@ describe("vMarquee", () => {
 
     expect(element.style.getPropertyValue("--marquee-width")).toBe("120px");
     expect(element.style.getPropertyValue("--marquee-shift")).toBe(shift);
+    vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
+  });
+
+  it("measures from the first item that has a box, as when the section's CSS hides the first", () => {
+    const element = document.createElement("div");
+    const [hidden, shown, hiddenCopy, shownCopy] = ["a", "b", "a", "b"].map(() => document.createElement("span"));
+    hiddenCopy.setAttribute("data-sb-repeat", "");
+    shownCopy.setAttribute("data-sb-repeat", "");
+    element.append(hidden, shown, hiddenCopy, shownCopy);
+    document.body.append(element);
+    [hidden, hiddenCopy].forEach((item) => Object.assign(item, { getClientRects: () => [] }));
+    [shown, shownCopy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
+    Object.defineProperty(shown, "offsetLeft", { value: 10 });
+    Object.defineProperty(shownCopy, "offsetLeft", { value: 130 });
+
+    vMarquee.mounted?.(element, { value: "" } as never, {} as never, null);
+
+    expect(element.style.getPropertyValue("--marquee-width")).toBe("120px");
     vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
   });
 
