@@ -108,10 +108,32 @@ describe("the kit registry", () => {
     expect(getCustomSectionTags()).toEqual({});
   });
 
-  it("takes a tag that costs a whole number of elements up to the render budget", () => {
-    registerCustomSectionTag("vc-promo", { ...TAG, cost: 5000 });
+  it.each([1, 5000])("takes a tag that costs %s, a whole number of elements within the render budget", (cost) => {
+    registerCustomSectionTag("vc-promo", { ...TAG, cost });
 
-    expect(getCustomSectionTags()["vc-promo"]?.cost).toBe(5000);
+    expect(getCustomSectionTags()["vc-promo"]?.cost).toBe(cost);
+  });
+
+  it("takes a tag and a behavior exactly at the server's caps", () => {
+    const options = Array.from({ length: 256 }, (_, index) => String(index).padStart(256, "x"));
+    const tag: ICustomSectionTag = {
+      ...TAG,
+      attributes: { ...toFields(63), [`a${"b".repeat(63)}`]: { type: "select", options } },
+    };
+    const behavior: ICustomSectionBehavior = {
+      ...BEHAVIOR,
+      value: { type: "string" },
+      options: toFields(63),
+      writes: Array.from({ length: 32 }, (_, index) => `--${String(index).padStart(126, "w")}`),
+    };
+
+    registerCustomSectionTag(`vc-${"a".repeat(61)}`, tag);
+    registerCustomSectionBehavior(`g${"a".repeat(63)}`, behavior);
+
+    expect([Object.keys(getCustomSectionTags()), Object.keys(getCustomSectionBehaviors())]).toEqual([
+      [`vc-${"a".repeat(61)}`],
+      [`g${"a".repeat(63)}`],
+    ]);
   });
 
   it.each<[string, Partial<ICustomSectionTag>]>([
