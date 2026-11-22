@@ -29,8 +29,18 @@ describe("the section authors' guide", () => {
   const patterns = [...guide.matchAll(PATTERN_REGEX)].map((match) => match[1]);
   const styles = [...guide.matchAll(CSS_REGEX)].map((match) => match[1]);
 
-  it("tells the render budget", () => {
+  it("tells the render budget, the children of a repeating behavior counted twice", () => {
     expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
+    expect(guide).toMatch(/children of a repeating behavior \(`data-marquee`\) count twice/);
+  });
+
+  it("tells what the server refuses and what it only warns about", () => {
+    const intro = guide.split("\n## ")[0].replaceAll(/\s+/g, " ");
+
+    expect(intro).toContain(
+      "the server also refuses an `h1`, an image without `alt`, a link with nothing to read and `outline: none`",
+    );
+    expect(intro).toContain("a literal color, a physical side, a skipped heading level and motion");
   });
 
   it("has the three patterns", () => {

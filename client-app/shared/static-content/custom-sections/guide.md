@@ -2,9 +2,10 @@
 
 A custom section is an HTML template, its CSS and its settings. The storefront renders it from data: no script runs.
 Anything that needs logic comes from the kit: a tag (`kit.tags`) or a behavior (`kit.behaviors`). What the
-storefront does not allow, it leaves out. The storefront holds the safety rules (code, links, images, the section's
-box, its size); the server, when a section is saved or published, also refuses one that breaks the accessibility
-rules below.
+storefront does not allow, it leaves out: it holds the safety rules (code, links, images, the section's box, its
+size). On save and publish the server also refuses an `h1`, an image without `alt`, a link with nothing to read and
+`outline: none`; a literal color, a physical side, a skipped heading level and motion outside
+`prefers-reduced-motion` get only a warning.
 
 - One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
   it in a box of its own: nothing the section draws leaves that box.
@@ -91,7 +92,8 @@ The page may read right to left.
 - Few, right-sized images. No background video unless the section is about it.
 - Behaviors load on their own the first time a template uses them; add only those the section needs.
 - A section renders at most 5,000 elements and behaviors, each counted as written (whatever `data-if` hides) and
-  once per row of its list. A section over that renders nothing.
+  once per row of its list; the children of a repeating behavior (`data-marquee`) count twice. A section over that
+  renders nothing.
 
 ## Patterns
 
