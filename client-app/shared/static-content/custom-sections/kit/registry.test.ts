@@ -89,6 +89,12 @@ describe("the kit registry", () => {
     expect(getCustomSectionTags()).toEqual({});
   });
 
+  it("refuses a tag whose hasSideEffects is not true or false", () => {
+    registerCustomSectionTag("vc-promo", { ...TAG, hasSideEffects: "yes" as unknown as boolean });
+
+    expect(getCustomSectionTags()).toEqual({});
+  });
+
   it("takes a tag that costs a whole number of elements up to the render budget", () => {
     registerCustomSectionTag("vc-promo", { ...TAG, cost: 5000 });
 

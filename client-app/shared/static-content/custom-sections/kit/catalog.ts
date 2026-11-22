@@ -5,7 +5,7 @@ import type { ICustomSectionBehavior, ICustomSectionTag } from "../types";
 
 /** What the designer's catalog says of the kit, for the agent and the server: no components, no loaders. */
 export interface ICustomSectionKitCatalog {
-  tags: Record<string, Pick<ICustomSectionTag, "description" | "attributes" | "cost">>;
+  tags: Record<string, Pick<ICustomSectionTag, "description" | "attributes" | "cost" | "hasSideEffects">>;
   behaviors: Record<
     string,
     Pick<ICustomSectionBehavior, "description" | "value" | "options" | "writes" | "repeatsChildren">
@@ -25,10 +25,12 @@ const SECTION_CONTAINER_NAME = "sb-section";
 
 /** Copies only data, so the catalog can be posted and hashed. */
 export function getKitCatalog(): ICustomSectionKitCatalog {
-  const tags = Object.entries(getCustomSectionTags()).map(([name, { description, attributes, cost }]) => [
-    name,
-    { description, attributes, cost: cost ?? 1 },
-  ]);
+  const tags = Object.entries(getCustomSectionTags()).map(
+    ([name, { description, attributes, cost, hasSideEffects }]) => [
+      name,
+      { description, attributes, cost: cost ?? 1, hasSideEffects: !!hasSideEffects },
+    ],
+  );
   const behaviors = Object.entries(getCustomSectionBehaviors()).map(
     ([name, { description, value, options, writes, repeatsChildren }]) => [
       name,

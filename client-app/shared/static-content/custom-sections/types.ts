@@ -45,6 +45,11 @@ export interface ICustomSectionTag {
    * section's render budget counts it for every instance, list rows included.
    */
   cost?: number;
+  /**
+   * An instance does work beyond drawing, such as a request or an analytics view, which a copy would do again: the
+   * tag is left out of an element whose behavior repeats its children.
+   */
+  hasSideEffects?: boolean;
 }
 
 /** A behavior a custom section template switches on with the attribute `data-{name}`. */

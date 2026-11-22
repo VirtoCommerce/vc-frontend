@@ -798,6 +798,15 @@ describe("SbSection", () => {
       unregisterCustomSectionTag("vc-promo-link");
     });
 
+    it("leaves out a kit tag with side effects inside an element whose behavior repeats its children", () => {
+      const wrapper = mountSection(
+        '<section><div data-marquee><span>A</span><vc-products query="a"></vc-products></div><vc-products query="b"></vc-products></section>',
+      );
+
+      expect(wrapper.findAll("[data-marquee] > span").map((item) => item.text())).toEqual(["A", "A"]);
+      expect(wrapper.findAllComponents({ name: "SbProductsStub" }).map((item) => item.props("query"))).toEqual(["b"]);
+    });
+
     it("does not nest a repeating behavior in another, so the copies cannot double at every level", () => {
       const wrapper = mountSection(
         "<section><div data-marquee><div data-marquee><div data-marquee><span>x</span></div></div></div></section>",

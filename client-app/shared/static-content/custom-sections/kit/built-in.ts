@@ -107,6 +107,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
       columns: { type: "number", min: 1, max: 6, description: "The most products in a row, 4 by default." },
     },
     cost: 1 + MAX_PRODUCTS * PRODUCT_CARD_ELEMENTS,
+    hasSideEffects: true,
   },
 };
 

@@ -144,7 +144,7 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
 /** Changes when a tag, a behavior or what the compiler reads of them changes. */
 function getKitSignature(kit: IKit): string {
   return JSON.stringify([
-    Object.entries(kit.tags).map(([name, tag]) => [name, Object.keys(tag.attributes)]),
+    Object.entries(kit.tags).map(([name, tag]) => [name, Object.keys(tag.attributes), tag.hasSideEffects]),
     Object.entries(kit.behaviors).map(([name, behavior]) => [
       name,
       Object.keys(behavior.options ?? {}),
@@ -181,8 +181,13 @@ function compileNode(node: Node, context: ICompileContext): CompiledNodeType[] {
 
   const element = compileElement(node, context);
 
+  if (!element.isKitTag) {
+    return [element];
+  }
+
   // A kit tag has no content: what the parser put in one written as `<vc-icon />` follows it.
-  return element.isKitTag ? [element, ...compileChildren(node, context)] : [element];
+  const following = compileChildren(node, context);
+  return context.isInRepeat && context.kit.tags[element.tag].hasSideEffects ? following : [element, ...following];
 }
 
 function compileElement(element: Element, context: ICompileContext): ICompiledElement {

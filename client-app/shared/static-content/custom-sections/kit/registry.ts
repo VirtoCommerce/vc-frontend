@@ -162,6 +162,10 @@ function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined
     }
   }
 
+  if (tag.hasSideEffects !== undefined && typeof tag.hasSideEffects !== "boolean") {
+    return "has a hasSideEffects that is not true or false";
+  }
+
   if (tag.cost !== undefined && !(Number.isInteger(tag.cost) && tag.cost >= 1 && tag.cost <= RENDER_BUDGET)) {
     return `has a cost that is not a whole number from 1 to ${RENDER_BUDGET}`;
   }

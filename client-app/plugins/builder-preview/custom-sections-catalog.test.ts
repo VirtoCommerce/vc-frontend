@@ -118,6 +118,7 @@ describe("watchCustomSectionCatalog", () => {
     const kit = apply.mock.lastCall?.[1];
     expect(Object.keys(kit?.tags ?? {})).toEqual(["vc-button", "vc-icon", "vc-badge", "vc-products"]);
     expect([kit?.tags["vc-button"].cost, kit?.tags["vc-products"].cost]).toEqual([1, 2401]);
+    expect([kit?.tags["vc-button"].hasSideEffects, kit?.tags["vc-products"].hasSideEffects]).toEqual([false, true]);
     expect(kit?.tags["vc-products"].attributes.take).toEqual({
       type: "number",
       min: 1,

@@ -72,6 +72,8 @@ The page may read right to left.
 
 - Move things only through behaviors (`data-inview`, `data-scroll-progress`, `data-count-up`, `data-marquee`) and
   the CSS that reads what they write. Animate `transform` and `opacity`.
+- A kit tag with `hasSideEffects` in the kit, such as `vc-products`, is left out inside an element whose behavior
+  repeats its children: its copy would search or report a view again.
 - Put transitions and animations under `@media (prefers-reduced-motion: no-preference)`. Behaviors already show
   their end state at once when motion is reduced.
 - A behavior that writes an element's text (`data-count-up`, `data-countdown`) replaces what the template writes
