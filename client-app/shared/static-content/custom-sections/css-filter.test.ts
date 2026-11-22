@@ -198,7 +198,7 @@ describe("filterSectionCss", () => {
     const rules = rulesOf(`
       .a { --bg: element(#secret); color: red; }
       .b { --bg: -moz-element(#secret); color: red; }
-      .c { width: expression(alert(1)); }
+      .c { --w: expression(alert(1)); color: red; }
     `);
 
     expect(rules).not.toContain("element(");

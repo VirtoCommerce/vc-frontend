@@ -26,6 +26,7 @@ describe("isAllowedValue", () => {
     ["url(data:image/svg+xml,%3Csvg%3E%3C/svg%3E%23m)", true],
     ["url(javascript:alert(1))", false],
     ["-moz-element(#secret)", false],
+    ["expression(alert(1))", false],
   ])("judges %s: %s", (value, isAllowed) => {
     expect(isAllowedValue(value, base)).toBe(isAllowed);
   });
@@ -55,6 +56,7 @@ describe("isAllowedValue", () => {
 
   it.each(["\r\n", "\r", "\f"])("reads %j as one line break, as the browser does before it tokenizes", (lineBreak) => {
     expect(isAllowedValue(`"a\\${lineBreak}" url(https://evil.example/x.png) "b"`, base)).toBe(false);
+    expect(isAllowedValue(`\\75${lineBreak}rl(https://evil.example/x.png)`, base)).toBe(false);
   });
 
   it("takes a url() inside a string as text", () => {
