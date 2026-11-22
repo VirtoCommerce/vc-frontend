@@ -77,7 +77,8 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
       color: { type: "string", description: "A palette color, or a palette variable such as --color-primary-700." },
     },
     mapProps: ({ name, size, color }) => ({
-      name,
+      // VcIcon draws a default icon for no name; an unset one draws none, as an unknown one.
+      name: toText(name) ?? "",
       size: toIconSize(toText(size)),
       color: toIconColor(toText(color)),
     }),

@@ -505,6 +505,12 @@ describe("SbSection", () => {
       expect(wrapper.findComponent(VcBadge).text()).toBe("New");
     });
 
+    it("draws no icon for vc-icon whose name setting is unset", () => {
+      const wrapper = mountSection('<section><vc-icon name="{{ settings.title }}"></vc-icon></section>', { title: "" });
+
+      expect(wrapper.findComponent(VcIcon).props("name")).toBe("");
+    });
+
     it("renders what follows a kit tag written as self-closing", () => {
       const wrapper = mountSection('<section><p><vc-icon name="star" /> Rated</p></section>');
 
