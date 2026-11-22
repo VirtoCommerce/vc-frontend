@@ -1,7 +1,7 @@
 <template>
   <div
     v-track-item="products"
-    class="sb-products"
+    :class="['sb-products', { 'sb-products--carousel': view === 'carousel' }]"
     data-vc-track="product-list"
     data-list-id="custom_section_products"
     :data-list-name="query"
@@ -79,6 +79,11 @@ watchEffect(async () => {
 <style lang="scss">
 // The section around it sets the width, the spacing and the heading.
 .sb-products {
+  // The carousel's arrows stand outside it, and the section clips what leaves its box.
+  &--carousel {
+    padding-inline: theme("spacing.5");
+  }
+
   &__grid {
     // The narrowest card before the row drops a column; `--columns` is the most the row holds.
     --min-card-width: 10rem;

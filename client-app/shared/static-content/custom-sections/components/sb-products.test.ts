@@ -46,6 +46,13 @@ describe("SbProducts", () => {
     expect(wrapper.find("h2").exists()).toBe(false);
   });
 
+  it.each([
+    { view: "carousel", hasGutter: true },
+    { view: "grid", hasGutter: false },
+  ])("keeps a gutter for the carousel's arrows in $view view: $hasGutter", ({ view, hasGutter }) => {
+    expect(mountProducts({ view }).classes("sb-products--carousel")).toBe(hasGutter);
+  });
+
   it("sizes the carousel by the element it stands in, columns at most", () => {
     const wrapper = mountProducts({ view: "carousel", columns: 2 });
     const options = wrapper.findComponent({ name: "VcCarousel" }).props("options") as ICarouselOptions;
