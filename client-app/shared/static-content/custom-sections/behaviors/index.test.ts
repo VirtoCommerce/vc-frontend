@@ -1,8 +1,8 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { Logger } from "@/core/utilities";
-import { getBehaviorDirective } from "./index";
+import { getBehaviorDirective, hasBehaviorFailed } from "./index";
 import type { CustomSectionDirectiveType, ICustomSectionBehavior } from "../types";
 
 const HOOKS = ["mounted", "beforeUpdate", "updated", "beforeUnmount", "unmounted"] as const;
@@ -27,8 +27,8 @@ function createBehavior() {
   return { behavior, calls, load: (): void => resolveLoad?.(directive) };
 }
 
-function mountWith(behavior: ICustomSectionBehavior) {
-  const value = ref("a");
+function mountWith(behavior: ICustomSectionBehavior, initial = "a") {
+  const value = ref(initial);
   const wrapper = mount(
     defineComponent({
       setup: () => () => withDirectives(h("div", value.value), [[getBehaviorDirective(behavior), value.value]]),
@@ -38,7 +38,13 @@ function mountWith(behavior: ICustomSectionBehavior) {
   return { wrapper, value };
 }
 
+enableAutoUnmount(afterEach);
+
 describe("a behavior's lazy directive", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("forwards every hook once the behavior has loaded", async () => {
     const { behavior, calls, load } = createBehavior();
     const { wrapper, value } = mountWith(behavior);
@@ -73,13 +79,29 @@ describe("a behavior's lazy directive", () => {
       .mockResolvedValue({ mounted: (_element, binding) => mounted(binding.value) });
     const behavior: ICustomSectionBehavior = { description: "Test.", directive };
 
-    mountWith(behavior);
+    mountWith(behavior, "a");
     await flushPromises();
-    mountWith(behavior).value.value = "b";
+    mountWith(behavior, "b");
     await flushPromises();
 
     expect(mounted.mock.calls).toEqual([["a"], ["b"]]);
-    vi.restoreAllMocks();
+  });
+
+  it("mounts every waiting element when one of them throws, and counts the load as done", async () => {
+    vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+    const mounted = vi.fn((_element: HTMLElement, binding: { value?: string }) => {
+      if (binding.value === "a") {
+        throw new Error("setup");
+      }
+    });
+    const behavior: ICustomSectionBehavior = { description: "Test.", directive: () => Promise.resolve({ mounted }) };
+
+    mountWith(behavior, "a");
+    mountWith(behavior, "b");
+    await flushPromises();
+
+    expect(mounted.mock.calls.map(([, binding]) => binding.value)).toEqual(["a", "b"]);
+    expect(hasBehaviorFailed(behavior)).toBe(false);
   });
 
   it("never mounts an element that unmounts before its behavior loads", async () => {

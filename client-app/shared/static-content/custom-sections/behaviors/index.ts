@@ -60,20 +60,35 @@ async function importDirective(
   behavior: ICustomSectionBehavior,
   entry: ILoadedBehavior,
 ): Promise<CustomSectionDirectiveType | undefined> {
-  try {
-    const loaded = await behavior.directive();
+  let loaded: CustomSectionDirectiveType;
 
-    entry.loaded = loaded;
-    setFailed(behavior, false);
-    entry.waiting.forEach((args) => loaded.mounted?.(...args));
-    entry.waiting.clear();
-    return loaded;
+  try {
+    loaded = await behavior.directive();
   } catch (error) {
     ignoreChunkLoadFailure(error);
     Logger.error("[custom-sections] Failed to load a behavior", error);
     entry.pending = undefined;
     setFailed(behavior, true);
     return undefined;
+  }
+
+  entry.loaded = loaded;
+  setFailed(behavior, false);
+  mountWaiting(entry, loaded);
+  return loaded;
+}
+
+/** One element's failed setup leaves the others to mount. */
+function mountWaiting(entry: ILoadedBehavior, loaded: CustomSectionDirectiveType): void {
+  const waiting = [...entry.waiting.values()];
+  entry.waiting.clear();
+
+  for (const args of waiting) {
+    try {
+      loaded.mounted?.(...args);
+    } catch (error) {
+      Logger.error("[custom-sections] A behavior failed to start on an element", error);
+    }
   }
 }
 
