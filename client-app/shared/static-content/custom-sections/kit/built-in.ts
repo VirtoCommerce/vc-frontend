@@ -114,7 +114,13 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
     directive: async () => (await import("../behaviors/inview")).vInview,
     description: "Sets data-visible while the element is on screen.",
     options: {
-      threshold: { type: "number", min: 0, max: 1, description: "The share of the element on screen, 0.2 by default." },
+      threshold: {
+        type: "number",
+        min: 0,
+        max: 1,
+        description:
+          "The share of the element on screen, or of the screen for an element taller than it; 0.2 by default.",
+      },
       once: { type: "boolean", description: "data-visible stays once set." },
     },
     writes: ["data-visible"],
