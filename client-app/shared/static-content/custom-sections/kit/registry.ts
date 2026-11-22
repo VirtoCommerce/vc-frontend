@@ -152,7 +152,7 @@ export function isDeniedTagAttribute(name: string): boolean {
 }
 
 /** What follows `data-` in an attribute the template or the storefront writes itself. */
-export function isReservedName(name: string): boolean {
+function isReservedName(name: string): boolean {
   return (
     (BINDING_NAMES as readonly string[]).includes(name) ||
     RESERVED_NAME_PREFIXES.some((prefix) => name === prefix || name.startsWith(`${prefix}-`))
