@@ -30,7 +30,10 @@ export interface ICustomSectionField {
 
 /** A storefront component a custom section template places as a `vc-*` tag. A kit tag has no content. */
 export interface ICustomSectionTag {
-  /** Load it lazily with `defineAsyncComponent`, unless the host loads it anyway. */
+  /**
+   * Load it lazily with `defineAsyncComponent`, unless the host loads it anyway. It renders one root element that
+   * takes the attributes passed through: a repeated copy hides itself from assistive technology through them.
+   */
   component: Component;
   /** What the tag shows, for the agent that writes templates. */
   description: string;
@@ -64,7 +67,10 @@ export interface ICustomSectionBehavior {
   options?: Record<string, ICustomSectionField>;
   /** What the directive writes for the section's CSS: a `--variable`, a `data-` attribute, or `text`. */
   writes?: string[];
-  /** Attributes of the elements whose text the directive writes: the template's text in them is not rendered. */
+  /**
+   * Attributes of the elements whose text the directive writes, each `data-{name}` or `data-{name}-…`: the
+   * template's text in them is not rendered.
+   */
   textAttributes?: string[];
   /** The renderer repeats the element's children once, the copies marked `data-sb-repeat` and hidden from assistive technology. */
   repeatsChildren?: boolean;

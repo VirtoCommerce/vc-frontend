@@ -133,6 +133,21 @@ describe("the kit registry", () => {
     expect(Object.keys(getCustomSectionTags())).toEqual(["vc-promo"]);
   });
 
+  it.each<[string, Partial<ICustomSectionBehavior>]>([
+    ["text attributes that are not a list", { textAttributes: "data-glow" as unknown as string[] }],
+    ["a text attribute not under its name, which would empty other elements", { textAttributes: ["title"] }],
+  ])("refuses a behavior with %s", (_, shape) => {
+    registerCustomSectionBehavior("glow", { ...BEHAVIOR, ...shape });
+
+    expect(getCustomSectionBehaviors()).toEqual({});
+  });
+
+  it("takes a behavior whose text attributes are its own or under its name", () => {
+    registerCustomSectionBehavior("glow", { ...BEHAVIOR, textAttributes: ["data-glow", "data-glow-label"] });
+
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow"]);
+  });
+
   it("takes a behavior by a name no template attribute of its own uses", () => {
     ["glow", "each", "if", "html", "sb-type", "pb-field", "Glow"].forEach((name) =>
       registerCustomSectionBehavior(name, BEHAVIOR),

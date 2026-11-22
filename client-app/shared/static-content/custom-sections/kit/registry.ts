@@ -190,6 +190,17 @@ function getBehaviorRefusal(
     return "has a repeatsChildren that is not true or false";
   }
 
+  // The renderer leaves out the template's text in any element with one of these, whatever its behavior.
+  if (
+    behavior.textAttributes !== undefined &&
+    !(
+      Array.isArray(behavior.textAttributes) &&
+      behavior.textAttributes.every((attribute) => isOwnAttribute(name, attribute))
+    )
+  ) {
+    return "has text attributes that are not a list of its own data-{name} attributes";
+  }
+
   const options = Object.entries(behavior.options ?? {});
   const fieldRefusal =
     (behavior.value === undefined ? undefined : getFieldRefusal(behavior.value)) ??
@@ -271,6 +282,13 @@ function isReservedPrefix(attribute: string, taken: string): boolean {
 
 function getTakenRefusal(name: string, entries: Readonly<Record<string, unknown>>): string | undefined {
   return Object.hasOwn(entries, name) ? "is already registered" : undefined;
+}
+
+function isOwnAttribute(behaviorName: string, attribute: unknown): boolean {
+  return (
+    typeof attribute === "string" &&
+    (attribute === `data-${behaviorName}` || attribute.startsWith(`data-${behaviorName}-`))
+  );
 }
 
 function isBound(value: unknown): boolean {
