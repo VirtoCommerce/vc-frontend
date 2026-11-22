@@ -11,6 +11,7 @@ host behaviour, or something the host must know before the plugin loads.
 | Menus (header, account) | `plugin.config.ts` `menu`                                                                       | yes                            |
 | Places in host pages    | `useExtensionRegistry().register()` / `registerContribution()`                                  | yes, when declared as a slot   |
 | Host-wide registries    | `registerLocaleLoader()`, `registerCacheTypePolicies()`, `registerProductConfigurationSource()` | no                             |
+| Custom section kit      | `registerCustomSectionTag()`, `registerCustomSectionBehavior()` in `init()`                     | no                             |
 
 The places in host pages are the extension registry's categories: the header and menus, product card and page,
 the product action buttons, the payment steps, order details, the shared list. The full list is

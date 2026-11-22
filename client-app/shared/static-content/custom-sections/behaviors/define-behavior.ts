@@ -3,13 +3,11 @@ import { useReducedMotion } from "./reduced-motion";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 
+/** The element mounts afresh when its value, one of its options or the motion preference changes. */
 export interface IBehaviorContext {
-  /** The attribute's value, bindings resolved; follows the settings. */
-  value: Readonly<ShallowRef<string>>;
-  /**
-   * With `prefers-reduced-motion: reduce` a behavior shows its end state at once. The element mounts afresh when
-   * the preference or one of the behavior's options changes, so a behavior reads both once.
-   */
+  /** The attribute's value, bindings resolved. */
+  value: string;
+  /** With `prefers-reduced-motion: reduce` a behavior shows its end state at once. */
   isReducedMotion: boolean;
   /** Counts the element's updates: its children may have changed. */
   updates: Readonly<ShallowRef<number>>;
@@ -17,7 +15,6 @@ export interface IBehaviorContext {
 
 interface IBehaviorState {
   scope: EffectScope;
-  value: ShallowRef<string>;
   updates: ShallowRef<number>;
 }
 
@@ -29,26 +26,21 @@ export function defineBehavior(
 
   return {
     mounted(element, binding) {
-      const state: IBehaviorState = {
-        scope: effectScope(true),
-        value: shallowRef(binding.value ?? ""),
-        updates: shallowRef(0),
-      };
+      const state: IBehaviorState = { scope: effectScope(true), updates: shallowRef(0) };
 
       states.set(element, state);
       state.scope.run(() =>
         setup(element, {
-          value: state.value,
+          value: binding.value ?? "",
           isReducedMotion: useReducedMotion().value === "reduce",
           updates: state.updates,
         }),
       );
     },
-    updated(element, binding) {
+    updated(element) {
       const state = states.get(element);
 
       if (state) {
-        state.value.value = binding.value ?? "";
         state.updates.value++;
       }
     },

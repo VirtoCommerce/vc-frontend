@@ -1,5 +1,5 @@
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
-import { computed, shallowRef, watchEffect } from "vue";
+import { shallowRef, watchEffect } from "vue";
 import { globals } from "@/core/globals";
 import { toFiniteNumber } from "../numbers";
 import { defineBehavior } from "./define-behavior";
@@ -10,9 +10,9 @@ const DEFAULT_DURATION = 1500;
 export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => {
   const decimals = Math.round(toFiniteNumber(element.getAttribute("data-count-up-decimals")) ?? 0);
   const duration = toFiniteNumber(element.getAttribute("data-count-up-duration")) ?? DEFAULT_DURATION;
-  const target = computed(() => toFiniteNumber(value.value) ?? Number.NaN);
+  const target = toFiniteNumber(value) ?? Number.NaN;
   const hasShown = shallowRef(isReducedMotion);
-  const shown = useTransition(() => (hasShown.value && Number.isFinite(target.value) ? target.value : 0), {
+  const shown = useTransition(() => (hasShown.value && Number.isFinite(target) ? target : 0), {
     duration,
     transition: TransitionPresets.easeOutCubic,
     disabled: isReducedMotion,
@@ -27,10 +27,10 @@ export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => 
 
   // A value that is no number shows as it is.
   watchEffect(() => {
-    const isNumber = Number.isFinite(target.value);
+    const isNumber = Number.isFinite(target);
 
-    steps.textContent = isNumber ? formatNumber(shown.value, decimals) : value.value;
-    result.textContent = isNumber ? formatNumber(target.value, decimals) : value.value;
+    steps.textContent = isNumber ? formatNumber(shown.value, decimals) : value;
+    result.textContent = isNumber ? formatNumber(target, decimals) : value;
   });
 
   if (!isReducedMotion) {

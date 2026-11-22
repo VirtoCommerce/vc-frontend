@@ -5,7 +5,8 @@ export type CustomSectionValueType = string | number | boolean;
 
 /**
  * The directive a behavior's attribute switches on; its value is the attribute's, bindings resolved. It loads
- * lazily, after its element may already be in the page, so it has the hooks from `mounted` on.
+ * lazily, after its element may already be in the page, so it has the hooks from `mounted` on. The element mounts
+ * afresh when the value, an option or the visitor's motion preference changes, so `mounted` reads them all.
  */
 export type CustomSectionDirectiveType = Pick<
   ObjectDirective<HTMLElement, string | undefined>,
@@ -55,7 +56,10 @@ export interface ICustomSectionTag {
   hasSideEffects?: boolean;
 }
 
-/** A behavior a custom section template switches on with the attribute `data-{name}`. */
+/**
+ * A behavior a custom section template switches on with the attribute `data-{name}`. Under
+ * `prefers-reduced-motion: reduce` it shows its end state at once.
+ */
 export interface ICustomSectionBehavior {
   /** Loads the directive, the first time a template uses the behavior. */
   directive: () => Promise<CustomSectionDirectiveType>;

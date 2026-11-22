@@ -31,7 +31,7 @@ export const vCopy = defineBehavior((element, { value }) => {
   const notifications = useNotifications();
 
   async function copyText(): Promise<void> {
-    if (!(await writeToClipboard(value.value))) {
+    if (!(await writeToClipboard(value))) {
       return;
     }
 

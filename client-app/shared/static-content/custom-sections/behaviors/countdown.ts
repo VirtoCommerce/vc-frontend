@@ -24,8 +24,9 @@ export const vCountdown = defineBehavior((element, { value }) => {
   }
   element.setAttribute("aria-live", "off");
 
+  const end = Date.parse(value);
+
   watchEffect(() => {
-    const end = Date.parse(value.value);
     const timeLeft = Number.isNaN(end) ? 0 : Math.max(0, end - now.value.getTime());
 
     element.toggleAttribute("data-ended", !Number.isNaN(end) && timeLeft === 0);

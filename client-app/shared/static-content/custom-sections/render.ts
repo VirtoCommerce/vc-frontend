@@ -188,8 +188,8 @@ function renderShown(
   });
   const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
 
-  // Vue pairs an element's directives by position, and a behavior reads its options and the motion preference
-  // once: a setting that changes any of them mounts the element afresh.
+  // Vue pairs an element's directives by position, and a behavior reads its value, its options and the motion
+  // preference once: a change to any of them mounts the element afresh.
   const behaviorValues = kept.filter(({ name }) => fields.has(name)).map(({ name, value }) => [name, value]);
   const behaviorKey = applied.length
     ? { key: JSON.stringify([props.key ?? null, position, scope.isReducedMotion, behaviorValues]) }

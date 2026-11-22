@@ -75,7 +75,8 @@ export function registerCustomSectionTag(name: string, tag: ICustomSectionTag): 
  * `data-{name}-{option}`, its value and options each a field the server reads. No attribute of it may be another
  * behavior's, and `data-each`, `data-if`, `data-html`, `data-sb-*` and `data-pb-*` are taken. The storefront's own
  * behaviors are reserved; the first registration of a name wins. A behavior that breaks a rule is ignored with a
- * warning.
+ * warning. Under reduced motion a behavior shows its end state at once; its element mounts afresh when the value,
+ * an option or the motion preference changes.
  */
 export function registerCustomSectionBehavior(name: string, behavior: ICustomSectionBehavior): void {
   const registry = useKitRegistry();
