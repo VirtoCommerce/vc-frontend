@@ -49,9 +49,12 @@ describe("SbProducts", () => {
   it.each([
     { view: "carousel", hasGutter: true },
     { view: "grid", hasGutter: false },
-  ])("keeps a gutter for the carousel's arrows in $view view: $hasGutter", ({ view, hasGutter }) => {
-    expect(mountProducts({ view }).classes("sb-products--carousel")).toBe(hasGutter);
-  });
+  ])(
+    "marks the carousel view, whose styles keep a gutter for its arrows, in $view view: $hasGutter",
+    ({ view, hasGutter }) => {
+      expect(mountProducts({ view }).classes("sb-products--carousel")).toBe(hasGutter);
+    },
+  );
 
   it("sizes the carousel by the element it stands in, columns at most", () => {
     const wrapper = mountProducts({ view: "carousel", columns: 2 });

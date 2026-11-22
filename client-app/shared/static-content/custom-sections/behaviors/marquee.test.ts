@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { vMarquee } from "./marquee";
@@ -32,6 +32,14 @@ function mountMarquee(direction?: "rtl") {
   );
 }
 
+/** Elements the directive was mounted on by hand, unmounted after each test even when it fails. */
+const directElements = new Set<HTMLElement>();
+
+function mountDirectly(element: HTMLElement): void {
+  directElements.add(element);
+  vMarquee.mounted?.(element, { value: "" } as never, {} as never, null);
+}
+
 function stubLayout(element: HTMLElement, animation: object): void {
   const [first, copy] = [...element.children] as HTMLElement[];
   [first, copy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
@@ -40,6 +48,8 @@ function stubLayout(element: HTMLElement, animation: object): void {
   Object.assign(element, { getAnimations: () => [animation] });
 }
 
+enableAutoUnmount(afterEach);
+
 describe("vMarquee", () => {
   beforeEach(() => {
     mocks.motion = "no-preference";
@@ -47,6 +57,8 @@ describe("vMarquee", () => {
   });
 
   afterEach(() => {
+    directElements.forEach((element) => vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null));
+    directElements.clear();
     vi.unstubAllGlobals();
   });
 
@@ -66,11 +78,10 @@ describe("vMarquee", () => {
     host.append(element);
     document.body.append(host);
 
-    vMarquee.mounted?.(element, { value: "" } as never, {} as never, null);
+    mountDirectly(element);
 
     expect(element.style.getPropertyValue("--marquee-width")).toBe("120px");
     expect(element.style.getPropertyValue("--marquee-shift")).toBe(shift);
-    vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
   });
 
   it("measures from the first item that has a box, as when the section's CSS hides the first", () => {
@@ -85,10 +96,9 @@ describe("vMarquee", () => {
     Object.defineProperty(shown, "offsetLeft", { value: 10 });
     Object.defineProperty(shownCopy, "offsetLeft", { value: 130 });
 
-    vMarquee.mounted?.(element, { value: "" } as never, {} as never, null);
+    mountDirectly(element);
 
     expect(element.style.getPropertyValue("--marquee-width")).toBe("120px");
-    vMarquee.unmounted?.(element, { value: "" } as never, {} as never, null);
   });
 
   it("shifts the other way when a setting turns the direction, without a remount", async () => {
@@ -110,7 +120,6 @@ describe("vMarquee", () => {
     await nextTick();
 
     expect(element.style.getPropertyValue("--marquee-shift")).toBe("120px");
-    wrapper.unmount();
   });
 
   it("pauses while the pointer is over it or the focus inside, and resumes only what it paused", async () => {
@@ -135,7 +144,6 @@ describe("vMarquee", () => {
     expect(running.play).toHaveBeenCalledOnce();
     expect(finished.pause).not.toHaveBeenCalled();
     expect(finished.play).not.toHaveBeenCalled();
-    wrapper.unmount();
   });
 
   it("measures again when an item of the track resizes, an item added later included, with one observer", async () => {
@@ -189,7 +197,6 @@ describe("vMarquee", () => {
     connected[0].callback();
 
     expect((element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("180px");
-    wrapper.unmount();
   });
 
   it.each([
@@ -207,7 +214,6 @@ describe("vMarquee", () => {
       );
 
       expect(wrapper.attributes("tabindex")).toBe(tabindex);
-      wrapper.unmount();
     },
   );
 
@@ -230,7 +236,6 @@ describe("vMarquee", () => {
     );
 
     expect(wrapper.attributes("tabindex")).toBe(tabindex);
-    wrapper.unmount();
   });
 
   it("gives the tab stop to an item that becomes focusable later, as one whose behavior loads after it", async () => {
@@ -249,7 +254,6 @@ describe("vMarquee", () => {
 
     item.removeAttribute("tabindex");
     await vi.waitFor(() => expect(wrapper.attributes("tabindex")).toBe("0"));
-    wrapper.unmount();
   });
 
   it("stands still with reduced motion", () => {
@@ -260,6 +264,5 @@ describe("vMarquee", () => {
 
     expect(element.style.getPropertyValue("--marquee-shift")).toBe("0px");
     expect(element.style.getPropertyValue("--marquee-width")).toBe("0px");
-    wrapper.unmount();
   });
 });

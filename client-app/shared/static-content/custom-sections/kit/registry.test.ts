@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { Logger } from "@/core/utilities";
 import {
@@ -34,6 +34,10 @@ describe("the kit registry", () => {
     vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
     Object.keys(getCustomSectionTags()).forEach(unregisterCustomSectionTag);
     Object.keys(getCustomSectionBehaviors()).forEach(unregisterCustomSectionBehavior);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("takes a tag named vc-* and keeps the first registration of a name", () => {
