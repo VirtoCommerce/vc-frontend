@@ -19,6 +19,20 @@ describe("sanitizeRichText", () => {
     expect(sanitizeRichText(html, { ...SCOPE, type: "custom-y" })).not.toBe(sanitizeRichText(html, SCOPE));
   });
 
+  it("keeps the 64 values read last, a value read again counting as read last", () => {
+    const first = sanitizeRichText("<p>First</p>", SCOPE);
+    const second = sanitizeRichText("<p>Second</p>", SCOPE);
+
+    for (let index = 0; index < 62; index++) {
+      sanitizeRichText(`<p>Filler ${index}</p>`, SCOPE);
+    }
+    sanitizeRichText("<p>First</p>", SCOPE);
+    sanitizeRichText("<p>One more</p>", SCOPE);
+
+    expect(sanitizeRichText("<p>First</p>", SCOPE)).toBe(first);
+    expect(sanitizeRichText("<p>Second</p>", SCOPE)).not.toBe(second);
+  });
+
   it("finds a value it read before by the string itself, never by a key built from it", () => {
     const html = `<p data-note="${"x".repeat(1_000_000)}">Hi</p>`;
     sanitizeRichText(html, SCOPE);

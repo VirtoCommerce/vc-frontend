@@ -17,4 +17,15 @@ describe("compileTemplate", () => {
 
     expect(compileTemplate(used, KIT)).toBe(first);
   });
+
+  it("drops the template used least recently past 32, so it compiles afresh", () => {
+    const dropped = "<section>Dropped</section>";
+    const first = compileTemplate(dropped, KIT);
+
+    for (let index = 0; index < 32; index++) {
+      compileTemplate(`<section>Filler ${index}</section>`, KIT);
+    }
+
+    expect(compileTemplate(dropped, KIT)).not.toBe(first);
+  });
 });
