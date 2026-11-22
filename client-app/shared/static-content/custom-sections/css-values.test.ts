@@ -15,6 +15,7 @@ describe("isAllowedValue", () => {
     ["linear-gradient(var(--color-primary-500), transparent)", true],
     [`image-set("${base}/a.png" 1x)`, true],
     ["image-set(var(--x) 1x)", false],
+    ["-webkit-cross-fade(var(--x), none, 50%)", false],
     [`url(${base}/a.png)`, true],
     ["url(https://example.com/a.png)", false],
     ['image-set("/a.png" 1x)', false],

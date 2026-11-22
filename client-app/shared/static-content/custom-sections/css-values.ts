@@ -14,7 +14,15 @@ type CssTokenType =
   | { type: "open" | "close" };
 
 /** Functions whose argument names what the browser loads. */
-const IMAGE_FUNCTIONS = new Set(["url", "image-set", "-webkit-image-set", "image", "cross-fade", "src"]);
+const IMAGE_FUNCTIONS = new Set([
+  "url",
+  "image-set",
+  "-webkit-image-set",
+  "image",
+  "cross-fade",
+  "-webkit-cross-fade",
+  "src",
+]);
 /** IE's script in CSS, and Firefox's live picture of any element of the page. */
 const REFUSED_FUNCTIONS = new Set(["expression", "element", "-moz-element"]);
 /** Whatever would decide an image's address only when the page renders. */
@@ -45,7 +53,7 @@ export function decodeCssEscapes(text: string): string {
 }
 
 /** An image the section may show: the asset library's, or an inline `data:image/`. */
-export function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined): boolean {
+function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined): boolean {
   const trimmed = trimAsciiWhitespace(url);
   // An image needs no fragment; `data:image/svg+xml,…#id` may load as a document whose images reach any host.
   return !!toAssetUrl(trimmed, assetsBaseUrl) || (DATA_IMAGE_REGEX.test(trimmed) && !trimmed.includes("#"));
