@@ -11,6 +11,7 @@ import { isBindingPath, parseBindings } from "./bindings";
 import { getBehaviorAttributeNames } from "./kit/registry";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
+import type { UponSanitizeAttributeHookEvent } from "dompurify";
 
 export interface ICompiledText {
   text: TemplatePartType[];
@@ -106,23 +107,38 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
 
   purifier ??= DOMPurify();
 
-  return purifier.sanitize(template, {
-    ALLOWED_TAGS: SECTION_ELEMENTS,
-    ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
-    ALLOW_DATA_ATTR: false,
-    ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
-    // Only names matter here: the renderer checks each value after its bindings resolve.
-    ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
-    CUSTOM_ELEMENT_HANDLING: {
-      tagNameCheck: (tag: string) => Object.hasOwn(kit.tags, tag),
-      attributeNameCheck: (name: string, tag?: string) =>
-        !!tag && Object.hasOwn(kit.tags, tag) && Object.hasOwn(kit.tags[tag].attributes, name),
-      allowCustomizedBuiltInElements: false,
-    },
-    // The fragment is only read to build the section, never put in the page, so names cannot clobber it.
-    SANITIZE_DOM: false,
-    RETURN_DOM_FRAGMENT: true,
-  });
+  // DOMPurify drops `for` off anything but a label; a kit tag becomes a component, never this element in the page.
+  function keepDeclaredFor(node: Element, event: UponSanitizeAttributeHookEvent): void {
+    const tag = Object.hasOwn(kit.tags, node.localName) ? kit.tags[node.localName] : undefined;
+
+    if (event.attrName === "for" && tag && Object.hasOwn(tag.attributes, "for")) {
+      event.forceKeepAttr = true;
+    }
+  }
+
+  purifier.addHook("uponSanitizeAttribute", keepDeclaredFor);
+
+  try {
+    return purifier.sanitize(template, {
+      ALLOWED_TAGS: SECTION_ELEMENTS,
+      ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
+      ALLOW_DATA_ATTR: false,
+      ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
+      // Only names matter here: the renderer checks each value after its bindings resolve.
+      ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
+      CUSTOM_ELEMENT_HANDLING: {
+        tagNameCheck: (tag: string) => Object.hasOwn(kit.tags, tag),
+        attributeNameCheck: (name: string, tag?: string) =>
+          !!tag && Object.hasOwn(kit.tags, tag) && Object.hasOwn(kit.tags[tag].attributes, name),
+        allowCustomizedBuiltInElements: false,
+      },
+      // The fragment is only read to build the section, never put in the page, so names cannot clobber it.
+      SANITIZE_DOM: false,
+      RETURN_DOM_FRAGMENT: true,
+    });
+  } finally {
+    purifier.removeHook("uponSanitizeAttribute", keepDeclaredFor);
+  }
 }
 
 /** Changes when a tag, a behavior or what the compiler reads of them changes. */
@@ -221,7 +237,7 @@ function compileAttribute(compiled: ICompiledElement, name: string, value: strin
 }
 
 function compileOtherAttribute(compiled: ICompiledElement, name: string, value: string, context: ICompileContext) {
-  if (!isAttributeOfElement(name, compiled.tag)) {
+  if (!compiled.isKitTag && !isAttributeOfElement(name, compiled.tag)) {
     return;
   }
 

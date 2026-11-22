@@ -630,6 +630,7 @@ describe("SbSection", () => {
 
     afterEach(() => {
       unregisterCustomSectionTag("vc-rating");
+      unregisterCustomSectionTag("vc-video");
       unregisterCustomSectionBehavior("glow");
     });
 
@@ -675,6 +676,28 @@ describe("SbSection", () => {
       );
 
       await vi.waitFor(() => expect(mounted).toHaveBeenCalledWith("gold", "strong"));
+    });
+
+    it("gives a module's tag every attribute it declares, those some native elements alone take included", () => {
+      const Video = defineComponent({
+        name: "VideoStub",
+        props: { autoplay: Boolean, open: Boolean, type: String, for: String },
+        setup: () => () => h("div"),
+      });
+      registerCustomSectionTag("vc-video", {
+        component: Video,
+        description: "A video.",
+        attributes: {
+          autoplay: { type: "boolean" },
+          open: { type: "boolean" },
+          type: { type: "string" },
+          for: { type: "string" },
+        },
+      });
+
+      const wrapper = mountSection('<section><vc-video autoplay open type="hero" for="intro"></vc-video></section>');
+
+      expect(wrapper.findComponent(Video).props()).toEqual({ autoplay: true, open: true, type: "hero", for: "intro" });
     });
 
     it("leaves out a tag nobody registered", () => {
