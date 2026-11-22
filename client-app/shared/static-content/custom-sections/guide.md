@@ -5,9 +5,10 @@ Anything that needs logic comes from the kit: a kit tag or a behavior.
 
 When a section is saved or published, the server refuses one that breaks the rules below: an element, attribute or
 class they refuse, a selector that reaches outside the section, a keyframes name, an image outside the asset
-library, an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`. A literal color, a
-physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text written into the template
-get only a warning. The storefront leaves out whatever still reaches a page against them.
+library, an element with more than 64 attributes, a kit tag with `hasSideEffects` inside an element whose behavior
+repeats its children, an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`. A literal
+color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text written into the
+template get only a warning. The storefront leaves out whatever still reaches a page against them.
 
 - One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
   it in a box of its own: nothing the section draws leaves that box.

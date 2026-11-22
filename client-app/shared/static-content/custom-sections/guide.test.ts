@@ -44,7 +44,11 @@ describe("the section authors' guide", () => {
     const intro = guide.split("\n## ")[0].replaceAll(/\s+/g, " ");
 
     expect(intro).toContain("When a section is saved or published, the server refuses one that breaks the rules below");
-    expect(intro).toContain("an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`");
+    expect(intro).toContain(
+      `an element with more than ${MAX_TEMPLATE_ATTRIBUTES} attributes, a kit tag with \`hasSideEffects\` inside an ` +
+        "element whose behavior repeats its children, an `h1`, an image without `alt`, a link with nothing to read, " +
+        "or `outline: none`",
+    );
     expect(intro).toContain(
       "A literal color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text " +
         "written into the template get only a warning.",
@@ -52,7 +56,7 @@ describe("the section authors' guide", () => {
     expect(intro).toContain("The storefront leaves out whatever still reaches a page against them.");
   });
 
-  it("lists the four selector rules the filter holds", () => {
+  it("lists the five selector rules the filter holds", () => {
     const rules = guide.replaceAll(/\s+/g, " ");
 
     expect(rules).toContain("`:scope` or `&` only as the first thing of a selector, never inside a pseudo-class");
