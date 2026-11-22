@@ -101,6 +101,8 @@ export {
   unregisterCustomSectionBehavior,
   unregisterCustomSectionTag,
 } from "@/shared/static-content/custom-sections/kit/registry";
+export { defineBehavior } from "@/shared/static-content/custom-sections/behaviors/define-behavior";
+export type { IBehaviorContext } from "@/shared/static-content/custom-sections/behaviors/define-behavior";
 export type {
   CustomSectionDirectiveType,
   CustomSectionValueType,

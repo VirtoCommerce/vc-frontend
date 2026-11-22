@@ -19,7 +19,11 @@ interface IBehaviorState {
   updates: ShallowRef<number>;
 }
 
-/** Runs the setup in an effect scope of its own per element, so what it starts stops when the element goes. */
+/**
+ * The directive of a behavior, as the built-ins make theirs. `setup` runs from `mounted` inside an effect scope of
+ * the element's own, which stops on unmount: a watcher, or a listener a VueUse composable adds, ends with the
+ * element. The context reads the value and the visitor's motion preference.
+ */
 export function defineBehavior(
   setup: (element: HTMLElement, context: IBehaviorContext) => void,
 ): CustomSectionDirectiveType {

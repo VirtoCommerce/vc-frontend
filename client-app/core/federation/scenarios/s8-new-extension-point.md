@@ -20,6 +20,8 @@ data contribution: a count, shown as a badge on a link the host draws.
 
 A custom section kit name is shared by every plugin, so the first registration of a name wins, unlike rule 2 below:
 call `unregisterCustomSectionTag()` or `unregisterCustomSectionBehavior()` first to replace it.
+A behavior's directive comes from `defineBehavior`, as the built-ins' do: its setup runs in the element's own effect
+scope, which stops on unmount, and reads the visitor's motion preference.
 
 ## Pick the kind of change
 
