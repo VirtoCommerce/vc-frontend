@@ -41,11 +41,11 @@ const BUILT_IN: PageBuilderSchemaType = {
 };
 
 describe("toCustomSectionSchemas", () => {
-  it("gives each custom type its name, settings, templates, limit and icon, marked custom", () => {
-    expect(toCustomSectionSchemas({ "custom-stats": STATS }, () => "Stats")).toEqual({
+  it("gives each custom type its name as the type stores it, settings, templates, limit and icon, marked custom", () => {
+    expect(toCustomSectionSchemas({ "custom-stats": STATS })).toEqual({
       "custom-stats": {
         type: "custom-stats",
-        name: "Stats",
+        name: { "en-US": "Stats", "de-DE": "Statistik" },
         settings: STATS.schema.settings,
         targetTemplates: ["page"],
         limit: 2,
@@ -58,13 +58,17 @@ describe("toCustomSectionSchemas", () => {
   it("leaves out a type with a name the storefront refuses or without settings", () => {
     const broken = { ...STATS, schema: {} } as unknown as ICustomSectionDefinition;
 
-    expect(toCustomSectionSchemas({ stats: STATS, "custom-broken": broken }, () => "Stats")).toEqual({});
+    expect(toCustomSectionSchemas({ stats: STATS, "custom-broken": broken })).toEqual({});
   });
 
-  it("names a type by its type when its name does not resolve", () => {
-    expect(toCustomSectionSchemas({ "custom-stats": STATS }, () => undefined)["custom-stats"].name).toBe(
-      "custom-stats",
-    );
+  it.each<[string, unknown]>([
+    ["no name", undefined],
+    ["an empty name", ""],
+    ["a name that is not text", { "en-US": 1 }],
+  ])("names a type by its type when it has %s", (_, name) => {
+    const definition = { ...STATS, name } as ICustomSectionDefinition;
+
+    expect(toCustomSectionSchemas({ "custom-stats": definition })["custom-stats"].name).toBe("custom-stats");
   });
 });
 
@@ -96,7 +100,7 @@ describe("watchCustomSectionCatalog", () => {
     await nextTick();
     expect(apply).toHaveBeenCalledTimes(2);
     expect(Object.keys(apply.mock.lastCall?.[0].sections ?? {})).toEqual(["custom-stats", "text-block"]);
-    expect(apply.mock.lastCall?.[0].sections["custom-stats"].name).toBe("Statistik");
+    expect(apply.mock.lastCall?.[0].sections["custom-stats"].name).toEqual(STATS.name);
 
     setDraft({ customSections: { "custom-stats": STATS }, brand: { logoUrl: "/logo.svg" } });
     await nextTick();

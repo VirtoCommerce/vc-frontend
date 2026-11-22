@@ -1,5 +1,6 @@
 import { computed, watch } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { isRecord } from "@/core/utilities";
 import { registerBuiltInKit } from "@/shared/static-content/custom-sections/kit";
 import { getKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import { isCustomSectionType } from "@/shared/static-content/custom-sections/type-name";
@@ -8,22 +9,17 @@ import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/
 import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 
-/** The custom types as section schemas, `custom: true`, each named in the page's language. */
-export function toCustomSectionSchemas(
-  types: Record<string, ICustomSectionDefinition>,
-  localize: (name: ICustomSectionDefinition["name"]) => unknown,
-): PageBuilderSchemaItemType {
+/** The custom types as section schemas, `custom: true`, each named as the type stores it: a text, or one per language. */
+export function toCustomSectionSchemas(types: Record<string, ICustomSectionDefinition>): PageBuilderSchemaItemType {
   return Object.fromEntries(
     Object.entries(types)
       .filter(([type, definition]) => isCustomSectionType(type) && Array.isArray(definition?.schema?.settings))
       .map(([type, { name, schema }]): [string, PageBuilderDescriptorType] => {
-        const shownName = localize(name);
-
         return [
           type,
           {
             type,
-            name: typeof shownName === "string" && shownName ? shownName : type,
+            name: isTypeName(name) ? name : type,
             settings: schema.settings,
             targetTemplates: schema.targetTemplates,
             limit: schema.limit,
@@ -40,11 +36,11 @@ export function watchCustomSectionCatalog(
   schemas: PageBuilderSchemaType,
   apply: (schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void,
 ): void {
-  const { theme, localizeThemeDraft } = useThemeSnapshot();
+  const { theme } = useThemeSnapshot();
 
   registerBuiltInKit();
 
-  const customSchemas = computed(() => toCustomSectionSchemas(theme.value?.customSections ?? {}, localizeThemeDraft));
+  const customSchemas = computed(() => toCustomSectionSchemas(theme.value?.customSections ?? {}));
   const kit = computed(() => getKitCatalog());
 
   watch(
@@ -52,4 +48,10 @@ export function watchCustomSectionCatalog(
     () => apply({ ...schemas, sections: { ...customSchemas.value, ...schemas.sections } }, kit.value),
     { immediate: true },
   );
+}
+
+function isTypeName(name: unknown): name is ICustomSectionDefinition["name"] {
+  return typeof name === "string"
+    ? name !== ""
+    : isRecord(name) && Object.keys(name).length > 0 && Object.values(name).every((text) => typeof text === "string");
 }

@@ -5,7 +5,8 @@ import type { Component } from "vue";
 type ComponentType = Component | { __name: string };
 
 export type PageBuilderDescriptorType = {
-  name?: string;
+  /** A theme's custom section type may hold it per language. */
+  name?: string | Record<string, string>;
   type: string;
   component?: ComponentType;
   /** A theme's custom section type declares its fields as the snapshot holds them. */
