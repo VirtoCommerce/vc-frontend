@@ -1,9 +1,9 @@
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
-import { isRecord, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
 import { BOOLEAN_ATTRIBUTES, toSafeAttributeValue } from "./allowlist";
 import { getBehaviorDirective, hasBehaviorFailed, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
-import { isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
+import { getListRows, isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
 import {
   getBehaviorAttributeNames,
   getCustomSectionBehaviors,
@@ -12,8 +12,9 @@ import {
   toFieldValue,
   toTagProps,
 } from "./kit";
-import { RENDER_BUDGET } from "./limits";
-import { sanitizeRichText } from "./rich-text";
+import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { fitsRenderLimits } from "./render-limits";
+import { getRichText } from "./rich-text";
 import { getSettingVariables } from "./setting-variables";
 import type { IBindingScope } from "./bindings";
 import type { CompiledNodeType, ICompiledElement, ICompiledTemplate } from "./template";
@@ -65,12 +66,12 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
     isReducedMotion: !!options.isReducedMotion,
   };
 
-  // Rows multiply what they hold: a short template with a long list could otherwise build millions of nodes.
-  if (countRenderCost(template.root, scope) > RENDER_BUDGET) {
+  if (!fitsRenderLimits(template.root, scope)) {
     if (!overBudgetTemplates.has(template)) {
       overBudgetTemplates.add(template);
       Logger.warn(
-        `[custom-sections] The ${options.type} section would render more than ${RENDER_BUDGET} elements and behaviors; it renders nothing.`,
+        `[custom-sections] The ${options.type} section would render more than ${RENDER_BUDGET} elements and ` +
+          `behaviors or ${MAX_RENDERED_TEXT} characters of settings; it renders nothing.`,
       );
     }
     return null;
@@ -123,7 +124,7 @@ function renderElement(
   }
 
   const field = scope.fields.get(listId);
-  const rows = getRows(listId, scope);
+  const rows = getListRows(listId, scope);
   const fields = toFieldMap(field?.element);
   const keys = toRowKeys(rows);
 
@@ -140,23 +141,6 @@ function renderElement(
       ),
     ),
   ];
-}
-
-function getRows(listId: string, scope: IBindingScope): Record<string, unknown>[] {
-  const value = scope.settings[listId];
-  return scope.fields.get(listId)?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
-}
-
-/** Counts as written, whatever `data-if` hides: a kit tag at its `cost`, one per element and per behavior, times its rows. */
-function countRenderCost(node: ICompiledElement, scope: IBindingScope): number {
-  const behaviors = getCustomSectionBehaviors();
-  const tags = getCustomSectionTags();
-  const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
-  const children = node.children.reduce((sum, child) => sum + ("text" in child ? 0 : countRenderCost(child, scope)), 0);
-  const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? 1) : 1;
-  const cost = own + node.behaviors.length + children * (isRepeated ? 2 : 1);
-
-  return node.each ? cost * getRows(node.each, scope).length : cost;
 }
 
 /** By the rows' own ids when every row has a different one, so a reordered row keeps what its element holds. */
@@ -337,13 +321,7 @@ function renderAttributes(
   }
 
   if (node.html) {
-    const binding = resolveBinding(node.html, scope);
-    const value: unknown = isRecord(binding?.value) ? binding.value.html : binding?.value;
-
-    return {
-      ...attributes,
-      innerHTML: binding?.field.type === "text" && typeof value === "string" ? sanitizeRichText(value, scope) : "",
-    };
+    return { ...attributes, innerHTML: getRichText(node.html, scope)?.html ?? "" };
   }
 
   return attributes;

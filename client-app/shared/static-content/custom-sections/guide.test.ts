@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
-import { RENDER_BUDGET } from "./limits";
+import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 
@@ -32,6 +32,7 @@ describe("the section authors' guide", () => {
   it("tells the render budget, the children of a repeating behavior counted twice", () => {
     expect(guide).toContain(`at most ${RENDER_BUDGET.toLocaleString("en-US")} elements and behaviors`);
     expect(guide).toMatch(/children of a repeating behavior \(`data-marquee`\) count twice/);
+    expect(guide).toContain(`at most ${MAX_RENDERED_TEXT.toLocaleString("en-US")} characters of settings`);
   });
 
   it("tells what the server refuses and what it only warns about", () => {

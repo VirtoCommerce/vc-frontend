@@ -280,6 +280,44 @@ describe("SbSection", () => {
     });
 
     it.each([
+      { rows: 1200, isRendered: true },
+      { rows: 1250, isRendered: false },
+    ])("counts the elements of rich text in every row: $rows rows rendered $isRendered", ({ rows, isRendered }) => {
+      vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+      const wrapper = mountSection(
+        '<section><div data-each="settings.cards" data-html="settings.body"></div></section>',
+        {
+          cards: toCards(rows),
+          body: "<b>a</b><i>b</i><u>c</u>",
+        },
+      );
+
+      expect(wrapper.find("section").exists()).toBe(isRendered);
+      vi.restoreAllMocks();
+    });
+
+    it.each([
+      { rows: 2600, isRendered: true },
+      { rows: 2700, isRendered: false },
+    ])(
+      "caps the text bound into every row: $rows rows of 100 characters rendered $isRendered",
+      ({ rows, isRendered }) => {
+        const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+        const wrapper = mountSection(
+          '<section><p data-each="settings.cards" title="x">{{ settings.title }}</p></section>',
+          {
+            cards: toCards(rows),
+            title: "x".repeat(100),
+          },
+        );
+
+        expect(wrapper.find("section").exists()).toBe(isRendered);
+        expect(warn.mock.calls.some(([message]) => String(message).includes(TYPE))).toBe(!isRendered);
+        vi.restoreAllMocks();
+      },
+    );
+
+    it.each([
       { count: 2, isRendered: true },
       { count: 3, isRendered: false },
     ])("counts each kit tag at its worst case: $count vc-products rendered $isRendered", ({ count, isRendered }) => {

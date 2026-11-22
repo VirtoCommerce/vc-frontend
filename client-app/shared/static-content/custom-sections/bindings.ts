@@ -88,6 +88,12 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
   return subField && isRecord(owner) ? { value: owner[subKey], field: subField, path: [key, subKey] } : undefined;
 }
 
+/** The rows of a `list` setting: its objects, in order. */
+export function getListRows(listId: string, scope: IBindingScope): Record<string, unknown>[] {
+  const value = scope.settings[listId];
+  return scope.fields.get(listId)?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
+}
+
 /** Inserted as text, never as HTML. */
 export function toBindingText(value: unknown): string {
   return typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? String(value) : "";
