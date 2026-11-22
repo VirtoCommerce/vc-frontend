@@ -1,4 +1,5 @@
 import { useEventListener, useResizeObserver } from "@vueuse/core";
+import { shallowRef, watch } from "vue";
 import { REPEATED_COPY_ATTRIBUTE } from "./constants";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
@@ -8,7 +9,7 @@ const PAUSED_ATTRIBUTE = "data-paused";
  * Writes `--marquee-width` (one run, gap included) and `--marquee-shift` (toward the inline start), 0 under reduced
  * motion; pauses on hover or focus within, setting `data-paused`.
  */
-export const vMarquee = defineBehavior((element, { isReducedMotion }) => {
+export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) => {
   if (isReducedMotion) {
     writeRun(element, 0);
     return;
@@ -45,8 +46,14 @@ export const vMarquee = defineBehavior((element, { isReducedMotion }) => {
     }
   }
 
+  // Its items too: a late image or a font swap resizes them inside a track whose own width is fixed.
+  const items = shallowRef([...element.children]);
+  watch(updates, () => {
+    items.value = [...element.children];
+  });
+
   measure();
-  useResizeObserver(element, measure);
+  useResizeObserver(() => [element, ...items.value], measure);
   useEventListener(element, "mouseenter", () => {
     isHovered = true;
     applyPause();

@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, withDirectives } from "vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { vMarquee } from "./marquee";
 
 const mocks = vi.hoisted(() => ({ motion: "no-preference" }));
@@ -43,6 +43,10 @@ describe("vMarquee", () => {
   beforeEach(() => {
     mocks.motion = "no-preference";
     document.body.innerHTML = "";
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it.each([
@@ -90,6 +94,53 @@ describe("vMarquee", () => {
     expect(running.play).toHaveBeenCalledOnce();
     expect(finished.pause).not.toHaveBeenCalled();
     expect(finished.play).not.toHaveBeenCalled();
+    wrapper.unmount();
+  });
+
+  it("measures again when an item of the track resizes, an item added later included, with one observer", async () => {
+    const observers: { targets: Element[]; isConnected: boolean }[] = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        targets: Element[] = [];
+        isConnected = true;
+
+        constructor() {
+          observers.push(this);
+        }
+
+        observe(target: Element): void {
+          this.targets.push(target);
+        }
+
+        disconnect(): void {
+          this.isConnected = false;
+        }
+      },
+    );
+    const items = ref(["A"]);
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          withDirectives(
+            h("div", { id: "marquee" }, [
+              ...items.value.map((item) => h("span", item)),
+              ...items.value.map((item) => h("span", { "data-sb-repeat": "" }, item)),
+            ]),
+            [[vMarquee, ""]],
+          ),
+      }),
+    );
+    const element = wrapper.element;
+    await nextTick();
+
+    items.value = ["A", "B"];
+    await nextTick();
+    await nextTick();
+    const connected = observers.filter(({ isConnected }) => isConnected);
+
+    expect(connected).toHaveLength(1);
+    expect(connected[0].targets).toEqual([element, ...element.children]);
     wrapper.unmount();
   });
 

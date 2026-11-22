@@ -11,11 +11,14 @@ export interface IBehaviorContext {
    * the preference or one of the behavior's options changes, so a behavior reads both once.
    */
   isReducedMotion: boolean;
+  /** Counts the element's updates: its children may have changed. */
+  updates: Readonly<ShallowRef<number>>;
 }
 
 interface IBehaviorState {
   scope: EffectScope;
   value: ShallowRef<string>;
+  updates: ShallowRef<number>;
 }
 
 /** Runs the setup in an effect scope of its own per element, so what it starts stops when the element goes. */
@@ -26,11 +29,19 @@ export function defineBehavior(
 
   return {
     mounted(element, binding) {
-      const state: IBehaviorState = { scope: effectScope(true), value: shallowRef(binding.value ?? "") };
+      const state: IBehaviorState = {
+        scope: effectScope(true),
+        value: shallowRef(binding.value ?? ""),
+        updates: shallowRef(0),
+      };
 
       states.set(element, state);
       state.scope.run(() =>
-        setup(element, { value: state.value, isReducedMotion: useReducedMotion().value === "reduce" }),
+        setup(element, {
+          value: state.value,
+          isReducedMotion: useReducedMotion().value === "reduce",
+          updates: state.updates,
+        }),
       );
     },
     updated(element, binding) {
@@ -38,6 +49,7 @@ export function defineBehavior(
 
       if (state) {
         state.value.value = binding.value ?? "";
+        state.updates.value++;
       }
     },
     unmounted(element) {
