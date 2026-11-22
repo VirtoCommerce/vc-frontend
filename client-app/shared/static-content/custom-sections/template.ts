@@ -59,8 +59,12 @@ let purifier: ReturnType<typeof DOMPurify> | undefined;
 export function compileTemplate(template: string, kit: IKit): ICompiledTemplate | undefined {
   const key = `${getKitSignature(kit)}\n${template}`;
 
+  // The least recently used goes first: a section still shown keeps its compiled template, so it does not remount.
   if (cache.has(key)) {
-    return cache.get(key);
+    const cached = cache.get(key);
+    cache.delete(key);
+    cache.set(key, cached);
+    return cached;
   }
 
   const compiled = compile(template, kit);
