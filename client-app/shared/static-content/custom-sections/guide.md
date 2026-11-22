@@ -1,25 +1,30 @@
 # Writing a custom section
 
 A custom section is an HTML template, its CSS and its settings. The storefront renders it from data: no script runs.
-Anything that needs logic comes from the kit: a tag (`kit.tags`) or a behavior (`kit.behaviors`). What the
-storefront does not allow, it leaves out: it holds the safety rules (code, links, images, the section's box, its
-size). On save and publish the server also refuses an `h1`, an image without `alt`, a link with nothing to read and
-`outline: none`; a literal color, a physical side, a skipped heading level and motion outside
-`prefers-reduced-motion` get only a warning.
+Anything that needs logic comes from the kit: a kit tag or a behavior.
+
+When a section is saved or published, the server refuses one that breaks the rules below: an element, attribute or
+class they refuse, a selector that reaches outside the section, a keyframes name, an image outside the asset
+library, an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`. A literal color, a
+physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text written into the template
+get only a warning. The storefront leaves out whatever still reaches a page against them.
 
 - One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
   it in a box of its own: nothing the section draws leaves that box.
 - Classes are the section's own: `{type}`, `{type}__part`, `{type}--modifier`. The storefront's utility classes are
   not available, and any other class is dropped.
 - CSS reaches only the section; `:scope` is the root. Keyframes are named `{type}__…`.
-- A selector that could look outside the section is dropped: `:scope` (or `&`) only at its start, no sibling in
-  `:has()` (`+`, `~`), no combinator inside `:is()`, `:where()` or `:not()`.
+- A selector may not look outside the section:
+  - `:scope` or `&` only as the first thing of a selector, never inside a pseudo-class;
+  - no `:has()` whose selector starts with `+` or `~`;
+  - no `:nth-child(… of …)` or `:nth-last-child(… of …)` on `:scope` or `&`;
+  - no combinator inside `:is()`, `:where()` or `:not()`, and no unknown functional pseudo-class.
 
 ## Layout: mobile first
 
 - Write the narrow layout first, then widen it with `@container sb-section (min-width: …)`. The container is the
-  place the section stands in: a full-width page or a narrow column. Take the widths from `kit.design.breakpoints`.
-- Keep content within `kit.design.containerMaxWidth` and center it, as the built-in sections do.
+  place the section stands in: a full-width page or a narrow column. Take the widths from the design's breakpoints.
+- Keep content within the design's content width and center it, as the built-in sections do.
 - Lay out with grid and flex and `gap`; let rows wrap (`repeat(auto-fill, minmax(min(100%, 16rem), 1fr))`).
 - No fixed widths or heights on anything that holds text.
 
@@ -34,11 +39,13 @@ The page may read right to left.
 
 ## Design tokens and colors
 
-- Sizes, type, corners and shadows come from `kit.design.tokens`, by variable name. A design may leave a token
-  unset, so write it with its fallback: `var(<token>, <fallback>)`. A shadow comes in parts
-  (`--vc-shadow-md-1`, `--vc-shadow-md-2`): list them all, separated by commas.
-- Colors come from the palette only: `var(--color-<family>-<shade>)` (`paletteTokens` in the catalog lists them,
-  `_` written as `-`), a `color-token` setting's `--setting-<id>`, `transparent` or `currentColor`. A literal color
+- Sizes, type, corners and shadows come from the design tokens, by variable name: the font family, size, weight
+  and line height (`--vc-font-size-*`, `--vc-font-weight-*`, `--vc-line-height-*`), the letter spacing
+  (`--vc-letter-spacing-*`), the heading role (`--vc-heading-*`), the corners (`--vc-radius-*`) and the shadows
+  (`--vc-shadow-*`). A design may leave a token unset, so write it with its fallback: `var(<token>, <fallback>)`. A
+  shadow comes in parts (`--vc-shadow-md-1`, `--vc-shadow-md-2`): list them all, separated by commas.
+- Colors come from the palette only: `var(--color-<family>-<shade>)` (the palette tokens list them, `_` written as
+  `-`), a `color-token` setting's `--setting-<id>`, `transparent` or `currentColor`. A literal color
   breaks the shop's presets and dark theme.
 - Outline text keeps its `color` and hides its fill with `-webkit-text-fill-color: transparent`, so a
   `-webkit-text-stroke` in `currentColor` draws in that color. A transparent `color` hides the stroke too.

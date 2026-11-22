@@ -37,13 +37,32 @@ describe("the section authors' guide", () => {
     expect(guide).toContain(`written with at most ${MAX_TEMPLATE_ATTRIBUTES} attributes`);
   });
 
-  it("tells what the server refuses and what it only warns about", () => {
+  it("tells what the server refuses at save, what it only warns about, and what the storefront leaves out", () => {
     const intro = guide.split("\n## ")[0].replaceAll(/\s+/g, " ");
 
+    expect(intro).toContain("When a section is saved or published, the server refuses one that breaks the rules below");
+    expect(intro).toContain("an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`");
     expect(intro).toContain(
-      "the server also refuses an `h1`, an image without `alt`, a link with nothing to read and `outline: none`",
+      "A literal color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text " +
+        "written into the template get only a warning.",
     );
-    expect(intro).toContain("a literal color, a physical side, a skipped heading level and motion");
+    expect(intro).toContain("The storefront leaves out whatever still reaches a page against them.");
+  });
+
+  it("lists the four selector rules the filter holds", () => {
+    const rules = guide.replaceAll(/\s+/g, " ");
+
+    expect(rules).toContain("`:scope` or `&` only as the first thing of a selector, never inside a pseudo-class");
+    expect(rules).toContain("no `:has()` whose selector starts with `+` or `~`");
+    expect(rules).toContain("no `:nth-child(… of …)` or `:nth-last-child(… of …)` on `:scope` or `&`");
+    expect(rules).toContain(
+      "no combinator inside `:is()`, `:where()` or `:not()`, and no unknown functional pseudo-class",
+    );
+  });
+
+  it("names the design facts and the palette without the catalog's key paths, which the agent does not see", () => {
+    expect(guide).not.toMatch(/kit\.(?:tags|behaviors|design)|paletteTokens/);
+    expect(guide).toContain("`--vc-font-weight-*`");
   });
 
   it("writes a counter's value as its text too, shown until the behavior loads", () => {
