@@ -16,7 +16,10 @@ interface IFilterContext {
   assetsBaseUrl: string | undefined;
 }
 
-type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
+interface IRuleOwner {
+  cssRules: CSSRuleList;
+  deleteRule(index: number): void;
+}
 
 const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", "CSSStartingStyleRule"];
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
@@ -61,7 +64,7 @@ export function filterSectionCss(type: string, css: string, assetsBaseUrl?: stri
  * Read in the scope it is put in, where a relative selector such as `> .card` is a rule; at the top level the
  * browser drops it. What a stray `}` lets out of the wrapper is not read.
  */
-function parseScoped(css: string): RuleOwnerType | undefined {
+function parseScoped(css: string): IRuleOwner | undefined {
   if (typeof CSSScopeRule === "undefined") {
     return parseStyleSheet(css);
   }
@@ -111,7 +114,7 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
 }
 
 /** Nested rules too: a style rule holds them with CSS nesting. */
-function filterRules(owner: Partial<RuleOwnerType>, context: IFilterContext, canHoldKeyframes: boolean): void {
+function filterRules(owner: Partial<IRuleOwner>, context: IFilterContext, canHoldKeyframes: boolean): void {
   if (!owner.cssRules || typeof owner.deleteRule !== "function") {
     return;
   }
@@ -150,7 +153,7 @@ function takeKeyframes(rule: CSSRule): string | undefined {
 }
 
 /** Keeps the rules `isKept` takes, looking into the condition rules it keeps. */
-function pruneRules(owner: Partial<RuleOwnerType>, isKept: (rule: CSSRule) => boolean): void {
+function pruneRules(owner: Partial<IRuleOwner>, isKept: (rule: CSSRule) => boolean): void {
   if (!owner.cssRules || typeof owner.deleteRule !== "function") {
     return;
   }

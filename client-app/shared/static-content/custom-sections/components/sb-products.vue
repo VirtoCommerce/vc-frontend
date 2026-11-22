@@ -1,12 +1,13 @@
 <template>
   <div
     v-track-item="products"
-    :class="['sb-products', { 'sb-products--carousel': view === 'carousel' }]"
+    class="sb-products"
+    :class="{ 'sb-products--carousel': isCarousel }"
     data-vc-track="product-list"
     data-list-id="custom_section_products"
     :data-list-name="query"
   >
-    <VcCarousel v-if="view === 'carousel'" :slides="products" :options="carouselOptions" navigation>
+    <VcCarousel v-if="isCarousel" :slides="products" :options="carouselOptions" navigation>
       <template #slide="{ slide: product }">
         <div class="sb-products__slide">
           <ProductCard class="sb-products__card" :product="product" />
@@ -51,6 +52,7 @@ const { products, fetchProducts } = useProducts();
 
 const count = computed(() => Math.round(props.take));
 const columnCount = computed(() => Math.round(props.columns));
+const isCarousel = computed(() => props.view === "carousel");
 
 /** Measured on the container, never above `columns`. */
 const carouselOptions = computed<ICarouselOptions>(() => {
@@ -82,7 +84,7 @@ watchEffect(async () => {
 .sb-products {
   // The carousel's arrows stand outside it, and the section clips what leaves its box.
   &--carousel {
-    padding-inline: theme("spacing.5");
+    @apply px-5;
   }
 
   &__grid {
