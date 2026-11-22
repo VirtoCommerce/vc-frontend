@@ -119,6 +119,46 @@ describe("filterSectionCss", () => {
     );
   });
 
+  it("parses the CSS inside a scope rule and reads that rule's children alone", () => {
+    const written: string[] = [];
+    const inside = new CSSStyleSheet();
+    const escaped = new CSSStyleSheet();
+    inside.replaceSync(".a { color: red; }");
+    escaped.replaceSync(".c { color: green; }");
+    class FakeScopeRule {
+      cssRules = [...inside.cssRules];
+
+      deleteRule(index: number): void {
+        this.cssRules.splice(index, 1);
+      }
+    }
+    vi.stubGlobal("CSSScopeRule", FakeScopeRule);
+    vi.stubGlobal(
+      "CSSStyleSheet",
+      class {
+        cssRules = [new FakeScopeRule(), ...escaped.cssRules];
+
+        replaceSync(css: string): void {
+          written.push(css);
+        }
+      },
+    );
+
+    expect(filterSectionCss(TYPE, ".a { color: red; } } .c { color: green; }")?.rules).toBe(".a { color: red; }");
+    expect(written).toEqual(["@scope ([data-sb-type]) {\n.a { color: red; } } .c { color: green; }\n}"]);
+  });
+
+  it("parses the CSS on its own where the browser has no scope rule", () => {
+    vi.stubGlobal("CSSScopeRule", undefined);
+
+    expect(rulesOf(".a { color: red; } @keyframes custom-hero__in { from { opacity: 0; } }")).toBe(
+      ".a { color: red; }",
+    );
+    expect(filterSectionCss(TYPE, "@keyframes custom-hero__in { from { opacity: 0; } }")?.keyframes).toContain(
+      "custom-hero__in",
+    );
+  });
+
   it("drops a nested rule whose selector reaches outside the section", () => {
     expect(rulesOf(".a { color: red; *:has([data-q]) & { color: blue; } }")).not.toContain("blue");
   });
