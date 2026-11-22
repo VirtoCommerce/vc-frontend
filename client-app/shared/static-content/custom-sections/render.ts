@@ -1,14 +1,13 @@
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
 import { Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
-import { BOOLEAN_ATTRIBUTES, toSafeAttributeValue } from "./allowlist";
-import { getBehaviorDirective, hasBehaviorFailed, REPEATED_COPY_ATTRIBUTE } from "./behaviors";
+import { BOOLEAN_ATTRIBUTES, isBooleanAttributeOn, isUnsetBinding, toSafeAttributeValue } from "./allowlist";
+import { getBehaviorDirective, hasBehaviorFailed, REPEATED_COPY_ATTRIBUTE, SECTION_TYPE_ATTRIBUTE } from "./behaviors";
 import { getListRows, isSetValue, renderParts, resolveBinding, toFieldMap } from "./bindings";
 import {
   getBehaviorAttributeNames,
   getCustomSectionBehaviors,
   getCustomSectionTags,
-  isBooleanAttributeOn,
   toFieldValue,
   toTagProps,
 } from "./kit";
@@ -79,7 +78,7 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
 
   const rootProps = {
     key: template.id,
-    "data-sb-type": options.type,
+    [SECTION_TYPE_ATTRIBUTE]: options.type,
     style: getSettingVariables(options.fields, options.settings, options.assetsBaseUrl),
   };
   const [root] = renderElement(template.root, scope, rootProps);
@@ -224,7 +223,7 @@ function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], pr
 
   // An attribute bound to an unset setting is as if it were not written: a boolean one is then off.
   const values = Object.fromEntries(
-    rendered.filter(({ value, isBound }) => !isBound || value !== "").map(({ name, value }) => [name, value]),
+    rendered.filter((attribute) => !isUnsetBinding(attribute)).map(({ name, value }) => [name, value]),
   );
 
   try {
@@ -276,7 +275,7 @@ function fitsBehaviorField(
 
   const field = fields.get(name);
 
-  return !(isBound && value === "") && (!field || toFieldValue(field, value) !== undefined);
+  return !isUnsetBinding({ value, isBound }) && (!field || toFieldValue(field, value) !== undefined);
 }
 
 function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSectionBehavior>>): IBehaviorAttributes {
@@ -315,7 +314,7 @@ function renderAttributes(
   const attributes: Record<string, string> = {};
 
   for (const { name, value, isBound } of rendered) {
-    const isOff = BOOLEAN_ATTRIBUTES.has(name) && ((isBound && value === "") || !isBooleanAttributeOn(value));
+    const isOff = BOOLEAN_ATTRIBUTES.has(name) && (isUnsetBinding({ value, isBound }) || !isBooleanAttributeOn(value));
     const safeValue = isOff ? undefined : toSafeAttributeValue(name, value, scope);
 
     if (safeValue !== undefined) {

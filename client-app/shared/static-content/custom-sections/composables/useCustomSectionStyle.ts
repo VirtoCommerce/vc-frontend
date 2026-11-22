@@ -1,4 +1,5 @@
 import { onBeforeUnmount, onMounted, toValue, watch } from "vue";
+import { SECTION_TYPE_ATTRIBUTE } from "../behaviors/constants";
 import { filterSectionCss } from "../css-filter";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -99,5 +100,5 @@ function toScopedCss(type: string, css: string, assetsBaseUrl: string | undefine
   }
 
   // Keyframes go beside the scope: `@scope` holds style rules only.
-  return `@layer custom-sections {\n${filtered.keyframes}\n@scope ([data-sb-type="${type}"]) {\n${filtered.rules}\n}\n}`;
+  return `@layer custom-sections {\n${filtered.keyframes}\n@scope ([${SECTION_TYPE_ATTRIBUTE}="${type}"]) {\n${filtered.rules}\n}\n}`;
 }

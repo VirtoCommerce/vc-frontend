@@ -260,7 +260,12 @@ function compileAttribute(compiled: ICompiledElement, name: string, value: strin
   }
 }
 
-function compileOtherAttribute(compiled: ICompiledElement, name: string, value: string, context: ICompileContext) {
+function compileOtherAttribute(
+  compiled: ICompiledElement,
+  name: string,
+  value: string,
+  context: ICompileContext,
+): void {
   if (!compiled.isKitTag && !isAttributeOfElement(name, compiled.tag)) {
     return;
   }

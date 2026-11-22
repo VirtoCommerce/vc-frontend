@@ -37,6 +37,19 @@ const ELEMENT_ATTRIBUTES: Readonly<Record<string, readonly string[]>> = {
 const LINK_TARGETS = new Set(["_self", "_blank"]);
 const OPENER_REGEX = /(?:^|\s)opener(?:\s|$)/i;
 
+/**
+ * A boolean attribute, a kit tag's or a native one, is on unless it says `false`. One bound to an unset setting is
+ * left out before, as if not written, so it is off too.
+ */
+export function isBooleanAttributeOn(value: string): boolean {
+  return value !== "false";
+}
+
+/** Bound to a setting that is unset: as if the attribute were not written. */
+export function isUnsetBinding({ value, isBound }: { value: string; isBound: boolean }): boolean {
+  return isBound && value === "";
+}
+
 export function isAttributeOfElement(name: string, tag: string): boolean {
   return !Object.hasOwn(ELEMENT_ATTRIBUTES, name) || ELEMENT_ATTRIBUTES[name].includes(tag);
 }

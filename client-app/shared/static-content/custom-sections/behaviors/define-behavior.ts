@@ -1,5 +1,6 @@
 import { effectScope, shallowRef } from "vue";
-import { useReducedMotion } from "./reduced-motion";
+import { isBooleanAttributeOn } from "../allowlist";
+import { useReducedMotion } from "./useReducedMotion";
 import type { CustomSectionDirectiveType } from "../types";
 import type { EffectScope, ShallowRef } from "vue";
 
@@ -53,7 +54,7 @@ export function defineBehavior(
 
 /** A boolean attribute: present and not `false`. */
 export function readBooleanAttribute(element: HTMLElement, name: string): boolean {
-  return element.hasAttribute(name) && element.getAttribute(name) !== "false";
+  return element.hasAttribute(name) && isBooleanAttributeOn(element.getAttribute(name) ?? "");
 }
 
 /** From the element's computed `direction`, so a `dir` anywhere above it counts. */
