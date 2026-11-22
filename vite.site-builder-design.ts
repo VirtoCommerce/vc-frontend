@@ -10,7 +10,7 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 
 /** The set `VcIcon` draws by default; legacy names reach it through the aliases. */
 const ICON_FOLDER = "client-app/ui-kit/icons/outline";
-const ICON_FILE_REGEX = /\.svg$/;
+const ICON_EXTENSION = ".svg";
 const ELEMENT_START_REGEX = /<[a-z][\w:-]*/gi;
 
 /** The stylesheets that declare or read the tokens outside the Tailwind theme. */
@@ -89,8 +89,8 @@ export function collectDesignFacts(): IDesignFacts {
 /** Every name `VcIcon` draws: the outline set's files and the legacy names aliased to them. */
 export function collectIconNames(): string[] {
   const files = readdirSync(path.join(ROOT, ICON_FOLDER))
-    .filter((file) => ICON_FILE_REGEX.test(file))
-    .map((file) => file.replace(ICON_FILE_REGEX, ""));
+    .filter((file) => file.endsWith(ICON_EXTENSION))
+    .map((file) => path.basename(file, ICON_EXTENSION));
 
   return [...new Set([...files, ...Object.keys(ICON_ALIASES)])].sort((a, b) => a.localeCompare(b));
 }
@@ -99,7 +99,7 @@ export function collectIconNames(): string[] {
 export function collectIconElements(): number {
   return Math.max(
     ...readdirSync(path.join(ROOT, ICON_FOLDER))
-      .filter((file) => ICON_FILE_REGEX.test(file))
+      .filter((file) => file.endsWith(ICON_EXTENSION))
       .map((file) => readFileSync(path.join(ROOT, ICON_FOLDER, file), "utf8").match(ELEMENT_START_REGEX)?.length ?? 0),
   );
 }

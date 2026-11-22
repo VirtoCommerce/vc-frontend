@@ -20,7 +20,7 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
   }
 
   const isOnce = readBooleanAttribute(element, "data-inview-once");
-  const threshold = toFiniteNumber(element.getAttribute("data-inview-threshold")) ?? DEFAULT_INVIEW_THRESHOLD;
+  const threshold = toFiniteNumber(element.dataset.inviewThreshold) ?? DEFAULT_INVIEW_THRESHOLD;
   // The observer calls back only as the element's own ratio crosses a threshold: the one that means the share.
   const observedRatio = shallowRef(toObservedRatio(element, threshold));
   let observerScope: EffectScope | undefined;

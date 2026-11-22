@@ -7,8 +7,8 @@ import { defineBehavior } from "./define-behavior";
 
 /** The text counts up to the number, in the page's language, when the element first shows. */
 export const vCountUp = defineBehavior((element, { value, isReducedMotion }) => {
-  const decimals = Math.round(toFiniteNumber(element.getAttribute("data-count-up-decimals")) ?? 0);
-  const duration = toFiniteNumber(element.getAttribute("data-count-up-duration")) ?? DEFAULT_COUNT_UP_DURATION;
+  const decimals = Math.round(toFiniteNumber(element.dataset.countUpDecimals) ?? 0);
+  const duration = toFiniteNumber(element.dataset.countUpDuration) ?? DEFAULT_COUNT_UP_DURATION;
   const target = toFiniteNumber(value) ?? Number.NaN;
   const hasShown = shallowRef(isReducedMotion);
   const shown = useTransition(() => (hasShown.value && Number.isFinite(target) ? target : 0), {
