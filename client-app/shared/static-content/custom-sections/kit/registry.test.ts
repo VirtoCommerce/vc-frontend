@@ -83,6 +83,18 @@ describe("the kit registry", () => {
     expect(getCustomSectionBehaviors()).toEqual({});
   });
 
+  it.each([0, 1.5, 5001, Number.NaN, "2"])("refuses a tag whose cost is %s", (cost) => {
+    registerCustomSectionTag("vc-promo", { ...TAG, cost: cost as number });
+
+    expect(getCustomSectionTags()).toEqual({});
+  });
+
+  it("takes a tag that costs a whole number of elements up to the render budget", () => {
+    registerCustomSectionTag("vc-promo", { ...TAG, cost: 5000 });
+
+    expect(getCustomSectionTags()["vc-promo"]?.cost).toBe(5000);
+  });
+
   it("refuses a select with neither options nor optionsFrom, whose value nothing could fit", () => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { size: { type: "select" } } });
 

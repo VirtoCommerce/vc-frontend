@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { filterSectionCss } from "./css-filter";
 import guide from "./guide.md?raw";
 import { getCustomSectionBehaviors, getCustomSectionKit, registerBuiltInKit } from "./kit";
-import { RENDER_BUDGET } from "./render";
+import { RENDER_BUDGET } from "./limits";
 import { compileTemplate } from "./template";
 import type { ICompiledElement, CompiledNodeType } from "./template";
 

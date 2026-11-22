@@ -40,6 +40,11 @@ export interface ICustomSectionTag {
   mapProps?: (attributes: Record<string, CustomSectionValueType>) => Record<string, unknown>;
   /** The attribute whose text fills the component's default slot, such as a button's `label`. */
   slotAttribute?: string;
+  /**
+   * The most elements one instance renders, a whole number from 1 to the render budget; 1 when left out. The
+   * section's render budget counts it for every instance, list rows included.
+   */
+  cost?: number;
 }
 
 /** A behavior a custom section template switches on with the attribute `data-{name}`. */

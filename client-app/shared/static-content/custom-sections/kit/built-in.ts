@@ -2,7 +2,7 @@ import { defineAsyncComponent, markRaw } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
 import { MAIN_COLORS } from "@/ui-kit/constants";
-import { PRODUCT_VIEWS } from "./constants";
+import { MAX_PRODUCTS, PRODUCT_CARD_ELEMENTS, PRODUCT_VIEWS } from "./constants";
 import { registerBuiltInKitEntries } from "./registry";
 import type { BuiltInBehaviorNameType, BuiltInTagNameType } from "./registry";
 import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
@@ -102,10 +102,11 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
     attributes: {
       query: { type: "string", description: "A search phrase." },
       filter: { type: "string", description: "A catalog filter expression." },
-      take: { type: "number", min: 1, max: 24, description: "How many products, 4 by default." },
+      take: { type: "number", min: 1, max: MAX_PRODUCTS, description: "How many products, 4 by default." },
       view: { type: "select", options: [...PRODUCT_VIEWS] },
       columns: { type: "number", min: 1, max: 6, description: "The most products in a row, 4 by default." },
     },
+    cost: 1 + MAX_PRODUCTS * PRODUCT_CARD_ELEMENTS,
   },
 };
 

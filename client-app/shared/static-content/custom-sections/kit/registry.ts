@@ -5,6 +5,7 @@ import { createGlobalState } from "@vueuse/core";
 import { omit } from "lodash-es";
 import { shallowRef } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
+import { RENDER_BUDGET } from "../limits";
 import type { ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag } from "../types";
 
 export interface IKit {
@@ -159,6 +160,10 @@ function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined
     if (fieldRefusal) {
       return `has the attribute "${attribute}", which ${fieldRefusal}`;
     }
+  }
+
+  if (tag.cost !== undefined && !(Number.isInteger(tag.cost) && tag.cost >= 1 && tag.cost <= RENDER_BUDGET)) {
+    return `has a cost that is not a whole number from 1 to ${RENDER_BUDGET}`;
   }
 
   return getDescriptionRefusal(tag.description);

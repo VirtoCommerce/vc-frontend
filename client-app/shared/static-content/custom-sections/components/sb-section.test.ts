@@ -278,6 +278,17 @@ describe("SbSection", () => {
       expect(warn.mock.calls.filter(([message]) => String(message).includes(TYPE))).toHaveLength(row.warnings);
       warn.mockRestore();
     });
+
+    it.each([
+      { count: 2, isRendered: true },
+      { count: 3, isRendered: false },
+    ])("counts each kit tag at its worst case: $count vc-products rendered $isRendered", ({ count, isRendered }) => {
+      vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+      const wrapper = mountSection(`<section>${'<vc-products query="a"></vc-products>'.repeat(count)}</section>`);
+
+      expect(wrapper.find("section").exists()).toBe(isRendered);
+      vi.restoreAllMocks();
+    });
   });
 
   describe("data-html", () => {

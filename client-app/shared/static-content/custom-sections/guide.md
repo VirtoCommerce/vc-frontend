@@ -92,8 +92,9 @@ The page may read right to left.
 - Few, right-sized images. No background video unless the section is about it.
 - Behaviors load on their own the first time a template uses them; add only those the section needs.
 - A section renders at most 5,000 elements and behaviors, each counted as written (whatever `data-if` hides) and
-  once per row of its list; the children of a repeating behavior (`data-marquee`) count twice. A section over that
-  renders nothing.
+  once per row of its list; the children of a repeating behavior (`data-marquee`) count twice, and a kit tag counts
+  its `cost` from the kit (`vc-products` counts as many as its products may render). A section over that renders
+  nothing.
 
 ## Patterns
 

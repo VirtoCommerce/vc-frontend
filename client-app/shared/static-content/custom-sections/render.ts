@@ -12,6 +12,7 @@ import {
   toFieldValue,
   toTagProps,
 } from "./kit";
+import { RENDER_BUDGET } from "./limits";
 import { sanitizeRichText } from "./rich-text";
 import { getSettingVariables } from "./setting-variables";
 import type { IBindingScope } from "./bindings";
@@ -51,8 +52,6 @@ interface IBehaviorAttributes {
 
 /** The copies a repeating behavior adds: out of the tab order and hidden from assistive technology. */
 const COPY_PROPS = { "aria-hidden": "true", inert: "", [REPEATED_COPY_ATTRIBUTE]: "" };
-/** The most elements and behaviors a section renders, list rows and repeated children included. */
-export const RENDER_BUDGET = 5000;
 
 const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
 const overBudgetTemplates = new WeakSet<ICompiledTemplate>();
@@ -148,12 +147,14 @@ function getRows(listId: string, scope: IBindingScope): Record<string, unknown>[
   return scope.fields.get(listId)?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
 }
 
-/** Counts as written, whatever `data-if` hides: one per element and per behavior, times its rows. */
+/** Counts as written, whatever `data-if` hides: a kit tag at its `cost`, one per element and per behavior, times its rows. */
 function countRenderCost(node: ICompiledElement, scope: IBindingScope): number {
   const behaviors = getCustomSectionBehaviors();
+  const tags = getCustomSectionTags();
   const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
   const children = node.children.reduce((sum, child) => sum + ("text" in child ? 0 : countRenderCost(child, scope)), 0);
-  const cost = 1 + node.behaviors.length + children * (isRepeated ? 2 : 1);
+  const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? 1) : 1;
+  const cost = own + node.behaviors.length + children * (isRepeated ? 2 : 1);
 
   return node.each ? cost * getRows(node.each, scope).length : cost;
 }
