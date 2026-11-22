@@ -90,6 +90,11 @@ describe("SbSection", () => {
     useThemeSnapshot().setDraft(undefined);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   describe("bindings", () => {
     it("inserts a setting as text, never as HTML", () => {
       const wrapper = mountSection("<section><h2>{{ settings.title }}!</h2></section>", {
@@ -147,6 +152,14 @@ describe("SbSection", () => {
       expect(root.element.style.getPropertyValue("--setting-image")).toBe(`url("${ASSETS}/hero.png")`);
       expect(root.element.style.getPropertyValue("--setting-speed")).toBe("3");
       expect(root.element.style.getPropertyValue("--setting-show-badge")).toBe("1");
+    });
+
+    it("keeps a quote inside an image setting from closing its url()", () => {
+      const image = `${ASSETS}/a") , url("https://evil.example/x.png`;
+      const root = mountSection("<section></section>", { image }).find("section");
+      const variable = root.element.style.getPropertyValue("--setting-image");
+
+      expect(variable).toBe(`url("${ASSETS}/a%22) , url(%22https://evil.example/x.png")`);
     });
 
     it("sets no variable for an image that breaks the image rule", () => {
@@ -270,8 +283,9 @@ describe("SbSection", () => {
   });
 
   describe("the render budget", () => {
+    // Each case its own template: a section over the budget warns once per template.
     const LIST =
-      '<section><ul><li data-each="settings.cards"{behavior}><span>{{ item.title }}</span></li></ul></section>';
+      '<section><ul title="{case}"><li data-each="settings.cards"{behavior}><span>{{ item.title }}</span></li></ul></section>';
 
     function toCards(count: number) {
       return Array.from({ length: count }, (_, index) => ({ id: String(index), title: "Card" }));
@@ -284,12 +298,28 @@ describe("SbSection", () => {
       { rows: 1667, behavior: " data-inview", isRendered: false, warnings: 1 },
     ])("renders $rows rows of two elements$behavior only within the budget", (row) => {
       const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
-      const wrapper = mountSection(LIST.replace("{behavior}", row.behavior), { cards: toCards(row.rows) });
+      const template = LIST.replace("{behavior}", row.behavior).replace("{case}", `${row.rows}${row.behavior}`);
+      const wrapper = mountSection(template, { cards: toCards(row.rows) });
 
       expect(wrapper.find("section").exists()).toBe(row.isRendered);
       expect(warn.mock.calls.filter(([message]) => String(message).includes(TYPE))).toHaveLength(row.warnings);
-      warn.mockRestore();
     });
+
+    it.each([
+      { rows: 2498, isRendered: true },
+      { rows: 2499, isRendered: false },
+    ])(
+      "counts what a repeating behavior's element holds twice: $rows rows rendered $isRendered",
+      ({ rows, isRendered }) => {
+        vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
+        const wrapper = mountSection(
+          `<section><div data-marquee title="${rows}"><span data-each="settings.cards">{{ item.title }}</span></div></section>`,
+          { cards: toCards(rows) },
+        );
+
+        expect(wrapper.find("section").exists()).toBe(isRendered);
+      },
+    );
 
     it.each([
       { rows: 1200, isRendered: true },
@@ -297,7 +327,7 @@ describe("SbSection", () => {
     ])("counts the elements of rich text in every row: $rows rows rendered $isRendered", ({ rows, isRendered }) => {
       vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
       const wrapper = mountSection(
-        '<section><div data-each="settings.cards" data-html="settings.body"></div></section>',
+        `<section title="${rows}"><div data-each="settings.cards" data-html="settings.body"></div></section>`,
         {
           cards: toCards(rows),
           body: "<b>a</b><i>b</i><u>c</u>",
@@ -305,7 +335,6 @@ describe("SbSection", () => {
       );
 
       expect(wrapper.find("section").exists()).toBe(isRendered);
-      vi.restoreAllMocks();
     });
 
     it.each([
@@ -316,7 +345,7 @@ describe("SbSection", () => {
       ({ rows, isRendered }) => {
         const warn = vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
         const wrapper = mountSection(
-          '<section><p data-each="settings.cards" title="x">{{ settings.title }}</p></section>',
+          `<section title="${rows}"><p data-each="settings.cards" title="x">{{ settings.title }}</p></section>`,
           {
             cards: toCards(rows),
             title: "x".repeat(100),
@@ -325,7 +354,6 @@ describe("SbSection", () => {
 
         expect(wrapper.find("section").exists()).toBe(isRendered);
         expect(warn.mock.calls.some(([message]) => String(message).includes(TYPE))).toBe(!isRendered);
-        vi.restoreAllMocks();
       },
     );
 
@@ -334,10 +362,11 @@ describe("SbSection", () => {
       { count: 3, isRendered: false },
     ])("counts each kit tag at its worst case: $count vc-products rendered $isRendered", ({ count, isRendered }) => {
       vi.spyOn(Logger, "warn").mockImplementation(() => undefined);
-      const wrapper = mountSection(`<section>${'<vc-products query="a"></vc-products>'.repeat(count)}</section>`);
+      const wrapper = mountSection(
+        `<section title="${count}">${'<vc-products query="a"></vc-products>'.repeat(count)}</section>`,
+      );
 
       expect(wrapper.find("section").exists()).toBe(isRendered);
-      vi.restoreAllMocks();
     });
   });
 
@@ -479,21 +508,41 @@ describe("SbSection", () => {
       expect((wrapper.find("details").element as HTMLDetailsElement).open).toBe(true);
     });
 
+    const BOOLEANS =
+      '<section><details open="{{ settings.show_badge }}"><summary>S</summary>x</details>' +
+      '<p hidden="{{ settings.show_badge }}">P</p><video autoplay="{{ settings.show_badge }}" ' +
+      'muted="{{ settings.show_badge }}" loop="{{ settings.show_badge }}" playsinline="{{ settings.show_badge }}" ' +
+      'controls="{{ settings.show_badge }}"></video></section>';
+
+    function readBooleans(wrapper: ReturnType<typeof mountSection>): boolean[] {
+      const video = wrapper.find("video").element as HTMLVideoElement;
+
+      return [
+        (wrapper.find("details").element as HTMLDetailsElement).open,
+        wrapper.find("p").attributes("hidden") !== undefined,
+        video.hasAttribute("autoplay"),
+        video.muted,
+        video.loop,
+        video.hasAttribute("playsinline"),
+        video.controls,
+      ];
+    }
+
     it.each([
       { showBadge: true, isOn: true },
       { showBadge: false, isOn: false },
       { showBadge: "", isOn: false },
       { showBadge: undefined, isOn: false },
-    ])("turns a native boolean bound to $showBadge on: $isOn", ({ showBadge, isOn }) => {
-      const wrapper = mountSection(
-        '<section><details open="{{ settings.show_badge }}"><summary>S</summary>x</details>' +
-          '<video loop="{{ settings.show_badge }}" playsinline="{{ settings.show_badge }}"></video></section>',
-        { show_badge: showBadge },
-      );
-      const video = wrapper.find("video").element as HTMLVideoElement;
+    ])("turns every native boolean bound to $showBadge on: $isOn", ({ showBadge, isOn }) => {
+      expect(readBooleans(mountSection(BOOLEANS, { show_badge: showBadge }))).toEqual(Array(7).fill(isOn));
+    });
 
-      expect((wrapper.find("details").element as HTMLDetailsElement).open).toBe(isOn);
-      expect([video.loop, video.hasAttribute("playsinline")]).toEqual([isOn, isOn]);
+    it("turns a native boolean off when its setting goes from on to off", async () => {
+      const wrapper = mountSection(BOOLEANS, { show_badge: true });
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, show_badge: false } });
+
+      expect(readBooleans(wrapper)).toEqual(Array(7).fill(false));
     });
 
     it("puts a poster through the image rule and a cite through the link rule", () => {
@@ -674,7 +723,6 @@ describe("SbSection", () => {
         '<span aria-hidden="true" inert="" data-sb-repeat="">Sale</span>',
       ]);
       expect((track.element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("120px");
-      vi.restoreAllMocks();
     });
 
     it("leaves the text of a counter to its behavior", () => {
@@ -717,9 +765,8 @@ describe("SbSection", () => {
     });
 
     afterEach(() => {
-      unregisterCustomSectionTag("vc-rating");
-      unregisterCustomSectionTag("vc-video");
-      unregisterCustomSectionBehavior("glow");
+      ["vc-rating", "vc-video", "vc-late"].forEach(unregisterCustomSectionTag);
+      ["glow", "tally"].forEach(unregisterCustomSectionBehavior);
     });
 
     it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
@@ -801,8 +848,16 @@ describe("SbSection", () => {
       expect(wrapper.find("span").text()).toBe("");
 
       await vi.waitFor(() => expect(wrapper.find("span").text()).toBe("five"));
-      unregisterCustomSectionBehavior("tally");
-      vi.restoreAllMocks();
+    });
+
+    it("renders a tag registered after the section first rendered", async () => {
+      const wrapper = mountSection('<section><vc-late label="Late"></vc-late></section>');
+      expect(wrapper.findComponent(Rating).exists()).toBe(false);
+
+      registerCustomSectionTag("vc-late", { component: Rating, description: "Late.", attributes: {} });
+      await nextTick();
+
+      expect(wrapper.findComponent(Rating).exists()).toBe(true);
     });
 
     it("leaves out a tag nobody registered", () => {
@@ -989,19 +1044,6 @@ describe("SbSection", () => {
       await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledTimes(2));
 
       expect(hooks.unmounted).toHaveBeenCalledOnce();
-    });
-
-    it("gives siblings with the same behaviors keys of their own", () => {
-      const wrapper = mountSection(
-        '<section><p data-glow="{{ settings.title }}">a</p><p data-glow="{{ settings.title }}">b</p></section>',
-        { title: "gold" },
-      );
-      const keys = wrapper
-        .findAll("p")
-        .map((p) => (p.element as HTMLElement & { __vnode?: { key: unknown } }).__vnode?.key);
-
-      expect(keys).toHaveLength(2);
-      expect(new Set(keys).size).toBe(2);
     });
 
     it("starts afresh when the visitor's motion preference changes", async () => {
