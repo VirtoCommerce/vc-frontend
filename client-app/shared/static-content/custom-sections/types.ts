@@ -15,6 +15,9 @@ export type CustomSectionDirectiveType = Pick<
   "mounted" | "beforeUpdate" | "updated" | "beforeUnmount" | "unmounted"
 >;
 
+/** The types of field the server reads in a kit. */
+export const CUSTOM_SECTION_FIELD_TYPES = ["string", "number", "boolean", "select", "link", "date"] as const;
+
 /**
  * An attribute of a kit tag, or the value or an option of a behavior, as the agent that writes templates and the
  * server that checks them read it. The storefront drops a tag attribute that breaks it.
@@ -25,7 +28,7 @@ export interface ICustomSectionField {
    * date or date-time; a date alone means 00:00 UTC of that day, the same moment for every visitor, and a date-time
    * names another moment with its offset.
    */
-  type: "string" | "number" | "boolean" | "select" | "link" | "date";
+  type: (typeof CUSTOM_SECTION_FIELD_TYPES)[number];
   /** The values a `select` takes; a select has these or `optionsFrom`. */
   options?: string[];
   /** A `select` of the storefront's icon names, which the catalog lists once, as `kit.icons`. */

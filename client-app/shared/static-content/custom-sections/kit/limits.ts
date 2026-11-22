@@ -1,8 +1,11 @@
-// The server's caps on the kit the designer's catalog uploads: past any of them it refuses the whole kit, so
-// the storefront's registry keeps every entry within them. Import-free, for the Vite config's tests too.
+// The server's caps on the kit the designer's catalog uploads: past any of them it refuses the whole kit. The
+// registry keeps tags and behaviors within theirs; tests hold the guide, the icons and the design facts to theirs.
+// Import-free, for the Vite config's tests too.
 
-/** Tags, and behaviors, in the kit: the storefront's own included. */
-export const MAX_KIT_ENTRIES = 256;
+/** Tags in the kit, the storefront's own included. */
+export const MAX_KIT_TAGS = 256;
+/** Behaviors in the kit, the storefront's own included. */
+export const MAX_KIT_BEHAVIORS = 256;
 /** A tag's attributes, or a behavior's value and options together. */
 export const MAX_ENTRY_FIELDS = 64;
 /** A tag's, a behavior's, an attribute's or an option's name. */

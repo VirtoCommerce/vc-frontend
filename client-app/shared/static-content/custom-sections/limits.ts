@@ -12,3 +12,9 @@ export const MAX_RENDERED_TEXT = 262_144;
 
 /** The most attributes an element of a template is written with, as the server counts them; one with more is left out. */
 export const MAX_TEMPLATE_ATTRIBUTES = 64;
+
+/** How deep a template's elements nest; what lies deeper is left out, so a hostile draft cannot exhaust the stack. */
+export const MAX_TEMPLATE_DEPTH = 32;
+
+/** A custom section type's name, `custom-` included. */
+export const MAX_CUSTOM_SECTION_TYPE_LENGTH = 64;

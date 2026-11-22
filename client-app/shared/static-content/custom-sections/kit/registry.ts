@@ -6,10 +6,12 @@ import { omit } from "lodash-es";
 import { shallowRef } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
 import { RENDER_BUDGET } from "../limits";
+import { CUSTOM_SECTION_FIELD_TYPES } from "../types";
 import {
   MAX_DESCRIPTION_LENGTH,
   MAX_ENTRY_FIELDS,
-  MAX_KIT_ENTRIES,
+  MAX_KIT_BEHAVIORS,
+  MAX_KIT_TAGS,
   MAX_NAME_LENGTH,
   MAX_OPTION_LENGTH,
   MAX_SELECT_OPTIONS,
@@ -51,7 +53,7 @@ const DENIED_TAG_ATTRIBUTE_REGEX =
   /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|command|commandfor|interestfor|ping|srcset|poster|action)$/;
 
 /** As the server reads a kit field. */
-const FIELD_TYPES = new Set<ICustomSectionField["type"]>(["string", "number", "boolean", "select", "link", "date"]);
+const FIELD_TYPES = new Set<string>(CUSTOM_SECTION_FIELD_TYPES);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
 const DATA_PREFIX = "data-";
 /** The server holds a bound as a decimal, so it refuses the whole kit for one past this. */
@@ -73,7 +75,7 @@ export function registerCustomSectionTag(name: string, tag: ICustomSectionTag): 
   const registry = useKitRegistry();
   const refusal =
     getTakenRefusal(name, registry.value.tags) ??
-    getRoomRefusal(registry.value.tags, RESERVED_TAG_NAMES) ??
+    getRoomRefusal(registry.value.tags, RESERVED_TAG_NAMES, MAX_KIT_TAGS) ??
     getTagRefusal(name, tag);
 
   if (refusal) {
@@ -96,7 +98,7 @@ export function registerCustomSectionBehavior(name: string, behavior: ICustomSec
   const registry = useKitRegistry();
   const refusal =
     getTakenRefusal(name, registry.value.behaviors) ??
-    getRoomRefusal(registry.value.behaviors, RESERVED_BEHAVIOR_NAMES) ??
+    getRoomRefusal(registry.value.behaviors, RESERVED_BEHAVIOR_NAMES, MAX_KIT_BEHAVIORS) ??
     getBehaviorRefusal(name, behavior, registry.value.behaviors);
 
   if (refusal) {
@@ -307,7 +309,7 @@ function getFieldRefusal(field: unknown): string | undefined {
     return `has the key "${unknownKey}", which a field does not have`;
   }
 
-  if (!FIELD_TYPES.has(field.type as ICustomSectionField["type"])) {
+  if (typeof field.type !== "string" || !FIELD_TYPES.has(field.type)) {
     return "has no type of string, number, boolean, select, link or date";
   }
 
@@ -347,11 +349,13 @@ function getTakenRefusal(name: string, entries: Readonly<Record<string, unknown>
 }
 
 /** The storefront's own entries register later, so room is kept for them. */
-function getRoomRefusal(entries: Readonly<Record<string, unknown>>, reserved: ReadonlySet<string>): string | undefined {
+function getRoomRefusal(
+  entries: Readonly<Record<string, unknown>>,
+  reserved: ReadonlySet<string>,
+  max: number,
+): string | undefined {
   const othersCount = Object.keys(entries).filter((name) => !reserved.has(name)).length;
-  return othersCount + reserved.size >= MAX_KIT_ENTRIES
-    ? `would take the kit past ${MAX_KIT_ENTRIES} entries`
-    : undefined;
+  return othersCount + reserved.size >= max ? `would take the kit past ${max} entries of its kind` : undefined;
 }
 
 function isName(name: string): boolean {

@@ -9,7 +9,7 @@ import {
 } from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
 import { BINDING_NAMES, fromBehaviorAttribute, getBehaviorAttributeNames, toBehaviorAttribute } from "./kit/registry";
-import { MAX_TEMPLATE_ATTRIBUTES } from "./limits";
+import { MAX_TEMPLATE_ATTRIBUTES, MAX_TEMPLATE_DEPTH } from "./limits";
 import { createLruCache } from "./lru-cache";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
@@ -47,7 +47,6 @@ const CONTROL_ATTRIBUTES = BINDING_NAMES.map(toBehaviorAttribute);
 const EACH_REGEX = /^settings\.([\w-]+)$/;
 const CONDITION_REGEX = /^(!?)\s*(\S+)$/;
 const MAX_CACHED_TEMPLATES = 32;
-const MAX_DEPTH = 32;
 
 /** A section still shown keeps its compiled template, so it does not remount. */
 const cache = createLruCache<string, ICompiledTemplate | undefined>(MAX_CACHED_TEMPLATES);
@@ -176,9 +175,9 @@ interface ICompileContext {
   behaviors: Set<string>;
 }
 
-/** Content nested deeper than `MAX_DEPTH` is left out, so a hostile draft cannot exhaust the stack. */
+/** Content nested deeper than `MAX_TEMPLATE_DEPTH` is left out. */
 function compileChildren(parent: Node, context: ICompileContext): CompiledNodeType[] {
-  return context.depth < MAX_DEPTH ? [...parent.childNodes].flatMap((node) => compileNode(node, context)) : [];
+  return context.depth < MAX_TEMPLATE_DEPTH ? [...parent.childNodes].flatMap((node) => compileNode(node, context)) : [];
 }
 
 function compileNode(node: Node, context: ICompileContext): CompiledNodeType[] {
