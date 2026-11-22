@@ -9,13 +9,14 @@ import { toCustomSectionSchemas, watchCustomSectionCatalog } from "./custom-sect
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { ICustomSectionDefinition } from "@/core/theme-snapshot";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
-import type { EffectScope } from "vue";
+import type { EffectScope, Ref } from "vue";
+
+const languages = vi.hoisted(() => ({ currentLanguage: undefined as unknown as Ref<{ cultureName: string }> }));
 
 vi.mock("@/core/composables/useLanguages", async () => {
   const { ref } = await import("vue");
-  return {
-    useLanguages: () => ({ currentLanguage: ref({ cultureName: "de-DE" }), defaultStoreCulture: ref("en-US") }),
-  };
+  languages.currentLanguage = ref({ cultureName: "de-DE" });
+  return { useLanguages: () => ({ currentLanguage: languages.currentLanguage, defaultStoreCulture: ref("en-US") }) };
 });
 
 const STATS: ICustomSectionDefinition = {
@@ -88,6 +89,9 @@ describe("watchCustomSectionCatalog", () => {
 
   afterEach(() => {
     scope.stop();
+    unregisterCustomSectionBehavior("confetti");
+    languages.currentLanguage.value = { cultureName: "de-DE" };
+    useThemeSnapshot().setDraft(undefined);
   });
 
   it("adds the theme's custom types to the schemas, and applies again only when they change", async () => {
@@ -135,7 +139,8 @@ describe("watchCustomSectionCatalog", () => {
       options: { part: expect.objectContaining({ type: "select" }) },
       writes: ["data-ended", "text"],
     });
-    expect(JSON.stringify(kit)).not.toContain("directive");
+    expect(Object.keys(kit?.tags["vc-button"] ?? {})).toEqual(["description", "attributes", "cost", "hasSideEffects"]);
+    expect(Object.keys(kit?.behaviors.marquee ?? {})).toEqual(["description", "writes", "repeatsChildren"]);
     expect(kit?.icons).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
     expect(kit?.icons).toEqual([...new Set(kit?.icons)].sort((a, b) => a.localeCompare(b)));
     expect(JSON.stringify(kit).match(/"shopping-cart"/g)).toHaveLength(1);
@@ -161,6 +166,17 @@ describe("watchCustomSectionCatalog", () => {
     await nextTick();
 
     expect(apply.mock.lastCall?.[1].behaviors.confetti).toEqual({ description: "Throws confetti." });
-    unregisterCustomSectionBehavior("confetti");
+  });
+
+  it("applies the same catalog whatever language the preview shows", async () => {
+    const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
+    useThemeSnapshot().setDraft({ customSections: { "custom-stats": STATS } });
+    watchCatalog(apply);
+    const calls = apply.mock.calls.length;
+
+    languages.currentLanguage.value = { cultureName: "en-US" };
+    await nextTick();
+
+    expect(apply.mock.calls).toHaveLength(calls);
   });
 });

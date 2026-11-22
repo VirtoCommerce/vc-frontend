@@ -78,6 +78,10 @@ describe("the section authors' guide", () => {
     expect(guide.length).toBeLessThanOrEqual(MAX_GUIDE_LENGTH);
   });
 
+  it("has the three patterns, each with its CSS", () => {
+    expect(styles).toHaveLength(3);
+  });
+
   it("has the three patterns", () => {
     expect(patterns).toHaveLength(3);
   });
@@ -101,7 +105,6 @@ describe("the section authors' guide", () => {
       const sheet = new CSSStyleSheet();
       sheet.replaceSync(css);
 
-      expect(styles).toHaveLength(patterns.length);
       expect(filterSectionCss("custom-guide", css, "https://cdn.example.com/assets")?.rules).toBe(
         [...sheet.cssRules].map((rule) => rule.cssText).join("\n"),
       );

@@ -4,6 +4,7 @@ import { defineComponent, h, ref } from "vue";
 import { CUSTOM_SECTION_STYLE_ATTRIBUTE, useCustomSectionStyle } from "./useCustomSectionStyle";
 
 const css = ref(".card { color: var(--color-primary-500); }");
+const assetsBaseUrl = ref<string | undefined>("https://cdn.example.com/assets");
 
 const Section = defineComponent({
   props: { type: { type: String, required: true } },
@@ -12,6 +13,7 @@ const Section = defineComponent({
     useCustomSectionStyle(
       () => props.type,
       () => css.value,
+      () => assetsBaseUrl.value,
     );
     return () => h("section");
   },
@@ -24,6 +26,7 @@ function findStyles(type: string): HTMLStyleElement[] {
 describe("useCustomSectionStyle", () => {
   afterEach(() => {
     css.value = ".card { color: var(--color-primary-500); }";
+    assetsBaseUrl.value = "https://cdn.example.com/assets";
     document.head.innerHTML = "";
   });
 
@@ -39,6 +42,30 @@ describe("useCustomSectionStyle", () => {
 
     first.unmount();
     second.unmount();
+  });
+
+  it("puts keyframes written in a condition inside the layer, beside the scope, with the condition", () => {
+    css.value =
+      "@media (prefers-reduced-motion: no-preference) { @keyframes custom-hero__in { from { opacity: 0; } } " +
+      ".card { animation: 1s custom-hero__in; } }";
+    const wrapper = mount(Section, { props: { type: "custom-hero" } });
+
+    expect(findStyles("custom-hero")[0].textContent?.replaceAll(/\s+/g, " ")).toMatch(
+      /^@layer custom-sections \{ @media \(prefers-reduced-motion: no-preference\) \{ @keyframes custom-hero__in \{.*\} \} @scope \(\[data-sb-type="custom-hero"\]\) \{ @media \(prefers-reduced-motion: no-preference\) \{ \.card \{ animation: .*custom-hero__in.*\} \} \} \}$/,
+    );
+    wrapper.unmount();
+  });
+
+  it("writes the CSS again when the asset library changes", async () => {
+    css.value = '.card { background-image: url("https://cdn.example.com/assets/a.png"); }';
+    const wrapper = mount(Section, { props: { type: "custom-hero" } });
+    expect(findStyles("custom-hero")[0].textContent).toContain("assets/a.png");
+
+    assetsBaseUrl.value = "https://cdn.example.com/other";
+    await wrapper.vm.$nextTick();
+
+    expect(findStyles("custom-hero")[0].textContent).not.toContain("assets/a.png");
+    wrapper.unmount();
   });
 
   it("removes the CSS when the last section of the type goes", () => {

@@ -192,6 +192,20 @@ describe("SbSection", () => {
     });
   });
 
+  describe("its CSS", () => {
+    it("puts the type's CSS in the page, scoped to its sections, and takes it away with the last", () => {
+      const wrapper = mountSection("<section></section>", {}, { css: ".custom-test__x { color: red; }" });
+      const style = document.head.querySelector(`style[data-sb-custom-section="${TYPE}"]`);
+
+      expect(style?.textContent?.replaceAll(/\s+/g, " ")).toContain(
+        `@scope ([data-sb-type="${TYPE}"]) { .custom-test__x { color: red; } }`,
+      );
+
+      wrapper.unmount();
+      expect(document.head.querySelector(`style[data-sb-custom-section="${TYPE}"]`)).toBeNull();
+    });
+  });
+
   describe("containment", () => {
     it("puts the section in a box of the storefront's, outside the root its CSS is scoped to, with the section's attributes", () => {
       const wrapper = mountSection("<section></section>");

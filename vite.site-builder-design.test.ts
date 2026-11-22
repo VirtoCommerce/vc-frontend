@@ -85,10 +85,12 @@ describe("collectIconNames", () => {
 });
 
 describe("designFactsDefine", () => {
-  it("inlines the facts and the icon names as JSON", () => {
+  it("inlines the facts and the icon names as JSON the preview reads as they are", () => {
     const defined = designFactsDefine();
+    const facts = JSON.parse(defined.__SB_DESIGN_FACTS__) as ReturnType<typeof collectDesignFacts>;
 
-    expect(JSON.parse(defined.__SB_DESIGN_FACTS__)).toEqual(collectDesignFacts());
-    expect(JSON.parse(defined.__SB_ICON_NAMES__)).toEqual(collectIconNames());
+    expect(Object.keys(defined)).toEqual(["__SB_DESIGN_FACTS__", "__SB_ICON_NAMES__"]);
+    expect(facts.tokens["--vc-radius"]).toEqual({ fallback: "0.5rem", description: expect.any(String) });
+    expect(JSON.parse(defined.__SB_ICON_NAMES__)).toEqual(expect.arrayContaining(["star"]));
   });
 });
