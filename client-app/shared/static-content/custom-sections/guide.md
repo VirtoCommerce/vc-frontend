@@ -85,9 +85,9 @@ The page may read right to left.
   repeats its children: its copy would search or report a view again.
 - Put transitions and animations under `@media (prefers-reduced-motion: no-preference)`. Behaviors already show
   their end state at once when motion is reduced.
-- A behavior that writes an element's text (`data-count-up`, `data-countdown`) replaces what the template writes
-  there; write the value as the text too, as the stats pattern does. That text shows until the behavior loads, and
-  stays if it fails to load.
+- In an element with `data-count-up`, and in the `data-countdown-part` children of a countdown, the behavior writes
+  the text: what the template writes there is left out, also while the behavior loads. Write the value as the text
+  too, as the stats pattern does: it shows if the behavior fails to load.
 
 ## Text and languages
 

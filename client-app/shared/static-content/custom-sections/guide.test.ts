@@ -67,11 +67,17 @@ describe("the section authors' guide", () => {
     expect(guide).toContain("`--vc-font-weight-*`");
   });
 
-  it("writes a counter's value as its text too, shown until the behavior loads", () => {
+  it("writes a counter's value as its text too, which shows if the behavior fails to load", () => {
+    const text = guide.replaceAll(/\s+/g, " ");
+
     expect(guide).toContain('data-count-up="{{ item.value }}">{{ item.value }}</span>');
-    expect(guide.replaceAll(/\s+/g, " ")).toContain(
-      "That text shows until the behavior loads, and stays if it fails to load.",
+    expect(text).toContain(
+      "In an element with `data-count-up`, and in the `data-countdown-part` children of a countdown",
     );
+    expect(text).toContain(
+      "Write the value as the text too, as the stats pattern does: it shows if the behavior fails to load.",
+    );
+    expect(text).not.toContain("shows until the behavior loads");
   });
 
   it("stays within the server's cap on the guide it takes", () => {
