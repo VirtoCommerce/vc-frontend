@@ -256,6 +256,37 @@ describe("filterSectionCss", () => {
     expect(filterSectionCss(TYPE, "@starting-style { .a { opacity: 0; } }")?.rules).toBe(rule.cssText);
   });
 
+  it("drops a keyframes inside @starting-style, which holds no keyframes", () => {
+    class FakeStartingStyleRule {
+      cssRules: CSSRule[];
+      cssText = "@starting-style { }";
+
+      constructor(rules: CSSRule[]) {
+        this.cssRules = rules;
+      }
+
+      deleteRule(index: number): void {
+        this.cssRules.splice(index, 1);
+      }
+    }
+    const inner = new CSSStyleSheet();
+    inner.replaceSync("@keyframes custom-hero__in { from { opacity: 0; } } .a { opacity: 0; }");
+    const rule = new FakeStartingStyleRule([...inner.cssRules]);
+    vi.stubGlobal("CSSStartingStyleRule", FakeStartingStyleRule);
+    vi.stubGlobal(
+      "CSSStyleSheet",
+      class {
+        cssRules = [rule];
+        replaceSync(): void {}
+      },
+    );
+
+    const filtered = filterSectionCss(TYPE, "@starting-style { }");
+
+    expect(rule.cssRules.map((kept) => kept.constructor.name)).toEqual(["CSSStyleRule"]);
+    expect(filtered?.keyframes).toBe("");
+  });
+
   it("gives no CSS where the browser cannot parse a stylesheet", () => {
     vi.stubGlobal("CSSStyleSheet", undefined);
 

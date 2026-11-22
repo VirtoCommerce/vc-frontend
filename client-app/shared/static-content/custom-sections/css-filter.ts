@@ -86,8 +86,9 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
     return true;
   }
 
+  // `@starting-style` holds style rules only: keyframes go in no condition but `@media`, `@supports` or `@container`.
   if (isConditionRule(rule)) {
-    filterRules(rule, context, canHoldKeyframes);
+    filterRules(rule, context, canHoldKeyframes && !isRuleOf(rule, "CSSStartingStyleRule"));
     return true;
   }
 
