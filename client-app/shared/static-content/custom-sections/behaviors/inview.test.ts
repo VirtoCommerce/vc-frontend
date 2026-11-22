@@ -69,6 +69,8 @@ describe("vInview", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    Reflect.deleteProperty(document.documentElement, "clientWidth");
+    Reflect.deleteProperty(document.documentElement, "clientHeight");
   });
 
   it("sets data-visible while the threshold's share of the element is on screen", () => {
@@ -97,13 +99,32 @@ describe("vInview", () => {
     const box = { width: 400, height: 3 * VIEWPORT.height };
     const wrapper = mountObserved({ "data-inview-threshold": "1" }, box);
 
-    expect(mocks.thresholds.some((threshold) => Math.abs(threshold - 1 / 3) < 1e-9)).toBe(true);
+    expect(mocks.thresholds.some((threshold) => Math.abs(threshold - 1 / 3) < 1e-3)).toBe(true);
 
     mocks.onIntersect?.([toEntry({ width: 400, height: 0.99 * VIEWPORT.height }, box)]);
     expect(wrapper.attributes("data-visible")).toBeUndefined();
 
     mocks.onIntersect?.([toEntry({ width: 400, height: VIEWPORT.height }, box)]);
     expect(wrapper.attributes("data-visible")).toBe("");
+  });
+
+  it("listens just below an element's largest ratio, so a threshold of 1 on a tall element is reached", () => {
+    mountObserved({ "data-inview-threshold": "1" }, { width: 400, height: 3 * VIEWPORT.height });
+
+    const [, observed] = mocks.thresholds;
+    expect(observed).toBeLessThan(1 / 3);
+    expect(observed).toBeGreaterThan(0.33);
+  });
+
+  it("measures the screen as the observer's root does, without the scrollbar", () => {
+    const rootWidth = VIEWPORT.width - 15;
+    Object.defineProperty(document.documentElement, "clientWidth", { value: rootWidth, configurable: true });
+    Object.defineProperty(document.documentElement, "clientHeight", { value: VIEWPORT.height, configurable: true });
+
+    mountObserved({ "data-inview-threshold": "0.99" }, { width: VIEWPORT.width, height: 400 });
+
+    const [, observed] = mocks.thresholds;
+    expect(observed).toBeLessThan(rootWidth / VIEWPORT.width);
   });
 
   it("counts both axes, so a card mostly beside the screen in a scrolled row stays hidden", () => {

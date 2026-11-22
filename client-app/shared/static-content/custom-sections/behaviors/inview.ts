@@ -60,12 +60,19 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
   onScopeDispose(() => observerScope?.stop());
 });
 
-/** The element's own ratio at which the share reaches the threshold. */
+/** The element's own ratio at which the share reaches the threshold, a tolerance below it as the share check. */
 function toObservedRatio(element: HTMLElement, threshold: number): number {
   const { width, height } = element.getBoundingClientRect();
-  const excess = toExcess(width, window.innerWidth) * toExcess(height, window.innerHeight);
+  const root = measureRoot();
+  const excess = toExcess(width, root.width) * toExcess(height, root.height);
 
-  return Math.min(1, threshold / excess);
+  return Math.min(1, Math.max(0, threshold - SHARE_TOLERANCE) / excess);
+}
+
+/** As the observer's root is: the viewport without its scrollbars. */
+function measureRoot(): { width: number; height: number } {
+  const { clientWidth, clientHeight } = document.documentElement;
+  return { width: clientWidth || window.innerWidth, height: clientHeight || window.innerHeight };
 }
 
 /** How many screens the element spans on an axis, at least 1. */
@@ -75,8 +82,9 @@ function toExcess(size: number, rootSize: number): number {
 
 /** Per axis, of the element or of the screen when the element is larger, multiplied. */
 function getVisibleShare(entry: IntersectionObserverEntry): number {
-  const rootWidth = entry.rootBounds?.width ?? window.innerWidth;
-  const rootHeight = entry.rootBounds?.height ?? window.innerHeight;
+  const root = entry.rootBounds ?? measureRoot();
+  const rootWidth = root.width;
+  const rootHeight = root.height;
 
   return (
     getAxisShare(entry.intersectionRect.width, entry.boundingClientRect.width, rootWidth) *
