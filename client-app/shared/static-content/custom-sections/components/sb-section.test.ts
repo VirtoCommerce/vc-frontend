@@ -439,7 +439,7 @@ describe("SbSection", () => {
         body:
           '<style>body { display: none }</style><p style="color: red" id="x" data-sb-type="other" ' +
           `class="fixed ${TYPE}__note">A</p><img src="https://evil.example/pixel" alt=""><img src="${ASSETS}/a.png" alt="">` +
-          '<a href="javascript:alert(1)">J</a><a href="/c" target="_blank">C</a><input><button>B</button>',
+          '<a href="javascript:alert(1)">J</a><a href="/c" target="_blank">C</a><input><button>B</button>', // nosemgrep: vc-javascript-uri -- sanitizer input fixture, never rendered
       });
       const html = wrapper.find("section div");
       const [foreign, asset] = html.findAll("img");
@@ -651,7 +651,7 @@ describe("SbSection", () => {
 
     it("gives VcButton an external link and leaves out values it does not take", () => {
       const wrapper = mountSection(
-        '<section><vc-button label="Go" to="https://example.com" color="hotpink" variant="weird"></vc-button><vc-button label="No" to="javascript:alert(1)"></vc-button></section>',
+        '<section><vc-button label="Go" to="https://example.com" color="hotpink" variant="weird"></vc-button><vc-button label="No" to="javascript:alert(1)"></vc-button></section>', // nosemgrep: vc-javascript-uri -- sanitizer input fixture, never rendered
       );
       const [external, unsafe] = wrapper.findAllComponents(VcButton);
 
@@ -1014,7 +1014,7 @@ describe("SbSection", () => {
       });
 
       const wrapper = mountSection(
-        '<section><vc-promo-link href="javascript:alert(document.domain)"></vc-promo-link><vc-promo-link href="/sale"></vc-promo-link></section>',
+        '<section><vc-promo-link href="javascript:alert(document.domain)"></vc-promo-link><vc-promo-link href="/sale"></vc-promo-link></section>', // nosemgrep: vc-javascript-uri -- sanitizer input fixture, never rendered
       );
       const [unsafe, safe] = wrapper.findAllComponents(PromoLink);
 
