@@ -99,6 +99,6 @@ function toScopedCss(type: string, css: string, assetsBaseUrl: string | undefine
     return "";
   }
 
-  // Keyframes go beside the scope: `@scope` holds style rules only.
+  // A keyframes name is not scoped, so a type's keyframes are emitted once beside the scope, as the contract does.
   return `@layer custom-sections {\n${filtered.keyframes}\n@scope ([${SECTION_TYPE_ATTRIBUTE}="${type}"]) {\n${filtered.rules}\n}\n}`;
 }

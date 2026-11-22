@@ -3,8 +3,8 @@ import { decodeCssEscapes, isAllowedValue } from "./css-values";
 
 export interface IFilteredCss {
   /**
-   * A keyframes name is not scoped, so it starts with `{type}__`. They stand beside the scope, which holds style
-   * rules only; one written inside a condition keeps it.
+   * A keyframes name is not scoped, so it starts with `{type}__`, and each is emitted once beside the scope, as the
+   * contract does; one written inside a condition keeps it.
    */
   keyframes: string;
   rules: string;
