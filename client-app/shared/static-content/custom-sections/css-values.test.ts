@@ -48,6 +48,10 @@ describe("isAllowedValue", () => {
     expect(isAllowedValue(value, base)).toBe(false);
   });
 
+  it.each(["\r\n", "\r", "\f"])("reads %j as one line break, as the browser does before it tokenizes", (lineBreak) => {
+    expect(isAllowedValue(`"a\\${lineBreak}" url(https://evil.example/x.png) "b"`, base)).toBe(false);
+  });
+
   it("takes a url() inside a string as text", () => {
     expect(isAllowedValue('"url(https://evil.example/x.png)"', base)).toBe(true);
   });

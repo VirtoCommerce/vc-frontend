@@ -1,4 +1,4 @@
-import { decodeCssEscapes, skipString } from "./css-values";
+import { decodeCssEscapes, preprocessCss, skipString } from "./css-values";
 
 type GroupKindType = "has" | "list" | "opaque";
 
@@ -77,7 +77,7 @@ interface IScanState {
  * counts no sibling of the section's root, and an `:is()`, `:where()` or `:not()` holds no combinator.
  */
 export function isContainedSelector(selectorText: string): boolean {
-  const skeleton = toSkeleton(selectorText).replace(NTH_OF_REGEX, ":$1-of(");
+  const skeleton = toSkeleton(preprocessCss(selectorText)).replace(NTH_OF_REGEX, ":$1-of(");
   const state: IScanState = { groups: [], hasContent: false, isAnchored: false, isInFirstCompound: true };
   let index = 0;
 

@@ -27,6 +27,8 @@ const WHITESPACE_REGEX = /^\s$/;
 const SPACES_REGEX = /\s*/y;
 const URL_STOP_REGEX = /^["'(]$/;
 const DATA_IMAGE_REGEX = /^data:image\//i;
+const LINE_BREAK_REGEX = /\r\n?|\f/g;
+const NULL_REGEX = /\0/g;
 const MAX_CODE_POINT = 0x10ffff;
 
 /** `image-s\65t(` is `image-set(`: a value kept as written, as one holding `var()` is, still has its escapes. */
@@ -52,11 +54,12 @@ export function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined
  * browser reads it: a name inside a string or a comment is no call, and an escaped quote opens no string.
  */
 export function isAllowedValue(value: string, assetsBaseUrl: string | undefined): boolean {
+  const text = preprocessCss(value);
   const state: IValueState = { calls: [], imageDepth: 0 };
   let index = 0;
 
-  while (index < value.length) {
-    const [token, next] = readToken(value, index);
+  while (index < text.length) {
+    const [token, next] = readToken(text, index);
 
     if (token && !isAllowedToken(token, state, assetsBaseUrl)) {
       return false;
@@ -65,6 +68,11 @@ export function isAllowedValue(value: string, assetsBaseUrl: string | undefined)
   }
 
   return true;
+}
+
+/** As CSS Syntax 3 reads its input before it tokenizes: every line break as `\n`, and NUL as U+FFFD. */
+export function preprocessCss(css: string): string {
+  return css.replaceAll(LINE_BREAK_REGEX, "\n").replaceAll(NULL_REGEX, "\uFFFD");
 }
 
 /** The index after the string that opens at `start`, its escapes skipped. */
