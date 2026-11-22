@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { IPublishedTheme } from "./types";
+import type { IPublishedTheme, IThemeDraft } from "./types";
 
 const THEME: IPublishedTheme = {
   storeId: "B2B-store",
@@ -122,6 +122,18 @@ describe("useThemeSnapshot", () => {
       const draftNamingAnother = { brand: {}, assetsBaseUrl: "https://evil.example/" };
       setDraft(draftNamingAnother);
       expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+    });
+
+    it("takes the draft's asset library for a store whose published snapshot names none, as before its first publication", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished(null);
+
+      setDraft({ customSections: {}, assetsBaseUrl: "https://cdn/draft" });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/draft");
+
+      const draftWithAnotherShape = { customSections: {}, assetsBaseUrl: 1 };
+      setDraft(draftWithAnotherShape as unknown as IThemeDraft);
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
     });
 
     it.each([[""], [1]])("names no asset library for a snapshot base of %j", async (assetsBaseUrl) => {
