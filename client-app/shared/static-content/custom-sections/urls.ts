@@ -20,7 +20,8 @@ export function toSectionLink(value: string): string | undefined {
 
 /**
  * An image of a custom section: one of the asset library's, under `assetsBaseUrl` once `..` resolves, as the
- * server reads it. Without the base, no image.
+ * server reads it. Without the base, no image. Gives the address it checked: a relative path would load from
+ * another folder on another page.
  */
 export function toAssetUrl(value: string, assetsBaseUrl: string | undefined): string | undefined {
   const url = trimAsciiWhitespace(value);
@@ -32,12 +33,12 @@ export function toAssetUrl(value: string, assetsBaseUrl: string | undefined): st
   const href = resolveUrl(url);
   const folder = resolveUrl(toFolder(assetsBaseUrl));
 
-  return href && folder && href.startsWith(folder) ? url : undefined;
+  return href && folder && href.startsWith(folder) ? href : undefined;
 }
 
 /**
  * `undefined` when any candidate breaks the rule: the attribute is left out whole. A candidate splits on ASCII
- * whitespace only, as the browser reads it, and is written back as it was checked.
+ * whitespace only, as the browser reads it, and is written back with the address it was checked at.
  */
 export function toAssetSrcset(value: string, assetsBaseUrl: string | undefined): string | undefined {
   const candidates = value

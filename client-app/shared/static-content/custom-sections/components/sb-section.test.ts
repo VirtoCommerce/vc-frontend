@@ -190,7 +190,7 @@ describe("SbSection", () => {
       const root = mountSection("<section></section>", { image }).find("section");
       const variable = root.element.style.getPropertyValue("--setting-image");
 
-      expect(variable).toBe(`url("${ASSETS}/a%22) , url(%22https://evil.example/x.png")`);
+      expect(variable).toBe(`url("${ASSETS}/a%22)%20,%20url(%22https://evil.example/x.png")`);
     });
 
     it("sets no variable for an image that breaks the image rule", () => {

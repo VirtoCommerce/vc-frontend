@@ -17,7 +17,13 @@ describe("toAssetUrl", () => {
     ["//evil.example/hero.png", false],
     ["javascript:alert(1)", false],
   ])("takes only the asset library's images, read as the browser resolves them: %s → %s", (url, isKept) => {
-    expect(toAssetUrl(url, BASE)).toBe(isKept ? url : undefined);
+    expect(toAssetUrl(url, BASE)).toBe(isKept ? `${BASE}/hero.png` : undefined);
+  });
+
+  it("gives the address it checked, so a relative path cannot load from another page's folder", () => {
+    const library = new URL("/assets", document.baseURI).href;
+
+    expect(toAssetUrl("assets/hero.png", library)).toBe(`${library}/hero.png`);
   });
 
   it("trims ASCII whitespace only, as the URL parser does", () => {
@@ -48,6 +54,12 @@ describe("toAssetSrcset", () => {
     expect(toAssetSrcset(`${BASE}/a.png 1x, ${BASE}/b.png 2x`, BASE)).toBe(`${BASE}/a.png 1x, ${BASE}/b.png 2x`);
     expect(toAssetSrcset(`${BASE}/a.png 1x, https://evil.example/b.png 2x`, BASE)).toBeUndefined();
     expect(toAssetSrcset(`${BASE}/a.png 1x, ${BASE}/../b.png 2x`, BASE)).toBeUndefined();
+  });
+
+  it("gives each candidate as the address it checked", () => {
+    expect(toAssetSrcset(`${BASE}/team/../a.png 1x, ${BASE}/b.png 2x`, BASE)).toBe(
+      `${BASE}/a.png 1x, ${BASE}/b.png 2x`,
+    );
   });
 
   it("reads a candidate as the browser does, split on ASCII whitespace only", () => {
