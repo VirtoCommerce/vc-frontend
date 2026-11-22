@@ -178,7 +178,8 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
     description:
       "The children are repeated once for a seamless loop. --marquee-width is the width of one run; animate " +
       "translate from 0 to var(--marquee-shift), which moves toward the inline start and reverses in " +
-      "right-to-left text. The loop pauses, with data-paused set, while the pointer is over it or the focus inside.",
+      "right-to-left text. The loop pauses, with data-paused set, while the pointer is over it or the focus inside; " +
+      "with nothing to focus inside, the element itself takes focus.",
     writes: ["--marquee-width", "--marquee-shift", "data-paused"],
     repeatsChildren: true,
   },

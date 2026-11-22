@@ -4,6 +4,7 @@ import { REPEATED_COPY_ATTRIBUTE } from "./constants";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const PAUSED_ATTRIBUTE = "data-paused";
+const FOCUSABLE_SELECTOR = "a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]";
 
 /**
  * Writes `--marquee-width` (one run, gap included) and `--marquee-shift` (toward the inline start), 0 under reduced
@@ -52,6 +53,11 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
     items.value = getItems(element);
   });
 
+  // Focus within pauses it: with nothing to focus in its run, the keyboard reaches the strip itself.
+  if (!element.hasAttribute("tabindex") && !hasFocusableItem(element)) {
+    element.tabIndex = 0;
+  }
+
   measure();
   useResizeObserver(() => [element, ...items.value], measure);
   useEventListener(element, "mouseenter", () => {
@@ -83,4 +89,11 @@ function getItems(element: HTMLElement): HTMLElement[] {
 
 function hasBox(element: HTMLElement): boolean {
   return element.getClientRects().length > 0;
+}
+
+/** The copies are inert, so only the run counts. */
+function hasFocusableItem(element: HTMLElement): boolean {
+  return [...element.querySelectorAll(FOCUSABLE_SELECTOR)].some(
+    (item) => !item.closest(`[${REPEATED_COPY_ATTRIBUTE}]`),
+  );
 }

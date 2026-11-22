@@ -163,6 +163,25 @@ describe("vMarquee", () => {
     wrapper.unmount();
   });
 
+  it.each([
+    { content: "text", children: [h("span", "Sale"), h("span", { "data-sb-repeat": "" }, "Sale")], tabindex: "0" },
+    {
+      content: "a link",
+      children: [h("a", { href: "/sale" }, "Sale"), h("a", { href: "/sale", "data-sb-repeat": "" }, "Sale")],
+      tabindex: undefined,
+    },
+  ])(
+    "lets the keyboard reach a marquee of $content, so focus can pause it: tabindex $tabindex",
+    ({ children, tabindex }) => {
+      const wrapper = mount(
+        defineComponent({ setup: () => () => withDirectives(h("div", children), [[vMarquee, ""]]) }),
+      );
+
+      expect(wrapper.attributes("tabindex")).toBe(tabindex);
+      wrapper.unmount();
+    },
+  );
+
   it("stands still with reduced motion", () => {
     mocks.motion = "reduce";
 
