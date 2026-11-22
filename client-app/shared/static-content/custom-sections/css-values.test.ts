@@ -19,6 +19,8 @@ describe("isAllowedValue", () => {
     ["url(https://example.com/a.png)", false],
     ['image-set("/a.png" 1x)', false],
     ['url("data:image/png;base64,AAAA")', true],
+    ["url(\"data:image/svg+xml,<svg><mask id='m'></mask></svg>#m\")", false],
+    ["url(data:image/svg+xml,%3Csvg%3E%3C/svg%3E%23m)", true],
     ["url(javascript:alert(1))", false],
     ["-moz-element(#secret)", false],
   ])("judges %s: %s", (value, isAllowed) => {

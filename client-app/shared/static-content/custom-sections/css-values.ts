@@ -46,7 +46,8 @@ export function decodeCssEscapes(text: string): string {
 /** An image the section may show: the asset library's, or an inline `data:image/`. */
 export function isAllowedImageUrl(url: string, assetsBaseUrl: string | undefined): boolean {
   const trimmed = url.trim();
-  return !!toAssetUrl(trimmed, assetsBaseUrl) || DATA_IMAGE_REGEX.test(trimmed);
+  // An image needs no fragment; `data:image/svg+xml,…#id` may load as a document whose images reach any host.
+  return !!toAssetUrl(trimmed, assetsBaseUrl) || (DATA_IMAGE_REGEX.test(trimmed) && !trimmed.includes("#"));
 }
 
 /**
