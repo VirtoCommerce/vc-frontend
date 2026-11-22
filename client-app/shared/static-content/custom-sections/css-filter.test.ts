@@ -41,6 +41,25 @@ describe("filterSectionCss", () => {
     expect(filtered?.rules).toBe("");
   });
 
+  it("moves a {type}__… keyframes out of a condition beside the scope, its condition with it, and drops the others", () => {
+    const filtered = filterSectionCss(
+      TYPE,
+      "@media (prefers-reduced-motion: no-preference) { @supports (rotate: 1turn) { " +
+        "@keyframes custom-hero__in { from { opacity: 0; } } @keyframes spin { to { rotate: 1turn; } } } " +
+        ".a { animation: 1s custom-hero__in; } } .b { @media (width > 1px) { @keyframes custom-hero__x { } } }",
+      ASSETS,
+    );
+    const keyframes = filtered?.keyframes.replaceAll(/\s+/g, " ") ?? "";
+
+    expect(keyframes).toMatch(
+      /^@media \(prefers-reduced-motion: no-preference\) \{ @supports \(rotate: 1turn\) \{ @keyframes custom-hero__in /,
+    );
+    expect(keyframes).not.toContain("spin");
+    expect(keyframes).not.toContain(".a");
+    expect(filtered?.rules).toContain("custom-hero__in");
+    expect(filtered?.rules).not.toContain("@keyframes");
+  });
+
   it("keeps :dir() selectors and the logical properties", () => {
     const rule =
       ".a:dir(rtl) { margin-inline-start: 1rem; padding-inline: 1rem; inset-inline-start: 0px; text-align: start; " +

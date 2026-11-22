@@ -2,9 +2,17 @@ import { isContainedSelector } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
 
 export interface IFilteredCss {
-  /** Top level: a keyframes name is not scoped, so it starts with `{type}__`. */
+  /**
+   * A keyframes name is not scoped, so it starts with `{type}__`. They stand beside the scope, which holds style
+   * rules only; one written inside a condition keeps it.
+   */
   keyframes: string;
   rules: string;
+}
+
+interface IFilterContext {
+  type: string;
+  assetsBaseUrl: string | undefined;
 }
 
 type RuleOwnerType = { cssRules: CSSRuleList; deleteRule(index: number): void };
@@ -25,16 +33,21 @@ export function filterSectionCss(type: string, css: string, assetsBaseUrl?: stri
     return undefined;
   }
 
+  const context: IFilterContext = { type, assetsBaseUrl };
   const keyframes: string[] = [];
   const rules: string[] = [];
 
   for (const rule of sheet.cssRules) {
     if (isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule")) {
-      if (rule.name.startsWith(`${type}__`)) {
-        [...rule.cssRules].filter(hasStyle).forEach((keyframe) => filterDeclarations(keyframe.style, assetsBaseUrl));
+      if (keepKeyframes(rule, context)) {
         keyframes.push(rule.cssText);
       }
-    } else if (keepRule(rule, assetsBaseUrl)) {
+    } else if (keepRule(rule, context, true)) {
+      const conditionalKeyframes = takeKeyframes(rule);
+
+      if (conditionalKeyframes) {
+        keyframes.push(conditionalKeyframes);
+      }
       rules.push(rule.cssText);
     }
   }
@@ -56,41 +69,93 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
   }
 }
 
-function keepRule(rule: CSSRule, assetsBaseUrl: string | undefined): boolean {
+/** `canHoldKeyframes`: only condition rules stand between the rule and the top level. */
+function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: boolean): boolean {
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
     if (REFUSED_SELECTOR_REGEX.test(rule.selectorText) || !isContainedSelector(rule.selectorText)) {
       return false;
     }
 
-    filterDeclarations(rule.style, assetsBaseUrl);
-    filterRules(rule, assetsBaseUrl);
+    filterDeclarations(rule.style, context.assetsBaseUrl);
+    filterRules(rule, context, false);
     return true;
   }
 
   if (isRuleOf(rule, "CSSNestedDeclarations") && hasStyle(rule)) {
-    filterDeclarations(rule.style, assetsBaseUrl);
+    filterDeclarations(rule.style, context.assetsBaseUrl);
     return true;
   }
 
   if (isConditionRule(rule)) {
-    filterRules(rule, assetsBaseUrl);
+    filterRules(rule, context, canHoldKeyframes);
     return true;
   }
 
-  return false;
+  return canHoldKeyframes && isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule") && keepKeyframes(rule, context);
 }
 
 /** Nested rules too: a style rule holds them with CSS nesting. */
-function filterRules(owner: Partial<RuleOwnerType>, assetsBaseUrl: string | undefined): void {
+function filterRules(owner: Partial<RuleOwnerType>, context: IFilterContext, canHoldKeyframes: boolean): void {
   if (!owner.cssRules || typeof owner.deleteRule !== "function") {
     return;
   }
 
   for (let index = owner.cssRules.length - 1; index >= 0; index--) {
-    if (!keepRule(owner.cssRules[index], assetsBaseUrl)) {
+    if (!keepRule(owner.cssRules[index], context, canHoldKeyframes)) {
       owner.deleteRule(index);
     }
   }
+}
+
+function keepKeyframes(rule: CSSKeyframesRule, context: IFilterContext): boolean {
+  if (!rule.name.startsWith(`${context.type}__`)) {
+    return false;
+  }
+
+  [...rule.cssRules].filter(hasStyle).forEach((keyframe) => filterDeclarations(keyframe.style, context.assetsBaseUrl));
+  return true;
+}
+
+/** Takes the keyframes out of a condition rule, returned inside a copy of the conditions that hold them. */
+function takeKeyframes(rule: CSSRule): string | undefined {
+  if (!isConditionRule(rule) || !holdsKeyframes(rule)) {
+    return undefined;
+  }
+
+  const copy = parseStyleSheet(rule.cssText);
+  pruneRules(rule, (child) => !isKeyframesRule(child));
+
+  if (!copy) {
+    return undefined;
+  }
+
+  pruneRules(copy, (child) => isKeyframesRule(child) || (isConditionRule(child) && holdsKeyframes(child)));
+  return [...copy.cssRules].map(({ cssText }) => cssText).join("\n");
+}
+
+/** Keeps the rules `isKept` takes, looking into the condition rules it keeps. */
+function pruneRules(owner: Partial<RuleOwnerType>, isKept: (rule: CSSRule) => boolean): void {
+  if (!owner.cssRules || typeof owner.deleteRule !== "function") {
+    return;
+  }
+
+  for (let index = owner.cssRules.length - 1; index >= 0; index--) {
+    const rule = owner.cssRules[index];
+
+    if (!isKept(rule)) {
+      owner.deleteRule(index);
+    } else if (isConditionRule(rule)) {
+      pruneRules(rule, isKept);
+    }
+  }
+}
+
+function holdsKeyframes(owner: CSSGroupingRule): boolean {
+  return [...owner.cssRules].some((rule) => isKeyframesRule(rule) || (isConditionRule(rule) && holdsKeyframes(rule)));
+}
+
+function isKeyframesRule(rule: CSSRule): boolean {
+  return isRuleOf(rule, "CSSKeyframesRule");
 }
 
 function filterDeclarations(style: CSSStyleDeclaration, assetsBaseUrl: string | undefined): void {
