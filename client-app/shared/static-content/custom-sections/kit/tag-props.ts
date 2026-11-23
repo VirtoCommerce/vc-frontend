@@ -1,21 +1,26 @@
 import { camelize } from "vue";
+import { toAssetUrl } from "../urls";
 import { toFieldValue } from "./fields";
 import { isDeniedTagAttribute } from "./registry";
-import type { CustomSectionValueType, ICustomSectionTag } from "../types";
+import type { CustomSectionValueType, ICustomSectionField, ICustomSectionTag } from "../types";
 
 /** Whatever type a tag declares them, these hold an address. */
-const LINK_ATTRIBUTES = new Set(["to", "href", "src"]);
+const LINK_ATTRIBUTES = new Set(["to", "href"]);
+/** Whatever type a tag declares it, an image of the asset library, as `src` on an `img`. */
+const IMAGE_ATTRIBUTE = "src";
 
 export function toTagProps(
   tag: ICustomSectionTag,
   values: Record<string, string>,
+  assetsBaseUrl?: string,
 ): { props: Record<string, unknown>; slotText?: string } {
   const checked: Record<string, CustomSectionValueType> = {};
 
   for (const [name, field] of Object.entries(tag.attributes)) {
-    const checkedField = LINK_ATTRIBUTES.has(name) ? { ...field, type: "link" as const } : field;
     const value =
-      Object.hasOwn(values, name) && !isDeniedTagAttribute(name) ? toFieldValue(checkedField, values[name]) : undefined;
+      Object.hasOwn(values, name) && !isDeniedTagAttribute(name)
+        ? toAttributeValue(name, field, values[name], assetsBaseUrl)
+        : undefined;
 
     if (value !== undefined) {
       checked[name] = value;
@@ -32,4 +37,17 @@ export function toTagProps(
       );
 
   return { props, slotText: slotText === undefined ? undefined : String(slotText) };
+}
+
+function toAttributeValue(
+  name: string,
+  field: ICustomSectionField,
+  value: string,
+  assetsBaseUrl: string | undefined,
+): CustomSectionValueType | undefined {
+  if (name === IMAGE_ATTRIBUTE) {
+    return toAssetUrl(value, assetsBaseUrl);
+  }
+
+  return toFieldValue(LINK_ATTRIBUTES.has(name) ? { ...field, type: "link" } : field, value);
 }

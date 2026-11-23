@@ -43,12 +43,12 @@ describe("the kit registry", () => {
   it("takes a tag named vc-* and keeps the first registration of a name", () => {
     const other = { ...TAG, description: "Other." };
 
-    registerCustomSectionTag("vc-rating", TAG);
-    registerCustomSectionTag("vc-rating", other);
+    registerCustomSectionTag("vc-stars", TAG);
+    registerCustomSectionTag("vc-stars", other);
     registerCustomSectionTag("rating", TAG);
     registerCustomSectionTag("vc-Rating", TAG);
 
-    expect(getCustomSectionTags()).toEqual({ "vc-rating": TAG });
+    expect(getCustomSectionTags()).toEqual({ "vc-stars": TAG });
     expect(Logger.warn).toHaveBeenCalledWith('registerCustomSectionTag: "rating" is not a kit tag name; ignoring.');
   });
 

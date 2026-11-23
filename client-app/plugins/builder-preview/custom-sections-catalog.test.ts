@@ -123,14 +123,21 @@ describe("watchCustomSectionCatalog", () => {
     watchCatalog(apply);
 
     const kit = apply.mock.lastCall?.[1];
-    expect(Object.keys(kit?.tags ?? {})).toEqual(["vc-button", "vc-icon", "vc-badge", "vc-products"]);
     const iconCost = 1 + __SB_ICON_ELEMENTS__;
-    expect(["vc-button", "vc-icon", "vc-badge", "vc-products"].map((name) => kit?.tags[name].cost)).toEqual([
-      5 + 2 * iconCost,
-      iconCost,
-      2,
-      2401,
-    ]);
+    expect(Object.fromEntries(Object.entries(kit?.tags ?? {}).map(([name, tag]) => [name, tag.cost]))).toEqual({
+      "vc-button": 5 + 2 * iconCost,
+      "vc-icon": iconCost,
+      "vc-badge": 2,
+      "vc-products": 2401,
+      "vc-image": 1,
+      "vc-link": 1,
+      "vc-chip": 2 + iconCost,
+      "vc-alert": 4 + iconCost,
+      "vc-typography": 1,
+      "vc-rating": 6 + 5 * (3 + 2 * iconCost),
+      "vc-shape": 1 + iconCost,
+      "vc-property": 4,
+    });
     expect([kit?.tags["vc-button"].hasSideEffects, kit?.tags["vc-products"].hasSideEffects]).toEqual([false, true]);
     expect(kit?.tags["vc-products"].attributes.take).toEqual({
       type: "number",

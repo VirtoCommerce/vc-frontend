@@ -26,7 +26,20 @@ export interface IKit {
 }
 
 /** The storefront's own kit. It registers lazily, after a module or a plugin could claim a name, so these are reserved. */
-export const BUILT_IN_TAG_NAMES = ["vc-button", "vc-icon", "vc-badge", "vc-products"] as const;
+export const BUILT_IN_TAG_NAMES = [
+  "vc-button",
+  "vc-icon",
+  "vc-badge",
+  "vc-products",
+  "vc-image",
+  "vc-link",
+  "vc-chip",
+  "vc-alert",
+  "vc-typography",
+  "vc-rating",
+  "vc-shape",
+  "vc-property",
+] as const;
 export const BUILT_IN_BEHAVIOR_NAMES = [
   "inview",
   "scroll-progress",

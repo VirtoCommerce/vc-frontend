@@ -47,7 +47,10 @@ export interface ICustomSectionTag {
   component: Component;
   /** What the tag shows, for the agent that writes templates. */
   description: string;
-  /** By attribute name; any other attribute is left out. */
+  /**
+   * By attribute name; any other attribute is left out. Whatever type they declare, `to` and `href` hold a link and
+   * `src` an image of the asset library, as on `a` and `img`.
+   */
   attributes: Record<string, ICustomSectionField>;
   /** The checked attributes as the component's props; without it each goes as the prop of its camelCase name. */
   mapProps?: (attributes: Record<string, CustomSectionValueType>) => Record<string, unknown>;

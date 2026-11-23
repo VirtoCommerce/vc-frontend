@@ -10,6 +10,8 @@ repeats its children, an `h1`, an image without `alt`, a link with nothing to re
 color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text written into the
 template get only a warning. The storefront leaves out whatever still reaches a page against them.
 
+- Reach for a kit tag before hand-built markup: a button, link, badge, chip, alert, rating, specification row,
+  icon shape or styled text from the kit looks and behaves as the rest of the storefront, in every theme preset.
 - One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
   it in a box of its own: nothing the section draws leaves that box.
 - Classes are the section's own: `{type}`, `{type}__part`, `{type}--modifier`. The storefront's utility classes are
@@ -53,21 +55,25 @@ The page may read right to left.
 
 ## Type and headings
 
-- The page owns the `h1`. A section starts at `h2`; its parts use `h3`. Do not skip levels.
+- The page owns the `h1`. A section starts at `h2`; its parts use `h3`. Do not skip levels. A `vc-typography`
+  with an `h2`–`h6` tag is a heading too.
 - Headings read the heading role tokens (`--vc-heading-*`) on their own. Set their size from the font size tokens
   with the matching line height.
 - Body text stays at the base size or larger.
 
 ## Images
 
+- An `img` or a `vc-image` takes its `src` from the asset library: one of its URLs, or one binding of an `images`
+  setting.
 - `alt` comes from a setting when the image says something, and is `""` when it only decorates.
 - Below the fold: `loading="lazy"`. Give `width` and `height` (or `aspect-ratio`) so nothing shifts as it loads.
 - Use the asset library's images at the size shown; no huge originals.
 
 ## Links and buttons
 
-- A call to action is a `vc-button` with `to`; a link is an `a` with an `href` of a `url` setting. Both carry visible text, and an
-  accessible name, when given, starts with that text.
+- A call to action is a `vc-button` with `to`; a link is a `vc-link` with `to`, or an `a` with an `href`, of a
+  `url` setting. Each carries visible text, and an accessible name, when given, starts with that text. A path on
+  the site opens without reloading the page from `vc-button` and `vc-link`, not from `a`.
 - `target` is `_self` or `_blank`; `_blank` gets `rel="noopener noreferrer"` from the storefront.
 
 ## Keyboard and focus

@@ -180,7 +180,7 @@ function renderShown(
   const rendered = renderAttributeEntries(node.attributes, scope);
 
   if (node.isKitTag) {
-    return renderKitTag(node, rendered, props);
+    return renderKitTag(node, rendered, props, scope.assetsBaseUrl);
   }
 
   const behaviors = getCustomSectionBehaviors();
@@ -223,7 +223,12 @@ function renderShown(
 }
 
 /** A tag that throws on its attributes renders nothing rather than the whole section failing. */
-function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], props: Record<string, unknown>): VNode {
+function renderKitTag(
+  node: ICompiledElement,
+  rendered: IRenderedAttribute[],
+  props: Record<string, unknown>,
+  assetsBaseUrl: string | undefined,
+): VNode {
   const tags = getCustomSectionTags();
   const tag = Object.hasOwn(tags, node.tag) ? tags[node.tag] : undefined;
 
@@ -237,7 +242,7 @@ function renderKitTag(node: ICompiledElement, rendered: IRenderedAttribute[], pr
   );
 
   try {
-    const { props: tagProps, slotText } = toTagProps(tag, values);
+    const { props: tagProps, slotText } = toTagProps(tag, values, assetsBaseUrl);
     return h(tag.component, { ...tagProps, ...props }, slotText === undefined ? undefined : () => slotText);
   } catch (error) {
     Logger.error(`[custom-sections] The ${node.tag} tag failed to map its attributes`, error);

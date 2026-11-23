@@ -41,6 +41,11 @@ describe("registerBuiltInKit", () => {
     expect(tags["vc-button"].description).toContain("without `to` it does nothing");
     expect(tags["vc-icon"].attributes.size.description).toContain("a whole number of pixels, such as 24");
     expect(tags["vc-products"].attributes.view.description).toContain("grid by default");
+    expect(tags["vc-image"].description).toContain("put it under data-if when its setting may be unset");
+    expect(tags["vc-image"].attributes.alt.description).toContain('"" (the default)');
+    expect(tags["vc-rating"].attributes["with-text"].description).toContain('on unless written "false"');
+    expect(tags["vc-shape"].attributes.size.description).toContain("40 by default");
+    expect(tags["vc-typography"].attributes.tag.options).not.toContain("h1");
     expect(behaviors["count-up"].options?.duration.description).toContain("1500 by default");
     expect(behaviors["count-up"].options?.decimals.description).toContain("0 by default");
     expect(behaviors.copy.description).toMatch(/Enter or Space.*button.*says nothing/);

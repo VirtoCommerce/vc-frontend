@@ -3,7 +3,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { Logger } from "@/core/utilities";
-import { VcBadge, VcButton, VcIcon } from "@/ui-kit/components";
+import {
+  VcAlert,
+  VcBadge,
+  VcButton,
+  VcChip,
+  VcIcon,
+  VcImage,
+  VcLink,
+  VcProperty,
+  VcRating,
+  VcShape,
+  VcTypography,
+} from "@/ui-kit/components";
 import {
   registerCustomSectionBehavior,
   registerCustomSectionTag,
@@ -18,6 +30,11 @@ const frame = vi.hoisted(() => ({ isPreview: false }));
 vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
   isPreviewV2Frame: () => frame.isPreview,
+}));
+
+vi.mock("vue-i18n", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("vue-i18n")>()),
+  useI18n: () => ({ t: (key: string) => key }),
 }));
 
 vi.mock("./sb-products.vue", async () => {
@@ -702,6 +719,136 @@ describe("SbSection", () => {
         columns: 3,
       });
     });
+
+    it("renders vc-image from the asset library only, its alt empty unless written", () => {
+      const wrapper = mountSection(
+        '<section><vc-image src="{{ settings.image }}" width="400" height="300" lazy></vc-image>' +
+          '<vc-image src="https://cdn.example.com/a.png" alt="Logo"></vc-image></section>',
+        { image: `${ASSETS}/a.png` },
+      );
+      const [asset, foreign] = wrapper.findAllComponents(VcImage);
+
+      expect(asset.props()).toMatchObject({ src: `${ASSETS}/a.png`, alt: "", lazy: true });
+      expect(asset.attributes()).toMatchObject({ width: "400", height: "300", loading: "lazy" });
+      expect(foreign.props()).toMatchObject({ src: "", alt: "Logo" });
+    });
+
+    it("renders vc-link as a route for a path, a link for a URL, and its text alone without one", () => {
+      const wrapper = mountSection(
+        '<section><vc-link label="Catalog" to="/catalog"></vc-link><vc-link label="Docs" to="https://example.com">' +
+          '</vc-link><vc-link label="Nowhere" to="javascript:alert(1)"></vc-link></section>', // nosemgrep: vc-javascript-uri -- sanitizer input fixture, never rendered
+      );
+      const [route, external, bare] = wrapper.findAllComponents(VcLink);
+
+      expect(route.findComponent(RouterLinkStub).props("to")).toBe("/catalog");
+      expect(route.text()).toBe("Catalog");
+      expect(external.find("a").attributes("href")).toBe("https://example.com");
+      expect(bare.props("disabled")).toBe(true);
+      expect(bare.find("a").exists()).toBe(false);
+      expect(bare.text()).toBe("Nowhere");
+    });
+
+    it("renders vc-chip, a link only with to", () => {
+      const wrapper = mountSection(
+        '<section><vc-chip label="New" icon="star" color="success" variant="outline" size="sm" rounded></vc-chip>' +
+          '<vc-chip label="Sale" to="/sale"></vc-chip></section>',
+      );
+      const [plain, linked] = wrapper.findAllComponents(VcChip);
+
+      expect(plain.props()).toMatchObject({
+        icon: "star",
+        color: "success",
+        variant: "outline",
+        size: "sm",
+        rounded: true,
+        clickable: false,
+      });
+      expect(plain.text()).toBe("New");
+      expect(linked.props()).toMatchObject({ clickable: true, to: "/sale" });
+      expect(linked.findComponent(RouterLinkStub).exists()).toBe(true);
+    });
+
+    it("renders vc-alert with the color's own icon, or the one it names", () => {
+      const wrapper = mountSection(
+        '<section><vc-alert text="Free shipping" title="Today" color="success" variant="soft" size="sm" with-icon ' +
+          'shadow></vc-alert><vc-alert text="Note" icon="star" with-icon></vc-alert><vc-alert text="Bare"></vc-alert>' +
+          "</section>",
+      );
+      const [colored, named, bare] = wrapper.findAllComponents(VcAlert);
+
+      expect(colored.props()).toMatchObject({
+        title: "Today",
+        color: "success",
+        variant: "soft",
+        size: "sm",
+        icon: true,
+        shadow: true,
+      });
+      expect(colored.text()).toContain("Free shipping");
+      expect(named.props("icon")).toBe("star");
+      expect(bare.props("icon")).toBe(false);
+    });
+
+    it("renders vc-typography with a tag of its list only, and a palette color", () => {
+      const wrapper = mountSection(
+        '<section><vc-typography text="Hello" tag="h3" variant="h2" color="primary" truncate></vc-typography>' +
+          '<vc-typography text="Body" tag="script" color="red"></vc-typography></section>',
+      );
+      const [heading, body] = wrapper.findAllComponents(VcTypography);
+
+      expect(heading.props()).toMatchObject({ tag: "h3", variant: "h2", color: "primary", truncate: true });
+      expect(heading.find("h3").text()).toBe("Hello");
+      expect(body.props()).toMatchObject({ tag: "p", color: undefined });
+      expect(body.find("p").text()).toBe("Body");
+    });
+
+    it("renders vc-rating read only, its text on unless written false", () => {
+      const wrapper = mountSection(
+        '<section><vc-rating value="4.5" mode="full" size="sm" review-count="12" label="Rated"></vc-rating>' +
+          '<vc-rating value="7" with-text="false"></vc-rating></section>',
+      );
+      const [full, outOfRange] = wrapper.findAllComponents(VcRating);
+
+      expect(full.props()).toMatchObject({
+        readOnly: true,
+        value: 4.5,
+        mode: "full",
+        size: "sm",
+        withText: true,
+        reviewCount: 12,
+        label: "Rated",
+      });
+      expect(full.findAll("button").every((button) => button.attributes("disabled") !== undefined)).toBe(true);
+      expect(outOfRange.props()).toMatchObject({ value: 0, withText: false });
+    });
+
+    it("renders vc-shape with palette colors and a size in pixels", () => {
+      const wrapper = mountSection(
+        '<section><vc-shape icon="star" icon-color="--color-primary-700" bg-color="accent" size="64" mask="heart">' +
+          '</vc-shape><vc-shape icon="star" bg-color="url(x)" size="4"></vc-shape></section>',
+      );
+      const [shaped, bare] = wrapper.findAllComponents(VcShape);
+
+      expect(shaped.props()).toMatchObject({
+        icon: "star",
+        iconColor: "--color-primary-700",
+        bgColor: "accent",
+        size: "64px",
+        mask: "heart",
+      });
+      expect(bare.props()).toMatchObject({ bgColor: undefined, size: undefined });
+    });
+
+    it("renders vc-property as a label and its value", () => {
+      const wrapper = mountSection(
+        '<section><vc-property label="Weight" value="{{ settings.title }}"></vc-property></section>',
+        {
+          title: "2 kg",
+        },
+      );
+
+      expect(wrapper.findComponent(VcProperty).props()).toMatchObject({ label: "Weight", value: "2 kg" });
+    });
   });
 
   describe("in the designer preview", () => {
@@ -827,12 +974,12 @@ describe("SbSection", () => {
     });
 
     afterEach(() => {
-      ["vc-rating", "vc-video", "vc-late"].forEach(unregisterCustomSectionTag);
+      ["vc-stars", "vc-video", "vc-late"].forEach(unregisterCustomSectionTag);
       ["glow", "tally"].forEach(unregisterCustomSectionBehavior);
     });
 
     it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
-      registerCustomSectionTag("vc-rating", {
+      registerCustomSectionTag("vc-stars", {
         component: Rating,
         description: "Stars.",
         attributes: {
@@ -844,7 +991,7 @@ describe("SbSection", () => {
       });
 
       const wrapper = mountSection(
-        '<section><vc-rating value="{{ settings.speed }}" max-value="10" label="Great" onclick="x"></vc-rating><vc-rating value="9"></vc-rating></section>',
+        '<section><vc-stars value="{{ settings.speed }}" max-value="10" label="Great" onclick="x"></vc-stars><vc-stars value="9"></vc-stars></section>',
         { speed: 4 },
       );
       const [rated, outOfRange] = wrapper.findAllComponents(Rating);
@@ -923,7 +1070,7 @@ describe("SbSection", () => {
     });
 
     it("leaves out a tag nobody registered", () => {
-      const wrapper = mountSection("<section><vc-rating value='3'></vc-rating><p>Kept</p></section>");
+      const wrapper = mountSection("<section><vc-stars value='3'></vc-stars><p>Kept</p></section>");
 
       expect(wrapper.find("section").element.innerHTML).toBe("<p>Kept</p>");
     });
