@@ -1,5 +1,6 @@
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { Logger } from "@/core/utilities";
 import plugin from "./builder-preview.plugin";
 import type { ConnectTokenResponseType } from "@/core/types";
 import type { MockInstance } from "vitest";
@@ -220,10 +221,14 @@ describe("the preview's auth message", () => {
   });
 
   it("renders anonymously and asks for a new code when the token endpoint cannot be reached", async () => {
-    state.requestToken.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    const fetchError = new TypeError("Failed to fetch");
+    const logError = vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+    state.requestToken.mockResolvedValueOnce({ data: null, error: fetchError });
 
     await sendCode("customer");
 
+    expect(logError).toHaveBeenCalledWith("[builder-preview] Failed to exchange the preview code", fetchError);
+    logError.mockRestore();
     expect(await getRequestAuthorization()).toBeUndefined();
     expect(state.globals).toEqual({ userId: "designer", organizationId: undefined });
     expect(getAuthRenewMessages()).toEqual([

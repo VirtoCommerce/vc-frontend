@@ -259,7 +259,7 @@ function createOverlay(
   installPageInputGuard(interactiveBlocker, isPageInputAllowed);
 
   const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
-    window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
+    postToDesigner(builderOrigin, type, { sectionId });
   };
   const sharedComponentOverlay = new SharedComponentOverlay(
     bodyEl,
@@ -298,7 +298,7 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       body: context.bodyEl,
       blocker: context.blocker,
       schemas: () => context.schemas.value,
-      post: (type, data) => window.parent.postMessage({ source: "preview", type, data }, context.builderOrigin),
+      post: (type, data) => postToDesigner(context.builderOrigin, type, data),
       renderPage: async (message) => {
         if (router.currentRoute.value.path !== DESIGNER_PREVIEW_PATH) {
           await router.push(DESIGNER_PREVIEW_PATH);
@@ -493,7 +493,7 @@ async function exchangePreviewCode(code: string): Promise<{ accessToken: string;
     const expiresIn = data.value?.expires_in;
 
     if (error.value || !accessToken || !expiresIn) {
-      Logger.error("[builder-preview] Failed to exchange the preview code", data.value?.error);
+      Logger.error("[builder-preview] Failed to exchange the preview code", data.value?.error ?? error.value);
       return null;
     }
 
@@ -505,7 +505,11 @@ async function exchangePreviewCode(code: string): Promise<{ accessToken: string;
 }
 
 function postAuthRenew(context: IPreviewContext, userId: string): void {
-  window.parent.postMessage({ source: "preview", type: "authRenew", data: { userId } }, context.builderOrigin);
+  postToDesigner(context.builderOrigin, "authRenew", { userId });
+}
+
+function postToDesigner(builderOrigin: string, type: string, data: unknown): void {
+  window.parent.postMessage({ source: "preview", type, data }, builderOrigin);
 }
 
 async function getPreviewUserOrganizationId(userId: string): Promise<string | undefined> {
