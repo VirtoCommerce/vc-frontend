@@ -1,20 +1,11 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive } from "vue";
-import { describeScrollBox } from "@/ui-kit/test-mocks";
+import { describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
 import VcIcon from "../icon/vc-icon.vue";
 import VcLoader from "../loader/vc-loader.vue";
 import VcScrollbar from "../scrollbar/vc-scrollbar.vue";
 import VcLoadMore from "./vc-load-more.vue";
-
-// jsdom ships MutationObserver but not ResizeObserver, and VcScrollbar constructs one on mount.
-class ResizeObserverStub {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 enableAutoUnmount(afterEach);
 

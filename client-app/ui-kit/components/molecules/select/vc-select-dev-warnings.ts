@@ -221,13 +221,13 @@ function watchItemModel<T>(props: IDevWarningProps<T>, getItemValue: (item: T) =
       }
 
       // An off-page selection matches no loaded item, but still carries a string value field as a key.
-      const holdsItems = modelValue.some(
+      const hasItemModel = modelValue.some(
         (value) =>
           (typeof valueField === "string" && typeof value === "object" && value !== null && valueField in value) ||
           items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
       );
 
-      if (holdsItems) {
+      if (hasItemModel) {
         warnedItemModel = true;
         // eslint-disable-next-line no-console
         console.warn(
@@ -256,12 +256,12 @@ function watchPrimitiveModel<T>(props: IDevWarningProps<T>): void {
 
       const values: unknown[] = Array.isArray(modelValue) ? modelValue : [modelValue];
       // A primitive that is itself one of the items (mixed items) is a valid model.
-      const holdsPrimitive = values.some(
+      const hasPrimitiveValue = values.some(
         (value) => value !== null && value !== undefined && typeof value !== "object" && !items.includes(value as T),
       );
-      const offersObjects = items.some((item) => isObjectLike(item));
+      const hasObjectItems = items.some((item) => isObjectLike(item));
 
-      if (holdsPrimitive && offersObjects) {
+      if (hasPrimitiveValue && hasObjectItems) {
         warnedPrimitiveModel = true;
         // eslint-disable-next-line no-console
         console.warn(

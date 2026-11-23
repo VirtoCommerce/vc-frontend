@@ -1,18 +1,8 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { h, nextTick } from "vue";
-import { describeScrollBox as describeBox } from "@/ui-kit/test-mocks";
+import { describeScrollBox as describeBox } from "@/ui-kit/test-mocks/describe-scroll-box";
 import VcScrollbar from "./vc-scrollbar.vue";
-
-// jsdom ships MutationObserver but not ResizeObserver, and useResizeObserver constructs one on
-// mount. Only the mutation path is exercised below, so a no-op is enough.
-class ResizeObserverStub {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 enableAutoUnmount(afterEach);
 
@@ -56,11 +46,7 @@ describe("VcScrollbar", () => {
       ["a height-collapsed region", { clientHeight: 0, scrollHeight: 0, scrollTop: 0, clientWidth: 300 }],
       ["a width-collapsed region", { clientHeight: 400, scrollHeight: 400, scrollTop: 0, clientWidth: 0 }],
     ])("says nothing about the edges of %s", async (_label, box) => {
-      const wrapper = mount(VcScrollbar, {
-        attachTo: document.body,
-        props: { vertical: true, horizontal: true },
-        slots: { default: () => h("p", "row") },
-      });
+      const wrapper = mountScrollbar(1, { horizontal: true });
 
       if (box) {
         describeBox(wrapper.element as HTMLElement, box);
@@ -78,7 +64,7 @@ describe("VcScrollbar", () => {
       ["horizontal only", { horizontal: true }, { reachBottom: 0, reachRight: 1 }],
       ["disabled", { vertical: true, horizontal: true, disabled: true }, { reachBottom: 0, reachRight: 0 }],
     ])("announces only the edges of the axes it scrolls: %s", async (_label, props, expected) => {
-      const wrapper = mount(VcScrollbar, { attachTo: document.body, props, slots: { default: () => h("p", "row") } });
+      const wrapper = mountScrollbar(1, { vertical: false, ...props });
 
       describeBox(wrapper.element as HTMLElement, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
       await nextTick();
@@ -89,11 +75,7 @@ describe("VcScrollbar", () => {
     });
 
     it("announces the bottom when the vertical axis is turned on after mount", async () => {
-      const wrapper = mount(VcScrollbar, {
-        attachTo: document.body,
-        props: { vertical: false, horizontal: true },
-        slots: { default: () => h("p", "row") },
-      });
+      const wrapper = mountScrollbar(1, { vertical: false, horizontal: true });
 
       describeBox(wrapper.element as HTMLElement, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
       await afterContentSettles();
@@ -133,11 +115,7 @@ describe("VcScrollbar", () => {
       ["a disabled scrollbar", { vertical: true, disabled: true }],
       ["a scrollbar with no axis turned on", {}],
     ])("stays quiet about the bottom on %s", async (_label, props) => {
-      const wrapper = mount(VcScrollbar, {
-        attachTo: document.body,
-        props,
-        slots: { default: () => h("p", "row") },
-      });
+      const wrapper = mountScrollbar(1, { vertical: false, ...props });
 
       describeBox(wrapper.element as HTMLElement, { clientHeight: 400, scrollHeight: 400, scrollTop: 0 });
       await afterContentSettles();
@@ -222,11 +200,7 @@ describe("VcScrollbar", () => {
       ["right reached, under a pixel short", "reachRight", 0, 0, 0, 299.45, 1],
       ["right not reached, two pixels short", "reachRight", 0, 0, 0, 298, 0],
     ])("counts the %s", async (_label, event, top, nextTop, left, nextLeft, emitted) => {
-      const wrapper = mount(VcScrollbar, {
-        attachTo: document.body,
-        props: { vertical: true, horizontal: true },
-        slots: { default: () => h("p", "row") },
-      });
+      const wrapper = mountScrollbar(1, { horizontal: true });
       const element = wrapper.element as HTMLElement;
       const box = { clientHeight: 100, scrollHeight: 400, clientWidth: 300, scrollWidth: 600 };
 
@@ -317,11 +291,7 @@ describe("VcScrollbar", () => {
     });
 
     it("leaves a region that fits and holds no interactive role without a tabindex", async () => {
-      const wrapper = mount(VcScrollbar, {
-        attachTo: document.body,
-        props: { vertical: true },
-        slots: { default: () => h("p", "row") },
-      });
+      const wrapper = mountScrollbar(1);
 
       describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 100, scrollTop: 0 });
       await afterContentSettles();

@@ -1,6 +1,27 @@
 export const FOCUSABLE_SELECTOR =
   'a[href]:not([data-skip-autofocus]), button:not(:disabled):not([data-skip-autofocus]), input:not(:disabled):not([data-skip-autofocus]), textarea:not(:disabled):not([data-skip-autofocus]), select:not(:disabled):not([data-skip-autofocus]), [tabindex]:not([tabindex="-1"]):not([data-skip-autofocus]), [contenteditable="true"]:not([data-skip-autofocus])';
 
+const FOCUSABLE_ELEMENTS = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  'input:not([disabled]):not([type="hidden"])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+  '[contenteditable="true"]',
+  "audio[controls]",
+  "video[controls]",
+  "summary",
+  "iframe",
+];
+
+/** Elements that can take focus, `tabindex="-1"` ones included. */
+export const FOCUSABLE_ELEMENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
+
+/** Elements in the Tab sequence: focusable ones without `tabindex="-1"`. */
+export const TABBABLE_SELECTOR = FOCUSABLE_ELEMENTS.map((selector) => `${selector}:not([tabindex="-1"])`).join(", ");
+
 function crossedFocusBoundary(event: FocusEvent): boolean {
   const other = event.relatedTarget;
   const shell = event.currentTarget as HTMLElement | null;

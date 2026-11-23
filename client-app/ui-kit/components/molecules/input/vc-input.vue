@@ -5,7 +5,7 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
-        'vc-input--pointer-modality': readonly && pointerModality,
+        'vc-input--pointer-modality': readonly && isPointerFocus,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
@@ -193,7 +193,7 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
-const { isPointerFocus: pointerModality } = useFocusModality();
+const { isPointerFocus } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -417,7 +417,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
-    #{$readonly}#{$pointerModality}:not(#{$opened}) & {
+    #{$pointerModality}:not(#{$opened}) & {
       @apply outline-none;
     }
 

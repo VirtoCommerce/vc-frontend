@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
 import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } from "vue";
-import { getColorValue } from "@/ui-kit/utilities";
+import { FOCUSABLE_ELEMENT_SELECTOR, getColorValue, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
 import { isCollapsedBox, vcScrollbarKey } from "./vc-scrollbar-context";
 
 interface IEmits {
@@ -102,26 +102,6 @@ const INTERACTIVE_CONTAINER_SELECTOR = INTERACTIVE_CONTAINER_ROLES.map((role) =>
 
 const INTERACTIVE_CHILD_SELECTOR = INTERACTIVE_CONTAINER_ROLES.map((role) => `:scope > [role="${role}"]`).join(", ");
 
-const FOCUSABLE_SELECTORS = [
-  "a[href]",
-  "area[href]",
-  "button:not([disabled])",
-  'input:not([disabled]):not([type="hidden"])',
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-  '[contenteditable="true"]',
-  "audio[controls]",
-  "video[controls]",
-  "summary",
-  "iframe",
-];
-
-const FOCUSABLE_SELECTOR = FOCUSABLE_SELECTORS.join(", ");
-
-// What puts a descendant in the Tab sequence; the browser's own scroller tab stop yields only to that.
-const TABBABLE_SELECTOR = FOCUSABLE_SELECTORS.map((selector) => `${selector}:not([tabindex="-1"])`).join(", ");
-
 const autoTabStop = ref<0 | -1 | undefined>();
 
 const tabindex = computed(() => (props.focusable ? 0 : autoTabStop.value));
@@ -151,7 +131,7 @@ function updateAutoTabStop(): void {
     return;
   }
 
-  autoTabStop.value = target.querySelector(FOCUSABLE_SELECTOR) ? undefined : 0;
+  autoTabStop.value = target.querySelector(FOCUSABLE_ELEMENT_SELECTOR) ? undefined : 0;
 }
 
 // The -1 only keeps the region out of the Tab order; a press on its own area (padding, the bar)
@@ -172,9 +152,9 @@ function onMousedown(event: MouseEvent): void {
 
   // Only the region's own area and the interactive container: text beside it stays selectable.
   const container = target.closest(INTERACTIVE_CONTAINER_SELECTOR);
-  const ownArea = target === region || (!!container && region.contains(container));
+  const isOwnArea = target === region || (!!container && region.contains(container));
 
-  if (ownArea && target.closest(`${FOCUSABLE_SELECTOR}, [tabindex]`) === region) {
+  if (isOwnArea && target.closest(`${FOCUSABLE_ELEMENT_SELECTOR}, [tabindex]`) === region) {
     event.preventDefault();
   }
 }
@@ -204,7 +184,7 @@ watch([() => props.vertical, () => props.horizontal, () => props.disabled], chec
 // The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
 // components grows: structural and text changes are seen by the MutationObserver, image loads
 // only by the capture-phase load listener (load doesn't bubble and isn't a mutation). Attributes
-// are watched too, since FOCUSABLE_SELECTOR and the role guard both read them.
+// are watched too, since FOCUSABLE_ELEMENT_SELECTOR and the role guard both read them.
 useResizeObserver(el, scheduleContentUpdate);
 useMutationObserver(el, scheduleContentUpdate, {
   childList: true,
@@ -239,30 +219,30 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
   measuredAt.value++;
 
   // An axis that cannot scroll sits at both edges by definition, so it announces nothing.
-  const verticalScrolls = props.vertical && !props.disabled;
-  const horizontalScrolls = props.horizontal && !props.disabled;
+  const isVerticalScrollable = props.vertical && !props.disabled;
+  const isHorizontalScrollable = props.horizontal && !props.disabled;
 
   // The refs still hold the previous measurement, which makes these arrivals rather than states.
-  if (verticalScrolls && measured.isAtTop && !isAtTop.value) {
+  if (isVerticalScrollable && measured.isAtTop && !isAtTop.value) {
     emit("reachTop");
   }
-  if (verticalScrolls && measured.isAtBottom && !isAtBottom.value) {
+  if (isVerticalScrollable && measured.isAtBottom && !isAtBottom.value) {
     emit("reachBottom");
   }
-  if (horizontalScrolls && measured.isAtLeft && !isAtLeft.value) {
+  if (isHorizontalScrollable && measured.isAtLeft && !isAtLeft.value) {
     emit("reachLeft");
   }
-  if (horizontalScrolls && measured.isAtRight && !isAtRight.value) {
+  if (isHorizontalScrollable && measured.isAtRight && !isAtRight.value) {
     emit("reachRight");
   }
 
   // Written only for axes that can emit, or enabling one later would find it already "arrived".
-  if (verticalScrolls) {
+  if (isVerticalScrollable) {
     isAtTop.value = measured.isAtTop;
     isAtBottom.value = measured.isAtBottom;
   }
 
-  if (horizontalScrolls) {
+  if (isHorizontalScrollable) {
     isAtLeft.value = measured.isAtLeft;
     isAtRight.value = measured.isAtRight;
   }

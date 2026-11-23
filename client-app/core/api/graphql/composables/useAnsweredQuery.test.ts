@@ -71,11 +71,11 @@ function mountConsumer({
 
   const consumer = defineComponent({
     setup() {
-      const enabled = computed(() => !minLength || !keyword.value || keyword.value.length >= minLength);
+      const isEnabled = computed(() => !minLength || !keyword.value || keyword.value.length >= minLength);
       const queryReturn = useQuery<{ search: { items: string[] } }, { keyword: string }>(
         SEARCH_DOCUMENT,
         () => ({ keyword: keyword.value }),
-        () => ({ fetchPolicy, keepPreviousResult, debounce, enabled: enabled.value }),
+        () => ({ fetchPolicy, keepPreviousResult, debounce, enabled: isEnabled.value }),
       );
       const { result, error, loading } = queryReturn;
 
@@ -86,7 +86,7 @@ function mountConsumer({
           typed: keyword.value,
           shown: result.value?.search.items[0]?.split("#")[0],
           answered: answeredQuery.value,
-          skipped: !enabled.value,
+          skipped: !isEnabled.value,
           failed: !!error.value && !loading.value,
         });
 

@@ -92,10 +92,10 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
         ? rememberedItem.value?.item
         : undefined;
 
-    const rawModelIsTheItem = !toValue(params.multiple) && toValue(params.valueField) === undefined;
+    const isRawModelTheItem = !toValue(params.multiple) && toValue(params.valueField) === undefined;
 
     return (
-      foundItem.value ?? remembered ?? (rawModelIsTheItem ? (toValue(params.modelValue) as T | undefined) : undefined)
+      foundItem.value ?? remembered ?? (isRawModelTheItem ? (toValue(params.modelValue) as T | undefined) : undefined)
     );
   });
 

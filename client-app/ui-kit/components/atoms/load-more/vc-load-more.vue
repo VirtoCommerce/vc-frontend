@@ -2,12 +2,12 @@
   <!-- The status region stays mounted: inserted together with its text it may go unannounced. -->
   <component
     :is="tag"
-    v-if="role === 'status' || showSpinner"
-    :class="['vc-load-more', { 'vc-load-more--loading': showSpinner }]"
+    v-if="role === 'status' || isSpinnerShown"
+    :class="['vc-load-more', { 'vc-load-more--loading': isSpinnerShown }]"
     :data-test-id="testId"
     :role="role"
   >
-    <slot v-if="showSpinner" name="loader">
+    <slot v-if="isSpinnerShown" name="loader">
       <VcLoader />
 
       <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
@@ -32,8 +32,9 @@ interface IProps {
    * How many items the list has loaded: a request is answered once the count grows, and a list
    * rebuilt for a new search is told by the count dropping. The loaded items, not the rendered rows,
    * which a filter may hide. A page that fails is not asked for again while the list rests unchanged at
-   * its end; scrolling away and back, a smaller count or a rewrite of the rows it asked from retries it
-   * (rows added after them do not), and a list too short to scroll is retried by the consumer.
+   * its end; scrolling away and back, a smaller count or a rewrite that changes the rows' text retries it
+   * (one that keeps the old text as its start does not), and a list too short to scroll is retried by the
+   * consumer.
    */
   itemCount: number;
   tag?: string;
@@ -67,9 +68,9 @@ if (import.meta.env.DEV) {
 
 // Read when a measurement lands, a next page appears, or on mount, never on `loading`: the edges come
 // from a debounced measurement, so reacting to `loading` would read the box from before an append.
-const wantsMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
+const shouldAskMore = computed(() => props.hasNextPage && !props.loading && scrollbar?.isAtBottom.value === true);
 
-const showSpinner = computed(() => props.loading && props.hasNextPage);
+const isSpinnerShown = computed(() => props.loading && props.hasNextPage);
 
 type ContentType = { size: number; text: string };
 
@@ -89,17 +90,22 @@ const askedAt = ref<ContentType | null>(null);
 function reconsider(): void {
   const size = props.itemCount;
 
-  // Shrunk, left or re-prefixed: ask afresh. Not while loading: a row swapped for the spinner is no rebuild.
+  // Left or re-prefixed: ask afresh. Not while loading: a row swapped for the spinner is no rebuild.
   if (
     askedAt.value &&
     !props.loading &&
-    (size < askedAt.value.size || scrollbar?.isAtBottom.value === false || !readText().startsWith(askedAt.value.text))
+    (scrollbar?.isAtBottom.value === false || !readText().startsWith(askedAt.value.text))
   ) {
     askedAt.value = null;
   }
 
   // A collapsed region (a closed dropdown) keeps the edges of its last measurement; it asks for nothing.
-  if (!wantsMore.value || size === askedAt.value?.size || !scrollbar?.el.value || isCollapsedBox(scrollbar.el.value)) {
+  if (
+    !shouldAskMore.value ||
+    size === askedAt.value?.size ||
+    !scrollbar?.el.value ||
+    isCollapsedBox(scrollbar.el.value)
+  ) {
     return;
   }
 

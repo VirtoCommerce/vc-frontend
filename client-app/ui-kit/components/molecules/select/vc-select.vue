@@ -95,14 +95,14 @@
             <ul
               :id="listboxId"
               ref="listElement"
-              :class="['vc-select__list', { 'vc-select__list--paging': showPagerSpinner }]"
+              :class="['vc-select__list', { 'vc-select__list--paging': isPagerSpinnerShown }]"
               role="listbox"
               :aria-label="accessibleLabel"
               :aria-multiselectable="multiple || undefined"
             >
               <!-- First, so a query being answered shows it above the previous query's options. -->
               <VcMenuItem
-                v-if="showLoadingRow"
+                v-if="isLoadingRowShown"
                 role="option"
                 :aria-selected="false"
                 disabled
@@ -164,7 +164,7 @@
 
             <VcLoadMore
               :loading="loading"
-              :has-next-page="pagerHasNextPage"
+              :has-next-page="hasPageToLoad"
               :item-count="items.length"
               @load-more="$emit('loadMore')"
             >
@@ -195,7 +195,7 @@ import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect, useSelectAll } from "@/ui-kit/composables";
-import { FOCUSABLE_SELECTOR, insertedText } from "@/ui-kit/utilities";
+import { insertedText, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
 import VcSelectAll from "./vc-select-all.vue";
 import VcSelectButton from "./vc-select-button.vue";
 import { useSelectDevWarnings } from "./vc-select-dev-warnings";
@@ -544,9 +544,9 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
       }
 
       // APG: Down/Home open on the first option, Up/End on the last.
-      const toLast = key === "end" || key === "up";
+      const shouldStartAtEnd = key === "end" || key === "up";
 
-      navigate(toLast ? "end" : "home");
+      navigate(shouldStartAtEnd ? "end" : "home");
     });
     return;
   }
@@ -715,11 +715,11 @@ const isSelectAllShown = computed(() => props.withSelectAll && props.multiple);
 
 // No next page of a query still being typed. The pager shows the spinner while it pages; otherwise
 // the loading row does, so exactly one shows.
-const pagerHasNextPage = computed(() => props.hasNextPage && !isQueryPending.value);
+const hasPageToLoad = computed(() => props.hasNextPage && !isQueryPending.value);
 
-const showLoadingRow = computed(() => props.loading && !pagerHasNextPage.value);
+const isLoadingRowShown = computed(() => props.loading && !hasPageToLoad.value);
 
-const showPagerSpinner = computed(() => props.loading && pagerHasNextPage.value);
+const isPagerSpinnerShown = computed(() => props.loading && hasPageToLoad.value);
 
 const {
   totalCount,
@@ -729,8 +729,8 @@ const {
   isDisabled: isSelectAllDisabled,
   toggle: toggleAll,
 } = useSelectAll<V>({
-  values: () => filteredItems.value.map((item) => getItemValue(item)),
-  activeRows,
+  rows: () =>
+    filteredItems.value.map((item, index) => ({ value: getItemValue(item), active: activeRows.value[index] })),
   selectedValues,
   filterValue,
   answeredQuery: echoedQuery,
@@ -785,7 +785,7 @@ function onSelectAllTab(event: KeyboardEvent): void {
     return;
   }
 
-  const candidates = [...document.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
+  const candidates = [...document.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)].filter(
     (element) =>
       element.tabIndex >= 0 &&
       !element.closest("[inert]") &&
@@ -847,7 +847,8 @@ function onTab(event: KeyboardEvent) {
     @apply max-h-[--dropdown-max-height] w-full;
   }
 
-  // The dropdown clips its corners, so corner options take its radius or their ring is cut.
+  // The dropdown clips its corners, so corner options take its radius or their ring is cut; this holds at
+  // rest, not once the list scrolls.
   &__list {
     $paging: "";
 

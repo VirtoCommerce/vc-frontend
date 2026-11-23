@@ -3,10 +3,13 @@ import { ref } from "vue";
 import { useSelectAll } from "./useSelectAll";
 import type { IUseSelectAllOptions } from "./useSelectAll";
 
-function setup(overrides: Partial<IUseSelectAllOptions<string>> = {}) {
+function setup({
+  values = ["a", "b", "c"],
+  activeRows = [false, false, false],
+  ...overrides
+}: Partial<Omit<IUseSelectAllOptions<string>, "rows">> & { values?: string[]; activeRows?: boolean[] } = {}) {
   return useSelectAll<string>({
-    values: ["a", "b", "c"],
-    activeRows: [false, false, false],
+    rows: values.map((value, index) => ({ value, active: activeRows[index] ?? false })),
     selectedValues: [],
     filterValue: "",
     answeredQuery: "",

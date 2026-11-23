@@ -69,7 +69,7 @@ export function mountWithReactiveProps(
 export const unhandledSelectAllProps = { items: ITEMS, multiple: true, withSelectAll: true };
 export const selectAllProps = { ...unhandledSelectAllProps, onSelectAll: noop };
 
-// Albania plus 39 values no option carries.
+// No option carries the 39 `x` values.
 export const SELECTED = ["Albania", ...Array.from({ length: 39 }, (_, index) => `x${index}`)];
 
 // A server's answer per query. Each carries the query's selected matches, as `selected-count` asks

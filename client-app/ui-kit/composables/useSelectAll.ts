@@ -3,10 +3,8 @@ import { computed, toValue } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseSelectAllOptions<V> {
-  /** The values of the options on screen, in render order. */
-  values: MaybeRefOrGetter<readonly V[]>;
-  /** Whether each option on screen is selected, in the same order as `values`. */
-  activeRows: MaybeRefOrGetter<readonly boolean[]>;
+  /** The options on screen, in render order: each one's value and whether it is selected. */
+  rows: MaybeRefOrGetter<readonly { value: V; active: boolean }[]>;
   /** The whole selection, including values no option on screen carries. */
   selectedValues: MaybeRefOrGetter<readonly V[]>;
   /** Without `serverFilter`, the typed query narrowing the options. */
@@ -15,7 +13,7 @@ export interface IUseSelectAllOptions<V> {
   answeredQuery: MaybeRefOrGetter<string>;
   /** The consumer filters the options (server-side), so `total` counts the query's matches. */
   serverFilter: MaybeRefOrGetter<boolean | undefined>;
-  /** The options and `total` on screen answer another query than the one typed. */
+  /** The typed query is not sent yet, or the consumer has not echoed it (spaces aside). */
   answerPending: MaybeRefOrGetter<boolean>;
   /** The size of the whole set; defaults to the number of options on screen. */
   total: MaybeRefOrGetter<number | undefined>;
@@ -43,9 +41,9 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
     () => !!(toValue(params.serverFilter) ? toValue(params.answeredQuery) : toValue(params.filterValue)),
   );
 
-  const optionCount = computed(() => toValue(params.values).length);
+  const optionCount = computed(() => toValue(params.rows).length);
 
-  const selectedVisibleCount = computed(() => toValue(params.activeRows).filter(Boolean).length);
+  const selectedVisibleCount = computed(() => toValue(params.rows).filter((row) => row.active).length);
 
   const totalCount = computed(() =>
     isNarrowed.value && !toValue(params.serverFilter)
@@ -93,8 +91,8 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
 
   const isSomeSelected = computed(() => selectedCount.value > 0 && !isAllSelected.value);
 
-  // A server-filtered list whose options answer another query than the typed one would have a press
-  // misreport it; with no option on screen there is nothing to do.
+  // Under `server-filter`, a typed query not sent or not echoed yet would have a press misreport it;
+  // with no option on screen there is nothing to do.
   const isDisabled = computed(() => toValue(params.answerPending) || !optionCount.value);
 
   /**
@@ -105,7 +103,7 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
    */
   function toggle(): { values: V[]; action: VcSelectSelectAllPayloadType["action"] } {
     const selectedValues = toValue(params.selectedValues);
-    const values = toValue(params.values);
+    const values = toValue(params.rows).map((row) => row.value);
 
     if (isAllSelected.value) {
       // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.

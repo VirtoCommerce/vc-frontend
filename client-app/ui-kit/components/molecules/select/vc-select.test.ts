@@ -1068,12 +1068,14 @@ describe("VcSelect", () => {
       ["a total: capped at it", { modelValue: [...ITEMS, "x1", "x2"], total: 4 }, "4 of 4"],
       ["a total: never below the checked rows", { modelValue: [...ITEMS], total: 2 }, "3 of 2"],
     ])("counts an unnarrowed selection with %s", (_label, props, count) => {
+      spyOnWarn();
       const wrapper = createWrapperWithMessages({ ...selectAllProps, hasNextPage: true, loading: false, ...props });
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe(count);
     });
 
     it("keeps counting the answered query while a server-side query is pending", async () => {
+      spyOnWarn();
       const wrapper = createWrapperWithMessages({
         ...selectAllProps,
         autocomplete: true,
@@ -1105,12 +1107,12 @@ describe("VcSelect", () => {
         answers = ANSWERS,
       }: { raise?: RaiseType; answers?: typeof ANSWERS } = {}) {
         const query = ref("");
-        const loading = ref(false);
+        const isLoading = ref(false);
         const answered = ref({ query: "", ...answers[""] });
 
         function land() {
           answered.value = { query: query.value, ...answers[query.value] };
-          loading.value = false;
+          isLoading.value = false;
         }
 
         function onSearch(text: string) {
@@ -1125,10 +1127,10 @@ describe("VcSelect", () => {
           if (raise === "sync") {
             land();
           } else if (raise === "in-search") {
-            loading.value = true;
+            isLoading.value = true;
           } else {
             setTimeout(() => {
-              loading.value = true;
+              isLoading.value = true;
             }, 30);
           }
         }
@@ -1140,7 +1142,7 @@ describe("VcSelect", () => {
             total: answered.value.total,
             selectedCount: answered.value.selectedCount,
             answeredQuery: answered.value.query,
-            loading: loading.value,
+            loading: isLoading.value,
             autocomplete: true,
             serverFilter: true,
             modelValue: SELECTED,
@@ -1609,6 +1611,30 @@ describe("VcSelect", () => {
       expect(event.defaultPrevented).toBe(enableTeleport);
       expect(document.activeElement).toBe(enableTeleport ? after : checkbox);
       expect(input.attributes("aria-expanded")).toBe(String(!enableTeleport));
+    });
+
+    it("hands Tab from the checkbox of a teleported list to a following summary", async () => {
+      const host = document.createElement("div");
+      host.id = "popover-host";
+      document.body.appendChild(host);
+      onTestFinished(() => host.remove());
+
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], enableTeleport: true });
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      details.append(summary);
+      wrapper.element.after(details);
+      onTestFinished(() => details.remove());
+
+      await wrapper.get("input").trigger("click");
+
+      const checkbox = document.querySelector<HTMLInputElement>(".vc-select-all input")!;
+      checkbox.focus();
+      const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      checkbox.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(document.activeElement).toBe(summary);
     });
 
     it("leaves Tab to the browser when no tab stop follows a teleported list", async () => {
@@ -3591,18 +3617,18 @@ describe("VcSelect", () => {
     });
 
     it("follows a slot added after mount when Enter decides between the field and the button", async () => {
-      const slotted = ref(false);
+      const isSlotted = ref(false);
       // A copy: h() stamps `_ctx` on a raw slots object, and the shared one would carry it into every later mount.
       const wrapper = mountWithReactiveProps(
         () => ({ items: ITEMS, autocomplete: true }),
-        () => (slotted.value ? { ...slots } : undefined),
+        () => (isSlotted.value ? { ...slots } : undefined),
       );
 
       await wrapper.get("input").trigger("keydown", { key: "Enter" });
 
       expect(wrapper.get("input").attributes("aria-expanded")).toBe("false");
 
-      slotted.value = true;
+      isSlotted.value = true;
       await nextTick();
 
       const trigger = wrapper.get('[role="combobox"]');
