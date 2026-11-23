@@ -896,6 +896,11 @@ interface IProps$u {
     highlightRing?: boolean;
     /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
     tabindex?: number | `${number}`;
+    /**
+     * Draws a separator above the item unless it is the first in its list. Its colour is
+     * `--vc-menu-item-divider-color`.
+     */
+    withDivider?: boolean;
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};

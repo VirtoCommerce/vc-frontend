@@ -108,6 +108,7 @@
                 disabled
                 :size="itemSize"
                 :tabindex="-1"
+                with-divider
               >
                 <span class="vc-select__loading">
                   <slot name="loading">
@@ -130,6 +131,7 @@
                 role="option"
                 :size="itemSize"
                 :tabindex="-1"
+                with-divider
                 @click="pick(item, close)"
                 @mousemove="highlightPassively(index)"
               >
@@ -152,6 +154,7 @@
                 disabled
                 :size="itemSize"
                 :tabindex="-1"
+                with-divider
               >
                 <slot name="empty">
                   {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
@@ -848,8 +851,7 @@ function onTab(event: KeyboardEvent) {
     // The options take the dropdown's surface, so its token tints them too.
     --vc-menu-item-bg-color: var(--dropdown-bg-color);
 
-    // Separators between the options, as VcDropdownMenu draws them on its own list.
-    @apply w-full divide-y divide-neutral-100;
+    @apply w-full;
 
     // The pager's spinner shows below the list; the pager itself stays mounted without it.
     &--paging {
@@ -868,9 +870,11 @@ function onTab(event: KeyboardEvent) {
       --vc-menu-item-radius: var(--dropdown-radius);
     }
 
-    // The divider continues onto the spinner below.
+    // The options' divider continues onto the spinner below, in their colour.
     &:where(#{$paging}) {
-      @apply border-b border-neutral-100;
+      @apply border-b;
+
+      border-color: var(--vc-menu-item-divider-color, var(--color-neutral-100));
     }
   }
 

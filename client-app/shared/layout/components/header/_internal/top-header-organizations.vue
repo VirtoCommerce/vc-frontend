@@ -363,7 +363,7 @@ async function onSearchClear(): Promise<void> {
   }
 
   // The ring goes on the frame, not the listbox: the list can be taller than the region scrolling it, so
-  // a ring of its own would be cut off at the region's edge.
+  // a ring of its own would be cut off at the region's edge. `:where` keeps the override to one class.
   &__listbox {
     $listbox: &;
 
@@ -373,7 +373,7 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__frame {
-    &:has(#{$listbox}:focus-visible) {
+    &:has(:where(#{$listbox}:focus-visible)) {
       @include focus-ring($inset: true);
     }
   }

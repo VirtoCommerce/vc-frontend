@@ -30,6 +30,13 @@ describe("VcMenuItem highlight ring", () => {
   });
 });
 
+describe("VcMenuItem divider", () => {
+  it("draws a divider only with `with-divider`", () => {
+    expect(createWrapper({ props: { withDivider: true } }).classes()).toContain("vc-menu-item--with-divider");
+    expect(createWrapper().classes()).not.toContain("vc-menu-item--with-divider");
+  });
+});
+
 describe("VcMenuItem tab order", () => {
   it.each([-1, "-1"] as const)("puts tabindex %j on the inner element and takes it without a warning", (tabindex) => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);

@@ -186,8 +186,8 @@ export interface IProps<T> {
   }
 
   // The ring outlines the whole box, as VcInput's does, not the inner control. Open looks like
-  // focus, whichever way it was opened.
-  &:has(#{$control}:focus-visible),
+  // focus, whichever way it was opened. `:where` keeps the override to one class.
+  &:has(:where(#{$control}:focus-visible)),
   &--opened {
     @include focus-ring;
   }

@@ -128,6 +128,18 @@ describe("VcSelect", () => {
       expect(wrapper.get('[role="option"]').text()).toBe("ui_kit.select.no_options");
     });
 
+    it.each([
+      ["the options", { items: ITEMS }],
+      ["the no-options row", { items: [] }],
+      ["the loading row", { items: [], loading: true }],
+    ])("draws the separators through the divider of %s", (_label, props) => {
+      const wrapper = createWrapper(props);
+      const rows = wrapper.findAllComponents(UIKitComponents.VcMenuItem);
+
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.every((row) => row.props("withDivider"))).toBe(true);
+    });
+
     it("labels a falsy option with itself under textField", () => {
       const wrapper = createWrapper({ items: [0, 1], textField: "name" });
 

@@ -94,6 +94,35 @@ export const HighlightStates: StoryType = {
   },
 };
 
+export const WithDivider: StoryType = {
+  render: () => ({
+    template: `<ul class="w-64">
+      <VcMenuItem with-divider>First item, no line above</VcMenuItem>
+      <VcMenuItem with-divider>Second item</VcMenuItem>
+      <VcMenuItem with-divider>Third item</VcMenuItem>
+    </ul>`,
+  }),
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          "`with-divider` draws a line above each item but the first in its list, as VcSelect draws its options. " +
+          "`--vc-menu-item-divider-color` sets the line's colour (default `--color-neutral-100`).",
+      },
+      source: {
+        code: `
+<ul>
+  <VcMenuItem with-divider>First item, no line above</VcMenuItem>
+  <VcMenuItem with-divider>Second item</VcMenuItem>
+  <VcMenuItem with-divider>Third item</VcMenuItem>
+</ul>
+        `,
+      },
+    },
+  },
+};
+
 export const Link: StoryType = {
   args: {
     to: "/some/link",

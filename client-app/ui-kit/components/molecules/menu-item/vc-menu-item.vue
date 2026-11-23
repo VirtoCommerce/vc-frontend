@@ -4,7 +4,7 @@
     :id="componentId"
     v-bind="$attrs"
     ref="currentElement"
-    class="vc-menu-item"
+    :class="['vc-menu-item', { 'vc-menu-item--with-divider': withDivider }]"
     :role="wrapperRole"
   >
     <component
@@ -85,6 +85,11 @@ interface IProps {
   highlightRing?: boolean;
   /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
   tabindex?: number | `${number}`;
+  /**
+   * Draws a separator above the item unless it is the first in its list. Its colour is
+   * `--vc-menu-item-divider-color`.
+   */
+  withDivider?: boolean;
 }
 
 defineOptions({
@@ -210,6 +215,10 @@ onMounted(() => {
   $maxLines: "";
 
   @apply list-none select-none;
+
+  &--with-divider:where(:not(:first-child)) {
+    border-block-start: 1px solid var(--vc-menu-item-divider-color, var(--color-neutral-100));
+  }
 
   &__inner {
     --vc-icon-size: var(--content-height);
