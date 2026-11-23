@@ -28,7 +28,7 @@ paths:
 ## Errors and user feedback
 14. The global `errorHandlerLink` already toasts every GraphQL error. If the component shows its own failure state (inline error, empty/not-found view), pass `context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`. Never suppress AND show nothing — a failure must stay visible. Don't stack a second toast on top of the global one.
 15. Mutation composables catch and return a boolean/result. Map `error.graphQLErrors[0].extensions.code` to an i18n key with a `te()` check and an `UNHANDLED` fallback (reference: `modules/returns/composables/useReturnErrors.ts`). Never show a raw server message or an unchecked key.
-16. Toasts: `useNotifications()` with translated `text`; `group` + `singleInGroup` for repeatable messages; `single: true` only when clearing every toast is intended; `html:` only for trusted host-built strings.
+16. Toasts: `useNotifications()` with translated `text` (inside ui-kit: `useUiKitOptions().notifications?.x(...)`, which may be absent); `group` + `singleInGroup` for repeatable messages; `single: true` only when clearing every toast is intended; `html:` only for trusted host-built strings.
 17. Modals: `useModal().openModal({ component, props: { onResult, ... } })`; pass `triggerElement` when the trigger isn't `document.activeElement` so focus returns.
 
 ## Composables and state
@@ -37,7 +37,7 @@ paths:
 20. Composable arguments are `MaybeRefOrGetter<T>` read with `toValue()` inside `computed`/`watch`.
 21. URL-backed filters/tabs/search: `useRouteQueryParam(key, { defaultValue, updateMethod: "replace" })`. No manual `router.push({ query })` syncing.
 22. `globals` is a non-reactive, mutable request context: fine for GraphQL variables, wrong where UI must react (use `useUser`, `useCurrency`, `useLanguages`, `useThemeContext`). It is written at boot (`app-runner.ts`), in checkout handoff and in builder preview — don't add new writers.
-23. Settings: store/theme via `useThemeContext()`, modules via `useModuleSettings(MODULE_ID).getSettingValue(...)` — don't dig into `themeContext.storeSettings.modules`.
+23. Settings: store/theme via `useThemeContext()` (inside ui-kit: only what the app passes in `app.use(uiKit, options)`, read with `useUiKitOptions()`), modules via `useModuleSettings(MODULE_ID).getSettingValue(...)` — don't dig into `themeContext.storeSettings.modules`.
 24. Page titles: `usePageHead({ title: computed(() => t("...")) })`, never `document.title`.
 25. Watchers and listeners added manually are cleaned up (`onScopeDispose` / `useEventListener` from VueUse).
 26. Analytics: `useAnalytics().analytics("<typedEvent>", ...)`; new events extend `ICustomAnalyticsEventMap` in `core/types/analytics-custom.ts`; no direct `gtag` / `dataLayer` calls from components.

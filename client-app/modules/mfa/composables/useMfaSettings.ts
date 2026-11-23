@@ -74,7 +74,7 @@ export function useMfaSettings(
     clearErrors();
 
     try {
-      const result = await requestMfaChangeCode();
+      const result = await requestMfaChangeCode(isOrganization.value ? toValue(organizationId) : undefined);
 
       if (!result?.succeeded || !result.twoFactorToken) {
         setErrors(result);

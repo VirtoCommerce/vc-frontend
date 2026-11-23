@@ -44,7 +44,7 @@ import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 import { isEqual } from "lodash-es";
 import { ref, computed, onMounted, nextTick, watch, provide, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
+import { Logger } from "@/ui-kit/utilities/logger";
 
 interface IEmits {
   (event: "update:modelValue", value: string | string[]): void;

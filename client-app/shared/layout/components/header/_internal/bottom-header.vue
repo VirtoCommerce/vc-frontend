@@ -43,7 +43,9 @@
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
           <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
-            <LinkDefault :item="item" />
+            <template #default="{ extensionProps }">
+              <LinkDefault :item="item" :count="toValue(extensionProps?.count)" />
+            </template>
           </ExtensionPoint>
         </li>
       </ul>
@@ -76,7 +78,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, ref, shallowRef, toValue, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";

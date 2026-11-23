@@ -66,7 +66,7 @@
 import { nextTick, toRef, useTemplateRef } from "vue";
 import { focusAddressRadio, useSelectAddressMap } from "@/shared/checkout/composables/useSelectAddressMap";
 import { useModal } from "@/shared/modal";
-import { focusFirstElement } from "@/ui-kit/utilities/focus";
+import { focusFirstElement } from "@/ui-kit/utilities";
 import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";

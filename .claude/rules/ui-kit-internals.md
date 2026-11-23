@@ -16,9 +16,9 @@ How the rest of the app uses the kit is in `ui-kit.md`.
    `Vc<Name><Prop>Type`), `vc-<name>.stories.ts` (Storybook story — required for a new component), optional
    `vc-<name>.test.ts`. Registration: export in `<layer>/index.ts` **and** `GlobalComponents` entry in
    `<layer>/types.d.ts`. Missing the export → not registered; missing the `GlobalComponents` entry → untyped in templates.
-3. Boundaries: the kit must not import `@/shared`, `@/modules`, `@/pages`; new imports from `@/core` are also
-   avoided (the kit is being made independent — `VcTable` moved to local types/constants). Use kit-local types,
-   string-literal unions instead of enums, constants in `ui-kit/constants`.
+3. Boundaries: the kit must not import anything else in `client-app`, `@/core` included (`no-ui-kit-to-host` in
+   dependency-cruiser). Use kit-local types, string-literal unions instead of enums, constants in
+   `ui-kit/constants`, and theme services through the `uiKit` plugin options.
 4. Kit text (labels, aria-labels) uses keys from `client-app/ui-kit/locales/*.json` (`ui_kit.*`), all 13 locales.
 5. Styling inside the kit:
    - block `vc-<name>`; modifiers `vc-x--flag`, `vc-x--size--md`, `vc-x--color--primary`, `vc-x--{variant}--{color}`;
@@ -60,6 +60,7 @@ How the rest of the app uses the kit is in `ui-kit.md`.
 
 ## Legacy — don't flag, don't copy
 
-- Existing `@/core` imports inside the kit and one `@/shared` import.
+- Enums in `ui-kit/enums` (`AddToCartModeType`, `ContentType`): `ContentType` moved from core and stays an enum because
+  `@/core/enums` and the `@vc-frontend/core` facade re-export it as a runtime value.
 - Existing cross-component selectors (`@at-root .vc-product-card`, `@at-root .vc-button` in `vc-icon`,
   `.vc-popover__body:has(...)`, `vc-line-item`'s `:has(.vc-*)`) — don't add new ones.

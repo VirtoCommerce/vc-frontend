@@ -1,7 +1,9 @@
+import type { IOrderStatus } from "./order-status";
+import type { IQuoteStatus } from "./quote-status";
+import type { SortDirectionType } from "./search/sorting/sort-info";
 import type { ISocialSharingService } from "./social-sharing";
 import type { DesktopMenuModeType } from "@/core/constants";
 import type { BrowserTargetType } from "@/core/enums";
-import type { IOrderStatus, IQuoteStatus, SortDirectionType } from "@/core/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
 export interface IThemeConfigPreset {
@@ -383,8 +385,6 @@ export interface IThemeConfigSettings {
   module_federation_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
-  product_compare_enabled?: boolean;
-  product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirectionType;
   product_quantity_control?: "stepper" | "button";

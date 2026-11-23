@@ -1,0 +1,63 @@
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h, reactive } from "vue";
+import { createWrapperFactory } from "@/core/utilities/tests";
+import { focusOrder } from "../layout-test-utils";
+import MainLayout from "./main-layout.vue";
+import VcFrame from "@/ui-kit/components/templates/frame/vc-frame.vue";
+
+vi.mock("vue-router", () => ({ useRoute: () => reactive({ path: "/" }) }));
+
+vi.mock("@/shared/layout/components/header/app-header.vue", () => ({
+  default: defineComponent({
+    name: "AppHeader",
+    setup: () => () => h("header", { class: "header-stub" }, [h("a", { href: "/" }, "Home")]),
+  }),
+}));
+
+vi.mock("@/shared/layout/components/footer/vc-footer.vue", () => ({
+  default: defineComponent({ name: "VcFooter", setup: () => () => h("footer", { id: "footer" }) }),
+}));
+
+const createWrapper = createWrapperFactory(mount, MainLayout, {
+  global: { components: { VcFrame } },
+  slots: { default: '<p class="page">page</p>' },
+});
+
+enableAutoUnmount(afterEach);
+
+describe("MainLayout", () => {
+  it("renders exactly one main#main-content with the page in it", () => {
+    const wrapper = createWrapper();
+    const mains = wrapper.findAll("main");
+
+    expect(mains).toHaveLength(1);
+    expect(mains[0].attributes("id")).toBe("main-content");
+    expect(mains[0].find(".page").exists()).toBe(true);
+  });
+
+  it("renders the skip link to #main-content before the main region", () => {
+    const wrapper = createWrapper();
+    const link = wrapper.get('a[href="#main-content"]');
+    const main = wrapper.get("#main-content");
+
+    expect(main.element.tagName).toBe("MAIN");
+    expect(link.element.compareDocumentPosition(main.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("puts the skip link first in the header, before the header's own links", () => {
+    const wrapper = createWrapper();
+
+    expect(focusOrder(wrapper)).toEqual(["skip-to-links #main-content", "skip-to-links #footer", "a /"]);
+  });
+
+  it("puts the footer in the frame's footer element and keeps the header out of main", () => {
+    const wrapper = createWrapper();
+    const main = wrapper.get("main");
+
+    expect(wrapper.get(".vc-frame__footer").find("#footer").exists()).toBe(true);
+    expect(main.find("#footer").exists()).toBe(false);
+    expect(wrapper.find(".header-stub").exists()).toBe(true);
+    expect(main.find(".header-stub").exists()).toBe(false);
+  });
+});
