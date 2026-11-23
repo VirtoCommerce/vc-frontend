@@ -57,7 +57,7 @@ export const Highlighted: StoryType = {
       description: {
         story:
           "The active option of an `aria-activedescendant` list, which keeps DOM focus on its combobox: " +
-          "`highlighted` draws the hover background and a focus ring in place of real focus.",
+          "`highlighted` draws a highlight background and a focus ring in place of real focus.",
       },
     },
   },

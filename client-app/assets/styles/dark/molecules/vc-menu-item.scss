@@ -13,14 +13,18 @@
     }
 
     &:not(#{$active}) {
-      background-color: var(--vc-menu-item-bg-color, inherit);
+      @apply bg-[inherit];
     }
 
     @each $color in $colors {
       &--color--#{$color} {
-        &:hover,
+        // -50, not hover's -100, so a keyboard highlight does not read as the selected item.
         &#{$highlighted} {
           @apply bg-[--color-#{$color}-50];
+        }
+
+        &:hover {
+          @apply bg-[--color-#{$color}-100];
         }
 
         &#{$active} {

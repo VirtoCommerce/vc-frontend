@@ -223,12 +223,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 text-start font-normal;
-
-    // A list whose container clips its corners rounds its corner items through this knob.
-    border-radius: var(--vc-menu-item-radius, inherit);
-    // A list painting its own surface hands its color to the items through this knob.
-    background-color: var(--vc-menu-item-bg-color, var(--color-additional-50));
+    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
       @apply text-neutral-950;
@@ -292,8 +287,12 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
-        &:hover,
+        // Before `:hover`, so the pointer's hover look wins on the item it highlights.
         &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
+        }
+
+        &:hover {
           @apply bg-[--color-#{$color}-50];
         }
 
@@ -316,6 +315,8 @@ onMounted(() => {
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
     &:focus-visible {
+      @apply rounded-[inherit];
+
       @include focus-ring($inset: true);
     }
 
