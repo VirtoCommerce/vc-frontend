@@ -23,10 +23,10 @@ async function afterContentSettles() {
   await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
 }
 
-function mountScrollbar(rows: number) {
+function mountScrollbar(rows: number, props: Record<string, unknown> = {}) {
   return mount(VcScrollbar, {
     attachTo: document.body,
-    props: { vertical: true },
+    props: { vertical: true, ...props },
     slots: { default: () => Array.from({ length: rows }, (_, index) => h("p", `row ${index}`)) },
   });
 }
@@ -180,9 +180,28 @@ describe("VcScrollbar", () => {
     // Measured in Chrome at 125% device pixels and 110% zoom: the end of the scroll sits 0.55px short.
     it.each([
       ["reached, under a pixel short", 165.4545, 1],
+      ["reached, exactly a pixel short", 165, 1],
       ["not reached, two pixels short", 164, 0],
     ])("counts the bottom as %s", async (_label, scrollTop, emitted) => {
       const wrapper = mountScrollbar(20);
+      const element = wrapper.element as HTMLElement;
+
+      describeBox(element, { clientHeight: 192, scrollHeight: 358, scrollTop: 0 });
+      await afterContentSettles();
+
+      describeBox(element, { clientHeight: 192, scrollHeight: 358, scrollTop });
+      element.dispatchEvent(new Event("scroll"));
+      await nextTick();
+
+      expect(wrapper.emitted("reachBottom")?.length ?? 0).toBe(emitted);
+    });
+
+    // 358 - 192 - 50 - 1 = 115: the threshold plus the sub-pixel allowance.
+    it.each([
+      ["within it", 115, 1],
+      ["beyond it", 110, 0],
+    ])("counts the bottom within `edge-threshold` when the scroll stops %s", async (_label, scrollTop, emitted) => {
+      const wrapper = mountScrollbar(20, { edgeThreshold: 50 });
       const element = wrapper.element as HTMLElement;
 
       describeBox(element, { clientHeight: 192, scrollHeight: 358, scrollTop: 0 });

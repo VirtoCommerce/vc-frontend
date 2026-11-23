@@ -3,6 +3,11 @@ import { describe, expectTypeOf, it } from "vitest";
 type ItemType = { id: string; rank: number; code: string | null; meta: { tag: string } };
 type ItemKeyType = "id" | "rank" | "code" | "meta";
 
+declare const SYMBOL_KEY: unique symbol;
+
+type MixedKeyItemType = { id: string; 0: string; [SYMBOL_KEY]: string };
+type OptionalItemType = { id?: string; rank?: number };
+
 describe("VcSelectEmittedType", () => {
   it("emits undefined for a cleared single select, an array for a multiple one", () => {
     expectTypeOf<VcSelectEmittedType<string, false>>().toEqualTypeOf<string | undefined>();
@@ -28,6 +33,16 @@ describe("VcSelectValueKeyType", () => {
 
   it("offers every key when the model type is the item", () => {
     expectTypeOf<VcSelectValueKeyType<ItemType, ItemType>>().toEqualTypeOf<ItemKeyType>();
+  });
+
+  it("offers only string keys, a value field being named by a string", () => {
+    expectTypeOf<VcSelectValueKeyType<MixedKeyItemType, MixedKeyItemType>>().toEqualTypeOf<"id">();
+    expectTypeOf<VcSelectValueKeyType<MixedKeyItemType, string>>().toEqualTypeOf<"id">();
+  });
+
+  it("offers an optional key whose value fits a bound model", () => {
+    expectTypeOf<VcSelectValueKeyType<OptionalItemType, string>>().toEqualTypeOf<"id">();
+    expectTypeOf<VcSelectValueKeyType<OptionalItemType, number>>().toEqualTypeOf<"rank">();
   });
 
   it("lets a field typed unknown fit any model", () => {

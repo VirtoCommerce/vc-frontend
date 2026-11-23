@@ -440,6 +440,25 @@ describe("useListboxNavigation over a changing list", () => {
     expect(highlightedIndex.value).toBe(-1);
   });
 
+  // Past the previous end there was no option to keep, so the row under it counts as another one.
+  it.each([
+    ["a key", "b"],
+    ["no key", undefined],
+  ])("drops a highlight put past the previous end, on an option with %s", async (_label, key) => {
+    const items = ref<{ value?: string }[]>([{ value: "a" }]);
+    const { highlightedIndex, highlight } = useListboxNavigation({
+      componentId: COMPONENT_ID,
+      items,
+      getKey: (item) => item.value,
+    });
+
+    items.value = [{ value: "a" }, { value: key }];
+    highlight(1);
+    await nextTick();
+
+    expect(highlightedIndex.value).toBe(-1);
+  });
+
   it("drops the highlight when the same array is cut short beneath it", async () => {
     const { items, highlightedIndex, activeDescendantId } = setup(["a", "b", "c"]);
 

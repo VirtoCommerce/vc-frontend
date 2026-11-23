@@ -140,3 +140,31 @@ describe("VcCheckbox exposed input", () => {
     expect(wrapper.vm.inputElement).toBeNull();
   });
 });
+
+describe("VcCheckbox with prevent-default", () => {
+  it.each([
+    ["checks", false, true],
+    ["clears", true, false],
+  ])(
+    "shows the new state after a click that %s, once the browser restores the cancelled one",
+    async (_label, from, to) => {
+      const wrapper = createWrapper({
+        props: {
+          modelValue: from,
+          ariaLabel: "Accept",
+          preventDefault: true,
+          "onUpdate:modelValue": (value: boolean) => void wrapper.setProps({ modelValue: value }),
+        },
+      });
+      const input = wrapper.get("input").element as HTMLInputElement;
+
+      input.click();
+      await nextTick();
+      // A browser renders the new state before it restores the cancelled click's old one.
+      input.checked = from;
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(input.checked).toBe(to);
+    },
+  );
+});

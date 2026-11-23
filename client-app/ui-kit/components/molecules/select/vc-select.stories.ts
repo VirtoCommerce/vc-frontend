@@ -6,6 +6,10 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const SIZES = ["xs", "sm", "md", "auto"];
 const ITEM_SIZES = ["xs", "sm", "md", "lg"];
 
+// The scroll box is VcScrollbar's `tabindex="-1"` region around the listbox, and the arrow keys reach
+// every option; axe exempts only a scroll box that is the combobox popup itself.
+const OVERFLOWING_LIST_A11Y = { options: { rules: { "scrollable-region-focusable": { enabled: false } } } };
+
 const ITEMS = ["Albania", "Belgium", "China", "India"];
 const OBJECT_ITEMS = [
   { id: 1, name: "Albania" },
@@ -661,6 +665,7 @@ export const SelectAllWithTotal: StoryType = {
     `,
   }),
   parameters: {
+    a11y: OVERFLOWING_LIST_A11Y,
     docs: {
       description: {
         story:
@@ -764,6 +769,7 @@ export const InfiniteScroll: StoryType = {
     `,
   }),
   parameters: {
+    a11y: OVERFLOWING_LIST_A11Y,
     docs: {
       source: {
         code: `
@@ -874,6 +880,7 @@ export const ServerFilter: StoryType = {
     `,
   }),
   parameters: {
+    a11y: OVERFLOWING_LIST_A11Y,
     docs: {
       source: {
         code: `
@@ -1176,6 +1183,7 @@ export const Custom: StoryType = {
   </VcSelect>`,
   }),
   parameters: {
+    a11y: OVERFLOWING_LIST_A11Y,
     docs: {
       source: {
         code: `

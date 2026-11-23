@@ -11,10 +11,10 @@
       prevent-default
       @change="$emit('change')"
     >
-      <span class="vc-select-all__text">{{ $t("ui_kit.select.select_all") }}</span>
+      <span class="vc-select-all__text" aria-hidden="true">{{ $t("ui_kit.select.select_all") }}</span>
     </VcCheckbox>
 
-    <!-- The label already reads the counts out. -->
+    <!-- The checkbox's name already reads the text and the counts out. -->
     <span class="vc-select-all__count" aria-hidden="true">{{ count }}</span>
   </div>
 </template>

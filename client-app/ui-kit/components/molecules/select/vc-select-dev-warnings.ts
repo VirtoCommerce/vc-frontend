@@ -1,6 +1,7 @@
 import { isEqual, isObjectLike } from "lodash-es";
 import { getCurrentInstance, watch } from "vue";
 import { isSelectedCountKnown } from "@/ui-kit/composables";
+import type { ComponentInternalInstance } from "vue";
 
 interface IDevWarningProps<T> {
   items: T[];
@@ -28,10 +29,11 @@ export function useSelectDevWarnings<T>(
   slots: IDevWarningSlots,
   getItemValue: (item: T) => unknown,
 ): void {
-  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
+  const instance = getCurrentInstance();
+  const vnodeProps = instance?.vnode.props ?? {};
 
   warnSelectAll(props, vnodeProps);
-  warnFiltering(props, slots, vnodeProps);
+  warnFiltering(props, slots, instance);
   warnPaging(props, slots, vnodeProps);
   watchItemModel(props, getItemValue);
   watchPrimitiveModel(props);
@@ -109,7 +111,11 @@ function watchUncountedSelectAll<T>(props: IDevWarningProps<T>): void {
   );
 }
 
-function warnFiltering<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnodeProps: VNodePropsType): void {
+function warnFiltering<T>(
+  props: IDevWarningProps<T>,
+  slots: IDevWarningSlots,
+  instance: ComponentInternalInstance | null,
+): void {
   if (props.autocomplete && (slots.selected || slots.placeholder)) {
     // eslint-disable-next-line no-console
     console.warn(
@@ -117,36 +123,52 @@ function warnFiltering<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, v
     );
   }
 
-  if (props.serverFilter && !props.autocomplete) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
+  const warned = new Set<string>();
+
+  function warnOnce(message: string): void {
+    if (!warned.has(message)) {
+      warned.add(message);
+      // eslint-disable-next-line no-console
+      console.warn(message);
+    }
   }
 
-  if (props.serverFilter && !vnodeProps.onSearch) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `server-filter` needs a `@search` handler for every query (not `.once`) that answers " +
-        "with new `items`, holding `loading` while it fetches.",
-    );
-  }
+  // `server-filter` can be switched after mount; the instance's current vnode holds the props bound now.
+  watch(
+    () => [props.serverFilter, props.autocomplete] as const,
+    ([serverFilter, autocomplete]) => {
+      const vnodeProps: VNodePropsType = instance?.vnode.props ?? {};
+      // Present, not truthy: "" answers the unfiltered list, and an echo may start undefined.
+      const hasAnsweredQuery = "answeredQuery" in vnodeProps || "answered-query" in vnodeProps;
 
-  // Present, not truthy: "" answers the unfiltered list, and an echo may start undefined.
-  if (props.serverFilter && !("answeredQuery" in vnodeProps || "answered-query" in vnodeProps)) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `server-filter` needs `answered-query`, the query your `items` answer; without it only the " +
-        "unfiltered list counts as answered, so under a typed query Select all stays disabled and no result " +
-        "count is announced.",
-    );
-  }
+      if (serverFilter && !autocomplete) {
+        warnOnce("VcSelect: `server-filter` needs `autocomplete`; without it nothing can be typed.");
+      }
 
-  if (!props.serverFilter && ("answeredQuery" in vnodeProps || "answered-query" in vnodeProps)) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "VcSelect: `answered-query` needs `server-filter`; without it the select filters on the client and " +
-        "ignores the echo, so Select all and the result count follow the loaded options, not your query.",
-    );
-  }
+      if (serverFilter && !vnodeProps.onSearch) {
+        warnOnce(
+          "VcSelect: `server-filter` needs a `@search` handler for every query (not `.once`) that answers " +
+            "with new `items`, holding `loading` while it fetches.",
+        );
+      }
+
+      if (serverFilter && !hasAnsweredQuery) {
+        warnOnce(
+          "VcSelect: `server-filter` needs `answered-query`, the query your `items` answer; without it only the " +
+            "unfiltered list counts as answered, so under a typed query Select all stays disabled and no result " +
+            "count is announced.",
+        );
+      }
+
+      if (!serverFilter && hasAnsweredQuery) {
+        warnOnce(
+          "VcSelect: `answered-query` needs `server-filter`; without it the select filters on the client and " +
+            "ignores the echo, so Select all and the result count follow the loaded options, not your query.",
+        );
+      }
+    },
+    { immediate: true },
+  );
 }
 
 function warnPaging<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnodeProps: VNodePropsType): void {

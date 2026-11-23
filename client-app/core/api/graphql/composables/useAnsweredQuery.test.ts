@@ -423,6 +423,6 @@ describe("useAnsweredQuery bound to a server-filter VcSelect", () => {
 
     expect(requests).toEqual([]);
     expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
-    expect(announced(wrapper)).toBe("3 results available");
+    expect(announced(wrapper)).toBe("500 results available");
   });
 });

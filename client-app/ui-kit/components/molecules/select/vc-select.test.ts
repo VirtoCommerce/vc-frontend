@@ -1257,7 +1257,22 @@ describe("VcSelect", () => {
 
         expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
         expect(isSelectAllDisabled(wrapper)).toBe(false);
-        expect(announced(wrapper)).toBe("3 results available");
+        // The query's matches, as the counter reads them, not the 3 options loaded so far.
+        expect(announced(wrapper)).toBe("10 results available");
+      });
+
+      it("announces no results for a query the server reports no matches for", async () => {
+        const { wrapper, answer } = mountServerConsumer({
+          answers: { ...ANSWERS, z: { items: [], total: 0, selectedCount: 0 } },
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("z");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await answer();
+
+        expect(announced(wrapper)).toBe("No results found");
       });
 
       it("counts an answer given inside `@search` at once", async () => {
@@ -1312,7 +1327,7 @@ describe("VcSelect", () => {
 
         expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
         expect(isSelectAllDisabled(wrapper)).toBe(false);
-        expect(announced(wrapper)).toBe("3 results available");
+        expect(announced(wrapper)).toBe("10 results available");
       });
     });
 
@@ -1334,6 +1349,22 @@ describe("VcSelect", () => {
       await nextTick();
 
       expect(wrapper.get(".vc-select-all__count").text()).toBe("5 of 5");
+    });
+
+    it("keeps its visible text out of the accessibility tree, where the checkbox's name reads it", () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: ["Albania"] });
+      const row = wrapper.findComponent({ name: "VcSelectAll" });
+      const walker = document.createTreeWalker(row.element, NodeFilter.SHOW_TEXT);
+      const exposedText: string[] = [];
+
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (node.textContent?.trim() && !node.parentElement?.closest('[aria-hidden="true"]')) {
+          exposedText.push(node.textContent.trim());
+        }
+      }
+
+      expect(exposedText).toEqual([]);
+      expect(row.get("input").attributes("aria-label")).toBe("Select all, 1 of 3");
     });
 
     it("names the checkbox with its count and keeps the name when it is checked", async () => {
@@ -1671,6 +1702,29 @@ describe("VcSelect", () => {
       createWrapper({ items: ITEMS, serverFilter: true, onSearch: noop, answeredQuery: "", autocomplete: true });
 
       expect(warn.mock.calls.filter(([message]) => String(message).includes("needs `autocomplete`"))).toHaveLength(1);
+    });
+
+    it.each([
+      ["on without answered-query", { autocomplete: true }, true, "needs `answered-query`"],
+      ["on without autocomplete", { answeredQuery: "" }, true, "needs `autocomplete`"],
+      [
+        "off with answered-query",
+        { autocomplete: true, serverFilter: true, answeredQuery: "" },
+        false,
+        "`answered-query` needs `server-filter`",
+      ],
+    ])("warns once when server-filter is switched %s", async (_label, props, serverFilter, message) => {
+      const warn = spyOnWarn();
+      const wrapper = createWrapper({ items: ITEMS, onSearch: noop, ...props });
+      const warnings = () => warn.mock.calls.filter(([text]) => String(text).includes(message));
+
+      expect(warnings()).toHaveLength(0);
+
+      await wrapper.setProps({ serverFilter });
+      await wrapper.setProps({ serverFilter: !serverFilter });
+      await wrapper.setProps({ serverFilter });
+
+      expect(warnings()).toHaveLength(1);
     });
 
     it.each([
@@ -2834,6 +2888,21 @@ describe("VcSelect", () => {
 
       const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
       wrapper.get(".vc-select__scroll").element.dispatchEvent(press);
+
+      expect(press.defaultPrevented).toBe(true);
+    });
+
+    it("keeps focus on the trigger when the Select all row is pressed beside its checkbox", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("click");
+
+      // On the row itself, outside the label: an uncancelled press there focuses the popover root,
+      // where Escape and the arrow keys reach no handler.
+      const press = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+      wrapper.findComponent({ name: "VcSelectAll" }).element.dispatchEvent(press);
 
       expect(press.defaultPrevented).toBe(true);
     });

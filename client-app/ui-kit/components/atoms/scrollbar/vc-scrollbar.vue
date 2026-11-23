@@ -46,7 +46,8 @@ interface IProps {
   /**
    * Always a tab stop. Without it an overflowing region with nothing focusable inside becomes one,
    * unless it holds an interactive role (a listbox, a menu…) and nothing tabbable: that region gets
-   * `tabindex="-1"`, and a press on its own area does not focus it.
+   * `tabindex="-1"`, and a press on its own area does not focus it. axe reports that region
+   * (`scrollable-region-focusable`) unless it is the popup itself, as a listbox a combobox controls.
    */
   focusable?: boolean;
   tag?: string;

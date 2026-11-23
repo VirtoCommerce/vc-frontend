@@ -74,7 +74,8 @@
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <div class="vc-select__dropdown" @focusout="onFocusOut($event, close)">
+        <!-- Pointer use anywhere in the dropdown, Select all and the scrollbar included, keeps focus on the trigger. -->
+        <div class="vc-select__dropdown" @mousedown.prevent @focusout="onFocusOut($event, close)">
           <VcSelectAll
             v-if="isSelectAllShown"
             ref="selectAllElement"
@@ -89,8 +90,7 @@
             @keydown.tab="onSelectAllTab"
           />
 
-          <!-- Pointer use inside the list, the scrollbar included, keeps focus on the trigger. -->
-          <VcScrollbar class="vc-select__scroll" vertical @mousedown.prevent>
+          <VcScrollbar class="vc-select__scroll" vertical>
             <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
             <ul
               :id="listboxId"
@@ -437,9 +437,10 @@ const liveRegionMessage = computed(() => {
     return "";
   }
 
-  return filteredItems.value.length
-    ? t("ui_kit.select.results_available", [filteredItems.value.length])
-    : t("ui_kit.select.no_results_found");
+  // A server-side query's matches, as Select all counts them, not just the options loaded so far.
+  const count = props.serverFilter && props.total !== undefined ? props.total : filteredItems.value.length;
+
+  return count ? t("ui_kit.select.results_available", [count]) : t("ui_kit.select.no_results_found");
 });
 
 function toLabel(value: unknown): string {
