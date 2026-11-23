@@ -50,8 +50,7 @@ export function parseBindings(text: string): TemplatePartType[] {
   for (const match of text.matchAll(BINDING_REGEX)) {
     const path = match[1].trim();
 
-    parts.push(text.slice(lastIndex, match.index));
-    parts.push(isBindingPath(path) ? { path } : "");
+    parts.push(text.slice(lastIndex, match.index), isBindingPath(path) ? { path } : "");
     lastIndex = match.index + match[0].length;
   }
 

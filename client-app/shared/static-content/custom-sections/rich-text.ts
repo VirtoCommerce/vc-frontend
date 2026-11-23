@@ -43,7 +43,7 @@ const cache = createLruCache<string, ICachedRichText>(MAX_CACHED_RICH_TEXTS);
 export function sanitizeRichText(html: string, scope: RichTextScopeType): IRichText {
   const cached = cache.get(html);
 
-  if (cached && cached.type === scope.type && cached.assetsBaseUrl === scope.assetsBaseUrl) {
+  if (cached?.type === scope.type && cached.assetsBaseUrl === scope.assetsBaseUrl) {
     return cached.richText;
   }
 
