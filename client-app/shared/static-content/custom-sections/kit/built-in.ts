@@ -1,4 +1,5 @@
 import { defineAsyncComponent, markRaw } from "vue";
+import { getThemeVariableName } from "@/core/plugins/config.plugin";
 import { getLinkAttr } from "@/core/utilities/common";
 import {
   VcAlert,
@@ -30,7 +31,9 @@ import type { CustomSectionValueType, ICustomSectionBehavior, ICustomSectionFiel
 const COLOR: ICustomSectionField = { type: "select", options: [...MAIN_COLORS], description: "A palette color." };
 const PALETTE_COLOR: ICustomSectionField = {
   type: "string",
-  description: "A palette color, or a palette variable such as --color-primary-700.",
+  description:
+    "A palette color, a palette variable such as --color-primary-700, or a color-token setting's value " +
+    "such as color_primary_700.",
 };
 const ICON: ICustomSectionField = {
   type: "select",
@@ -80,6 +83,8 @@ const SHAPE_COST = 1 + ICON_COST;
 /** Its root, label, dots and value. */
 const PROPERTY_COST = 4;
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
+/** As a `color-token` setting stores it. */
+const PALETTE_TOKEN_REGEX = /^color_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const PIXELS_REGEX = /^\d+$/;
 
 const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
@@ -444,6 +449,10 @@ function toIconSize(size: string | undefined): string | number | undefined {
 }
 
 function toPaletteColor(color: string | undefined): string | undefined {
+  if (color && PALETTE_TOKEN_REGEX.test(color)) {
+    return getThemeVariableName(color);
+  }
+
   return color && ((MAIN_COLORS as readonly string[]).includes(color) || PALETTE_VARIABLE_REGEX.test(color))
     ? color
     : undefined;

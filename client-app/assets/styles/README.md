@@ -97,7 +97,7 @@ How to verify:
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
-| `custom-sections` | the CSS of a Site Builder custom section, added at runtime per type and scoped to its sections (`shared/static-content/custom-sections`): above every other layer, so it wins inside its own section over every layered rule; unlayered CSS (`_custom.scss`, a plugin's own stylesheet) still wins, except over a section's `!important` |
+| `custom-sections` | the CSS of a Site Builder custom section, added at runtime per type and scoped to its sections (`shared/static-content/custom-sections`): above every other layer, so it wins inside its own section over every layered rule; unlayered CSS (`_custom.scss`, a plugin's own stylesheet) still wins, except over a section's `!important`. It needs `@scope` (Chrome 118, Safari 17.4, Firefox 128): an older browser renders custom sections unstyled |
 
 Element-level dark token remaps stay with their dark files (`vc.kit` / `vc.app`), never in `theme`.
 

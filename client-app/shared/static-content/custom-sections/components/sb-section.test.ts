@@ -867,6 +867,17 @@ describe("SbSection", () => {
       expect(bare.props()).toMatchObject({ bgColor: undefined, size: undefined });
     });
 
+    it("takes a color-token setting's value as a kit tag's palette color", () => {
+      const wrapper = mountSection(
+        '<section><vc-icon name="star" color="{{ settings.accent }}"></vc-icon>' +
+          '<vc-shape icon="star" bg-color="{{ settings.accent }}"></vc-shape></section>',
+        { accent: "color_secondary_700" },
+      );
+
+      expect(wrapper.findComponent(VcIcon).props("color")).toBe("--color-secondary-700");
+      expect(wrapper.findComponent(VcShape).props("bgColor")).toBe("--color-secondary-700");
+    });
+
     it("renders vc-property as a label and its value", () => {
       const wrapper = mountSection(
         '<section><vc-property label="Weight" value="{{ settings.title }}"></vc-property></section>',
@@ -1058,7 +1069,7 @@ describe("SbSection", () => {
 
     afterEach(() => {
       ["vc-stars", "vc-video", "vc-late"].forEach(unregisterCustomSectionTag);
-      ["glow", "tally"].forEach(unregisterCustomSectionBehavior);
+      ["glow", "tally", "reveal", "unveil", "loop"].forEach(unregisterCustomSectionBehavior);
     });
 
     it("renders a tag a module registered, with its checked attributes as camelCase props", () => {
@@ -1155,6 +1166,43 @@ describe("SbSection", () => {
       expect(wrapper.find("p").attributes("data-shown")).toBeUndefined();
 
       await vi.waitFor(() => expect(wrapper.find("p").attributes("data-shown")).toBe(""));
+    });
+
+    it("keeps what a behavior writes once a later try loads it", async () => {
+      vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+      const directive = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("chunk"))
+        .mockResolvedValue({ mounted: (element: HTMLElement) => element.setAttribute("data-shown", "") });
+      registerCustomSectionBehavior("unveil", {
+        directive,
+        description: "Reveals.",
+        writes: ["data-shown"],
+        fallbackAttributes: ["data-shown"],
+      });
+
+      const wrapper = mountSection("<section><p data-unveil>Hi</p></section>");
+      await vi.waitFor(() => expect(wrapper.find("p").attributes("data-shown")).toBe(""));
+      mount(SbSection, { props: { model: { id: "section-2", type: TYPE } } });
+      await vi.waitFor(() => expect(directive).toHaveBeenCalledTimes(2));
+      await flushPromises();
+
+      expect(wrapper.find("p").attributes("data-shown")).toBe("");
+    });
+
+    it("renders a repeating behavior's children once when the behavior fails to load", async () => {
+      vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+      registerCustomSectionBehavior("loop", {
+        directive: () => Promise.reject(new Error("chunk")),
+        description: "Loops.",
+        repeatsChildren: true,
+      });
+
+      const wrapper = mountSection('<section><p data-loop><a href="/sale">Sale</a></p></section>');
+      expect(wrapper.findAll("a")).toHaveLength(2);
+
+      await vi.waitFor(() => expect(wrapper.findAll("a")).toHaveLength(1));
+      expect(wrapper.find("[data-sb-repeat]").exists()).toBe(false);
     });
 
     it("renders a tag registered after the section first rendered", async () => {

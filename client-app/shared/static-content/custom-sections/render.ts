@@ -209,14 +209,15 @@ function renderShown(
     const behavior = textAttributes.get(name);
     return !!behavior && !!innerScope.appliedBehaviors?.has(behavior) && !hasBehaviorFailed(behavior);
   });
-  const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
+  // Without its chunk, nothing would move the copy nor take it out of the tab order.
+  const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren && !hasBehaviorFailed(behaviors[name]));
   const fallbackAttributes = applied
     .map((name) => behaviors[name])
     .filter(hasBehaviorFailed)
     .flatMap((behavior) => (behavior.fallbackAttributes ?? []).map((attribute) => [attribute, ""]));
 
   // Vue pairs an element's directives by position, and a behavior reads its value, its options and the motion
-  // preference once: a change to any of them mounts the element afresh.
+  // preference once, and a failed one renders the element otherwise: a change to any of them mounts it afresh.
   const behaviorValues = kept.filter(({ name }) => fields.has(name)).map(({ name, value }) => [name, value]);
   const behaviorKey = applied.length
     ? {
@@ -225,7 +226,7 @@ function renderShown(
           position,
           scope.isReducedMotion,
           behaviorValues,
-          applied.map((name) => getBehaviorId(behaviors[name])),
+          applied.map((name) => [getBehaviorId(behaviors[name]), hasBehaviorFailed(behaviors[name])]),
         ]),
       }
     : {};
