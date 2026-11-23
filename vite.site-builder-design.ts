@@ -10,6 +10,8 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 
 /** The set `VcIcon` draws by default; legacy names reach it through the aliases. */
 const ICON_FOLDER = "client-app/ui-kit/icons/outline";
+/** The set `VcShape` cuts its mask from. */
+const MASK_FOLDER = "client-app/ui-kit/icons/solid";
 const ICON_EXTENSION = ".svg";
 const ELEMENT_START_REGEX = /<[a-z][\w:-]*/gi;
 
@@ -88,11 +90,18 @@ export function collectDesignFacts(): IDesignFacts {
 
 /** Every name `VcIcon` draws: the outline set's files and the legacy names aliased to them. */
 export function collectIconNames(): string[] {
-  const files = readdirSync(path.join(ROOT, ICON_FOLDER))
+  return [...new Set([...readIconNames(ICON_FOLDER), ...Object.keys(ICON_ALIASES)])].sort((a, b) => a.localeCompare(b));
+}
+
+/** Every name `VcShape` takes as its mask. */
+export function collectMaskNames(): string[] {
+  return readIconNames(MASK_FOLDER).sort((a, b) => a.localeCompare(b));
+}
+
+function readIconNames(folder: string): string[] {
+  return readdirSync(path.join(ROOT, folder))
     .filter((file) => file.endsWith(ICON_EXTENSION))
     .map((file) => path.basename(file, ICON_EXTENSION));
-
-  return [...new Set([...files, ...Object.keys(ICON_ALIASES)])].sort((a, b) => a.localeCompare(b));
 }
 
 /** The most elements an icon draws, its own `svg` included: a kit tag's cost counts it. */
@@ -109,6 +118,7 @@ export function designFactsDefine(): Record<string, string> {
   return {
     __SB_DESIGN_FACTS__: JSON.stringify(collectDesignFacts()),
     __SB_ICON_NAMES__: JSON.stringify(collectIconNames()),
+    __SB_MASK_NAMES__: JSON.stringify(collectMaskNames()),
     __SB_ICON_ELEMENTS__: JSON.stringify(collectIconElements()),
   };
 }

@@ -71,6 +71,7 @@ const KIT: ICustomSectionKitCatalog = {
   behaviors: {},
   design: { breakpoints: {}, containerMaxWidth: "1280px", tokens: {}, containerName: "sb-section" },
   icons: ["star"],
+  masks: ["polygon"],
   guide: "",
 };
 

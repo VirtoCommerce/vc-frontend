@@ -13,6 +13,7 @@ import {
   collectDesignFacts,
   collectIconElements,
   collectIconNames,
+  collectMaskNames,
   designFactsDefine,
   readTokenFallbacks,
 } from "./vite.site-builder-design.js";
@@ -86,6 +87,17 @@ describe("collectIconNames", () => {
   });
 });
 
+describe("collectMaskNames", () => {
+  it("lists the icons VcShape cuts its mask from, sorted, within the server's caps", () => {
+    const names = collectMaskNames();
+
+    expect(names).toEqual(expect.arrayContaining(["polygon", "circle-solid", "heart"]));
+    expect([...names].sort((a, b) => a.localeCompare(b))).toEqual(names);
+    expect(names.length).toBeLessThanOrEqual(MAX_ICONS);
+    expect(names.filter((name) => name.length === 0 || name.length > MAX_ICON_NAME_LENGTH)).toEqual([]);
+  });
+});
+
 describe("collectIconElements", () => {
   it("counts the elements of the largest icon the storefront draws, its own svg included", () => {
     const folder = "client-app/ui-kit/icons/outline";
@@ -100,13 +112,19 @@ describe("collectIconElements", () => {
 });
 
 describe("designFactsDefine", () => {
-  it("inlines the facts and the icon names as JSON the preview reads as they are", () => {
+  it("inlines the facts and the icon and mask names as JSON the preview reads as they are", () => {
     const defined = designFactsDefine();
     const facts = JSON.parse(defined.__SB_DESIGN_FACTS__) as ReturnType<typeof collectDesignFacts>;
 
-    expect(Object.keys(defined)).toEqual(["__SB_DESIGN_FACTS__", "__SB_ICON_NAMES__", "__SB_ICON_ELEMENTS__"]);
+    expect(Object.keys(defined)).toEqual([
+      "__SB_DESIGN_FACTS__",
+      "__SB_ICON_NAMES__",
+      "__SB_MASK_NAMES__",
+      "__SB_ICON_ELEMENTS__",
+    ]);
     expect(JSON.parse(defined.__SB_ICON_ELEMENTS__)).toBe(collectIconElements());
     expect(facts.tokens["--vc-radius"]).toEqual({ fallback: "0.5rem", description: expect.any(String) });
     expect(JSON.parse(defined.__SB_ICON_NAMES__)).toEqual(expect.arrayContaining(["star"]));
+    expect(JSON.parse(defined.__SB_MASK_NAMES__)).toEqual(collectMaskNames());
   });
 });

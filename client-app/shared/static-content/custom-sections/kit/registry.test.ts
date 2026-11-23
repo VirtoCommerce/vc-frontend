@@ -209,6 +209,7 @@ describe("the kit registry", () => {
       description: "x".repeat(1024),
       attributes: {
         icon: { type: "select", optionsFrom: "icons", description: "An icon." },
+        mask: { type: "select", optionsFrom: "masks" },
         size: { type: "select", options: ["sm", "lg"] },
         count: { type: "number", min: 1, max: 9 },
         enabled: { type: "boolean" },

@@ -313,7 +313,7 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
         max: MAX_SHAPE_SIZE,
         description: "In pixels, 40 by default.",
       },
-      mask: { ...ICON, description: "An icon of the storefront's set whose outline cuts the shape." },
+      mask: { type: "select", optionsFrom: "masks", description: "An icon whose silhouette cuts the shape." },
     },
     mapProps: (attributes) => ({
       icon: attributes.icon,

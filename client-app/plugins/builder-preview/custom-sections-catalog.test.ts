@@ -164,6 +164,12 @@ describe("watchCustomSectionCatalog", () => {
     expect(kit?.icons).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
     expect(kit?.icons).toEqual([...new Set(kit?.icons)].sort((a, b) => a.localeCompare(b)));
     expect(JSON.stringify(kit).match(/"shopping-cart"/g)).toHaveLength(1);
+    expect(kit?.masks).toEqual(expect.arrayContaining(["polygon", "heart"]));
+    expect(kit?.tags["vc-shape"].attributes.mask).toEqual({
+      type: "select",
+      optionsFrom: "masks",
+      description: expect.any(String),
+    });
     for (const field of [
       kit?.tags["vc-icon"].attributes.name,
       kit?.tags["vc-button"].attributes["prepend-icon"],

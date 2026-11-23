@@ -71,6 +71,8 @@ const VNODE_ATTRIBUTES = new Set(["key", "ref"]);
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<string>(CUSTOM_SECTION_FIELD_TYPES);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
+/** The lists of names the catalog holds once, for a select's `optionsFrom`. */
+const OPTION_LISTS = new Set<unknown>(["icons", "masks"]);
 const DATA_PREFIX = "data-";
 /**
  * The server refuses the whole kit for a bound it cannot read, as one from 2^63 on, which its JSON reader takes as a
@@ -392,8 +394,8 @@ function getFieldRefusal(field: unknown): string | undefined {
     return `has options that are not a list of at most ${MAX_SELECT_OPTIONS} texts of ${MAX_OPTION_LENGTH} characters`;
   }
 
-  if (field.optionsFrom !== undefined && !(field.type === "select" && field.optionsFrom === "icons")) {
-    return 'has an optionsFrom other than "icons" of a select';
+  if (field.optionsFrom !== undefined && !(field.type === "select" && OPTION_LISTS.has(field.optionsFrom))) {
+    return 'has an optionsFrom other than "icons" or "masks" of a select';
   }
 
   // No value of such a select could be taken.

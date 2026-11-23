@@ -16,6 +16,8 @@ export interface ICustomSectionKitCatalog {
   };
   /** Every icon name `VcIcon` draws, sorted: the values of a `select` with `optionsFrom: "icons"`. */
   icons: string[];
+  /** Every icon name `VcShape` takes as its mask, sorted: the values of a `select` with `optionsFrom: "masks"`. */
+  masks: string[];
   /** How to write a section that fits the storefront, in Markdown, for the agent that writes them. */
   guide: string;
 }
@@ -42,6 +44,7 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
     behaviors: Object.fromEntries(behaviors),
     design: { ...__SB_DESIGN_FACTS__, containerName: SECTION_CONTAINER_NAME },
     icons: __SB_ICON_NAMES__,
+    masks: __SB_MASK_NAMES__,
     guide,
   };
 

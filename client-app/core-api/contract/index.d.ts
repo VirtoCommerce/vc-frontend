@@ -5343,8 +5343,11 @@ interface ICustomSectionField {
     type: (typeof CUSTOM_SECTION_FIELD_TYPES)[number];
     /** The values a `select` takes; a select has these or `optionsFrom`. */
     options?: string[];
-    /** A `select` of the storefront's icon names, which the catalog lists once, as `kit.icons`. */
-    optionsFrom?: "icons";
+    /**
+     * A `select` of a list the catalog holds once: `icons`, the names `VcIcon` draws, as `kit.icons`, or `masks`, the
+     * names `VcShape` cuts its mask from, as `kit.masks`.
+     */
+    optionsFrom?: "icons" | "masks";
     min?: number;
     max?: number;
     description?: string;
