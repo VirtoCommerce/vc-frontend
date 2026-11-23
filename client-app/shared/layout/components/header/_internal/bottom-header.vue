@@ -82,6 +82,7 @@ import { computed, nextTick, ref, shallowRef, toValue, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
+import { usePreferencesMenu } from "@/shared/layout/composables/usePreferencesMenu";
 import CatalogMenu from "./catalog-menu.vue";
 import SearchBar from "./search-bar/search-bar.vue";
 import type { StyleValue } from "vue";
@@ -95,6 +96,7 @@ defineProps<IProps>();
 
 const router = useRouter();
 const { organization, isMultiOrganization } = useUser();
+const { hasPreferences } = usePreferencesMenu();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
@@ -106,9 +108,13 @@ const catalogMenuVisible = ref(false);
 const { bottom } = useElementBounding(bottomHeader);
 const route = useRoute();
 
-// The organizations menu is for members of several organizations; for the others it would leave an empty list item.
+// The organizations menu is for members of several organizations, the preferences menu for stores that offer a choice;
+// otherwise each would leave an empty list item.
 const mainMenuItems = computed(() =>
-  desktopMainMenuItems.value.filter((item) => item.id !== "organizations" || isMultiOrganization.value),
+  desktopMainMenuItems.value.filter(
+    (item) =>
+      (item.id !== "organizations" || isMultiOrganization.value) && (item.id !== "preferences" || hasPreferences.value),
+  ),
 );
 
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));

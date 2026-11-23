@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "Preferências",
+          "trigger_label": "{title}: {value}",
+          "currency": "Moeda",
+          "appearance": "Aparência",
+          "language": "Idioma",
+          "color_modes": {
+            "light": "Claro",
+            "dark": "Escuro",
+            "system": "Sistema"
+          }
+        },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Nenhum item | {n} item | {n} itens"
       },

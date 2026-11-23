@@ -13,6 +13,9 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
         () => import("@/shared/layout/components/header/_internal/organization-switcher.vue"),
       ),
     },
+    preferences: {
+      component: defineAsyncComponent(() => import("@/shared/layout/components/header/_internal/preferences-menu.vue")),
+    },
   },
   mobileMenu: {
     cart: {

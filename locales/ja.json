@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "設定",
+          "trigger_label": "{title}: {value}",
+          "currency": "通貨",
+          "appearance": "外観",
+          "language": "言語",
+          "color_modes": {
+            "light": "ライト",
+            "dark": "ダーク",
+            "system": "システム"
+          }
+        },
         "link_with_count": "{title}：{count}",
         "cart_items_tooltip": "商品なし | {n} 点 | {n} 点"
       },

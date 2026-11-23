@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "Настройки",
+          "trigger_label": "{title}: {value}",
+          "currency": "Валюта",
+          "appearance": "Тема",
+          "language": "Язык",
+          "color_modes": {
+            "light": "Светлая",
+            "dark": "Тёмная",
+            "system": "Системная"
+          }
+        },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"
       },
