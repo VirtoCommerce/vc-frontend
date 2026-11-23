@@ -24,6 +24,8 @@ export function toCustomSectionSchemas(types: Record<string, ICustomSectionDefin
             limit: schema.limit,
             icon: schema.icon,
             custom: true,
+            // The storefront applies the shared anchor to every section, but no background to a custom one.
+            excludeShared: ["background"],
           },
         ];
       }),

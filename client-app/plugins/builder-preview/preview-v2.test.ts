@@ -132,6 +132,18 @@ describe("preview protocol 2", () => {
     expect(changed.hash).not.toBe(catalog.hash);
   });
 
+  it("keeps the hash whatever custom section types the theme has, since the server takes them from the theme", () => {
+    const custom = { type: "custom-stats", name: { "en-US": "Stats" }, settings: [], custom: true };
+    const translated = { ...custom, name: "Stats" };
+    const catalog = buildPreviewCatalog({ ...SCHEMAS, sections: { ...SCHEMAS.sections, "custom-stats": custom } }, KIT);
+
+    expect(catalog.sections).toHaveProperty("custom-stats");
+    expect(catalog.hash).toBe(buildPreviewCatalog(SCHEMAS, KIT).hash);
+    expect(
+      buildPreviewCatalog({ ...SCHEMAS, sections: { ...SCHEMAS.sections, "custom-stats": translated } }, KIT).hash,
+    ).toBe(catalog.hash);
+  });
+
   it("carries the custom section kit, in the hash too", () => {
     const catalog = buildPreviewCatalog(SCHEMAS, KIT);
 

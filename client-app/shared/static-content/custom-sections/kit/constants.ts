@@ -12,3 +12,8 @@ export type ProductViewType = (typeof PRODUCT_VIEWS)[number];
 export const DEFAULT_PRODUCTS = 4;
 export const DEFAULT_PRODUCT_COLUMNS = 4;
 export const DEFAULT_PRODUCT_VIEW: ProductViewType = "grid";
+
+/** Whatever type a tag declares them, these hold an address. */
+export const LINK_ATTRIBUTES: ReadonlySet<string> = new Set(["to", "href"]);
+/** Whatever type a tag declares it, an image of the asset library, as `src` on an `img`. */
+export const IMAGE_ATTRIBUTE = "src";

@@ -120,8 +120,15 @@ describe("filterSectionCss", () => {
     expect(rulesOf(`.title { ${outline} }`)).toBe(`.title { ${outline} }`);
   });
 
-  it.each([":root", "html", "body .card", ".card, html .x", ":is(body) .y"])("drops a rule naming %s", (selector) => {
-    expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
+  it.each([":root", "html", "body .card", ".card, html .x", ":is(body) .y", "*|body .z", "*|html"])(
+    "drops a rule naming %s",
+    (selector) => {
+      expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
+    },
+  );
+
+  it("keeps a rule whose pseudo-element takes body as a name, not as an element", () => {
+    expect(rulesOf(".card::part(body) { color: red; }")).toBe(".card::part(body) { color: red; }");
   });
 
   it.each([

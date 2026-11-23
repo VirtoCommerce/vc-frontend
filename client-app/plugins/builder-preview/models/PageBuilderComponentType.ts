@@ -16,6 +16,8 @@ export type PageBuilderDescriptorType = {
   icon?: string;
   /** A section type the theme defines. */
   custom?: boolean;
+  /** `true` for none of the shared fields, or the ids of those the type leaves out. */
+  excludeShared?: boolean | string[];
 };
 
 export type PageBuilderComponentDescriptorType =

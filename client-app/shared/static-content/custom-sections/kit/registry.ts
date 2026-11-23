@@ -3,10 +3,11 @@
 // a kit entry carries what the renderer, the agent and the server read of it.
 import { createGlobalState } from "@vueuse/core";
 import { omit } from "lodash-es";
-import { shallowRef } from "vue";
+import { camelize, shallowRef } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
 import { RENDER_BUDGET } from "../limits";
 import { CUSTOM_SECTION_FIELD_TYPES } from "../types";
+import { IMAGE_ATTRIBUTE, LINK_ATTRIBUTES } from "./constants";
 import {
   MAX_DESCRIPTION_LENGTH,
   MAX_ENTRY_FIELDS,
@@ -221,7 +222,12 @@ export function getTagShapeRefusal(tag: ICustomSectionTag): string | undefined {
   }
 
   for (const [attribute, field] of attributes) {
-    if (!isName(attribute) || isDeniedTagAttribute(attribute) || VNODE_ATTRIBUTES.has(attribute)) {
+    if (
+      !isName(attribute) ||
+      isDeniedTagAttribute(attribute) ||
+      VNODE_ATTRIBUTES.has(attribute) ||
+      isRenamedInDom(attribute)
+    ) {
       return `takes the attribute "${attribute}", which a kit tag may not`;
     }
 
@@ -425,6 +431,19 @@ function getRoomRefusal(
 ): string | undefined {
   const othersCount = Object.keys(entries).filter((name) => !reserved.has(name)).length;
   return othersCount + reserved.size >= max ? `would take the kit past ${max} entries of its kind` : undefined;
+}
+
+/**
+ * One the DOM would read as an attribute the kit refuses or checks by name: a prop the component does not declare
+ * lands camelCase, and the browser lowercases it, so `o-nclick` becomes `onclick` and `h-ref` `href`.
+ */
+function isRenamedInDom(attribute: string): boolean {
+  const domName = camelize(attribute).toLowerCase();
+
+  return (
+    domName !== attribute &&
+    (isDeniedTagAttribute(domName) || LINK_ATTRIBUTES.has(domName) || domName === IMAGE_ATTRIBUTE)
+  );
 }
 
 function isName(name: string): boolean {

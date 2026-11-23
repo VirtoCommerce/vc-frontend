@@ -30,7 +30,7 @@ import { SectionOverlay } from "./section-overlay";
 import { installLeavingLinkGuard } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { IEditableText, IEndedEdit } from "./inline-text-editor";
-import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
 import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
@@ -75,12 +75,20 @@ export function buildPreviewCatalog(
 
   return {
     ...catalog,
-    hash: hashOf(JSON.stringify(catalog)),
+    hash: hashOf(JSON.stringify({ ...catalog, sections: withoutCustomSections(catalog.sections) })),
     protocol: PREVIEW_PROTOCOL,
     capabilities: PREVIEW_CAPABILITIES,
     conditions: getTemplateConditionDescriptors(),
     builtInTemplates: Object.keys(BUILT_IN_TEMPLATES),
   };
+}
+
+/**
+ * The server takes the theme's custom types from the theme, not from the catalog, so they leave the hash alone: the
+ * same storefront keeps one catalog whatever the types or the language they are shown in.
+ */
+function withoutCustomSections(sections: PageBuilderSchemaItemType): PageBuilderSchemaItemType {
+  return Object.fromEntries(Object.entries(sections).filter(([, schema]) => !schema.custom));
 }
 
 /** A template without a theme file is the built-in one: the designer opens and copies it from `default`. */

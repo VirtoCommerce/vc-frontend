@@ -1,13 +1,9 @@
 import { camelize } from "vue";
 import { toAssetUrl } from "../urls";
+import { IMAGE_ATTRIBUTE, LINK_ATTRIBUTES } from "./constants";
 import { toFieldValue } from "./fields";
 import { isDeniedTagAttribute } from "./registry";
 import type { CustomSectionValueType, ICustomSectionField, ICustomSectionTag } from "../types";
-
-/** Whatever type a tag declares them, these hold an address. */
-const LINK_ATTRIBUTES = new Set(["to", "href"]);
-/** Whatever type a tag declares it, an image of the asset library, as `src` on an `img`. */
-const IMAGE_ATTRIBUTE = "src";
 
 export function toTagProps(
   tag: ICustomSectionTag,

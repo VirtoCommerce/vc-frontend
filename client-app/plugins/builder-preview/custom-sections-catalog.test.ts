@@ -46,7 +46,7 @@ const BUILT_IN: PageBuilderSchemaType = {
 };
 
 describe("toCustomSectionSchemas", () => {
-  it("gives each custom type its name as the type stores it, settings, templates, limit and icon, marked custom", () => {
+  it("gives each custom type its name as the type stores it, settings, templates, limit and icon, marked custom, without the shared background", () => {
     expect(toCustomSectionSchemas({ "custom-stats": STATS })).toEqual({
       "custom-stats": {
         type: "custom-stats",
@@ -56,6 +56,7 @@ describe("toCustomSectionSchemas", () => {
         limit: 2,
         icon: "chart",
         custom: true,
+        excludeShared: ["background"],
       },
     });
   });

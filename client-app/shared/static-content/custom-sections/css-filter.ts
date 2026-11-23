@@ -26,7 +26,10 @@ const CONDITION_RULES = ["CSSMediaRule", "CSSSupportsRule", "CSSContainerRule", 
 const REFUSED_PROPERTIES = new Set(["behavior", "-moz-binding"]);
 const POSITION_VALUES = new Set(["static", "relative", "absolute", "sticky", "inherit", "initial", "unset", "revert"]);
 const SCOPE_PRELUDE = `@scope ([${SECTION_TYPE_ATTRIBUTE}])`;
-const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(])(?:html|body)(?![\w-])/i;
+/** `:root`, and `html` or `body` as a type selector, a namespace prefix included. */
+const REFUSED_SELECTOR_REGEX = /:root(?![\w-])|(?:^|[\s>+~,(|])(?:html|body)(?![\w-])/i;
+/** A pseudo-class or -element whose argument is a name, not a selector: `::part(body)` names no element. */
+const NAME_ARGUMENT_REGEX = /::?(?:part|state)\([^)]*\)/gi;
 
 /**
  * Keeps the at-rules and declarations the custom section contract allows, as the browser parsed them.
@@ -95,7 +98,10 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
   }
 
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
-    if (REFUSED_SELECTOR_REGEX.test(rule.selectorText) || !isContainedSelector(rule.selectorText)) {
+    if (
+      REFUSED_SELECTOR_REGEX.test(rule.selectorText.replaceAll(NAME_ARGUMENT_REGEX, "")) ||
+      !isContainedSelector(rule.selectorText)
+    ) {
       return false;
     }
 

@@ -76,6 +76,10 @@ describe("the kit registry", () => {
     "interestfor",
     "key",
     "ref",
+    "o-nclick",
+    "s-tyle",
+    "h-ref",
+    "s-rc",
   ])("refuses a tag that takes the attribute %s", (attribute) => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { [attribute]: { type: "string" } } });
 
