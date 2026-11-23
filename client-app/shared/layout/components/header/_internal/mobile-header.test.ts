@@ -16,7 +16,14 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
   useElementSize: () => ({ height: headerHeight }),
 }));
 
-vi.mock("@/core/composables", () => ({ useWhiteLabeling: () => ({ logoUrl: ref("/logo.svg") }) }));
+vi.mock("@/shared/layout/composables/useHeaderLogo", () => ({
+  useHeaderLogo: () => ({ headerLogoUrl: ref("/logo.svg") }),
+}));
+vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
+  useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), siteHeader: ref() }),
+}));
+vi.mock("@/shared/static-content/sections", () => ({ getPreviewSectionAttrs: () => ({}) }));
+vi.mock("../../announcement-bar/announcement-bar.vue", () => Empty("AnnouncementBar"));
 
 vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({ getSettingValue: () => undefined }),

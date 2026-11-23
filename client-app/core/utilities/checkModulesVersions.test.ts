@@ -1,0 +1,38 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getOutdatedModules } from "./checkModulesVersions";
+
+const siteBuilder = vi.hoisted(() => ({ isEnabled: true }));
+
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
+
+describe("getOutdatedModules", () => {
+  beforeEach(() => {
+    siteBuilder.isEnabled = true;
+  });
+
+  it("reports a Site Builder older than the storefront expects", () => {
+    expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.999.0" }])).toEqual([
+      { moduleId: "VirtoCommerce.SiteBuilder", backendVersion: "3.999.0", expectedVersion: "3.1000.0" },
+    ]);
+  });
+
+  it("does not check Site Builder while it is off", () => {
+    siteBuilder.isEnabled = false;
+
+    expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.999.0" }])).toEqual([]);
+  });
+
+  it("accepts a Site Builder at the expected version", () => {
+    expect(getOutdatedModules([{ moduleId: "VirtoCommerce.SiteBuilder", version: "3.1000.0" }])).toEqual([]);
+  });
+
+  it("still checks Page Builder from the backend package list", () => {
+    expect(getOutdatedModules([{ moduleId: "VirtoCommerce.PageBuilderModule", version: "3.1.0" }])).toEqual([
+      expect.objectContaining({ moduleId: "VirtoCommerce.PageBuilderModule", backendVersion: "3.1.0" }),
+    ]);
+  });
+
+  it("ignores modules the storefront does not know", () => {
+    expect(getOutdatedModules([{ moduleId: "Vendor.Unknown", version: "1.0.0" }])).toEqual([]);
+  });
+});

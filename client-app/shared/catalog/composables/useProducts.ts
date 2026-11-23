@@ -393,7 +393,10 @@ export function useProducts(
     );
   }
 
+  let latestRequest = 0;
+
   async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
+    const request = ++latestRequest;
     const searchParams = {
       ..._searchParams,
       page:
@@ -430,6 +433,11 @@ export function useProducts(
         currencyCodeOverride: toValue(currencyCodeOverride),
       });
 
+      // Only the latest request replaces the shared state; an older one still answers its own caller.
+      if (request !== latestRequest) {
+        return { items, totalCount };
+      }
+
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
@@ -456,17 +464,19 @@ export function useProducts(
         };
       }
 
-      // The response this call applied, so a caller can act on its own request's result instead of the shared state.
       return { items, totalCount };
     } catch (e) {
       Logger.error(`useProducts.${fetchProducts.name}`, e);
       throw e;
     } finally {
-      fetchingProducts.value = false;
+      if (request === latestRequest) {
+        fetchingProducts.value = false;
+      }
     }
   }
 
   async function fetchMoreProducts(searchParams: Partial<ProductsSearchParamsType>) {
+    const request = latestRequest;
     fetchingMoreProducts.value = true;
 
     try {
@@ -475,6 +485,11 @@ export function useProducts(
         withZeroPrice,
         currencyCodeOverride: toValue(currencyCodeOverride),
       });
+
+      // A page of the list an earlier fetchProducts loaded must not be added to a newer one.
+      if (request !== latestRequest) {
+        return { items, totalCount };
+      }
 
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
