@@ -40,11 +40,15 @@ function mountDirectly(element: HTMLElement): void {
   vMarquee.mounted?.(element, { value: "" } as never, {} as never, null);
 }
 
+function placeAt(element: HTMLElement, left: number): void {
+  Object.assign(element, { getBoundingClientRect: () => ({ left }) });
+}
+
 function stubLayout(element: HTMLElement, animation: object): void {
   const [first, copy] = [...element.children] as HTMLElement[];
   [first, copy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
-  Object.defineProperty(first, "offsetLeft", { value: 0 });
-  Object.defineProperty(copy, "offsetLeft", { value: 120 });
+  placeAt(first, 0);
+  placeAt(copy, 120.5);
   Object.assign(element, { getAnimations: () => [animation] });
 }
 
@@ -63,9 +67,9 @@ describe("vMarquee", () => {
   });
 
   it.each([
-    { direction: undefined, shift: "-120px" },
-    { direction: "rtl" as const, shift: "120px" },
-  ])("shifts one run toward the inline start: $shift for $direction", ({ direction, shift }) => {
+    { direction: undefined, shift: "-120.5px" },
+    { direction: "rtl" as const, shift: "120.5px" },
+  ])("shifts one run toward the inline start, unrounded: $shift for $direction", ({ direction, shift }) => {
     const animation = { pause: vi.fn(), play: vi.fn() };
     const element = document.createElement("div");
     element.append(document.createElement("span"), document.createElement("span"));
@@ -80,7 +84,7 @@ describe("vMarquee", () => {
 
     mountDirectly(element);
 
-    expect(element.style.getPropertyValue("--marquee-width")).toBe("120px");
+    expect(element.style.getPropertyValue("--marquee-width")).toBe("120.5px");
     expect(element.style.getPropertyValue("--marquee-shift")).toBe(shift);
   });
 
@@ -93,8 +97,8 @@ describe("vMarquee", () => {
     document.body.append(element);
     [hidden, hiddenCopy].forEach((item) => Object.assign(item, { getClientRects: () => [] }));
     [shown, shownCopy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
-    Object.defineProperty(shown, "offsetLeft", { value: 10 });
-    Object.defineProperty(shownCopy, "offsetLeft", { value: 130 });
+    placeAt(shown, 10);
+    placeAt(shownCopy, 130);
 
     mountDirectly(element);
 
@@ -119,7 +123,7 @@ describe("vMarquee", () => {
     direction.value = "rtl";
     await nextTick();
 
-    expect(element.style.getPropertyValue("--marquee-shift")).toBe("120px");
+    expect(element.style.getPropertyValue("--marquee-shift")).toBe("120.5px");
   });
 
   it("pauses while the pointer is over it or the focus inside, and resumes only what it paused", async () => {
@@ -193,7 +197,7 @@ describe("vMarquee", () => {
 
     const [first, , firstCopy] = [...element.children] as HTMLElement[];
     [first, firstCopy].forEach((item) => Object.assign(item, { getClientRects: () => [{}] }));
-    Object.defineProperty(firstCopy, "offsetLeft", { value: 180 });
+    placeAt(firstCopy, 180);
     connected[0].callback();
 
     expect((element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("180px");
@@ -255,6 +259,35 @@ describe("vMarquee", () => {
     item.removeAttribute("tabindex");
     await vi.waitFor(() => expect(wrapper.attributes("tabindex")).toBe("0"));
   });
+
+  it.each(["no-preference", "reduce"])(
+    "keeps the copies clickable but out of the tab order, with %s motion",
+    async (motion) => {
+      mocks.motion = motion;
+      const wrapper = mount(
+        defineComponent({
+          setup: () => () =>
+            withDirectives(
+              h("div", [
+                h("a", { href: "/sale" }, "Sale"),
+                h("span", { "data-sb-repeat": "" }, [h("a", { href: "/sale" }, "Sale")]),
+                h("a", { href: "/new", "data-sb-repeat": "" }, "New"),
+              ]),
+              [[vMarquee, ""]],
+            ),
+        }),
+      );
+      const [run, nested, copy] = wrapper.findAll("a");
+
+      expect(run.attributes("tabindex")).toBeUndefined();
+      expect(nested.attributes("tabindex")).toBe("-1");
+      expect(copy.attributes("tabindex")).toBe("-1");
+
+      const late = document.createElement("button");
+      wrapper.element.querySelector("span")?.append(late);
+      await vi.waitFor(() => expect(late.getAttribute("tabindex")).toBe("-1"));
+    },
+  );
 
   it("stands still with reduced motion", () => {
     mocks.motion = "reduce";

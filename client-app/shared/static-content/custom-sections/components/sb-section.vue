@@ -24,7 +24,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { theme } = useThemeSnapshot();
+const { theme, localizeThemeDraft } = useThemeSnapshot();
 const reducedMotion = useReducedMotion();
 
 registerBuiltInKit();
@@ -32,6 +32,12 @@ registerBuiltInKit();
 const definition = computed(() =>
   isCustomSectionType(props.model.type) ? theme.value?.customSections[props.model.type] : undefined,
 );
+
+// A draft's defaults may still be translatable dictionaries.
+const fields = computed(() => {
+  const settings = localizeThemeDraft(definition.value?.schema?.settings);
+  return Array.isArray(settings) ? settings : [];
+});
 
 const compiled = computed(() =>
   typeof definition.value?.template === "string"
@@ -62,13 +68,12 @@ useCustomSectionStyle(
 /** Not a computed: VNodes must be fresh on every render. */
 function renderSection(): VNode | null {
   const template = compiled.value;
-  const fields = definition.value?.schema?.settings;
 
   return template
     ? renderCustomSection(template, {
         type: props.model.type,
         settings: props.model,
-        fields: Array.isArray(fields) ? fields : [],
+        fields: fields.value,
         assetsBaseUrl: theme.value?.assetsBaseUrl,
         isReducedMotion: reducedMotion.value === "reduce",
       })

@@ -1,6 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount, RouterLinkStub } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useThemeSnapshot } from "@/core/theme-snapshot";
 import { Logger } from "@/core/utilities";
 import {
@@ -24,6 +25,7 @@ import {
 } from "../kit";
 import SbSection from "./sb-section.vue";
 import type { ICustomSectionDefinition, IThemeSchemaField } from "@/core/theme-snapshot";
+import type { ILanguage } from "@/core/types";
 
 const frame = vi.hoisted(() => ({ isPreview: false }));
 
@@ -31,6 +33,12 @@ vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
   isPreviewV2Frame: () => frame.isPreview,
 }));
+
+vi.mock("@/core/composables/useLanguages", async () => {
+  const { ref } = await import("vue");
+  const currentLanguage = ref({ cultureName: "en-US" });
+  return { useLanguages: () => ({ currentLanguage, defaultStoreCulture: ref("en-US") }) };
+});
 
 vi.mock("vue-i18n", async (importOriginal) => ({
   ...(await importOriginal<typeof import("vue-i18n")>()),
@@ -104,6 +112,7 @@ enableAutoUnmount(afterEach);
 describe("SbSection", () => {
   beforeEach(() => {
     frame.isPreview = false;
+    useLanguages().currentLanguage.value = { cultureName: "en-US" } as ILanguage;
     useThemeSnapshot().setDraft(undefined);
   });
 
@@ -289,6 +298,25 @@ describe("SbSection", () => {
       expect(wrapper.findAll("section div")).toHaveLength(31);
       expect(wrapper.text()).not.toContain("deep");
     });
+
+    it("keeps the content of an element exactly 32 deep, the root included, as the server does", () => {
+      const depth = 31;
+      const wrapper = mountSection(`<section>${"<div>".repeat(depth)}deep${"</div>".repeat(depth)}</section>`);
+
+      expect(wrapper.findAll("section div")).toHaveLength(31);
+      expect(wrapper.text()).toBe("deep");
+    });
+  });
+
+  it("renders a draft's translatable default in the current language, not blank", () => {
+    useLanguages().currentLanguage.value = { cultureName: "de-DE" } as ILanguage;
+    const wrapper = mountSection(
+      "<section><h2>{{ settings.title }}</h2></section>",
+      {},
+      { schema: { settings: [{ id: "title", type: "string", default: { "en-US": "Hello", "de-DE": "Hallo" } }] } },
+    );
+
+    expect(wrapper.find("h2").text()).toBe("Hallo");
   });
 
   describe("data-each", () => {
@@ -918,8 +946,8 @@ describe("SbSection", () => {
     });
 
     it("runs a marquee track that starts with text the width of one run", async () => {
-      vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
-        return this.hasAttribute("data-sb-repeat") ? 120 : 0;
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+        return { left: this.hasAttribute("data-sb-repeat") ? 120 : 0 } as DOMRect;
       });
       vi.spyOn(HTMLElement.prototype, "getClientRects").mockReturnValue([{}] as unknown as DOMRectList);
       const wrapper = mountSection("<section><p data-marquee>{{ settings.title }}</p></section>", { title: "Sale" });
@@ -929,7 +957,7 @@ describe("SbSection", () => {
 
       expect([...track.element.children].map((child) => child.outerHTML)).toEqual([
         "<span>Sale</span>",
-        '<span aria-hidden="true" inert="" data-sb-repeat="">Sale</span>',
+        '<span aria-hidden="true" data-sb-repeat="">Sale</span>',
       ]);
       expect((track.element as HTMLElement).style.getPropertyValue("--marquee-width")).toBe("120px");
     });
@@ -1100,7 +1128,7 @@ describe("SbSection", () => {
       expect(wrapper.findAll("[data-marquee]")).toHaveLength(1);
     });
 
-    it("marks the copies of a repeated list's rows, out of the tab order and hidden from assistive technology", () => {
+    it("marks the copies of a repeated list's rows, hidden from assistive technology and still clickable", () => {
       const wrapper = mountSection(
         '<section><ul data-marquee><li data-each="settings.cards"><a href="{{ item.link }}">{{ item.title }}</a></li></ul></section>',
         {
@@ -1115,7 +1143,7 @@ describe("SbSection", () => {
       expect(rows.map((row) => row.text())).toEqual(["One", "Two", "One", "Two"]);
       expect(rows.map((row) => row.attributes("data-sb-repeat"))).toEqual([undefined, undefined, "", ""]);
       expect(rows.map((row) => row.attributes("aria-hidden"))).toEqual([undefined, undefined, "true", "true"]);
-      expect(rows.map((row) => row.attributes("inert"))).toEqual([undefined, undefined, "", ""]);
+      expect(rows.map((row) => row.attributes("inert"))).toEqual([undefined, undefined, undefined, undefined]);
     });
 
     it("mounts a changed template afresh, so an added behavior starts instead of breaking the patch", async () => {

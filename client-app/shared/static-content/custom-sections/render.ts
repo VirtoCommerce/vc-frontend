@@ -57,8 +57,11 @@ interface IBehaviorAttributes {
   textAttributes: Map<string, ICustomSectionBehavior>;
 }
 
-/** The copies a repeating behavior adds: out of the tab order and hidden from assistive technology. */
-const COPY_PROPS = { "aria-hidden": "true", inert: "", [REPEATED_COPY_ATTRIBUTE]: "" };
+/**
+ * The copies a repeating behavior adds: hidden from assistive technology, still clickable, as a loop mostly shows
+ * them. The behavior takes them out of the tab order.
+ */
+const COPY_PROPS = { "aria-hidden": "true", [REPEATED_COPY_ATTRIBUTE]: "" };
 
 const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
 const overBudgetTemplates = new WeakSet<ICompiledTemplate>();

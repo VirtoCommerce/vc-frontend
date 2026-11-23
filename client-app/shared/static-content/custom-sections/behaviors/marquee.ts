@@ -14,18 +14,28 @@ const FOCUS_ATTRIBUTES = ["tabindex", "href", "disabled", "controls", "contented
  * motion; pauses on hover or focus within, setting `data-paused`.
  */
 export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) => {
+  removeCopiesFromTabOrder(element);
+
   if (isReducedMotion) {
     writeRun(element, 0);
+    useMutationObserver(element, () => removeCopiesFromTabOrder(element), {
+      subtree: true,
+      childList: true,
+      attributeFilter: FOCUS_ATTRIBUTES,
+    });
     return;
   }
 
-  /** From the first item with a box to its copy: the section's CSS may hide the first at some widths. */
+  /**
+   * From the first item with a box to its copy: the section's CSS may hide the first at some widths. Unrounded, so
+   * a loop does not snap by a fraction of a pixel; both sit in the same track, so its shift cancels out.
+   */
   function measure(): void {
     const items = getItems(element);
     const run = items.filter((item) => !item.hasAttribute(REPEATED_COPY_ATTRIBUTE));
     const copies = items.filter((item) => item.hasAttribute(REPEATED_COPY_ATTRIBUTE));
     const index = run.findIndex((item, position) => hasBox(item) && !!copies[position] && hasBox(copies[position]));
-    const width = index >= 0 ? Math.abs(copies[index].offsetLeft - run[index].offsetLeft) : element.scrollWidth / 2;
+    const width = index >= 0 ? Math.abs(getLeft(copies[index]) - getLeft(run[index])) : element.scrollWidth / 2;
 
     writeRun(element, width);
   }
@@ -57,6 +67,8 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 
   /** Also later: an item's own behavior may load after this one and make the item focusable. */
   function placeTabStop(): void {
+    removeCopiesFromTabOrder(element);
+
     const isNeeded = !hasFocusableItem(element);
 
     // Only on a change: the observer below sees this element's own `tabindex` too.
@@ -109,11 +121,29 @@ function getItems(element: HTMLElement): HTMLElement[] {
   return [...element.children].filter((child): child is HTMLElement => child instanceof HTMLElement);
 }
 
+function getLeft(element: HTMLElement): number {
+  return element.getBoundingClientRect().left;
+}
+
 function hasBox(element: HTMLElement): boolean {
   return element.getClientRects().length > 0;
 }
 
-/** In the tab order: the copies are inert, so only the run counts, and a negative tabindex or a disabled control not. */
+/**
+ * The copies stay clickable, as a loop mostly shows them, but the keyboard reaches each item once, in the run. Only
+ * on a change: the observers see `tabindex` too.
+ */
+function removeCopiesFromTabOrder(element: HTMLElement): void {
+  for (const copy of element.querySelectorAll<HTMLElement>(`[${REPEATED_COPY_ATTRIBUTE}]`)) {
+    for (const item of [copy, ...copy.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)]) {
+      if (item.matches(FOCUSABLE_SELECTOR) && item.getAttribute("tabindex") !== "-1") {
+        item.tabIndex = -1;
+      }
+    }
+  }
+}
+
+/** In the tab order: the copies are out of it, so only the run counts, and a negative tabindex or a disabled control not. */
 function hasFocusableItem(element: HTMLElement): boolean {
   return [...element.querySelectorAll(FOCUSABLE_SELECTOR)].some(
     (item) =>

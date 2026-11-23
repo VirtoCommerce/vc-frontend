@@ -176,9 +176,15 @@ interface ICompileContext {
   behaviors: Set<string>;
 }
 
-/** Content nested deeper than `MAX_TEMPLATE_DEPTH` is left out. */
+/**
+ * Elements nested deeper than `MAX_TEMPLATE_DEPTH`, the root counted as 1 as the server counts it, are left out; an
+ * element at that depth keeps its text.
+ */
 function compileChildren(parent: Node, context: ICompileContext): CompiledNodeType[] {
-  return context.depth < MAX_TEMPLATE_DEPTH ? [...parent.childNodes].flatMap((node) => compileNode(node, context)) : [];
+  const nodes = [...parent.childNodes];
+  const kept = context.depth < MAX_TEMPLATE_DEPTH ? nodes : nodes.filter(({ nodeType }) => nodeType === Node.TEXT_NODE);
+
+  return kept.flatMap((node) => compileNode(node, context));
 }
 
 function compileNode(node: Node, context: ICompileContext): CompiledNodeType[] {
