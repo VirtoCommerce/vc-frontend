@@ -1,4 +1,4 @@
-import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, withDirectives } from "vue";
 import { vMarquee } from "./marquee";
@@ -129,25 +129,39 @@ describe("vMarquee", () => {
   it("pauses while the pointer is over it or the focus inside, and resumes only what it paused", async () => {
     const wrapper = mountMarquee();
     const marquee = wrapper.find("#marquee");
-    const running = { playState: "running", pause: vi.fn(), play: vi.fn() };
-    const finished = { playState: "finished", pause: vi.fn(), play: vi.fn() };
+    const [track, ended] = [...marquee.element.children] as HTMLElement[];
+    const running = { playState: "running", effect: { target: track }, pause: vi.fn(), play: vi.fn() };
+    const finished = { playState: "finished", effect: { target: ended }, pause: vi.fn(), play: vi.fn() };
     stubLayout(marquee.element as HTMLElement, running);
     Object.assign(marquee.element, { getAnimations: () => [running, finished] });
 
     await marquee.trigger("mouseenter");
     expect(marquee.attributes("data-paused")).toBe("");
-    expect(running.pause).toHaveBeenCalledOnce();
+    expect(track.style.animationPlayState).toBe("paused");
 
     await marquee.trigger("focusin");
     await marquee.trigger("mouseleave");
     expect(marquee.attributes("data-paused")).toBe("");
-    expect(running.play).not.toHaveBeenCalled();
+    expect(track.style.animationPlayState).toBe("paused");
 
     await marquee.trigger("focusout", { relatedTarget: null });
     expect(marquee.attributes("data-paused")).toBeUndefined();
-    expect(running.play).toHaveBeenCalledOnce();
-    expect(finished.pause).not.toHaveBeenCalled();
-    expect(finished.play).not.toHaveBeenCalled();
+    expect(track.style.animationPlayState).toBe("");
+    expect(ended.style.animationPlayState).toBe("");
+  });
+
+  it("leaves the play state to the section's CSS: it never pauses or plays an animation itself", async () => {
+    const wrapper = mountMarquee();
+    const marquee = wrapper.find("#marquee");
+    const running = { playState: "running", effect: { target: marquee.element }, pause: vi.fn(), play: vi.fn() };
+    stubLayout(marquee.element as HTMLElement, running);
+
+    await marquee.trigger("mouseenter");
+    await marquee.trigger("mouseleave");
+
+    expect(running.pause).not.toHaveBeenCalled();
+    expect(running.play).not.toHaveBeenCalled();
+    expect((marquee.element as HTMLElement).style.animationPlayState).toBe("");
   });
 
   it("measures again when an item of the track resizes, an item added later included, with one observer", async () => {
@@ -258,6 +272,24 @@ describe("vMarquee", () => {
 
     item.removeAttribute("tabindex");
     await vi.waitFor(() => expect(wrapper.attributes("tabindex")).toBe("0"));
+  });
+
+  it("keeps a tab stop another behavior set on the strip, as data-copy, though its run holds a link", async () => {
+    const wrapper = mount(
+      defineComponent({
+        setup: () => () =>
+          withDirectives(
+            h("div", [h("a", { href: "/terms" }, "Terms"), h("a", { href: "/terms", "data-sb-repeat": "" }, "Terms")]),
+            [[vMarquee, ""]],
+          ),
+      }),
+    );
+    const element = wrapper.element as HTMLElement;
+
+    element.tabIndex = 0;
+    await flushPromises();
+
+    expect(wrapper.attributes("tabindex")).toBe("0");
   });
 
   it.each(["no-preference", "reduce"])(

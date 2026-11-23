@@ -79,15 +79,21 @@ function copyWithSelection(text: string): boolean {
     return false;
   }
 
+  // In the viewport, so focusing it scrolls nothing; the focus goes back where it was.
+  const focused = document.activeElement;
   const field = document.createElement("textarea");
   field.value = text;
   field.setAttribute("readonly", "");
-  field.style.position = "absolute";
-  field.style.opacity = "0";
+  Object.assign(field.style, { position: "fixed", top: "0", left: "0", opacity: "0" });
   document.body.append(field);
+  field.focus({ preventScroll: true });
   field.select();
   const isCopied = execCommand("copy");
   field.remove();
+
+  if (focused instanceof HTMLElement) {
+    focused.focus({ preventScroll: true });
+  }
 
   return isCopied;
 }

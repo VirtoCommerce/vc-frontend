@@ -10,12 +10,13 @@ const mocks = vi.hoisted(() => ({ success: vi.fn(), writeText: vi.fn() }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ success: mocks.success }) }));
 
-function mountCopy(tag = "span", attributes: Record<string, string> = {}) {
+function mountCopy(tag = "span", attributes: Record<string, string> = {}, options: { attachTo?: HTMLElement } = {}) {
   return mount(
     defineComponent({
       setup: () => () =>
         withDirectives(h(tag, attributes, ["Copy", h("a", { href: "/terms" }, "Terms")]), [[vCopy, "CODE10"]]),
     }),
+    options,
   );
 }
 
@@ -43,6 +44,8 @@ describe("vCopy", () => {
     Reflect.deleteProperty(navigator, "clipboard");
     Reflect.deleteProperty(document, "execCommand");
     setGlobals({ i18n: initialI18n });
+    vi.restoreAllMocks();
+    document.body.innerHTML = "";
   });
 
   it("copies the text on a click and marks the element while the copy is fresh, for 2 seconds", async () => {
@@ -94,6 +97,28 @@ describe("vCopy", () => {
       expect(wrapper.attributes("data-copied") !== undefined).toBe(isAnnounced);
     },
   );
+
+  it("keeps the page where it is and gives the focus back when it copies through the selection", async () => {
+    Reflect.deleteProperty(navigator, "clipboard");
+    const fields: HTMLTextAreaElement[] = [];
+    const execCommand = vi.fn(() => {
+      fields.push(document.activeElement as HTMLTextAreaElement);
+      return true;
+    });
+    Object.defineProperty(document, "execCommand", { value: execCommand, configurable: true });
+    const wrapper = mountCopy("span", {}, { attachTo: document.body });
+    const element = wrapper.element as HTMLElement;
+    const focus = vi.spyOn(HTMLElement.prototype, "focus");
+    element.focus();
+
+    await wrapper.trigger("keydown", { key: "Enter" });
+    await flushPromises();
+
+    expect(fields[0]).toBeInstanceOf(HTMLTextAreaElement);
+    expect(fields[0].style).toMatchObject({ position: "fixed", top: "0px", left: "0px" });
+    expect(focus.mock.calls.slice(1)).toEqual([[{ preventScroll: true }], [{ preventScroll: true }]]);
+    expect(document.activeElement).toBe(element);
+  });
 
   it("says nothing and marks nothing when the browser refuses the copy", async () => {
     mocks.writeText.mockRejectedValue(new DOMException("Denied", "NotAllowedError"));

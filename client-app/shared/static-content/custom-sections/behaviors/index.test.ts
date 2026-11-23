@@ -70,7 +70,7 @@ describe("a behavior's lazy directive", () => {
     expect(calls).toEqual(["mounted b"]);
   });
 
-  it("mounts an element left waiting by a failed load once a later load succeeds", async () => {
+  it("mounts an element left waiting by a failed load, and clears the failure, once a later load succeeds", async () => {
     vi.spyOn(Logger, "error").mockImplementation(() => undefined);
     const mounted = vi.fn();
     const directive = vi
@@ -81,10 +81,13 @@ describe("a behavior's lazy directive", () => {
 
     mountWith(behavior, "a");
     await flushPromises();
+    expect(hasBehaviorFailed(behavior)).toBe(true);
+
     mountWith(behavior, "b");
     await flushPromises();
 
     expect(mounted.mock.calls).toEqual([["a"], ["b"]]);
+    expect(hasBehaviorFailed(behavior)).toBe(false);
   });
 
   it("mounts every waiting element when one of them throws, and counts the load as done", async () => {

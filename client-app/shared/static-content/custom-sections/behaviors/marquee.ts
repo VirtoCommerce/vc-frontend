@@ -42,20 +42,22 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 
   let isHovered = false;
   let isFocused = false;
-  let paused: Animation[] = [];
+  let paused: HTMLElement[] = [];
 
-  /** Resumes only what it paused, so a finished or a CSS-paused animation stays as it is. */
+  /**
+   * Through an inline play state, not `Animation.pause()`, after which the section's CSS could no longer pause or
+   * run the animation. Resumes only what it paused, so a finished or a CSS-paused animation stays as it is.
+   */
   function applyPause(): void {
     const isPaused = isHovered || isFocused;
 
     element.toggleAttribute(PAUSED_ATTRIBUTE, isPaused);
 
     if (isPaused && !paused.length) {
-      // Whatever element the section's CSS animates.
-      paused = (element.getAnimations?.({ subtree: true }) ?? []).filter(({ playState }) => playState === "running");
-      paused.forEach((animation) => animation.pause());
+      paused = getAnimatedElements(element);
+      paused.forEach((animated) => animated.style.setProperty("animation-play-state", "paused"));
     } else if (!isPaused) {
-      paused.forEach((animation) => animation.play());
+      paused.forEach((animated) => animated.style.removeProperty("animation-play-state"));
       paused = [];
     }
   }
@@ -63,23 +65,24 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
   // Its items too: a late image or a font swap resizes them inside a track whose own width is fixed.
   const items = shallowRef(getItems(element));
   // Focus within pauses it: with nothing to focus in its run, the keyboard reaches the strip itself.
-  const isOwnTabStop = !element.hasAttribute("tabindex");
+  let hasSetTabStop = false;
 
-  /** Also later: an item's own behavior may load after this one and make the item focusable. */
+  /**
+   * Also later: an item's own behavior may load after this one and make the item focusable. Removes only a tab stop
+   * it set: another behavior on the strip, as `data-copy`, may set one of its own. Only on a change: the observer
+   * below sees this element's own `tabindex` too.
+   */
   function placeTabStop(): void {
     removeCopiesFromTabOrder(element);
 
     const isNeeded = !hasFocusableItem(element);
 
-    // Only on a change: the observer below sees this element's own `tabindex` too.
-    if (!isOwnTabStop || isNeeded === element.hasAttribute("tabindex")) {
-      return;
-    }
-
-    if (isNeeded) {
+    if (isNeeded && !element.hasAttribute("tabindex")) {
       element.tabIndex = 0;
-    } else {
+      hasSetTabStop = true;
+    } else if (!isNeeded && hasSetTabStop) {
       element.removeAttribute("tabindex");
+      hasSetTabStop = false;
     }
   }
 
@@ -115,6 +118,16 @@ export const vMarquee = defineBehavior((element, { isReducedMotion, updates }) =
 function writeRun(element: HTMLElement, width: number): void {
   element.style.setProperty("--marquee-width", `${width}px`);
   element.style.setProperty("--marquee-shift", `${isRightToLeft(element) ? width : -width}px`);
+}
+
+/** Whatever elements the section's CSS animates, running now. */
+function getAnimatedElements(element: HTMLElement): HTMLElement[] {
+  const animated = (element.getAnimations?.({ subtree: true }) ?? [])
+    .filter(({ playState }) => playState === "running")
+    .map(({ effect }) => (effect as KeyframeEffect | null)?.target)
+    .filter((target): target is HTMLElement => target instanceof HTMLElement);
+
+  return [...new Set(animated)];
 }
 
 function getItems(element: HTMLElement): HTMLElement[] {

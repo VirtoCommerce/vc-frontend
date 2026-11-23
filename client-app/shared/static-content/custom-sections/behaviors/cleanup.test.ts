@@ -1,9 +1,9 @@
-import { mount } from "@vue/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, withDirectives } from "vue";
+import { createApp, h, nextTick, withDirectives } from "vue";
 import { vCopy } from "./copy";
 import { vCountUp } from "./count-up";
 import { vCountdown } from "./countdown";
+import { defineBehavior } from "./define-behavior";
 import { vInview } from "./inview";
 import { vMarquee } from "./marquee";
 import { vPointer } from "./pointer";
@@ -43,13 +43,19 @@ const BEHAVIORS: [string, CustomSectionDirectiveType, string][] = [
   ["marquee", vMarquee, ""],
 ];
 
+/** Holds only what every behavior shares, as the motion preference's listener. */
+const vIdle = defineBehavior(() => undefined);
+
+/** With Vue alone: a test wrapper listens on its root for every DOM event, which would hide a behavior's own. */
 function mountBehavior(directive: CustomSectionDirectiveType, value: string) {
-  return mount(
-    defineComponent({
-      setup: () => () =>
-        withDirectives(h("div", [h("span", { "data-countdown-part": "seconds" }, "A")]), [[directive, value]]),
-    }),
-  );
+  const app = createApp({
+    setup: () => () =>
+      withDirectives(h("div", [h("span", { "data-countdown-part": "seconds" }, "A")]), [[directive, value]]),
+  });
+  const host = document.createElement("div");
+  app.mount(host);
+
+  return { element: host.firstElementChild as HTMLElement, unmount: () => app.unmount() };
 }
 
 /** Every observer still connected, listener still attached and timer or frame still pending. */
@@ -117,8 +123,10 @@ describe("a behavior, once its element unmounts", () => {
   });
 
   it.each(BEHAVIORS)("%s holds no observer, listener or timer", async (_, directive, value) => {
-    const wrapper = mountBehavior(directive, value);
-    const element = wrapper.element as HTMLElement;
+    const idle = mountBehavior(vIdle, "");
+    await nextTick();
+    const shared = getHeldResources();
+    const { element, unmount } = mountBehavior(directive, value);
     await nextTick();
 
     const rect = element.getBoundingClientRect();
@@ -127,9 +135,10 @@ describe("a behavior, once its element unmounts", () => {
     ["pointermove", "mouseenter", "focusin"].forEach((type) => element.dispatchEvent(new Event(type)));
     window.dispatchEvent(new Event("scroll"));
     await nextTick();
-    expect(getHeldResources()).not.toEqual([]);
+    expect(getHeldResources().length).toBeGreaterThan(shared.length);
 
-    wrapper.unmount();
+    unmount();
+    idle.unmount();
     window.dispatchEvent(new Event("scroll"));
     // A transition under way sees its scope gone at its next frame, and asks for none after it.
     vi.advanceTimersToNextFrame();
