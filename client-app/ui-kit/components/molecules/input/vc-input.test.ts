@@ -1,8 +1,8 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import { nextTick } from "vue";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "./vc-input.vue";
 import type { DirectiveBinding } from "vue";
@@ -269,6 +269,46 @@ describe("VcInput aria-invalid", () => {
     const wrapper = createInputWrapper({ props: { aria: { "aria-invalid": null } } });
 
     expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+});
+
+describe("VcInput aria-required", () => {
+  it("is exposed when the field is required", () => {
+    const wrapper = createInputWrapper({ props: { label: "Email", required: true } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it("is absent on an optional field", () => {
+    const wrapper = createInputWrapper({ props: { label: "Email" } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBeUndefined();
+  });
+
+  it("does not switch on native validation", () => {
+    const wrapper = createInputWrapper({ props: { required: true } });
+
+    expect(wrapper.get("input").attributes("required")).toBeUndefined();
+  });
+
+  it.each(["false", "FALSE", "False"])("lets a consumer-supplied %j win over required", (value) => {
+    const wrapper = createInputWrapper({ props: { required: true, aria: { "aria-required": value } } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("false");
+  });
+
+  it.each(["true", "TRUE", "True"])("maps the consumer value %j to true on an optional field", (value) => {
+    const wrapper = createInputWrapper({ props: { aria: { "aria-required": value } } });
+
+    expect(wrapper.get("input").attributes("aria-required")).toBe("true");
+  });
+
+  it.each([null, "", "0", "no", "off", "yes", 0, 1])("treats the consumer value %j as unset", (value) => {
+    const required = createInputWrapper({ props: { required: true, aria: { "aria-required": value } } });
+    const optional = createInputWrapper({ props: { aria: { "aria-required": value } } });
+
+    expect(required.get("input").attributes("aria-required")).toBe("true");
+    expect(optional.get("input").attributes("aria-required")).toBeUndefined();
   });
 });
 

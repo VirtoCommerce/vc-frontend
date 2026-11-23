@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcMenuItem from "./vc-menu-item.vue";
 
 const createWrapper = createWrapperFactory(mount, VcMenuItem);

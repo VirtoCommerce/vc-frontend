@@ -37,7 +37,9 @@
       "nav_previous": "上一个",
       "nav_next": "下一个",
       "nav_up": "向上",
-      "nav_down": "向下"
+      "nav_down": "向下",
+      "select_item": "选择{name}",
+      "select_all_items": "选择所有商品"
     },
     "calendar": {
       "aria_label": "日历",
@@ -170,6 +172,10 @@
       "rating_label": "评分 {value}，满分 {maxValue}",
       "read_only_button_aria_label": "评分 {value}，满分 {maxValue}，不可选择",
       "set_rating_aria_label": "将评分设置为 {value}，满分 {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}：加载中",
+      "error": "{label}：{error}"
     }
   }
 }

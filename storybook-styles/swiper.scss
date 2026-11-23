@@ -1,8 +1,8 @@
-@use "swiper/css";
-@use "swiper/css/pagination";
-@use "swiper/css/navigation";
-@use "swiper/css/thumbs";
+@use "../client-app/assets/styles/layers";
+@use "../client-app/assets/styles/vendors/swiper-base";
 
-:root {
-  --swiper-theme-color: var(--color-primary-500);
+@layer vc.vendor {
+  :root {
+    --swiper-theme-color: var(--color-primary-500);
+  }
 }

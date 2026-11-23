@@ -18,7 +18,9 @@ export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue"
 export { default as VcDialogHeader } from "./dialog-header/vc-dialog-header.vue";
 export { default as VcDropdownMenu } from "./dropdown-menu/vc-dropdown-menu.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
+/** @deprecated Use VcWidget with `collapsible` instead. */
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
+/** @deprecated Use VcWidget with `collapsible` instead. */
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
 export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";
@@ -52,7 +54,9 @@ export { default as VcShape } from "./shape/vc-shape.vue";
 export { default as VcSlider } from "./slider/vc-slider.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTabSwitch } from "./tab-switch/vc-tab-switch.vue";
+export { default as VcTabSwitchGroup } from "./tab-switch-group/vc-tab-switch-group.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
+export { default as VcTileButton } from "./tile-button/vc-tile-button.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
 export { default as VcVariantPicker } from "./variant-picker/vc-variant-picker.vue";

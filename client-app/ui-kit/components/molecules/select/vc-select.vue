@@ -221,6 +221,7 @@ const props = withDefaults(
     modelValue?: M extends true ? V[] : V;
     label?: string;
     ariaLabel?: string;
+    /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
     required?: boolean;
     disabled?: boolean;
     readonly?: boolean;

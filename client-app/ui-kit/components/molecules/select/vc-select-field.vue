@@ -12,7 +12,6 @@
       'aria-controls': opened ? listboxId : null,
       'aria-activedescendant': activeDescendantId ?? null,
       'aria-invalid': error ? 'true' : null,
-      'aria-required': required ? 'true' : null,
       'aria-autocomplete': autocomplete ? 'list' : null,
       'aria-describedby': detailsId,
     }"

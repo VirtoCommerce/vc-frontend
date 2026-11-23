@@ -1,0 +1,10 @@
+mutation RequestMfaChangeCode($command: InputRequestMfaChangeCodeType!) {
+  requestMfaChangeCode(command: $command) {
+    succeeded
+    twoFactorToken
+    destination
+    resendSecondsRemaining
+    errorCode
+    errorDescription
+  }
+}

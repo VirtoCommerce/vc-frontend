@@ -37,7 +37,9 @@
       "nav_previous": "Poprzedni",
       "nav_next": "Następny",
       "nav_up": "W górę",
-      "nav_down": "W dół"
+      "nav_down": "W dół",
+      "select_item": "Zaznacz {name}",
+      "select_all_items": "Zaznacz wszystkie produkty"
     },
     "calendar": {
       "aria_label": "Kalendarz",
@@ -170,6 +172,10 @@
       "rating_label": "Ocena {value} na {maxValue}",
       "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
       "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: ładowanie",
+      "error": "{label}: {error}"
     }
   }
 }

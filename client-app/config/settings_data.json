@@ -11,10 +11,8 @@
 
     "module_federation_enabled": true,
 
-    "sales_rep_builtin_enabled": false,
+    "site_builder_enabled": false,
 
-    "product_compare_enabled": true,
-    "product_compare_limit": 5,
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
     "product_quantity_control": "stepper",
@@ -49,6 +47,7 @@
     "catalog_pagination_mode": "infinite_scroll",
     "desktop_menu_mode": "horizontal",
     "icon_variant": "outline",
+    "design": "classic",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,

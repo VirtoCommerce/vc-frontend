@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
-import { Logger } from "@/core/utilities";
 import { useDateField } from "@/ui-kit/composables";
+import { Logger } from "@/ui-kit/utilities/logger";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 import type { Ref } from "vue";
 

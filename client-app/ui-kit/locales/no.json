@@ -37,7 +37,9 @@
       "nav_previous": "Forrige",
       "nav_next": "Neste",
       "nav_up": "Opp",
-      "nav_down": "Ned"
+      "nav_down": "Ned",
+      "select_item": "Velg {name}",
+      "select_all_items": "Velg alle varer"
     },
     "calendar": {
       "aria_label": "Kalender",
@@ -170,6 +172,10 @@
       "rating_label": "Vurdering {value} av {maxValue}",
       "read_only_button_aria_label": "Vurdering {value} av {maxValue}, ikke tilgjengelig for valg",
       "set_rating_aria_label": "Sett vurdering til {value} av {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: laster inn",
+      "error": "{label}: {error}"
     }
   }
 }

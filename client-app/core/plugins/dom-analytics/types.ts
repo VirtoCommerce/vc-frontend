@@ -15,10 +15,14 @@ export type AttrFieldType = {
   type?: "number";
 };
 
+export type PositionFieldType = {
+  position: string;
+};
+
 export type ObjectSourceType = ScopeType & {
   source: "object";
   /** Target path (dot notation allowed) → attribute to read it from */
-  fields: Record<string, AttrFieldType>;
+  fields: Record<string, AttrFieldType | PositionFieldType>;
 };
 
 export type ItemSourceType = ScopeType & {

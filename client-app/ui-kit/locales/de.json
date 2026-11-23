@@ -37,7 +37,9 @@
       "nav_previous": "Zurück",
       "nav_next": "Weiter",
       "nav_up": "Nach oben",
-      "nav_down": "Nach unten"
+      "nav_down": "Nach unten",
+      "select_item": "{name} auswählen",
+      "select_all_items": "Alle Artikel auswählen"
     },
     "calendar": {
       "aria_label": "Kalender",
@@ -170,6 +172,10 @@
       "rating_label": "Bewertung {value} von {maxValue}",
       "read_only_button_aria_label": "Bewertung {value} von {maxValue}, nicht zur Auswahl verfügbar",
       "set_rating_aria_label": "Bewertung auf {value} von {maxValue} setzen"
+    },
+    "stat_widget": {
+      "loading": "{label}: wird geladen",
+      "error": "{label}: {error}"
     }
   }
 }

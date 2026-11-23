@@ -52,7 +52,7 @@
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded bg-neutral-100" src="select-payment.svg" />
+              <VcImage class="size-12 rounded bg-neutral-100" src="select-payment.svg" alt="" />
 
               {{ $t("common.placeholders.select_payment_method") }}
             </div>
@@ -60,14 +60,14 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-3 text-sm" :data-selected-payment-method-id="item.code">
-              <VcImage class="size-12 rounded" :src="item.logoUrl" />
+              <VcImage class="size-12 rounded" :src="item.logoUrl" alt="" />
 
               {{ item.name }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded" :src="item.logoUrl" alt="" />
 
             <span :data-payment-method-id="item.code">{{ item.name }}</span>
           </template>

@@ -13,7 +13,9 @@
       <VcImage class="mission-card__image" :src="view.bannerUrl" alt="" lazy />
 
       <div v-if="view.isCompleted" class="mission-card__done" aria-hidden="true">
-        <VcIcon name="circle-check" :size="56" />
+        <span class="mission-card__check" data-test-id="mission-card-check">
+          <VcIcon name="circle-check" :size="56" />
+        </span>
       </div>
 
       <div class="mission-card__badges">
@@ -33,7 +35,9 @@
       <span class="mission-card__note">{{ view.progressLabel }}</span>
 
       <div class="mission-card__progress">
-        <div class="mission-card__track">
+        <progress class="mission-card__native-progress" :value="view.percent" max="100" :aria-labelledby="titleId" />
+
+        <div class="mission-card__track" data-test-id="mission-card-progress-track" aria-hidden="true">
           <div
             class="mission-card__bar"
             :class="{ 'mission-card__bar--completed': view.isCompleted }"
@@ -41,10 +45,10 @@
           />
         </div>
 
-        <span class="mission-card__percent">{{ view.percent }}%</span>
+        <span class="mission-card__percent" aria-hidden="true">{{ view.percent }}%</span>
       </div>
 
-      <VcTypography text-transform="none" class="mission-card__title" tag="h3" variant="h5">
+      <VcTypography :id="titleId" text-transform="none" class="mission-card__title" tag="h3" variant="h5">
         {{ view.title }}
       </VcTypography>
 
@@ -67,6 +71,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useModal } from "@/shared/modal";
+import { useComponentId } from "@/ui-kit/composables";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import MissionDateBadge from "./mission-date-badge.vue";
 import OrderMissionModal from "./order-mission-modal.vue";
@@ -83,6 +88,8 @@ const props = defineProps<IProps>();
 const { view } = useMissionCard(() => props.mission);
 
 const isBackdropFailed = ref(false);
+
+const titleId = useComponentId("mission-card-title");
 
 const TYPE_ICONS: Record<MissionType, string> = {
   [MISSION_TYPE.PerSkuAll]: "barcode",
@@ -117,17 +124,26 @@ function openMission(): void {
   }
 
   &__backdrop {
-    @apply absolute inset-0 size-full scale-110 object-cover opacity-60 blur-lg;
+    --vc-image-object-fit: cover;
+
+    @apply absolute inset-0 size-full scale-110 opacity-60 blur-lg;
   }
 
   &__image {
-    @apply relative size-full object-contain;
+    --vc-image-object-fit: contain;
+
+    @apply relative size-full;
   }
 
   &__done {
     @apply absolute inset-0 flex items-center justify-center text-additional-50;
 
     background: rgb(from theme("colors.success.600") r g b / 0.55);
+  }
+
+  // An opaque disc keeps the check at 3:1 whatever banner art shows through the scrim.
+  &__check {
+    @apply flex size-16 items-center justify-center rounded-full bg-success-600;
   }
 
   &__badges {
@@ -144,6 +160,10 @@ function openMission(): void {
 
   &__progress {
     @apply mb-3.5 flex items-center gap-2.5;
+  }
+
+  &__native-progress {
+    @apply sr-only;
   }
 
   &__track {

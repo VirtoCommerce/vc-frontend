@@ -1,3 +1,0 @@
-mutation DeleteSalesRepTask($command: InputDeleteSalesRepTask!) {
-  deleteSalesRepTask(command: $command)
-}

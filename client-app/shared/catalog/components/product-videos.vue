@@ -50,7 +50,9 @@ function openVideoModal(video: VideoType) {
   }
 
   &__image {
-    @apply size-full rounded-sm object-cover object-center opacity-60;
+    --vc-image-object-fit: cover;
+
+    @apply size-full rounded-sm opacity-60;
   }
 
   &__play {

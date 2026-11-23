@@ -37,7 +37,9 @@
       "nav_previous": "Anterior",
       "nav_next": "Siguiente",
       "nav_up": "Arriba",
-      "nav_down": "Abajo"
+      "nav_down": "Abajo",
+      "select_item": "Seleccionar {name}",
+      "select_all_items": "Seleccionar todos los artículos"
     },
     "calendar": {
       "aria_label": "Calendario",
@@ -170,6 +172,10 @@
       "rating_label": "Clasificación {value} de {maxValue}",
       "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
       "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: cargando",
+      "error": "{label}: {error}"
     }
   }
 }

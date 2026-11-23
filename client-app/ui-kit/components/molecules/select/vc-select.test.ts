@@ -5,9 +5,9 @@ import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { computed, defineComponent, effectScope, h, nextTick, reactive, ref } from "vue";
 import { createI18n } from "vue-i18n";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
-import { describeScrollBox } from "@/ui-kit/test-mocks";
+import { describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
 import type { VueWrapper } from "@vue/test-utils";
@@ -4125,5 +4125,33 @@ describe("VcSelect inside a dialog popover", () => {
     expect(selectIsOpen(wrapper)).toBe(false);
     expect(dialogIsOpen(wrapper)).toBe(true);
     expect(document.activeElement).toBe(selectTrigger(wrapper).element);
+  });
+});
+
+const requiredSelectProps = { items: ["Pickup", "Courier"], label: "Shipping method", required: true };
+
+describe("VcSelect required", () => {
+  it("binds the label to the input trigger, which carries aria-required", () => {
+    const wrapper = createWrapper(requiredSelectProps);
+    const label = wrapper.get(".vc-label");
+    const input = wrapper.get('input[role="combobox"]');
+
+    expect(label.attributes("for")).toBe(input.attributes("id"));
+    expect(input.attributes("aria-required")).toBe("true");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
+  });
+
+  // The slot trigger is a <button role="combobox">: a label can name it and it allows aria-required.
+  it.each([
+    ["placeholder", { placeholder: "Select" }, ""],
+    ["selected", { selected: "Picked" }, "Pickup"],
+  ])("binds the label to a %s-slot trigger, which carries aria-required", (_, slots, modelValue) => {
+    const wrapper = createWrapper({ ...requiredSelectProps, modelValue }, slots);
+    const label = wrapper.get(".vc-label");
+    const control = wrapper.get('button[role="combobox"]');
+
+    expect(label.attributes("for")).toBe(control.attributes("id"));
+    expect(control.attributes("aria-required")).toBe("true");
+    expect(label.get(".vc-label__asterisk").attributes("aria-hidden")).toBe("true");
   });
 });

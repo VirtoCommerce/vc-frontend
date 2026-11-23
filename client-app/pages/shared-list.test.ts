@@ -21,6 +21,7 @@ const mocks = await vi.hoisted(async () => {
   const lineItemsSpy = {
     props: {} as Record<string, unknown>,
     emit: undefined as undefined | ((item: unknown, quantity: number) => void),
+    emitLinkClick: undefined as undefined | ((product: unknown) => void),
   };
 
   const WishlistLineItems = define({
@@ -34,6 +35,7 @@ const mocks = await vi.hoisted(async () => {
     emits: ["update:cartItem", "linkClick"],
     setup(props, { emit }) {
       lineItemsSpy.emit = (item, quantity) => emit("update:cartItem", item, quantity);
+      lineItemsSpy.emitLinkClick = (product) => emit("linkClick", product);
 
       return () => {
         lineItemsSpy.props = { ...props };
@@ -81,8 +83,10 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
 }));
 
 // Minimal stand-in: the page only needs the identity fields its cart handler matches on.
-vi.mock("@/core/utilities", () => ({
+vi.mock("@/core/utilities", async () => ({
   prepareLineItem: (item: LineItemType, countInCart?: number) => ({ ...item, countInCart }),
+  getProductListIndex: (await vi.importActual<typeof import("@/core/utilities/product")>("@/core/utilities/product"))
+    .getProductListIndex,
 }));
 
 vi.mock("@/shared/cart", () => ({
@@ -314,6 +318,24 @@ describe("SharedList", () => {
 
       // `update:listItem` is the editable-mode channel; this page must not be wired to it at all.
       expect(lineItemsSpy.props.editable).toBe(false);
+    });
+  });
+
+  describe("analytics", () => {
+    it("sends a selected product with its position in the list's view_item_list", async () => {
+      const items = ["prod-1", "prod-2", "prod-3"].map((id, i) =>
+        lineItem({ id: `li-${i}`, productId: id, product: { id } as LineItemType["product"] }),
+      );
+      mocks.list.value = wishlist(PLAIN_SCOPE, items);
+      await renderSettled();
+
+      lineItemsSpy.emitLinkClick!({ id: "prod-3" });
+
+      expect(mocks.analytics).toHaveBeenCalledWith(
+        "selectItem",
+        { id: "prod-3" },
+        expect.objectContaining({ item_list_id: "wishlist", index: 2 }),
+      );
     });
   });
 });

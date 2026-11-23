@@ -158,7 +158,9 @@ watch(
   }
 
   &__banner-image {
-    @apply w-full h-full object-cover;
+    --vc-image-object-fit: cover;
+
+    @apply w-full h-full;
   }
 
   &__logo {

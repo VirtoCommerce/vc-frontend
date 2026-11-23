@@ -13,10 +13,10 @@
       />
 
       <template v-else>
-        <SignInForm v-if="hasPasswordAuthentication" />
+        <SignInForm v-if="hasPasswordAuthentication" @step-changed="passwordStep = $event" />
 
         <button
-          v-if="hasOtpEmailAuthentication"
+          v-if="showSwitchToOtpLink"
           type="button"
           class="sign-in__switch-link"
           data-test-id="otp-email-switch-to-otp-link"
@@ -53,7 +53,6 @@ import { SignInForm } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
-import { OtpStep } from "@/shared/sign-in/enums";
 import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
@@ -67,15 +66,12 @@ const route = useRoute();
 const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 
 const { hasOtpEmailAuthentication } = useOtpEmailAuthentication();
-const { showOtpEmailForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasOtpEmailAuthentication);
+const { showOtpEmailForm, showSwitchToOtpLink, otpStep, passwordStep, stepHeader, switchToOtp, switchToPassword } =
+  useOtpSignInMode(hasOtpEmailAuthentication);
 
 const hasSignInForm = computed(() => hasPasswordAuthentication.value || hasOtpEmailAuthentication.value);
 
-const pageTitle = computed(() =>
-  showOtpEmailForm.value && otpStep.value === OtpStep.Verify
-    ? t("shared.sign_in.otp_email_sign_in_form.verify.header")
-    : t("pages.sign_in.header"),
-);
+const pageTitle = computed(() => stepHeader.value ?? t("pages.sign_in.header"));
 
 usePageHead({
   title: t("pages.sign_in.meta.title"),

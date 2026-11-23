@@ -5,7 +5,8 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { humanizeName, isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
-import type { IPageTemplate } from "@/shared/static-content";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
+import type { IPageTemplate } from "@/shared/static-content/types";
 import type { MaybeRefOrGetter } from "vue";
 
 /**
@@ -86,11 +87,11 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   });
 
   const hasContent = computed(() => {
-    return objectType.value === "ContentFile";
+    return objectType.value === CONTENT_FILE_OBJECT_TYPE;
   });
 
   const hasPageDocumentContent = computed(() => {
-    return objectType.value === "Pages";
+    return objectType.value === PAGES_OBJECT_TYPE;
   });
 
   const getPageParams = computed(() => {
@@ -180,6 +181,13 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return null;
   });
 
+  // The lazy content query starts a moment after the slug is known, so "not loading" alone would read as "no content".
+  const isContentAwaited = computed(
+    () =>
+      (hasContent.value && !contentResult.value && !contentError.value) ||
+      (hasPageDocumentContent.value && !pageDocumentContentResult.value && !PageDocumentContentError.value),
+  );
+
   watch(
     slugOutline,
     async (value) => {
@@ -191,7 +199,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
 
   return {
     loading: computed(() => {
-      return slugLoading.value || contentLoading.value || pageDocumentContentLoading.value;
+      return slugLoading.value || contentLoading.value || pageDocumentContentLoading.value || isContentAwaited.value;
     }),
     slugInfo,
     objectType,

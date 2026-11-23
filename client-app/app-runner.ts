@@ -3,14 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import {
-  useCurrency,
-  useDarkMode,
-  useModules,
-  useThemeContext,
-  useNavigations,
-  useWhiteLabeling,
-} from "@/core/composables";
+import { useCurrency, useModules, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -28,32 +21,40 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
+import { installThemeSnapshotNavigation, setupThemePalette, startThemeSnapshot } from "@/core/theme-snapshot";
 import { extractHostname, Logger } from "@/core/utilities";
+import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
+import { init as initMfa } from "@/modules/mfa";
 import { init as initNews } from "@/modules/news";
 import { init as initPunchout } from "@/modules/punchout";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { init as initReturns } from "@/modules/returns";
-import { init as initSalesRep } from "@/modules/sales-rep";
 import { init as initSkyflow } from "@/modules/skyflow";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
+import { registerAccountDashboardBlocks } from "@/shared/account/dashboard-blocks";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
-import { templateBlocks } from "@/shared/static-content";
+import {
+  productTemplateSections,
+  registerPageBuilderSections,
+  setLandingPageLayout,
+  templateBlocks,
+} from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
-import { setDefaultIconVariant } from "@/ui-kit/utilities";
-import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
+import { getLocales as getUIKitLocales, setDefaultIconVariant, setLogger } from "@/ui-kit/utilities";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 
@@ -73,12 +74,20 @@ function reportOptionalChunkFailure(error: unknown): undefined {
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
+  // Before anything of the kit runs: the kit locales load, and can log, before app.use(uiKit).
+  setLogger(Logger);
+
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
+
+  const design = getDesign();
+  setDesignAttribute(design);
+  // Awaited before mount, so a soft storefront never paints classic first.
+  const designStylesReady = loadDesignStyles(design);
 
   /**
    * Create and mount application
@@ -119,7 +128,6 @@ export default async () => {
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
-  const { setActivePreset } = useDarkMode();
   const { setModules, outdatedModules } = useModules();
   const notifications = useNotifications();
 
@@ -141,6 +149,8 @@ export default async () => {
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
   const userId = savedUserId.value;
+
+  const themeSnapshotBoot = startThemeSnapshot({ domain, cultureName: possibleCultureName });
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -191,6 +201,8 @@ export default async () => {
   // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
   const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+  const themeSnapshotContext = { storeId: themeContext.value.storeId, cultureName: currentCultureName };
+  themeSnapshotBoot?.prepare(themeSnapshotContext);
 
   // Plural rules must be registered for every locale key messages can resolve under — full
   // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
@@ -242,13 +254,23 @@ export default async () => {
     resolvedCultureName: currentCultureName,
   });
 
+  await themeSnapshotBoot?.settle(themeSnapshotContext);
+  usePageLayout().installPageLayoutRouting(router);
+  setLandingPageLayout(router, pageContext.slugInfo?.entityInfo);
+  installThemeSnapshotNavigation(router, () => ({
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+  }));
+
   /**
    * Other settings
    */
 
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
-  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+  setupThemePalette(() => !!themePresetName.value);
+  // Awaited before mount with the design styles, so a preset's stylesheet never paints late.
+  const presetStylesReady = loadPresetStyles(themeContext.value.activePresetName ?? "");
 
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
@@ -257,16 +279,19 @@ export default async () => {
     void fetchCatalogMenu();
   }
 
+  // The account dashboard's blocks, before the app mounts — as each module below registers its own in `init()`.
+  registerAccountDashboardBlocks();
+
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initModuleBackInStock(router, i18n);
+  initMfa(i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
-  void initSalesRep(router, i18n);
   void initReturns(router, i18n);
   void initSkyflow(router, i18n);
   void initPunchout(router, i18n);
@@ -280,7 +305,16 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
-  app.use(uiKit);
+  app.use(uiKit, {
+    image: {
+      thumbnails: () => ({
+        enabled: themeContext.value.settings.image_thumbnails_enabled,
+        originalFallbackEnabled: themeContext.value.settings.image_thumbnails_original_fallback_enabled,
+        suffixes: themeContext.value.settings.image_thumbnails_suffixes,
+      }),
+    },
+    notifications,
+  });
 
   app.use(applicationInsightsPlugin, { router });
 
@@ -329,6 +363,8 @@ export default async () => {
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
+  registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks, ...productTemplateSections });
+
   await router.isReady();
 
   app.config.warnHandler = (message, _, traceDetails) => {
@@ -339,6 +375,8 @@ export default async () => {
 
     Logger.warn(message, traceDetails);
   };
+
+  await Promise.all([designStylesReady, presetStylesReady]);
 
   app.mount(appElement);
 

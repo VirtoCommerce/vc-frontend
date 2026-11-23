@@ -1,4 +1,5 @@
 import { graphqlClient } from "../../../client";
+import { refetchAddressBooks } from "../refetchAddressBooks";
 import removeAddressFromFavoritesMutation from "./removeAddressFromFavoritesMutation.graphql";
 import type {
   RemoveAddressFromFavoritesMutation,
@@ -14,4 +15,6 @@ export async function removeAddressFromFavorites(addressId: string): Promise<voi
       },
     },
   });
+
+  refetchAddressBooks();
 }

@@ -108,15 +108,15 @@ export type QueryNewsArticlesArgs = {
 };
 
 export type SeoInfo = {
-  id: Scalars['String']['output'];
+  id?: Maybe<Scalars['String']['output']>;
   imageAltDescription?: Maybe<Scalars['String']['output']>;
   isActive: Scalars['Boolean']['output'];
   languageCode?: Maybe<Scalars['String']['output']>;
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaKeywords?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  objectId: Scalars['String']['output'];
-  objectType: Scalars['String']['output'];
+  objectId?: Maybe<Scalars['String']['output']>;
+  objectType?: Maybe<Scalars['String']['output']>;
   outline?: Maybe<Scalars['String']['output']>;
   pageTitle?: Maybe<Scalars['String']['output']>;
   semanticUrl: Scalars['String']['output'];

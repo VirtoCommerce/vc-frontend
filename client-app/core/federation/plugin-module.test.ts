@@ -209,6 +209,30 @@ describe("checkModuleFiles", () => {
     expect(withStatus(results, "warn")).toHaveLength(1);
   });
 
+  it("only warns on a pre-release facade pin with a matching range", () => {
+    const { webDir, write } = createModule();
+    const alpha = `${PIN}-alpha.17.my-branch`;
+    write(
+      "StorefrontApp/package.json",
+      JSON.stringify({
+        packageManager: "yarn@4.17.0",
+        dependencies: {
+          "@vc-frontend/core": `https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v${alpha}/vc-frontend-core-${alpha}.tgz`,
+        },
+      }),
+    );
+    write(
+      "StorefrontApp/vite.config.ts",
+      `createRemoteFederationOptions({ name: "foo", requiredHostVersion: "^${alpha}" });\noutDir: "../plugins/vc-frontend"`,
+    );
+
+    const results = checkModuleFiles(webDir);
+    expect(failures(results)).toEqual([]);
+    expect(withStatus(results, "warn")).toEqual([
+      expect.objectContaining({ message: expect.stringContaining(`pre-release ${alpha}`) }),
+    ]);
+  });
+
   it("fails a contract range that reaches past the facade's breaking line, or admits nothing", () => {
     const { webDir, write } = createModule();
     const viteConfig = (range: string) =>

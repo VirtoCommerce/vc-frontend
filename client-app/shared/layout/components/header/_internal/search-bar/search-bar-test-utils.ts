@@ -47,21 +47,36 @@ export function createBarcodeScannerMock() {
   };
 }
 
+export const SEARCH_INPUT_SELECTOR = '[data-testid="search-input"]';
+
 /**
- * Renders the `placeholder` attr, the bound phrase and the `prepend` / `append` slots — where the scope
- * indicators, the search button and the barcode scanner live.
+ * Renders the `placeholder` attr, the bound phrase, the `prepend` / `append` slots — where the scope
+ * indicators, the search button and the barcode scanner live — and the input between them. Like the real
+ * VcInput, it passes `focusInput` to both slots and hands the `focus` and `click` listeners to the input.
  */
 const VcInputStub = defineComponent({
   name: "VcInput",
   inheritAttrs: false,
 
   setup(_props, { slots, attrs }) {
+    const inputElement = ref<HTMLInputElement>();
+
+    function focusInput() {
+      inputElement.value?.focus();
+    }
+
     return () =>
       h("div", { class: "input" }, [
         h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
         h("span", { "data-testid": "search-phrase" }, attrs.modelValue as string),
-        slots.prepend?.(),
-        slots.append?.(),
+        slots.prepend?.({ focusInput }),
+        h("input", {
+          ref: inputElement,
+          "data-testid": "search-input",
+          onFocus: attrs.onFocus,
+          onClick: attrs.onClick,
+        }),
+        slots.append?.({ focusInput }),
       ]);
   },
 });

@@ -333,7 +333,7 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   &--disabled {
     $disabled: &;
 
-    @apply overflow-hidden !important;
+    @apply overflow-hidden;
   }
 
   &--no-bar {

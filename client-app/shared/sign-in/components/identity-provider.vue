@@ -1,5 +1,5 @@
 <template>
-  <VcButton class="identity-provider" variant="outline" color="secondary" @click="$emit('signIn')">
+  <VcButton class="identity-provider" variant="outline" color="secondary" :loading="loading" @click="$emit('signIn')">
     <template #prepend>
       <VcImage class="identity-provider__icon" alt="" :src="icon" />
     </template>
@@ -15,6 +15,7 @@ interface IEmits {
 interface IProps {
   text: string;
   icon: string;
+  loading?: boolean;
 }
 
 defineEmits<IEmits>();

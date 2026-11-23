@@ -3,6 +3,7 @@
     <component
       :is="isLink ? 'a' : 'button'"
       :href="getHrefValue(href)"
+      :aria-label="getCountAriaLabel(link.title, count)"
       :class="['flex min-h-9 w-full items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
       @click.prevent="click(navigate)"
     >
@@ -12,7 +13,7 @@
           :name="link.icon"
           :size="32"
           :class="[
-            isLink && (isActive || isExactActive)
+            isLink && isHighlighted(isActive, isExactActive)
               ? 'text-[--mobile-menu-icon-active-color]'
               : 'text-[--mobile-menu-icon-color]',
           ]"
@@ -22,7 +23,7 @@
       <span
         :class="[
           'line-clamp-3 break-words',
-          isLink && !isExternalLink && (isActive || isExactActive)
+          isLink && !isExternalLink && isHighlighted(isActive, isExactActive)
             ? 'text-[--mobile-menu-link-active-color]'
             : 'text-[--mobile-menu-link-color]',
         ]"
@@ -30,9 +31,7 @@
         <slot v-bind="{ isActive, isExactActive, formattedText: formatTextFunction(link.title) }" />
       </span>
 
-      <VcBadge v-if="count" variant="solid-light" color="neutral" rounded>
-        {{ $n(count, { style: "decimal", notation: "compact" }) }}
-      </VcBadge>
+      <HeaderBadge :count="count" variant="soft" color="neutral" />
 
       <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation-color]" name="chevron-right" />
     </component>
@@ -41,9 +40,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getLinkAttr } from "@/core/utilities";
+import { useRoute } from "vue-router";
+import { getLinkAttr, isMenuLinkActive } from "@/core/utilities";
+import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
+import HeaderBadge from "@/shared/layout/components/header-badge/header-badge.vue";
 
 interface IEmits {
   (event: "select"): void;
@@ -62,15 +64,23 @@ const props = withDefaults(defineProps<IProps>(), {
   formatTextFunction: (text: string | undefined) => text ?? "",
 });
 
+const route = useRoute();
+const { getCountAriaLabel } = useHeaderCountLabel();
+
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route || !!props.link.isCatalogItem);
+
+// The same rule as the account rail.
+function isHighlighted(isActive: boolean, isExactActive: boolean): boolean {
+  return isMenuLinkActive(props.link, route, isActive || isExactActive);
+}
 
 function click(navigate: () => Promise<void | NavigationFailure>) {
   if (isParent.value) {
     emit("select");
   } else {
     if (isExternalLink.value) {
-      window.open(props.link.route as string, "_blank")?.focus();
+      window.open(props.link.route as string, "_blank", "noopener,noreferrer");
     } else {
       void navigate();
     }

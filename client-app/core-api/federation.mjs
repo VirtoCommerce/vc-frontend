@@ -39,6 +39,7 @@ export const CONTRACT_TYPE_PEERS = {
   maska: "^3.2.0",
   unhead: "^3.2.1",
   "utility-types": "^3.11.0",
+  yup: "^1.7.1",
 };
 
 // One place for the per-entry defaults: base packages (buildSharedConfig) and packages

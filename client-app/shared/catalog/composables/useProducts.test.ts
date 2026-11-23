@@ -295,6 +295,37 @@ describe("useProducts", () => {
       ]);
     });
 
+    it("returns only the page it added, not the accumulated list", async () => {
+      const { fetchProducts, fetchMoreProducts, products } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product1" }, { id: "product2" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      const result = await fetchMoreProducts({ page: 2, itemsPerPage: 2 });
+
+      expect(result).toEqual({ items: [{ id: "product3" }, { id: "product4" }], totalCount: 10 });
+      expect(products.value).toHaveLength(4);
+    });
+
     it("should handle API errors gracefully during fetchMoreProducts", async () => {
       const errorMessage = "API Error";
       mockData.searchProducts.mockRejectedValueOnce(new Error(errorMessage));
@@ -752,6 +783,124 @@ describe("useProducts", () => {
       expect(result).toEqual({ items: [{ id: "product1" }, { id: "product2" }], totalCount: 10 });
       expect(products.value).toEqual(result.items);
       expect(totalProductsCount.value).toBe(result.totalCount);
+    });
+  });
+
+  describe("overlapping requests", () => {
+    const olderResponse = { ...mockData.mockSearchProductsResponse, totalCount: 4 };
+    const newerResponse = { ...mockData.mockSearchProductsMoreResponse, totalCount: 6 };
+
+    function deferSearch() {
+      let resolve!: (value: ProductConnection) => void;
+      let reject!: (error: Error) => void;
+      mockData.searchProducts.mockReturnValueOnce(
+        new Promise((_resolve, _reject) => {
+          resolve = _resolve;
+          reject = _reject;
+        }),
+      );
+      return { resolve, reject };
+    }
+
+    it("keeps the latest request's products when an older answer arrives after it", async () => {
+      const { fetchProducts, products, totalProductsCount, fetchingProducts } = useProducts();
+      const older = deferSearch();
+      const newer = deferSearch();
+
+      const olderPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      const newerPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      newer.resolve(newerResponse);
+      await newerPromise;
+      older.resolve(olderResponse);
+      await olderPromise;
+
+      expect(products.value).toEqual(newerResponse.items);
+      expect(totalProductsCount.value).toBe(6);
+      expect(fetchingProducts.value).toBe(false);
+    });
+
+    it("stays fetching and ignores an older answer that arrives first", async () => {
+      const { fetchProducts, products, totalProductsCount, fetchingProducts } = useProducts();
+      const older = deferSearch();
+      const newer = deferSearch();
+
+      const olderPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      const newerPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      older.resolve(olderResponse);
+      await olderPromise;
+
+      expect(products.value).toEqual([]);
+      expect(totalProductsCount.value).toBe(0);
+      expect(fetchingProducts.value).toBe(true);
+
+      newer.resolve(newerResponse);
+      await newerPromise;
+
+      expect(products.value).toEqual(newerResponse.items);
+      expect(fetchingProducts.value).toBe(false);
+    });
+
+    it("stays fetching when an older request fails while a newer one is in flight", async () => {
+      const { fetchProducts, fetchingProducts } = useProducts();
+      const older = deferSearch();
+      deferSearch();
+
+      const olderPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      void fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      older.reject(new Error("API Error"));
+
+      await expect(olderPromise).rejects.toThrow("API Error");
+      expect(fetchingProducts.value).toBe(true);
+    });
+
+    it("resolves a superseded request with its own response", async () => {
+      const { fetchProducts } = useProducts();
+      const older = deferSearch();
+      const newer = deferSearch();
+
+      const olderPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      const newerPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      newer.resolve(newerResponse);
+      await newerPromise;
+      older.resolve(olderResponse);
+
+      await expect(olderPromise).resolves.toEqual({ items: olderResponse.items, totalCount: 4 });
+    });
+
+    it("does not add a page of the previous list to a list fetched after it was requested", async () => {
+      const { fetchProducts, fetchMoreProducts, products, totalProductsCount } = useProducts();
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      const morePage = deferSearch();
+      const morePromise = fetchMoreProducts({ page: 2, itemsPerPage: 2 });
+
+      mockData.searchProducts.mockResolvedValueOnce(newerResponse);
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+
+      morePage.resolve({ ...mockData.mockSearchProductsResponse, items: [{ id: "product5" }], totalCount: 20 });
+      await morePromise;
+
+      expect(products.value).toEqual(newerResponse.items);
+      expect(totalProductsCount.value).toBe(6);
+    });
+
+    it("still applies a list when a page is loaded more while it is in flight", async () => {
+      const { fetchProducts, fetchMoreProducts, products, fetchingProducts } = useProducts();
+      const list = deferSearch();
+
+      const listPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      await fetchMoreProducts({ page: 2, itemsPerPage: 2 });
+
+      list.resolve(newerResponse);
+      await listPromise;
+
+      expect(products.value).toEqual(newerResponse.items);
+      expect(fetchingProducts.value).toBe(false);
     });
   });
 });

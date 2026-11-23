@@ -11,11 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useThemeContext } from "@/core/composables";
-import { NO_IMAGE_URL } from "@/core/constants";
-import { appendSuffixToFilename } from "@/core/utilities";
-import { getImageUrl, isFilenameOnly } from "../../../utilities";
+import { computed, ref, toValue, watch } from "vue";
+import { useUiKitOptions } from "../../../composables/useUiKitOptions";
+import { NO_IMAGE_URL } from "../../../constants";
+import { appendSuffixToFilename, getImageUrl, isFilenameOnly } from "../../../utilities";
 
 export interface IProps {
   lazy?: boolean;
@@ -35,7 +34,8 @@ const props = withDefaults(defineProps<IProps>(), {
   fallbackSrc: NO_IMAGE_URL,
 });
 
-const { themeContext } = useThemeContext();
+const { image } = useUiKitOptions();
+const thumbnails = computed(() => toValue(image?.thumbnails));
 
 const fallbackEnabled = ref(false);
 const originalEnabled = ref(false);
@@ -49,12 +49,9 @@ const preparedSrc = computed<string>(() => {
     return getImageUrl(props.src);
   }
 
-  const sizeSuffix =
-    props.sizeSuffix && !!themeContext.value
-      ? themeContext.value?.settings?.image_thumbnails_suffixes?.[props.sizeSuffix]
-      : "";
+  const sizeSuffix = props.sizeSuffix ? thumbnails.value?.suffixes?.[props.sizeSuffix] : "";
 
-  if (originalEnabled.value || !themeContext.value?.settings?.image_thumbnails_enabled || !sizeSuffix) {
+  if (originalEnabled.value || !thumbnails.value?.enabled || !sizeSuffix) {
     return props.src;
   }
 
@@ -68,8 +65,8 @@ function setFallback(): void {
   if (
     !originalEnabled.value &&
     props.sizeSuffix &&
-    themeContext.value?.settings?.image_thumbnails_enabled &&
-    themeContext.value?.settings?.image_thumbnails_original_fallback_enabled
+    thumbnails.value?.enabled &&
+    thumbnails.value.originalFallbackEnabled
   ) {
     originalEnabled.value = true;
   } else if (!fallbackEnabled.value) {
@@ -89,8 +86,11 @@ watch(
 
 <style lang="scss">
 .vc-image {
+  object-fit: var(--vc-image-object-fit, fill);
+  object-position: var(--vc-image-object-position, 50% 50%);
+
   &--fallback {
-    @apply object-scale-down object-center;
+    object-fit: var(--vc-image-fallback-object-fit, var(--vc-image-object-fit, scale-down));
   }
 }
 </style>

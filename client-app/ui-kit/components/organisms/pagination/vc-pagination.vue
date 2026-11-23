@@ -188,7 +188,7 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center;
+    @apply order-2 flex justify-center gap-[var(--vc-pagination-pages-gap,normal)];
 
     #{$wrapped} & {
       @apply flex-wrap;
@@ -196,7 +196,14 @@ const setPage = (page: number) => {
   }
 
   &__page {
-    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded text-xs font-bold;
+    --radius: var(--vc-pagination-page-radius, theme("borderRadius.DEFAULT"));
+    // No ring until its width token is set; the colour falls back to the theme's default border colour.
+    --border-color: var(--vc-pagination-page-border-color, theme("borderColor.DEFAULT"));
+    --hover-border-color: var(--vc-pagination-page-hover-border-color, var(--border-color));
+    --ring-color: var(--border-color);
+
+    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded-[--radius] text-xs font-bold
+      border-[length:var(--vc-pagination-page-border-width,0)] border-solid border-[color:var(--ring-color)];
 
     &[type="button"] {
       @apply bg-additional-50 text-neutral-950;
@@ -208,10 +215,14 @@ const setPage = (page: number) => {
     }
 
     &:hover {
+      --ring-color: var(--hover-border-color);
+
       @apply bg-primary-50;
     }
 
     &--active {
+      --ring-color: var(--vc-pagination-page-active-border-color, var(--border-color));
+
       @apply pointer-events-none;
 
       background-color: var(--page-active-bg);
@@ -219,7 +230,7 @@ const setPage = (page: number) => {
     }
 
     &--ellipsis {
-      @apply pointer-events-none;
+      @apply pointer-events-none border-0 text-[color:var(--vc-pagination-ellipsis-color,currentColor)];
     }
   }
 

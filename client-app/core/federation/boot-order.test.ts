@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { toValue } from "vue";
 import type { IPlatformPlugin } from "./index";
+import type { IUiKitOptions } from "@/ui-kit/composables/useUiKitOptions";
 
 /**
  * Executes the real app-runner and records the order its calls actually happen in, so a call moved
@@ -8,10 +10,12 @@ import type { IPlatformPlugin } from "./index";
  * MAINTENANCE: a module added to app-runner needs a mock added below, or every case here fails with
  * whatever that module breaks first - "Theme context is missing." - which points nowhere near it.
  *
- * Three invariants, all load-bearing. Plugins resolve store settings through the facade's
+ * Among the load-bearing invariants pinned below: plugins resolve store settings through the facade's
  * useModuleSettings and the permission gate reads user.value at call time, so setThemeContext and
- * setUser must precede the loader. And the router must not be installed until the loader settles,
- * or a deep link to a plugin route resolves before the plugin registered it.
+ * setUser must precede the loader. The router must not be installed until the loader settles,
+ * or a deep link to a plugin route resolves before the plugin registered it. And data-design is
+ * written first and the app mounts only after the design styles settle, so the first paint is
+ * already in that design.
  */
 
 const order: string[] = [];
@@ -20,15 +24,25 @@ const record = (name: string) =>
     order.push(name);
   });
 
+// One shared notifications object, so a case can check the kit receives this very one.
+const { uiKitInstall, NOTIFICATIONS } = vi.hoisted(() => ({
+  uiKitInstall: vi.fn<(app: unknown, options?: IUiKitOptions) => void>(),
+  NOTIFICATIONS: { error: vi.fn(), success: vi.fn() },
+}));
+
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
-const { getStorePluginsMock, loaderOptions, previewBoot } = vi.hoisted(() => {
+const { getStorePluginsMock, loaderOptions, previewBoot, loader, designStyles, presetStyles } = vi.hoisted(() => {
   // The options app-runner hands the loader, so the discovery wiring itself is assertable.
   const captured: { current?: { fetchPlugins?: () => Promise<unknown> } } = {};
   return {
     getStorePluginsMock: vi.fn(),
     loaderOptions: captured,
     previewBoot: { isActive: false },
+    // Only the mount case lets the run continue past the loader.
+    loader: { stopsTheRun: true },
+    designStyles: { ready: Promise.resolve() },
+    presetStyles: { ready: Promise.resolve() },
   };
 });
 
@@ -41,7 +55,9 @@ vi.mock("@/core/federation/bootstrap", () => ({
   startFederatedModules: vi.fn(async (options?: { fetchPlugins?: () => Promise<unknown> }) => {
     order.push("startFederatedModules");
     loaderOptions.current = options;
-    throw LOADER_REACHED;
+    if (loader.stopsTheRun) {
+      throw LOADER_REACHED;
+    }
   }),
 }));
 
@@ -54,6 +70,8 @@ vi.mock("@/shared/account", () => ({
     checkPermissions: vi.fn(() => true),
   }),
 }));
+// Imported by its own path, so the barrel mock above does not cover it; the real module reaches the GraphQL client.
+vi.mock("@/shared/account/dashboard-blocks", () => ({ registerAccountDashboardBlocks: vi.fn() }));
 
 const LANGUAGES = {
   currentLanguage: ref({ cultureName: "en-US" }),
@@ -81,12 +99,25 @@ vi.mock("@/router", () => ({
     },
   }),
 }));
-vi.mock("./App.vue", () => ({ default: {} }));
-vi.mock("@/App.vue", () => ({ default: {} }));
-vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
-vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
-vi.mock("@/ui-kit/utilities/getLocales", () => ({
+const App = {
+  render: () => null,
+  mounted: () => {
+    order.push("mount");
+  },
+};
+vi.mock("./App.vue", () => ({ default: App }));
+vi.mock("@/App.vue", () => ({ default: App }));
+vi.mock("@/core/utilities/design", () => ({
+  getDesign: () => "soft",
+  setDesignAttribute: record("setDesignAttribute"),
+  loadDesignStyles: vi.fn(() => designStyles.ready),
+  loadPresetStyles: vi.fn(async () => presetStyles.ready),
+}));
+vi.mock("@/ui-kit", () => ({ uiKit: { install: uiKitInstall } }));
+vi.mock("@/ui-kit/utilities", () => ({
   getLocales: vi.fn(async () => ({ messages: {}, fallbackMessages: {} })),
+  setDefaultIconVariant: vi.fn(),
+  setLogger: vi.fn(),
 }));
 vi.mock("@/i18n", () => ({ createI18n: () => ({ install: vi.fn(), global: { t: (k: string) => k } }) }));
 // Always a factory, never a bare vi.mock(path): a bare automock imports the real module to derive
@@ -104,8 +135,21 @@ vi.mock("@/core/plugins", () => ({
 }));
 vi.mock("@/core/globals", () => ({ setGlobals: vi.fn(), globals: {} }));
 vi.mock("@/core/locale-loaders", () => ({ registerLocaleLoader: vi.fn() }));
+vi.mock("@/shared/layout/composables/usePageLayout", () => ({
+  usePageLayout: () => ({ installPageLayoutRouting: vi.fn() }),
+}));
+vi.mock("@/core/theme-snapshot", () => ({
+  installThemeSnapshotNavigation: vi.fn(),
+  setupThemePalette: vi.fn(),
+  startThemeSnapshot: vi.fn(() => undefined),
+}));
 vi.mock("@/shared/catalog/components/product", () => ({ default: {} }));
-vi.mock("@/shared/static-content", () => ({ templateBlocks: {} }));
+vi.mock("@/shared/static-content", () => ({
+  registerPageBuilderSections: vi.fn(),
+  setLandingPageLayout: vi.fn(),
+  templateBlocks: {},
+  productTemplateSections: {},
+}));
 vi.mock("@/core/api/graphql/types", () => ({ GetSlugInfoDocument: {} }));
 vi.mock("@/core/utilities", () => ({
   extractHostname: vi.fn(() => "example.test"),
@@ -115,12 +159,12 @@ vi.mock("@/modules/back-in-stock", () => ({ init: vi.fn() }));
 vi.mock("@/modules/customer-reviews", () => ({ init: vi.fn() }));
 vi.mock("@/modules/google-analytics", () => ({ init: vi.fn() }));
 vi.mock("@/modules/loyalty", () => ({ init: vi.fn() }));
+vi.mock("@/modules/mfa", () => ({ init: vi.fn() }));
 vi.mock("@/modules/news", () => ({ init: vi.fn() }));
 vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
 vi.mock("@/modules/returns", () => ({ init: vi.fn() }));
-vi.mock("@/modules/sales-rep", () => ({ init: vi.fn() }));
 vi.mock("@/modules/skyflow", () => ({ init: vi.fn() }));
 vi.mock("@/modules/punchout", () => ({ init: vi.fn() }));
 vi.mock("@/plugins/builder-io-preview/utils", () => ({ isPreviewMode: () => false }));
@@ -140,7 +184,12 @@ vi.mock("@/core/composables", () => ({
     themeContext: ref({
       storeId: "s",
       catalogId: "c",
-      settings: { icon_variant: "outline" },
+      settings: {
+        icon_variant: "outline",
+        image_thumbnails_enabled: true,
+        image_thumbnails_original_fallback_enabled: false,
+        image_thumbnails_suffixes: { sm: "s", md: "m", lg: "l" },
+      },
       storeSettings: { anonymousUsersAllowed: true },
       defaultPresetName: "d",
       activePresetName: "a",
@@ -151,13 +200,12 @@ vi.mock("@/core/composables", () => ({
   useCurrency: () => ({ currentCurrency: ref({ code: "USD" }) }),
   useNavigations: () => ({ fetchCatalogMenu: vi.fn() }),
   useWhiteLabeling: () => ({ themePresetName: ref("p"), setWhiteLabelingSettings: vi.fn() }),
-  useDarkMode: () => ({ setActivePreset: vi.fn() }),
   useModules: () => ({ setModules: record("setModules"), outdatedModules: ref([]) }),
 }));
 
 vi.mock("@/core/composables/useHotjar", () => ({ useHotjar: () => ({ init: vi.fn() }) }));
 
-vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: vi.fn(), success: vi.fn() }) }));
+vi.mock("@/shared/notification", () => ({ useNotifications: () => NOTIFICATIONS }));
 
 vi.mock("@/core/api/graphql", () => ({
   apolloClient: {},
@@ -190,6 +238,9 @@ describe("app-runner boot order", () => {
     order.length = 0;
     loaderOptions.current = undefined;
     previewBoot.isActive = false;
+    loader.stopsTheRun = true;
+    designStyles.ready = Promise.resolve();
+    presetStyles.ready = Promise.resolve();
     getStorePluginsMock.mockResolvedValue([]);
   });
 
@@ -287,6 +338,19 @@ describe("app-runner boot order", () => {
     });
   });
 
+  it("hands the kit the theme's thumbnail settings and the app's notifications", async () => {
+    await runBoot();
+
+    const options = uiKitInstall.mock.calls[0]?.[1];
+    // `false`, not `undefined`: toEqual skips undefined keys, so a dropped setting would still pass.
+    expect(toValue(options?.image?.thumbnails)).toEqual({
+      enabled: true,
+      originalFallbackEnabled: false,
+      suffixes: { sm: "s", md: "m", lg: "l" },
+    });
+    expect(options?.notifications).toBe(NOTIFICATIONS);
+  });
+
   it("starts the loader only after the host plugin that mutates routes has installed", async () => {
     // The loader's route guard cannot tell a host call from a plugin's, so a host install running
     // inside its phase has its own routes refused.
@@ -297,5 +361,54 @@ describe("app-runner boot order", () => {
     const installedAt = order.indexOf("builderPreview.install");
     expect(installedAt, `preview plugin never installed; order was ${order.join(" -> ")}`).toBeGreaterThan(-1);
     expect(installedAt).toBeLessThan(order.indexOf("startFederatedModules"));
+  });
+
+  it("writes data-design first and mounts only after the design styles settle", async () => {
+    loader.stopsTheRun = false;
+    let settle = () => {};
+    designStyles.ready = new Promise<void>((resolve) => {
+      settle = () => {
+        order.push("design styles settled");
+        resolve();
+      };
+    });
+    document.body.innerHTML = '<div id="app"></div>';
+    const run = (await import("@/app-runner")).default();
+
+    await vi.waitFor(() => expect(order).toContain("app.use(router)"));
+    expect(order, `order was ${order.join(" -> ")}`).not.toContain("mount");
+
+    settle();
+    await run;
+
+    expect(order[0], `order was ${order.join(" -> ")}`).toBe("setDesignAttribute");
+    const design = await import("@/core/utilities/design");
+    expect(design.setDesignAttribute).toHaveBeenCalledWith("soft");
+    expect(design.loadDesignStyles).toHaveBeenCalledWith("soft");
+    expect(order.indexOf("design styles settled")).toBeGreaterThan(-1);
+    expect(order.indexOf("design styles settled")).toBeLessThan(order.indexOf("mount"));
+  });
+  it("mounts only after the preset styles settle", async () => {
+    loader.stopsTheRun = false;
+    let settle = () => {};
+    presetStyles.ready = new Promise<void>((resolve) => {
+      settle = () => {
+        order.push("preset styles settled");
+        resolve();
+      };
+    });
+    document.body.innerHTML = '<div id="app"></div>';
+    const run = (await import("@/app-runner")).default();
+
+    await vi.waitFor(() => expect(order).toContain("app.use(router)"));
+    expect(order, `order was ${order.join(" -> ")}`).not.toContain("mount");
+
+    settle();
+    await run;
+
+    const design = await import("@/core/utilities/design");
+    expect(design.loadPresetStyles).toHaveBeenCalledWith("a");
+    expect(order.indexOf("preset styles settled")).toBeGreaterThan(-1);
+    expect(order.indexOf("preset styles settled")).toBeLessThan(order.indexOf("mount"));
   });
 });

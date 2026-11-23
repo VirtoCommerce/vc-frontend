@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Cet article ne peut pas être acheté",
       "item_is_out_of_stock": "Cet article est en rupture de stock",
       "invalid_value": "Valeur invalide",
+      "invalid_characters": "Contient des caractères non valides",
+      "html_tags_not_allowed": "Les balises HTML ne sont pas autorisées",
+      "unsafe_content": "Contient un contenu non autorisé",
+      "invalid_addresses": "Certaines adresses ne sont pas valides",
+      "invalid_data": "Certaines données saisies ne sont pas valides",
       "invalid_user_id_or_token": "L'identifiant utilisateur ou le jeton est invalide.",
       "product_no_longer_available": "Plus disponible",
       "item_quantity_required_field": "La valeur de la quantité d'article ne peut pas être vide",
@@ -285,7 +290,8 @@
       "company_members": "Membres de l'entreprise",
       "contact_administrator": "contacter l'administrateur du site",
       "skip_to_main_content": "Aller au contenu principal",
-      "skip_to_footer": "Aller au pied de page"
+      "skip_to_footer": "Aller au pied de page",
+      "security": "Sécurité"
     },
     "titles": {
       "all_actions": "Toutes les actions",
@@ -363,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -378,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Enregistré pour plus tard",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -407,7 +413,9 @@
             "navigation": "Navigation",
             "main_navigation": "Navigation principale"
           }
-        }
+        },
+        "link_with_count": "{title} : {count}",
+        "cart_items_tooltip": "Aucun article | {n} article | {n} articles"
       },
       "footer": {
         "version": "Ver.",
@@ -494,7 +502,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +534,12 @@
           "duplicate_email_login_attempt": "Plusieurs comptes utilisent cette adresse e-mail.",
           "lockout_disabled": "Ce compte ne peut pas se connecter avec un code.",
           "invalid_code": "Ce code n'a pas fonctionné.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Votre session de connexion a expiré. Connectez-vous à nouveau.",
+          "code_attempts_exceeded": "Trop de codes incorrects. Patientez quelques minutes, puis reconnectez-vous.",
+          "mfa_provider_not_available": "Nous ne pouvons pas envoyer de code de connexion à ce compte. Veuillez contacter votre administrateur.",
+          "two_factor_unavailable": "Ce compte exige une deuxième étape de connexion, mais elle n'est pas disponible. Contactez votre administrateur.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +559,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vérification réussie, mais le basculement vers le compte client a échoué. Veuillez réessayer.",
-          "generic": "Une erreur s'est produite. Veuillez réessayer."
+          "generic": "Une erreur s'est produite. Veuillez réessayer.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -618,6 +641,30 @@
         "click_to_copy": "Cliquez pour copier",
         "clipboard_success": "Coupon copié avec succès",
         "tap_to_copy": "Appuyez pour copier"
+      },
+      "dashboard": {
+        "orders_placed_week": "Commandes cette semaine",
+        "orders_placed_mtd": "Commandes depuis le début du mois",
+        "orders_placed_ytd": "Commandes depuis le début de l'année",
+        "avg_order_value": "Valeur moyenne des commandes",
+        "per_order": "Moyenne par commande (année en cours)",
+        "vs_last_week": "{delta} vs semaine dernière",
+        "vs_last_month": "{delta} vs mois dernier",
+        "vs_last_year": "{delta} vs année dernière",
+        "excluded_orders": "{count} commande dans une autre devise non incluse | {count} commandes dans d'autres devises non incluses",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Statistiques des ventes"
+        },
+        "recent_orders": {
+          "title": "Mes commandes récentes",
+          "view_all": "Toutes les commandes",
+          "filter_all": "Toutes",
+          "empty": "Aucune commande pour le moment",
+          "no_results": "Aucune commande avec ce statut",
+          "load_failed": "Impossible de charger les commandes",
+          "statuses_label": "Statuts à afficher"
+        }
       }
     },
     "sign_in": {
@@ -632,12 +679,7 @@
         "verify": {
           "header": "Consultez votre e-mail",
           "subtitle": "Nous avons envoyé un code à {email}.",
-          "code_label": "Code",
-          "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
-          "submit_button": "Se connecter",
-          "resend_button": "Renvoyer le code",
-          "use_different_email_link": "Utiliser une autre adresse e-mail",
-          "live_resent": "Nouveau code envoyé."
+          "use_different_email_link": "Utiliser une autre adresse e-mail"
         },
         "locked": {
           "title": "Trop de tentatives échouées",
@@ -653,6 +695,19 @@
           "password_button": "Se connecter avec un mot de passe",
           "back_link": "Retour à la connexion"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Saisissez le code de connexion",
+        "subtitle": "Nous avons envoyé un code à {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Code",
+        "paste_hint": "Saisissez ou collez le code. Sur mobile, touchez-le au-dessus du clavier.",
+        "submit_button": "Se connecter",
+        "resend_button": "Renvoyer le code",
+        "resend_countdown": "Renvoyer le code dans {seconds} s",
+        "live_resent": "Nouveau code envoyé."
       }
     },
     "company": {
@@ -1113,48 +1168,121 @@
       "date_new_to_old": "Date, du plus récent au plus ancien",
       "date_old_to_new": "Date, du plus ancien au plus récent"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Ajouter à la comparaison",
-          "remove": "Supprimer de la comparaison"
-        }
+    "dashboard": {
+      "edit": "Modifier la disposition",
+      "editing": "Modification de la disposition",
+      "hint": "— faites glisser un bloc par sa poignée pour le réorganiser, ou masquez-le avec ✕.",
+      "hint_keyboard": "Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
+      "save": "Enregistrer la disposition",
+      "cancel": "Annuler",
+      "reset": "Réinitialiser",
+      "save_failed": "La disposition n'a pas pu être enregistrée. Vos modifications sont conservées — réessayez.",
+      "load_failed": "La disposition enregistrée n'a pas pu être chargée, l'agencement par défaut est donc affiché. La modification est indisponible jusqu'au chargement — actualisez la page.",
+      "hidden_widgets": "Widgets masqués",
+      "visible_stats": "Indicateurs visibles",
+      "hidden_stats": "Indicateurs masqués",
+      "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
+      "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
+      "max_rows": "Nombre de lignes max",
+      "restored": "Disposition par défaut restaurée.",
+      "empty": {
+        "title": "Tous les blocs sont masqués",
+        "text": "Tous les indicateurs et widgets de cette page ont été placés dans la section {hidden} des paramètres de disposition. Restaurez la disposition par défaut pour tout récupérer, ou ouvrez {edit} pour choisir précisément ce qui s'affiche.",
+        "hidden": "Masqués",
+        "restore": "Restaurer la disposition par défaut"
       },
-      "notifications": {
-        "limit_reached": "Seulement {productsLimit} produits de la même catégorie peuvent être comparés",
-        "added_html": "Le produit <span class=\"hidden lg:inline\">« <strong>{productName}</strong> »</span> est ajouté à la liste de comparaison <span class=\"hidden lg:inline\">(articles restants - {itemsLeft})</span>",
-        "removed_html": "Le produit <span class=\"hidden lg:inline\">« <strong>{productName}</strong> »</span> a été supprimé de la liste de comparaison",
-        "compare_button": "Comparer",
-        "added_to_cart_html": "Ajouté <strong>{productName}</strong> au panier",
-        "fetch_failed": "Impossible de charger certains produits comparés. Veuillez réessayer."
+      "a11y": {
+        "reorder": "Réorganiser {title}",
+        "hide": "Masquer {title}",
+        "show": "Afficher {title}",
+        "editing": "Modification de la disposition. Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
+        "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
+        "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
+        "moved": "{title} déplacé en position {position} sur {total}.",
+        "dropped": "{title} déposé en position {position} sur {total}.",
+        "edge": "{title} est déjà en position {position} sur {total}.",
+        "cancelled": "Déplacement de {title} annulé.",
+        "parked": "{title} masqué.",
+        "restored": "{title} affiché.",
+        "max_rows": "Nombre de lignes max pour {title}, entre {min} et {max}"
+      },
+      "stats": {
+        "load_failed": "Échec du chargement"
+      }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Panier moyen sur la période : {aov}",
+        "title": "Valeur moyenne des commandes"
+      },
+      "axis": {
+        "aov": "Panier moyen, {currency}"
+      },
+      "cancelled_excluded": "Commandes annulées exclues",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "6 derniers mois",
+        "twelve_months": "12 derniers mois",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, mois en cours jusqu'au {today}. Les ventes sont nettes, par date de commande ; les commandes annulées sont exclues.",
+      "footnote_closed": "{from} – {to}. Les ventes sont nettes, par date de commande ; les commandes annulées sont exclues.",
+      "footnote_upcoming": "Cette période n'a pas encore commencé.",
+      "kpi": {
+        "aov": "Valeur moyenne des commandes · {period}",
+        "month_to_date": "{month} à ce jour · jour {day} sur {days}",
+        "orders": "Commandes · {period}",
+        "projected": "{share} du mois · prévision {value}",
+        "sales": "Ventes · {period}",
+        "vs_last_year": "{change} vs année dernière"
+      },
+      "last_year": "Année dernière",
+      "last_year_toggle": "Année dernière : {chart}",
+      "legend": {
+        "aov_closed": "Panier moyen, mois clôturés",
+        "current": "Ce mois-ci, à ce jour",
+        "down": "baisse",
+        "last_year": "Année dernière",
+        "projection": "Prévision de fin de mois",
+        "sales_closed": "Ventes, mois clôturés",
+        "up": "hausse",
+        "vs_last_year": "vs même mois de l'année dernière"
+      },
+      "load_failed": "Impossible de charger le rapport. Veuillez réessayer plus tard.",
+      "period_label": "Période",
+      "periods": {
+        "q1": "T1",
+        "q2": "T2",
+        "q3": "T3",
+        "q4": "T4",
+        "six_months": "6 mois",
+        "twelve_months": "12 mois",
+        "year": "Année en cours"
+      },
+      "sales_chart": {
+        "subtitle": "En moyenne {value} par mois clôturé",
+        "title": "Ventes mensuelles · {period}"
       },
       "table": {
-        "tabs": {
-          "all": "Tous",
-          "differences": "Différences"
-        },
-        "uncategorized": "Non classé",
-        "unresolved_category": "Catégorie inconnue",
-        "differ_rows": "Diffèrent : {count} sur {total} lignes",
-        "clear_category": "Vider la catégorie",
-        "remove_product": "Supprimer de la comparaison",
-        "add_to_cart": "Ajouter au panier",
-        "fields": {
-          "price_per_unit": "Prix par unité",
-          "price_per_unit_tooltip": "Prix, hors TVA, par unité.",
-          "customer_rating": "Note client",
-          "availability": "Disponibilité",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Qté min. commande",
-          "min_order_qty_tooltip": "MOQ — nombre minimum d'unités par commande."
-        },
-        "pin": {
-          "pin_title": "Épingler en haut",
-          "unpin_title": "Désépingler",
-          "pin_label": "Épingler « {label} »",
-          "unpin_label": "Désépingler « {label} »"
-        }
-      }
+        "aov": "Panier moyen",
+        "change": "vs année dernière",
+        "description": "Ventes, commandes et valeur moyenne des commandes par mois",
+        "last_year": "Même mois l'année dernière",
+        "month": "Mois",
+        "orders": "Commandes",
+        "sales": "Ventes",
+        "toggle": "Afficher sous forme de tableau"
+      },
+      "tooltip": {
+        "aov": "Panier moyen",
+        "last_year_aov": "Panier moyen, {month}",
+        "last_year_revenue": "Revenus, {month}",
+        "projection": "Prévision de fin de mois",
+        "revenue": "Revenus",
+        "revenue_to_date": "Revenus à ce jour",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "À venir"
     }
   },
   "pages": {
@@ -1307,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Tableau de bord",
-        "last_orders_card": {
-          "title": "Dernières commandes",
-          "all_orders_link": "Toutes les commandes",
-          "order_number_label": "Numéro de commande",
-          "purchase_number_label": "Numéro de commande d'achat",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Facture",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Aucune commande",
-          "no_orders_message": "Aucune commande pour le moment"
-        },
-        "monthly_report_card": {
-          "title": "Rapport de dépenses mensuel",
-          "budget_title": "Budget",
-          "total_spend_label": "Total dépensé",
-          "spend_chart_alt": "Graphique des dépenses"
-        },
-        "orders_status_card": {
-          "title": "Statut des commandes"
-        },
-        "bulk_order_card": {
-          "title": "Pad de commande en gros"
-        }
+        "title": "Tableau de bord"
       },
       "change_password": {
         "meta": {
@@ -1464,6 +1568,23 @@
       "promotion_coupons": {
         "title": "Tous les coupons et promotions",
         "no_lists": "Vous n'avez aucun coupon ni promotion"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Aucune clé",
+        "unnamed_key": "Clé sans nom",
+        "rename_key_label": "Renommer {name}",
+        "delete_key_label": "Supprimer {name}",
+        "created": "Créée le {date}",
+        "changed": "Modifiée le {date}",
+        "rename_modal": {
+          "title": "Renommer la clé",
+          "name_label": "Nom"
+        },
+        "delete_modal": {
+          "title": "Supprimer la clé",
+          "message": "Vous ne pourrez plus vous connecter avec cette clé."
+        }
       }
     },
     "company": {
@@ -1756,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Produits"
-    },
-    "compare": {
-      "title": "Comparer les produits",
-      "meta": {
-        "keywords": "comparer les produits, comparaison de produits, comparaison côte à côte",
-        "description": "Comparez les produits côte à côte pour trouver la meilleure option pour vos besoins."
-      },
-      "added_count": "{count} sur {total} ajoutés",
-      "added_count_in_category": "{count} sur {total} ajoutés dans {category}",
-      "actions": {
-        "clear_all": "Tout effacer"
-      },
-      "clear_all_modal": {
-        "title": "Tout effacer",
-        "message": "Aucun produit ne sera supprimé de la comparaison. | 1 produit sera supprimé de la comparaison. | Tous les {n} produits seront supprimés de la comparaison. | Tous les {n} produits seront supprimés de la comparaison."
-      },
-      "clear_category_modal": {
-        "title": "Vider la catégorie",
-        "message": "Aucun produit dans {category} ne sera supprimé de la comparaison. | 1 produit dans {category} sera supprimé de la comparaison. | Tous les {n} produits dans {category} seront supprimés de la comparaison. | Tous les {n} produits dans {category} seront supprimés de la comparaison."
-      },
-      "empty": {
-        "title": "Votre liste de comparaison est vide",
-        "description": "Ajoutez des produits du catalogue pour comparer leurs caractéristiques côte à côte. Vous pouvez comparer jusqu'à {limit} produits par catégorie.",
-        "restore_button": "Restaurer les produits",
-        "add_button": "Ajouter des produits"
-      },
-      "error": "Échec du chargement des données",
-      "retry": "Réessayer"
     }
   },
   "identity_error": {
@@ -1803,7 +1896,11 @@
     "PasswordRequiresNonAlphanumeric": "Les mots de passe doivent contenir au moins un caractère non alphanumérique",
     "PasswordRequiresUpper": "Les mots de passe doivent contenir au moins une lettre majuscule ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Les mots de passe doivent utiliser des caractères différents",
-    "RecentPasswordUsed": "Vous avez utilisé ce mot de passe dans le passé. Veuillez en créer un autre."
+    "RecentPasswordUsed": "Vous avez utilisé ce mot de passe dans le passé. Veuillez en créer un autre.",
+    "user_not_editable": "Cet utilisateur ne peut pas être modifié",
+    "sign_in_key_not_found": "La clé de connexion est introuvable",
+    "last_sign_in_key": "La dernière clé de connexion ne peut pas être supprimée",
+    "operation_not_supported": "Cette opération n'est pas prise en charge"
   },
   "password_tips": {
     "title": "Conseils pour créer un mot de passe fort :",

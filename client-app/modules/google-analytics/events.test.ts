@@ -1,10 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { CustomerOrderType, OrderLineItemType, Product } from "@/core/api/graphql/types";
+import type { CustomerOrderType, LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 const hoisted = vi.hoisted(() => ({
   currentCurrencyRef: { value: { code: "USD" } },
   themeContextRef: { value: { storeName: "Test Store" } },
   sendEventMock: vi.fn(),
+  deferLoginMock: vi.fn(),
+}));
+
+vi.mock("./pending-login", () => ({
+  deferLogin: hoisted.deferLoginMock,
 }));
 
 vi.mock("@/core/composables/useCurrency", () => ({
@@ -86,6 +91,7 @@ function buildProduct(overrides: Partial<Product> = {}): Product {
 describe("google-analytics events", () => {
   beforeEach(() => {
     hoisted.sendEventMock.mockReset();
+    hoisted.deferLoginMock.mockReset();
     hoisted.currentCurrencyRef.value = { code: "USD" };
     hoisted.themeContextRef.value = { storeName: "Test Store" };
   });
@@ -167,6 +173,78 @@ describe("google-analytics events", () => {
     });
   });
 
+  describe("selectItem", () => {
+    it("gives the selected item the list id, list name and currency of the list it was picked from", async () => {
+      hoisted.currentCurrencyRef.value = { code: "EUR" };
+      const { events } = await import("./events");
+
+      void events.selectItem!(buildProduct({ code: "SKU-A" }), {
+        item_list_id: "category_printers_page_1",
+        item_list_name: 'Category "Printers" (page 1)',
+      });
+
+      const [eventName, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(eventName).toBe("select_item");
+      const item = payload.items[0];
+      expect(item.item_id).toBe("SKU-A");
+      expect(item.currency).toBe("EUR");
+      expect(item.item_list_id).toBe("category_printers_page_1");
+      expect(item.item_list_name).toBe('Category "Printers" (page 1)');
+    });
+
+    it("gives the selected item its position in the list, not the event", async () => {
+      const { events } = await import("./events");
+
+      void events.selectItem!(buildProduct({ code: "SKU-C" }), { item_list_id: "category_printers_page_1", index: 2 });
+
+      const [, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(payload.items[0].index).toBe(2);
+      expect(payload).not.toHaveProperty("index");
+      expect(payload.item_list_id).toBe("category_printers_page_1");
+    });
+
+    it("gives a selected cart line its position too", async () => {
+      const { events } = await import("./events");
+
+      const lineItem = { ...buildOrderLineItem({ sku: "SKU-L" }), productId: "P-1" } as unknown as LineItemType;
+      void events.selectItem!(lineItem, { item_list_id: "cart", item_list_name: "Cart", index: 1 });
+
+      const [, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(payload.items[0].item_id).toBe("SKU-L");
+      expect(payload.items[0].index).toBe(1);
+      expect(payload.items[0].item_list_id).toBe("cart");
+      expect(payload.items[0].item_list_name).toBe("Cart");
+      expect(payload).not.toHaveProperty("index");
+    });
+  });
+
+  describe("viewItem", () => {
+    it("sets the event currency on the item too", async () => {
+      const { events } = await import("./events");
+
+      void events.viewItem!(
+        buildProduct({ price: { list: { amount: 189 }, actual: { amount: 189 } } } as unknown as Partial<Product>),
+      );
+
+      const [eventName, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(eventName).toBe("view_item");
+      expect(payload.currency).toBe("USD");
+      expect(payload.items[0].currency).toBe(payload.currency);
+    });
+  });
+
+  describe("addItemToWishList", () => {
+    it("sets the event currency on the item too", async () => {
+      const { events } = await import("./events");
+
+      void events.addItemToWishList!(buildProduct());
+
+      const [eventName, payload] = hoisted.sendEventMock.mock.calls[0];
+      expect(eventName).toBe("add_to_wishlist");
+      expect(payload.items[0].currency).toBe(payload.currency);
+    });
+  });
+
   describe("placeOrder", () => {
     it("sends place_order with AC2-compliant payload (value=subTotal, items[] present)", async () => {
       const { events } = await import("./events");
@@ -197,6 +275,31 @@ describe("google-analytics events", () => {
       expect(payload.value).toBe(100);
       expect(payload.value).not.toBe(150);
       expect(payload.transaction_id).toBe("order-uuid-1");
+    });
+  });
+
+  describe("login", () => {
+    // Sent now, it would race the reload a sign-in starts and carry the signed-out identity.
+    it("leaves a successful sign-in to the page it lands on", async () => {
+      const { events } = await import("./events");
+
+      void events.login!("password", { success: true });
+
+      expect(hoisted.deferLoginMock).toHaveBeenCalledWith("password", { success: true });
+      expect(hoisted.sendEventMock).not.toHaveBeenCalled();
+    });
+
+    it("sends a failed attempt at once: the page stays, and so does the signed-out visitor", async () => {
+      const { events } = await import("./events");
+
+      void events.login!("password", { success: false, errors: "invalid_grant" });
+
+      expect(hoisted.sendEventMock).toHaveBeenCalledWith("login", {
+        success: false,
+        errors: "invalid_grant",
+        method: "password",
+      });
+      expect(hoisted.deferLoginMock).not.toHaveBeenCalled();
     });
   });
 });

@@ -3,6 +3,11 @@ export enum SignInMode {
   Otp = "otp",
 }
 
+export enum PasswordStep {
+  Password = "password",
+  TwoFactor = "two-factor",
+}
+
 export enum OtpStep {
   Request = "request",
   Verify = "verify",

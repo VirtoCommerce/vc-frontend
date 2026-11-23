@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Punchout-Modus"
+    "mode_label": "Punchout-Modus",
+    "create_requisition": "Bestellanforderung erstellen",
+    "errors": {
+      "create_requisition_failed": "Die Bestellanforderung konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "session_not_found": "Ihre Punchout-Sitzung wurde nicht gefunden. Kehren Sie zu Ihrem Beschaffungssystem zurück und starten Sie eine neue Sitzung.",
+      "session_expired": "Ihre Punchout-Sitzung ist abgelaufen. Kehren Sie zu Ihrem Beschaffungssystem zurück und starten Sie eine neue Sitzung.",
+      "store_not_configured": "Punchout ist für diesen Shop nicht eingerichtet. Bitte wenden Sie sich an den Shop-Administrator.",
+      "configuration_error": "Die Punchout-Verbindung ist nicht korrekt konfiguriert. Bitte wenden Sie sich an den Shop-Administrator.",
+      "message_error": "Die Bestellanforderung konnte nicht für Ihr Beschaffungssystem vorbereitet werden. Bitte wenden Sie sich an den Shop-Administrator.",
+      "cart_not_found": "Ihr Warenkorb wurde nicht gefunden. Laden Sie die Seite neu und prüfen Sie Ihren Warenkorb.",
+      "cart_is_empty": "Wählen Sie mindestens einen Artikel im Warenkorb aus, um eine Bestellanforderung zu erstellen.",
+      "session_returned": "Bestellanforderung bereits gesendet."
+    }
   }
 }

@@ -48,8 +48,8 @@
 
 <script setup lang="ts">
 import { ref, computed, provide, onMounted } from "vue";
-import { getLinkAttr } from "@/core/utilities/common";
 import { useComponentId } from "@/ui-kit/composables";
+import { getLinkAttr } from "@/ui-kit/utilities";
 import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -246,7 +246,7 @@ onMounted(() => {
     }
 
     &--nowrap {
-      @apply whitespace-nowrap #{!important};
+      @apply whitespace-nowrap;
     }
 
     &--max-lines {

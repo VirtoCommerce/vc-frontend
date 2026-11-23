@@ -120,13 +120,13 @@ describe("getCategoryRoute", () => {
   it("should throw an error when category is null", () => {
     expect(() => {
       getCategoryRoute(null as unknown as Category);
-    }).toThrowError();
+    }).toThrow();
   });
 
   it("should throw an error when category is undefined", () => {
     expect(() => {
       getCategoryRoute(undefined as unknown as Category);
-    }).toThrowError();
+    }).toThrow();
   });
 
   it("should return route with slug and query when category has a slug and query is provided", () => {
