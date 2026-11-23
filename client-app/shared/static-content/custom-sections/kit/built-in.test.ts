@@ -42,6 +42,7 @@ describe("registerBuiltInKit", () => {
     expect(tags["vc-icon"].attributes.size.description).toContain("a whole number of pixels, such as 24");
     expect(tags["vc-products"].attributes.view.description).toContain("grid by default");
     expect(tags["vc-image"].description).toContain("put it under data-if when its setting may be unset");
+    expect(tags["vc-link"].description).toContain("It has no style of its own");
     expect(tags["vc-image"].attributes.alt.description).toContain('"" (the default)');
     expect(tags["vc-rating"].attributes["with-text"].description).toContain('on unless written "false"');
     expect(tags["vc-shape"].attributes.size.description).toContain("40 by default");

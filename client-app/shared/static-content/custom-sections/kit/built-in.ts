@@ -184,7 +184,9 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
   },
   "vc-link": {
     component: markRaw(VcLink),
-    description: "A text link in the storefront's link style; a path on the site opens without reloading the page.",
+    description:
+      "A text link; a path on the site opens without reloading the page. It has no style of its own: style it " +
+      "from the section's CSS through its parent, such as .custom-x__more a.",
     attributes: {
       label: { type: "string" },
       to: { type: "link" },
