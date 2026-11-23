@@ -1,6 +1,7 @@
 import { SECTION_TYPE_ATTRIBUTE } from "./constants";
 import { isContainedSelector } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
+import { MAX_CSS_DEPTH } from "./limits";
 
 export interface IFilteredCss {
   /**
@@ -47,7 +48,7 @@ export function filterSectionCss(type: string, css: string, assetsBaseUrl?: stri
       if (keepKeyframes(rule, context)) {
         keyframes.push(rule.cssText);
       }
-    } else if (keepRule(rule, context, true)) {
+    } else if (keepRule(rule, context, true, 1)) {
       const conditionalKeyframes = takeKeyframes(rule);
 
       if (conditionalKeyframes) {
@@ -87,15 +88,19 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
   }
 }
 
-/** `canHoldKeyframes`: only condition rules stand between the rule and the top level. */
-function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: boolean): boolean {
+/** `canHoldKeyframes`: only condition rules stand between the rule and the top level. `depth`: 1 at the top level. */
+function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: boolean, depth: number): boolean {
+  if (depth > MAX_CSS_DEPTH) {
+    return false;
+  }
+
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
     if (REFUSED_SELECTOR_REGEX.test(rule.selectorText) || !isContainedSelector(rule.selectorText)) {
       return false;
     }
 
     filterDeclarations(rule.style, context.assetsBaseUrl);
-    filterRules(rule, context, false);
+    filterRules(rule, context, false, depth + 1);
     return true;
   }
 
@@ -106,21 +111,26 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
 
   // `@starting-style` holds style rules only: keyframes go in no condition but `@media`, `@supports` or `@container`.
   if (isConditionRule(rule)) {
-    filterRules(rule, context, canHoldKeyframes && !isRuleOf(rule, "CSSStartingStyleRule"));
+    filterRules(rule, context, canHoldKeyframes && !isRuleOf(rule, "CSSStartingStyleRule"), depth + 1);
     return true;
   }
 
   return canHoldKeyframes && isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule") && keepKeyframes(rule, context);
 }
 
-/** Nested rules too: a style rule holds them with CSS nesting. */
-function filterRules(owner: Partial<IRuleOwner>, context: IFilterContext, canHoldKeyframes: boolean): void {
+/** Nested rules too: a style rule holds them with CSS nesting. `depth`: that of the owner's rules. */
+function filterRules(
+  owner: Partial<IRuleOwner>,
+  context: IFilterContext,
+  canHoldKeyframes: boolean,
+  depth: number,
+): void {
   if (!owner.cssRules || typeof owner.deleteRule !== "function") {
     return;
   }
 
   for (let index = owner.cssRules.length - 1; index >= 0; index--) {
-    if (!keepRule(owner.cssRules[index], context, canHoldKeyframes)) {
+    if (!keepRule(owner.cssRules[index], context, canHoldKeyframes, depth)) {
       owner.deleteRule(index);
     }
   }

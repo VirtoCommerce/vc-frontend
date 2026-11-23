@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   MAX_DESIGN_ENTRIES,
@@ -88,9 +88,14 @@ describe("collectIconNames", () => {
 
 describe("collectIconElements", () => {
   it("counts the elements of the largest icon the storefront draws, its own svg included", () => {
-    const largest = readFileSync("client-app/ui-kit/icons/outline/text-select.svg", "utf8").match(/<[a-z][\w:-]*/gi);
+    const folder = "client-app/ui-kit/icons/outline";
+    const counts = readdirSync(folder)
+      .filter((file) => file.endsWith(".svg"))
+      .map((file) => readFileSync(`${folder}/${file}`, "utf8").match(/<[a-z][\w:-]*/gi)?.length ?? 0);
+    const largest = collectIconElements();
 
-    expect(collectIconElements()).toBe(largest?.length);
+    expect(counts).toContain(largest);
+    expect(counts.every((count) => count <= largest)).toBe(true);
   });
 });
 

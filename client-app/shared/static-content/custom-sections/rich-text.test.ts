@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { sanitizeSectionHtml } from "../sections";
-import { sanitizeRichText } from "./rich-text";
+import { toFieldMap } from "./bindings";
+import { getRichText, sanitizeRichText } from "./rich-text";
 
 const SCOPE = { type: "custom-x", assetsBaseUrl: "https://cdn.example.com/assets" };
 
@@ -47,11 +48,25 @@ describe("sanitizeRichText", () => {
 
   it("works in DOMPurify's inert document, so no image of it loads in the page", () => {
     const createElement = vi.spyOn(document, "createElement");
+    const importNode = vi.spyOn(document, "importNode");
+    const adoptNode = vi.spyOn(document, "adoptNode");
 
     sanitizeRichText('<img src="https://cdn.example.com/assets/a.png" alt="">', { ...SCOPE, type: "custom-z" });
 
     expect(createElement).not.toHaveBeenCalled();
-    createElement.mockRestore();
+    expect(importNode).not.toHaveBeenCalled();
+    expect(adoptNode).not.toHaveBeenCalled();
+    vi.restoreAllMocks();
+  });
+
+  it("reads rich text stored as an object with its HTML, as the designer's editor writes it", () => {
+    const fields = toFieldMap([{ id: "body", type: "text" }]);
+    const settings = { body: { html: "<p>Hi <b>there</b></p>" } };
+
+    expect(getRichText("settings.body", { ...SCOPE, settings, fields })).toEqual({
+      html: "<p>Hi <b>there</b></p>",
+      elements: 2,
+    });
   });
 
   it("leaves the built-in sections' rich text as it was", () => {

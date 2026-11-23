@@ -19,5 +19,8 @@ export const MAX_TEMPLATE_ATTRIBUTES = 64;
 /** How deep a template's elements nest; what lies deeper is left out, so a hostile draft cannot exhaust the stack. */
 export const MAX_TEMPLATE_DEPTH = 32;
 
+/** How deep a section's CSS nests its rules; what lies deeper is left out, so hostile CSS cannot exhaust the stack. */
+export const MAX_CSS_DEPTH = 32;
+
 /** A custom section type's name, `custom-` included. */
 export const MAX_CUSTOM_SECTION_TYPE_LENGTH = 64;

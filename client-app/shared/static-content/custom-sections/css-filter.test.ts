@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { filterSectionCss } from "./css-filter";
+import { MAX_CSS_DEPTH } from "./limits";
 
 const TYPE = "custom-hero";
 const ASSETS = "https://cdn.example.com/assets";
@@ -58,6 +59,38 @@ describe("filterSectionCss", () => {
     expect(keyframes).not.toContain(".a");
     expect(filtered?.rules).toContain("custom-hero__in");
     expect(filtered?.rules).not.toContain("@keyframes");
+  });
+
+  it("drops a url() naming any other image from a keyframe, inside a condition too", () => {
+    const keyframe = "from { background-image: url(https://evil.example/p.png); opacity: 0; }";
+    const filtered = filterSectionCss(
+      TYPE,
+      `@keyframes custom-hero__a { ${keyframe} } @media all { @keyframes custom-hero__b { ${keyframe} } }`,
+      ASSETS,
+    );
+    const keyframes = filtered?.keyframes.replaceAll(/\s+/g, " ");
+
+    expect(keyframes).toContain("@keyframes custom-hero__a { 0% { opacity: 0; } }");
+    expect(keyframes).toContain("@keyframes custom-hero__b { 0% { opacity: 0; } }");
+    expect(keyframes).not.toContain("evil.example");
+  });
+
+  it("keeps the declarations after a nested rule, and drops a url() naming any other image from them", () => {
+    const rules = rulesOf(
+      ".a { & .b { color: red; } color: blue; background-image: url(https://evil.example/p.png); }",
+    );
+
+    expect(rules).toContain("& .b { color: red; }");
+    expect(rules).toContain("color: blue;");
+    expect(rules).not.toContain("evil.example");
+  });
+
+  it(`keeps rules nested ${MAX_CSS_DEPTH} deep and drops what nests deeper`, () => {
+    const nest = (depth: number) => `${"@media all { ".repeat(depth - 1)}.a { color: red; }${" }".repeat(depth - 1)}`;
+
+    expect(rulesOf(nest(MAX_CSS_DEPTH))).toContain("color: red");
+    expect(rulesOf(nest(MAX_CSS_DEPTH + 1))).not.toContain("color: red");
+    expect(rulesOf(`.a { ${nest(MAX_CSS_DEPTH)} }`)).not.toContain("color: red");
   });
 
   it("keeps :dir() selectors and the logical properties", () => {
