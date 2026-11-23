@@ -74,6 +74,8 @@ describe("the kit registry", () => {
     "command",
     "commandfor",
     "interestfor",
+    "key",
+    "ref",
   ])("refuses a tag that takes the attribute %s", (attribute) => {
     registerCustomSectionTag("vc-promo", { ...TAG, attributes: { [attribute]: { type: "string" } } });
 
@@ -217,6 +219,8 @@ describe("the kit registry", () => {
   it.each<[string, Partial<ICustomSectionBehavior>]>([
     ["text attributes that are not a list", { textAttributes: "data-glow" as unknown as string[] }],
     ["a text attribute not under its name, which would empty other elements", { textAttributes: ["title"] }],
+    ["a fallback attribute it does not write", { writes: ["data-lit"], fallbackAttributes: ["data-glowing"] }],
+    ["a fallback that is not a data- attribute", { writes: ["--glow"], fallbackAttributes: ["--glow"] }],
     [
       "a text attribute under its name that is not an option, which no template keeps",
       { textAttributes: ["data-glow-x"] },
@@ -225,6 +229,16 @@ describe("the kit registry", () => {
     registerCustomSectionBehavior("glow", { ...BEHAVIOR, ...shape });
 
     expect(getCustomSectionBehaviors()).toEqual({});
+  });
+
+  it("takes a behavior whose fallback attributes are data- attributes it writes", () => {
+    registerCustomSectionBehavior("glow", {
+      ...BEHAVIOR,
+      writes: ["data-lit", "--glow"],
+      fallbackAttributes: ["data-lit"],
+    });
+
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow"]);
   });
 
   it("takes a behavior whose text attributes are its own or its options'", () => {

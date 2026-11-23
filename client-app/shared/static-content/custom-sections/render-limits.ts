@@ -46,7 +46,7 @@ function addElementSize(node: ICompiledElement, scope: IBindingScope, size: IRen
 
   // Every row adds at least its element, so the count stops within the budget's number of rows.
   for (let index = 0; index < rows.length && !isOverLimits(size); index++) {
-    addOwnSize(node, { ...scope, row: { listId, index, values: rows[index], fields } }, size, times);
+    addOwnSize(node, { ...scope, row: { ...rows[index], listId, fields } }, size, times);
   }
 }
 

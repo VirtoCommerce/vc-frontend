@@ -32,6 +32,10 @@ const STATS: ICustomSectionDefinition = {
   css: "",
 };
 
+function byName(a: string, b: string): number {
+  return a < b ? -1 : 1;
+}
+
 const BUILT_IN: PageBuilderSchemaType = {
   blocks: {},
   sections: { "text-block": { type: "text-block", name: "Text" } },
@@ -151,7 +155,9 @@ describe("watchCustomSectionCatalog", () => {
       value: { type: "date" },
       options: { part: expect.objectContaining({ type: "select" }) },
       writes: ["data-ended", "text"],
+      textAttributes: ["data-countdown-part"],
     });
+    expect(kit?.behaviors["count-up"].textAttributes).toEqual(["data-count-up"]);
     expect(Object.keys(kit?.tags["vc-button"] ?? {})).toEqual(["description", "attributes", "cost", "hasSideEffects"]);
     expect(Object.keys(kit?.behaviors.marquee ?? {})).toEqual(["description", "writes", "repeatsChildren"]);
     expect(kit?.icons).toEqual(expect.arrayContaining(["star", "shopping-cart"]));
@@ -179,6 +185,23 @@ describe("watchCustomSectionCatalog", () => {
     await nextTick();
 
     expect(apply.mock.lastCall?.[1].behaviors.confetti).toEqual({ description: "Throws confetti." });
+  });
+
+  it("lists the kit's tags and behaviors by name, whatever order they registered in", () => {
+    const apply = vi.fn<(schemas: PageBuilderSchemaType, kit: ICustomSectionKitCatalog) => void>();
+    registerCustomSectionBehavior("confetti", {
+      directive: () => Promise.resolve({}),
+      description: "Throws confetti.",
+    });
+    watchCatalog(apply);
+
+    const kit = apply.mock.lastCall?.[1];
+    const tags = Object.keys(kit?.tags ?? {});
+    const behaviors = Object.keys(kit?.behaviors ?? {});
+
+    expect(behaviors).toContain("confetti");
+    expect(tags).toEqual([...tags].sort(byName));
+    expect(behaviors).toEqual([...behaviors].sort(byName));
   });
 
   it("applies the same catalog whatever language the preview shows", async () => {

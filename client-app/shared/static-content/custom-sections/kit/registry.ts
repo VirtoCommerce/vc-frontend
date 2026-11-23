@@ -64,6 +64,8 @@ const NAME_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** As the server refuses them on any kit tag, whatever the tag declares. */
 const DENIED_TAG_ATTRIBUTE_REGEX =
   /^(?:on.*|style|id|is|class|srcdoc|form.*|popover.*|command|commandfor|interestfor|ping|srcset|poster|action)$/;
+/** Vue reads these off a vnode's props as its own, so a component would never get them. */
+const VNODE_ATTRIBUTES = new Set(["key", "ref"]);
 
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<string>(CUSTOM_SECTION_FIELD_TYPES);
@@ -207,7 +209,10 @@ function getTagRefusal(name: string, tag: ICustomSectionTag): string | undefined
   return RESERVED_TAG_NAMES.has(name) ? "is the storefront's own" : getTagShapeRefusal(tag);
 }
 
-/** What the server would refuse in a tag, whatever its name: the storefront's own tags are held to it too. */
+/**
+ * What the server or the renderer would refuse in a tag, whatever its name: the storefront's own tags are held to it
+ * too.
+ */
 export function getTagShapeRefusal(tag: ICustomSectionTag): string | undefined {
   const attributes = Object.entries(tag.attributes);
 
@@ -216,7 +221,7 @@ export function getTagShapeRefusal(tag: ICustomSectionTag): string | undefined {
   }
 
   for (const [attribute, field] of attributes) {
-    if (!isName(attribute) || isDeniedTagAttribute(attribute)) {
+    if (!isName(attribute) || isDeniedTagAttribute(attribute) || VNODE_ATTRIBUTES.has(attribute)) {
       return `takes the attribute "${attribute}", which a kit tag may not`;
     }
 
@@ -318,18 +323,28 @@ export function getBehaviorShapeRefusal(name: string, behavior: ICustomSectionBe
 }
 
 function getBehaviorListRefusal(name: string, behavior: ICustomSectionBehavior): string | undefined {
-  const { writes, repeatsChildren, textAttributes } = behavior;
+  const { writes, fallbackAttributes, repeatsChildren, textAttributes } = behavior;
 
   if (writes !== undefined && !isTextList(writes, MAX_WRITES, MAX_WRITE_LENGTH)) {
     return `has writes that are not a list of at most ${MAX_WRITES} names of ${MAX_WRITE_LENGTH} characters`;
+  }
+
+  if (
+    fallbackAttributes !== undefined &&
+    !(
+      Array.isArray(fallbackAttributes) &&
+      fallbackAttributes.every((attribute) => attribute.startsWith(DATA_PREFIX) && !!writes?.includes(attribute))
+    )
+  ) {
+    return "has fallback attributes that are not a list of the data- attributes it writes";
   }
 
   if (repeatsChildren !== undefined && typeof repeatsChildren !== "boolean") {
     return "has a repeatsChildren that is not true or false";
   }
 
-  // The renderer leaves out the template's text in any element with one of these, whatever its behavior. The
-  // sanitizer keeps only the behavior's attribute and its options', and the server refuses any other.
+  // The renderer leaves out the template's text in an element with one of these where the behavior is applied, on it
+  // or above. The sanitizer keeps only the behavior's attribute and its options', and the server refuses any other.
   const ownAttributes = getBehaviorAttributeNames(name, behavior);
 
   if (

@@ -28,4 +28,28 @@ describe("compileTemplate", () => {
 
     expect(compileTemplate(dropped, KIT)).not.toBe(first);
   });
+
+  it("keeps an attribute whose value reads like the end of a comment or a markup declaration, as the server does", () => {
+    const compiled = compileTemplate(
+      '<section><a href="/next" aria-label="Next -->" title="a ]> b">x</a></section>',
+      KIT,
+    );
+    const [link] = compiled?.root.children ?? [];
+
+    expect(link && "attributes" in link ? link.attributes : []).toEqual([
+      ["href", ["/next"]],
+      ["aria-label", ["Next -->"]],
+      ["title", ["a ]> b"]],
+    ]);
+  });
+
+  it("keeps markup written in an attribute value as its text, never as elements", () => {
+    const compiled = compileTemplate('<section><p title="</style><img src=x onerror=alert(1)>">x</p></section>', KIT);
+    const [paragraph] = compiled?.root.children ?? [];
+
+    expect(paragraph && "attributes" in paragraph ? paragraph.attributes : []).toEqual([
+      ["title", ["</style><img src=x onerror=alert(1)>"]],
+    ]);
+    expect(paragraph && "children" in paragraph ? paragraph.children : []).toEqual([{ text: ["x"] }]);
+  });
 });

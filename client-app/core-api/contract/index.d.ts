@@ -5337,8 +5337,8 @@ declare const CUSTOM_SECTION_FIELD_TYPES: readonly ["string", "number", "boolean
 interface ICustomSectionField {
     /**
      * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
-     * date or date-time; a date alone means 00:00 UTC of that day, the same moment for every visitor, and a date-time
-     * names another moment with its offset.
+     * date, `2026-12-24`, meaning 00:00 UTC of that day, or a date-time with its offset, `2026-12-24T18:00:00-05:00` or
+     * `…Z`; one without an offset is refused, as it would name a different moment in each visitor's time zone.
      */
     type: (typeof CUSTOM_SECTION_FIELD_TYPES)[number];
     /** The values a `select` takes; a select has these or `optionsFrom`. */
@@ -5393,6 +5393,11 @@ interface ICustomSectionBehavior {
     options?: Record<string, ICustomSectionField>;
     /** What the directive writes for the section's CSS: a `--variable`, a `data-` attribute, or `text`. */
     writes?: string[];
+    /**
+     * `data-` attributes of `writes` the renderer sets on the element while the directive fails to load: its end state,
+     * so what the section's CSS hides until the behavior runs still shows.
+     */
+    fallbackAttributes?: string[];
     /**
      * Attributes of the elements whose text the directive writes, each `data-{name}` or `data-{name}-…`: the
      * template's text in them is not rendered.

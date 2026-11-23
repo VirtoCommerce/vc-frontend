@@ -900,6 +900,48 @@ describe("SbSection", () => {
       ]);
     });
 
+    it("names a row's setting by its place in the stored list, past entries that are not rows", () => {
+      const wrapper = mountSection('<ul><li data-each="settings.cards">{{ item.title }}</li></ul>', {
+        cards: [null, { title: "One" }],
+      });
+      const card = wrapper.find("li");
+
+      expect(card.attributes("data-pb-field")).toBe("cards.1.title");
+      expect(card.element.style.getPropertyValue("--i")).toBe("0");
+    });
+
+    it("names no setting a field's default shows, which the section does not hold to edit", () => {
+      const fields = [
+        { id: "title", type: "string", default: "Fresh" },
+        { id: "subtitle", type: "string", default: "Sub" },
+        {
+          id: "cards",
+          type: "list",
+          default: [{ title: "Default" }],
+          element: [
+            { id: "title", type: "string" },
+            { id: "note", type: "string", default: "Note" },
+          ],
+        },
+      ];
+      const template =
+        '<section><h2>{{ settings.title }}</h2><h3>{{ settings.subtitle }}</h3><ul><li data-each="settings.cards">' +
+        "<b>{{ item.title }}</b><i>{{ item.note }}</i></li></ul></section>";
+      const placed = mountSection(
+        template,
+        { title: "Own", cards: [{ title: "Row" }] },
+        { schema: { settings: fields } },
+      );
+      const fallback = mountSection(template, {}, { schema: { settings: fields } });
+
+      expect(placed.findAll("[data-pb-field]").map((element) => element.attributes("data-pb-field"))).toEqual([
+        "title",
+        "cards.0.title",
+      ]);
+      expect(fallback.find("b").text()).toBe("Default");
+      expect(fallback.find("[data-pb-field]").exists()).toBe(false);
+    });
+
     it("names a repeated text's setting on the run's span alone, never on the copy or the element", () => {
       const wrapper = mountSection(
         '<section><p data-marquee>{{ settings.title }}</p><span data-count-up="5">{{ settings.title }}</span></section>',
@@ -969,6 +1011,19 @@ describe("SbSection", () => {
 
       expect(wrapper.find("span").attributes("data-count-up")).toBe("5");
       expect(wrapper.find("span").text()).not.toContain("placeholder");
+    });
+
+    it("shows the template's text in a countdown's parts while the countdown is not applied", () => {
+      const part = '<span data-countdown-part="days">0</span>';
+      const wrapper = mountSection(
+        `<section><p data-countdown="{{ settings.title }}">${part} d</p>` +
+          `<p data-countdown="2030-01-01T00:00:00">${part} d</p><p data-countdown="2030-01-01">${part} d</p>` +
+          `${part}</section>`,
+      );
+      const [unset, refused, applied, alone] = wrapper.findAll("span");
+
+      expect([unset.text(), refused.text(), alone.text()]).toEqual(["0", "0", "0"]);
+      expect(applied.text()).toBe("");
     });
 
     it("applies a behavior once its chunk loads", async () => {
@@ -1087,6 +1142,21 @@ describe("SbSection", () => {
       await vi.waitFor(() => expect(wrapper.find("span").text()).toBe("five"));
     });
 
+    it("shows a behavior's end state when the behavior fails to load", async () => {
+      vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+      registerCustomSectionBehavior("reveal", {
+        directive: () => Promise.reject(new Error("chunk")),
+        description: "Reveals.",
+        writes: ["data-shown", "--reveal"],
+        fallbackAttributes: ["data-shown"],
+      });
+
+      const wrapper = mountSection("<section><p data-reveal>Hi</p></section>");
+      expect(wrapper.find("p").attributes("data-shown")).toBeUndefined();
+
+      await vi.waitFor(() => expect(wrapper.find("p").attributes("data-shown")).toBe(""));
+    });
+
     it("renders a tag registered after the section first rendered", async () => {
       const wrapper = mountSection('<section><vc-late label="Late"></vc-late></section>');
       expect(wrapper.findComponent(Rating).exists()).toBe(false);
@@ -1095,6 +1165,24 @@ describe("SbSection", () => {
       await nextTick();
 
       expect(wrapper.findComponent(Rating).exists()).toBe(true);
+    });
+
+    it("renders nothing for a tag that throws on its attributes, and the rest of the section still", () => {
+      const error = vi.spyOn(Logger, "error").mockImplementation(() => undefined);
+      registerCustomSectionTag("vc-stars", {
+        component: Rating,
+        description: "Stars.",
+        attributes: { label: { type: "string" } },
+        mapProps: ({ label }) => ({ value: (label as string).length }),
+      });
+
+      const wrapper = mountSection("<section><vc-stars></vc-stars><p>Kept</p></section>");
+
+      expect(wrapper.find("section").element.innerHTML).toBe("<!----><p>Kept</p>");
+      expect(error).toHaveBeenCalledWith(
+        "[custom-sections] The vc-stars tag failed to map its attributes",
+        expect.any(TypeError),
+      );
     });
 
     it("leaves out a tag nobody registered", () => {
@@ -1107,6 +1195,7 @@ describe("SbSection", () => {
   describe("against a hostile or changing draft", () => {
     afterEach(() => {
       unregisterCustomSectionTag("vc-promo-link");
+      unregisterCustomSectionTag("vc-toggle");
     });
 
     it("leaves out a kit tag with side effects inside an element whose behavior repeats its children", async () => {
@@ -1199,13 +1288,51 @@ describe("SbSection", () => {
 
     it("turns a kit boolean bound to an unset setting off", () => {
       const wrapper = mountSection(
-        '<section><vc-button label="A" full-width="{{ settings.title }}"></vc-button><vc-button label="B" full-width></vc-button></section>',
+        '<section><vc-button label="A" full-width="{{ settings.title }}"></vc-button><vc-button label="B" full-width></vc-button>' +
+          '<vc-rating value="4" with-text="{{ settings.show_badge }}"></vc-rating><vc-rating value="4"></vc-rating></section>',
         { title: "" },
       );
       const [bound, written] = wrapper.findAllComponents(VcButton);
+      const [boundRating, bareRating] = wrapper.findAllComponents(VcRating);
 
       expect(bound.props("fullWidth")).toBe(false);
       expect(written.props("fullWidth")).toBe(true);
+      expect(boundRating.props("withText")).toBe(false);
+      expect(bareRating.props("withText")).toBe(true);
+    });
+
+    it("turns a module tag's boolean bound to an unset setting off, whatever its prop defaults to", () => {
+      const Toggle = defineComponent({
+        name: "ToggleStub",
+        props: { shown: { type: Boolean, default: true } },
+        setup: () => () => h("div"),
+      });
+      registerCustomSectionTag("vc-toggle", {
+        component: Toggle,
+        description: "A toggle.",
+        attributes: { shown: { type: "boolean" } },
+      });
+
+      const wrapper = mountSection(
+        '<section><vc-toggle shown="{{ settings.show_badge }}"></vc-toggle><vc-toggle></vc-toggle></section>',
+      );
+
+      expect(wrapper.findAllComponents(Toggle).map((toggle) => toggle.props("shown"))).toEqual([false, true]);
+    });
+
+    it("keys rows that share an id by their place, so they keep their content when reordered", async () => {
+      const warn = vi.spyOn(console, "warn");
+      const cards = [
+        { id: "a", title: "One" },
+        { id: "a", title: "Two" },
+        { id: "b", title: "Three" },
+      ];
+      const wrapper = mountSection('<ul><li data-each="settings.cards">{{ item.title }}</li></ul>', { cards });
+
+      await wrapper.setProps({ model: { id: "section-1", type: TYPE, cards: [cards[2], cards[0], cards[1]] } });
+
+      expect(wrapper.findAll("li").map((card) => card.text())).toEqual(["Three", "One", "Two"]);
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("Duplicate keys"), expect.anything());
     });
 
     it("leaves out a behavior's value or option its field does not take, and then its text stays", () => {
@@ -1280,6 +1407,23 @@ describe("SbSection", () => {
 
       await wrapper.setProps({ model: { id: "section-1", type: TYPE, title: "gold", speed: 2, ...change } });
       await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledTimes(2));
+
+      expect(hooks.unmounted).toHaveBeenCalledOnce();
+    });
+
+    it("stops the behavior it replaced and starts afresh when one of the same name replaces it", async () => {
+      const replacement = { mounted: vi.fn(), unmounted: vi.fn() };
+      mountSection('<section><p data-glow="{{ settings.title }}">x</p></section>', { title: "gold" });
+      await vi.waitFor(() => expect(hooks.mounted).toHaveBeenCalledOnce());
+
+      unregisterCustomSectionBehavior("glow");
+      registerCustomSectionBehavior("glow", {
+        directive: () => Promise.resolve(replacement),
+        description: "Glows anew.",
+        value: { type: "string" },
+        options: { size: { type: "number" } },
+      });
+      await vi.waitFor(() => expect(replacement.mounted).toHaveBeenCalledOnce());
 
       expect(hooks.unmounted).toHaveBeenCalledOnce();
     });

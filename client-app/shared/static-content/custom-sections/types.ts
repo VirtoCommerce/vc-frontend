@@ -84,6 +84,11 @@ export interface ICustomSectionBehavior {
   /** What the directive writes for the section's CSS: a `--variable`, a `data-` attribute, or `text`. */
   writes?: string[];
   /**
+   * `data-` attributes of `writes` the renderer sets on the element while the directive fails to load: its end state,
+   * so what the section's CSS hides until the behavior runs still shows.
+   */
+  fallbackAttributes?: string[];
+  /**
    * Attributes of the elements whose text the directive writes, each `data-{name}` or `data-{name}-…`: the
    * template's text in them is not rendered.
    */

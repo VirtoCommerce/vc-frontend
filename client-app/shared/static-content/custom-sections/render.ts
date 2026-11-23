@@ -1,5 +1,5 @@
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
-import { Logger } from "@/core/utilities";
+import { isRecord, Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
 import { BOOLEAN_ATTRIBUTES, isBooleanAttributeOn, isUnsetBinding, toSafeAttributeValue } from "./allowlist";
 import { getBehaviorDirective, hasBehaviorFailed } from "./behaviors";
@@ -41,6 +41,8 @@ interface IRenderScope extends IBindingScope {
   richTexts: Map<string, IRichText>;
   /** Inside the copy a repeating behavior adds, which the designer never edits. */
   isCopy?: boolean;
+  /** Applied on the element or an ancestor: a text attribute leaves the text to its behavior only under it. */
+  appliedBehaviors?: ReadonlySet<ICustomSectionBehavior>;
 }
 
 interface IRenderedAttribute {
@@ -64,6 +66,9 @@ interface IBehaviorAttributes {
 const COPY_PROPS = { "aria-hidden": "true", [REPEATED_COPY_ATTRIBUTE]: "" };
 
 const behaviorAttributes = new WeakMap<object, IBehaviorAttributes>();
+/** A behavior unregistered and registered again under its name is another object, and mounts its elements afresh. */
+const behaviorIds = new WeakMap<ICustomSectionBehavior, number>();
+let behaviorCount = 0;
 const overBudgetTemplates = new WeakSet<ICompiledTemplate>();
 
 export function renderCustomSection(template: ICompiledTemplate, options: IRenderOptions): VNode | null {
@@ -137,16 +142,16 @@ function renderElement(
   const field = scope.fields.get(listId);
   const rows = getListRows(listId, scope);
   const fields = toFieldMap(field?.element);
-  const keys = toRowKeys(rows);
+  const keys = toRowKeys(rows.map(({ values }) => values));
 
   return [
     h(
       Fragment,
-      rows.map((values, index) =>
+      rows.map(({ index, values }, i) =>
         renderShown(
           node,
           { ...scope, row: { listId, index, values, fields } },
-          { ...props, key: keys[index], style: { "--i": String(index), "--n": String(rows.length) } },
+          { ...props, key: keys[i], style: { "--i": String(i), "--n": String(rows.length) } },
           position,
         ),
       ),
@@ -193,18 +198,36 @@ function renderShown(
   const applied = node.behaviors.filter(
     (name) => Object.hasOwn(behaviors, name) && values.has(toBehaviorAttribute(name)),
   );
+  const innerScope = applied.length
+    ? {
+        ...scope,
+        appliedBehaviors: new Set([...(scope.appliedBehaviors ?? []), ...applied.map((name) => behaviors[name])]),
+      }
+    : scope;
   // A behavior whose chunk failed to load leaves the template's text in place until a later load succeeds.
   const hasText = kept.some(({ name }) => {
     const behavior = textAttributes.get(name);
-    return !!behavior && !hasBehaviorFailed(behavior);
+    return !!behavior && !!innerScope.appliedBehaviors?.has(behavior) && !hasBehaviorFailed(behavior);
   });
   const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren);
+  const fallbackAttributes = applied
+    .map((name) => behaviors[name])
+    .filter(hasBehaviorFailed)
+    .flatMap((behavior) => (behavior.fallbackAttributes ?? []).map((attribute) => [attribute, ""]));
 
   // Vue pairs an element's directives by position, and a behavior reads its value, its options and the motion
   // preference once: a change to any of them mounts the element afresh.
   const behaviorValues = kept.filter(({ name }) => fields.has(name)).map(({ name, value }) => [name, value]);
   const behaviorKey = applied.length
-    ? { key: JSON.stringify([props.key ?? null, position, scope.isReducedMotion, behaviorValues]) }
+    ? {
+        key: JSON.stringify([
+          props.key ?? null,
+          position,
+          scope.isReducedMotion,
+          behaviorValues,
+          applied.map((name) => getBehaviorId(behaviors[name])),
+        ]),
+      }
     : {};
   const vnode = h(
     node.tag,
@@ -212,10 +235,11 @@ function renderShown(
     mergeProps(
       renderAttributes(node, kept, scope),
       isRepeated || hasText || scope.isCopy ? {} : getFieldAttributes(node, scope),
+      Object.fromEntries(fallbackAttributes),
       props,
       behaviorKey,
     ),
-    renderChildren(node, scope, hasText, isRepeated),
+    renderChildren(node, innerScope, hasText, isRepeated),
   );
   const directives: DirectiveArguments = applied.map((name) => [
     getBehaviorDirective(behaviors[name]),
@@ -239,10 +263,17 @@ function renderKitTag(
     return createCommentVNode("", true);
   }
 
-  // An attribute bound to an unset setting is as if it were not written: a boolean one is then off.
-  const values = Object.fromEntries(
-    rendered.filter((attribute) => !isUnsetBinding(attribute)).map(({ name, value }) => [name, value]),
-  );
+  // An attribute bound to an unset setting is as if it were not written, but a boolean one is off: written, it
+  // would be on, and left out, the component's own default would hold.
+  const values: Record<string, string> = {};
+
+  for (const { name, value, isBound } of rendered) {
+    if (!isUnsetBinding({ value, isBound })) {
+      values[name] = value;
+    } else if (Object.hasOwn(tag.attributes, name) && tag.attributes[name].type === "boolean") {
+      values[name] = "false";
+    }
+  }
 
   try {
     const { props: tagProps, slotText } = toTagProps(tag, values, assetsBaseUrl);
@@ -294,6 +325,17 @@ function fitsBehaviorField(
   const field = fields.get(name);
 
   return !isUnsetBinding({ value, isBound }) && (!field || toFieldValue(field, value) !== undefined);
+}
+
+function getBehaviorId(behavior: ICustomSectionBehavior): number {
+  let id = behaviorIds.get(behavior);
+
+  if (id === undefined) {
+    id = ++behaviorCount;
+    behaviorIds.set(behavior, id);
+  }
+
+  return id;
 }
 
 function getBehaviorAttributes(behaviors: Readonly<Record<string, ICustomSectionBehavior>>): IBehaviorAttributes {
@@ -351,7 +393,10 @@ function renderAttributes(
   return attributes;
 }
 
-/** Names the setting an element shows as its whole text, so the designer edits it in place. */
+/**
+ * Names the setting an element shows as its whole text, so the designer edits it in place: only a value the placed
+ * section holds, never a field's default, which the designer has nothing to edit in.
+ */
 function getFieldAttributes(node: ICompiledElement, scope: IBindingScope): Record<string, string> {
   const parts = node.children.length === 1 && "text" in node.children[0] ? node.children[0].text : [];
   const bindings = parts.filter((part) => typeof part !== "string" || part.trim());
@@ -359,7 +404,19 @@ function getFieldAttributes(node: ICompiledElement, scope: IBindingScope): Recor
   const resolved =
     bindings.length === 1 && typeof binding !== "string" ? resolveBinding(binding.path, scope) : undefined;
 
-  return resolved?.field.type === "string" && resolved.field.format !== "url"
+  return resolved?.field.type === "string" &&
+    resolved.field.format !== "url" &&
+    isOwnValue(scope.settings, resolved.path)
     ? getPreviewFieldAttrs(resolved.path.join("."))
     : {};
+}
+
+function isOwnValue(settings: Record<string, unknown>, path: readonly (string | number)[]): boolean {
+  let owner: unknown = settings;
+
+  return path.every((step) => {
+    const isOwn = (isRecord(owner) || Array.isArray(owner)) && Object.hasOwn(owner, step);
+    owner = isOwn ? (owner as Record<string | number, unknown>)[step] : undefined;
+    return isOwn;
+  });
 }

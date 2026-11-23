@@ -13,7 +13,6 @@ import { MAX_TEMPLATE_ATTRIBUTES, MAX_TEMPLATE_DEPTH } from "./limits";
 import { createLruCache } from "./lru-cache";
 import type { TemplatePartType } from "./bindings";
 import type { IKit } from "./kit/registry";
-import type { UponSanitizeAttributeHookEvent } from "dompurify";
 
 export interface ICompiledText {
   text: TemplatePartType[];
@@ -103,15 +102,6 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
 
   purifier ??= DOMPurify();
 
-  // DOMPurify drops `for` off anything but a label or an output; a kit tag becomes a component, never this element.
-  function keepDeclaredFor(node: Element, event: UponSanitizeAttributeHookEvent): void {
-    const tag = Object.hasOwn(kit.tags, node.localName) ? kit.tags[node.localName] : undefined;
-
-    if (event.attrName === "for" && tag && Object.hasOwn(tag.attributes, "for")) {
-      event.forceKeepAttr = true;
-    }
-  }
-
   // Counted as the parser leaves them, before DOMPurify drops any; taken out once it is done, as content past the
   // depth is.
   const overwritten = new Set<Element>();
@@ -122,7 +112,6 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
     }
   }
 
-  purifier.addHook("uponSanitizeAttribute", keepDeclaredFor);
   purifier.addHook("beforeSanitizeAttributes", countAttributes);
 
   try {
@@ -139,15 +128,16 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
           !!tag && Object.hasOwn(kit.tags, tag) && Object.hasOwn(kit.tags[tag].attributes, name),
         allowCustomizedBuiltInElements: false,
       },
-      // The fragment is only read to build the section, never put in the page, so names cannot clobber it.
+      // The fragment is only read to build the section, never put in the page: names cannot clobber it, and no value
+      // is parsed as markup again, so one holding `-->` or `</style` stays, as the server keeps it.
       SANITIZE_DOM: false,
+      SAFE_FOR_XML: false,
       RETURN_DOM_FRAGMENT: true,
     });
 
     overwritten.forEach((element) => element.remove());
     return fragment;
   } finally {
-    purifier.removeHook("uponSanitizeAttribute", keepDeclaredFor);
     purifier.removeHook("beforeSanitizeAttributes", countAttributes);
   }
 }

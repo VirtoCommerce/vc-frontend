@@ -38,8 +38,8 @@ const LINK_TARGETS = new Set(["_self", "_blank"]);
 const OPENER_REGEX = /(?:^|\s)opener(?:\s|$)/i;
 
 /**
- * A boolean attribute, a kit tag's or a native one, is on unless it says `false`. One bound to an unset setting is
- * left out before, as if not written, so it is off too.
+ * A boolean attribute, a kit tag's or a native one, is on unless it says `false`. One bound to an unset setting is off
+ * too: a native one is left out, as if not written, and a kit tag's says `false`.
  */
 export function isBooleanAttributeOn(value: string): boolean {
   return value !== "false";

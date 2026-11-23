@@ -8,7 +8,7 @@ export interface ICustomSectionKitCatalog {
   tags: Record<string, Pick<ICustomSectionTag, "description" | "attributes" | "cost" | "hasSideEffects">>;
   behaviors: Record<
     string,
-    Pick<ICustomSectionBehavior, "description" | "value" | "options" | "writes" | "repeatsChildren">
+    Pick<ICustomSectionBehavior, "description" | "value" | "options" | "writes" | "repeatsChildren" | "textAttributes">
   >;
   design: IDesignFacts & {
     /** The container every custom section stands in, for `@container sb-section (min-width: …)`. */
@@ -23,18 +23,18 @@ export interface ICustomSectionKitCatalog {
 /** The name `.sb-section` in `sb-section.vue` gives its container. */
 const SECTION_CONTAINER_NAME = "sb-section";
 
-/** Copies only data, so the catalog can be posted and hashed. */
+/** Copies only data, by name, so the same kit hashes alike whatever order it registered in. */
 export function getKitCatalog(): ICustomSectionKitCatalog {
-  const tags = Object.entries(getCustomSectionTags()).map(
+  const tags = toSortedEntries(getCustomSectionTags()).map(
     ([name, { description, attributes, cost, hasSideEffects }]) => [
       name,
       { description, attributes, cost: cost ?? 1, hasSideEffects: !!hasSideEffects },
     ],
   );
-  const behaviors = Object.entries(getCustomSectionBehaviors()).map(
-    ([name, { description, value, options, writes, repeatsChildren }]) => [
+  const behaviors = toSortedEntries(getCustomSectionBehaviors()).map(
+    ([name, { description, value, options, writes, repeatsChildren, textAttributes }]) => [
       name,
-      { description, value, options, writes, repeatsChildren },
+      { description, value, options, writes, repeatsChildren, textAttributes },
     ],
   );
   const catalog = {
@@ -46,4 +46,8 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
   };
 
   return JSON.parse(JSON.stringify(catalog)) as ICustomSectionKitCatalog;
+}
+
+function toSortedEntries<T>(entries: Readonly<Record<string, T>>): [string, T][] {
+  return Object.entries(entries).sort(([a], [b]) => (a < b ? -1 : 1));
 }

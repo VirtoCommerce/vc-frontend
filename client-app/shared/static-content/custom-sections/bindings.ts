@@ -7,6 +7,7 @@ export type TemplatePartType = string | { path: string };
 export interface IRowScope {
   /** The `list` setting the row belongs to. */
   listId: string;
+  /** Its place in the stored list, entries that are no rows counted. */
   index: number;
   values: Record<string, unknown>;
   fields: ReadonlyMap<string, IThemeSchemaField>;
@@ -90,10 +91,13 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
 }
 
 /** The rows of a `list` setting: its objects, in order. */
-export function getListRows(listId: string, scope: IBindingScope): Record<string, unknown>[] {
+export function getListRows(listId: string, scope: IBindingScope): Pick<IRowScope, "index" | "values">[] {
   const field = scope.fields.get(listId);
   const value = field ? readSetting(scope.settings, listId, field) : undefined;
-  return field?.type === "list" && Array.isArray(value) ? value.filter(isRecord) : [];
+
+  return field?.type === "list" && Array.isArray(value)
+    ? value.flatMap((row: unknown, index) => (isRecord(row) ? [{ index, values: row }] : []))
+    : [];
 }
 
 /** Inserted as text, never as HTML. */
