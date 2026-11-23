@@ -14,7 +14,13 @@ function addPopoverHost(): void {
 
   const host = document.createElement("div");
   host.id = POPOVER_HOST_ID;
-  document.body.append(host);
+
+  // A classic script in <head> installs the kit before <body> exists.
+  if (document.body) {
+    document.body.append(host);
+  } else {
+    document.addEventListener("DOMContentLoaded", () => document.body.append(host), { once: true });
+  }
 }
 
 export const uiKit: Plugin<[IUiKitOptions?]> = {

@@ -458,6 +458,45 @@ ${loads("dark")}  }
       ]);
     });
 
+    it.each([
+      ["a commented-out load of a ui-kit file", `@include meta.load-css("${KIT_REF}/soft");\n`, []],
+      ["only a commented-out load of ui-kit's part", "", ["does not load ui-kit's part"]],
+    ])("ignores %s", async (_name, load, messages) => {
+      const options = designs(
+        {
+          "soft/index.scss": `@use "sass:meta";\n// @include meta.load-css("${KIT_REF}/soft/blocks/vc-card");\n/* @include meta.load-css("${KIT_REF}/soft"); */\n${load}`,
+        },
+        { "soft/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }" },
+        ["vc-card"],
+      );
+
+      expect((await checkDesigns(options)).errors.filter((error) => error.includes("ui-kit's part"))).toEqual(
+        messages.map((message) => expect.stringContaining(message)),
+      );
+    });
+
+    it.each([
+      [
+        "its index.scss",
+        "soft/index.scss",
+        `@use "sass:meta";\n@layer vc.design.app {\n  ${SOFT} {\n    @include meta.load-css("../../designs/soft/blocks/footer-links");\n  }\n}\n`,
+      ],
+      ["a block file", "soft/blocks/vc-card.scss", '@use "../../../designs/soft/blocks/footer-links";\n'],
+    ])("reports a ui-kit design file that loads the app's from %s", async (_name, file, text) => {
+      const options = designs(
+        {
+          "soft/index.scss": `@use "sass:meta";\n@include meta.load-css("${KIT_REF}/soft");\n`,
+          "soft/blocks/footer-links.scss": `${SOFT} .footer-links { --vc-widget-radius: 0; }`,
+        },
+        { "soft/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }", [file]: text },
+        ["vc-card"],
+      );
+
+      expect((await checkDesigns(options)).errors).toContainEqual(
+        expect.stringMatching(/kit-designs\/soft\/(index|blocks\/vc-card)\.scss:\d+ {2}.*is not a \.scss file in/),
+      );
+    });
+
     it("reports a ui-kit design folder with files and no index.scss", async () => {
       const options = designs(
         { "soft/design.ts": "export {};" },

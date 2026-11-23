@@ -186,7 +186,7 @@ listed before the kit's, so the kit's scales win.
 28. **Dark mode is a palette swap** under `html.dark` (shade numbers invert: 50↔950, 100↔900…). Consequences:
     - no `dark:` utilities and no dark branches in components;
     - `additional-50` surfaces and `neutral-*` text flip correctly; a hardcoded literal colour does not;
-    - when a component genuinely needs a dark-specific remap, it goes to `assets/styles/dark/**` (§1.4);
+    - when a component genuinely needs a dark-specific remap, it goes to `ui-kit/styles/dark/<atoms|molecules|organisms>/` for a kit one, `assets/styles/dark/**` for an app one (§1.4);
     - dark overrides there usually win by specificity (`html.dark .x` 0,2,1) — check they don't clobber the
       disabled / selected state (re-assert or guard with `:not(.x--disabled)`).
 29. Text colour on light surfaces: body text `neutral-950/900`, secondary `neutral-600/700`. `neutral-500` and

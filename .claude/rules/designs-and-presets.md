@@ -32,7 +32,7 @@ what follows; the rest is review-only.
    The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder
    whole (`@include meta.load-css("@/ui-kit/styles/designs/<design>")`) and its own files, never a kit file
    by name.
-4. **Layers in the two `index.scss`:** kit blocks (`vc-*`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
+4. **Layers in the two `index.scss`:** kit blocks (components in `client-app/ui-kit/`) in `@layer vc.design.kit`, app blocks in `@layer vc.design.app`,
    which wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block
    whichever file loads first.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's

@@ -968,6 +968,13 @@ function isIndexAtRule(atRule: AtRule): boolean {
   );
 }
 
+/** `index.scss` without its comments, each replaced by spaces, so a commented-out load is no load and lines stay put. */
+function uncommented(file: string): string {
+  return readFileSync(file, "utf-8").replaceAll(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, (comment) =>
+    comment.replaceAll(/[^\n]/g, " "),
+  );
+}
+
 /** The 1-based line of `index` in `text`. */
 function lineAt(text: string, index = 0): number {
   return text.slice(0, index).split("\n").length;
@@ -975,7 +982,7 @@ function lineAt(text: string, index = 0): number {
 
 /** Where `index.scss` loads `ref`, found in its text as `checkDesignName` finds `data-design`. */
 function loadLine(indexFile: string, ref: string): string {
-  const text = readFileSync(indexFile, "utf-8");
+  const text = uncommented(indexFile);
   const match = [...text.matchAll(LOAD_CSS)].find((load) => load[1].replace(/\.scss$/, "") === ref);
 
   return match ? `${indexFile}:${lineAt(text, match.index)}` : indexFile;
@@ -1126,7 +1133,7 @@ function checkDesignName(file: string, design: string): string[] {
 
 /** `index.scss` loads ui-kit's part of the design as a whole, so a file the kit adds needs no edit there. */
 function kitLoadErrors(indexFile: string, kitRef: string, hasKitIndex: boolean): string[] {
-  const text = readFileSync(indexFile, "utf-8");
+  const text = uncommented(indexFile);
   const loads = [...text.matchAll(LOAD_CSS)];
   const errors = loads
     .filter((load) => load[1].startsWith(`${kitRef}/`))
@@ -1173,6 +1180,22 @@ function semanticsFor(owner: OwnerType, semantics: ReadonlySet<string>): Readonl
   return owner === "kit" ? NO_SEMANTICS : semantics;
 }
 
+/** The folders a design file may load from: ui-kit's own only, since the package ships without the app. */
+function rootsOf(owner: OwnerType, dir: string, kitDir: string): string[] {
+  return owner === "kit" ? [kitDir] : [dir, kitDir];
+}
+
+/** ui-kit's index.scss compiles only inside the design's, so it is compiled alone too, with ui-kit's folder only. */
+async function kitIndexErrors(kitIndex: string | undefined, kitDir: string): Promise<string[]> {
+  const errors: string[] = [];
+
+  if (kitIndex) {
+    await compileOrReport(kitIndex, [kitDir], errors);
+  }
+
+  return errors;
+}
+
 async function checkFolder(dir: string, options: IDesignCheckOptions, errors: string[]): Promise<number> {
   const { blocks, semantics } = options;
   const design = path.basename(dir);
@@ -1210,7 +1233,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
   const compiled = await Promise.all(
     sources.map(async (source) => {
       const compileErrors: string[] = [];
-      const css = await compileOrReport(source.file, [dir, kitDir], compileErrors);
+      const css = await compileOrReport(source.file, rootsOf(source.owner, dir, kitDir), compileErrors);
 
       return { css, compileErrors };
     }),
@@ -1245,6 +1268,8 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
       `${path.join(kitDir, "index.scss")} is missing; ui-kit loads its own design files, and the design's index.scss loads it as @include meta.load-css("${kitRef}");`,
     );
   }
+
+  errors.push(...(await kitIndexErrors(kitFiles.index, kitDir)));
 
   if (!files.index) {
     errors.push(`${path.join(dir, "index.scss")} is missing; a design ships only what its index.scss loads`);
@@ -1440,7 +1465,9 @@ export async function checkPresets({
 }
 
 async function main(): Promise<void> {
+  // `posix`: `/` on Windows too, so `isKitSource` matches.
   const sources = globSync("client-app/**/*.{vue,scss}", {
+    posix: true,
     ignore: [
       "client-app/designs/**",
       "client-app/ui-kit/styles/designs/**",
