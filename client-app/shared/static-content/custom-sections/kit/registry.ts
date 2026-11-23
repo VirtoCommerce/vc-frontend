@@ -69,8 +69,11 @@ const DENIED_TAG_ATTRIBUTE_REGEX =
 const FIELD_TYPES = new Set<string>(CUSTOM_SECTION_FIELD_TYPES);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
 const DATA_PREFIX = "data-";
-/** The server holds a bound as a decimal, so it refuses the whole kit for one past this. */
-const MAX_BOUND = 7.9e28;
+/**
+ * The server refuses the whole kit for a bound it cannot read, as one from 2^63 on, which its JSON reader takes as a
+ * big integer; a safe integer reads alike on both sides.
+ */
+const MAX_BOUND = Number.MAX_SAFE_INTEGER;
 
 const RESERVED_TAG_NAMES = new Set<string>(BUILT_IN_TAG_NAMES);
 const RESERVED_BEHAVIOR_NAMES = new Set<string>(BUILT_IN_BEHAVIOR_NAMES);
@@ -260,7 +263,42 @@ function getBehaviorRefusal(
     takenAttributes.some((taken) => attribute === taken || isReservedPrefix(attribute, taken)),
   );
 
-  return clash ? `would write ${clash}, which another behavior takes` : undefined;
+  if (clash) {
+    return `would write ${clash}, which another behavior takes`;
+  }
+
+  const captured = getCapturedOption(name, behavior, registered);
+  return captured ? `would leave ${captured} to the longer behavior name the server reads it with` : undefined;
+}
+
+/**
+ * An option whose attribute starts with a longer behavior's: the server reads an attribute with the longest behavior
+ * name it starts with, so `glow` with the option `color-mode` and the behavior `glow-color` both claim
+ * `data-glow-color-mode`, whichever registers first.
+ */
+function getCapturedOption(
+  name: string,
+  behavior: ICustomSectionBehavior,
+  registered: IKit["behaviors"],
+): string | undefined {
+  const behaviors = [...Object.entries(registered), [name, behavior] as const].map(([other, otherBehavior]) => ({
+    attribute: toBehaviorAttribute(other),
+    options: getBehaviorAttributeNames(other, otherBehavior).slice(1),
+  }));
+  const own = toBehaviorAttribute(name);
+
+  return behaviors
+    .flatMap(({ attribute, options }) =>
+      options.filter((option) =>
+        behaviors.some(
+          (longer) =>
+            longer.attribute.length > attribute.length &&
+            option.startsWith(`${longer.attribute}-`) &&
+            (attribute === own || longer.attribute === own),
+        ),
+      ),
+    )
+    .at(0);
 }
 
 /** What the server or the renderer would refuse in a behavior: the storefront's own behaviors are held to it too. */
@@ -290,12 +328,15 @@ function getBehaviorListRefusal(name: string, behavior: ICustomSectionBehavior):
     return "has a repeatsChildren that is not true or false";
   }
 
-  // The renderer leaves out the template's text in any element with one of these, whatever its behavior.
+  // The renderer leaves out the template's text in any element with one of these, whatever its behavior. The
+  // sanitizer keeps only the behavior's attribute and its options', and the server refuses any other.
+  const ownAttributes = getBehaviorAttributeNames(name, behavior);
+
   if (
     textAttributes !== undefined &&
-    !(Array.isArray(textAttributes) && textAttributes.every((attribute) => isOwnAttribute(name, attribute)))
+    !(Array.isArray(textAttributes) && textAttributes.every((attribute) => ownAttributes.includes(attribute)))
   ) {
-    return "has text attributes that are not a list of its own data-{name} attributes";
+    return "has text attributes that are not a list of its own data-{name} attribute and its options'";
   }
 
   return undefined;
@@ -383,13 +424,6 @@ function isTextList(value: unknown, maxCount: number, maxLength: number): boolea
   );
 }
 
-function isOwnAttribute(behaviorName: string, attribute: unknown): boolean {
-  return (
-    typeof attribute === "string" &&
-    (attribute === toBehaviorAttribute(behaviorName) || attribute.startsWith(`${toBehaviorAttribute(behaviorName)}-`))
-  );
-}
-
 function isBound(value: unknown): boolean {
-  return typeof value === "number" && Number.isFinite(value) && Math.abs(value) < MAX_BOUND;
+  return typeof value === "number" && Number.isFinite(value) && Math.abs(value) <= MAX_BOUND;
 }

@@ -88,6 +88,8 @@ describe("the kit registry", () => {
     ["another optionsFrom", { type: "select", optionsFrom: "colors" }],
     ["a min that is not a number", { type: "number", min: "1" }],
     ["a max out of the server's range", { type: "number", max: 1e29 }],
+    ["a max the server reads as a big integer", { type: "number", max: 2 ** 63 }],
+    ["a min past the safe integers", { type: "number", min: -(Number.MAX_SAFE_INTEGER + 2) }],
     ["a min that is not finite", { type: "number", min: Number.NEGATIVE_INFINITY }],
     ["a description that is not text", { type: "string", description: 42 }],
     ["a description too long", { type: "string", description: "x".repeat(1025) }],
@@ -215,14 +217,22 @@ describe("the kit registry", () => {
   it.each<[string, Partial<ICustomSectionBehavior>]>([
     ["text attributes that are not a list", { textAttributes: "data-glow" as unknown as string[] }],
     ["a text attribute not under its name, which would empty other elements", { textAttributes: ["title"] }],
+    [
+      "a text attribute under its name that is not an option, which no template keeps",
+      { textAttributes: ["data-glow-x"] },
+    ],
   ])("refuses a behavior with %s", (_, shape) => {
     registerCustomSectionBehavior("glow", { ...BEHAVIOR, ...shape });
 
     expect(getCustomSectionBehaviors()).toEqual({});
   });
 
-  it("takes a behavior whose text attributes are its own or under its name", () => {
-    registerCustomSectionBehavior("glow", { ...BEHAVIOR, textAttributes: ["data-glow", "data-glow-label"] });
+  it("takes a behavior whose text attributes are its own or its options'", () => {
+    registerCustomSectionBehavior("glow", {
+      ...BEHAVIOR,
+      options: { label: { type: "string" } },
+      textAttributes: ["data-glow", "data-glow-label"],
+    });
 
     expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow"]);
   });
@@ -250,6 +260,27 @@ describe("the kit registry", () => {
     registerCustomSectionBehavior("inview-delay", BEHAVIOR);
 
     expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow", "shine"]);
+  });
+
+  it.each([
+    ["the behavior first", ["glow-color", "glow"]],
+    ["the option first", ["glow", "glow-color"]],
+  ])("refuses an option a longer behavior name would read, %s", (_, order) => {
+    const shapes: Record<string, ICustomSectionBehavior> = {
+      glow: { ...BEHAVIOR, options: { "color-mode": { type: "string" } } },
+      "glow-color": BEHAVIOR,
+    };
+
+    order.forEach((name) => registerCustomSectionBehavior(name, shapes[name]));
+
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual([order[0]]);
+  });
+
+  it("takes a behavior whose name starts with another's, when no option of either is read by the other", () => {
+    registerCustomSectionBehavior("glow", { ...BEHAVIOR, options: { size: { type: "number" } } });
+    registerCustomSectionBehavior("glow-color", { ...BEHAVIOR, options: { mode: { type: "string" } } });
+
+    expect(Object.keys(getCustomSectionBehaviors())).toEqual(["glow", "glow-color"]);
   });
 
   it("refuses the storefront's own names to anyone else", () => {
