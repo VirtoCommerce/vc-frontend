@@ -22,6 +22,10 @@ template get only a warning. The storefront leaves out whatever still reaches a 
   - no `:has()` whose selector starts with `+` or `~`;
   - no `:nth-child(… of …)` or `:nth-last-child(… of …)` on `:scope` or `&`;
   - no combinator inside `:is()`, `:where()` or `:not()`, and no unknown functional pseudo-class.
+- The storefront writes each rule back as the browser parsed it, and a browser keeps a shorthand with `var()` only
+  whole. When a rule sets some of its parts after it, as `background: linear-gradient(var(--a), var(--b))` and then
+  `background-size` or `background-clip: text`, the shorthand is lost: set each part on its own
+  (`background-image`).
 
 ## Layout: mobile first
 
@@ -30,6 +34,8 @@ template get only a warning. The storefront leaves out whatever still reaches a 
 - Keep content within the design's content width and center it, as the built-in sections do.
 - Lay out with grid and flex and `gap`; let rows wrap (`repeat(auto-fill, minmax(min(100%, 16rem), 1fr))`).
 - No fixed widths or heights on anything that holds text.
+- A `data-marquee` row is as wide as all it holds. In a grid, give its column `minmax(0, 1fr)`: an `auto` or `1fr`
+  column grows to the row and pushes the rest of the section off the screen.
 
 ## Right to left
 
@@ -75,6 +81,9 @@ The page may read right to left.
   `url` setting. Each carries visible text, and an accessible name, when given, starts with that text. A path on
   the site opens without reloading the page from `vc-button` and `vc-link`, not from `a`.
 - `target` is `_self` or `_blank`; `_blank` gets `rel="noopener noreferrer"` from the storefront.
+- A kit tag takes no `class` or `style`. Style a `vc-button` from an element around it: `--vc-button-radius`,
+  `--vc-button-min-width`, `--vc-button-icon-size` and `--vc-button-text-transform` reach the button. Its largest
+  `size` is `lg`; a bigger button is that one under a `scale` on its wrapper.
 
 ## Keyboard and focus
 

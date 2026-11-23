@@ -86,7 +86,9 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
   "vc-button": {
     component: markRaw(VcButton),
     description:
-      "A button; with `to`, a link that looks like one. A call to action needs `to`: without `to` it does nothing.",
+      "A button; with `to`, a link that looks like one. A call to action needs `to`: without `to` it does nothing. " +
+      "An element around it sets its corners, least width, icon size and letter case through --vc-button-radius, " +
+      "--vc-button-min-width, --vc-button-icon-size and --vc-button-text-transform.",
     attributes: {
       label: { type: "string" },
       to: { type: "link" },
