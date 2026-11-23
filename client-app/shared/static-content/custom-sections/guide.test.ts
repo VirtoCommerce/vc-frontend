@@ -106,10 +106,11 @@ describe("the section authors' guide", () => {
     expect(styles).toHaveLength(3);
   });
 
-  it("tells what moment a date with no time means", () => {
-    expect(guide.replaceAll(/\s+/g, " ")).toContain(
-      "A countdown's date with no time ends at 00:00 UTC of that day, the same moment for every visitor.",
-    );
+  it("tells what moment a date with no time means, and that a date-time needs its offset", () => {
+    const text = guide.replaceAll(/\s+/g, " ");
+
+    expect(text).toContain("which means 00:00 UTC of that day, the same moment for every visitor");
+    expect(text).toContain("A date-time without an offset is refused");
   });
 
   it("has the three patterns", () => {

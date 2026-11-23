@@ -21,6 +21,9 @@ describe("toFieldValue", () => {
     [{ type: "link" }, "javascript:alert(1)", undefined],
     [{ type: "date" }, "2026-12-31", "2026-12-31"],
     [{ type: "date" }, "2026-12-31T18:00:00Z", "2026-12-31T18:00:00Z"],
+    [{ type: "date" }, "2026-12-31T18:00-05:00", "2026-12-31T18:00-05:00"],
+    [{ type: "date" }, "2026-12-31T18:00:00", undefined],
+    [{ type: "date" }, "2026-12-31T18:00:00+0500", undefined],
     [{ type: "date" }, "next friday", undefined],
     [{ type: "date" }, "2026-13-45", undefined],
   ])("checks %j against %j: %j", (field, value, expected) => {

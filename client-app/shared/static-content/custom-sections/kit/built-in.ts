@@ -382,8 +382,9 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
     directive: async () => (await import("../behaviors/countdown")).vCountdown,
     description:
       "Children with data-countdown-part show the time left until the date; data-ended is set when it passes. " +
-      "A date with no time ends at 00:00 UTC of that day, for every visitor alike; write a date-time with an offset, " +
-      "such as 2026-12-24T18:00:00-05:00, for another moment.",
+      "A date with no time ends at 00:00 UTC of that day, for every visitor alike; for another moment write a " +
+      "date-time with its offset, such as 2026-12-24T18:00:00-05:00 or 2026-12-24T23:00:00Z. One without an " +
+      "offset is refused.",
     value: { type: "date" },
     options: {
       part: {

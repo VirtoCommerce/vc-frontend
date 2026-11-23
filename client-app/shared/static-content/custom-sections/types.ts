@@ -25,8 +25,8 @@ export const CUSTOM_SECTION_FIELD_TYPES = ["string", "number", "boolean", "selec
 export interface ICustomSectionField {
   /**
    * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
-   * date or date-time; a date alone means 00:00 UTC of that day, the same moment for every visitor, and a date-time
-   * names another moment with its offset.
+   * date, `2026-12-24`, meaning 00:00 UTC of that day, or a date-time with its offset, `2026-12-24T18:00:00-05:00` or
+   * `…Z`; one without an offset is refused, as it would name a different moment in each visitor's time zone.
    */
   type: (typeof CUSTOM_SECTION_FIELD_TYPES)[number];
   /** The values a `select` takes; a select has these or `optionsFrom`. */

@@ -3,8 +3,9 @@ import { toFiniteNumber } from "../numbers";
 import { toSectionLink } from "../urls";
 import type { CustomSectionValueType, ICustomSectionField } from "../types";
 
-/** The date part; the browser's parser takes the rest of an ISO 8601 date-time. */
-const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(?:$|T)/;
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+/** With its offset: a time without one would name a different moment in each visitor's time zone. */
+const ISO_TIME_REGEX = /^\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/;
 
 /** `undefined` for a value the field does not take: the attribute is left out. */
 export function toFieldValue(field: ICustomSectionField, value: string): CustomSectionValueType | undefined {
@@ -30,8 +31,20 @@ export function toFieldValue(field: ICustomSectionField, value: string): CustomS
     case "link":
       return toSectionLink(value);
     case "date":
-      return ISO_DATE_REGEX.test(value.trim()) && !Number.isNaN(Date.parse(value)) ? value.trim() : undefined;
+      return isIsoDate(value.trim()) ? value.trim() : undefined;
     default:
       return value;
   }
+}
+
+/** As the server takes it: a date, or a date and a time with its offset. */
+function isIsoDate(value: string): boolean {
+  const [date, ...times] = value.split("T");
+
+  return (
+    ISO_DATE_REGEX.test(date) &&
+    times.length <= 1 &&
+    times.every((time) => ISO_TIME_REGEX.test(time)) &&
+    !Number.isNaN(Date.parse(value))
+  );
 }
