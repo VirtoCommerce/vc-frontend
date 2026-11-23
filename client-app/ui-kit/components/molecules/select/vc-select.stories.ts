@@ -1066,7 +1066,7 @@ function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
         story:
           "Server Filter with Select all. Under `server-filter`, `total` counts the matches of the query " +
           "the `items` answer and `selected-count` the selected ones among them, the ones not loaded " +
-          "included. The row loads only one page, so `@select-all` carries the `query` it acted on: add " +
+          "included. The row can add only the loaded matches, so `@select-all` carries the `query` it acted on: add " +
           'every match of it on `action: "select-all"` and clear them on `action: "deselect-all"`, leaving ' +
           "the rest of the selection alone. The row waits until `answered-query` echoes the typed query.",
       },

@@ -1181,7 +1181,8 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         /**
          * With `with-select-all`: the size of the whole set for the row's counter. Defaults to the number of
          * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
-         * With `server-filter`, it is the number of matches for the current query.
+         * With `server-filter`, it is the number of matches for the current query, and the result count
+         * announced for it, with or without the row.
          */
         total?: number;
         /**

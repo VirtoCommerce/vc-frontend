@@ -16,11 +16,24 @@ const FOCUSABLE_ELEMENTS = [
   "iframe",
 ];
 
-/** Elements that can take focus, `tabindex="-1"` ones included. */
+/**
+ * Roughly the natively focusable elements, `tabindex="-1"` ones included, and any other element with a
+ * `tabindex` other than -1.
+ */
 export const FOCUSABLE_ELEMENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
 
-/** Elements in the Tab sequence: focusable ones without `tabindex="-1"`. */
+/** The same elements without `tabindex="-1"`. Other negative values still match; drop them with `hasNegativeTabindex`. */
 export const TABBABLE_SELECTOR = FOCUSABLE_ELEMENTS.map((selector) => `${selector}:not([tabindex="-1"])`).join(", ");
+
+/**
+ * Whether the `tabindex` attribute keeps the element out of the Tab order, parsed as HTML parses integers:
+ * "-0" reads as 0, and a value with no digits after the sign is ignored. The attribute, not `tabIndex`:
+ * that reads -1 for a media control or a contenteditable without one.
+ */
+export function hasNegativeTabindex(element: Element): boolean {
+  const match = /^[\t\n\f\r ]*([+-]?\d+)/.exec(element.getAttribute("tabindex") ?? "");
+  return !!match && Number(match[1]) < 0;
+}
 
 function crossedFocusBoundary(event: FocusEvent): boolean {
   const other = event.relatedTarget;

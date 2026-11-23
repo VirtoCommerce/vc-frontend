@@ -257,8 +257,6 @@ describe("useAnsweredQuery", () => {
   });
 });
 
-// The helper bound to VcSelect's `answered-query`, as its JSDoc tells a consumer to: Select all counts,
-// enables and announces only the query the items on screen answer.
 describe("useAnsweredQuery bound to a server-filter VcSelect", () => {
   const COUNTED_SEARCH_DOCUMENT = gql`
     query Search($keyword: String!) {

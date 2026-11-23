@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
 import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } from "vue";
-import { FOCUSABLE_ELEMENT_SELECTOR, getColorValue, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
+import { FOCUSABLE_ELEMENT_SELECTOR, getColorValue, hasNegativeTabindex, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
 import { isCollapsedBox, vcScrollbarKey } from "./vc-scrollbar-context";
 
 interface IEmits {
@@ -118,7 +118,9 @@ function updateAutoTabStop(): void {
   // keeping it out takes an explicit -1. Set whether or not it overflows yet: a popup's list is
   // measured a debounce after it opens, and a Tab pressed before that would land on it.
   if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CHILD_SELECTOR)) {
-    autoTabStop.value = target.querySelector(TABBABLE_SELECTOR) ? undefined : -1;
+    const hasTabStop = [...target.querySelectorAll(TABBABLE_SELECTOR)].some((element) => !hasNegativeTabindex(element));
+
+    autoTabStop.value = hasTabStop ? undefined : -1;
     return;
   }
 

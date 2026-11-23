@@ -74,7 +74,7 @@
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <!-- Pointer use anywhere in the dropdown, Select all and the scrollbar included, keeps focus on the trigger. -->
+        <!-- A mousedown anywhere in the dropdown, the scrollbar included, does not move focus. -->
         <div class="vc-select__dropdown" @mousedown.prevent @focusout="onFocusOut($event, close)">
           <VcSelectAll
             v-if="isSelectAllShown"
@@ -195,7 +195,7 @@ import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect, useSelectAll } from "@/ui-kit/composables";
-import { insertedText, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
+import { hasNegativeTabindex, insertedText, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
 import VcSelectAll from "./vc-select-all.vue";
 import VcSelectButton from "./vc-select-button.vue";
 import { useSelectDevWarnings } from "./vc-select-dev-warnings";
@@ -257,7 +257,8 @@ const props = withDefaults(
     /**
      * With `with-select-all`: the size of the whole set for the row's counter. Defaults to the number of
      * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
-     * With `server-filter`, it is the number of matches for the current query.
+     * With `server-filter`, it is the number of matches for the current query, and the result count
+     * announced for it, with or without the row.
      */
     total?: number;
     /**
@@ -438,7 +439,7 @@ const liveRegionMessage = computed(() => {
   }
 
   // A server-side query's matches, as Select all counts them, not just the options loaded so far.
-  const count = props.serverFilter && props.total !== undefined ? props.total : filteredItems.value.length;
+  const count = props.serverFilter ? (props.total ?? filteredItems.value.length) : filteredItems.value.length;
 
   return count ? t("ui_kit.select.results_available", [count]) : t("ui_kit.select.no_results_found");
 });
@@ -787,7 +788,7 @@ function onSelectAllTab(event: KeyboardEvent): void {
 
   const candidates = [...document.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)].filter(
     (element) =>
-      element.tabIndex >= 0 &&
+      !hasNegativeTabindex(element) &&
       !element.closest("[inert]") &&
       !owns(element) &&
       !!(root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING),

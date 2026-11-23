@@ -7,8 +7,8 @@ import { createWrapperFactory } from "./wrapper-factory";
 import type { VueWrapper } from "@vue/test-utils";
 import VcSelect from "@/ui-kit/components/molecules/select/vc-select.vue";
 
-// What VcSelect's suite and useAnsweredQuery's (core) both mount it with. Import it by path, not
-// through the test-mocks index, which carries the vue-i18n mock; the messages below need the real one.
+// Import this harness by path, not through the test-mocks index, which carries the vue-i18n mock; the
+// messages below need the real one.
 
 export const ITEMS = ["Albania", "Belgium", "China"];
 

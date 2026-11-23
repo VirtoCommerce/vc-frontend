@@ -307,6 +307,22 @@ describe("VcScrollbar", () => {
       expect(wrapper.attributes("tabindex")).toBeUndefined();
     });
 
+    it.each<[string, string[], string | undefined]>([
+      ["tabindex=-2 is not a tab stop", ["-2"], "-1"],
+      ["tabindex=-0 is a tab stop", ["-0"], undefined],
+      ["a non-negative tabindex after a negative candidate is a tab stop", ["-2", "0"], undefined],
+    ])("%s", async (_label, tabindices, expected) => {
+      const wrapper = await mountOverflowing(() =>
+        h(
+          "ul",
+          { role: "listbox" },
+          tabindices.map((tabindex, index) => h("li", { role: "option", tabindex }, `row ${index}`)),
+        ),
+      );
+
+      expect(wrapper.attributes("tabindex")).toBe(expected);
+    });
+
     describe("a press on a region kept out of the Tab order", () => {
       const listbox = () => h("ul", { role: "listbox" }, [h("li", { role: "option", class: "row" }, "row")]);
 

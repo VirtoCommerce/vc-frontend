@@ -546,7 +546,7 @@ describe("VcLoadMore", () => {
     ["without loading", { hasNextPage: true }, true],
     ["in kebab case without loading", { "has-next-page": true }, true],
     ["with loading", { hasNextPage: true, loading: false }, false],
-  ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
+  ])("warns about has-next-page %s unless loading is bound", (_label, props, warns) => {
     const warn = spyOnWarn();
 
     mount(VcLoadMore, { props: { itemCount: 0, ...props }, global: GLOBAL });

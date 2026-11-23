@@ -61,18 +61,20 @@ describe("VcMenuItem tab order", () => {
 });
 
 describe("VcMenuItem as an interactive parent", () => {
-  // A control inside a button or link would nest interactive content; the item is the control.
   it.each([
     ["a clickable item", {}, false],
     ["a link", { externalLink: "https://example.com" }, false],
     ["an item that is not clickable", { clickable: false }, true],
-  ])("lets a checkbox in %s render its own input accordingly", (_label, props, rendersInput) => {
-    const wrapper = mount(VcMenuItem, {
-      props,
-      slots: { default: () => h(VcCheckbox, { ariaLabel: "Pick" }) },
-      global: { stubs: { VcTooltip: true, VcInputDetails: true } },
-    });
+  ])(
+    "renders the input of a checkbox in %s only when the item is not itself a control",
+    (_label, props, rendersInput) => {
+      const wrapper = mount(VcMenuItem, {
+        props,
+        slots: { default: () => h(VcCheckbox, { ariaLabel: "Pick" }) },
+        global: { stubs: { VcTooltip: true, VcInputDetails: true } },
+      });
 
-    expect(wrapper.find('input[type="checkbox"]').exists()).toBe(rendersInput);
-  });
+      expect(wrapper.find('input[type="checkbox"]').exists()).toBe(rendersInput);
+    },
+  );
 });

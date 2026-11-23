@@ -440,7 +440,6 @@ describe("useListboxNavigation over a changing list", () => {
     expect(highlightedIndex.value).toBe(-1);
   });
 
-  // Past the previous end there was no option to keep, so the row under it counts as another one.
   it.each([
     ["a key", "b"],
     ["no key", undefined],

@@ -32,78 +32,81 @@ export function useSelectDevWarnings<T>(
   const instance = getCurrentInstance();
   const vnodeProps = instance?.vnode.props ?? {};
 
-  warnSelectAll(props, vnodeProps);
+  warnSelectAll(props, instance);
   warnFiltering(props, slots, instance);
   warnPaging(props, slots, vnodeProps);
   watchItemModel(props, getItemValue);
   watchPrimitiveModel(props);
 }
 
-function warnSelectAll<T>(props: IDevWarningProps<T>, vnodeProps: VNodePropsType): void {
-  if (props.withSelectAll && !props.multiple) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `with-select-all` only applies to `multiple` selects and is ignored here.");
-  }
+function createWarnOnce(): (message: string) => void {
+  const warned = new Set<string>();
 
-  // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
-  // Truthy, not present: `@select-all="undefined"` handles nothing. `.once` is not exempt either — a
-  // paged list needs the handler on every press.
-  if (props.withSelectAll && props.multiple && !vnodeProps.onSelectAll) {
-    let warnedPaged = false;
-
-    watch(
-      () => props.hasNextPage || (props.total ?? 0) > props.items.length,
-      (paged) => {
-        if (paged && !warnedPaged) {
-          warnedPaged = true;
-          // eslint-disable-next-line no-console
-          console.warn(
-            "VcSelect: a paged `with-select-all` without a `@select-all` handler selects only the loaded " +
-              "options; add the rest of the set in `@select-all`.",
-          );
-        }
-      },
-      { immediate: true },
-    );
-  }
-
-  if (props.selectedCount !== undefined && !(props.multiple && props.withSelectAll)) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `selected-count` only counts for `multiple` + `with-select-all`; it is ignored here.");
-  }
-
-  watchUncountedSelectAll(props);
-
-  if (
-    !("with-select-all" in vnodeProps || "withSelectAll" in vnodeProps) &&
-    (props.total !== undefined || vnodeProps.onSelectAll)
-  ) {
-    // eslint-disable-next-line no-console
-    console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `with-select-all`.");
-  }
+  return (message) => {
+    if (!warned.has(message)) {
+      warned.add(message);
+      // eslint-disable-next-line no-console
+      console.warn(message);
+    }
+  };
 }
 
-// Without the count a fully selected page cannot be told from the whole set, so the row clears there
-// instead of asking for the rest.
-function watchUncountedSelectAll<T>(props: IDevWarningProps<T>): void {
-  if (!(props.withSelectAll && props.multiple)) {
-    return;
-  }
-
-  let warnedUncounted = false;
+// The props can be switched after mount; the instance's current vnode holds the ones bound now.
+function warnSelectAll<T>(props: IDevWarningProps<T>, instance: ComponentInternalInstance | null): void {
+  const warnOnce = createWarnOnce();
 
   watch(
     () =>
-      !isSelectedCountKnown(props.selectedCount) &&
-      ((props.total ?? 0) > props.items.length || (!!props.serverFilter && props.total !== undefined)),
-    (uncounted) => {
-      if (uncounted && !warnedUncounted) {
-        warnedUncounted = true;
-        // eslint-disable-next-line no-console
-        console.warn(
+      [
+        props.withSelectAll,
+        props.multiple,
+        props.selectedCount,
+        props.total,
+        props.serverFilter,
+        props.hasNextPage,
+        props.items.length,
+      ] as const,
+    ([withSelectAll, multiple, selectedCount, total, serverFilter, hasNextPage, itemCount]) => {
+      const vnodeProps: VNodePropsType = instance?.vnode.props ?? {};
+      const hasRow = "with-select-all" in vnodeProps || "withSelectAll" in vnodeProps;
+      const isRowShown = !!withSelectAll && !!multiple;
+
+      if (withSelectAll && !multiple) {
+        warnOnce("VcSelect: `with-select-all` only applies to `multiple` selects and is ignored here.");
+      }
+
+      // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
+      // Truthy, not present: `@select-all="undefined"` handles nothing. `.once` is not exempt either — a
+      // paged list needs the handler on every press.
+      if (isRowShown && !vnodeProps.onSelectAll && (hasNextPage || (total ?? 0) > itemCount)) {
+        warnOnce(
+          "VcSelect: a paged `with-select-all` without a `@select-all` handler selects only the loaded " +
+            "options; add the rest of the set in `@select-all`.",
+        );
+      }
+
+      if (selectedCount !== undefined && !isRowShown) {
+        warnOnce("VcSelect: `selected-count` only counts for `multiple` + `with-select-all`; it is ignored here.");
+      }
+
+      // Without the count a fully selected page cannot be told from the whole set, so the row clears there
+      // instead of asking for the rest.
+      if (
+        isRowShown &&
+        !isSelectedCountKnown(selectedCount) &&
+        ((total ?? 0) > itemCount || (!!serverFilter && total !== undefined))
+      ) {
+        warnOnce(
           "VcSelect: a paged `with-select-all` needs `selected-count` to select the rest — the selected options, " +
             "and under a `server-filter` query the selected matches among `total`; without it a fully selected " +
             "page clears.",
+        );
+      }
+
+      // Under `server-filter` the announced result count reads `total` too.
+      if (!hasRow && ((total !== undefined && !serverFilter) || vnodeProps.onSelectAll)) {
+        warnOnce(
+          "VcSelect: `@select-all`, and `total` outside `server-filter`, belong to the Select all row; add `with-select-all`.",
         );
       }
     },
@@ -123,15 +126,7 @@ function warnFiltering<T>(
     );
   }
 
-  const warned = new Set<string>();
-
-  function warnOnce(message: string): void {
-    if (!warned.has(message)) {
-      warned.add(message);
-      // eslint-disable-next-line no-console
-      console.warn(message);
-    }
-  }
+  const warnOnce = createWarnOnce();
 
   // `server-filter` can be switched after mount; the instance's current vnode holds the props bound now.
   watch(

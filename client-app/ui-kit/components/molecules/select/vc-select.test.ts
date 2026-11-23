@@ -46,7 +46,6 @@ const OBJECT_ITEMS = [
 // order in which prefix matches are hoisted.
 const AFFIX_ITEMS = ["Abel", "Belgium"];
 
-// MOUNT_OPTIONS attaches to the document, and a leftover instance would answer the next test's queries.
 enableAutoUnmount(afterEach);
 
 const mountSelect = createWrapperFactory(mount, VcSelect, MOUNT_OPTIONS);
@@ -317,13 +316,16 @@ describe("VcSelect", () => {
         ["the item itself", { modelValue: OBJECT_ITEMS[0] }, false],
         ["no model yet", { modelValue: undefined }, false],
         ["an id with valueField", { valueField: "id", modelValue: "1" }, false],
-      ])("warns for %s accordingly", (_label, props, warns) => {
-        const warn = spyOnWarn();
+      ])(
+        "warns for %s only when the model holds ids and no valueField maps the object items",
+        (_label, props, warns) => {
+          const warn = spyOnWarn();
 
-        createWrapper({ items: OBJECT_ITEMS, textField: "name", ...props });
+          createWrapper({ items: OBJECT_ITEMS, textField: "name", ...props });
 
-        expect(warned(warn)).toBe(warns);
-      });
+          expect(warned(warn)).toBe(warns);
+        },
+      );
 
       it("stays quiet for a primitive that is one of mixed items", () => {
         const warn = spyOnWarn();
@@ -750,7 +752,7 @@ describe("VcSelect", () => {
       it.each([
         ["once, which a paged list outgrows after one press", { onSelectAllOnce: () => undefined }, true],
         ["bound to undefined", { onSelectAll: undefined }, true],
-      ])("treats a handler %s accordingly", (_label, listener, warns) => {
+      ])("warns about a paged select-all with a handler %s, as with no handler", (_label, listener, warns) => {
         const warn = spyOnWarn();
 
         createWrapper({ ...unhandledSelectAllProps, modelValue: [], total: 30, ...listener });
@@ -773,18 +775,21 @@ describe("VcSelect", () => {
         ["a multiple select", {}, 0, false],
         ["a single select paged past its items", { multiple: false, modelValue: undefined, total: 30 }, 1, false],
         ["a total equal to the loaded options", { total: ITEMS.length }, 0, false],
-      ])("warns about select-all on %s accordingly", (_label, props, singleWarnings, paged) => {
-        const warn = spyOnWarn();
+      ])(
+        "warns about select-all on %s that it needs `multiple` only for a single select, never that it is paged",
+        (_label, props, singleWarnings, paged) => {
+          const warn = spyOnWarn();
 
-        createWrapper({ ...unhandledSelectAllProps, modelValue: [], ...props });
+          createWrapper({ ...unhandledSelectAllProps, modelValue: [], ...props });
 
-        expect(
-          warn.mock.calls.filter(([message]) => String(message).includes("only applies to `multiple`")),
-        ).toHaveLength(singleWarnings);
-        expect(warn.mock.calls.some(([message]) => String(message).includes("without a `@select-all` handler"))).toBe(
-          paged,
-        );
-      });
+          expect(
+            warn.mock.calls.filter(([message]) => String(message).includes("only applies to `multiple`")),
+          ).toHaveLength(singleWarnings);
+          expect(warn.mock.calls.some(([message]) => String(message).includes("without a `@select-all` handler"))).toBe(
+            paged,
+          );
+        },
+      );
 
       it("warns about a select-all with no handler once a total pages it", async () => {
         const warn = spyOnWarn();
@@ -821,15 +826,28 @@ describe("VcSelect", () => {
         ["both, with the row", { total: 30, onSelectAll: noop, withSelectAll: true }, false],
         ["both, with the row bound off for now", { total: 30, onSelectAll: noop, withSelectAll: false }, false],
         ["both, with the row in kebab case", { total: 30, onSelectAll: noop, "with-select-all": "" }, false],
-      ])("warns about %s that no Select all row reads accordingly", (_label, props, warns) => {
-        const warn = spyOnWarn();
+        [
+          "a total under a server filter",
+          { autocomplete: true, serverFilter: true, onSearch: noop, answeredQuery: "", total: 30 },
+          false,
+        ],
+        [
+          "a select-all handler under a server filter",
+          { autocomplete: true, serverFilter: true, onSearch: noop, answeredQuery: "", onSelectAll: noop },
+          true,
+        ],
+      ])(
+        "warns about %s only when neither a bound Select all row nor a server filter reads it",
+        (_label, props, warns) => {
+          const warn = spyOnWarn();
 
-        createWrapper({ items: ITEMS, multiple: true, modelValue: [], ...props });
+          createWrapper({ items: ITEMS, multiple: true, modelValue: [], ...props });
 
-        expect(warn.mock.calls.some(([message]) => String(message).includes("belong to the Select all row"))).toBe(
-          warns,
-        );
-      });
+          expect(warn.mock.calls.some(([message]) => String(message).includes("belong to the Select all row"))).toBe(
+            warns,
+          );
+        },
+      );
 
       it("warns about a selected-count that nothing reads", () => {
         const warn = spyOnWarn();
@@ -867,13 +885,16 @@ describe("VcSelect", () => {
         ],
         ["the whole set loaded", { total: ITEMS.length }, false],
         ["a single select", { multiple: false, modelValue: undefined, total: 30 }, false],
-      ])("warns about a select-all over %s with nothing counting the set accordingly", (_label, props, warns) => {
-        const warn = spyOnWarn();
+      ])(
+        "warns about a select-all over %s only when a total beyond the loaded options, or any total under a server filter, has no valid selected-count",
+        (_label, props, warns) => {
+          const warn = spyOnWarn();
 
-        createWrapper({ ...selectAllProps, modelValue: [], ...props });
+          createWrapper({ ...selectAllProps, modelValue: [], ...props });
 
-        expect(warn.mock.calls.some(([message]) => String(message).includes("needs `selected-count`"))).toBe(warns);
-      });
+          expect(warn.mock.calls.some(([message]) => String(message).includes("needs `selected-count`"))).toBe(warns);
+        },
+      );
 
       it("warns about an uncounted select-all once a total pages it", async () => {
         const warn = spyOnWarn();
@@ -1259,7 +1280,6 @@ describe("VcSelect", () => {
 
         expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
         expect(isSelectAllDisabled(wrapper)).toBe(false);
-        // The query's matches, as the counter reads them, not the 3 options loaded so far.
         expect(announced(wrapper)).toBe("10 results available");
       });
 
@@ -1275,6 +1295,20 @@ describe("VcSelect", () => {
         await answer();
 
         expect(announced(wrapper)).toBe("No results found");
+      });
+
+      it("announces the loaded matches for a query the server sends no total for", async () => {
+        const { wrapper, answer } = mountServerConsumer({
+          answers: { ...ANSWERS, a: { ...ANSWERS.a, total: null as never } },
+        });
+        const input = wrapper.get("input");
+
+        await input.trigger("click");
+        await input.setValue("a");
+        await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS);
+        await answer();
+
+        expect(announced(wrapper)).toBe("3 results available");
       });
 
       it("counts an answer given inside `@search` at once", async () => {
@@ -1637,6 +1671,54 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(summary);
     });
 
+    it("offers Tab from the checkbox of a teleported list to a following media control", async () => {
+      const host = document.createElement("div");
+      host.id = "popover-host";
+      document.body.appendChild(host);
+      onTestFinished(() => host.remove());
+
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [], enableTeleport: true });
+      const video = document.createElement("video");
+      video.setAttribute("controls", "");
+      const focusVideo = vi.spyOn(video, "focus");
+      wrapper.element.after(video);
+      onTestFinished(() => video.remove());
+
+      await wrapper.get("input").trigger("click");
+
+      const checkbox = document.querySelector<HTMLInputElement>(".vc-select-all input")!;
+      checkbox.focus();
+      checkbox.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+
+      expect(focusVideo).toHaveBeenCalled();
+    });
+
+    it.each(["-0", "-abc"])(
+      "hands Tab from the checkbox of a teleported list to a following button whose tabindex %s is no negative integer",
+      async (tabindex) => {
+        const host = document.createElement("div");
+        host.id = "popover-host";
+        document.body.appendChild(host);
+        onTestFinished(() => host.remove());
+
+        const wrapper = createWrapper({ ...selectAllProps, modelValue: [], enableTeleport: true });
+        const after = document.createElement("button");
+        after.setAttribute("tabindex", tabindex);
+        wrapper.element.after(after);
+        onTestFinished(() => after.remove());
+
+        await wrapper.get("input").trigger("click");
+
+        const checkbox = document.querySelector<HTMLInputElement>(".vc-select-all input")!;
+        checkbox.focus();
+        const event = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+        checkbox.dispatchEvent(event);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(document.activeElement).toBe(after);
+      },
+    );
+
     it("leaves Tab to the browser when no tab stop follows a teleported list", async () => {
       const host = document.createElement("div");
       host.id = "popover-host";
@@ -1684,34 +1766,40 @@ describe("VcSelect", () => {
       ["a handler bound to undefined", { onSearch: undefined }, true],
       ["a once handler, gone after the first query", { onSearchOnce: () => undefined }, true],
       ["a handler", { onSearch: () => undefined }, false],
-    ])("warns about server-filter with %s accordingly", (_label, listener, warns) => {
-      const warn = spyOnWarn();
+    ])(
+      "warns about server-filter with %s unless a `@search` function stays bound for every query",
+      (_label, listener, warns) => {
+        const warn = spyOnWarn();
 
-      createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, ...listener });
+        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, ...listener });
 
-      expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
-    });
+        expect(warn.mock.calls.some(([message]) => String(message).includes("needs a `@search` handler"))).toBe(warns);
+      },
+    );
 
     it.each([
       ["no answered-query", {}, true],
       ["an answered-query", { answeredQuery: "" }, false],
       ["an answered-query in kebab case", { "answered-query": "" }, false],
       ["an answered-query that is not set yet", { answeredQuery: undefined }, false],
-    ])("warns about server-filter with %s accordingly", (_label, props, warns) => {
-      const warn = spyOnWarn();
+    ])(
+      "warns about server-filter with %s unless answered-query is bound, even to undefined",
+      (_label, props, warns) => {
+        const warn = spyOnWarn();
 
-      createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, onSearch: noop, ...props });
+        createWrapper({ items: ITEMS, serverFilter: true, autocomplete: true, onSearch: noop, ...props });
 
-      expect(warn.mock.calls.some(([message]) => String(message).includes("needs `answered-query`"))).toBe(warns);
-    });
+        expect(warn.mock.calls.some(([message]) => String(message).includes("needs `answered-query`"))).toBe(warns);
+      },
+    );
 
     it.each([
       ["without server-filter", { answeredQuery: "" }, true],
       ["without server-filter in kebab case", { "answered-query": "" }, true],
       ["without server-filter, not set yet", { answeredQuery: undefined }, true],
       ["with server-filter", { serverFilter: true, answeredQuery: "" }, false],
-      ["no answered-query and no server-filter", {}, false],
-    ])("warns about an answered-query bound %s accordingly", (_label, props, warns) => {
+      ["left unbound without server-filter", {}, false],
+    ])("warns about an answered-query %s only when it is bound and server-filter is off", (_label, props, warns) => {
       const warn = spyOnWarn();
 
       createWrapper({ items: ITEMS, autocomplete: true, onSearch: noop, ...props });
@@ -1754,10 +1842,55 @@ describe("VcSelect", () => {
     });
 
     it.each([
+      [
+        "with-select-all is switched on in a single select",
+        { withSelectAll: false },
+        { withSelectAll: true },
+        "only applies to `multiple`",
+      ],
+      [
+        "with-select-all is switched on over a paged list without @select-all",
+        { multiple: true, modelValue: [], withSelectAll: false, total: 30, selectedCount: 0 },
+        { withSelectAll: true },
+        "without a `@select-all`",
+      ],
+      [
+        "with-select-all is switched on over a paged list without selected-count",
+        { multiple: true, modelValue: [], withSelectAll: false, total: 30, onSelectAll: noop },
+        { withSelectAll: true },
+        "needs `selected-count`",
+      ],
+      [
+        "multiple is switched off under selected-count",
+        { multiple: true, modelValue: [], withSelectAll: true, selectedCount: 0, onSelectAll: noop },
+        { multiple: false, modelValue: undefined },
+        "`selected-count` only counts",
+      ],
+      [
+        "total is bound without the row",
+        { multiple: true, modelValue: [] },
+        { total: 30 },
+        "belong to the Select all row",
+      ],
+    ])("warns once when %s after mount", async (_label, props, switched, message) => {
+      const warn = spyOnWarn();
+      const wrapper = createWrapper({ items: ITEMS, ...props });
+      const warnings = () => warn.mock.calls.filter(([text]) => String(text).includes(message));
+
+      expect(warnings()).toHaveLength(0);
+
+      await wrapper.setProps(switched);
+      await wrapper.setProps(props);
+      await wrapper.setProps(switched);
+
+      expect(warnings()).toHaveLength(1);
+    });
+
+    it.each([
       ["without loading", { hasNextPage: true }, true],
       ["in kebab case without loading", { "has-next-page": true }, true],
       ["with loading", { hasNextPage: true, loading: false }, false],
-    ])("warns about has-next-page %s accordingly", (_label, props, warns) => {
+    ])("warns about has-next-page %s unless loading is bound", (_label, props, warns) => {
       const warn = spyOnWarn();
 
       createWrapper({ items: ITEMS, ...props });
@@ -1769,7 +1902,7 @@ describe("VcSelect", () => {
       ["no handler", { loading: false }, true],
       ["a handler bound to undefined", { loading: false, onLoadMore: undefined }, true],
       ["a handler", { loading: false, onLoadMore: noop }, false],
-    ])("warns about has-next-page with %s accordingly", (_label, props, warns) => {
+    ])("warns about has-next-page with %s unless a `@load-more` function is bound", (_label, props, warns) => {
       const warn = spyOnWarn();
 
       createWrapper({ items: ITEMS, hasNextPage: true, ...props });
@@ -1796,13 +1929,16 @@ describe("VcSelect", () => {
         false,
       ],
       ["no autocomplete", { hasNextPage: true, loading: false, onLoadMore: noop, autocomplete: false }, false],
-    ])("warns about autocomplete over a list paged by %s accordingly", (_label, props, warns) => {
-      const warn = spyOnWarn();
+    ])(
+      "warns about autocomplete over a list paged by %s only when it filters a partly loaded list on the client",
+      (_label, props, warns) => {
+        const warn = spyOnWarn();
 
-      createWrapper({ items: ITEMS, autocomplete: true, ...props });
+        createWrapper({ items: ITEMS, autocomplete: true, ...props });
 
-      expect(warn.mock.calls.some(([message]) => String(message).includes("filters on the client"))).toBe(warns);
-    });
+        expect(warn.mock.calls.some(([message]) => String(message).includes("filters on the client"))).toBe(warns);
+      },
+    );
 
     it("warns about autocomplete once a next page appears", async () => {
       const warn = spyOnWarn();
