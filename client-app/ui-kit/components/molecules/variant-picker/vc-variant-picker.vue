@@ -424,6 +424,7 @@ function toggleValue(): void {
       --size: 2.75rem;
       --line-height: 1.25rem;
       --px: theme("padding.4");
+      --card-gap: theme("spacing[2.5]");
       --transparency: 48%;
 
       @apply text-sm/[--line-height] font-black tracking-[1%];
@@ -433,6 +434,8 @@ function toggleValue(): void {
       --size: 3.25rem;
       --line-height: 1.5rem;
       --px: theme("padding.5");
+      --card-px: theme("padding[4.5]");
+      --card-gap: theme("spacing.3");
       --transparency: 49%;
 
       @apply text-base/[--line-height] font-black tracking-[1%];
@@ -538,9 +541,11 @@ function toggleValue(): void {
   &__content {
     $content: &;
 
-    --card-padding: var(--vc-variant-picker-card-padding, theme("padding[1.5]") var(--px));
+    --card-padding: var(--vc-variant-picker-card-padding, theme("padding[1.5]") var(--card-px, var(--px)));
 
-    @apply flex grow items-stretch gap-2 min-w-0 p-[--card-padding] rounded-[--radius-inner] overflow-hidden text-start;
+    @apply flex grow items-stretch min-w-0 p-[--card-padding] rounded-[--radius-inner] overflow-hidden text-start;
+
+    gap: var(--card-gap, theme("spacing.2"));
   }
 
   &__prepend {

@@ -428,6 +428,9 @@ export const Card: StoryType = {
   },
 };
 
+// The badge size whose font is the closest to the picker's description font without exceeding it.
+const BADGE_SIZES = { xxs: "sm", xs: "sm", sm: "sm", md: "md", lg: "md" } as const;
+
 const CARD_SIZES_TEMPLATE = `<VcVariantPickerGroup v-model="model" type="card" name="size" aria-label="Sizes">
   <VcVariantPicker v-for="size in sizes" :key="size" :size="size" :value="size" is-available>
     <template #prepend>
@@ -439,12 +442,16 @@ const CARD_SIZES_TEMPLATE = `<VcVariantPickerGroup v-model="model" type="card" n
     <template #description>
       <VcProductPrice :actual-price="{ amount: 58.08, formattedAmount: '$58.08' }" single-line />
     </template>
+
+    <template #append>
+      <VcBadge color="success" :size="badgeSizes[size]" rounded nowrap>−12%</VcBadge>
+    </template>
   </VcVariantPicker>
 </VcVariantPickerGroup>`;
 
 export const CardSizes: StoryType = {
   render: () => ({
-    setup: () => ({ model: ref("md"), sizes: SIZES }),
+    setup: () => ({ model: ref("md"), sizes: SIZES, badgeSizes: BADGE_SIZES }),
     template: `<div class="p-6">${CARD_SIZES_TEMPLATE}</div>`,
   }),
   parameters: {
@@ -453,10 +460,51 @@ export const CardSizes: StoryType = {
         story:
           "Every size sets the card's minimum height, the text size of the default and `description` slots " +
           "(a `VcProductPrice` follows) and the size of a `VcIcon` without `size` in `prepend`. The group has no " +
-          "`size`, so each picker keeps its own.",
+          "`size`, so each picker keeps its own. `size` sets nothing on the `append` slot: its content keeps its own " +
+          "size, so the `VcBadge` here takes the `size` whose font is the closest to the `description` font without " +
+          "exceeding it. The slot sits at the card's end and is never covered, because the text beside it wraps in the " +
+          "room it leaves.",
       },
       source: {
         code: CARD_SIZES_TEMPLATE,
+      },
+    },
+  },
+};
+
+const CARD_SIZES_CORNER_TEMPLATE = `<VcVariantPickerGroup v-model="model" type="card" name="size" aria-label="Sizes">
+  <VcVariantPicker v-for="size in sizes" :key="size" :size="size" :value="size" is-available>
+    <template #prepend>
+      <VcIcon name="calendar" />
+    </template>
+
+    <template #default>Size {{ size }}</template>
+
+    <template #description>
+      <VcProductPrice :actual-price="{ amount: 58.08, formattedAmount: '$58.08' }" single-line />
+    </template>
+
+    <template #corner>
+      <VcBadge color="success" size="xs" rounded nowrap>−12%</VcBadge>
+    </template>
+  </VcVariantPicker>
+</VcVariantPickerGroup>`;
+
+export const CardSizesCorner: StoryType = {
+  render: () => ({
+    setup: () => ({ model: ref("md"), sizes: SIZES }),
+    template: `<div class="p-6">${CARD_SIZES_CORNER_TEMPLATE}</div>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The `corner` slot over the top-end corner of every size. `size` sets nothing on it: the `VcBadge` keeps " +
+          '`size="xs"` at every picker size, since a corner tag stays small. The group keeps room ' +
+          "above and beside its direct-child pickers for the corner content, so it is never cut.",
+      },
+      source: {
+        code: CARD_SIZES_CORNER_TEMPLATE,
       },
     },
   },

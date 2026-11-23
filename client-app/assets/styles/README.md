@@ -238,7 +238,7 @@ them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_
 then applies at every width, soft's `lg` step for `h1`–`h3` included.
 
 VcVariantPicker with `type="card"` reads `--vc-variant-picker-card-padding`, the space between the
-card's edge and its content (classic: `0.375rem` top and bottom, the picker size's side padding). Set
+card's edge and its content (classic: `0.375rem` top and bottom, a side padding that grows with the picker size: `0.625rem` at `xxs`, then `0.75rem`, `0.875rem`, `1rem`, `1.125rem` at `lg`). Set
 it on the picker, on its VcVariantPickerGroup or on `html`; `0` lets content such as an image run to
 the card's edge.
 
