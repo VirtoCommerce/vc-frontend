@@ -3,6 +3,7 @@ paths:
   - "client-app/designs/**"
   - "client-app/assets/presets/**"
   - "client-app/ui-kit/presets/**"
+  - "client-app/ui-kit/styles/designs/**"
   - "client-app/config/settings_data.json"
   - "scripts/check-designs.ts"
 ---
@@ -25,7 +26,7 @@ what follows; the rest is review-only.
    modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
    block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
    block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are kit tokens, so its
-   `_tokens.scss` sits in the kit folder too, with palette values; a value taken from an app colour
+   `_tokens.scss` sits in the kit folder too, with preset values; a value taken from an app colour
    (`--vc-frame-bg-color: var(--body-bg-color)`) goes in the design's own `_tokens.scss`, loaded after the kit's.
    A fork's own design keeps its `_tokens.scss` in its own folder.
    The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder

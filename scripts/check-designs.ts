@@ -735,7 +735,7 @@ function reportMedia(node: ChildNode, report: ReportType, owner: string, places:
   } else if (isPrintOnly(node)) {
     report(
       node,
-      `@media ${node.params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/ui-kit/styles/print/`,
+      `@media ${node.params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print: a kit block's in client-app/ui-kit/styles/print/, an app block's in its component's own @media print`,
     );
   }
 }
@@ -1166,6 +1166,13 @@ function blockFileErrors(
   ];
 }
 
+const NO_SEMANTICS: ReadonlySet<string> = new Set();
+
+// ui-kit renders without the app, so its design files read no app colour.
+function semanticsFor(owner: OwnerType, semantics: ReadonlySet<string>): ReadonlySet<string> {
+  return owner === "kit" ? NO_SEMANTICS : semantics;
+}
+
 async function checkFolder(dir: string, options: IDesignCheckOptions, errors: string[]): Promise<number> {
   const { blocks, semantics } = options;
   const design = path.basename(dir);
@@ -1219,7 +1226,14 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     errors.push(...compileErrors);
 
     if (css) {
-      const result = checkCompiledFile(css, source.file, source.kind, design, blocks, semantics);
+      const result = checkCompiledFile(
+        css,
+        source.file,
+        source.kind,
+        design,
+        blocks,
+        semanticsFor(source.owner, semantics),
+      );
 
       errors.push(...result.errors);
       checked.push({ ...source, keys: result.keys });

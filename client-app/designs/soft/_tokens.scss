@@ -1,5 +1,5 @@
 // Soft's values that come from the app's colours; loaded after ui-kit's soft tokens, so they win.
 html[data-design="soft"] {
   // VcFrame paints the page colour.
-  --vc-frame-bg-color: var(--body-bg-color);
+  --vc-frame-bg-color: var(--body-bg-color, var(--color-body-bg, var(--color-neutral-50)));
 }

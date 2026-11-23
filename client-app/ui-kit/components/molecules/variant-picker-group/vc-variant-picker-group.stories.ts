@@ -110,11 +110,11 @@ export const Images: StoryType = {
       source: {
         code: `
           <VcVariantPickerGroup type="image" v-model="model">
-            <VcVariantPicker type="image" value="product-example-1.webp" is-available />
-            <VcVariantPicker type="image" value="product-example-2.webp" is-available />
-            <VcVariantPicker type="image" value="product-example-3.webp" />
-            <VcVariantPicker type="image" value="product-example-4.webp" />
-            <VcVariantPicker type="image" value="product-example-5.webp" is-available />
+            <VcVariantPicker type="image" value="https://example.com/product-1.webp" is-available />
+            <VcVariantPicker type="image" value="https://example.com/product-2.webp" is-available />
+            <VcVariantPicker type="image" value="https://example.com/product-3.webp" />
+            <VcVariantPicker type="image" value="https://example.com/product-4.webp" />
+            <VcVariantPicker type="image" value="https://example.com/product-5.webp" is-available />
           </VcVariantPickerGroup>
         `,
       },

@@ -44,7 +44,7 @@ export const Basic: StoryType = {
     docs: {
       source: {
         code: `
-          <VcImage src="product-example-1.webp" alt="Product image" />
+          <VcImage src="https://example.com/product-1.webp" alt="Product image" />
         `,
       },
     },
@@ -61,7 +61,7 @@ export const WithLazyLoading: StoryType = {
     docs: {
       source: {
         code: `
-          <VcImage src="product-example-1.webp" alt="Product image" lazy />
+          <VcImage src="https://example.com/product-1.webp" alt="Product image" lazy />
         `,
       },
     },
@@ -78,7 +78,7 @@ export const WithFallback: StoryType = {
     docs: {
       source: {
         code: `
-          <VcImage src="non-existent-image.webp" alt="Product image" fallback-src="product-example-1.webp" />
+          <VcImage src="non-existent-image.webp" alt="Product image" fallback-src="https://example.com/product-1.webp" />
         `,
       },
     },
@@ -109,9 +109,9 @@ export const ObjectFit: StoryType = {
       },
       source: {
         code: `
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64" />
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:contain]" />
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:contain]" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
         `,
       },
     },

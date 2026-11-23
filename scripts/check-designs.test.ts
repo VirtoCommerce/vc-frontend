@@ -24,7 +24,7 @@ const DARK_MEDIA =
 const LIGHT_MEDIA = "@media (prefers-color-scheme: light) follows the OS theme, not the storefront's dark mode";
 const osTheme = (media: string, places: string) => `${media}; drop it: ${places}`;
 const printOnly = (params: string, owner: string) =>
-  `@media ${params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print, client-app/ui-kit/styles/print/`;
+  `@media ${params}: ${owner} holds no print rules (\`print:\` writes them); they go in vc.print: a kit block's in client-app/ui-kit/styles/print/, an app block's in its component's own @media print`;
 
 describe("check-designs", () => {
   describe("checkBlockSelector", () => {
@@ -491,6 +491,15 @@ ${loads("dark")}  }
       );
 
       expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
+    });
+
+    it("reports an app colour in ui-kit's token values, while the design's own may read it", async () => {
+      const frame = `${SOFT} { --vc-frame-bg-color: var(--body-bg-color); }`;
+      const { errors } = await checkDesigns(
+        designs({ "soft/design.ts": "export {};", "soft/_tokens.scss": frame }, { "soft/_tokens.scss": frame }),
+      );
+
+      expect(errors).toEqual([expect.stringMatching(/kit-designs\/soft\/_tokens\.scss:1 .*--body-bg-color/)]);
     });
 
     it("checks ui-kit token values like a design's own", async () => {

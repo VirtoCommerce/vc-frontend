@@ -160,7 +160,7 @@ export const TooltipSlotWithImage: StoryType = {
     docs: {
       source: {
         code: `
-          <VcVariantPicker type="image" :value="product-example-1.webp" is-available>
+          <VcVariantPicker type="image" value="https://example.com/product-1.webp" is-available>
             <template #tooltip>
               <div class="flex items-center gap-2 max-w-64 font-normal">
                 <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md [--vc-image-object-fit:cover]" />

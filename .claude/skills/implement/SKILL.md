@@ -32,7 +32,7 @@ A task is done only after all of these ran. Report each result; paste failures v
 2. `yarn validate:types`.
 3. `yarn build` — required after any utility → `@apply` migration (`styles.md` §17: missing classes and
    leading-`!` utilities only fail here); otherwise when styles or imports changed substantially.
-4. `yarn check:designs` — when a design folder (`client-app/designs/`), a preset stylesheet
+4. `yarn check:designs` — when a design folder (`client-app/designs/`, `client-app/ui-kit/styles/designs/`), a preset stylesheet
    (`client-app/ui-kit/presets/<name>.scss`, `client-app/assets/presets/<name>.scss`) or a block they name changed.
 5. `yarn test:unit run scripts/design-token-table.test.ts` — when a shape or type token was added, renamed or removed.
 6. A look at the result: the page in the browser (`yarn dev`, https://localhost:3000) or the component in

@@ -48,8 +48,12 @@ export function mergeStyles(...sets: DesignStylesType[]): DesignStylesType {
 
       merged[name] = previous
         ? async () => {
-            await previous();
-            return load();
+            // A failed earlier stylesheet still lets the later one load; its error is rethrown after.
+            try {
+              await previous();
+            } finally {
+              await load();
+            }
           }
         : load;
     }

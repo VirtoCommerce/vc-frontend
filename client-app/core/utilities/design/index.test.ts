@@ -304,6 +304,14 @@ describe("design", () => {
       expect(other).not.toHaveBeenCalled();
     });
 
+    it("loads a later stylesheet when an earlier one fails, and still rejects", async () => {
+      const app = vi.fn(async () => undefined);
+      const merged = mergeStyles({ mercury: async () => Promise.reject(new Error("offline")) }, { mercury: app });
+
+      await expect(merged.mercury()).rejects.toThrow("offline");
+      expect(app).toHaveBeenCalled();
+    });
+
     it("keys the preset stylesheets by file name", () => {
       expect(byFileName({ "/client-app/assets/presets/black-gold.scss": 1 })).toEqual({ "black-gold": 1 });
     });
