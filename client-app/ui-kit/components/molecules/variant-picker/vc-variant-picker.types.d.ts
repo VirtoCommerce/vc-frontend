@@ -1,8 +1,6 @@
 declare global {
-  type VcVariantPickerType = "color" | "image" | "text";
+  type VcVariantPickerType = "color" | "image" | "text" | "card";
   type VcVariantPickerSizeType = "xxs" | "xs" | "sm" | "md" | "lg";
-  type VcVariantPickerIconPositionType = "start" | "end";
-  type VcVariantPickerBadgePositionType = "end" | "top";
 }
 
 export {};

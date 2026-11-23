@@ -12,5 +12,6 @@ export * from "./link";
 export * from "./logger";
 export * from "./optional-chunk";
 export * from "./price";
+export * from "./roving-focus";
 export * from "./string-array";
 export * from "./variant-compat";

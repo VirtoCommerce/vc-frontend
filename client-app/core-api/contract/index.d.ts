@@ -105,7 +105,7 @@ interface IProps$O {
     modelValue?: boolean;
     /**
      * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
-     * Ignored inside a clickable or linked `VcMenuItem`, where no input renders.
+     * Ignored inside a clickable or linked `VcMenuItem` or inside a `VcVariantPicker`, where no input renders.
      */
     name?: string;
     value?: string | number | object;
@@ -120,7 +120,10 @@ interface IProps$O {
     testId?: string;
     preventDefault?: boolean;
     tabindex?: string;
-    /** Accessible name; overrides the slot label. Ignored inside a clickable or linked `VcMenuItem`, where no input renders. */
+    /**
+     * Accessible name; overrides the slot label. Ignored inside a clickable or linked `VcMenuItem` or inside a
+     * `VcVariantPicker`, where no input renders.
+     */
     ariaLabel?: string;
     tooltip?: {
         placement?: VcPopoverPlacementType;

@@ -237,6 +237,11 @@ spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't
 them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
 then applies at every width, soft's `lg` step for `h1`–`h3` included.
 
+VcVariantPicker with `type="card"` reads `--vc-variant-picker-card-padding`, the space between the
+card's edge and its content (classic: `0.375rem` top and bottom, the picker size's side padding). Set
+it on the picker, on its VcVariantPickerGroup or on `html`; `0` lets content such as an image run to
+the card's edge.
+
 A block file is written exactly like the component's own `<style>`: the same BEM nesting and `$x: &`
 captures (rule 13 of `.claude/rules/styles.md`), `@apply` allowed, no prefix. One difference: it loads
 nothing outside its own design folder (a component may `@use "@/ui-kit/styles/focus-ring"`, a design
