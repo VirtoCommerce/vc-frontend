@@ -76,7 +76,7 @@
       <template v-if="enabled" #content="{ close }">
         <div class="vc-select__dropdown" @focusout="onFocusOut($event, close)">
           <VcSelectAll
-            v-if="showSelectAll"
+            v-if="isSelectAllShown"
             ref="selectAllElement"
             :checked="isAllSelected"
             :indeterminate="isSomeSelected"
@@ -111,7 +111,7 @@
                 with-divider
               >
                 <span class="vc-select__loading">
-                  <slot name="loading">
+                  <slot name="loader">
                     <VcLoader />
 
                     <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
@@ -168,8 +168,8 @@
               :item-count="items.length"
               @load-more="$emit('loadMore')"
             >
-              <template v-if="$slots.loading" #loading>
-                <slot name="loading" />
+              <template v-if="$slots.loader" #loader>
+                <slot name="loader" />
               </template>
             </VcLoadMore>
           </VcScrollbar>
@@ -206,13 +206,13 @@ const emit = defineEmits<{
   (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
   (event: "change", value: VcSelectEmittedType<V, M>): void;
   /**
-   * Select all was pressed: `selected` is true when it selected, false when it cleared. Fires
-   * alongside the model update, so a paged consumer can select or clear the options not loaded.
+   * Select all was pressed: `action` is `select-all` when it selected, `deselect-all` when it cleared.
+   * Fires alongside the model update, so a paged consumer can select or clear the options not loaded.
    * `query` is the text narrowing the list ("" for none): with one, the row acted on the matching
    * options only, so leave the rest of the selection alone — or, with `serverFilter`, add or clear
    * the query's matches.
    */
-  (event: "selectAll", payload: { selected: boolean; query: string }): void;
+  (event: "selectAll", payload: VcSelectSelectAllPayloadType): void;
   /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
   /** The typed query, debounced; an emptied query is sent at once. Pair with `serverFilter` to filter on the server. */
@@ -253,19 +253,20 @@ const props = withDefaults(
     multiple?: M & boolean;
     clearable?: boolean;
     /** Adds a Select all row above the options. Multiple mode only. */
-    selectAll?: boolean;
+    withSelectAll?: boolean;
     /**
-     * With `select-all`: the size of the whole set for the row's counter. Defaults to the number of
+     * With `with-select-all`: the size of the whole set for the row's counter. Defaults to the number of
      * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
      * With `server-filter`, it is the number of matches for the current query.
      */
     total?: number;
     /**
-     * The consumer's count of selected options, for a paged `select-all` (`total` above the loaded
-     * options, or `server-filter`). Bind it for a partial row to select the rest: without it a fully
-     * selected page shows checked and a press clears, since the row cannot tell it from the whole
-     * selection. The counter reads it while a `server-filter` query narrows the list (the selected
-     * matches among `total`, loaded or not); unfiltered it counts the model, which holds every value.
+     * Binding it says you complete the set on `@select-all`, for a paged `with-select-all` (`total`
+     * above the loaded options, or `server-filter`): a row whose loaded options are all selected then
+     * stays partial, and a press reports `select-all` for you to add the rest. Without it such a page
+     * shows checked and a press clears, since the row cannot tell it from the whole selection.
+     * Its value counts while a `server-filter` query narrows the list: the selected matches among
+     * `total`, loaded or not. Unfiltered the counter counts the model, which holds every value.
      * Capped at `total`, never below the selected matches that are loaded.
      */
     selectedCount?: number;
@@ -292,7 +293,8 @@ const props = withDefaults(
      * matches the last `search` (spaces around either ignored), Select all is disabled, keeps counting
      * the answered query, and no result count is announced. Echo a query you skip (too short) at once.
      * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, bind
-     * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `core/api/graphql/composables`.
+     * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `@vc-frontend/core`
+     * (host code: `core/api/graphql/composables`).
      * Not `loading.value ? prev : variables.value.keyword`: it names the new query before its result is in.
      */
     answeredQuery?: string;
@@ -320,7 +322,7 @@ const slots = defineSlots<{
   /** Replaces the label of one option. */
   item?: (props: { item: T; index: number }) => unknown;
   /** Replaces the loading indicator, for the first page and for every next one. */
-  loading?: () => unknown;
+  loader?: () => unknown;
   /** Replaces the text of the row shown when there are no options or no matches. */
   empty?: () => unknown;
 }>();
@@ -708,7 +710,7 @@ if (import.meta.env.DEV) {
   useSelectDevWarnings(props, slots, getItemValue);
 }
 
-const showSelectAll = computed(() => props.selectAll && props.multiple);
+const isSelectAllShown = computed(() => props.withSelectAll && props.multiple);
 
 // No next page of a query still being typed. The pager shows the spinner while it pages; otherwise
 // the loading row does, so exactly one shows.
@@ -761,10 +763,10 @@ function onSelectAll() {
     return;
   }
 
-  const { values, selected: selecting } = toggleAll();
+  const { values, action } = toggleAll();
 
   commit(values);
-  emit("selectAll", { selected: selecting, query: filterValue.value });
+  emit("selectAll", { action, query: filterValue.value });
 }
 
 // Back to the trigger it came from; forward past the select. A teleported list sits outside the select,
@@ -802,7 +804,7 @@ function onSelectAllTab(event: KeyboardEvent): void {
 }
 
 function onTab(event: KeyboardEvent) {
-  if (!showSelectAll.value || !isShown.value || event.shiftKey) {
+  if (!isSelectAllShown.value || !isShown.value || event.shiftKey) {
     return;
   }
 

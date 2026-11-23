@@ -12,10 +12,11 @@ import { NumberSchema } from 'yup';
 import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import * as _apollo_client_core from '@apollo/client/core';
-import { ApolloClient, TypePolicies } from '@apollo/client/core';
+import { ApolloClient, TypePolicies, OperationVariables } from '@apollo/client/core';
+import * as _vue_apollo_composable from '@vue/apollo-composable';
+import { UseQueryReturn } from '@vue/apollo-composable';
 import * as _vueuse_core from '@vueuse/core';
 import { DeepPartial } from 'utility-types';
-import * as _vue_apollo_composable from '@vue/apollo-composable';
 import * as _vue_apollo_composable_dist_useLazyQuery_js from '@vue/apollo-composable/dist/useLazyQuery.js';
 import * as _intlify_core_base from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
@@ -1176,19 +1177,20 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         multiple?: M & boolean;
         clearable?: boolean;
         /** Adds a Select all row above the options. Multiple mode only. */
-        selectAll?: boolean;
+        withSelectAll?: boolean;
         /**
-         * With `select-all`: the size of the whole set for the row's counter. Defaults to the number of
+         * With `with-select-all`: the size of the whole set for the row's counter. Defaults to the number of
          * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
          * With `server-filter`, it is the number of matches for the current query.
          */
         total?: number;
         /**
-         * The consumer's count of selected options, for a paged `select-all` (`total` above the loaded
-         * options, or `server-filter`). Bind it for a partial row to select the rest: without it a fully
-         * selected page shows checked and a press clears, since the row cannot tell it from the whole
-         * selection. The counter reads it while a `server-filter` query narrows the list (the selected
-         * matches among `total`, loaded or not); unfiltered it counts the model, which holds every value.
+         * Binding it says you complete the set on `@select-all`, for a paged `with-select-all` (`total`
+         * above the loaded options, or `server-filter`): a row whose loaded options are all selected then
+         * stays partial, and a press reports `select-all` for you to add the rest. Without it such a page
+         * shows checked and a press clears, since the row cannot tell it from the whole selection.
+         * Its value counts while a `server-filter` query narrows the list: the selected matches among
+         * `total`, loaded or not. Unfiltered the counter counts the model, which holds every value.
          * Capped at `total`, never below the selected matches that are loaded.
          */
         selectedCount?: number;
@@ -1215,7 +1217,8 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
          * matches the last `search` (spaces around either ignored), Select all is disabled, keeps counting
          * the answered query, and no result count is announced. Echo a query you skip (too short) at once.
          * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, bind
-         * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `core/api/graphql/composables`.
+         * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `@vc-frontend/core`
+         * (host code: `core/api/graphql/composables`).
          * Not `loading.value ? prev : variables.value.keyword`: it names the new query before its result is in.
          */
         answeredQuery?: string;
@@ -1230,10 +1233,7 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         onLoadMore?: (() => any) | undefined;
         onChange?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
         "onUpdate:modelValue"?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
-        onSelectAll?: ((payload: {
-            selected: boolean;
-            query: string;
-        }) => any) | undefined;
+        onSelectAll?: ((payload: VcSelectSelectAllPayloadType) => any) | undefined;
     }> & (typeof globalThis extends {
         __VLS_PROPS_FALLBACK: infer P;
     } ? P : {});
@@ -1258,17 +1258,14 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
             index: number;
         }) => unknown;
         /** Replaces the loading indicator, for the first page and for every next one. */
-        loading?: () => unknown;
+        loader?: () => unknown;
         /** Replaces the text of the row shown when there are no options or no matches. */
         empty?: () => unknown;
     };
     emit: {
         (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
         (event: "change", value: VcSelectEmittedType<V, M>): void;
-        (event: "selectAll", payload: {
-            selected: boolean;
-            query: string;
-        }): void;
+        (event: "selectAll", payload: VcSelectSelectAllPayloadType): void;
         (event: "loadMore"): void;
         (event: "search", value: string): void;
     };
@@ -5692,6 +5689,16 @@ type ErrorNotificationsContextType = {
 };
 declare const SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT: ErrorNotificationsContextType;
 
+type AnsweredQuerySourceType<TResult, TVariables extends OperationVariables> = Pick<UseQueryReturn<TResult, TVariables>, "query" | "loading" | "variables" | "options">;
+/**
+ * The search query a `useQuery` result answers, for VcSelect's `answered-query` with `server-filter`.
+ * It moves to new variables only once their result is in, and at once for a query skipped with
+ * `enabled: false`. A failed query counts as answered, so clear the items on error.
+ * @param queryReturn - What `useQuery` returned.
+ * @param getQuery - Picks the search text out of the variables.
+ */
+declare function useAnsweredQuery<TResult, TVariables extends OperationVariables>(queryReturn: AnsweredQuerySourceType<TResult, TVariables>, getQuery: (variables: TVariables | undefined) => string | undefined): ComputedRef<string | undefined>;
+
 declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
     getModuleSettings: <T extends Record<string, string>>(settingsMapping: T) => { [K in T[keyof T]]?: string | number | boolean | null | undefined; };
     getSettingValue: (name: string) => string | number | boolean | null | undefined;
@@ -7337,7 +7344,7 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$c as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$d as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$I as VcAlert, _default$U as VcBadge, _default$T as VcBreadcrumbs, _default$H as VcButton, _default$G as VcCalendar, _default$S as VcCheckbox, _default$R as VcCheckboxGroup, _default$F as VcChip, _default$Q as VcContainer, _default$m as VcDatePicker, _default$l as VcDateRangePicker, _default$E as VcDialog, _default$D as VcDialogContent, _default$C as VcDialogFooter, _default$B as VcDialogHeader, _default$A as VcEmptyView, _default$P as VcIcon, _default$O as VcImage, _default$z as VcInput, _default$N as VcInputDetails, _default$M as VcLabel, _default$e as VcLayout, _default$L as VcLink, _default$y as VcLoaderOverlay, _default$K as VcMarkdownRender, _default$x as VcMenuItem, _default$k as VcModal, _default$j as VcPagination, _default$w as VcPopover, _default$v as VcProductActions, _default$u as VcProductActionsButton, _default$t as VcProductPrice, _default$s as VcProductTitle, _default$r as VcRating, _default$q as VcSelect, _default$p as VcTabSwitch, _default$i as VcTable, _default$h as VcTableColumn, _default$o as VcTextarea, _default$J as VcTooltip, _default$n as VcTypography, _default$g as VcWidget, _default$f as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, registerProductConfigurationSource, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAnalyticsUtils, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
+export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$c as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$d as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$I as VcAlert, _default$U as VcBadge, _default$T as VcBreadcrumbs, _default$H as VcButton, _default$G as VcCalendar, _default$S as VcCheckbox, _default$R as VcCheckboxGroup, _default$F as VcChip, _default$Q as VcContainer, _default$m as VcDatePicker, _default$l as VcDateRangePicker, _default$E as VcDialog, _default$D as VcDialogContent, _default$C as VcDialogFooter, _default$B as VcDialogHeader, _default$A as VcEmptyView, _default$P as VcIcon, _default$O as VcImage, _default$z as VcInput, _default$N as VcInputDetails, _default$M as VcLabel, _default$e as VcLayout, _default$L as VcLink, _default$y as VcLoaderOverlay, _default$K as VcMarkdownRender, _default$x as VcMenuItem, _default$k as VcModal, _default$j as VcPagination, _default$w as VcPopover, _default$v as VcProductActions, _default$u as VcProductActionsButton, _default$t as VcProductPrice, _default$s as VcProductTitle, _default$r as VcRating, _default$q as VcSelect, _default$p as VcTabSwitch, _default$i as VcTable, _default$h as VcTableColumn, _default$o as VcTextarea, _default$J as VcTooltip, _default$n as VcTypography, _default$g as VcWidget, _default$f as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, registerProductConfigurationSource, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAnalyticsUtils, useAnsweredQuery, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
 export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ProductActionPropsType, ProductConfigurationSourceType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
@@ -7417,6 +7424,10 @@ type VcPopoverShiftOptionsType = ShiftOptions;
 type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
 type VcProductActionsButtonColorType = VcMainColorType;
 type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
+type VcSelectSelectAllPayloadType = {
+    action: "select-all" | "deselect-all";
+    query: string;
+  };
 type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
 type VcSelectValueKeyType<T, V> = [V] extends [T]
     ? Extract<keyof T, string>

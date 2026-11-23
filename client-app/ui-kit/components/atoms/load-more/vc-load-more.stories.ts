@@ -248,7 +248,7 @@ export const CustomIndicator: StoryType = {
         :item-count="items.length"
         @load-more="loadMore"
       >
-        <template #loading>
+        <template #loader>
           <span class="text-sm text-neutral-600">Loading page {{ page + 1 }}…</span>
         </template>
       </VcLoadMore>
@@ -257,7 +257,7 @@ export const CustomIndicator: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "`#loading` replaces the spinner and leaves the request behaviour untouched.",
+        story: "`#loader` replaces the spinner and leaves the request behaviour untouched.",
       },
       source: {
         code: `
@@ -265,7 +265,7 @@ export const CustomIndicator: StoryType = {
   <div v-for="item in items" :key="item">Item {{ item }}</div>
 
   <VcLoadMore :loading="loading" :has-next-page="hasNextPage" :item-count="items.length" @load-more="loadMore">
-    <template #loading>
+    <template #loader>
       <span class="text-sm text-neutral-600">Loading page {{ page + 1 }}…</span>
     </template>
   </VcLoadMore>

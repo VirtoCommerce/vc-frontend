@@ -7,7 +7,7 @@
     :data-test-id="testId"
     :role="role"
   >
-    <slot v-if="showSpinner" name="loading">
+    <slot v-if="showSpinner" name="loader">
       <VcLoader />
 
       <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>

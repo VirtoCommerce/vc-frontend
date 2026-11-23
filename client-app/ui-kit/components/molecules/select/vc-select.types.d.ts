@@ -2,6 +2,12 @@ declare global {
   /** Emitted value: an array in multiple mode, otherwise a value or `undefined` (cleared). */
   type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
 
+  /** The `select-all` event: what the press did, and the query narrowing the list ("" for none). */
+  type VcSelectSelectAllPayloadType = {
+    action: "select-all" | "deselect-all";
+    query: string;
+  };
+
   /** Property name, or an accessor function, resolving a field of an option. */
   type VcSelectFieldAccessorType<T, R> = Extract<keyof T, string> | ((item: T) => R);
 

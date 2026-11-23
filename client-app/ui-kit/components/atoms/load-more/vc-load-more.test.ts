@@ -235,6 +235,19 @@ describe("VcLoadMore", () => {
     expect(wrapper.get('[role="status"]').text()).toBe("ui_kit.messages.loading_text");
   });
 
+  it("replaces the spinner with `#loader`", () => {
+    // Bare, so it warns about the missing scroll region.
+    spyOnWarn();
+    const wrapper = mount(VcLoadMore, {
+      props: { hasNextPage: true, loading: true, itemCount: 0 },
+      slots: { loader: () => h("span", { "data-test-id": "custom-loader" }, "wait") },
+      global: GLOBAL,
+    });
+
+    expect(wrapper.find('[data-test-id="custom-loader"]').exists()).toBe(true);
+    expect(wrapper.findComponent(VcLoader).exists()).toBe(false);
+  });
+
   it("asks for nothing while a page is already on its way", async () => {
     const { onLoadMore, region } = mountList({ loading: true });
 

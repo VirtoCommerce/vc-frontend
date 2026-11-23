@@ -130,33 +130,33 @@ describe("useSelectAll toggle", () => {
   it("adds the options on screen to the selection", () => {
     expect(setup({ activeRows: [false, true, false], selectedValues: ["x", "b"] }).toggle()).toEqual({
       values: ["x", "b", "a", "c"],
-      selected: true,
+      action: "select-all",
     });
   });
 
   it("selects on a counted partial set even when every option on screen is selected", () => {
     expect(
       setup({ total: 100, selectedCount: 3, activeRows: [true, true, true], selectedValues: ["a", "b", "c"] }).toggle(),
-    ).toEqual({ values: ["a", "b", "c"], selected: true });
+    ).toEqual({ values: ["a", "b", "c"], action: "select-all" });
   });
 
   it("clears a fully selected page of an uncounted set", () => {
     expect(setup({ total: 100, activeRows: [true, true, true], selectedValues: ["a", "b", "c"] }).toggle()).toEqual({
       values: [],
-      selected: false,
+      action: "deselect-all",
     });
   });
 
   it("clears the whole selection once every option on screen is selected", () => {
     expect(setup({ activeRows: [true, true, true], selectedValues: ["a", "b", "c", "x"] }).toggle()).toEqual({
       values: [],
-      selected: false,
+      action: "deselect-all",
     });
   });
 
   it("keeps what a query hides when clearing the matches", () => {
     expect(setup({ filterValue: "a", values: ["a"], activeRows: [true], selectedValues: ["a", "b"] }).toggle()).toEqual(
-      { values: ["b"], selected: false },
+      { values: ["b"], action: "deselect-all" },
     );
   });
 });

@@ -20,9 +20,9 @@ export interface IUseSelectAllOptions<V> {
   /** The size of the whole set; defaults to the number of options on screen. */
   total: MaybeRefOrGetter<number | undefined>;
   /**
-   * Selected matches among `total` under a server-side query, counting the ones not loaded. Bound at
-   * all, it also says the consumer completes the set: without it a paged row cannot tell a fully
-   * selected page from the whole selection.
+   * Bound at all, it says the consumer completes the set: without it a paged row cannot tell a fully
+   * selected page from the whole selection. Its value counts under a server-side query: the selected
+   * matches among `total`, the ones not loaded included.
    */
   selectedCount: MaybeRefOrGetter<number | undefined>;
 }
@@ -98,21 +98,24 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
   const isDisabled = computed(() => toValue(params.answerPending) || !optionCount.value);
 
   /**
-   * The selection a press produces, and whether it selected (true) or cleared (false); check
-   * `isDisabled` first. The press follows the row's state: checked clears, unchecked and mixed
+   * The selection a press produces, and whether it selected (`select-all`) or cleared (`deselect-all`);
+   * check `isDisabled` first. The press follows the row's state: checked clears, unchecked and mixed
    * select — on a counted partial set whose loaded options are all selected that adds nothing here,
-   * and the consumer selects the rest on `selected: true`.
+   * and the consumer selects the rest on `select-all`.
    */
-  function toggle(): { values: V[]; selected: boolean } {
+  function toggle(): { values: V[]; action: VcSelectSelectAllPayloadType["action"] } {
     const selectedValues = toValue(params.selectedValues);
     const values = toValue(params.values);
 
     if (isAllSelected.value) {
       // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
-      return { values: isNarrowed.value ? differenceWith(selectedValues, values, isEqual) : [], selected: false };
+      return {
+        values: isNarrowed.value ? differenceWith(selectedValues, values, isEqual) : [],
+        action: "deselect-all",
+      };
     }
 
-    return { values: unionWith(selectedValues, values, isEqual), selected: true };
+    return { values: unionWith(selectedValues, values, isEqual), action: "select-all" };
   }
 
   return {

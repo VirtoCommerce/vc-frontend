@@ -127,6 +127,8 @@ export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 export { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 // Opts one operation out of the host's global error toast, for a read that names its own failure inline.
 export { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
+// The query a `useQuery` result answers, for a `server-filter` VcSelect's `answered-query`.
+export { useAnsweredQuery } from "@/core/api/graphql/composables/useAnsweredQuery";
 
 // Composables. Subpath imports, not barrels — a barrel re-exports the whole module
 // graph and turns the contract's type graph (and Rollup's chunk graph) circular.

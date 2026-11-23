@@ -33,7 +33,7 @@ interface IVcSelectStoryArgs {
   error?: boolean;
   autocomplete?: boolean;
   multiple?: boolean;
-  selectAll?: boolean;
+  withSelectAll?: boolean;
   total?: number;
   selectedCount?: number;
   loading?: boolean;
@@ -600,19 +600,19 @@ export const SelectAll: StoryType = {
     label: "Label",
     placeholder: "Select multiple items",
     multiple: true,
-    selectAll: true,
+    withSelectAll: true,
     modelValue: [],
   },
   parameters: {
     docs: {
       source: {
         code: `
-<VcSelect v-model="selected" :items="items" multiple select-all label="Label" />
+<VcSelect v-model="selected" :items="items" multiple with-select-all label="Label" />
         `,
       },
       description: {
         story:
-          "`select-all` adds a row above the options with a real checkbox, so partial selection " +
+          "`with-select-all` adds a row above the options with a real checkbox, so partial selection " +
           'can report `aria-checked="mixed"`. The counter shows the selection against the whole ' +
           "set — pass `total` when the list is paged and `items` holds one page. With a filter " +
           "active, Select all applies to the filtered subset and leaves the rest of the selection alone.",
@@ -626,7 +626,7 @@ export const SelectAllWithTotal: StoryType = {
     label: "Buyer name",
     placeholder: "Select buyers",
     multiple: true,
-    selectAll: true,
+    withSelectAll: true,
   },
   render: (args) => ({
     setup: () => {
@@ -637,9 +637,9 @@ export const SelectAllWithTotal: StoryType = {
 
       // The select can only add what is loaded; the rest of the set is the consumer's to add. With a
       // query the row acted on the loaded matches only; the rest of the selection stays.
-      function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
+      function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
         if (!query) {
-          selected.value = all ? [...allIds] : [];
+          selected.value = action === "select-all" ? [...allIds] : [];
         }
       }
 
@@ -665,9 +665,9 @@ export const SelectAllWithTotal: StoryType = {
       description: {
         story:
           "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
-          "and Select all can only add the options that are loaded. `@select-all` with `selected: true` is the " +
-          "consumer's cue to select the rest of the set — every id from the server — and " +
-          "`selected: false` the cue to clear it. With a `query` the row acted on the matching options " +
+          'and Select all can only add the options that are loaded. `@select-all` with `action: "select-all"` ' +
+          "is the consumer's cue to select the rest of the set — every id from the server — and " +
+          '`action: "deselect-all"` the cue to clear it. With a `query` the row acted on the matching options ' +
           "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
           "query's matches. Bind `selected-count` too: with it a mixed row selects even when every loaded " +
           "option is already selected, so the consumer adds the rest. Without it the row cannot tell a " +
@@ -679,9 +679,9 @@ export const SelectAllWithTotal: StoryType = {
 const { items, total, allIds } = useBuyers();
 const selected = ref<string[]>([]);
 
-function onSelectAll({ selected: all, query }: { selected: boolean; query: string }) {
+function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
   if (!query) {
-    selected.value = all ? [...allIds.value] : [];
+    selected.value = action === "select-all" ? [...allIds.value] : [];
   }
 }
 </script>
@@ -693,7 +693,7 @@ function onSelectAll({ selected: all, query }: { selected: boolean; query: strin
     :total="total"
     :selected-count="selected.length"
     multiple
-    select-all
+    with-select-all
     @select-all="onSelectAll"
   />
 </template>

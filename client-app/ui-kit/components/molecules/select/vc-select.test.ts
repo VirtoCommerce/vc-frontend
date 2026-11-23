@@ -1,21 +1,27 @@
-import { ApolloClient, ApolloLink, InMemoryCache, Observable, gql } from "@apollo/client/core";
-import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { computed, defineComponent, effectScope, h, nextTick, reactive, ref } from "vue";
-import { createI18n } from "vue-i18n";
+import { defineComponent, h, nextTick, reactive, ref } from "vue";
 import * as UIKitComponents from "@/ui-kit/components";
 import { describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
+import {
+  ANSWERS,
+  ITEMS,
+  MOUNT_OPTIONS,
+  SEARCH_DEBOUNCE_MS,
+  SELECTED,
+  WITH_MESSAGES,
+  announced,
+  isSelectAllDisabled,
+  mountWithReactiveProps,
+  noop,
+  selectAllProps,
+  unhandledSelectAllProps,
+} from "@/ui-kit/test-mocks/vc-select-harness.mock";
 import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
+import type { SelectMountOptionsType } from "@/ui-kit/test-mocks/vc-select-harness.mock";
 import type { VueWrapper } from "@vue/test-utils";
-
-const ITEMS = ["Albania", "Belgium", "China"];
-
-// vc-select.vue's SEARCH_DEBOUNCE_MS: a `<script setup>` constant cannot be imported.
-const SEARCH_DEBOUNCE_MS = 300;
 
 // VcScrollbar debounces its edge measurement by 100 ms.
 const SCROLLBAR_SETTLE_MS = 160;
@@ -40,58 +46,21 @@ const OBJECT_ITEMS = [
 // order in which prefix matches are hoisted.
 const AFFIX_ITEMS = ["Abel", "Belgium"];
 
-// Real strings for the parameterised keys; with empty messages t() would return the bare key.
-const countingI18n = createI18n({
-  locale: "en",
-  legacy: false,
-  missingWarn: false,
-  messages: {
-    en: {
-      ui_kit: {
-        select: {
-          items_selected: "{0} items selected",
-          results_available: "{0} results available",
-          no_results_found: "No results found",
-          selected_of_total: "{selected} of {total}",
-          select_all_label: "Select all, {selected} of {total}",
-        },
-      },
-    },
-  },
-});
-
-const WITH_MESSAGES = { plugins: [countingI18n] };
-
-// attachTo: document.activeElement only tracks attached nodes, and a leftover instance would
-// answer the next test's queries, hence the auto-unmount.
+// MOUNT_OPTIONS attaches to the document, and a leftover instance would answer the next test's queries.
 enableAutoUnmount(afterEach);
-
-// Integration mount on purpose: the trigger, popover, list and checkbox are not stubbed.
-// Components go in as an object, not the uiKit plugin, which would duplicate html-safe under
-// lodash.merge; only maska is needed. i18n has empty messages, so t() returns keys.
-const MOUNT_OPTIONS = {
-  attachTo: document.body,
-  global: { components: UIKitComponents, directives: { maska: vMaska } },
-};
 
 const mountSelect = createWrapperFactory(mount, VcSelect, MOUNT_OPTIONS);
 
-type MountOptionsType = NonNullable<Parameters<typeof mount<typeof VcSelect>>[1]>;
-
 // Mounted untyped, items are `unknown`, which has no keys to name; the fixtures name real ones.
-type HarnessPropsType = Omit<NonNullable<MountOptionsType["props"]>, "textField" | "valueField"> &
+type HarnessPropsType = Omit<NonNullable<SelectMountOptionsType["props"]>, "textField" | "valueField"> &
   Partial<Record<"textField" | "valueField", string | ((item: never) => unknown)>>;
 
-function createWrapper(props: HarnessPropsType, slots?: MountOptionsType["slots"]) {
-  return mountSelect({ props: props as MountOptionsType["props"], slots });
+function createWrapper(props: HarnessPropsType, slots?: SelectMountOptionsType["slots"]) {
+  return mountSelect({ props: props as SelectMountOptionsType["props"], slots });
 }
 
 function createWrapperWithMessages(props: HarnessPropsType) {
-  return mountSelect({ props: props as MountOptionsType["props"], global: WITH_MESSAGES });
-}
-
-function noop() {
-  return undefined;
+  return mountSelect({ props: props as SelectMountOptionsType["props"], global: WITH_MESSAGES });
 }
 
 function spyOnWarn() {
@@ -99,18 +68,6 @@ function spyOnWarn() {
   onTestFinished(() => warn.mockRestore());
 
   return warn;
-}
-
-// Mounted through a parent so reactive arrays reach the select as they are: the mount factory
-// deep-merges props, which would copy them.
-function mountWithReactiveProps(
-  props: () => Record<string, unknown>,
-  slots?: () => Record<string, unknown> | undefined,
-  global?: MountOptionsType["global"],
-) {
-  const parent = defineComponent({ setup: () => () => h(VcSelect as never, props(), slots?.()) });
-
-  return createWrapperFactory(mount, parent, MOUNT_OPTIONS)({ global });
 }
 
 describe("VcSelect", () => {
@@ -554,13 +511,6 @@ describe("VcSelect", () => {
   });
 
   describe("select all", () => {
-    // With a handler, as a paged Select all needs one; the warnings below go without it.
-    const unhandledSelectAllProps = { items: ITEMS, multiple: true, selectAll: true };
-    const selectAllProps = { ...unhandledSelectAllProps, onSelectAll: noop };
-
-    // Albania plus 39 values no option carries.
-    const SELECTED = ["Albania", ...Array.from({ length: 39 }, (_, index) => `x${index}`)];
-
     // The consumer answers the query with the options it already holds.
     async function typeAnsweredQuery(wrapper: VueWrapper, query: string) {
       useFakeTimersInTest();
@@ -597,7 +547,7 @@ describe("VcSelect", () => {
 
     it("is ignored in single mode, with a warning", () => {
       const warn = spyOnWarn();
-      const wrapper = createWrapper({ items: ITEMS, selectAll: true });
+      const wrapper = createWrapper({ items: ITEMS, withSelectAll: true });
 
       expect(wrapper.find(".vc-select-all").exists()).toBe(false);
       expect(warn).toHaveBeenCalledWith(expect.stringContaining("only applies to `multiple`"));
@@ -662,7 +612,7 @@ describe("VcSelect", () => {
       await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[...ITEMS]]]);
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "" }]]);
     });
 
     it("shows a fully selected page of an uncounted set as checked, and clears it on a press", async () => {
@@ -675,7 +625,7 @@ describe("VcSelect", () => {
       await checkbox.trigger("change");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: false, query: "" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ action: "deselect-all", query: "" }]]);
     });
 
     it("asks for the rest of a server-side query's counted matches when only the loaded ones are selected", async () => {
@@ -697,7 +647,7 @@ describe("VcSelect", () => {
       await wrapper.get(".vc-select-all input").trigger("change");
 
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "a" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "a" }]]);
     });
 
     it("acts on the filtered subset only", async () => {
@@ -770,7 +720,7 @@ describe("VcSelect", () => {
 
       await wrapper.get(".vc-select-all input").trigger("change");
 
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: false, query: "a" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ action: "deselect-all", query: "a" }]]);
     });
 
     it("tells the consumer which query narrowed the options it acted on", async () => {
@@ -780,7 +730,7 @@ describe("VcSelect", () => {
       await wrapper.get("input").setValue("bel");
       await wrapper.get(".vc-select-all input").trigger("change");
 
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "bel" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "bel" }]]);
     });
 
     describe("development warnings", () => {
@@ -868,9 +818,9 @@ describe("VcSelect", () => {
       it.each([
         ["a total", { total: 30 }, true],
         ["a select-all handler", { onSelectAll: noop }, true],
-        ["both, with the row", { total: 30, onSelectAll: noop, selectAll: true }, false],
-        ["both, with the row bound off for now", { total: 30, onSelectAll: noop, selectAll: false }, false],
-        ["both, with the row in kebab case", { total: 30, onSelectAll: noop, "select-all": "" }, false],
+        ["both, with the row", { total: 30, onSelectAll: noop, withSelectAll: true }, false],
+        ["both, with the row bound off for now", { total: 30, onSelectAll: noop, withSelectAll: false }, false],
+        ["both, with the row in kebab case", { total: 30, onSelectAll: noop, "with-select-all": "" }, false],
       ])("warns about %s that no Select all row reads accordingly", (_label, props, warns) => {
         const warn = spyOnWarn();
 
@@ -883,7 +833,7 @@ describe("VcSelect", () => {
 
       it("warns about a selected-count that nothing reads", () => {
         const warn = spyOnWarn();
-        const counted = { items: ITEMS, multiple: true, selectAll: true, modelValue: [], selectedCount: 2 };
+        const counted = { items: ITEMS, multiple: true, withSelectAll: true, modelValue: [], selectedCount: 2 };
 
         const serverSide = {
           autocomplete: true,
@@ -895,7 +845,7 @@ describe("VcSelect", () => {
 
         createWrapper(counted);
         createWrapper({ ...counted, ...serverSide, multiple: false, modelValue: undefined });
-        createWrapper({ ...counted, ...serverSide, selectAll: false });
+        createWrapper({ ...counted, ...serverSide, withSelectAll: false });
         createWrapper({ ...counted, ...serverSide });
 
         expect(warn.mock.calls.filter(([message]) => String(message).includes("`selected-count`"))).toHaveLength(2);
@@ -947,7 +897,10 @@ describe("VcSelect", () => {
       await wrapper.setProps({ modelValue: [...ITEMS] });
       await checkbox.trigger("click");
 
-      expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "" }], [{ selected: false, query: "" }]]);
+      expect(wrapper.emitted("selectAll")).toEqual([
+        [{ action: "select-all", query: "" }],
+        [{ action: "deselect-all", query: "" }],
+      ]);
     });
 
     it("checks once the consumer reports every match of a server-side query selected", async () => {
@@ -1144,12 +1097,6 @@ describe("VcSelect", () => {
     describe("a server-side query the consumer answers later", () => {
       beforeEach(useFakeTimersInTest);
 
-      // Each answer carries the query's selected matches, as `selected-count` asks of a paged consumer.
-      const ANSWERS: Record<string, { items: string[]; total: number; selectedCount?: number }> = {
-        "": { items: ITEMS, total: 500, selectedCount: SELECTED.length },
-        a: { items: ["Albania", "Andorra", "Austria"], total: 10, selectedCount: 1 },
-      };
-
       // When `loading` rises says nothing about the answer: `late` raises it after a timer, `sync` answers in `@search`.
       type RaiseType = "in-search" | "late" | "sync";
 
@@ -1215,11 +1162,6 @@ describe("VcSelect", () => {
         count: wrapper.get(".vc-select-all__count").text(),
         label: wrapper.get(".vc-select-all input").attributes("aria-label"),
       });
-
-      const isSelectAllDisabled = (wrapper: VueWrapper) =>
-        wrapper.get(".vc-select-all input").attributes("disabled") !== undefined;
-
-      const announced = (wrapper: VueWrapper) => wrapper.get('[aria-live="polite"]').text();
 
       it("counts the previous query until the answer to a typed one lands", async () => {
         const { wrapper, answer } = mountServerConsumer();
@@ -1350,7 +1292,7 @@ describe("VcSelect", () => {
         await answer();
         await wrapper.get(".vc-select-all input").trigger("change");
 
-        expect(select.emitted("selectAll")).toEqual([[{ selected: true, query: "a" }]]);
+        expect(select.emitted("selectAll")).toEqual([[{ action: "select-all", query: "a" }]]);
       });
 
       it("takes the options on screen as the answer to a query the consumer skips and echoes", async () => {
@@ -1371,173 +1313,6 @@ describe("VcSelect", () => {
         expect(counted(wrapper)).toEqual({ count: "1 of 10", label: "Select all, 1 of 10" });
         expect(isSelectAllDisabled(wrapper)).toBe(false);
         expect(announced(wrapper)).toBe("3 results available");
-      });
-
-      describe("an Apollo `useQuery` consumer echoing the query its result answers", () => {
-        const SEARCH_DOCUMENT = gql`
-          query Search($keyword: String!) {
-            search(keyword: $keyword) {
-              items
-              total
-              selectedCount
-            }
-          }
-        `;
-
-        type ApolloConsumerOptionsType = {
-          fetchPolicy: "network-only" | "cache-first";
-          debounce?: number;
-          skipShort?: boolean;
-        };
-
-        function mountApolloConsumer({ fetchPolicy, debounce, skipShort }: ApolloConsumerOptionsType) {
-          const requests: { keyword: string; respond: () => void }[] = [];
-          const client = new ApolloClient({
-            cache: new InMemoryCache(),
-            link: new ApolloLink(
-              (operation) =>
-                new Observable((observer) => {
-                  const keyword = operation.variables.keyword as string;
-
-                  requests.push({
-                    keyword,
-                    respond: () => {
-                      observer.next({ data: { search: { __typename: "SearchResult", ...ANSWERS[keyword] } } });
-                      observer.complete();
-                    },
-                  });
-                }),
-            ),
-          });
-          const keyword = ref("");
-          const enabled = computed(() => !skipShort || keyword.value.length !== 1);
-          const scope = effectScope();
-
-          onTestFinished(() => scope.stop());
-
-          const { result, loading, query, variables } = scope.run(() =>
-            provideApolloClient(client)(() =>
-              useQuery<{ search: (typeof ANSWERS)[string] }, { keyword: string }>(
-                SEARCH_DOCUMENT,
-                () => ({ keyword: keyword.value }),
-                () => ({ fetchPolicy, keepPreviousResult: true, debounce, enabled: enabled.value }),
-              ),
-            ),
-          )!;
-          // The `answered-query` recipe: a skipped query is answered at once; otherwise the query whose result is in.
-          const answeredQuery = computed<string | undefined>((previous) => {
-            if (!enabled.value) {
-              return variables.value?.keyword;
-            }
-
-            return loading.value || !query.value ? previous : query.value.variables?.keyword;
-          });
-
-          const wrapper = mountWithReactiveProps(
-            () => ({
-              ...selectAllProps,
-              ...result.value?.search,
-              answeredQuery: answeredQuery.value,
-              loading: loading.value,
-              autocomplete: true,
-              serverFilter: true,
-              modelValue: SELECTED,
-              onSearch: (value: string) => {
-                keyword.value = value;
-              },
-            }),
-            undefined,
-            WITH_MESSAGES,
-          );
-
-          async function respond(expected: string) {
-            const request = requests.shift();
-
-            expect(request?.keyword).toBe(expected);
-            request?.respond();
-            await vi.advanceTimersByTimeAsync(0);
-          }
-
-          return { wrapper, requests, respond };
-        }
-
-        async function typeInto(wrapper: VueWrapper, value: string) {
-          await wrapper.get("input").setValue(value);
-          await vi.advanceTimersByTimeAsync(value ? SEARCH_DEBOUNCE_MS : 0);
-        }
-
-        const state = (wrapper: VueWrapper) => ({
-          count: wrapper.get(".vc-select-all__count").text(),
-          disabled: isSelectAllDisabled(wrapper),
-        });
-
-        it("counts the previous result while every query goes to the network", async () => {
-          const { wrapper, respond } = mountApolloConsumer({ fetchPolicy: "network-only" });
-
-          await respond("");
-          await wrapper.get("input").trigger("click");
-          await typeInto(wrapper, "a");
-
-          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: true });
-
-          await respond("a");
-
-          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
-
-          await typeInto(wrapper, "");
-
-          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: true });
-
-          await respond("");
-
-          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
-        });
-
-        it("counts a cached result at once", async () => {
-          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "cache-first" });
-
-          await respond("");
-          await wrapper.get("input").trigger("click");
-          await typeInto(wrapper, "a");
-          await respond("a");
-          await typeInto(wrapper, "");
-
-          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
-
-          await typeInto(wrapper, "a");
-
-          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
-          expect(requests).toEqual([]);
-        });
-
-        it("counts the previous result while `useQuery` debounces the query", async () => {
-          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "network-only", debounce: 100 });
-
-          await respond("");
-          await wrapper.get("input").trigger("click");
-          await typeInto(wrapper, "a");
-          await vi.advanceTimersByTimeAsync(50);
-
-          expect(requests).toEqual([]);
-          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: true });
-
-          await vi.advanceTimersByTimeAsync(50);
-          await respond("a");
-
-          expect(state(wrapper)).toEqual({ count: "1 of 10", disabled: false });
-        });
-
-        it("takes the result on screen as the answer to a query it skips", async () => {
-          const { wrapper, requests, respond } = mountApolloConsumer({ fetchPolicy: "network-only", skipShort: true });
-
-          await respond("");
-          await wrapper.get("input").trigger("click");
-          await typeInto(wrapper, "a");
-
-          expect(requests).toEqual([]);
-          expect(state(wrapper)).toEqual({ count: "40 of 500", disabled: false });
-          expect(announced(wrapper)).toBe("3 results available");
-        });
       });
     });
 
@@ -1629,7 +1404,7 @@ describe("VcSelect", () => {
     });
 
     it("toggles when the visible label text is clicked", async () => {
-      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, withSelectAll: true, modelValue: [] });
 
       await wrapper.get(".vc-select-all__text").trigger("click");
 
@@ -1924,7 +1699,11 @@ describe("VcSelect", () => {
 
     it.each([
       ["a next page", { hasNextPage: true, loading: false, onLoadMore: noop }, true],
-      ["a total beyond the loaded options", { multiple: true, selectAll: true, onSelectAll: noop, total: 30 }, true],
+      [
+        "a total beyond the loaded options",
+        { multiple: true, withSelectAll: true, onSelectAll: noop, total: 30 },
+        true,
+      ],
       [
         "a server filter",
         { hasNextPage: true, loading: false, onLoadMore: noop, serverFilter: true, onSearch: noop, answeredQuery: "" },
@@ -1933,7 +1712,7 @@ describe("VcSelect", () => {
       ["the whole set loaded", {}, false],
       [
         "a total equal to the loaded options",
-        { multiple: true, selectAll: true, onSelectAll: noop, total: ITEMS.length },
+        { multiple: true, withSelectAll: true, onSelectAll: noop, total: ITEMS.length },
         false,
       ],
       ["no autocomplete", { hasNextPage: true, loading: false, onLoadMore: noop, autocomplete: false }, false],
@@ -2191,8 +1970,8 @@ describe("VcSelect", () => {
     it.each([
       ["a first page with nothing to show yet", { items: [], loading: true }],
       ["a further page on its way", { items: ITEMS, loading: true, hasNextPage: true }],
-    ])("puts the loading slot in place of the spinner for %s", (_label, props) => {
-      const wrapper = createWrapper(props, { loading: () => h("span", { class: "probe-loading" }, "wait") });
+    ])("puts the `#loader` slot in place of the spinner for %s", (_label, props) => {
+      const wrapper = createWrapper(props, { loader: () => h("span", { class: "probe-loading" }, "wait") });
 
       expect(wrapper.findAll(".probe-loading")).toHaveLength(1);
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
@@ -2459,7 +2238,7 @@ describe("VcSelect", () => {
           onSearch: noop,
           answeredQuery: "",
           multiple: true,
-          selectAll: true,
+          withSelectAll: true,
           modelValue: [],
           onSelectAll: () => undefined,
         });
@@ -2486,7 +2265,7 @@ describe("VcSelect", () => {
         await wrapper.setProps({ answeredQuery: "chi" });
         await wrapper.get(".vc-select-all input").trigger("change");
 
-        expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "chi" }]]);
+        expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "chi" }]]);
       });
 
       it("keeps paging and Select all for a query the consumer skips", async () => {
@@ -2499,7 +2278,7 @@ describe("VcSelect", () => {
           hasNextPage: true,
           loading: false,
           multiple: true,
-          selectAll: true,
+          withSelectAll: true,
           modelValue: [],
           onSelectAll: () => undefined,
         });
@@ -2514,7 +2293,7 @@ describe("VcSelect", () => {
 
         await wrapper.get(".vc-select-all input").trigger("change");
 
-        expect(wrapper.emitted("selectAll")).toEqual([[{ selected: true, query: "be" }]]);
+        expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "be" }]]);
       });
 
       it("hands paging back once the answer lands", async () => {
@@ -2562,8 +2341,6 @@ describe("VcSelect", () => {
 
         return wrapper;
       }
-
-      const announced = (wrapper: VueWrapper) => wrapper.get('[aria-live="polite"]').text();
 
       it("stays silent until the query goes out", async () => {
         const wrapper = createWrapperWithMessages({
@@ -3246,7 +3023,7 @@ describe("VcSelect", () => {
     });
 
     it("closes the list when focus leaves Select all for the page", async () => {
-      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, withSelectAll: true, modelValue: [] });
       const input = wrapper.get("input");
       const outside = document.createElement("button");
       document.body.appendChild(outside);
@@ -3330,7 +3107,7 @@ describe("VcSelect", () => {
     });
 
     it("keeps the list open when focus moves to Select all", async () => {
-      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, withSelectAll: true, modelValue: [] });
       const input = wrapper.get("input");
 
       await input.trigger("click");
@@ -3905,7 +3682,7 @@ const DialogHost = defineComponent({
     clearable: { type: Boolean, default: false },
     multiple: { type: Boolean, default: false },
     readonly: { type: Boolean, default: false },
-    selectAll: { type: Boolean, default: false },
+    withSelectAll: { type: Boolean, default: false },
     slotted: { type: Boolean, default: false },
     selected: { type: [String, Array], default: undefined },
   },
@@ -3928,7 +3705,7 @@ const DialogHost = defineComponent({
           :clearable="clearable"
           :multiple="multiple"
           :readonly="readonly"
-          :select-all="selectAll"
+          :with-select-all="withSelectAll"
           :model-value="selected"
         >
           <template v-if="slotted" #selected="{ item }">{{ item }}</template>
@@ -4020,7 +3797,7 @@ describe("VcSelect inside a dialog popover", () => {
   });
 
   it("consumes Escape from the Select all checkbox and hands focus back to the trigger", async () => {
-    const wrapper = mountDialogHost({ props: { multiple: true, selectAll: true } });
+    const wrapper = mountDialogHost({ props: { multiple: true, withSelectAll: true } });
     await openDialogAndSelect(wrapper);
 
     const checkbox = wrapper.get(".vc-select-all input");

@@ -7,7 +7,7 @@ interface IDevWarningProps<T> {
   modelValue?: unknown;
   multiple?: boolean;
   valueField?: unknown;
-  selectAll?: boolean;
+  withSelectAll?: boolean;
   total?: number;
   selectedCount?: number;
   hasNextPage?: boolean;
@@ -38,15 +38,15 @@ export function useSelectDevWarnings<T>(
 }
 
 function warnSelectAll<T>(props: IDevWarningProps<T>, vnodeProps: VNodePropsType): void {
-  if (props.selectAll && !props.multiple) {
+  if (props.withSelectAll && !props.multiple) {
     // eslint-disable-next-line no-console
-    console.warn("VcSelect: `select-all` only applies to `multiple` selects and is ignored here.");
+    console.warn("VcSelect: `with-select-all` only applies to `multiple` selects and is ignored here.");
   }
 
   // A paged list's Select all can only add what is loaded; the rest of the set is the consumer's.
   // Truthy, not present: `@select-all="undefined"` handles nothing. `.once` is not exempt either — a
   // paged list needs the handler on every press.
-  if (props.selectAll && props.multiple && !vnodeProps.onSelectAll) {
+  if (props.withSelectAll && props.multiple && !vnodeProps.onSelectAll) {
     let warnedPaged = false;
 
     watch(
@@ -56,7 +56,7 @@ function warnSelectAll<T>(props: IDevWarningProps<T>, vnodeProps: VNodePropsType
           warnedPaged = true;
           // eslint-disable-next-line no-console
           console.warn(
-            "VcSelect: a paged `select-all` without a `@select-all` handler selects only the loaded " +
+            "VcSelect: a paged `with-select-all` without a `@select-all` handler selects only the loaded " +
               "options; add the rest of the set in `@select-all`.",
           );
         }
@@ -65,26 +65,26 @@ function warnSelectAll<T>(props: IDevWarningProps<T>, vnodeProps: VNodePropsType
     );
   }
 
-  if (props.selectedCount !== undefined && !(props.multiple && props.selectAll)) {
+  if (props.selectedCount !== undefined && !(props.multiple && props.withSelectAll)) {
     // eslint-disable-next-line no-console
-    console.warn("VcSelect: `selected-count` only counts for `multiple` + `select-all`; it is ignored here.");
+    console.warn("VcSelect: `selected-count` only counts for `multiple` + `with-select-all`; it is ignored here.");
   }
 
   watchUncountedSelectAll(props);
 
   if (
-    !("select-all" in vnodeProps || "selectAll" in vnodeProps) &&
+    !("with-select-all" in vnodeProps || "withSelectAll" in vnodeProps) &&
     (props.total !== undefined || vnodeProps.onSelectAll)
   ) {
     // eslint-disable-next-line no-console
-    console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `select-all`.");
+    console.warn("VcSelect: `total` and `@select-all` belong to the Select all row; add `with-select-all`.");
   }
 }
 
 // Without the count a fully selected page cannot be told from the whole set, so the row clears there
 // instead of asking for the rest.
 function watchUncountedSelectAll<T>(props: IDevWarningProps<T>): void {
-  if (!(props.selectAll && props.multiple)) {
+  if (!(props.withSelectAll && props.multiple)) {
     return;
   }
 
@@ -99,7 +99,7 @@ function watchUncountedSelectAll<T>(props: IDevWarningProps<T>): void {
         warnedUncounted = true;
         // eslint-disable-next-line no-console
         console.warn(
-          "VcSelect: a paged `select-all` needs `selected-count` to select the rest — the selected options, " +
+          "VcSelect: a paged `with-select-all` needs `selected-count` to select the rest — the selected options, " +
             "and under a `server-filter` query the selected matches among `total`; without it a fully selected " +
             "page clears.",
         );
