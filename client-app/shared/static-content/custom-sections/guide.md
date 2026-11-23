@@ -8,12 +8,15 @@ class they refuse, a selector that reaches outside the section, a keyframes name
 library, an element with more than 64 attributes, a kit tag with `hasSideEffects` inside an element whose behavior
 repeats its children, an `h1`, an image without `alt`, a link with nothing to read, or `outline: none`. A literal
 color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text written into the
-template get only a warning. The storefront leaves out whatever still reaches a page against them.
+template get only a warning. If a section against the refused rules still reaches a page, the storefront leaves
+out what breaks them, except an `h1`, an image without `alt`, a link with nothing to read and `outline: none`: those
+render as written.
 
 - Reach for a kit tag before hand-built markup: a button, link, badge, chip, alert, rating, specification row,
   icon shape or styled text from the kit looks and behaves as the rest of the storefront, in every theme preset.
-- One root element. The storefront sets `data-sb-type` and the setting variables (`--setting-<id>`) on it and wraps
-  it in a box of its own: nothing the section draws leaves that box.
+- One root element. The storefront sets `data-sb-type` and the setting variables on it and wraps it in a box of its
+  own: nothing the section draws leaves that box. A `color-token`, `images`, `number`, `slider` or `checkbox`
+  setting gets a variable, `--setting-<id>` with `_` written as `-`; the other types get none.
 - Classes are the section's own: `{type}`, `{type}__part`, `{type}--modifier`. The storefront's utility classes are
   not available, and any other class is dropped.
 - CSS reaches only the section; `:scope` is the root. Keyframes are named `{type}__…`.
@@ -84,6 +87,8 @@ The page may read right to left.
 - A kit tag takes no `class` or `style`. Style a `vc-button` from an element around it: `--vc-button-radius`,
   `--vc-button-min-width`, `--vc-button-icon-size` and `--vc-button-text-transform` reach the button. Its largest
   `size` is `lg`; a bigger button is that one under a `scale` on its wrapper.
+- An element selector also matches inside a kit tag, which renders storefront components: select the section's own
+  elements by their class (`.custom-x__link`, not `.custom-x__body a`).
 
 ## Keyboard and focus
 
@@ -103,8 +108,8 @@ The page may read right to left.
 - A kit tag with `hasSideEffects` in the kit, such as `vc-products`, is left out inside an element whose behavior
   repeats its children: its copy would search or report a view again.
 - Put transitions and animations under `@media (prefers-reduced-motion: no-preference)`. Behaviors already show
-  their end state at once when motion is reduced.
-- In an element with `data-count-up`, and in the `data-countdown-part` children of a countdown, the behavior writes
+  their end state at once when motion is reduced, and `data-inview` sets `data-visible` if it fails to load.
+- In an element with `data-count-up`, and in the `data-countdown-part` elements of a countdown, the behavior writes
   the text: what the template writes there is left out, also while the behavior loads. Write the value as the text
   too, as the stats pattern does: it shows if the behavior fails to load.
 

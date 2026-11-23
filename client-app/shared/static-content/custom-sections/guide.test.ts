@@ -53,7 +53,11 @@ describe("the section authors' guide", () => {
       "A literal color, a physical side, a skipped heading level, motion outside `prefers-reduced-motion` and text " +
         "written into the template get only a warning.",
     );
-    expect(intro).toContain("The storefront leaves out whatever still reaches a page against them.");
+    expect(intro).toContain(
+      "If a section against the refused rules still reaches a page, the storefront leaves out what breaks them, " +
+        "except an `h1`, an image without `alt`, a link with nothing to read and `outline: none`: those render as " +
+        "written.",
+    );
   });
 
   it("lists the five selector rules the filter holds", () => {
@@ -90,7 +94,7 @@ describe("the section authors' guide", () => {
 
     expect(guide).toContain('data-count-up="{{ item.value }}">{{ item.value }}</span>');
     expect(text).toContain(
-      "In an element with `data-count-up`, and in the `data-countdown-part` children of a countdown",
+      "In an element with `data-count-up`, and in the `data-countdown-part` elements of a countdown",
     );
     expect(text).toContain(
       "Write the value as the text too, as the stats pattern does: it shows if the behavior fails to load.",
