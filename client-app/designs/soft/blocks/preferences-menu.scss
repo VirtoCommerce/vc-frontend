@@ -1,0 +1,66 @@
+// A smaller pill, and a two-column panel on the theme's plate: currency and appearance beside the languages, each
+// group an outlined card.
+.preferences-menu {
+  // The plate surface the organizations panel beside it takes; the rows are transparent on it.
+  --vc-popover-bg-color: var(--vc-plate-bg-color, var(--color-additional-50));
+  --vc-popover-padding: theme("spacing.4");
+  --vc-popover-border-width: 1px;
+
+  // Clear air before the pill, so it does not read as one more icon link.
+  @apply ms-2;
+
+  &__trigger {
+    @apply px-[0.6875rem] py-[0.4375rem] text-[0.78125rem]/[1.55];
+  }
+
+  &__value {
+    @apply tracking-[0.02em];
+  }
+
+  &__panel {
+    // The card's padding and border surround the panel, so the card keeps the design's width: a fixed one, as a
+    // panel sized by its content grows while the flags load and drags its start edge across the trigger.
+    $inset: calc(2 * (var(--vc-popover-padding) + var(--vc-popover-border-width)));
+
+    @apply grid grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-4;
+
+    width: calc(38.75rem - #{$inset});
+
+    &--single {
+      @apply grid-cols-1;
+
+      width: calc(23.25rem - #{$inset});
+    }
+  }
+
+  &__column {
+    @apply flex min-w-0 flex-col gap-4 pb-0;
+
+    & + & {
+      @apply border-s-0;
+    }
+  }
+
+  &__group {
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] border border-neutral-200 p-2;
+  }
+
+  &__heading {
+    @apply mb-1 px-2 py-0 font-bold uppercase tracking-wide;
+  }
+
+  // The rows of both lists.
+  &__list {
+    --vc-menu-item-bg-color: transparent;
+    --vc-menu-item-padding-x: theme("spacing.2");
+    --vc-menu-item-radius: calc(var(--vc-radius) - 2px);
+  }
+
+  &__modes {
+    @apply mx-0 mt-0 w-full;
+  }
+
+  &__mode {
+    @apply flex-1;
+  }
+}

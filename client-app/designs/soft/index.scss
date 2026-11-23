@@ -13,6 +13,7 @@
     @include meta.load-css("blocks/vc-container");
     @include meta.load-css("blocks/organization-switcher");
     @include meta.load-css("blocks/organization-list");
+    @include meta.load-css("blocks/preferences-menu");
   }
 
   html.dark[data-design="soft"] {
