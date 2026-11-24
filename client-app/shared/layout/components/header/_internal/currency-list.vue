@@ -12,19 +12,21 @@
       truncate
       @click="select(currency.code)"
     >
-      <span class="currency-list__symbol">{{ currency.symbol }}</span>
+      <span class="currency-list__symbol" aria-hidden="true">{{ currency.symbol }}</span>
 
       <span class="currency-list__code">{{ currency.code }}</span>
 
-      <span class="currency-list__name">{{ currency.englishName }}</span>
+      <span class="currency-list__name">{{ getCurrencyName(currency) }}</span>
     </VcMenuItem>
   </VcScrollbar>
 </template>
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useCurrencySwitch } from "@/shared/layout/composables/useCurrencySwitch";
 import { useListboxKeyboard } from "@/shared/layout/composables/useListboxKeyboard";
+import type { ICurrency } from "@/core/types";
 import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
@@ -34,10 +36,25 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 
 const { currentCurrency, supportedCurrencies, selectCurrency } = useCurrencySwitch();
+const { currentLanguage } = useLanguages();
 
 const list = useTemplateRef<ComponentPublicInstance>("list");
 
 useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined);
+
+// In the page language, capitalised as a list entry; the platform's English name where the browser lacks the code.
+function getCurrencyName(currency: ICurrency): string {
+  const locale = currentLanguage.value?.cultureName;
+  let name: string | undefined;
+
+  try {
+    name = new Intl.DisplayNames(locale, { type: "currency", fallback: "none" }).of(currency.code);
+  } catch {
+    // A malformed locale or currency code.
+  }
+
+  return name ? name.charAt(0).toLocaleUpperCase(locale) + name.slice(1) : currency.englishName;
+}
 
 function select(code: string): void {
   void selectCurrency(code);
