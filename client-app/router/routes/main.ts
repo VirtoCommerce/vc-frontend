@@ -29,7 +29,6 @@ const Account = () => import("@/pages/account/index.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
 const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
-const CompareProducts = () => import("@/pages/compare-products.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const LoyaltyCatalog = () => import("@/pages/loyalty-catalog.vue");
@@ -109,7 +108,6 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: ROUTES.SEARCH.PATH, name: ROUTES.SEARCH.NAME, component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
-  { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
   ...cartRoutes,
   ...checkoutRoutes,
@@ -142,7 +140,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   {
     path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
-    name: "LoyaltyCatalogMatcher",
+    name: ROUTES.LOYALTY_CATALOG_MATCHER.NAME,
     component: Matcher,
     props: true,
     beforeEnter: (_to, _from, next) => {
@@ -159,5 +157,5 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
 
   /** NOTE: Always leave it last. */
-  { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
+  { path: "/:pathMatch(.*)*", name: ROUTES.MATCHER.NAME, component: Matcher, props: true },
 ];

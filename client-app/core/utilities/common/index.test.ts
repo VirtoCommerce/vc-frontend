@@ -14,8 +14,10 @@ import {
   areStringOrNumberEqual,
   buildRedirectUrl,
   humanizeName,
+  getLanguageCode,
   parseJsonStringArray,
   toFirstString,
+  toNonEmptyString,
 } from "./index";
 import type { RouteLocationNormalized } from "vue-router";
 
@@ -612,6 +614,16 @@ describe("humanizeName", () => {
   });
 });
 
+describe("getLanguageCode", () => {
+  it.each([
+    ["de-DE", "de"],
+    ["DE", "de"],
+    ["sr-Latn-RS", "sr"],
+  ])("takes the language of %s", (cultureName, expected) => {
+    expect(getLanguageCode(cultureName)).toBe(expected);
+  });
+});
+
 describe("parseJsonStringArray", () => {
   it("returns the array when the value is a JSON array of strings", () => {
     expect(parseJsonStringArray('["gtin","code"]')).toEqual(["gtin", "code"]);
@@ -660,5 +672,16 @@ describe("toFirstString", () => {
     expect(toFirstString(undefined)).toBe("");
     expect(toFirstString(null)).toBe("");
     expect(toFirstString(150701)).toBe("");
+  });
+});
+
+describe("toNonEmptyString", () => {
+  it("returns a non-empty string as is", () => {
+    expect(toNonEmptyString("Home")).toBe("Home");
+    expect(toNonEmptyString(" ")).toBe(" ");
+  });
+
+  it.each([[""], [undefined], [null], [0], [["Home"]], [{}]])("returns undefined for %j", (value) => {
+    expect(toNonEmptyString(value)).toBeUndefined();
   });
 });

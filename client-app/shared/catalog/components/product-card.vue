@@ -30,7 +30,7 @@
       >
         <AddToList :product="product" />
 
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+        <ExtensionPointList category="productActions" :product="product" :condition-params="product" />
       </VcProductActions>
     </template>
 
@@ -166,7 +166,6 @@ import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { getPurchasableVariationsCount, getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";

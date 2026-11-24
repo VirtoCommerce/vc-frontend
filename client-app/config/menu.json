@@ -12,15 +12,6 @@
           "priority": 0
         },
         {
-          "id": "compare",
-          "route": {
-            "name": "CompareProducts"
-          },
-          "title": "shared.layout.header.menu.compare",
-          "icon": "compare",
-          "priority": 10
-        },
-        {
           "id": "lists",
           "route": {
             "name": "Lists"
@@ -184,14 +175,6 @@
           "title": "shared.layout.header.menu.catalog",
           "icon": "cube",
           "isCatalogItem": true
-        },
-        {
-          "id": "compare",
-          "route": {
-            "name": "CompareProducts"
-          },
-          "title": "shared.layout.header.menu.compare",
-          "icon": "compare"
         },
         {
           "id": "bulk-order",

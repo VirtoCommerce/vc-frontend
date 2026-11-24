@@ -5,6 +5,7 @@ declare module "vue" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
     VcEmptyPage: typeof Components.VcEmptyPage;
+    VcFrame: typeof Components.VcFrame;
     VcLayout: typeof Components.VcLayout;
   }
 }

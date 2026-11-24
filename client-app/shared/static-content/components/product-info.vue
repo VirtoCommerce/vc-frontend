@@ -82,8 +82,9 @@ function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) 
   return {};
 }
 
+// A block is a part of the product; a page section of the same type would render as a page-wide section here.
 function shouldShowBlock(block: NonNullable<IPageContent["blocks"]>[number]) {
-  if (BLOCKS_TO_HIDE.includes(block.type ?? "")) {
+  if (BLOCKS_TO_HIDE.includes(block.type ?? "") || !getRegisteredSection(ProductBlocks, block.type)) {
     return false;
   }
 

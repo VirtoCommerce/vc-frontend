@@ -1,2 +1,3 @@
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
+export { default as VcFrame } from "./frame/vc-frame.vue";
 export { default as VcLayout } from "./layout/vc-layout.vue";
