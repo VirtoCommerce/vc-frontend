@@ -1,5 +1,4 @@
-// A smaller pill, and a two-column panel on the theme's plate: currency and appearance beside the languages, each
-// group an outlined card.
+// A two-column panel on the theme's plate: currency and appearance beside the languages, each group an outlined card.
 .preferences-menu {
   // The plate surface the organizations panel beside it takes; the rows are transparent on it.
   --vc-popover-bg-color: var(--vc-plate-bg-color, var(--color-additional-50));
@@ -18,8 +17,7 @@
   }
 
   &__panel {
-    // The card's padding and border surround the panel, so the card keeps the design's width: a fixed one, as a
-    // panel sized by its content grows while the flags load and drags its start edge across the trigger.
+    // The card's padding and border surround the panel, so the panel leaves them out of the design's card width.
     $inset: calc(2 * (var(--vc-popover-padding) + var(--vc-popover-border-width)));
 
     @apply grid grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-4;
@@ -49,7 +47,6 @@
     @apply mb-1 px-2 py-0 font-bold uppercase tracking-wide;
   }
 
-  // The rows of both lists.
   &__list {
     --vc-menu-item-bg-color: transparent;
     --vc-menu-item-padding-x: theme("spacing.2");

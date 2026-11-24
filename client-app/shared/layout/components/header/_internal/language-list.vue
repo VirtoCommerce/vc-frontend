@@ -50,7 +50,6 @@ function select(cultureName: string): void {
 
 <style lang="scss">
 .language-list {
-  // The cap of the dropdown the languages had in the top header.
   @apply max-h-48;
 
   &__flag {

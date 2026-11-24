@@ -123,12 +123,10 @@ const triggerLabel = computed(() =>
 .preferences-menu {
   $opened: "";
 
-  // The surface of the language and currency dropdowns in the top header.
   --vc-popover-bg-color: var(--color-additional-50);
 
   &__trigger {
     --border-color: theme("colors.neutral.200");
-    // The chevron of the old top header selectors.
     --vc-icon-color: theme("colors.primary.500");
 
     @apply flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[--border-color] px-3 py-1.5 text-sm text-[--header-bottom-link-color];

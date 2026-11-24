@@ -68,7 +68,6 @@ function select(code: string): void {
 
 <style lang="scss">
 .currency-list {
-  // The cap of the dropdown the currencies had in the top header.
   @apply max-h-48;
 
   &__symbol {
