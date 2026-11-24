@@ -613,6 +613,7 @@
 
 **VcTabSwitchGroup** (`client-app/ui-kit/components/molecules/tab-switch-group/vc-tab-switch-group.vue`)
 - v-model: the checked VcTabSwitch value
+- Props: direction (horizontal/vertical; vertical stacks the items, each as wide as the group, and sets aria-orientation)
 - Emits: change
 - Slots: default (VcTabSwitch items); name the group with aria-label or aria-labelledby
 - Tokens: --vc-tab-switch-group-gap, -padding, -radius, -bg-color

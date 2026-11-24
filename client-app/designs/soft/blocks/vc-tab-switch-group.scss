@@ -13,6 +13,12 @@
   --vc-tab-switch-font-weight: 400;
   --vc-tab-switch-checked-font-weight: 600;
 
+  // Stacked rows cannot be pills: the track takes the theme radius, and the rows and the pill follow its curve.
+  &--direction--vertical {
+    --vc-tab-switch-group-radius: var(--vc-radius);
+    --vc-tab-switch-radius: calc(var(--vc-tab-switch-group-radius) - var(--vc-tab-switch-group-padding, 0px));
+  }
+
   &__pill {
     display: block;
     border-radius: var(--vc-tab-switch-radius);

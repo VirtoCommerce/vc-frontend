@@ -15,7 +15,13 @@
           {{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}
         </VcLabel>
 
-        <VcTabSwitchGroup v-model="sharingScope" :aria-labelledby="scopeLabelId" class="share-wishlist-modal__scopes">
+        <VcTabSwitchGroup
+          v-model="sharingScope"
+          :direction="areScopesStacked ? 'vertical' : 'horizontal'"
+          :aria-labelledby="scopeLabelId"
+          class="share-wishlist-modal__scopes"
+          :class="{ 'share-wishlist-modal__scopes--stacked': areScopesStacked }"
+        >
           <VcTabSwitch
             v-for="scope in listSharingScopes"
             :key="scope.id"
@@ -99,13 +105,14 @@
 </template>
 
 <script setup lang="ts">
-import { useClipboard } from "@vueuse/core";
+import { useBreakpoints, useClipboard } from "@vueuse/core";
 import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useComponentId } from "@/ui-kit/composables";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
@@ -121,10 +128,13 @@ const props = defineProps<IProps>();
 // The registry keys scopes by raw string; core's enum is one of those strings.
 const PRIVATE_SCOPE: string = WishlistScopeType.Private;
 const ANYONE_ANONYMOUS_SCOPE: string = WishlistScopeType.AnyoneAnonymous;
+// A row fits three scopes in every locale; a fourth wraps its labels in the longer ones.
+const MAX_SCOPES_IN_ROW = 3;
 
 const { t } = useI18n();
 
 const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
 const notifications = useNotifications();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
@@ -163,6 +173,7 @@ const listSharingScopes = computed(() => {
     icon: scope.icon,
   }));
 });
+const areScopesStacked = computed(() => isMobile.value || listSharingScopes.value.length > MAX_SCOPES_IN_ROW);
 
 const activeScope = computed(() => getSharingScope(sharingScope.value));
 // Such a scope stays listed but must not offer its controls.
@@ -312,6 +323,10 @@ async function copySharingLink() {
 
   &__scopes {
     @apply mt-2;
+  }
+
+  &__scopes--stacked {
+    @apply w-full;
   }
 
   &__scope {

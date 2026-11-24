@@ -65,6 +65,7 @@ vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifica
 vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
 
 const scopeAvailable = ref(true);
+const asyncScopeAvailable = ref(true);
 
 const controls = {
   canSave: ref(false),
@@ -314,6 +315,7 @@ beforeAll(() => {
     scope: ASYNC_SCOPE,
     labelKey: "test_module.async_scope.label",
     icon: "test-glyph",
+    isAvailable: () => asyncScopeAvailable.value,
     element: AsyncScopeControls,
   });
 });
@@ -325,6 +327,7 @@ beforeEach(() => {
   mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());
   scopeAvailable.value = true;
+  asyncScopeAvailable.value = true;
   controls.canSave.value = false;
   controls.dirty.value = false;
   controls.payload.value = {};
@@ -338,6 +341,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
 });
 
 describe("ShareWishlistModal", () => {
@@ -425,8 +429,57 @@ describe("ShareWishlistModal", () => {
       expect(component.getByRole("radiogroup")).toHaveAccessibleName(
         "shared.wishlists.share_wishlist_modal.who_can_access_label",
       );
-      // A fieldset around the radiogroup would announce a second group under the same name.
       expect(component.queryByRole("group")).toBeNull();
+    });
+
+    describe("its layout", () => {
+      function stubViewportWidth(width: number) {
+        vi.stubGlobal(
+          "matchMedia",
+          vi.fn((query: string) => {
+            const [, bound, limit] = /(min|max)-width:\s*([\d.]+)px/.exec(query) ?? [];
+
+            return {
+              matches: bound === "max" ? width <= Number(limit) : width >= Number(limit),
+              media: query,
+              addEventListener: vi.fn(),
+              removeEventListener: vi.fn(),
+            };
+          }),
+        );
+      }
+
+      function showCoreScopesOnly() {
+        scopeAvailable.value = false;
+        asyncScopeAvailable.value = false;
+      }
+
+      it("is a row of the three core scopes from md up", () => {
+        stubViewportWidth(768);
+        showCoreScopesOnly();
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).not.toHaveAttribute("aria-orientation");
+      });
+
+      it("stacks the scopes below md", () => {
+        stubViewportWidth(767);
+        showCoreScopesOnly();
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).toHaveAttribute("aria-orientation", "vertical");
+      });
+
+      it("stacks the scopes at any width once a fourth is listed", () => {
+        stubViewportWidth(768);
+        scopeAvailable.value = false;
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).toHaveAttribute("aria-orientation", "vertical");
+      });
     });
 
     it("is a single tab stop: the selected scope", async () => {
