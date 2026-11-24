@@ -122,6 +122,7 @@ describe("useSelect with a multiple model of items", () => {
     const { isActiveItem, isSameItem } = setupMultiple([{ ...COUNTRIES[1] }]);
 
     expect(isActiveItem(COUNTRIES[1])).toBe(true);
+    expect(isSameItem(COUNTRIES[1], { ...COUNTRIES[1] })).toBe(true);
     expect(isSameItem(COUNTRIES[1], { id: "2", name: "Renamed" })).toBe(false);
   });
 

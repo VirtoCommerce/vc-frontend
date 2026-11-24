@@ -92,7 +92,7 @@ export interface IEmits {
 }
 
 export interface IProps<T> {
-  /** What the `selected` slot receives: the resolved item, or the selected values in multiple mode. */
+  /** What the `selected` slot receives: the resolved item, or the selected items in multiple mode. */
   selectedItem?: T;
   hasSelection: boolean;
   size: VcInputSizeType;

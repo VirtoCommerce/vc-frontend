@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useSelectAll } from "./useSelectAll";
 import type { IUseSelectAllOptions } from "./useSelectAll";
@@ -192,6 +192,23 @@ describe("useSelectAll over items refetched as new objects", () => {
 
   it("adds only the items the selection does not hold yet, keeping its own objects", () => {
     expect(setupCountries({}).toggle()).toEqual({ items: [albaniaBefore, belgium], action: "select-all" });
+  });
+
+  it("adds an item two rows hold once, comparing the unselected rows only with each other", () => {
+    const isSameItem = vi.fn(sameId);
+    const { toggle } = setupCountries({
+      isSameItem,
+      rows: [
+        { item: albania, active: true },
+        { item: belgium, active: false },
+        { item: { id: "2", name: "Belgium, on another row" }, active: false },
+      ],
+    });
+
+    expect(toggle()).toEqual({ items: [albaniaBefore, belgium], action: "select-all" });
+    expect(isSameItem).toHaveBeenCalled();
+    expect(isSameItem.mock.calls.flat()).not.toContain(albaniaBefore);
+    expect(isSameItem.mock.calls.flat()).not.toContain(albania);
   });
 
   it("clears the matches of a query by identity, keeping the items it hides", () => {

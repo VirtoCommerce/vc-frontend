@@ -1,4 +1,4 @@
-import { differenceWith, unionWith } from "lodash-es";
+import { differenceWith, uniqWith } from "lodash-es";
 import { computed, toValue } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -105,17 +105,30 @@ export function useSelectAll<T>(params: IUseSelectAllOptions<T>) {
    */
   function toggle(): { items: T[]; action: VcSelectSelectAllPayloadType["action"] } {
     const selectedItems = toValue(params.selectedItems);
-    const items = toValue(params.rows).map((row) => row.item);
+    const rows = toValue(params.rows);
 
     if (isAllSelected.value) {
       // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
       return {
-        items: isNarrowed.value ? differenceWith(selectedItems, items, params.isSameItem) : [],
+        items: isNarrowed.value
+          ? differenceWith(
+              selectedItems,
+              rows.map((row) => row.item),
+              params.isSameItem,
+            )
+          : [],
         action: "deselect-all",
       };
     }
 
-    return { items: unionWith(selectedItems, items, params.isSameItem), action: "select-all" };
+    // A row already knows whether the selection holds it, so only the unselected rows are compared, and
+    // only with each other: a long selection is never scanned.
+    const added = uniqWith(
+      rows.filter((row) => !row.active).map((row) => row.item),
+      params.isSameItem,
+    );
+
+    return { items: [...selectedItems, ...added], action: "select-all" };
   }
 
   return {

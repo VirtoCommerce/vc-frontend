@@ -199,8 +199,8 @@ function warnPaging<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnod
   );
 }
 
-// A model is the item itself in multiple mode, and in single mode without `valueField`; there a primitive
-// over object items matches no option, and the whole item is what a pick writes into it.
+// A multiple model holds items, and so does a single one without `valueField`: a primitive there, over object
+// items, is not an item, and a pick writes the whole item into the model.
 function watchPrimitiveModel<T>(props: IDevWarningProps<T>): void {
   let warnedPrimitiveModel = false;
 
@@ -227,7 +227,7 @@ function watchPrimitiveModel<T>(props: IDevWarningProps<T>): void {
       console.warn(
         multiple
           ? "VcSelect: a `multiple` model holds items, not `value-field` values, but this one holds a primitive " +
-              "while the items are objects, so it matches no option. Put the items themselves in the model."
+              "while the items are objects. Put the items themselves in the model."
           : "VcSelect: the model holds a primitive but the items are objects, and without `value-field` " +
               "the model is the item. Set `value-field` to the key the model holds.",
       );

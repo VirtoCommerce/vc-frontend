@@ -59,11 +59,12 @@ The facade has its own version, in this folder's `package.json`. It is not the s
 
 1. **The automatic check sees the root contract's export names only.** These are breaking, yet bump a patch, so
    bump by hand: a prop, event or slot of a kept export removed or renamed; a removal from `/federation`,
-   `/manifest`, `/codegen` or `/testing`; a changed shape of the data a plugin passes in or gets back (prop types,
-   the model or an emitted payload, e.g. items vs values). These stay a patch: types tightened to what the
-   export already does at runtime (typed emits in place of `any`, `undefined` on clear), and behaviour
-   refinements that keep those shapes (focus, `tabindex`, ARIA, when an event fires, visuals); list them under the
-   PR's Breaking changes for forks. The version is a load-time gate: the host loads a plugin only when its own
+   `/manifest`, `/codegen` or `/testing`; a changed shape of the data a plugin passes in or gets back at runtime
+   (what a prop accepts narrowed or replaced, the model or an emitted payload, e.g. items vs values). These stay a
+   patch: additions (a prop, event, slot or accepted form added); type-only changes that leave runtime alone, even
+   when some plugin code stops compiling (types tightened to what the export already does, typed emits in place of
+   `any`, `undefined` on clear, a component made generic); and behaviour refinements that keep those shapes (focus,
+   `tabindex`, ARIA, when an event fires, visuals). List the last two under the PR's Breaking changes for forks. The version is a load-time gate: the host loads a plugin only when its own
    version is in the plugin's `^` `requiredHostVersion`, so a needless minor bump refuses plugins that still work.
 2. **A plugin's `requiredHostVersion` is `^` the facade it pins** (`^0.2.4`), not the start of the line
    (`^0.2.0`): it compiled against everything up to its pin, and `check:plugin-module` fails a lower floor.
