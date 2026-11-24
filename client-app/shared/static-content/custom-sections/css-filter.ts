@@ -1,5 +1,5 @@
 import { SECTION_TYPE_ATTRIBUTE } from "./constants";
-import { isContainedSelector } from "./css-selectors";
+import { isContainedSelector, toSelectorSkeleton } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
 import { MAX_CSS_DEPTH } from "./limits";
 
@@ -98,10 +98,10 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
   }
 
   if (isRuleOf<CSSStyleRule>(rule, "CSSStyleRule")) {
-    if (
-      REFUSED_SELECTOR_REGEX.test(rule.selectorText.replaceAll(NAME_ARGUMENT_REGEX, "")) ||
-      !isContainedSelector(rule.selectorText)
-    ) {
+    // Read without strings and attribute values, which could hold what looks like a name or a pseudo-class.
+    const skeleton = toSelectorSkeleton(rule.selectorText).replaceAll(NAME_ARGUMENT_REGEX, "");
+
+    if (REFUSED_SELECTOR_REGEX.test(skeleton) || !isContainedSelector(rule.selectorText)) {
       return false;
     }
 

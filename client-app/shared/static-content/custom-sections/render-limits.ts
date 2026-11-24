@@ -1,6 +1,6 @@
 import { getListRows, renderParts, resolveBinding, toBindingText, toFieldMap } from "./bindings";
 import { getCustomSectionBehaviors, getCustomSectionTags } from "./kit";
-import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { getRichText } from "./rich-text";
 import type { IBindingScope, TemplatePartType } from "./bindings";
 import type { IRichText } from "./rich-text";
@@ -9,6 +9,8 @@ import type { ICompiledElement } from "./template";
 interface IRenderSize {
   elements: number;
   characters: number;
+  /** Of the template's own text. */
+  templateCharacters: number;
   /** The rich texts read, handed on to the render. */
   richTexts: Map<string, IRichText>;
 }
@@ -22,14 +24,18 @@ export function fitsRenderLimits(
   scope: IBindingScope,
   richTexts: Map<string, IRichText>,
 ): boolean {
-  const size: IRenderSize = { elements: 0, characters: 0, richTexts };
+  const size: IRenderSize = { elements: 0, characters: 0, templateCharacters: 0, richTexts };
 
   addElementSize(root, scope, size, 1);
   return !isOverLimits(size);
 }
 
 function isOverLimits(size: IRenderSize): boolean {
-  return size.elements > RENDER_BUDGET || size.characters > MAX_RENDERED_TEXT;
+  return (
+    size.elements > RENDER_BUDGET ||
+    size.characters > MAX_RENDERED_TEXT ||
+    size.templateCharacters > MAX_RENDERED_TEMPLATE_TEXT
+  );
 }
 
 /** `times`: how often the element renders where it stands; a repeating behavior renders its children twice. */
@@ -56,13 +62,12 @@ function addOwnSize(node: ICompiledElement, scope: IBindingScope, size: IRenderS
   const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? 1) : 1;
   const richText = node.html ? getRichText(node.html, scope, size.richTexts) : undefined;
   const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
-  const boundText = countBoundText(
-    node.attributes.flatMap(([, parts]) => parts),
-    scope,
-  );
+  const attributeParts = node.attributes.flatMap(([, parts]) => parts);
+  const boundText = countBoundText(attributeParts, scope);
 
   size.elements += (own + node.behaviors.length + (richText?.elements ?? 0)) * times;
   size.characters += (boundText + (richText?.html.length ?? 0)) * times;
+  size.templateCharacters += countTemplateText(attributeParts) * times;
 
   const childTimes = (isRepeated ? 2 : 1) * times;
 
@@ -88,6 +93,7 @@ function addTextSize(
   isRepeated: boolean,
 ): void {
   size.characters += countBoundText(text, scope) * times;
+  size.templateCharacters += countTemplateText(text) * times;
 
   if (isRepeated && renderParts(text, scope).trim()) {
     size.elements += times;
@@ -100,4 +106,8 @@ function countBoundText(parts: readonly TemplatePartType[], scope: IBindingScope
       typeof part === "string" ? sum : sum + toBindingText(resolveBinding(part.path, scope)?.value).length,
     0,
   );
+}
+
+function countTemplateText(parts: readonly TemplatePartType[]): number {
+  return parts.reduce((sum, part) => (typeof part === "string" ? sum + part.length : sum), 0);
 }

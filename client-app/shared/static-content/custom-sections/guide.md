@@ -131,11 +131,15 @@ The page may read right to left.
 - Few, right-sized images. No background video unless the section is about it.
 - Behaviors load on their own the first time a template uses them; add only those the section needs.
 - An element is written with at most 64 attributes; one with more is left out, with its content.
+- An ARIA attribute that names an id (`aria-labelledby`, `aria-describedby`, `aria-controls`, `aria-owns` and the
+  like) is left out: a section writes no id. Name an element with `aria-label`.
 - A section renders at most 5,000 elements and behaviors, each counted as written (whatever `data-if` hides) and
   once per row of its list; what an element with a repeating behavior (`data-marquee`) holds counts twice, a text
   right inside it as an element too, a kit tag counts its `cost` from the kit (`vc-products` counts as many as its
-  products may render), and rich text counts its elements. It also renders at most 262,144 characters of settings: every bound value in its text and
-  attributes, and its rich text, counted the same way. A section over either renders nothing.
+  products may render), and rich text counts its elements. It also renders at most 262,144 characters of settings:
+  every bound value in its text and attributes, and its rich text, counted the same way; and at most 2,097,152
+  characters of the template's own text, in text and attributes, once per row too. A section over any of them
+  renders nothing.
 
 ## Patterns
 

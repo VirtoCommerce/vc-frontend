@@ -3,6 +3,7 @@ import { isRecord } from "@/core/utilities";
 import { opensNewWindow, withNewWindowRel } from "../sections";
 import {
   FORBIDDEN_CONTENTS,
+  ID_REFERENCE_ATTRIBUTES,
   isAttributeOfElement,
   SECTION_ELEMENTS,
   TEXT_ATTRIBUTES,
@@ -79,7 +80,8 @@ export function getRichText(
 /** In DOMPurify's own inert document: an image adopted into the page would load though the section never shows. */
 function sanitize(html: string, scope: RichTextScopeType): Element | undefined {
   function applyAttributeRules(node: Element): void {
-    for (const { name, value } of [...node.attributes]) {
+    // A copy: the loop removes attributes, which shifts the live map it would otherwise walk.
+    for (const { name, value } of Array.from(node.attributes)) {
       const safeValue = isAttributeOfElement(name, node.localName)
         ? toSafeAttributeValue(name, value, scope)
         : undefined;
@@ -103,6 +105,7 @@ function sanitize(html: string, scope: RichTextScopeType): Element | undefined {
       ALLOWED_TAGS: SECTION_ELEMENTS,
       ALLOWED_ATTR: [...TEXT_ATTRIBUTES, ...URL_ATTRIBUTES],
       ALLOW_DATA_ATTR: false,
+      FORBID_ATTR: ID_REFERENCE_ATTRIBUTES,
       ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
       RETURN_DOM: true,
     });

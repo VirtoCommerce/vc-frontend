@@ -77,7 +77,7 @@ interface IScanState {
  * counts no sibling of the section's root, and an `:is()`, `:where()` or `:not()` holds no combinator.
  */
 export function isContainedSelector(selectorText: string): boolean {
-  const skeleton = toSkeleton(preprocessCss(selectorText)).replace(NTH_OF_REGEX, ":$1-of(");
+  const skeleton = toSelectorSkeleton(selectorText).replace(NTH_OF_REGEX, ":$1-of(");
   const state: IScanState = { groups: [], hasContent: false, isAnchored: false, isInFirstCompound: true };
   let index = 0;
 
@@ -204,6 +204,11 @@ function toGroupKind(name: string): GroupKindType | undefined {
   }
 
   return OPAQUE_PSEUDOS.has(name) ? "opaque" : undefined;
+}
+
+/** `toSkeleton` of a selector as the browser serializes it. */
+export function toSelectorSkeleton(selectorText: string): string {
+  return toSkeleton(preprocessCss(selectorText));
 }
 
 /**

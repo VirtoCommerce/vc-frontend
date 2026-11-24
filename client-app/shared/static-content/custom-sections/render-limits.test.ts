@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { toFieldMap } from "./bindings";
 import { getCustomSectionKit, registerBuiltInKit } from "./kit";
-import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { fitsRenderLimits } from "./render-limits";
 import { compileTemplate } from "./template";
 import type { ICompiledTemplate } from "./template";
@@ -56,6 +56,15 @@ describe("fitsRenderLimits", () => {
 
     expect(fits(template, { title: "a".repeat(half) })).toBe(true);
     expect(fits(template, { title: "a".repeat(half + 1) })).toBe(false);
+  });
+
+  it("caps the template's own text, in text and attributes, once per row", () => {
+    const text = "a".repeat(1024);
+    const template = `<section><i data-each="settings.rows" title="${text}">${text}</i></section>`;
+    const fitting = MAX_RENDERED_TEMPLATE_TEXT / (2 * text.length);
+
+    expect(fits(template, { rows: rows(fitting) })).toBe(true);
+    expect(fits(template, { rows: rows(fitting + 1) })).toBe(false);
   });
 
   it("takes elements up to the budget", () => {

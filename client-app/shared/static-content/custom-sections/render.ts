@@ -13,7 +13,7 @@ import {
   toFieldValue,
   toTagProps,
 } from "./kit";
-import { MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { fitsRenderLimits } from "./render-limits";
 import { getRichText } from "./rich-text";
 import { getSettingVariables } from "./setting-variables";
@@ -86,7 +86,8 @@ export function renderCustomSection(template: ICompiledTemplate, options: IRende
       overBudgetTemplates.add(template);
       Logger.warn(
         `[custom-sections] The ${options.type} section would render more than ${RENDER_BUDGET} elements and ` +
-          `behaviors or ${MAX_RENDERED_TEXT} characters of settings; it renders nothing.`,
+          `behaviors, ${MAX_RENDERED_TEXT} characters of settings or ${MAX_RENDERED_TEMPLATE_TEXT} of its ` +
+          "template's own text; it renders nothing.",
       );
     }
     return null;

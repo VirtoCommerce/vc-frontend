@@ -2,6 +2,7 @@ import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 import {
   FORBIDDEN_CONTENTS,
+  ID_REFERENCE_ATTRIBUTES,
   isAttributeOfElement,
   SECTION_ELEMENTS,
   TEXT_ATTRIBUTES,
@@ -119,6 +120,7 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
       ALLOWED_TAGS: SECTION_ELEMENTS,
       ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
       ALLOW_DATA_ATTR: false,
+      FORBID_ATTR: ID_REFERENCE_ATTRIBUTES,
       ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
       // Only names matter here: the renderer checks each value after its bindings resolve.
       ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],

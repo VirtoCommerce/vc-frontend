@@ -127,6 +127,21 @@ describe("filterSectionCss", () => {
     },
   );
 
+  it.each(['.zz[title=":state("], html .a:not(.b)', '.zz[title="::part("], body .a:is(.b)', String.raw`\62 ody .a`])(
+    "drops a rule naming an element of the page behind a string or an escape: %s",
+    (selector) => {
+      expect(rulesOf(`${selector} { color: red; } .kept { margin: 0; }`)).toBe(".kept { margin: 0px; }");
+    },
+  );
+
+  it("reads a long attribute value once, not once per pseudo-class it seems to hold", () => {
+    const startedAt = performance.now();
+
+    filterSectionCss(TYPE, `[title="${":state(".repeat(30_000)}"] { color: red; }`, ASSETS);
+
+    expect(performance.now() - startedAt).toBeLessThan(500);
+  });
+
   it("keeps a rule whose pseudo-element takes body as a name, not as an element", () => {
     expect(rulesOf(".card::part(body) { color: red; }")).toBe(".card::part(body) { color: red; }");
   });

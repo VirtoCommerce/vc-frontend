@@ -15,6 +15,20 @@ export const TEXT_ATTRIBUTES = (
   "scope autoplay muted loop playsinline controls preload type media open"
 ).split(" ");
 export const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
+/**
+ * The ARIA attributes that name elements by id. A section writes no id, so one could only name an element of the
+ * page around it, as `aria-owns` does to take it out of where assistive technology reads it.
+ */
+export const ID_REFERENCE_ATTRIBUTES = [
+  "aria-activedescendant",
+  "aria-controls",
+  "aria-describedby",
+  "aria-details",
+  "aria-errormessage",
+  "aria-flowto",
+  "aria-labelledby",
+  "aria-owns",
+];
 /** Of `TEXT_ATTRIBUTES`, those the browser reads as on whatever their value. */
 export const BOOLEAN_ATTRIBUTES = new Set(["hidden", "autoplay", "muted", "loop", "playsinline", "controls", "open"]);
 /** As the server sanitizer: these go with their content. */

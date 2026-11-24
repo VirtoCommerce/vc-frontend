@@ -11,6 +11,13 @@ export const RENDER_BUDGET = 5000;
 export const MAX_RENDERED_TEXT = 262_144;
 
 /**
+ * The most characters of the template's own text a section renders, in its text and attributes, list rows and
+ * repeated children included: a short template with a long list could otherwise fill the page's memory. Over it,
+ * the section renders nothing.
+ */
+export const MAX_RENDERED_TEMPLATE_TEXT = 2_097_152;
+
+/**
  * The most attributes an element of a template has, counted as the parser leaves them, before the sanitizer drops
  * any; one with more is left out. The server counts the raw text, where a repeated attribute counts again.
  */

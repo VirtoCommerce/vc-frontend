@@ -530,6 +530,19 @@ describe("SbSection", () => {
 
       expect(wrapper.find("p").attributes()).toEqual({ title: "Kept", "aria-label": "Kept" });
     });
+
+    it("drops the ARIA attributes that name an id, which could only be one of the page around the section", () => {
+      const wrapper = mountSection(
+        '<section><p aria-owns="app" aria-labelledby="x" aria-flowto="y" aria-hidden="true">a</p>' +
+          '<div data-html="settings.body"></div></section>',
+        { body: '<p aria-owns="app" aria-describedby="x" aria-label="Kept">b</p>' },
+      );
+
+      const [own, rich] = wrapper.findAll("p");
+
+      expect(own.attributes()).toEqual({ "aria-hidden": "true" });
+      expect(rich.attributes()).toEqual({ "aria-label": "Kept" });
+    });
   });
 
   describe("links and images", () => {
