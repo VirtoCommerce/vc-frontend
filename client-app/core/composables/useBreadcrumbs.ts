@@ -23,7 +23,6 @@ export function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadc
   const { t } = useI18n();
   const route = useRoute();
 
-  const homepage: IBreadcrumb = { title: t("common.links.home"), route: "/" };
   const breadcrumbs: MaybeRef<IBreadcrumb[]> = typeof sources === "function" ? computed(sources) : sources;
 
   const loyaltyCatalogCrumb = computed<IBreadcrumb | undefined>(() => {
@@ -34,6 +33,7 @@ export function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadc
   });
 
   return computed(() => {
+    const homepage: IBreadcrumb = { title: t("common.links.home"), route: "/" };
     const prefix = loyaltyCatalogCrumb.value ? [homepage, loyaltyCatalogCrumb.value] : [homepage];
     return prefix.concat(unref(breadcrumbs));
   });

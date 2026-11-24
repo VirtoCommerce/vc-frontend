@@ -1,6 +1,11 @@
 <template>
   <div>
-    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" :name="liveName" />
+    <VPPageBuilder
+      v-if="isPageBuilderContent"
+      :content="pageDocument?.content"
+      :name="liveName"
+      :permalink="permalink"
+    />
 
     <VPBuilderIO v-if="isBulderIOContent" :content="pageDocument?.content" />
   </div>
@@ -12,6 +17,7 @@ import { computed, watch } from "vue";
 import { useBrandProfile } from "@/core/composables/useBrandProfile";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { buildAlternateLinks } from "@/pages/matcher/virto-pages/alternate-links";
+import { PAGE_BUILDER_DOCUMENT_SOURCE } from "@/shared/common/constants/slug-object-types";
 import type { IPageAlternate } from "@/pages/matcher/virto-pages/alternate-links";
 import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import VPPageBuilder from "@/pages/matcher/virto-pages/vp-page-builder.vue";
@@ -33,7 +39,7 @@ const isBulderIOContent = computed(() => {
 });
 
 const isPageBuilderContent = computed(() => {
-  return props.pageDocument?.source === "page-builder";
+  return props.pageDocument?.source === PAGE_BUILDER_DOCUMENT_SOURCE;
 });
 
 const permalink = computed(() => {
