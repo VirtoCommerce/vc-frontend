@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="organization-list">
+  <div class="organization-list">
     <VcAlert v-if="switchError" class="organization-list__error" color="danger" size="sm" variant="tonal" icon>
       {{ switchError }}
     </VcAlert>
@@ -48,6 +48,7 @@
     <div class="organization-list__items">
       <VcScrollbar
         :id="listboxId"
+        ref="list"
         vertical
         role="listbox"
         :aria-label="$t('common.labels.organizations')"
@@ -69,8 +70,6 @@
             item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
           "
           @click="selectOrganization(item.id)"
-          @keydown.up.prevent="moveFocus(-1)"
-          @keydown.down.prevent="moveFocus(1)"
         >
           <VcRadioButton
             :model-value="contactOrganizationId"
@@ -114,12 +113,14 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useEventListener } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher } from "@/shared/account/composables/useOrganizationSwitcher";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useUserOrganizations } from "@/shared/account/composables/useUserOrganizations";
+import { useListboxKeyboard } from "@/shared/layout/composables/useListboxKeyboard";
 import { useComponentId } from "@/ui-kit/composables";
+import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
   (event: "organizationSelected"): void;
@@ -157,27 +158,19 @@ watch(
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
 const activeDescendantId = ref<string>();
-const root = useTemplateRef<HTMLElement>("root");
+const list = useTemplateRef<ComponentPublicInstance>("list");
+
+const { moveFocus } = useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined, {
+  onFocus: (option) => {
+    activeDescendantId.value = option.id;
+  },
+});
 
 // Shared session state: refetch on each mount so a newly locked row is disabled, and drop the last phrase.
 onMounted(() => {
   searchPhrase.value = "";
   void search();
 });
-
-// The popover focuses its panel on every open, so arrows enter the list from there too.
-useEventListener(
-  () => root.value?.closest<HTMLElement>("[role='dialog']"),
-  "keydown",
-  (event: KeyboardEvent) => {
-    if (event.target !== event.currentTarget || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) {
-      return;
-    }
-
-    event.preventDefault();
-    moveFocus(event.key === "ArrowDown" ? 1 : -1);
-  },
-);
 
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
@@ -195,29 +188,6 @@ watch(displayedOrganizations, () => {
 
 function getOptionId(index: number): string {
   return `${componentId}-option-${index}`;
-}
-
-// Locked rows are disabled buttons that can't take focus, so they're left out and arrows step over them.
-function getOptionElements(): HTMLElement[] {
-  return Array.from(root.value?.querySelectorAll<HTMLElement>("[role='option']:not(:disabled)") ?? []);
-}
-
-function moveFocus(step: 1 | -1): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  let current = elements.indexOf(document.activeElement as HTMLElement);
-  // From the panel, Down enters at the top and Up at the bottom; the search field takes Down only.
-  if (current === -1 && step === -1) {
-    current = 0;
-  }
-  const target = elements[(current + step + elements.length) % elements.length];
-
-  activeDescendantId.value = target?.id;
-  target?.focus();
 }
 
 async function selectOrganization(organizationId: string): Promise<void> {

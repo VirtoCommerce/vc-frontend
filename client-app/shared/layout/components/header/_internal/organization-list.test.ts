@@ -42,7 +42,7 @@ enableAutoUnmount(afterEach);
 const stubs = {
   VcInput: {
     name: "VcInput",
-    props: ["modelValue"],
+    props: ["modelValue", "aria"],
     emits: ["clear", "input", "keydown", "update:modelValue"],
     template: '<div class="test-input"><slot name="append" /></div>',
   },
@@ -249,6 +249,17 @@ describe("OrganizationList: keyboard", () => {
     await nextTick();
 
     expect(focused()).toBe(options(wrapper)[0].element);
+  });
+
+  it("points the search field at the row the arrows focus", async () => {
+    const wrapper = await mountList();
+    await resolveAll();
+    const input = wrapper.findComponent({ name: "VcInput" });
+
+    input.vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    await nextTick();
+
+    expect(input.props("aria")["aria-activedescendant"]).toBe(options(wrapper)[0].attributes("id"));
   });
 });
 
