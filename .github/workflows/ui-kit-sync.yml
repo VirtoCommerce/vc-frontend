@@ -1,0 +1,60 @@
+# Copies client-app/ui-kit into src/ of VirtoCommerce/vc-frontend-ui-kit on every push to dev that changes
+# it, as one commit "sync: vc-frontend@<sha>" on that repository's main. One way only, until ui-kit
+# development moves to that repository. src/ there is bot-only: its guard-src workflow fails any pull
+# request that touches it.
+#
+# Setup: a write deploy key on vc-frontend-ui-kit whose private half is the UI_KIT_SYNC_KEY secret here.
+# The ui-kit repository must have a main branch. Run this workflow by hand on dev for the first sync.
+name: ui-kit sync
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'client-app/ui-kit/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-kit-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    # Upstream only (repo id 296335982 = VirtoCommerce/vc-frontend, rename-proof): the theme mirror and
+    # forks must not push into the ui-kit repository. Only dev is mirrored, also for a manual run.
+    if: github.repository_id == '296335982' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: vc-frontend
+          sparse-checkout: client-app/ui-kit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: VirtoCommerce/vc-frontend-ui-kit
+          ref: main
+          ssh-key: ${{ secrets.UI_KIT_SYNC_KEY }}
+          path: ui-kit
+
+      - name: Copy client-app/ui-kit into src/
+        run: |
+          rsync -a --delete vc-frontend/client-app/ui-kit/ ui-kit/src/
+
+      - name: Commit and push
+        working-directory: ui-kit
+        run: |
+          git add -A src
+          if git diff --cached --quiet; then
+            echo "src/ already matches vc-frontend@$GITHUB_SHA." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "sync: vc-frontend@$GITHUB_SHA"
+          git push origin HEAD:main
+          echo "Pushed $(git rev-parse --short HEAD): sync: vc-frontend@$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
