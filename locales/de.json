@@ -1868,6 +1868,13 @@
       "title": "Ihr Konto ist blockiert",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Freischaltung ausstehend"
+      },
+      "title": "Ihr Konto wartet auf Freischaltung",
+      "message": "Vielen Dank für Ihre Registrierung. Der Katalog wird freigeschaltet, sobald das Shop-Team Ihr Konto bestätigt hat. Wir informieren Sie per E-Mail."
+    },
     "brands": {
       "top_brands_title": "Top-Marken",
       "title": "Marken",

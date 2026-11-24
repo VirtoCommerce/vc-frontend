@@ -72,15 +72,11 @@ watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
   appHeaderHeightVar.value = shown ? `${value}px` : undefined;
 });
 
-const { isAuthenticated } = useUser();
+const { canBrowseCatalog } = useUser();
 const { isCatalogMenuShown } = useNavigations();
 
 const isMegamenuShown = computed(() => {
-  return (
-    isCatalogMenuShown.value &&
-    desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
-    (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
-  );
+  return isCatalogMenuShown.value && desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal && canBrowseCatalog.value;
 });
 
 onActivated(() => {

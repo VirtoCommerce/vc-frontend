@@ -19,6 +19,7 @@ fragment userTypeFields on UserType {
     firstName
     lastName
     fullName
+    status
     organizationId
     defaultLanguage
     currencyCode

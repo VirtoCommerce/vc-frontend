@@ -1868,6 +1868,13 @@
       "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Awaiting approval"
+      },
+      "title": "Your account is awaiting approval",
+      "message": "Thanks for registering. The catalog opens as soon as the store team approves your account. We will let you know by email."
+    },
     "brands": {
       "top_brands_title": "Top brands",
       "title": "Brands",

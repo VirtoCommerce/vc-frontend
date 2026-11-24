@@ -25,6 +25,7 @@ const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
 const ChangePassword = () => import("@/pages/change-password.vue");
 const BlockedPage = () => import("@/pages/blocked.vue");
+const AwaitingApprovalPage = () => import("@/pages/awaiting-approval.vue");
 const Account = () => import("@/pages/account/index.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
 const Company = () => import("@/pages/company/index.vue");
@@ -78,6 +79,12 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true, redirectable: false } },
+  {
+    path: ROUTES.AWAITING_APPROVAL.PATH,
+    name: ROUTES.AWAITING_APPROVAL.NAME,
+    component: AwaitingApprovalPage,
+    meta: { requiresAuth: true, redirectable: false },
+  },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
     path: "/account/impersonate/:userId",

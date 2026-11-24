@@ -1868,6 +1868,13 @@
       "title": "Ditt konto är blockerat",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Väntar på godkännande"
+      },
+      "title": "Ditt konto väntar på godkännande",
+      "message": "Tack för din registrering. Katalogen blir tillgänglig så snart butiksteamet har godkänt ditt konto. Vi meddelar dig via e-post."
+    },
     "brands": {
       "top_brands_title": "Toppmärken",
       "title": "Märken",

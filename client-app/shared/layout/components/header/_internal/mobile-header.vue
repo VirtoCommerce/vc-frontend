@@ -56,7 +56,9 @@
             </a>
 
             <button
+              v-if="canBrowseCatalog"
               :aria-label="$t('common.labels.toggle_search_bar')"
+              data-test-id="mobile-header-search-button"
               type="button"
               class="mobile-header__action"
               @click="toggleSearchBar"
@@ -84,7 +86,7 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <MobileSearchBar :visible="searchBarVisible" />
+      <MobileSearchBar v-if="canBrowseCatalog" :visible="searchBarVisible" />
       <!-- endregion Mobile Search Bar -->
     </div>
   </header>
@@ -111,6 +113,7 @@ import { computed, onActivated, onDeactivated, ref, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
+import { useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
@@ -132,6 +135,7 @@ const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMB
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar } = useSearchBar();
+const { canBrowseCatalog } = useUser();
 const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);

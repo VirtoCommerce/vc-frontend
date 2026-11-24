@@ -1868,6 +1868,13 @@
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "承認待ち"
+      },
+      "title": "アカウントは承認待ちです",
+      "message": "ご登録ありがとうございます。ストアのスタッフがアカウントを承認すると、カタログをご覧いただけるようになります。承認されましたらメールでお知らせします。"
+    },
     "brands": {
       "top_brands_title": "人気ブランド",
       "title": "ブランド",

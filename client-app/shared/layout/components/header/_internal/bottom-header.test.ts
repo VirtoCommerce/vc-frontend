@@ -13,12 +13,14 @@ type HoistedType = {
   entries: Record<string, Record<string, EntryType>>;
   menuItems: { value: ExtendedMenuLinkType[] };
   iconsMenuLinks: { value: ExtendedMenuLinkType[] | undefined };
+  canBrowseCatalog: { value: boolean };
 };
 
 const h = vi.hoisted((): HoistedType => ({
   entries: {},
   menuItems: { value: [] },
   iconsMenuLinks: { value: undefined },
+  canBrowseCatalog: { value: true },
 }));
 
 const BUILT_IN_CART: ExtendedMenuLinkType = {
@@ -44,7 +46,9 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
 vi.mock("@/core/composables", () => ({
   useNavigations: () => ({ catalogMenuItems: ref([]), desktopMainMenuItems: h.menuItems }),
 }));
-vi.mock("@/shared/account/composables/useUser", () => ({ useUser: () => ({ organization: ref() }) }));
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({ organization: ref(), canBrowseCatalog: computed(() => h.canBrowseCatalog.value) }),
+}));
 vi.mock("@/shared/layout/composables/useHeaderLogo", () => ({ useHeaderLogo: () => ({ headerLogoUrl: ref("") }) }));
 vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
   useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
@@ -157,5 +161,22 @@ describe("BottomHeader icons menu", () => {
     h.iconsMenuLinks.value = [{ title: "Help", route: "/help" }];
 
     expect(shownItems()).toEqual([{ id: "/help", title: "Help", route: "/help" }]);
+  });
+});
+
+describe("BottomHeader search", () => {
+  beforeEach(() => {
+    h.menuItems.value = [];
+    h.canBrowseCatalog.value = true;
+  });
+
+  it("shows the search bar to a customer who can browse the catalog", () => {
+    expect(mountHeader().findComponent({ name: "SearchBar" }).exists()).toBe(true);
+  });
+
+  it("hides the search bar from a customer awaiting approval", () => {
+    h.canBrowseCatalog.value = false;
+
+    expect(mountHeader().findComponent({ name: "SearchBar" }).exists()).toBe(false);
   });
 });

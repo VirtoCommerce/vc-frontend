@@ -20,6 +20,7 @@ query GetMe($userId: String) {
       firstName
       lastName
       fullName
+      status
       organizationId
       defaultLanguage
       currencyCode

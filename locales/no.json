@@ -1868,6 +1868,13 @@
       "title": "Kontoen din er blokkert",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Venter på godkjenning"
+      },
+      "title": "Kontoen din venter på godkjenning",
+      "message": "Takk for at du registrerte deg. Katalogen blir tilgjengelig så snart butikkteamet har godkjent kontoen din. Vi gir deg beskjed på e-post."
+    },
     "brands": {
       "top_brands_title": "Toppmerker",
       "title": "Merker",

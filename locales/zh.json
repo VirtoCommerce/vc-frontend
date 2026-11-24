@@ -1868,6 +1868,13 @@
       "title": "您的账户已被封锁",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "等待审核"
+      },
+      "title": "您的账户正在等待审核",
+      "message": "感谢您的注册。商店团队审核通过您的账户后，即可浏览商品目录。我们会通过电子邮件通知您。"
+    },
     "brands": {
       "top_brands_title": "热门品牌",
       "title": "品牌",

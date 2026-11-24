@@ -48,6 +48,7 @@
     "desktop_menu_mode": "horizontal",
     "icon_variant": "outline",
     "design": "classic",
+    "require_contact_approval": false,
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,

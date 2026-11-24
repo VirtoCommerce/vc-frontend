@@ -5,11 +5,11 @@ import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { saveUcpContinuation } from "@/shared/checkout/ucp/continuation";
 import { mainRoutes } from "./routes";
-import type { RouteRecordName } from "vue-router";
+import type { RouteLocationNormalized, RouteLocationRaw, RouteRecordName } from "vue-router";
 
 export function createRouter(options: { base: string }) {
   const { base } = options;
-  const { isAuthenticated, organization } = useUser();
+  const { isAuthenticated, isAwaitingApproval, organization } = useUser();
   const { themeContext } = useThemeContext();
 
   const router = _createRouter({
@@ -23,6 +23,26 @@ export function createRouter(options: { base: string }) {
       }
     },
   });
+
+  // Routes a customer awaiting approval may still open: the waiting page itself, and the password form
+  // (an expired password sends them there, and they would otherwise be sent back here in a loop).
+  const AWAITING_APPROVAL_ALLOWED_ROUTES: RouteRecordName[] = [
+    ROUTES.AWAITING_APPROVAL.NAME,
+    ROUTES.CHANGE_PASSWORD.NAME,
+  ];
+
+  // A customer not yet approved by the store admin sees only the waiting page (and the public pages)
+  function getApprovalRedirect(to: RouteLocationNormalized): RouteLocationRaw | undefined {
+    if (isAwaitingApproval.value && !to.meta.public && !AWAITING_APPROVAL_ALLOWED_ROUTES.includes(to.name ?? "")) {
+      return { name: ROUTES.AWAITING_APPROVAL.NAME };
+    }
+
+    if (to.name === ROUTES.AWAITING_APPROVAL.NAME && !isAwaitingApproval.value) {
+      return { name: ROUTES.CATALOG.NAME };
+    }
+
+    return undefined;
+  }
 
   router.beforeEach((to, _, next) => {
     const isCheckout = to.matched.some((route) => route.name === "Checkout");
@@ -53,6 +73,11 @@ export function createRouter(options: { base: string }) {
         name: ROUTES.SIGN_IN.NAME,
         query,
       });
+    }
+
+    const approvalRedirect = getApprovalRedirect(to);
+    if (approvalRedirect) {
+      return next(approvalRedirect);
     }
 
     // Protecting company routes

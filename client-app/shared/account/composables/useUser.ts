@@ -16,6 +16,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -29,6 +30,7 @@ import {
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
+import { isAwaitingContactApproval } from "../utils/contact-approval";
 import type { UserType } from "@/core/api/graphql/account/queries/getMe";
 import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 import type {
@@ -56,12 +58,28 @@ interface IPasswordExpirationEntry {
 export function _useUser() {
   const loading = ref(false);
   const user = ref<UserType>();
+  const { themeContext } = useThemeContext();
 
   const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
   const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
   const organization = computed(() => user.value?.contact?.organization ?? null);
 
   const operator = computed(() => user.value?.operator ?? null);
+  // Opt-in per store (`require_contact_approval`): a signed-in customer the store team has not approved yet.
+  const isAwaitingApproval = computed<boolean>(() =>
+    isAwaitingContactApproval({
+      requireApproval: themeContext.value?.settings?.require_contact_approval,
+      isAuthenticated: isAuthenticated.value,
+      isAdministrator: user.value?.isAdministrator,
+      status: user.value?.contact?.status,
+    }),
+  );
+  // Whether the catalog (menu, mega-menu, search) is shown: never to a customer awaiting approval.
+  const canBrowseCatalog = computed<boolean>(
+    () =>
+      !isAwaitingApproval.value &&
+      (isAuthenticated.value || !!themeContext.value?.storeSettings?.anonymousUsersAllowed),
+  );
 
   const broadcast = useBroadcast();
   const { refresh, errors: authErrors } = useAuth();
@@ -389,6 +407,8 @@ export function _useUser() {
     isMultiOrganization: computed(() => (user.value?.contact?.organizations?.totalCount ?? 0) > 1),
     organization,
     operator,
+    isAwaitingApproval,
+    canBrowseCatalog,
     userGroups,
     checkPermissions,
     fetchUser,

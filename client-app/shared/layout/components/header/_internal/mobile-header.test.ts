@@ -1,12 +1,13 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import MobileHeader from "./mobile-header.vue";
 
-const { headerHeight, Empty } = await vi.hoisted(async () => {
+const { headerHeight, canBrowseCatalog, Empty } = await vi.hoisted(async () => {
   const vue = await import("vue");
   return {
     headerHeight: vue.ref(0),
+    canBrowseCatalog: vue.ref(true),
     Empty: (name: string) => ({ default: vue.defineComponent({ name, setup: () => () => null }) }),
   };
 });
@@ -28,6 +29,8 @@ vi.mock("../../announcement-bar/announcement-bar.vue", () => Empty("Announcement
 vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({ getSettingValue: () => undefined }),
 }));
+
+vi.mock("@/shared/account", () => ({ useUser: () => ({ canBrowseCatalog }) }));
 
 vi.mock("@/shared/cart", () => ({ useShortCart: () => ({ cart: ref() }) }));
 
@@ -76,5 +79,27 @@ describe("MobileHeader", () => {
     await nextTick();
 
     expect(appHeaderHeight()).toBe("146px");
+  });
+});
+
+describe("MobileHeader search", () => {
+  beforeEach(() => {
+    canBrowseCatalog.value = true;
+  });
+
+  it("offers search to a customer who can browse the catalog", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find("[data-test-id='mobile-header-search-button']").exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "MobileSearchBar" }).exists()).toBe(true);
+  });
+
+  it("offers no search to a customer awaiting approval", () => {
+    canBrowseCatalog.value = false;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find("[data-test-id='mobile-header-search-button']").exists()).toBe(false);
+    expect(wrapper.findComponent({ name: "MobileSearchBar" }).exists()).toBe(false);
   });
 });

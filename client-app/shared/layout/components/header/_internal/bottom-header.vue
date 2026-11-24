@@ -50,7 +50,7 @@
         <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
       </a>
 
-      <SearchBar />
+      <SearchBar v-if="canBrowseCatalog" />
 
       <ul class="-mx-2 flex items-center">
         <li v-for="item in iconsMenuItems" :key="item.id" :data-test-id="item.dataTestId">
@@ -110,7 +110,7 @@ interface IProps {
 defineProps<IProps>();
 
 const router = useRouter();
-const { organization } = useUser();
+const { organization, canBrowseCatalog } = useUser();
 const { headerLogoUrl } = useHeaderLogo();
 const { logoWidth, logoStyle, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
