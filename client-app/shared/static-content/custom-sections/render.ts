@@ -195,13 +195,13 @@ function renderShown(
   const { fields, textAttributes } = getBehaviorAttributes(behaviors);
   const kept = rendered.filter((attribute) => fitsBehaviorField(attribute, fields));
   const values = new Map(kept.map(({ name, value }) => [name, value]));
-  const applied = node.behaviors.filter(
-    (name) => Object.hasOwn(behaviors, name) && values.has(toBehaviorAttribute(name)),
-  );
+  const applied = node.behaviors
+    .filter((name) => Object.hasOwn(behaviors, name) && values.has(toBehaviorAttribute(name)))
+    .map((name) => ({ name, behavior: behaviors[name], isFailed: hasBehaviorFailed(behaviors[name]) }));
   const innerScope = applied.length
     ? {
         ...scope,
-        appliedBehaviors: new Set([...(scope.appliedBehaviors ?? []), ...applied.map((name) => behaviors[name])]),
+        appliedBehaviors: new Set([...(scope.appliedBehaviors ?? []), ...applied.map(({ behavior }) => behavior)]),
       }
     : scope;
   // A behavior whose chunk failed to load leaves the template's text in place until a later load succeeds.
@@ -210,11 +210,10 @@ function renderShown(
     return !!behavior && !!innerScope.appliedBehaviors?.has(behavior) && !hasBehaviorFailed(behavior);
   });
   // Without its chunk, nothing would move the copy nor take it out of the tab order.
-  const isRepeated = applied.some((name) => !!behaviors[name].repeatsChildren && !hasBehaviorFailed(behaviors[name]));
+  const isRepeated = applied.some(({ behavior, isFailed }) => !!behavior.repeatsChildren && !isFailed);
   const fallbackAttributes = applied
-    .map((name) => behaviors[name])
-    .filter(hasBehaviorFailed)
-    .flatMap((behavior) => (behavior.fallbackAttributes ?? []).map((attribute) => [attribute, ""]));
+    .filter(({ isFailed }) => isFailed)
+    .flatMap(({ behavior }) => (behavior.fallbackAttributes ?? []).map((attribute) => [attribute, ""]));
 
   // Vue pairs an element's directives by position, and a behavior reads its value, its options and the motion
   // preference once, and a failed one renders the element otherwise: a change to any of them mounts it afresh.
@@ -226,7 +225,7 @@ function renderShown(
           position,
           scope.isReducedMotion,
           behaviorValues,
-          applied.map((name) => [getBehaviorId(behaviors[name]), hasBehaviorFailed(behaviors[name])]),
+          applied.map(({ behavior, isFailed }) => [getBehaviorId(behavior), isFailed]),
         ]),
       }
     : {};
@@ -242,8 +241,8 @@ function renderShown(
     ),
     renderChildren(node, innerScope, hasText, isRepeated),
   );
-  const directives: DirectiveArguments = applied.map((name) => [
-    getBehaviorDirective(behaviors[name]),
+  const directives: DirectiveArguments = applied.map(({ name, behavior }) => [
+    getBehaviorDirective(behavior),
     values.get(toBehaviorAttribute(name)),
   ]);
 

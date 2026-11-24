@@ -1,16 +1,17 @@
 import { useNow } from "@vueuse/core";
 import { watch } from "vue";
+import { COUNTDOWN_PARTS } from "./constants";
 import { defineBehavior } from "./define-behavior";
 
 const TICK = 1000;
 const PART_SELECTOR = "[data-countdown-part]";
 
-const UNITS = [
-  ["days", 86_400_000],
-  ["hours", 3_600_000],
-  ["minutes", 60_000],
-  ["seconds", 1000],
-] as const;
+const PART_SIZES: Record<(typeof COUNTDOWN_PARTS)[number], number> = {
+  days: 86_400_000,
+  hours: 3_600_000,
+  minutes: 60_000,
+  seconds: 1000,
+};
 
 /**
  * Elements with `data-countdown-part`, inside it or the element itself, show the time left until the date;
@@ -56,7 +57,8 @@ function writeParts(element: HTMLElement, timeLeft: number): void {
   const shownUnits = new Set(parts.map((part) => part.dataset.countdownPart));
   let rest = timeLeft;
 
-  UNITS.filter(([unit]) => shownUnits.has(unit)).forEach(([unit, size], index) => {
+  COUNTDOWN_PARTS.filter((unit) => shownUnits.has(unit)).forEach((unit, index) => {
+    const size = PART_SIZES[unit];
     const count = Math.floor(rest / size);
     rest -= count * size;
 

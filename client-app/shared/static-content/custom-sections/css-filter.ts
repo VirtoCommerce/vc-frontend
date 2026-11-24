@@ -1,3 +1,4 @@
+import { Logger } from "@/core/utilities";
 import { SECTION_TYPE_ATTRIBUTE } from "./constants";
 import { isContainedSelector, toSelectorSkeleton } from "./css-selectors";
 import { decodeCssEscapes, isAllowedValue } from "./css-values";
@@ -86,7 +87,8 @@ function parseStyleSheet(css: string): CSSStyleSheet | undefined {
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(css);
     return sheet;
-  } catch {
+  } catch (error) {
+    Logger.warn("[custom-sections] A type's CSS failed to parse", error);
     return undefined;
   }
 }

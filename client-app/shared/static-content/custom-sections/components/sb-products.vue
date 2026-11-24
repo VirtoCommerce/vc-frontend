@@ -26,7 +26,7 @@ import { computed, watchEffect } from "vue";
 import { extractNumberFromString } from "@/core/utilities";
 import { ProductCard, useProducts } from "@/shared/catalog";
 import { BREAKPOINTS } from "@/ui-kit/constants";
-import { DEFAULT_PRODUCT_COLUMNS, DEFAULT_PRODUCT_VIEW, DEFAULT_PRODUCTS } from "../kit/constants";
+import { DEFAULT_PRODUCT_COLUMNS, DEFAULT_PRODUCT_COUNT, DEFAULT_PRODUCT_VIEW } from "../kit/constants";
 import type { ProductViewType } from "../kit/constants";
 
 interface IProps {
@@ -40,7 +40,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   query: undefined,
   filter: undefined,
-  take: DEFAULT_PRODUCTS,
+  take: DEFAULT_PRODUCT_COUNT,
   view: DEFAULT_PRODUCT_VIEW,
   columns: DEFAULT_PRODUCT_COLUMNS,
 });

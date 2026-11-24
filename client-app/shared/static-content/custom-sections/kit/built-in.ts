@@ -16,11 +16,19 @@ import {
 } from "@/ui-kit/components";
 import { MAIN_COLORS, MAX_RATING } from "@/ui-kit/constants";
 import { isMainColorType } from "@/ui-kit/utilities";
-import { COPIED_DURATION, DEFAULT_COUNT_UP_DURATION, DEFAULT_INVIEW_THRESHOLD } from "../behaviors/constants";
+import {
+  COPIED_DURATION,
+  COUNTDOWN_PARTS,
+  DEFAULT_COUNT_UP_DURATION,
+  DEFAULT_INVIEW_THRESHOLD,
+  MAX_COUNT_UP_DECIMALS,
+  MAX_COUNT_UP_DURATION,
+} from "../behaviors/constants";
 import {
   DEFAULT_PRODUCT_COLUMNS,
+  DEFAULT_PRODUCT_COUNT,
   DEFAULT_PRODUCT_VIEW,
-  DEFAULT_PRODUCTS,
+  MAX_PRODUCT_COLUMNS,
   MAX_PRODUCTS,
   PRODUCT_CARD_ELEMENTS,
   PRODUCT_VIEWS,
@@ -155,13 +163,13 @@ const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
         type: "number",
         min: 1,
         max: MAX_PRODUCTS,
-        description: `How many products, ${DEFAULT_PRODUCTS} by default.`,
+        description: `How many products, ${DEFAULT_PRODUCT_COUNT} by default.`,
       },
       view: { type: "select", options: [...PRODUCT_VIEWS], description: `${DEFAULT_PRODUCT_VIEW} by default.` },
       columns: {
         type: "number",
         min: 1,
-        max: 6,
+        max: MAX_PRODUCT_COLUMNS,
         description: `The most products in a row, ${DEFAULT_PRODUCT_COLUMNS} by default.`,
       },
     },
@@ -375,10 +383,10 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
       duration: {
         type: "number",
         min: 0,
-        max: 5000,
+        max: MAX_COUNT_UP_DURATION,
         description: `In milliseconds, ${DEFAULT_COUNT_UP_DURATION} by default.`,
       },
-      decimals: { type: "number", min: 0, max: 4, description: "0 by default." },
+      decimals: { type: "number", min: 0, max: MAX_COUNT_UP_DECIMALS, description: "0 by default." },
     },
     writes: ["text"],
     textAttributes: ["data-count-up"],
@@ -395,7 +403,7 @@ const BUILT_IN_BEHAVIORS: Record<BuiltInBehaviorNameType, ICustomSectionBehavior
     options: {
       part: {
         type: "select",
-        options: ["days", "hours", "minutes", "seconds"],
+        options: [...COUNTDOWN_PARTS],
         description: "On a child: what it shows.",
       },
     },

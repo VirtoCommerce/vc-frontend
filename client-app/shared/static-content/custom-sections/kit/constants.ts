@@ -9,8 +9,9 @@ export const PRODUCT_VIEWS = ["grid", "carousel"] as const;
 export type ProductViewType = (typeof PRODUCT_VIEWS)[number];
 
 /** What `vc-products` shows when its attribute is left out. */
-export const DEFAULT_PRODUCTS = 4;
+export const DEFAULT_PRODUCT_COUNT = 4;
 export const DEFAULT_PRODUCT_COLUMNS = 4;
+export const MAX_PRODUCT_COLUMNS = 6;
 export const DEFAULT_PRODUCT_VIEW: ProductViewType = "grid";
 
 /** Whatever type a tag declares them, these hold an address. */
