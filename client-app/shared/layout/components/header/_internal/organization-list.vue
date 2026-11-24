@@ -21,15 +21,9 @@
         :placeholder="$t('shared.layout.header.top_header.search_organizations')"
         :aria-label="$t('shared.layout.header.top_header.search_organizations')"
         :clearable="!!searchPhrase"
-        :aria="{
-          role: 'combobox',
-          'aria-expanded': 'true',
-          'aria-haspopup': 'listbox',
-          'aria-controls': listboxId,
-          'aria-activedescendant': activeDescendantId ?? null,
-        }"
+        :aria="{ 'aria-controls': listboxId }"
         @keydown.enter="search"
-        @keydown.down.prevent="moveFocus(1)"
+        @keydown.down.prevent="list?.focus()"
         @input="onSearchInput"
         @clear="onSearchClear"
       >
@@ -46,57 +40,55 @@
     </div>
 
     <div class="organization-list__items">
-      <VcScrollbar
+      <VcMenuList
         :id="listboxId"
         ref="list"
-        vertical
         role="listbox"
         :aria-label="$t('common.labels.organizations')"
-        class="organization-list__scroll"
-        test-id="organizations-list"
+        class="organization-list__options"
       >
-        <VcMenuItem
-          v-for="(item, index) in displayedOrganizations"
-          :key="item.id"
-          size="xs"
-          role="option"
-          class="organization-list__item"
-          :active="contactOrganizationId === item.id"
-          :option-id="getOptionId(index)"
-          :data-vc-organization-option="componentId"
-          :aria-selected="contactOrganizationId === item.id"
-          :disabled="item.isLockedForCurrentUser"
-          :title="
-            item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
-          "
-          @click="selectOrganization(item.id)"
-        >
-          <VcRadioButton
-            :model-value="contactOrganizationId"
-            :label="item.name"
-            :value="item.id"
-            :max-lines="2"
-            :title="item.name"
-            word-break="break-word"
-            :data-organization-name="item.name"
+        <VcScrollbar vertical class="organization-list__scroll" test-id="organizations-list">
+          <VcMenuItem
+            v-for="item in displayedOrganizations"
+            :key="item.id"
+            size="xs"
+            class="organization-list__item"
+            :active="contactOrganizationId === item.id"
             :disabled="item.isLockedForCurrentUser"
+            :title="
+              item.isLockedForCurrentUser
+                ? $t('shared.layout.header.top_header.organization_locked_tooltip')
+                : undefined
+            "
+            @click="selectOrganization(item.id)"
+          >
+            <VcRadioButton
+              :model-value="contactOrganizationId"
+              :label="item.name"
+              :value="item.id"
+              :max-lines="2"
+              :title="item.name"
+              word-break="break-word"
+              :data-organization-name="item.name"
+              :disabled="item.isLockedForCurrentUser"
+            />
+
+            <template v-if="item.isLockedForCurrentUser" #append>
+              <VcIcon name="lock-closed" size="xs" />
+            </template>
+          </VcMenuItem>
+
+          <VcInfinityScrollLoader
+            v-if="hasNextPage"
+            :loading="loading"
+            :page-number="currentPage"
+            :pages-count="pagesCount"
+            distance="50"
+            class="organization-list__loader"
+            @visible="loadOrganizations"
           />
-
-          <template v-if="item.isLockedForCurrentUser" #append>
-            <VcIcon name="lock-closed" size="xs" />
-          </template>
-        </VcMenuItem>
-
-        <VcInfinityScrollLoader
-          v-if="hasNextPage"
-          :loading="loading"
-          :page-number="currentPage"
-          :pages-count="pagesCount"
-          distance="50"
-          class="organization-list__loader"
-          @visible="loadOrganizations"
-        />
-      </VcScrollbar>
+        </VcScrollbar>
+      </VcMenuList>
 
       <!-- Outside the listbox (only options belong there) and always rendered, so an empty result is announced. -->
       <output>
@@ -118,9 +110,7 @@ import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher } from "@/shared/account/composables/useOrganizationSwitcher";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useUserOrganizations } from "@/shared/account/composables/useUserOrganizations";
-import { useListboxKeyboard } from "@/shared/layout/composables/useListboxKeyboard";
 import { useComponentId } from "@/ui-kit/composables";
-import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
   (event: "organizationSelected"): void;
@@ -155,16 +145,8 @@ watch(
   },
 );
 
-const componentId = useComponentId("organizations");
-const listboxId = componentId + "-listbox";
-const activeDescendantId = ref<string>();
-const list = useTemplateRef<ComponentPublicInstance>("list");
-
-const { moveFocus } = useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined, {
-  onFocus: (option) => {
-    activeDescendantId.value = option.id;
-  },
-});
+const listboxId = useComponentId("organizations") + "-listbox";
+const list = useTemplateRef("list");
 
 // Shared session state: refetch on each mount so a newly locked row is disabled, and drop the last phrase.
 onMounted(() => {
@@ -181,14 +163,6 @@ const displayedOrganizations = computed(() => {
 
   return withoutCurrent;
 });
-
-watch(displayedOrganizations, () => {
-  activeDescendantId.value = undefined;
-});
-
-function getOptionId(index: number): string {
-  return `${componentId}-option-${index}`;
-}
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {

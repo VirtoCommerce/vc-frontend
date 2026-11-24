@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
-import { VcMenuItem } from "@/ui-kit/components/molecules";
+import { VcMenuItem, VcMenuList } from "@/ui-kit/components/molecules";
 import type { VueWrapper } from "@vue/test-utils";
 
 type RequestType = {
@@ -82,7 +82,7 @@ async function mountList(): Promise<VueWrapper> {
 
   const wrapper = mount(Panel, {
     attachTo: document.body,
-    global: { stubs, components: { VcMenuItem }, mocks: { $t: (key: string) => key } },
+    global: { stubs, components: { VcMenuItem, VcMenuList }, mocks: { $t: (key: string) => key } },
   });
   await flushPromises();
   return wrapper;
@@ -227,39 +227,36 @@ describe("OrganizationList: keyboard", () => {
     expect(focused()).toBe(rows[3].element);
   });
 
-  it("enters the list from the panel: Down at the first row, Up at the last", async () => {
+  it("is one tab stop: the current organization", async () => {
     const wrapper = await mountRows();
-    const panel = wrapper.get<HTMLElement>(".test-panel");
-    const rows = options(wrapper);
 
-    panel.element.focus();
-    await panel.trigger("keydown", { key: "ArrowUp" });
-    expect(focused()).toBe(rows[3].element);
-
-    panel.element.focus();
-    await panel.trigger("keydown", { key: "ArrowDown" });
-    expect(focused()).toBe(rows[0].element);
+    expect(options(wrapper).map((row) => row.attributes("tabindex"))).toEqual(["0", "-1", "-1", "-1"]);
   });
 
-  it("enters the list from the search field at the first row", async () => {
+  it("enters the list from the search field at its tab stop", async () => {
     const wrapper = await mountList();
     await resolveAll();
+    const rows = options(wrapper);
 
     wrapper.findComponent({ name: "VcInput" }).vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
     await nextTick();
+    expect(focused()).toBe(rows[0].element);
 
-    expect(focused()).toBe(options(wrapper)[0].element);
+    rows[2].element.focus();
+    await nextTick();
+    wrapper.get<HTMLElement>(".test-panel").element.focus();
+    wrapper.findComponent({ name: "VcInput" }).vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    await nextTick();
+    expect(focused()).toBe(rows[2].element);
   });
 
-  it("points the search field at the row the arrows focus", async () => {
+  it("keeps the search field a plain search box that controls the list", async () => {
     const wrapper = await mountList();
     await resolveAll();
-    const input = wrapper.findComponent({ name: "VcInput" });
 
-    input.vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
-    await nextTick();
+    const aria = wrapper.findComponent({ name: "VcInput" }).props("aria");
 
-    expect(input.props("aria")["aria-activedescendant"]).toBe(options(wrapper)[0].attributes("id"));
+    expect(aria).toEqual({ "aria-controls": wrapper.get('[role="listbox"]').attributes("id") });
   });
 });
 

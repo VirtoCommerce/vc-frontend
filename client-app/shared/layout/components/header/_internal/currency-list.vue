@@ -1,34 +1,31 @@
 <template>
-  <VcScrollbar ref="list" vertical role="listbox" class="currency-list" test-id="preferences-menu-currencies">
-    <VcMenuItem
-      v-for="currency in supportedCurrencies"
-      :key="currency.code"
-      role="option"
-      color="secondary"
-      class="currency-list__item"
-      :active="isCurrent(currency)"
-      :aria-selected="isCurrent(currency)"
-      :data-currency-code="currency.code"
-      truncate
-      @click="select(currency.code)"
-    >
-      <span class="currency-list__symbol" aria-hidden="true">{{ currency.symbol }}</span>
+  <VcMenuList role="listbox" class="currency-list" data-test-id="preferences-menu-currencies">
+    <VcScrollbar vertical class="currency-list__scroll">
+      <VcMenuItem
+        v-for="currency in supportedCurrencies"
+        :key="currency.code"
+        color="secondary"
+        class="currency-list__item"
+        :active="isCurrent(currency)"
+        :data-currency-code="currency.code"
+        truncate
+        @click="select(currency.code)"
+      >
+        <span class="currency-list__symbol" aria-hidden="true">{{ currency.symbol }}</span>
 
-      <span class="currency-list__code">{{ currency.code }}</span>
+        <span class="currency-list__code">{{ currency.code }}</span>
 
-      <span class="currency-list__name">{{ getCurrencyName(currency) }}</span>
-    </VcMenuItem>
-  </VcScrollbar>
+        <span class="currency-list__name">{{ getCurrencyName(currency) }}</span>
+      </VcMenuItem>
+    </VcScrollbar>
+  </VcMenuList>
 </template>
 
 <script setup lang="ts">
 import { upperFirst } from "lodash-es";
-import { useTemplateRef } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useCurrencySwitch } from "@/shared/layout/composables/useCurrencySwitch";
-import { useListboxKeyboard } from "@/shared/layout/composables/useListboxKeyboard";
 import type { ICurrency } from "@/core/types";
-import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
   (event: "select"): void;
@@ -38,10 +35,6 @@ const emit = defineEmits<IEmits>();
 
 const { currentCurrency, supportedCurrencies, selectCurrency } = useCurrencySwitch();
 const { currentLanguage } = useLanguages();
-
-const list = useTemplateRef<ComponentPublicInstance>("list");
-
-useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined);
 
 function isCurrent(currency: ICurrency): boolean {
   return currency.code === currentCurrency.value.code;
@@ -75,7 +68,9 @@ function select(code: string): void {
 
 <style lang="scss">
 .currency-list {
-  @apply max-h-48;
+  &__scroll {
+    @apply max-h-48;
+  }
 
   &__symbol {
     @apply w-8 flex-none text-center text-neutral-600;
