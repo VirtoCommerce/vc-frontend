@@ -1,10 +1,15 @@
 .vc-menu-item {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
   $active: "";
+  $highlighted: "";
 
   &__inner {
     &--active {
       $active: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
     }
 
     &:not(#{$active}) {
@@ -13,6 +18,11 @@
 
     @each $color in $colors {
       &--color--#{$color} {
+        // -50, not hover's -100, so a keyboard highlight does not read as the selected item.
+        &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
+        }
+
         &:hover {
           @apply bg-[--color-#{$color}-100];
         }

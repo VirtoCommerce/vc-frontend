@@ -1,7 +1,9 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
+import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcCheckbox from "./vc-checkbox.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
@@ -18,6 +20,9 @@ function mountCheckbox(props = {}, slots: ComponentMountingOptions<typeof VcChec
     global: mountGlobal,
   });
 }
+
+const STUBS = { VcTooltip: true, VcInputDetails: true };
+const createWrapper = createWrapperFactory(mount, VcCheckbox, { global: { stubs: STUBS } });
 
 describe("VcCheckbox error state", () => {
   it("marks the input invalid and points it at the rendered message", () => {
@@ -102,4 +107,64 @@ describe("VcCheckbox accessible name", () => {
 
     expect(wrapper.get("input").attributes("aria-label")).toBe("Subscribe to the newsletter");
   });
+});
+
+describe("VcCheckbox exposed input", () => {
+  it("exposes its native input", () => {
+    const wrapper = createWrapper({ props: { modelValue: false, ariaLabel: "Accept" } });
+
+    expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
+  });
+
+  it("keeps the exposed input read-only for a parent", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    onTestFinished(() => warn.mockRestore());
+    const wrapper = createWrapper({ props: { modelValue: false, ariaLabel: "Accept" } });
+
+    (wrapper.vm as { inputElement: HTMLInputElement | null }).inputElement = null;
+
+    expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
+    expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
+      expect.stringContaining("computed value is readonly"),
+    ]);
+  });
+
+  it("exposes null inside an interactive parent, which renders no input", () => {
+    // Mounted directly: the factory's deep merge drops symbol keys from `provide`.
+    const wrapper = mount(VcCheckbox, {
+      props: { modelValue: false, ariaLabel: "Accept" },
+      global: { stubs: STUBS, provide: { [INTERACTIVE_PARENT_KEY as symbol]: ref(true) } },
+    });
+
+    expect(wrapper.find("input").exists()).toBe(false);
+    expect(wrapper.vm.inputElement).toBeNull();
+  });
+});
+
+describe("VcCheckbox with prevent-default", () => {
+  it.each([
+    ["checks", false, true],
+    ["clears", true, false],
+  ])(
+    "shows the new state after a click that %s, once the browser restores the cancelled one",
+    async (_label, from, to) => {
+      const wrapper = createWrapper({
+        props: {
+          modelValue: from,
+          ariaLabel: "Accept",
+          preventDefault: true,
+          "onUpdate:modelValue": (value: boolean) => void wrapper.setProps({ modelValue: value }),
+        },
+      });
+      const input = wrapper.get("input").element as HTMLInputElement;
+
+      input.click();
+      await nextTick();
+      // A browser renders the new state before it restores the cancelled click's old one.
+      input.checked = from;
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(input.checked).toBe(to);
+    },
+  );
 });

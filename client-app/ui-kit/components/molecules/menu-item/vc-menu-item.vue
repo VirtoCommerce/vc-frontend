@@ -4,7 +4,7 @@
     :id="componentId"
     v-bind="$attrs"
     ref="currentElement"
-    class="vc-menu-item"
+    :class="['vc-menu-item', { 'vc-menu-item--with-divider': withDivider }]"
     :role="wrapperRole"
   >
     <component
@@ -21,6 +21,8 @@
         `vc-menu-item__inner--color--${color}`,
         {
           'vc-menu-item__inner--active': active,
+          'vc-menu-item__inner--highlighted': highlighted,
+          'vc-menu-item__inner--highlight-ring': highlighted && highlightRing,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -72,6 +74,22 @@ interface IProps {
   role?: string;
   ariaSelected?: boolean;
   optionId?: string;
+  /**
+   * The active option of an `aria-activedescendant` list, where DOM focus stays on the combobox
+   * and cannot provide the usual focus ring.
+   */
+  highlighted?: boolean;
+  /**
+   * Draws the focus ring on a highlighted item. Turn it off for a highlight that follows the pointer.
+   */
+  highlightRing?: boolean;
+  /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
+  tabindex?: number | `${number}`;
+  /**
+   * Draws a separator above the item unless it is the first in its list. Its colour is
+   * `--vc-menu-item-divider-color`.
+   */
+  withDivider?: boolean;
 }
 
 defineOptions({
@@ -84,6 +102,8 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  tabindex: 0,
+  highlightRing: true,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -130,15 +150,15 @@ provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button", tabindex: 0 };
+    return { type: "button", tabindex: props.tabindex };
   }
 
   return {};
@@ -189,10 +209,16 @@ onMounted(() => {
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
+  $highlighted: "";
+  $highlightRing: "";
   $truncate: "";
   $maxLines: "";
 
   @apply list-none select-none;
+
+  &--with-divider:where(:not(:first-child)) {
+    border-block-start: 1px solid var(--vc-menu-item-divider-color, var(--color-neutral-100));
+  }
 
   &__inner {
     --vc-icon-size: var(--content-height);
@@ -207,6 +233,16 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
+    }
+
+    &--highlight-ring {
+      $highlightRing: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
+
+      @apply outline-none;
     }
 
     &--truncate {
@@ -251,6 +287,11 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
+        // Before `:hover`, so the pointer's hover look wins on the item it highlights.
+        &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
+        }
+
         &:hover {
           @apply bg-[--color-#{$color}-50];
         }
@@ -259,6 +300,16 @@ onMounted(() => {
           @apply bg-[--color-#{$color}-100];
         }
       }
+    }
+
+    // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
+    &#{$highlightRing} {
+      @include focus-ring($inset: true);
+    }
+
+    // `:where` keeps this at the specificity of the `:focus-visible` rule below, which must still win.
+    &:where(:not(#{$highlighted})):focus {
+      @apply outline-none;
     }
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
@@ -299,10 +350,6 @@ onMounted(() => {
 
   &__append {
     @apply flex-none flex items-center h-[--content-height] empty:hidden;
-  }
-
-  .vc-icon {
-    @apply flex-none;
   }
 }
 </style>

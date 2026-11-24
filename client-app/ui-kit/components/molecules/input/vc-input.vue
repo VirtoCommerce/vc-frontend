@@ -5,6 +5,7 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
+        'vc-input--pointer-modality': readonly && isPointerFocus,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
@@ -106,7 +107,7 @@
 <script setup lang="ts" generic="T extends string | number | null">
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
-import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { useAttrsOnly, useComponentId, useFocusModality, useListeners } from "@/ui-kit/composables";
 import { getInputClearIconSize } from "@/ui-kit/utilities";
 import type { MaskOptions } from "maska";
 import type { AriaAttributes } from "vue";
@@ -154,6 +155,7 @@ export interface IProps {
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
+  /** Attributes for the native input. A focused input with `aria-expanded: "true"` (a popup the field controls is open) draws the focus ring, even after a mouse click; never when `seamless`. */
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
   tabindex?: string | number;
@@ -188,6 +190,7 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
+const { isPointerFocus } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -302,6 +305,7 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/field-size" as *;
 @use "@/ui-kit/styles/focus-ring" as *;
 
 .vc-input {
@@ -310,6 +314,7 @@ provide<VcInputContextType>("inputContext", {
   $sizeMd: "";
 
   $readonly: "";
+  $pointerModality: "";
   $disabled: "";
   $error: "";
   $noBorder: "";
@@ -325,6 +330,22 @@ provide<VcInputContextType>("inputContext", {
   @apply flex flex-col;
 
   &--size {
+    @each $size in (xs, sm, md) {
+      &--#{$size} {
+        --height: #{field-height($size)};
+        --text-size: #{field-text-size($size)};
+        --line-height: #{field-line-height($size)};
+      }
+    }
+
+    // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
+    // ancestor's same-named property: `--height` and `--line-height` are generic names.
+    &--auto {
+      --height: initial;
+      --text-size: initial;
+      --line-height: initial;
+    }
+
     &--xs {
       $sizeXs: &;
     }
@@ -340,6 +361,10 @@ provide<VcInputContextType>("inputContext", {
 
   &--readonly {
     $readonly: &;
+  }
+
+  &--pointer-modality {
+    $pointerModality: &;
   }
 
   &--disabled {
@@ -371,20 +396,22 @@ provide<VcInputContextType>("inputContext", {
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
-    #{$sizeXs} & {
-      @apply h-8 text-sm;
-    }
+    // Unset without the knob, so the container keeps inheriting its cursor.
+    cursor: var(--vc-input-cursor);
 
-    #{$sizeSm} & {
-      @apply h-[2.375rem] text-base;
-    }
+    height: var(--height);
+    font-size: var(--text-size);
+    line-height: var(--line-height);
 
-    #{$sizeMd} & {
-      @apply h-11 text-base;
-    }
-
-    &:has(input:focus-visible) {
+    // Expanded rings only with focus, so an always-open inline list does not; `:where` keeps the focus-visible weight.
+    &:has(input:focus-visible),
+    &:has(input:where([aria-expanded="true"]):focus) {
       @include focus-ring;
+    }
+
+    // A read-only field takes no typing, so a mouse click on it is not a reason to ring; an open popup still is.
+    #{$pointerModality} &:not(:has(input[aria-expanded="true"])) {
+      @apply outline-none;
     }
 
     #{$error} & {
@@ -404,7 +431,8 @@ provide<VcInputContextType>("inputContext", {
       @apply border-0 bg-transparent p-0;
 
       // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
-      &:has(input:focus-visible) {
+      &:has(input:focus-visible),
+      &:has(input[aria-expanded="true"]) {
         @apply outline-none;
       }
 
@@ -434,6 +462,7 @@ provide<VcInputContextType>("inputContext", {
     @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     padding-inline: var(--vc-input-padding-x, theme("padding.2"));
+    cursor: var(--vc-input-cursor, auto);
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
