@@ -18,6 +18,9 @@ export type CustomSectionDirectiveType = Pick<
 /** The types of field the server reads in a kit. */
 export const CUSTOM_SECTION_FIELD_TYPES = ["string", "number", "boolean", "select", "link", "date"] as const;
 
+/** The lists of names the catalog holds once, for a select's `optionsFrom`. */
+export const CUSTOM_SECTION_OPTION_LISTS = ["icons", "masks"] as const;
+
 /**
  * An attribute of a kit tag, or the value or an option of a behavior, as the agent that writes templates and the
  * server that checks them read it. The storefront drops a tag attribute that breaks it.
@@ -35,7 +38,7 @@ export interface ICustomSectionField {
    * A `select` of a list the catalog holds once: `icons`, the names `VcIcon` draws, as `kit.icons`, or `masks`, the
    * names `VcShape` cuts its mask from, as `kit.masks`.
    */
-  optionsFrom?: "icons" | "masks";
+  optionsFrom?: (typeof CUSTOM_SECTION_OPTION_LISTS)[number];
   min?: number;
   max?: number;
   description?: string;

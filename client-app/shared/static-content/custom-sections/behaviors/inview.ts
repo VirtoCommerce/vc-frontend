@@ -44,8 +44,7 @@ export const vInview = defineBehavior((element, { isReducedMotion }) => {
       observerScope?.stop();
       observerScope = effectScope(true);
       observerScope.run(() => {
-        const { stop } = useIntersectionObserver(element, onIntersect, { threshold: [0, ratio] });
-        onScopeDispose(stop);
+        useIntersectionObserver(element, onIntersect, { threshold: [0, ratio] });
       });
     },
     { immediate: true },

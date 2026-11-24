@@ -1,6 +1,6 @@
-import { getListRows, renderParts, resolveBinding, toBindingText, toFieldMap } from "./bindings";
+import { getListRows, renderParts, resolveBinding, toBindingText } from "./bindings";
 import { getCustomSectionBehaviors, getCustomSectionTags } from "./kit";
-import { MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { DEFAULT_TAG_COST, MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
 import { getRichText } from "./rich-text";
 import type { IBindingScope, TemplatePartType } from "./bindings";
 import type { IRichText } from "./rich-text";
@@ -48,18 +48,17 @@ function addElementSize(node: ICompiledElement, scope: IBindingScope, size: IRen
   }
 
   const rows = getListRows(listId, scope);
-  const fields = toFieldMap(scope.fields.get(listId)?.element);
 
   // Every row adds at least its element, so the count stops within the budget's number of rows.
   for (let index = 0; index < rows.length && !isOverLimits(size); index++) {
-    addOwnSize(node, { ...scope, row: { ...rows[index], listId, fields } }, size, times);
+    addOwnSize(node, { ...scope, row: rows[index] }, size, times);
   }
 }
 
 function addOwnSize(node: ICompiledElement, scope: IBindingScope, size: IRenderSize, times: number): void {
   const behaviors = getCustomSectionBehaviors();
   const tags = getCustomSectionTags();
-  const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? 1) : 1;
+  const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? DEFAULT_TAG_COST) : 1;
   const richText = node.html ? getRichText(node.html, scope, size.richTexts) : undefined;
   const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
   const attributeParts = node.attributes.flatMap(([, parts]) => parts);

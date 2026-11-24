@@ -37,7 +37,7 @@ export function defineBehavior(
       state.scope.run(() =>
         setup(element, {
           value: binding.value ?? "",
-          isReducedMotion: useReducedMotion().value === "reduce",
+          isReducedMotion: useReducedMotion().value,
           updates: state.updates,
         }),
       );

@@ -32,7 +32,7 @@ import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { IEditableText, IEndedEdit } from "./inline-text-editor";
 import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
-import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
+import type { IThemeDraft, IThemeItem, IThemePageDocument, IThemeSchemaField } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
 import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import type { Router } from "vue-router";
@@ -43,17 +43,8 @@ const LOG_SCOPE = "[builder-preview]";
 
 type AnswerKindType = "render" | "draft";
 
-interface ISchemaField {
-  id?: string;
-  type?: string;
-  format?: string;
-  translatable?: boolean;
-  multiline?: boolean;
-  element?: ISchemaField[];
-}
-
 interface ISchemaWithSettings {
-  settings?: ISchemaField[];
+  settings?: IThemeSchemaField[];
   includeShared?: string[];
 }
 
@@ -445,13 +436,13 @@ export function findSchemaField(
   schemas: PageBuilderSchemaType | undefined,
   itemType: string,
   path: (string | number)[],
-): ISchemaField | undefined {
+): IThemeSchemaField | undefined {
   const schema = (schemas?.sections[itemType] ?? schemas?.blocks[itemType]) as ISchemaWithSettings | undefined;
   const sharedFields = (schema?.includeShared ?? []).flatMap(
     (name) => (schemas?.shared[name] as ISchemaWithSettings | undefined)?.settings ?? [],
   );
-  let fields: ISchemaField[] | undefined = [...(schema?.settings ?? []), ...sharedFields];
-  let field: ISchemaField | undefined;
+  let fields: IThemeSchemaField[] | undefined = [...(schema?.settings ?? []), ...sharedFields];
+  let field: IThemeSchemaField | undefined;
 
   for (const key of path.filter((step): step is string => typeof step === "string")) {
     field = fields?.find((candidate) => candidate.id === key);

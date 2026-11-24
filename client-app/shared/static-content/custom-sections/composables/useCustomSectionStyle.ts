@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted, toValue, watch } from "vue";
-import { SECTION_TYPE_ATTRIBUTE } from "../constants";
+import { CUSTOM_SECTION_STYLE_ATTRIBUTE, SECTION_TYPE_ATTRIBUTE } from "../constants";
 import { filterSectionCss } from "../css-filter";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -9,8 +9,6 @@ interface IAppliedStyle {
   users: number;
   sourceKey?: string;
 }
-
-export const CUSTOM_SECTION_STYLE_ATTRIBUTE = "data-sb-custom-section";
 
 const appliedStyles = new Map<string, IAppliedStyle>();
 

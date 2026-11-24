@@ -6,7 +6,7 @@ import { omit } from "lodash-es";
 import { camelize, shallowRef } from "vue";
 import { isRecord, Logger } from "@/core/utilities";
 import { RENDER_BUDGET } from "../limits";
-import { CUSTOM_SECTION_FIELD_TYPES } from "../types";
+import { CUSTOM_SECTION_FIELD_TYPES, CUSTOM_SECTION_OPTION_LISTS } from "../types";
 import { IMAGE_ATTRIBUTE, LINK_ATTRIBUTES } from "./constants";
 import {
   MAX_DESCRIPTION_LENGTH,
@@ -71,8 +71,8 @@ const VNODE_ATTRIBUTES = new Set(["key", "ref"]);
 /** As the server reads a kit field. */
 const FIELD_TYPES = new Set<string>(CUSTOM_SECTION_FIELD_TYPES);
 const FIELD_KEYS = new Set(["type", "options", "optionsFrom", "min", "max", "description"]);
-/** The lists of names the catalog holds once, for a select's `optionsFrom`. */
-const OPTION_LISTS = new Set<unknown>(["icons", "masks"]);
+const OPTION_LISTS = new Set<unknown>(CUSTOM_SECTION_OPTION_LISTS);
+const ALTERNATIVES = new Intl.ListFormat("en", { type: "disjunction" });
 const DATA_PREFIX = "data-";
 /**
  * The server refuses the whole kit for a bound it cannot read, as one from 2^63 on, which its JSON reader takes as a
@@ -387,7 +387,7 @@ function getFieldRefusal(field: unknown): string | undefined {
   }
 
   if (typeof field.type !== "string" || !FIELD_TYPES.has(field.type)) {
-    return "has no type of string, number, boolean, select, link or date";
+    return `has no type of ${ALTERNATIVES.format(CUSTOM_SECTION_FIELD_TYPES)}`;
   }
 
   if (field.options !== undefined && !isTextList(field.options, MAX_SELECT_OPTIONS, MAX_OPTION_LENGTH)) {
@@ -395,7 +395,7 @@ function getFieldRefusal(field: unknown): string | undefined {
   }
 
   if (field.optionsFrom !== undefined && !(field.type === "select" && OPTION_LISTS.has(field.optionsFrom))) {
-    return 'has an optionsFrom other than "icons" or "masks" of a select';
+    return `has an optionsFrom other than ${ALTERNATIVES.format(CUSTOM_SECTION_OPTION_LISTS.map((name) => JSON.stringify(name)))} of a select`;
   }
 
   // No value of such a select could be taken.

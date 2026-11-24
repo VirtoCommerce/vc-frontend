@@ -1,4 +1,5 @@
 import guide from "../guide.md?raw";
+import { DEFAULT_TAG_COST } from "../limits";
 import { getCustomSectionBehaviors, getCustomSectionTags } from "./registry";
 import type { IDesignFacts } from "../design-facts";
 import type { ICustomSectionBehavior, ICustomSectionTag } from "../types";
@@ -30,7 +31,7 @@ export function getKitCatalog(): ICustomSectionKitCatalog {
   const tags = toSortedEntries(getCustomSectionTags()).map(
     ([name, { description, attributes, cost, hasSideEffects }]) => [
       name,
-      { description, attributes, cost: cost ?? 1, hasSideEffects: !!hasSideEffects },
+      { description, attributes, cost: cost ?? DEFAULT_TAG_COST, hasSideEffects: !!hasSideEffects },
     ],
   );
   const behaviors = toSortedEntries(getCustomSectionBehaviors()).map(

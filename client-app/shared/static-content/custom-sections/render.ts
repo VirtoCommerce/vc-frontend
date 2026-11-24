@@ -1,5 +1,6 @@
+import { has } from "lodash-es";
 import { createCommentVNode, createTextVNode, Fragment, h, isVNode, mergeProps, withDirectives } from "vue";
-import { isRecord, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { getPreviewFieldAttrs, opensNewWindow, withNewWindowRel } from "../sections";
 import { BOOLEAN_ATTRIBUTES, isBooleanAttributeOn, isUnsetBinding, toSafeAttributeValue } from "./allowlist";
 import { getBehaviorDirective, hasBehaviorFailed } from "./behaviors";
@@ -140,18 +141,16 @@ function renderElement(
     return [renderShown(node, scope, props, position)];
   }
 
-  const field = scope.fields.get(listId);
   const rows = getListRows(listId, scope);
-  const fields = toFieldMap(field?.element);
   const keys = toRowKeys(rows.map(({ values }) => values));
 
   return [
     h(
       Fragment,
-      rows.map(({ index, values }, i) =>
+      rows.map((row, i) =>
         renderShown(
           node,
-          { ...scope, row: { listId, index, values, fields } },
+          { ...scope, row },
           { ...props, key: keys[i], style: { "--i": String(i), "--n": String(rows.length) } },
           position,
         ),
@@ -406,19 +405,7 @@ function getFieldAttributes(node: ICompiledElement, scope: IBindingScope): Recor
   const resolved =
     bindings.length === 1 && typeof binding !== "string" ? resolveBinding(binding.path, scope) : undefined;
 
-  return resolved?.field.type === "string" &&
-    resolved.field.format !== "url" &&
-    isOwnValue(scope.settings, resolved.path)
+  return resolved?.field.type === "string" && resolved.field.format !== "url" && has(scope.settings, resolved.path)
     ? getPreviewFieldAttrs(resolved.path.join("."))
     : {};
-}
-
-function isOwnValue(settings: Record<string, unknown>, path: readonly (string | number)[]): boolean {
-  let owner: unknown = settings;
-
-  return path.every((step) => {
-    const isOwn = (isRecord(owner) || Array.isArray(owner)) && Object.hasOwn(owner, step);
-    owner = isOwn ? (owner as Record<string | number, unknown>)[step] : undefined;
-    return isOwn;
-  });
 }

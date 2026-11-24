@@ -59,6 +59,7 @@ export interface IThemeSchemaField {
   type?: string;
   format?: string;
   translatable?: boolean;
+  multiline?: boolean;
   /** The fields of a `list` row or an `object`. */
   element?: IThemeSchemaField[];
   [key: string]: unknown;

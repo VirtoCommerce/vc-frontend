@@ -4,6 +4,9 @@
  */
 export const RENDER_BUDGET = 5000;
 
+/** What a kit tag counts against the render budget when it names no `cost`. */
+export const DEFAULT_TAG_COST = 1;
+
 /**
  * The most characters of settings a section renders: every bound value in its text and attributes, and its rich
  * text, list rows and repeated children included. Over it, the section renders nothing.

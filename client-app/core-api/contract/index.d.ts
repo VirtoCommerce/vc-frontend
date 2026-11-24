@@ -5330,6 +5330,8 @@ type CustomSectionValueType = string | number | boolean;
 type CustomSectionDirectiveType = Pick<ObjectDirective<HTMLElement, string | undefined>, "mounted" | "beforeUpdate" | "updated" | "beforeUnmount" | "unmounted">;
 /** The types of field the server reads in a kit. */
 declare const CUSTOM_SECTION_FIELD_TYPES: readonly ["string", "number", "boolean", "select", "link", "date"];
+/** The lists of names the catalog holds once, for a select's `optionsFrom`. */
+declare const CUSTOM_SECTION_OPTION_LISTS: readonly ["icons", "masks"];
 /**
  * An attribute of a kit tag, or the value or an option of a behavior, as the agent that writes templates and the
  * server that checks them read it. The storefront drops a tag attribute that breaks it.
@@ -5347,7 +5349,7 @@ interface ICustomSectionField {
      * A `select` of a list the catalog holds once: `icons`, the names `VcIcon` draws, as `kit.icons`, or `masks`, the
      * names `VcShape` cuts its mask from, as `kit.masks`.
      */
-    optionsFrom?: "icons" | "masks";
+    optionsFrom?: (typeof CUSTOM_SECTION_OPTION_LISTS)[number];
     min?: number;
     max?: number;
     description?: string;

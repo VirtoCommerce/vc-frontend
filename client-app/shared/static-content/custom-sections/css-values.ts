@@ -30,7 +30,7 @@ const DYNAMIC_FUNCTIONS = new Set(["var", "inherit", "attr", "env", "if"]);
 const ESCAPE_REGEX = /\\(?:([\da-f]{1,6})\s?|(.))/gis;
 /** One escape at the reader's place: a `\` before a newline is none. */
 const ONE_ESCAPE_REGEX = /\\(?:[\da-f]{1,6}\s?|[^\n])/iy;
-const NAME_CHAR_REGEX = /^[-\w]$|^[^\0-\x7f]$/;
+export const NAME_CHAR_REGEX = /^[-\w]$|^[^\0-\x7f]$/;
 /** CSS whitespace, after the line breaks are read as `\n`. */
 const WHITESPACE_REGEX = /^[\t\n ]$/;
 const SPACES_REGEX = /[\t\n ]*/y;
@@ -85,6 +85,12 @@ export function preprocessCss(css: string): string {
   return css.replaceAll(LINE_BREAK_REGEX, "\n").replaceAll(NULL_REGEX, "\uFFFD");
 }
 
+/** The index after the comment that opens at `start`. */
+export function skipComment(value: string, start: number): number {
+  const end = value.indexOf("*/", start + 2);
+  return end < 0 ? value.length : end + 2;
+}
+
 /** The index after the string that opens at `start`, its escapes skipped. */
 export function skipString(value: string, start: number): number {
   return readString(value, start)[1];
@@ -122,8 +128,7 @@ function readToken(value: string, index: number): [token: CssTokenType | undefin
   const char = value[index];
 
   if (value.startsWith("/*", index)) {
-    const end = value.indexOf("*/", index + 2);
-    return [undefined, end < 0 ? value.length : end + 2];
+    return [undefined, skipComment(value, index)];
   }
 
   if (char === '"' || char === "'") {
@@ -238,7 +243,7 @@ function readUrl(value: string, start: number): [url: string | undefined, next: 
   return [isBad ? undefined : parts.join(""), index + 1];
 }
 
-function readEscape(value: string, index: number): [char: string, next: number] | undefined {
+export function readEscape(value: string, index: number): [char: string, next: number] | undefined {
   ONE_ESCAPE_REGEX.lastIndex = index;
   const escape = value[index] === "\\" ? ONE_ESCAPE_REGEX.exec(value)?.[0] : undefined;
 

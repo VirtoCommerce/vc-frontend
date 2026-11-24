@@ -1,8 +1,9 @@
 import { toAssetSrcset, toAssetUrl, toSectionLink } from "./urls";
 import type { IBindingScope } from "./bindings";
+import type { Config } from "dompurify";
 
 /** The server sanitizer's element allowlist minus form controls; `svg`, `script`, `style` and the like go with their content. */
-export const SECTION_ELEMENTS = (
+const SECTION_ELEMENTS = (
   "a abbr acronym address area article aside audio b bdi bdo big blink blockquote br canvas caption center cite " +
   "code col colgroup data dd del details dfn dialog dir div dl dt em figcaption figure font footer h1 h2 h3 h4 h5 " +
   "h6 header hgroup hr i img ins kbd li main map mark marquee menu menuitem meter nav nobr ol p picture pre " +
@@ -19,7 +20,7 @@ export const URL_ATTRIBUTES = ["href", "src", "srcset", "poster", "cite"];
  * The ARIA attributes that name elements by id. A section writes no id, so one could only name an element of the
  * page around it, as `aria-owns` does to take it out of where assistive technology reads it.
  */
-export const ID_REFERENCE_ATTRIBUTES = [
+const ID_REFERENCE_ATTRIBUTES = [
   "aria-activedescendant",
   "aria-controls",
   "aria-describedby",
@@ -32,7 +33,14 @@ export const ID_REFERENCE_ATTRIBUTES = [
 /** Of `TEXT_ATTRIBUTES`, those the browser reads as on whatever their value. */
 export const BOOLEAN_ATTRIBUTES = new Set(["hidden", "autoplay", "muted", "loop", "playsinline", "controls", "open"]);
 /** As the server sanitizer: these go with their content. */
-export const FORBIDDEN_CONTENTS = ["form", "frame", "frameset", "object", "embed", "applet"];
+const FORBIDDEN_CONTENTS = ["form", "frame", "frameset", "object", "embed", "applet"];
+/** The sanitizer settings templates and rich text share; each adds the attributes it takes. */
+export const SECTION_PURIFY_CONFIG: Config = {
+  ALLOWED_TAGS: SECTION_ELEMENTS,
+  ALLOW_DATA_ATTR: false,
+  FORBID_ATTR: ID_REFERENCE_ATTRIBUTES,
+  ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
+};
 
 /** The attributes only some elements take. */
 const ELEMENT_ATTRIBUTES: Readonly<Record<string, readonly string[]>> = {

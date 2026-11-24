@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isContainedSelector } from "./css-selectors";
+import { isContainedSelector, toSelectorSkeleton } from "./css-selectors";
 
 describe("isContainedSelector", () => {
   it.each([
@@ -28,5 +28,17 @@ describe("isContainedSelector", () => {
   it("checks every selector of a list from its own start", () => {
     expect(isContainedSelector(":scope > .a, :scope > .b")).toBe(true);
     expect(isContainedSelector(".a, .b :scope")).toBe(false);
+  });
+});
+
+describe("toSelectorSkeleton", () => {
+  it("reads a lone trailing backslash as one character", () => {
+    expect(toSelectorSkeleton(".a\\")).toBe(".a_");
+    expect(isContainedSelector(".a\\")).toBe(true);
+  });
+
+  it("reads a backslash before a newline as no escape", () => {
+    expect(toSelectorSkeleton(":is(.a\\\n.b)")).toBe(":is(.a_ .b)");
+    expect(isContainedSelector(":is(.a\\\n.b)")).toBe(false);
   });
 });

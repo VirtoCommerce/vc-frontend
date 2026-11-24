@@ -1,13 +1,6 @@
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
-import {
-  FORBIDDEN_CONTENTS,
-  ID_REFERENCE_ATTRIBUTES,
-  isAttributeOfElement,
-  SECTION_ELEMENTS,
-  TEXT_ATTRIBUTES,
-  URL_ATTRIBUTES,
-} from "./allowlist";
+import { isAttributeOfElement, SECTION_PURIFY_CONFIG, TEXT_ATTRIBUTES, URL_ATTRIBUTES } from "./allowlist";
 import { isBindingPath, parseBindings } from "./bindings";
 import { BINDING_NAMES, fromBehaviorAttribute, getBehaviorAttributeNames, toBehaviorAttribute } from "./kit/registry";
 import { MAX_TEMPLATE_ATTRIBUTES, MAX_TEMPLATE_DEPTH } from "./limits";
@@ -105,23 +98,20 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
 
   // Counted as the parser leaves them, before DOMPurify drops any; taken out once it is done, as content past the
   // depth is.
-  const overwritten = new Set<Element>();
+  const overAttributeCap = new Set<Element>();
 
-  function countAttributes(node: Element): void {
+  function markOverAttributeCap(node: Element): void {
     if (node instanceof Element && node.attributes.length > MAX_TEMPLATE_ATTRIBUTES) {
-      overwritten.add(node);
+      overAttributeCap.add(node);
     }
   }
 
-  purifier.addHook("beforeSanitizeAttributes", countAttributes);
+  purifier.addHook("beforeSanitizeAttributes", markOverAttributeCap);
 
   try {
     const fragment = purifier.sanitize(template, {
-      ALLOWED_TAGS: SECTION_ELEMENTS,
+      ...SECTION_PURIFY_CONFIG,
       ALLOWED_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
-      ALLOW_DATA_ATTR: false,
-      FORBID_ATTR: ID_REFERENCE_ATTRIBUTES,
-      ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
       // Only names matter here: the renderer checks each value after its bindings resolve.
       ADD_URI_SAFE_ATTR: [...nameAttributes, ...URL_ATTRIBUTES],
       CUSTOM_ELEMENT_HANDLING: {
@@ -137,10 +127,10 @@ function sanitize(template: string, kit: IKit): DocumentFragment {
       RETURN_DOM_FRAGMENT: true,
     });
 
-    overwritten.forEach((element) => element.remove());
+    overAttributeCap.forEach((element) => element.remove());
     return fragment;
   } finally {
-    purifier.removeHook("beforeSanitizeAttributes", countAttributes);
+    purifier.removeHook("beforeSanitizeAttributes", markOverAttributeCap);
   }
 }
 

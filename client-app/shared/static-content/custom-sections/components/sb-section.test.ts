@@ -833,7 +833,7 @@ describe("SbSection", () => {
     it("renders vc-typography with a tag of its list only, and a palette color", () => {
       const wrapper = mountSection(
         '<section><vc-typography text="Hello" tag="h3" variant="h2" color="primary" truncate></vc-typography>' +
-          '<vc-typography text="Body" tag="script" color="red"></vc-typography></section>',
+          '<vc-typography text="Body" tag="script" color="#ff0000"></vc-typography></section>',
       );
       const [heading, body] = wrapper.findAllComponents(VcTypography);
 
@@ -880,15 +880,19 @@ describe("SbSection", () => {
       expect(bare.props()).toMatchObject({ bgColor: undefined, size: undefined });
     });
 
-    it("takes a color-token setting's value as a kit tag's palette color", () => {
+    it.each([
+      ["color_secondary_700", "--color-secondary-700"],
+      ["secondary_700", "--color-secondary-700"],
+      ["primary", "primary"],
+    ])("takes the setting value %j as the kit tag's palette color %j", (token, color) => {
       const wrapper = mountSection(
         '<section><vc-icon name="star" color="{{ settings.accent }}"></vc-icon>' +
           '<vc-shape icon="star" bg-color="{{ settings.accent }}"></vc-shape></section>',
-        { accent: "color_secondary_700" },
+        { accent: token },
       );
 
-      expect(wrapper.findComponent(VcIcon).props("color")).toBe("--color-secondary-700");
-      expect(wrapper.findComponent(VcShape).props("bgColor")).toBe("--color-secondary-700");
+      expect(wrapper.findComponent(VcIcon).props("color")).toBe(color);
+      expect(wrapper.findComponent(VcShape).props("bgColor")).toBe(color);
     });
 
     it("renders vc-property as a label and its value", () => {

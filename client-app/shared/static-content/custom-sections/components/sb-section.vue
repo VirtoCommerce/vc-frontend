@@ -25,7 +25,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { theme, localizeThemeDraft } = useThemeSnapshot();
-const reducedMotion = useReducedMotion();
+const isReducedMotion = useReducedMotion();
 
 registerBuiltInKit();
 
@@ -75,7 +75,7 @@ function renderSection(): VNode | null {
         settings: props.model,
         fields: fields.value,
         assetsBaseUrl: theme.value?.assetsBaseUrl,
-        isReducedMotion: reducedMotion.value === "reduce",
+        isReducedMotion: isReducedMotion.value,
       })
     : null;
 }

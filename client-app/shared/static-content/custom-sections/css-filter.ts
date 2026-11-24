@@ -47,7 +47,7 @@ export function filterSectionCss(type: string, css: string, assetsBaseUrl?: stri
   const rules: string[] = [];
 
   for (const rule of sheet.cssRules) {
-    if (isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule")) {
+    if (isKeyframesRule(rule)) {
       if (keepKeyframes(rule, context)) {
         keyframes.push(rule.cssText);
       }
@@ -121,7 +121,7 @@ function keepRule(rule: CSSRule, context: IFilterContext, canHoldKeyframes: bool
     return true;
   }
 
-  return canHoldKeyframes && isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule") && keepKeyframes(rule, context);
+  return canHoldKeyframes && isKeyframesRule(rule) && keepKeyframes(rule, context);
 }
 
 /** Nested rules too: a style rule holds them with CSS nesting. `depth`: that of the owner's rules. */
@@ -189,8 +189,8 @@ function holdsKeyframes(owner: CSSGroupingRule): boolean {
   return [...owner.cssRules].some((rule) => isKeyframesRule(rule) || (isConditionRule(rule) && holdsKeyframes(rule)));
 }
 
-function isKeyframesRule(rule: CSSRule): boolean {
-  return isRuleOf(rule, "CSSKeyframesRule");
+function isKeyframesRule(rule: CSSRule): rule is CSSKeyframesRule {
+  return isRuleOf<CSSKeyframesRule>(rule, "CSSKeyframesRule");
 }
 
 function filterDeclarations(style: CSSStyleDeclaration, assetsBaseUrl: string | undefined): void {

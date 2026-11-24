@@ -1,5 +1,5 @@
 import { defineAsyncComponent, markRaw } from "vue";
-import { getThemeVariableName } from "@/core/plugins/config.plugin";
+import { getColorTokenVariableName } from "@/core/plugins/config.plugin";
 import { getLinkAttr } from "@/core/utilities/common";
 import {
   VcAlert,
@@ -15,6 +15,7 @@ import {
   VcTypography,
 } from "@/ui-kit/components";
 import { MAIN_COLORS, MAX_RATING } from "@/ui-kit/constants";
+import { isMainColorType } from "@/ui-kit/utilities";
 import { COPIED_DURATION, DEFAULT_COUNT_UP_DURATION, DEFAULT_INVIEW_THRESHOLD } from "../behaviors/constants";
 import {
   DEFAULT_PRODUCT_COLUMNS,
@@ -50,8 +51,8 @@ const CHIP_SIZES = ["sm", "md", "lg"] as const satisfies readonly VcChipSizeType
 const ALERT_COLORS = ["info", "success", "warning", "danger"] as const satisfies readonly VcAlertColorType[];
 const ALERT_VARIANTS = ["solid", "soft", "outline", "tonal"] as const satisfies readonly VcAlertVariantType[];
 const ALERT_SIZES = ["sm", "md"] as const satisfies readonly VcAlertSizeType[];
-const RATING_MODES = ["mini", "full"] as const;
-const RATING_SIZES = ["xs", "sm", "md"] as const;
+const RATING_MODES = ["mini", "full"] as const satisfies readonly VcRatingModeType[];
+const RATING_SIZES = ["xs", "sm", "md"] as const satisfies readonly VcRatingSizeType[];
 /** No `h1`: the page holds it. */
 const TYPOGRAPHY_TAGS = ["p", "span", "div", "h2", "h3", "h4", "h5", "h6"] as const;
 const TYPOGRAPHY_VARIANTS = [
@@ -83,8 +84,6 @@ const SHAPE_COST = 1 + ICON_COST;
 /** Its root, label, dots and value. */
 const PROPERTY_COST = 4;
 const PALETTE_VARIABLE_REGEX = /^--color-[a-z0-9-]+$/;
-/** As a `color-token` setting stores it. */
-const PALETTE_TOKEN_REGEX = /^color_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const PIXELS_REGEX = /^\d+$/;
 
 const BUILT_IN_TAGS: Record<BuiltInTagNameType, ICustomSectionTag> = {
@@ -449,11 +448,9 @@ function toIconSize(size: string | undefined): string | number | undefined {
 }
 
 function toPaletteColor(color: string | undefined): string | undefined {
-  if (color && PALETTE_TOKEN_REGEX.test(color)) {
-    return getThemeVariableName(color);
+  if (color && (isMainColorType(color) || PALETTE_VARIABLE_REGEX.test(color))) {
+    return color;
   }
 
-  return color && ((MAIN_COLORS as readonly string[]).includes(color) || PALETTE_VARIABLE_REGEX.test(color))
-    ? color
-    : undefined;
+  return getColorTokenVariableName(color);
 }

@@ -91,12 +91,13 @@ export function resolveBinding(path: string, scope: IBindingScope): IResolvedBin
 }
 
 /** The rows of a `list` setting: its objects, in order. */
-export function getListRows(listId: string, scope: IBindingScope): Pick<IRowScope, "index" | "values">[] {
+export function getListRows(listId: string, scope: IBindingScope): IRowScope[] {
   const field = scope.fields.get(listId);
   const value = field ? readSetting(scope.settings, listId, field) : undefined;
+  const fields = toFieldMap(field?.element);
 
   return field?.type === "list" && Array.isArray(value)
-    ? value.flatMap((row: unknown, index) => (isRecord(row) ? [{ index, values: row }] : []))
+    ? value.flatMap((row: unknown, index) => (isRecord(row) ? [{ listId, index, values: row, fields }] : []))
     : [];
 }
 

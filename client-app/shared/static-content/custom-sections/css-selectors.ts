@@ -1,4 +1,4 @@
-import { decodeCssEscapes, preprocessCss, skipString } from "./css-values";
+import { NAME_CHAR_REGEX, preprocessCss, readEscape, skipComment, skipString } from "./css-values";
 
 type GroupKindType = "has" | "list" | "opaque";
 
@@ -53,14 +53,12 @@ const NTH_OF_PSEUDOS = new Set(["nth-child-of", "nth-last-child-of"]);
 const COMBINATORS = new Set([" ", ">", "+", "~"]);
 const SIBLING_COMBINATORS = new Set(["+", "~"]);
 const PSEUDO_REGEX = /::?([-\w]+)(\()?/y;
-const ESCAPE_REGEX = /\\(?:[\da-f]{1,6}\s?|.)?/isy;
 /** `:nth-child(2n of S)`: what follows `of` is a selector list. */
 const NTH_OF_REGEX = /:(nth-(?:last-)?child)\([^()]*?\bof\b ?/g;
 const SPACE_REGEX = /\s+/g;
 /** Spaces around these are no descendant combinator; a space after `)` is one. */
 const SPACED_PUNCTUATION_REGEX = / ?([,>+~]) ?/g;
 const SPACE_IN_PARENTHESES_REGEX = /(?<=\() | (?=\))/g;
-const IDENT_CHAR_REGEX = /^[\w-]$|^[^\0-\x7f]$/;
 
 interface IScanState {
   groups: IGroup[];
@@ -238,11 +236,9 @@ function readSkeletonPart(selector: string, index: number): [part: string, next:
   const char = selector[index];
 
   if (char === "\\") {
-    ESCAPE_REGEX.lastIndex = index;
-    const escape = ESCAPE_REGEX.exec(selector)?.[0] ?? char;
-    const decoded = decodeCssEscapes(escape);
+    const [decoded, next] = readEscape(selector, index) ?? ["_", index + 1];
 
-    return [IDENT_CHAR_REGEX.test(decoded) ? decoded.toLowerCase() : "_", index + escape.length];
+    return [NAME_CHAR_REGEX.test(decoded) ? decoded.toLowerCase() : "_", next];
   }
 
   if (char === '"' || char === "'") {
@@ -254,8 +250,7 @@ function readSkeletonPart(selector: string, index: number): [part: string, next:
   }
 
   if (selector.startsWith("/*", index)) {
-    const end = selector.indexOf("*/", index + 2);
-    return [" ", end < 0 ? selector.length : end + 2];
+    return [" ", skipComment(selector, index)];
   }
 
   return [char.toLowerCase(), index + 1];

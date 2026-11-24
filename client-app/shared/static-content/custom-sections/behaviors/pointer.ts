@@ -1,10 +1,9 @@
 import { createSharedComposable, useEventListener, useMediaQuery } from "@vueuse/core";
-import { clamp, round } from "lodash-es";
 import { watch } from "vue";
+import { toUnitShare } from "../numbers";
 import { defineBehavior, isRightToLeft } from "./define-behavior";
 
 const CENTER = 0.5;
-const PRECISION = 3;
 
 const useTouchScreen = createSharedComposable(() => useMediaQuery("(hover: none)"));
 
@@ -44,11 +43,11 @@ export const vPointer = defineBehavior((element, { isReducedMotion, updates }) =
 });
 
 function toShare(offset: number, size: number): number {
-  return size > 0 ? round(clamp(offset / size, 0, 1), PRECISION) : CENTER;
+  return size > 0 ? toUnitShare(offset / size) : CENTER;
 }
 
 function writePointer(element: HTMLElement, x: number, y: number, isRtl: boolean): void {
   element.style.setProperty("--pointer-x", String(x));
   element.style.setProperty("--pointer-y", String(y));
-  element.style.setProperty("--pointer-inline", String(isRtl ? round(1 - x, PRECISION) : x));
+  element.style.setProperty("--pointer-inline", String(isRtl ? toUnitShare(1 - x) : x));
 }

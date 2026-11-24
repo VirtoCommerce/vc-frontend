@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getThemeVariablesCss, toPaletteVariable, writeThemeVariables } from "./config.plugin";
+import {
+  getColorTokenVariableName,
+  getThemeVariablesCss,
+  toPaletteVariable,
+  writeThemeVariables,
+} from "./config.plugin";
 import type { IThemeConfigPreset } from "../types";
 
 function rules(): CSSStyleRule[] {
@@ -70,10 +75,24 @@ describe("toPaletteVariable", () => {
   it.each([
     ["color_primary_500", "var(--color-primary-500)"],
     ["color_neutral_900", "var(--color-neutral-900)"],
+    ["primary_500", "var(--color-primary-500)"],
     ["red; background: url(x)", undefined],
     ["Color_primary", undefined],
     [42, undefined],
   ])("reads %j as %j", (token, variable) => {
     expect(toPaletteVariable(token)).toBe(variable);
+  });
+});
+
+describe("getColorTokenVariableName", () => {
+  it.each([
+    ["color_primary_500", "--color-primary-500"],
+    ["primary_500", "--color-primary-500"],
+    ["", undefined],
+    ["red; background: url(x)", undefined],
+    ["Primary_500", undefined],
+    [42, undefined],
+  ])("reads %j as %j", (token, name) => {
+    expect(getColorTokenVariableName(token)).toBe(name);
   });
 });

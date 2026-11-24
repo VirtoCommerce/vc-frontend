@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, nextTick, withDirectives } from "vue";
+import { defineComponent, h, nextTick, onScopeDispose, withDirectives } from "vue";
 import { vInview } from "./inview";
 
 type EntryType = Pick<
@@ -39,6 +39,7 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
     mocks.onIntersect = callback;
     mocks.thresholds = observer.thresholds;
     mocks.observers.push(observer);
+    onScopeDispose(observer.stop);
     return { stop: observer.stop };
   },
 }));

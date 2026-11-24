@@ -106,8 +106,8 @@ describe("the section authors' guide", () => {
     expect(guide.length).toBeLessThanOrEqual(MAX_GUIDE_LENGTH);
   });
 
-  it("has the three patterns, each with its CSS", () => {
-    expect(styles).toHaveLength(3);
+  it("has one CSS block per pattern", () => {
+    expect(styles).toHaveLength(patterns.length);
   });
 
   it("tells what moment a date with no time means, and that a date-time needs its offset", () => {

@@ -107,9 +107,11 @@ function readIconNames(folder: string): string[] {
 /** The most elements an icon draws, its own `svg` included: a kit tag's cost counts it. */
 export function collectIconElements(): number {
   return Math.max(
-    ...readdirSync(path.join(ROOT, ICON_FOLDER))
-      .filter((file) => file.endsWith(ICON_EXTENSION))
-      .map((file) => readFileSync(path.join(ROOT, ICON_FOLDER, file), "utf8").match(ELEMENT_START_REGEX)?.length ?? 0),
+    ...readIconNames(ICON_FOLDER).map(
+      (name) =>
+        readFileSync(path.join(ROOT, ICON_FOLDER, `${name}${ICON_EXTENSION}`), "utf8").match(ELEMENT_START_REGEX)
+          ?.length ?? 0,
+    ),
   );
 }
 

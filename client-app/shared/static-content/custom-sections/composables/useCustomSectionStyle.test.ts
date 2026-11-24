@@ -1,8 +1,8 @@
-import { mount } from "@vue/test-utils";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent, h, ref } from "vue";
-import { CUSTOM_SECTION_STYLE_ATTRIBUTE, useCustomSectionStyle } from "./useCustomSectionStyle";
-import type { VueWrapper } from "@vue/test-utils";
+import { CUSTOM_SECTION_STYLE_ATTRIBUTE } from "../constants";
+import { useCustomSectionStyle } from "./useCustomSectionStyle";
 
 const css = ref(".card { color: var(--color-primary-500); }");
 const assetsBaseUrl = ref<string | undefined>("https://cdn.example.com/assets");
@@ -20,27 +20,18 @@ const Section = defineComponent({
   },
 });
 
-/** Mounted and not yet unmounted: what a failed test leaves is unmounted after it, so its CSS goes too. */
-const mounted = new Set<VueWrapper>();
-
-function mountSection(type: string): VueWrapper {
-  const wrapper = mount(Section, { props: { type } });
-  mounted.add(wrapper);
-  return wrapper;
-}
-
-function unmountSection(wrapper: VueWrapper): void {
-  mounted.delete(wrapper);
-  wrapper.unmount();
+function mountSection(type: string) {
+  return mount(Section, { props: { type } });
 }
 
 function findStyles(type: string): HTMLStyleElement[] {
   return [...document.head.querySelectorAll<HTMLStyleElement>(`style[${CUSTOM_SECTION_STYLE_ATTRIBUTE}="${type}"]`)];
 }
 
+enableAutoUnmount(afterEach);
+
 describe("useCustomSectionStyle", () => {
   afterEach(() => {
-    [...mounted].forEach(unmountSection);
     css.value = ".card { color: var(--color-primary-500); }";
     assetsBaseUrl.value = "https://cdn.example.com/assets";
   });
@@ -82,10 +73,10 @@ describe("useCustomSectionStyle", () => {
     const first = mountSection("custom-hero");
     const second = mountSection("custom-hero");
 
-    unmountSection(first);
+    first.unmount();
     expect(findStyles("custom-hero")).toHaveLength(1);
 
-    unmountSection(second);
+    second.unmount();
     expect(findStyles("custom-hero")).toHaveLength(0);
   });
 
@@ -105,7 +96,7 @@ describe("useCustomSectionStyle", () => {
 
     expect(findStyles("custom-hero")).toHaveLength(0);
     expect(findStyles("custom-stats")[0].textContent).toContain('[data-sb-type="custom-stats"]');
-    unmountSection(wrapper);
+    wrapper.unmount();
     expect(findStyles("custom-stats")).toHaveLength(0);
   });
 });

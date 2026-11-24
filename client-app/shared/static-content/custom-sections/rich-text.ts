@@ -2,10 +2,8 @@ import DOMPurify from "dompurify";
 import { isRecord } from "@/core/utilities";
 import { opensNewWindow, withNewWindowRel } from "../sections";
 import {
-  FORBIDDEN_CONTENTS,
-  ID_REFERENCE_ATTRIBUTES,
   isAttributeOfElement,
-  SECTION_ELEMENTS,
+  SECTION_PURIFY_CONFIG,
   TEXT_ATTRIBUTES,
   toSafeAttributeValue,
   URL_ATTRIBUTES,
@@ -102,11 +100,8 @@ function sanitize(html: string, scope: RichTextScopeType): Element | undefined {
 
   try {
     const body: unknown = purifier.sanitize(html, {
-      ALLOWED_TAGS: SECTION_ELEMENTS,
+      ...SECTION_PURIFY_CONFIG,
       ALLOWED_ATTR: [...TEXT_ATTRIBUTES, ...URL_ATTRIBUTES],
-      ALLOW_DATA_ATTR: false,
-      FORBID_ATTR: ID_REFERENCE_ATTRIBUTES,
-      ADD_FORBID_CONTENTS: FORBIDDEN_CONTENTS,
       RETURN_DOM: true,
     });
 

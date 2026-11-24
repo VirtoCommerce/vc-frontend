@@ -1,10 +1,9 @@
 import { useEventListener, useIntersectionObserver } from "@vueuse/core";
-import { clamp, round } from "lodash-es";
 import { onScopeDispose } from "vue";
+import { toUnitShare } from "../numbers";
 import { defineBehavior } from "./define-behavior";
 
 const VARIABLE = "--scroll-progress";
-const PRECISION = 3;
 
 /** Elements to update at the next frame, shared: every rect is read before any variable is written. */
 const scheduled = new Set<HTMLElement>();
@@ -59,5 +58,5 @@ function readProgress(element: HTMLElement): number {
   const { top, height } = element.getBoundingClientRect();
   const distance = window.innerHeight + height;
 
-  return distance > 0 ? round(clamp((window.innerHeight - top) / distance, 0, 1), PRECISION) : 0;
+  return distance > 0 ? toUnitShare((window.innerHeight - top) / distance) : 0;
 }
