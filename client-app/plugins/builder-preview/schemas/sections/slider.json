@@ -8,12 +8,14 @@
       "id": "title",
       "label": "Title",
       "type": "string",
+      "translatable": true,
       "tab": "Content"
     },
     {
       "id": "subtitle",
       "label": "Subtitle",
       "type": "string",
+      "translatable": true,
       "multiline": true,
       "tab": "Content"
     },
@@ -32,18 +34,21 @@
         {
           "id": "title",
           "label": "Title",
-          "type": "string"
+          "type": "string",
+          "translatable": true
         },
         {
           "id": "text",
           "label": "Text",
           "type": "string",
+          "translatable": true,
           "multiline": true
         },
         {
           "id": "url",
           "label": "Url",
-          "type": "string"
+          "type": "string",
+          "format": "url"
         }
       ]
     },

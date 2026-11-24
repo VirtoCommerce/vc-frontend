@@ -6,6 +6,7 @@
     {
       "id": "section1",
       "type": "product-info",
+      "variationsLayout": "b2c",
       "blocks": [
         {
           "id": "product-options",
@@ -43,10 +44,12 @@
       "blocks": [
         {
           "id": "related_products",
+          "type": "recommendation",
           "model": "related-products"
         },
         {
           "id": "bought_together",
+          "type": "recommendation",
           "model": "bought-together"
         }
       ]

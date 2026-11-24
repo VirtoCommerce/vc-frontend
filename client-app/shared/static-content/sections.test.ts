@@ -1,7 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { defineAsyncComponent, defineComponent } from "vue";
 import {
   getLoadedSectionComponent,
+  getPreviewFieldAttrs,
+  getPreviewSectionAttrs,
   getRegisteredSection,
   getSectionLinkAttr,
   loadSectionComponent,
@@ -139,6 +141,19 @@ describe("getSectionLinkAttr", () => {
       expect(getSectionLinkAttr(link)).toEqual({});
     },
   );
+});
+
+describe("preview markup", () => {
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+  });
+
+  it("leaves the markup as it is on the standalone preview route, outside the designer's frame", () => {
+    window.history.replaceState(null, "", "/designer-preview?pageId=page-1");
+
+    expect(getPreviewSectionAttrs("section-1")).toEqual({});
+    expect(getPreviewFieldAttrs("title")).toEqual({});
+  });
 });
 
 describe("getRegisteredSection", () => {
