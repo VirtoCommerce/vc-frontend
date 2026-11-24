@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { upperFirst } from "lodash-es";
 import { useTemplateRef } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useCurrencySwitch } from "@/shared/layout/composables/useCurrencySwitch";
@@ -46,18 +47,24 @@ function isCurrent(currency: ICurrency): boolean {
   return currency.code === currentCurrency.value.code;
 }
 
-// In the page language, capitalised as a list entry; the platform's English name where the browser lacks the code.
-function getCurrencyName(currency: ICurrency): string {
-  const locale = currentLanguage.value?.cultureName;
-  let name: string | undefined;
-
+function getDisplayName(locale: string | undefined, code: string): string | undefined {
   try {
-    name = new Intl.DisplayNames(locale, { type: "currency", fallback: "none" }).of(currency.code);
+    return new Intl.DisplayNames(locale, { type: "currency", fallback: "none" }).of(code);
   } catch {
     // A malformed locale or currency code.
+    return undefined;
+  }
+}
+
+// In the page language, capitalised as a list entry; the platform's English name where the browser lacks the code.
+function getCurrencyName(currency: ICurrency): string {
+  const name = getDisplayName(currentLanguage.value?.cultureName, currency.code);
+
+  if (!name) {
+    return currency.englishName;
   }
 
-  return name ? name.charAt(0).toLocaleUpperCase(locale) + name.slice(1) : currency.englishName;
+  return upperFirst(name);
 }
 
 function select(code: string): void {

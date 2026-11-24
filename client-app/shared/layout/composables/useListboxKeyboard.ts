@@ -84,14 +84,10 @@ export function useListboxKeyboard(
     "keydown",
     (event: KeyboardEvent) => {
       const dialog = event.currentTarget as HTMLElement;
+      const firstListbox = dialog.querySelector<HTMLElement>("[role='listbox']");
       const step = ARROW_STEPS.get(event.key);
 
-      if (
-        !step ||
-        hasModifier(event) ||
-        event.target !== dialog ||
-        dialog.querySelector("[role='listbox']") !== toValue(listbox)
-      ) {
+      if (!step || hasModifier(event) || event.target !== dialog || firstListbox !== toValue(listbox)) {
         return;
       }
 
