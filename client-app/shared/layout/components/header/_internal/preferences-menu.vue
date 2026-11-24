@@ -20,7 +20,9 @@
         data-test-id="preferences-menu-button"
         v-bind="triggerProps"
       >
-        <span class="preferences-menu__value" data-test-id="preferences-menu-value">{{ triggerValue }}</span>
+        <span class="preferences-menu__value" data-test-id="preferences-menu-value">{{
+          triggerValue || item.title
+        }}</span>
 
         <VcIcon class="preferences-menu__arrow" :name="opened ? 'chevron-up' : 'chevron-down'" size="xxs" />
       </button>
@@ -99,15 +101,19 @@ usePopoverEscape(trigger, isOpen);
 
 const hasTwoColumns = computed(() => (isCurrencyShown.value || isAppearanceShown.value) && isLanguageShown.value);
 
-const triggerValue = computed(() => {
-  const languageCode = currentLanguage.value?.twoLetterLanguageName.toUpperCase();
-
-  return [currentCurrency.value?.code, languageCode].filter(Boolean).join(" · ");
-});
+// Only the values the panel offers a choice of; with appearance alone, the trigger shows the menu's title.
+const triggerValue = computed(() =>
+  [
+    isCurrencyShown.value ? currentCurrency.value?.code : undefined,
+    isLanguageShown.value ? currentLanguage.value?.twoLetterLanguageName.toUpperCase() : undefined,
+  ]
+    .filter(Boolean)
+    .join(" · "),
+);
 
 // The visible value alone ("USD · EN") does not say what the control is for, so the name leads with the menu title.
 const triggerLabel = computed(() =>
-  props.item.title
+  props.item.title && triggerValue.value
     ? t("shared.layout.header.preferences_menu.trigger_label", { title: props.item.title, value: triggerValue.value })
     : undefined,
 );
