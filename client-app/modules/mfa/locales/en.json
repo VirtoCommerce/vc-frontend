@@ -37,6 +37,7 @@
       "admin_managed": "The store administrator manages two-factor authentication.",
       "locked": "Set by the administrator: you can't turn it off.",
       "organization": "Your company turned it on for all its members, so you can't change it here.",
+      "lockout_disabled": "Two-factor authentication isn't available for your account, so you can't change it here. Contact your administrator.",
       "operator": "You can't change it while you act on behalf of the customer."
     },
     "messages": {

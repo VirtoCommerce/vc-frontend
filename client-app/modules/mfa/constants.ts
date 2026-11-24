@@ -8,6 +8,12 @@ export const MODULE_ID = "VirtoCommerce.MFA";
  */
 export const SCHEMA_RELEASES = ["3.1000.2", "3.1002.0"] as const;
 
+/**
+ * The first release that reports `isLockoutEnabled` in the MFA settings and sends the code to an unconfirmed email
+ * too. Older releases fail a query with that field, and an unconfirmed email makes the code provider unavailable.
+ */
+export const LOCKOUT_RELEASE = "3.1006.0";
+
 /** Registered by the MFA module; lets an organization maintainer turn MFA on or off for the whole organization. */
 export const MFA_PERMISSIONS = {
   manageOrganizationMfa: "xapi:my_organization:mfa:manage",

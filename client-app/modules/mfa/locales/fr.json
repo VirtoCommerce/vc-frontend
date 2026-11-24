@@ -37,6 +37,7 @@
       "admin_managed": "L'administrateur de la boutique gère l'authentification à deux facteurs.",
       "locked": "Définie par l'administrateur : vous ne pouvez pas la désactiver.",
       "organization": "Votre entreprise l'a activée pour tous ses membres, vous ne pouvez donc pas la modifier ici.",
+      "lockout_disabled": "L'authentification à deux facteurs n'est pas disponible pour votre compte, vous ne pouvez donc pas la modifier ici. Contactez votre administrateur.",
       "operator": "Vous ne pouvez pas le modifier lorsque vous agissez au nom du client."
     },
     "messages": {

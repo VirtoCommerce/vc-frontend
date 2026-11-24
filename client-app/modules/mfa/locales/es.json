@@ -37,6 +37,7 @@
       "admin_managed": "El administrador de la tienda gestiona la autenticación de dos factores.",
       "locked": "Configurada por el administrador: no puedes desactivarla.",
       "organization": "Tu empresa la activó para todos sus miembros, así que no puedes cambiarla aquí.",
+      "lockout_disabled": "La autenticación de dos factores no está disponible para tu cuenta, así que no puedes cambiarla aquí. Contacta con el administrador.",
       "operator": "No puede cambiarlo mientras actúa en nombre del cliente."
     },
     "messages": {

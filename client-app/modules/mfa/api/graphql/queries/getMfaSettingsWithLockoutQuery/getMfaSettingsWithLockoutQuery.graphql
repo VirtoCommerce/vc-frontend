@@ -1,0 +1,8 @@
+#import "../../fragments/mfaSettings.graphql"
+
+query GetMfaSettingsWithLockout($storeId: String!, $organizationId: String) {
+  mfaSettings(storeId: $storeId, organizationId: $organizationId) {
+    ...mfaSettings
+    isLockoutEnabled
+  }
+}

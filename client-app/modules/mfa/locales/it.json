@@ -37,6 +37,7 @@
       "admin_managed": "L'autenticazione a due fattori è gestita dall'amministratore del negozio.",
       "locked": "Impostata dall'amministratore: non puoi disattivarla.",
       "organization": "La tua azienda l'ha attivata per tutti i suoi membri, quindi non puoi modificarla qui.",
+      "lockout_disabled": "L'autenticazione a due fattori non è disponibile per il tuo account, quindi non puoi modificarla qui. Contatta l'amministratore.",
       "operator": "Non puoi modificarlo mentre agisci per conto del cliente."
     },
     "messages": {

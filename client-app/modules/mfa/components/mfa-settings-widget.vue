@@ -31,7 +31,7 @@
         size="sm"
         icon
       >
-        {{ $t("mfa.messages.confirm_email") }}
+        {{ providerUnavailableText }}
       </VcAlert>
 
       <VcAlert v-if="errors.length && !challenge" color="danger" variant="soft" size="sm" icon>
@@ -98,6 +98,7 @@ const {
   mode,
   isOn,
   canChange,
+  isLockoutReported,
   fetchSettings,
   startChange,
   requestCode,
@@ -128,6 +129,11 @@ const isRequiredByOrganization = computed(
     props.scope === "user" &&
     !!settings.value?.isRequired &&
     settings.value.requiredBy === MFA_REQUIRED_BY.organization,
+);
+
+// Without lockout the account can't pass the second factor, so the server lets no one change either mode
+const isLockoutDisabled = computed(
+  () => settings.value?.storeMode === MFA_STORE_MODES.customerChoice && settings.value.isLockoutEnabled === false,
 );
 
 // The server refuses a change made on behalf of the customer, so the operator gets no switch
@@ -170,12 +176,23 @@ const hint = computed(() => {
     return t("mfa.hints.organization");
   }
 
+  if (isLockoutDisabled.value) {
+    return t("mfa.hints.lockout_disabled");
+  }
+
   if (isOperator.value && canChange.value) {
     return t("mfa.hints.operator");
   }
 
   return undefined;
 });
+
+// The releases that report the lockout also send the code to an unconfirmed email, so only the older ones need it
+const providerUnavailableText = computed(() =>
+  isLockoutReported.value
+    ? t("shared.account.sign_in_form.errors.mfa_provider_not_available")
+    : t("mfa.messages.confirm_email"),
+);
 
 async function onSubmit(code: string): Promise<void> {
   const enabled = targetEnabled.value;
