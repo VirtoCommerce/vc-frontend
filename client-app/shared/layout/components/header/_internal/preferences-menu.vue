@@ -46,24 +46,7 @@
               {{ $t("shared.layout.header.preferences_menu.appearance") }}
             </div>
 
-            <VcTabSwitchGroup
-              :model-value="colorMode"
-              :aria-labelledby="appearanceLabelId"
-              class="preferences-menu__modes"
-              data-test-id="preferences-menu-color-modes"
-              @change="selectColorMode"
-            >
-              <VcTabSwitch
-                v-for="mode in COLOR_MODES"
-                :key="mode.value"
-                :value="mode.value"
-                :icon="mode.icon"
-                :label="$t(`shared.layout.header.preferences_menu.color_modes.${mode.value}`)"
-                size="sm"
-                class="preferences-menu__mode"
-                :data-test-id="`preferences-menu-color-mode-${mode.value}`"
-              />
-            </VcTabSwitchGroup>
+            <ColorModeSwitch :aria-labelledby="appearanceLabelId" class="preferences-menu__modes" />
           </div>
         </div>
 
@@ -86,10 +69,10 @@ import { onKeyStroke } from "@vueuse/core";
 import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency } from "@/core/composables/useCurrency";
-import { useDarkMode } from "@/core/composables/useDarkMode";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { usePreferencesMenu } from "@/shared/layout/composables/usePreferencesMenu";
 import { useComponentId } from "@/ui-kit/composables";
+import ColorModeSwitch from "./color-mode-switch.vue";
 import CurrencyList from "./currency-list.vue";
 import LanguageList from "./language-list.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -100,17 +83,9 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// The icons of the dark mode toggle (useDarkMode's colorModeIcon).
-const COLOR_MODES = [
-  { value: "light", icon: "sun" },
-  { value: "dark", icon: "moon" },
-  { value: "system", icon: "desktop-computer" },
-] as const;
-
 const { t } = useI18n();
 const { currentCurrency } = useCurrency();
 const { currentLanguage } = useLanguages();
-const { colorMode } = useDarkMode();
 const { isCurrencyShown, isAppearanceShown, isLanguageShown, hasPreferences } = usePreferencesMenu();
 
 const currencyLabelId = useComponentId("preferences-menu-currency");
@@ -134,14 +109,6 @@ const triggerLabel = computed(() =>
     ? t("shared.layout.header.preferences_menu.trigger_label", { title: props.item.title, value: triggerValue.value })
     : undefined,
 );
-
-function selectColorMode(value: VcTabSwitchGroupValueType): void {
-  const mode = COLOR_MODES.find((item) => item.value === value);
-
-  if (mode) {
-    colorMode.value = mode.value;
-  }
-}
 
 // VcPopover takes Escape only in its panel and on its trigger: from anywhere else, close it through the trigger.
 onKeyStroke("Escape", (event: KeyboardEvent) => {
