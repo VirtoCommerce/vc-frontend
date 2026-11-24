@@ -1,0 +1,5 @@
+// On the dark track's mid-tone pill, primary-500 falls under 3:1: the glyphs step up to primary-700.
+.color-mode-switch {
+  --vc-icon-color: theme("colors.primary.700");
+  --vc-tab-switch-color: theme("colors.primary.700");
+}

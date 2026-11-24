@@ -6,9 +6,11 @@
   --vc-popover-border-width: 1px;
 
   // Clear air before the pill, so it does not read as one more icon link.
-  @apply ms-2;
+  @apply ms-5;
 
   &__trigger {
+    --vc-icon-color: currentColor;
+
     @apply px-[0.6875rem] py-[0.4375rem] text-xs/[1.55];
   }
 
@@ -40,7 +42,9 @@
   }
 
   &__group {
-    @apply flex flex-col gap-0.5 rounded-[--vc-radius] border border-neutral-200 p-2;
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] border p-2;
+
+    border-color: color-mix(in srgb, var(--color-neutral-900) 12%, transparent);
   }
 
   &__heading {
@@ -49,6 +53,7 @@
 
   &__list {
     --vc-menu-item-bg-color: transparent;
+    --vc-menu-item-hover-bg-color: color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
     --vc-menu-item-padding-x: theme("spacing.2");
     --vc-menu-item-radius: calc(var(--vc-radius) - 2px);
   }

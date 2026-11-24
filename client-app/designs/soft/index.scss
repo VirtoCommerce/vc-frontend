@@ -19,5 +19,7 @@
 
   html.dark[data-design="soft"] {
     @include meta.load-css("dark/vc-tab-switch-group");
+    @include meta.load-css("dark/preferences-menu");
+    @include meta.load-css("dark/color-mode-switch");
   }
 }
