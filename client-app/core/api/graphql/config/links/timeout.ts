@@ -8,6 +8,7 @@ export const timeoutLink = new ApolloLink((operation, forward) => {
     const currentSignal = previousContext.fetchOptions?.signal;
     return {
       fetchOptions: {
+        ...previousContext.fetchOptions,
         signal: currentSignal ? AbortSignal.any([timeoutSignal, currentSignal]) : timeoutSignal,
       },
     };
