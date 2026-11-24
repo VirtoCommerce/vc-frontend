@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import { COLLECT_ANONYMOUS_KEY, FLUSH_DELAY_MS, MAX_BATCH_SIZE } from "./constants";
-import type { InputPushAnalyticsEvents } from "./api/graphql/types";
+import { COLLECT_ANONYMOUS_KEY, FLUSH_DELAY_MS, MAX_BATCH_SIZE, MAX_PROPERTIES_LENGTH } from "../constants";
+import type { InputPushAnalyticsEvents } from "../api/graphql/types";
 
 const hoisted = vi.hoisted(() => ({
   pushMock: vi.fn(),
@@ -12,7 +12,7 @@ const isAuthenticated = ref(true);
 const organization = ref<{ id: string } | null>({ id: "org-1" });
 const operator = ref<unknown>(null);
 
-vi.mock("./api/graphql/mutations/pushAnalyticsEvents", () => ({
+vi.mock("../api/graphql/mutations/pushAnalyticsEvents", () => ({
   pushAnalyticsEvents: hoisted.pushMock,
 }));
 
@@ -34,7 +34,7 @@ vi.mock("@/shared/account/composables/useUser", () => ({
 }));
 
 async function createQueue() {
-  const { useAnalyticsQueue } = await import("./queue");
+  const { useAnalyticsQueue } = await import("./useAnalyticsQueue");
   return useAnalyticsQueue();
 }
 
@@ -76,7 +76,40 @@ describe("useAnalyticsQueue", () => {
     expect(command.events[0]).toMatchObject({ name: "search", userId: "user-1", organizationId: "org-1" });
     expect(command.events[0].id).toBeTruthy();
     expect(JSON.parse(command.events[0].properties ?? "")).toEqual({ search_term: "bolt", items_count: 3 });
-    expect(JSON.parse(command.events[0].context ?? "")).toMatchObject({ path: "/search", landing_path: "/search" });
+    const context = JSON.parse(command.events[0].context ?? "") as Record<string, unknown>;
+    expect(context).toMatchObject({ path: "/search", landing_path: "/search" });
+    expect(context).not.toHaveProperty("id");
+  });
+
+  it("takes the page path from the module's resolver, and from the caller when the action is reported later", async () => {
+    const { capture, setPagePathResolver } = await createQueue();
+    setPagePathResolver(() => "/shared-list/:sharingKey");
+    const viewedAt = new Date("2026-11-24T10:00:00.000Z");
+
+    capture("search", { search_term: "bolt" });
+    capture("$pageview", { page_type: "product" }, { path: "/bolts/carriage-bolt", occurredAt: viewedAt });
+    await vi.advanceTimersByTimeAsync(FLUSH_DELAY_MS);
+
+    const [search, pageView] = sentCommands()[0].events;
+    expect(JSON.parse(search.context ?? "")).toMatchObject({ path: "/shared-list/:sharingKey" });
+    expect(JSON.parse(pageView.context ?? "")).toMatchObject({ path: "/bolts/carriage-bolt" });
+    expect(pageView.occurredAt).toBe(viewedAt.toISOString());
+  });
+
+  it("sends an event too long for the backend without its item list, and skips one that is still too long", async () => {
+    const { capture } = await createQueue();
+    const items = Array.from({ length: 400 }, (_, i) => ({
+      item_id: `SKU-${i}`,
+      item_name: "A product with a long name",
+    }));
+
+    capture("add_to_cart", { value: 120, items_count: items.length, items });
+    capture("search", { search_term: "x".repeat(MAX_PROPERTIES_LENGTH) });
+    await vi.advanceTimersByTimeAsync(FLUSH_DELAY_MS);
+
+    const { events } = sentCommands()[0];
+    expect(events).toHaveLength(1);
+    expect(JSON.parse(events[0].properties ?? "")).toEqual({ value: 120, items_count: 400 });
   });
 
   it("puts the events of one burst into one request", async () => {
@@ -133,6 +166,9 @@ describe("useAnalyticsQueue", () => {
 
     capture("search", { search_term: "bolt" });
     flush();
+
+    expect(hoisted.pushMock).toHaveBeenCalledTimes(1);
+
     await vi.advanceTimersByTimeAsync(FLUSH_DELAY_MS * 3);
 
     expect(hoisted.pushMock).toHaveBeenCalledTimes(1);
@@ -159,5 +195,24 @@ describe("useAnalyticsQueue", () => {
     const ids = sentCommands().map((command) => command.events[0].id);
     expect(ids).toHaveLength(2);
     expect(ids[0]).toBe(ids[1]);
+  });
+
+  it("sends a failed batch again ahead of what was captured meanwhile, in requests of the allowed size", async () => {
+    hoisted.pushMock.mockRejectedValueOnce(new Error("offline"));
+    const { capture, flush } = await createQueue();
+
+    for (let i = 0; i < MAX_BATCH_SIZE; i++) {
+      capture("search", { search_term: `first ${i}` });
+    }
+    capture("search", { search_term: "later" });
+    await vi.advanceTimersByTimeAsync(0);
+    flush();
+    await vi.advanceTimersByTimeAsync(FLUSH_DELAY_MS * 2);
+
+    const [failed, retried, rest] = sentCommands();
+    expect(retried.events.map((event) => event.id)).toEqual(failed.events.map((event) => event.id));
+    expect(rest.events.map((event) => JSON.parse(event.properties ?? "") as unknown)).toEqual([
+      { search_term: "later" },
+    ]);
   });
 });

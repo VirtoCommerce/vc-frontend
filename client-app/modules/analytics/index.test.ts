@@ -1,21 +1,38 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { effectScope } from "vue";
+import { effectScope, nextTick, ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { ENABLED_KEY, SESSION_START_EVENT, TRACKER_NAME } from "./constants";
+import { ENABLED_KEY, SESSION_START_EVENT, SESSION_STORAGE_KEY, TRACKER_NAME } from "./constants";
 import type { TrackerType } from "@/core/types/analytics";
 import type { Router } from "vue-router";
 
 const hoisted = vi.hoisted(() => ({
   captureMock: vi.fn(),
   flushMock: vi.fn(),
+  setPagePathResolverMock: vi.fn(),
   addTrackerMock: vi.fn(),
   trackPageViewsMock: vi.fn(),
   enabledKeys: new Set<string>(),
   isDevelopment: false,
 }));
 
-vi.mock("./queue", () => ({
-  useAnalyticsQueue: () => ({ capture: hoisted.captureMock, flush: hoisted.flushMock }),
+const isAuthenticated = ref(false);
+const organization = ref<{ id: string } | null>(null);
+
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({
+    isAuthenticated,
+    user: ref({ id: "user-1", contact: { id: "contact-1" }, permissions: [] }),
+    organization,
+    operator: ref(null),
+  }),
+}));
+
+vi.mock("./composables/useAnalyticsQueue", () => ({
+  useAnalyticsQueue: () => ({
+    capture: hoisted.captureMock,
+    flush: hoisted.flushMock,
+    setPagePathResolver: hoisted.setPagePathResolverMock,
+  }),
 }));
 
 vi.mock("./page-views", () => ({
@@ -72,6 +89,8 @@ describe("init", () => {
     hoisted.enabledKeys.clear();
     hoisted.enabledKeys.add(ENABLED_KEY);
     hoisted.isDevelopment = false;
+    isAuthenticated.value = false;
+    organization.value = null;
   });
 
   afterEach(() => {
@@ -105,11 +124,48 @@ describe("init", () => {
     expect(hoisted.trackPageViewsMock).toHaveBeenCalledWith(router, hoisted.captureMock);
   });
 
-  it("reports the start of a session once per tab", () => {
+  function sessionStarts(): number {
+    return hoisted.captureMock.mock.calls.filter(([name]) => name === SESSION_START_EVENT).length;
+  }
+
+  // Later the landing page, the referrer and the campaign are gone; a visitor who signs in must still have them.
+  it("reads how the visit started on the landing page, even for a visitor whose events are not collected", () => {
+    history.replaceState(null, "", "/shared-list/3f9c-secret?utm_source=newsletter");
+
+    init(
+      createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: "/shared-list/:sharingKey", component: { template: "<div />" } }],
+      }),
+    );
+    history.replaceState(null, "", "/");
+
+    expect(JSON.parse(sessionStorage.getItem(SESSION_STORAGE_KEY) ?? "null")).toMatchObject({
+      landing_path: "/shared-list/:sharingKey",
+      utm_source: "newsletter",
+    });
+  });
+
+  it("reports the start of a session once for the same visitor", () => {
     init(buildRouter());
     init(buildRouter());
 
-    expect(hoisted.captureMock.mock.calls.filter(([name]) => name === SESSION_START_EVENT)).toHaveLength(1);
+    expect(sessionStarts()).toBe(1);
+  });
+
+  it("reports it again for the customer once they sign in, and for each organization they act for", async () => {
+    init(buildRouter());
+
+    isAuthenticated.value = true;
+    organization.value = { id: "org-1" };
+    await nextTick();
+
+    expect(sessionStarts()).toBe(2);
+
+    organization.value = { id: "org-2" };
+    await nextTick();
+
+    expect(sessionStarts()).toBe(3);
   });
 
   it("passes bus events on under their GA4 names", () => {

@@ -11,7 +11,7 @@ vi.mock("@/core/api/graphql/client", () => ({
   apolloClient: { query: hoisted.queryMock },
 }));
 
-const { getRoutePageType, getSlugPermalink, resolveSlugPageType } = await import("./page-type");
+const { getRoutePageType, resolveSlugPageType } = await import("./page-type");
 
 const Page = { template: "<div />" };
 
@@ -31,17 +31,6 @@ function route(path: string): RouteLocationNormalizedGeneric {
 function slugInfoResult(slugInfo: unknown): { data: { slugInfo: unknown } } {
   return { data: { slugInfo } };
 }
-
-describe("getSlugPermalink", () => {
-  it("builds the matcher's permalink from the catch-all path", () => {
-    expect(getSlugPermalink(route("/bolts/carriage-bolts/"))).toBe("bolts/carriage-bolts");
-    expect(getSlugPermalink(route("/"))).toBe("/");
-  });
-
-  it("returns nothing for a named route", () => {
-    expect(getSlugPermalink(route("/product/p-1"))).toBeUndefined();
-  });
-});
 
 describe("getRoutePageType", () => {
   it("names a named route's page after the route", () => {
@@ -99,10 +88,11 @@ describe("resolveSlugPageType", () => {
     expect(await resolveSlugPageType("old-place")).toBe("redirect");
   });
 
-  it("reports not_found when the slug matches nothing", async () => {
+  // The matcher also serves page-builder and internal pages there, so "no entity" is not "not found".
+  it("does not name the page when the slug describes none", async () => {
     hoisted.queryMock.mockResolvedValue(slugInfoResult({ entityInfo: null, redirectUrl: null }));
 
-    expect(await resolveSlugPageType("no-such-page")).toBe("not_found");
+    expect(await resolveSlugPageType("demo-landing")).toBeUndefined();
   });
 
   it("returns nothing when the lookup has no answer or fails", async () => {

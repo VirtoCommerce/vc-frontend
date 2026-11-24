@@ -1,4 +1,4 @@
-import { SESSION_STORAGE_KEY } from "./constants";
+import { SESSION_IDENTITY_STORAGE_KEY, SESSION_STORAGE_KEY } from "./constants";
 import { createId } from "./utils";
 
 /** How the visitor arrived. Read once, when the session starts: a later page would describe the site itself. */
@@ -13,28 +13,49 @@ export type SessionType = {
   utm_content?: string;
 };
 
+// With storage blocked the session lives as long as the page does, which still groups the events of that page.
+let sessionWithoutStorage: SessionType | undefined;
+
 const UTM_NAMES = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"] as const;
 
 /**
  * One session per tab, kept in session storage so the reload a sign-in or an organization switch makes stays in it.
- * `isNew` is true for the call that started it.
  */
-export function getSession(): { session: SessionType; isNew: boolean } {
-  const stored = readSession();
+export function getSession(getLandingPath: () => string = () => location.pathname): SessionType {
+  const stored = readSession() ?? sessionWithoutStorage;
 
   if (stored) {
-    return { session: stored, isNew: false };
+    return stored;
   }
 
-  const session = startSession();
+  const session = startSession(getLandingPath());
 
   try {
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
   } catch {
-    // No storage: every page load is its own session, which still groups the events of that page.
+    sessionWithoutStorage = session;
   }
 
-  return { session, isNew: true };
+  return session;
+}
+
+/**
+ * True the first time the session is seen under this identity. A visit is counted for whoever makes it, and a
+ * session that starts signed out is not yet anybody's: it starts again, for the customer and their organization,
+ * once they sign in or switch organization.
+ */
+export function startSessionFor(identityKey: string): boolean {
+  try {
+    if (sessionStorage.getItem(SESSION_IDENTITY_STORAGE_KEY) === identityKey) {
+      return false;
+    }
+
+    sessionStorage.setItem(SESSION_IDENTITY_STORAGE_KEY, identityKey);
+  } catch {
+    // No storage to remember it in: reported once per page load.
+  }
+
+  return true;
 }
 
 function readSession(): SessionType | undefined {
@@ -51,11 +72,11 @@ function readSession(): SessionType | undefined {
   }
 }
 
-function startSession(): SessionType {
+function startSession(landingPath: string): SessionType {
   const params = new URLSearchParams(location.search);
   const session: SessionType = {
     id: createId(),
-    landing_path: location.pathname,
+    landing_path: landingPath,
     referrer: getExternalReferrer(),
   };
 

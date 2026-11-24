@@ -48,7 +48,7 @@ export function productToAnalyticsItem(
   priceOverrideOrContext?: ConfiguredPriceType | ProductToItemContextType,
   context?: ProductToItemContextType,
 ): AnalyticsItemType {
-  // 3rd arg used to be ConfiguredPriceType — preserved for external extendEvents consumers.
+  // The third argument is a price override or the context: `extendEvents` consumers call it both ways.
   const isPriceOverride =
     !!priceOverrideOrContext &&
     typeof priceOverrideOrContext === "object" &&

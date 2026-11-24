@@ -6,6 +6,7 @@ export const TRACKER_NAME = "analytics";
 export const DEBUG_PREFIX = "[Analytics]";
 
 export const SESSION_STORAGE_KEY = "vc-analytics-session";
+export const SESSION_IDENTITY_STORAGE_KEY = "vc-analytics-session-identity";
 
 export const SESSION_START_EVENT = "session_start";
 
@@ -28,6 +29,9 @@ export const MAX_BATCH_SIZE = 50;
 
 /** Long enough to put the events of one navigation into one request, short enough to lose little on a closed tab. */
 export const FLUSH_DELAY_MS = 1000;
+
+/** Under the backend's limit of 16,384 characters for an event's properties. */
+export const MAX_PROPERTIES_LENGTH = 16_000;
 
 /** A failed batch is offered once more, then dropped: an unreachable backend must not grow the queue forever. */
 export const MAX_SEND_ATTEMPTS = 2;

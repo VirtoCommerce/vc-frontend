@@ -22,13 +22,18 @@ function buildRouter(): Router {
     routes: [
       { path: "/catalog", name: "Catalog", component: Page },
       { path: "/sign-in", name: "SignIn", component: Page },
+      { path: "/shared-list/:sharingKey", name: "SharedList", component: Page },
       { path: "/:pathMatch(.*)*", name: "Matcher", component: Page },
     ],
   });
 }
 
-function pageViews(): unknown[] {
-  return hoisted.captureMock.mock.calls.filter(([name]) => name === "$pageview").map(([, props]) => props);
+type ViewType = { properties: Record<string, unknown>; path?: string; occurredAt?: Date };
+
+function pageViews(): ViewType[] {
+  return hoisted.captureMock.mock.calls
+    .filter(([name]) => name === "$pageview")
+    .map(([, properties, options]) => ({ properties, ...options }) as ViewType);
 }
 
 /** A slug lookup the test answers when it wants to, with the given object type. */
@@ -52,97 +57,81 @@ describe("trackPageViews", () => {
     hoisted.queryMock.mockReset();
   });
 
-  it("sends one page view per navigation, with the route name and its page type", async () => {
+  it("sends one page view per navigation, with the route name, its page type and its path", async () => {
     const router = buildRouter();
     trackPageViews(router, hoisted.captureMock);
 
-    await router.push("/");
     await router.push("/catalog");
     await router.push("/sign-in");
 
-    expect(pageViews()).toEqual([
-      { route_name: "Matcher", page_type: "home" },
-      { route_name: "Catalog", page_type: "catalog" },
-      { route_name: "SignIn", page_type: "sign_in" },
+    expect(pageViews()).toMatchObject([
+      { properties: { route_name: "Catalog", page_type: "catalog" }, path: "/catalog" },
+      { properties: { route_name: "SignIn", page_type: "sign_in" }, path: "/sign-in" },
     ]);
-    expect(hoisted.queryMock).not.toHaveBeenCalled();
   });
 
   it("sends a slug page's view once the slug tells what the page is", async () => {
+    const answerSlugLookup = deferSlugLookup();
     const router = buildRouter();
     trackPageViews(router, hoisted.captureMock);
-    await router.push("/");
-    hoisted.captureMock.mockReset();
-    const answerSlug = deferSlugLookup();
 
     await router.push("/bolts/carriage-bolt");
+
     expect(pageViews()).toEqual([]);
 
-    await answerSlug("CatalogProduct");
-    expect(pageViews()).toEqual([{ route_name: "Matcher", page_type: "product" }]);
-  });
+    await answerSlugLookup("CatalogProduct");
 
-  it("sends a slug page left before its type came back untyped, ahead of the next view", async () => {
-    const router = buildRouter();
-    trackPageViews(router, hoisted.captureMock);
-    await router.push("/");
-    hoisted.captureMock.mockReset();
-    const answerSlug = deferSlugLookup();
-
-    await router.push("/bolts");
-    await router.push("/sign-in");
-    await answerSlug("Category");
-
-    expect(pageViews()).toEqual([
-      { route_name: "Matcher", page_type: undefined },
-      { route_name: "SignIn", page_type: "sign_in" },
+    expect(pageViews()).toMatchObject([
+      { properties: { route_name: "Matcher", page_type: "product" }, path: "/bolts/carriage-bolt" },
     ]);
   });
 
-  it("sends a slug page untyped when the lookup fails", async () => {
+  it("sends a slug page left before its type came back untyped, as the page and the moment it was viewed", async () => {
+    deferSlugLookup();
     const router = buildRouter();
     trackPageViews(router, hoisted.captureMock);
-    await router.push("/");
-    hoisted.captureMock.mockReset();
-    hoisted.queryMock.mockRejectedValueOnce(new Error("network"));
 
-    await router.push("/bolts");
+    await router.push("/bolts/carriage-bolt");
+    const leftAt = new Date();
+    await router.push("/sign-in");
+
+    const [slugView, signInView] = pageViews();
+    expect(slugView).toMatchObject({ properties: { route_name: "Matcher" }, path: "/bolts/carriage-bolt" });
+    expect(slugView.properties.page_type).toBeUndefined();
+    expect(slugView.occurredAt?.getTime()).toBeLessThanOrEqual(leftAt.getTime());
+    expect(signInView).toMatchObject({ properties: { page_type: "sign_in" }, path: "/sign-in" });
+    expect(pageViews()).toHaveLength(2);
+  });
+
+  it("sends a slug page untyped when the lookup fails", async () => {
+    hoisted.queryMock.mockRejectedValueOnce(new Error("network"));
+    const router = buildRouter();
+    trackPageViews(router, hoisted.captureMock);
+
+    await router.push("/bolts/carriage-bolt");
     await flushPromises();
 
-    expect(pageViews()).toEqual([{ route_name: "Matcher", page_type: undefined }]);
+    expect(pageViews()).toHaveLength(1);
+    expect(pageViews()[0].properties.page_type).toBeUndefined();
   });
 
-  // `init` awaits the SDK chunk, so the hook is usually registered after the initial navigation has finished.
-  it("sends the initial page view exactly once when registered after the initial navigation", async () => {
-    const router = buildRouter();
-    await router.push("/catalog");
-    await router.isReady();
-
-    trackPageViews(router, hoisted.captureMock);
-    await router.isReady();
-
-    expect(pageViews()).toEqual([{ route_name: "Catalog", page_type: "catalog" }]);
-  });
-
-  it("sends the initial page view exactly once when registered before the initial navigation", async () => {
+  it("stores a route with a secret in its URL as its pattern", async () => {
     const router = buildRouter();
     trackPageViews(router, hoisted.captureMock);
 
-    await router.push("/catalog");
-    await router.isReady();
+    await router.push("/shared-list/3f9c-secret-key");
 
-    expect(pageViews()).toEqual([{ route_name: "Catalog", page_type: "catalog" }]);
+    expect(pageViews()[0].path).toBe("/shared-list/:sharingKey");
   });
 
   it("sends nothing for a navigation that did not happen", async () => {
     const router = buildRouter();
-    await router.push("/catalog");
+    router.beforeEach((to) => to.path !== "/sign-in");
     trackPageViews(router, hoisted.captureMock);
-    await router.isReady();
-    hoisted.captureMock.mockReset();
 
     await router.push("/catalog");
+    await router.push("/sign-in");
 
-    expect(pageViews()).toEqual([]);
+    expect(pageViews()).toHaveLength(1);
   });
 });

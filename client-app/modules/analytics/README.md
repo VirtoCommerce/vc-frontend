@@ -25,7 +25,7 @@ Event and property names are the GA4 ones of the shared mapping
 
 | Event                 | When                                                                                   |
 | --------------------- | -------------------------------------------------------------------------------------- |
-| `session_start`       | The first page of a tab's session                                                      |
+| `session_start`       | A tab's session begins, and again once the visitor signs in or switches organization   |
 | `$pageview`           | After every router navigation, with `route_name` and `page_type`                       |
 | `search`              | A search submitted from the search bar                                                 |
 | `view_search_results` | A page of search results loaded, with `results_count` and `results_page`               |
@@ -41,7 +41,11 @@ results a search really gave is `results_count` of `view_search_results` with `r
 
 `page_type` ([`page-type.ts`](./page-type.ts)) is the route name in snake_case for a named route, `home` for the root,
 and for a URL served by the slug matcher what its slug resolves to (`product`, `category`, `catalog`, `brand`, …). That
-lookup reuses the matcher's own cached query, so no extra request goes out.
+lookup uses the matcher's own cached query, so it is usually the request the page sends anyway. A page the slug does
+not describe — a page-builder or an internal page, or a URL that leads nowhere — is sent without a `page_type`.
+
+A page view is sent for every navigation, a change of the query string included, so paging or filtering a list
+counts as a view.
 
 ## Identity and delivery
 
@@ -52,8 +56,15 @@ lookup reuses the matcher's own cached query, so no extra request goes out.
   hidden or left. Every event carries its own id, so a retried request is stored once. A failed request is offered
   once more and then dropped.
 - A session ([`session.ts`](./session.ts)) lives in the tab's session storage, so it survives the reload a sign-in
-  makes. How the visit started — landing page, external referrer (origin and path only), `utm_*` — is read once and
-  travels in the `context` of every event, together with the page path, the language and the screen size.
+  makes; with storage blocked it lives as long as the page. How the visit started — landing page, external referrer
+  (origin and path only), `utm_*` — is read once, on the landing page, and travels in the `context` of every event,
+  together with the page path, the language and the screen size.
+- A path is stored without its query string. A route with parameters of its own is stored as its pattern
+  ([`page-path.ts`](./page-path.ts)): `/shared-list/:sharingKey` carries a key that opens the list. Catalog and
+  content URLs are stored as they are.
+- The backend drops an event whose properties are over 16 KB, so a longer one is sent without its `items` list and
+  keeps its totals.
+- `search_term` is what the visitor typed, as it was typed.
 
 ## Adding an event
 

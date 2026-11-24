@@ -34,6 +34,11 @@ describe("timeoutLink", () => {
 
     const context = await runWithContext({ fetchOptions: { signal: controller.signal } });
     const { signal } = context.fetchOptions as RequestInit;
+
+    // Not the caller's own signal: that one would never time out.
+    expect(signal).not.toBe(controller.signal);
+    expect(signal?.aborted).toBe(false);
+
     controller.abort();
 
     expect(signal?.aborted).toBe(true);
