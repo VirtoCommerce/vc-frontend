@@ -207,10 +207,12 @@ describe("the preview's auth message", () => {
   });
 
   it("renders anonymously and asks the designer for a new code when the exchange fails", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     await sendAuth("customer");
     state.requestToken.mockResolvedValueOnce({ data: { error: "invalid_grant" }, error: new Error("Bad Request") });
 
     await sendCode("colleague");
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(await getRequestAuthorization()).toBeUndefined();
     expect(state.globals).toEqual({ userId: "designer", organizationId: undefined });
@@ -221,11 +223,13 @@ describe("the preview's auth message", () => {
   });
 
   it("renders anonymously and asks for a new code when the token endpoint cannot be reached", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const fetchError = new TypeError("Failed to fetch");
     const logError = vi.spyOn(Logger, "error").mockImplementation(() => undefined);
     state.requestToken.mockResolvedValueOnce({ data: null, error: fetchError });
 
     await sendCode("customer");
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(logError).toHaveBeenCalledWith("[builder-preview] Failed to exchange the preview code", fetchError);
     logError.mockRestore();
@@ -234,6 +238,17 @@ describe("the preview's auth message", () => {
     expect(getAuthRenewMessages()).toEqual([
       [{ source: "preview", type: "authRenew", data: { userId: "customer" } }, BUILDER_ORIGIN],
     ]);
+  });
+
+  it("drops the renewal request of a failed exchange when the designer sends another auth first", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    state.requestToken.mockResolvedValueOnce({ data: { error: "invalid_grant" }, error: new Error("Bad Request") });
+
+    await sendCode("customer");
+    await sendAuth(null);
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(getAuthRenewMessages()).toHaveLength(0);
   });
 
   it("asks for a new code 60 seconds before the exchanged token expires", async () => {

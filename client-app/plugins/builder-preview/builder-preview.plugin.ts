@@ -427,7 +427,11 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   clearTimeout(authRenewTimer);
   authRenewTimer = undefined;
 
-  const { token, userId } = await resolvePreviewAuth(context, message);
+  const { token, userId, renewal } = await resolvePreviewAuth(message);
+
+  if (renewal) {
+    authRenewTimer = setTimeout(() => postAuthRenew(context, renewal.userId), renewal.delaySeconds * 1000);
+  }
 
   // A renewed token of the user shown: their organization, branding and loaded data stay right.
   if (userId === previewUserId && !!token === !!previewToken) {
@@ -456,10 +460,11 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   await context.previewV2?.reload();
 }
 
-async function resolvePreviewAuth(
-  context: IPreviewContext,
-  message: TransferDataType,
-): Promise<{ token: string | null; userId: string | null }> {
+async function resolvePreviewAuth(message: TransferDataType): Promise<{
+  token: string | null;
+  userId: string | null;
+  renewal?: { userId: string; delaySeconds: number };
+}> {
   const userId = message.userId || null;
 
   if (!message.code || !userId) {
@@ -469,15 +474,14 @@ async function resolvePreviewAuth(
   const response = await exchangePreviewCode(message.code);
 
   if (!response) {
-    postAuthRenew(context, userId);
-    return { token: null, userId: null };
+    return { token: null, userId: null, renewal: { userId, delaySeconds: 0 } };
   }
 
-  authRenewTimer = setTimeout(
-    () => postAuthRenew(context, userId),
-    Math.max(0, response.expiresIn - AUTH_RENEW_LEAD_SECONDS) * 1000,
-  );
-  return { token: response.accessToken, userId };
+  return {
+    token: response.accessToken,
+    userId,
+    renewal: { userId, delaySeconds: Math.max(0, response.expiresIn - AUTH_RENEW_LEAD_SECONDS) },
+  };
 }
 
 /** The storefront host must mint the token: one minted on the platform host fails its issuer check here. */
