@@ -225,10 +225,14 @@ overridden on that element's block, not on `html`: in the design's `blocks/<bloc
 (`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
 dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
 and `--vc-dropdown-menu-radius` instead, on `html` as usual.
-Soft's organization switcher sets `--vc-popover-padding` and `--vc-popover-border-width` on
-`.organization-switcher` the same way, and its panel subtracts both from the card's 20rem × 50vh.
-Override them on `html[data-design="soft"] .organization-switcher` in `_custom.scss`, as lengths
-(`0px`, not `0`).
+Soft's organization switcher and preferences menu set `--vc-popover-padding` and
+`--vc-popover-border-width` on `.organization-switcher` and `.preferences-menu` the same way, and their
+panels subtract both from the card's size (20rem × 50vh; 38.75rem, or 23.25rem with one column).
+Override them on `html[data-design="soft"] .organization-switcher` or `html[data-design="soft"] .preferences-menu`
+in `_custom.scss`, as lengths (`0px`, not `0`). The preferences menu also sets the `--vc-menu-item-*` row
+tokens on `.preferences-menu__list`, and its appearance switch sets `--vc-icon-color` and
+`--vc-tab-switch-color` on `.color-mode-switch` (`html.dark[data-design="soft"]` for dark): override them on
+those blocks, not on `html`.
 Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
 spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
 them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
@@ -338,7 +342,7 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
   preset's default, so a block that sets the same token on its own element (an app block, a design's
   block) wins: the footer keeps its transparent `VcWidget` plate. Never set a component's private variable
   (`--bg-color`, `--text-color`, …).
-- Soft's organizations panel paints with `--vc-plate-bg-color` (`additional-50` when unset), not
+- Soft's organizations and preferences panels paint with `--vc-plate-bg-color` (`additional-50` when unset), not
   `--vc-widget-bg-color`: a preset that recolours its plates sets only `--vc-plate-bg-color`, as
   paprika does; soft derives `--vc-widget-bg-color` from it, and classic widgets keep `additional-50`.
 - Target a block or BEM part only for a part with no token, and set the property itself there: the
