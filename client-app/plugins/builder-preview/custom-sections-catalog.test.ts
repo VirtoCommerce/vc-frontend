@@ -61,6 +61,23 @@ describe("toCustomSectionSchemas", () => {
     });
   });
 
+  it("keeps only the field keys and types the server takes, a row's fields too", () => {
+    const settings = [
+      { id: "q", type: "search", request: { url: "/api/x" } },
+      {
+        id: "cards",
+        type: "list",
+        requests: [{ url: "/api/y" }],
+        element: [{ id: "title", type: "string", label: "Title", visibility: { when: "x" } }],
+      },
+    ];
+    const typed = { ...STATS, schema: { settings } } as unknown as ICustomSectionDefinition;
+
+    expect(toCustomSectionSchemas({ "custom-stats": typed })["custom-stats"].settings).toEqual([
+      { id: "cards", type: "list", element: [{ id: "title", type: "string", label: "Title" }] },
+    ]);
+  });
+
   it("leaves out a type with a name the storefront refuses or without settings", () => {
     const broken = { ...STATS, schema: {} } as unknown as ICustomSectionDefinition;
 

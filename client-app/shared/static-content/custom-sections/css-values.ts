@@ -26,7 +26,7 @@ const IMAGE_FUNCTIONS = new Set([
 /** IE's script in CSS, and Firefox's live picture of any element of the page. */
 const REFUSED_FUNCTIONS = new Set(["expression", "element", "-moz-element"]);
 /** Whatever would decide an image's address only when the page renders. */
-const DYNAMIC_FUNCTIONS = new Set(["var", "attr", "env", "if"]);
+const DYNAMIC_FUNCTIONS = new Set(["var", "inherit", "attr", "env", "if"]);
 const ESCAPE_REGEX = /\\(?:([\da-f]{1,6})\s?|(.))/gis;
 /** One escape at the reader's place: a `\` before a newline is none. */
 const ONE_ESCAPE_REGEX = /\\(?:[\da-f]{1,6}\s?|[^\n])/iy;
