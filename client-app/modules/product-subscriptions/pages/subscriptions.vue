@@ -70,6 +70,7 @@
 
       <VcWidget
         v-if="inactiveSubscriptions.length"
+        ref="inactiveWidget"
         class="subscriptions__inactive"
         :title="$t('product_subscriptions.deliveries.idle_title', { count: inactiveSubscriptions.length })"
         collapsible
@@ -143,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref } from "vue";
+import { computed, nextTick, onMounted, reactive, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useCurrency, usePageHead } from "@/core/composables";
@@ -214,6 +215,7 @@ const targetSubscriptionId = computed(() =>
   typeof route.query.subscription === "string" ? route.query.subscription : undefined,
 );
 const showInactive = ref(false);
+const inactiveWidget = useTemplateRef<{ $el: HTMLElement }>("inactiveWidget");
 /** Renewal or subscription id -> the action in progress for it. */
 const busy = reactive<Record<string, string | undefined>>({});
 
@@ -341,11 +343,14 @@ async function revealTarget(): Promise<void> {
   if (!id) {
     return;
   }
-  if (inactiveSubscriptions.value.some((x) => x.id === id)) {
+  const isInactive = inactiveSubscriptions.value.some((x) => x.id === id);
+  if (isInactive) {
     showInactive.value = true;
   }
   await nextTick();
-  const anchor = document.getElementById(subscriptionAnchorId(id));
+  // A past delivery card carries the same anchor, so an inactive subscription is looked up in its own block.
+  const scope = isInactive ? inactiveWidget.value?.$el : document;
+  const anchor = scope?.querySelector(`#${CSS.escape(subscriptionAnchorId(id))}`);
   const deliveryCard = anchor?.closest(".subscription-delivery");
   if (deliveryCard) {
     // `html` has `scroll-padding-top` for the sticky header, so "start" lands just below it.
