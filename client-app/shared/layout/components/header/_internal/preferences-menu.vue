@@ -65,11 +65,11 @@
 </template>
 
 <script setup lang="ts">
-import { onKeyStroke } from "@vueuse/core";
 import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { usePopoverEscape } from "@/shared/layout/composables/usePopoverEscape";
 import { usePreferencesMenu } from "@/shared/layout/composables/usePreferencesMenu";
 import { useComponentId } from "@/ui-kit/composables";
 import ColorModeSwitch from "./color-mode-switch.vue";
@@ -95,6 +95,8 @@ const languageLabelId = useComponentId("preferences-menu-language");
 const isOpen = ref(false);
 const trigger = useTemplateRef<HTMLButtonElement>("trigger");
 
+usePopoverEscape(trigger, isOpen);
+
 const hasTwoColumns = computed(() => (isCurrencyShown.value || isAppearanceShown.value) && isLanguageShown.value);
 
 const triggerValue = computed(() => {
@@ -109,15 +111,6 @@ const triggerLabel = computed(() =>
     ? t("shared.layout.header.preferences_menu.trigger_label", { title: props.item.title, value: triggerValue.value })
     : undefined,
 );
-
-// VcPopover takes Escape only in its panel and on its trigger: from anywhere else, close it through the trigger.
-onKeyStroke("Escape", (event: KeyboardEvent) => {
-  if (!isOpen.value || event.defaultPrevented) {
-    return;
-  }
-
-  trigger.value?.click();
-});
 </script>
 
 <style lang="scss">
