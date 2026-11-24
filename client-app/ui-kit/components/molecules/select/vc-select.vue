@@ -222,7 +222,7 @@ const emit = defineEmits<{
 const props = withDefaults(
   defineProps<{
     /** The selected value, or in `multiple` mode the selected items, whatever `value-field` says. */
-    modelValue?: M extends true ? T[] : V;
+    modelValue?: M extends true ? NoInfer<T>[] : V;
     label?: string;
     ariaLabel?: string;
     /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */

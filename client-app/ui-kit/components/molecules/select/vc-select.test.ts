@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { defineComponent, h, nextTick, reactive, ref } from "vue";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, onTestFinished, vi } from "vitest";
+import { computed, defineComponent, h, nextTick, reactive, ref } from "vue";
 import * as UIKitComponents from "@/ui-kit/components";
 import { describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
 import {
@@ -22,6 +22,7 @@ import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
 import type { SelectMountOptionsType } from "@/ui-kit/test-mocks/vc-select-harness.mock";
 import type { VueWrapper } from "@vue/test-utils";
+import type { ComponentProps } from "vue-component-type-helpers";
 
 // VcScrollbar debounces its edge measurement by 100 ms.
 const SCROLLBAR_SETTLE_MS = 160;
@@ -312,6 +313,38 @@ describe("VcSelect", () => {
       await wrapper.findAll('[role="option"]')[0].trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
+    });
+
+    it("types the model as the items with any valueField, whatever the value type", () => {
+      type BuyerType = { id: string; rank: number };
+      type MultiplePropsType<T> = ComponentProps<typeof VcSelect<T, string, true>>;
+
+      expectTypeOf<{
+        items: BuyerType[];
+        multiple: true;
+        valueField: "rank";
+        modelValue: BuyerType[];
+      }>().toExtend<MultiplePropsType<BuyerType>>();
+      expectTypeOf<{ items: BuyerType[]; multiple: true; valueField: "id"; modelValue: string[] }>().not.toExtend<
+        Pick<MultiplePropsType<BuyerType>, "modelValue">
+      >();
+
+      function checkMultipleProps<T>(props: MultiplePropsType<T>) {
+        return props;
+      }
+
+      const buyers: BuyerType[] = [];
+      const picked: BuyerType[] = [];
+      const ids: string[] = [];
+
+      checkMultipleProps({ items: buyers, multiple: true, valueField: "id", modelValue: picked });
+      checkMultipleProps({
+        items: buyers,
+        multiple: true,
+        valueField: "id",
+        // @ts-expect-error -- a multiple model holds items, not valueField ids
+        modelValue: ids,
+      });
     });
 
     it("treats an uninitialised model as empty", async () => {
@@ -666,6 +699,51 @@ describe("VcSelect", () => {
 
         expect(wrapper.emitted("update:modelValue")).toEqual([[[COUNTRIES[0], COUNTRIES[2]]]]);
         expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "a" }]]);
+      });
+
+      it("merges a server-side Select all by valueField when every answer returns new objects", async () => {
+        function matchesOf(query: string) {
+          return COUNTRIES.filter((country) => country.name.includes(query)).map((country) => ({ ...country }));
+        }
+
+        const items = ref(matchesOf("").slice(0, 2));
+        const selected = ref([{ ...COUNTRIES[2] }]);
+        const selectedMatchCount = computed(() => {
+          const selectedIds = new Set(selected.value.map((buyer) => buyer.id));
+          return matchesOf("").filter((buyer) => selectedIds.has(buyer.id)).length;
+        });
+
+        function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
+          const matches = matchesOf(query);
+          const matchIds = new Set(matches.map((buyer) => buyer.id));
+          const rest = selected.value.filter((buyer) => !matchIds.has(buyer.id));
+          selected.value = action === "select-all" ? [...rest, ...matches] : rest;
+        }
+
+        const wrapper = mountWithReactiveProps(
+          () => ({
+            ...selectAllProps,
+            items: items.value,
+            textField: "name",
+            valueField: "id",
+            autocomplete: true,
+            serverFilter: true,
+            onSearch: noop,
+            answeredQuery: "",
+            total: COUNTRIES.length,
+            selectedCount: selectedMatchCount.value,
+            modelValue: selected.value,
+            onSelectAll,
+          }),
+          undefined,
+          WITH_MESSAGES,
+        );
+
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(selected.value.map((buyer) => buyer.id)).toEqual(["1", "2", "3"]);
+        expect(wrapper.get(".vc-select-all__count").text()).toBe("3 of 3");
+        expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("true");
       });
 
       it("clears the matches of a query by their valueField and keeps the items it hides", async () => {

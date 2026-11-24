@@ -1151,7 +1151,7 @@ declare const _default$r: typeof __VLS_export$r;
 declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: vue.PublicProps & __VLS_PrettifyLocal$2<{
         /** The selected value, or in `multiple` mode the selected items, whatever `value-field` says. */
-        modelValue?: M extends true ? T[] : V;
+        modelValue?: M extends true ? NoInfer<T>[] : V;
         label?: string;
         ariaLabel?: string;
         /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */

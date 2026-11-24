@@ -935,10 +935,15 @@ export const ServerFilterSelectAll: StoryType = {
   },
   render: (args) => ({
     setup: () => {
-      const ALL = Array.from({ length: 40 }, (_, index) => `Buyer ${index + 1}`);
+      type BuyerType = { id: number; name: string };
+
+      const ALL: BuyerType[] = Array.from({ length: 40 }, (_, index) => ({
+        id: index + 1,
+        name: `Buyer ${index + 1}`,
+      }));
       const PAGE_SIZE = 8;
-      const items = ref<string[]>([]);
-      const selected = ref<string[]>([]);
+      const items = ref<BuyerType[]>([]);
+      const selected = ref<BuyerType[]>([]);
       const matchCount = ref(0);
       const loading = ref(false);
       const answeredQuery = ref("");
@@ -947,7 +952,7 @@ export const ServerFilterSelectAll: StoryType = {
 
       function matchesOf(value: string) {
         const pattern = new RegExp(escapeRegExp(value), "i");
-        return ALL.filter((buyer) => pattern.test(buyer));
+        return ALL.filter((buyer) => pattern.test(buyer.name)).map((buyer) => ({ ...buyer }));
       }
 
       async function fetchPage(append: boolean) {
@@ -978,7 +983,8 @@ export const ServerFilterSelectAll: StoryType = {
       // The row acted on the loaded matches; the consumer completes it over every match of the query.
       function onSelectAll({ action, query: value }: VcSelectSelectAllPayloadType) {
         const matches = matchesOf(value);
-        const rest = selected.value.filter((buyer) => !matches.includes(buyer));
+        const matchIds = new Set(matches.map((buyer) => buyer.id));
+        const rest = selected.value.filter((buyer) => !matchIds.has(buyer.id));
         selected.value = action === "select-all" ? [...rest, ...matches] : rest;
       }
 
@@ -991,9 +997,10 @@ export const ServerFilterSelectAll: StoryType = {
         loading,
         answeredQuery,
         matchCount,
-        selectedMatchCount: computed(
-          () => matchesOf(answeredQuery.value).filter((buyer) => selected.value.includes(buyer)).length,
-        ),
+        selectedMatchCount: computed(() => {
+          const selectedIds = new Set(selected.value.map((buyer) => buyer.id));
+          return matchesOf(answeredQuery.value).filter((buyer) => selectedIds.has(buyer.id)).length;
+        }),
         hasNextPage: computed(() => items.value.length < matchCount.value),
         loadNextPage: () => fetchPage(true),
         search,
@@ -1011,6 +1018,8 @@ export const ServerFilterSelectAll: StoryType = {
           :answered-query="answeredQuery"
           :total="matchCount"
           :selected-count="selectedMatchCount"
+          text-field="name"
+          value-field="id"
           autocomplete
           server-filter
           with-select-all
@@ -1032,14 +1041,16 @@ export const ServerFilterSelectAll: StoryType = {
         code: `
 <script setup lang="ts">
 const { items, loading, answeredQuery, matchCount, hasNextPage, loadNextPage, search, matchesOf } = useBuyers();
-const selected = ref<string[]>([]);
-const selectedMatchCount = computed(
-  () => matchesOf(answeredQuery.value).filter((buyer) => selected.value.includes(buyer)).length,
-);
+const selected = ref<BuyerType[]>([]);
+const selectedMatchCount = computed(() => {
+  const selectedIds = new Set(selected.value.map((buyer) => buyer.id));
+  return matchesOf(answeredQuery.value).filter((buyer) => selectedIds.has(buyer.id)).length;
+});
 
 function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
   const matches = matchesOf(query);
-  const rest = selected.value.filter((buyer) => !matches.includes(buyer));
+  const matchIds = new Set(matches.map((buyer) => buyer.id));
+  const rest = selected.value.filter((buyer) => !matchIds.has(buyer.id));
   selected.value = action === "select-all" ? [...rest, ...matches] : rest;
 }
 </script>
@@ -1053,6 +1064,8 @@ function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
     :answered-query="answeredQuery"
     :total="matchCount"
     :selected-count="selectedMatchCount"
+    text-field="name"
+    value-field="id"
     multiple
     autocomplete
     server-filter
@@ -1070,7 +1083,8 @@ function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
           "the `items` answer and `selected-count` the selected ones among them, the ones not loaded " +
           "included. The row can add only the loaded matches, so `@select-all` carries the `query` it acted on: add " +
           'every match of it on `action: "select-all"` and clear them on `action: "deselect-all"`, leaving ' +
-          "the rest of the selection alone. The row waits until `answered-query` echoes the typed query.",
+          "the rest of the selection alone. Compare object items by `value-field`, not by reference: every answer " +
+          "can carry new objects. The row waits until `answered-query` echoes the typed query.",
       },
     },
   },
