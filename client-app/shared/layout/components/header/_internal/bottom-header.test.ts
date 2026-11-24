@@ -7,7 +7,12 @@ import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 type EntryType = { use?: () => Record<string, unknown> };
 
-const h = vi.hoisted((): { entries: Record<string, Record<string, EntryType>> } => ({ entries: {} }));
+const h = vi.hoisted(
+  (): { entries: Record<string, Record<string, EntryType>>; hasPreferences: { value: boolean } } => ({
+    entries: {},
+    hasPreferences: { value: true },
+  }),
+);
 
 vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", () => ({
   useExtensionRegistry: () => ({
@@ -22,13 +27,20 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
 vi.mock("@/core/composables", () => ({
   useNavigations: () => ({
     catalogMenuItems: ref([]),
-    desktopMainMenuItems: ref([{ id: "my-list", title: "My list", route: { name: "MyList" } }]),
+    desktopMainMenuItems: ref([
+      { id: "my-list", title: "My list", route: { name: "MyList" } },
+      { id: "preferences", title: "Preferences", dataTestId: "test-preferences-item" },
+    ]),
   }),
   useWhiteLabeling: () => ({ logoUrl: ref("") }),
 }));
 
 vi.mock("@/shared/account/composables/useUser", () => ({
   useUser: () => ({ organization: ref() }),
+}));
+
+vi.mock("@/shared/layout/composables/usePreferencesMenu", () => ({
+  usePreferencesMenu: () => ({ hasPreferences: h.hasPreferences }),
 }));
 
 vi.mock("./search-bar/search-bar.vue", () => ({ default: { name: "SearchBar", render: () => null } }));
@@ -100,5 +112,17 @@ describe("BottomHeader", () => {
 
     expect(wrapper.text()).toContain("My list");
     expect(wrapper.findComponent(VcBadgeStub).exists()).toBe(false);
+  });
+
+  it.each([
+    ["lists", true],
+    ["leaves out", false],
+  ])("%s the preferences item as the store offers a choice or not", (_, hasPreferences) => {
+    h.entries = {};
+    h.hasPreferences.value = hasPreferences;
+
+    const wrapper = mountHeader();
+
+    expect(wrapper.find('[data-test-id="test-preferences-item"]').exists()).toBe(hasPreferences);
   });
 });
