@@ -233,21 +233,19 @@ describe("OrganizationList: keyboard", () => {
     expect(options(wrapper).map((row) => row.attributes("tabindex"))).toEqual(["0", "-1", "-1", "-1"]);
   });
 
-  it("enters the list from the search field at its tab stop", async () => {
+  it("enters the list from the search field at the current organization", async () => {
     const wrapper = await mountList();
     await resolveAll();
     const rows = options(wrapper);
 
-    wrapper.findComponent({ name: "VcInput" }).vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
-    await nextTick();
-    expect(focused()).toBe(rows[0].element);
-
     rows[2].element.focus();
     await nextTick();
     wrapper.get<HTMLElement>(".test-panel").element.focus();
+    await nextTick();
     wrapper.findComponent({ name: "VcInput" }).vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
     await nextTick();
-    expect(focused()).toBe(rows[2].element);
+
+    expect(focused()).toBe(rows[0].element);
   });
 
   it("keeps the row hook the e2e suite selects options by", async () => {

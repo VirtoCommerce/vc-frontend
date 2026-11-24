@@ -173,6 +173,50 @@ describe("VcMenuList", () => {
       expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "-1", "0"]);
     });
 
+    it("keeps the item focused last while focus stays inside the list", async () => {
+      const wrapper = await mountList(
+        `
+          <VcMenuList role="listbox" aria-label="Currency">
+            <VcMenuItem v-for="code in codes" :key="code" :active="code === current">{{ code }}</VcMenuItem>
+            <button type="button" class="more">More</button>
+          </VcMenuList>
+        `,
+        codesSetup("EUR"),
+      );
+
+      inners(wrapper)[2].element.focus();
+      await nextTick();
+      (wrapper.get(".more").element as HTMLElement).focus();
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "-1", "0"]);
+    });
+
+    it("goes back to the active item when focus leaves the list", async () => {
+      const wrapper = await mountList(
+        `<div><button type="button" class="outside">Outside</button>${codesList()}</div>`,
+        codesSetup("EUR"),
+      );
+
+      inners(wrapper)[2].element.focus();
+      await nextTick();
+      (wrapper.get(".outside").element as HTMLElement).focus();
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1"]);
+    });
+
+    it("goes back to the active item when focus leaves for nowhere", async () => {
+      const wrapper = await mountList(codesList(), codesSetup("EUR"));
+
+      inners(wrapper)[2].element.focus();
+      await nextTick();
+      inners(wrapper)[2].element.blur();
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1"]);
+    });
+
     it("moves to a new active item", async () => {
       const wrapper = await mountList(codesList(), codesSetup("EUR"));
 
@@ -314,15 +358,16 @@ describe("VcMenuList", () => {
       expect(document.activeElement).toBe(inners(wrapper)[2].element);
     });
 
-    it("focuses the item focused last", async () => {
+    it("enters at the active item again after focus has left the list", async () => {
       const wrapper = await mountWithButton("GBP");
 
       inners(wrapper)[0].element.focus();
       await nextTick();
       (wrapper.get(".entry").element as HTMLElement).focus();
+      await nextTick();
       keydown(wrapper.get(".entry").element as HTMLElement, "ArrowDown");
 
-      expect(document.activeElement).toBe(inners(wrapper)[0].element);
+      expect(document.activeElement).toBe(inners(wrapper)[2].element);
     });
 
     it("focuses the first item while none is active", async () => {
@@ -355,7 +400,7 @@ describe("VcMenuList", () => {
     elements[5].focus();
     await nextTick();
 
-    expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1", "-1", "-1", "0"]);
+    expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1", "-1", "-1", "0"]);
   });
 
   describe("an item teleported out of the list", () => {
@@ -400,7 +445,8 @@ describe("VcMenuList", () => {
       teleported().focus();
       await nextTick();
 
-      expect(attrsOf(wrapper, "tabindex").slice(0, 2)).toEqual(["0", "-1"]);
+      // Focus has left the list: it is entered again at its active item.
+      expect(attrsOf(wrapper, "tabindex").slice(0, 2)).toEqual(["-1", "0"]);
     });
   });
 

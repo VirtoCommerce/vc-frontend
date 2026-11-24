@@ -53,6 +53,15 @@ watch(activeItem, () => {
   lastFocused.value = null;
 });
 
+// The item focused last is remembered only while focus stays inside: the list is entered again at its selection.
+useEventListener(root, "focusout", (event: FocusEvent) => {
+  const next = event.relatedTarget;
+
+  if (!(next instanceof Node) || !root.value?.contains(next)) {
+    lastFocused.value = null;
+  }
+});
+
 const tabStop = computed(() => {
   const enabledItems = getEnabledItems();
 
@@ -110,7 +119,7 @@ useEventListener(root, "keydown", (event: KeyboardEvent) => {
   target.focus();
 });
 
-/** Focuses the tab stop: the item focused last, else the `active` one, else the first enabled one. */
+/** Focuses the tab stop: the `active` item, else the first enabled one (inside the list: the item focused last). */
 function focus(): void {
   tabStop.value?.el()?.focus();
 }
@@ -128,9 +137,7 @@ provide(vcMenuListKey, {
   contains,
   isTabStop: (item) => tabStop.value === item,
   onItemFocus: (item) => {
-    if (contains(item)) {
-      lastFocused.value = item;
-    }
+    lastFocused.value = item;
   },
   register,
 });

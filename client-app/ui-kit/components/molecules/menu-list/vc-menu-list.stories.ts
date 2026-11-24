@@ -25,7 +25,7 @@ const meta: Meta<typeof VcMenuList> = {
           "",
           "- `role` is required: `listbox` for a choice of options (rows become `option`, `aria-selected` follows `active`),",
           "  `menu` for actions or links (rows become `menuitem`). Name the list with `aria-label` or `aria-labelledby`.",
-          "- One tab stop: the row focused last, else the `active` row, else the first enabled one.",
+          "- One tab stop: the `active` row, else the first enabled one; while focus stays inside, the row focused last.",
           "- Keys: Up and Down move between the enabled rows and wrap, Home and End go to the ends;",
           "  keys with Shift, Ctrl, Alt or Meta are left to the browser.",
           "- Rows may sit at any depth (a `VcScrollbar` between them is fine); a row teleported out of the list does not join it.",
