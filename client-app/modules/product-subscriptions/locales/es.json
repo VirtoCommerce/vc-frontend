@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Algo ha salido mal. Inténtalo de nuevo.",
-      "action_disabled": "Esta tienda no permite hacerlo. Ponte en contacto con la tienda."
+      "action_disabled": "Esta tienda no permite hacerlo. Ponte en contacto con la tienda.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Este producto está en tu carrito más de una vez. Suscríbete a cada una de sus líneas o elimina las demás para suscribirte a esta.",
+        "NO_OWN_PRICE": "Este producto no tiene precio propio. Elige una de sus variantes para suscribirte."
+      }
     },
     "purchase_options": {
       "title": "Opciones de compra",

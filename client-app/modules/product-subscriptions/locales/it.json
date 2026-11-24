@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Si è verificato un errore. Riprova.",
-      "action_disabled": "Questo negozio non lo consente. Contatta il negozio."
+      "action_disabled": "Questo negozio non lo consente. Contatta il negozio.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Questo prodotto è nel carrello più di una volta. Abbonati a ciascuna delle sue righe, oppure rimuovi le altre, per abbonarti a questa.",
+        "NO_OWN_PRICE": "Questo prodotto non ha un prezzo proprio. Scegli una delle sue varianti per abbonarti."
+      }
     },
     "purchase_options": {
       "title": "Opzioni di acquisto",

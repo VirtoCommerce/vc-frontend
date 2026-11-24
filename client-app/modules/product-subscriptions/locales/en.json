@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
-      "action_disabled": "This store doesn't let you do this. Please contact the store."
+      "action_disabled": "This store doesn't let you do this. Please contact the store.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "This product is in your cart more than once. Subscribe to each of its lines, or remove the others, to subscribe to this one.",
+        "NO_OWN_PRICE": "This product has no price of its own. Choose one of its variations to subscribe."
+      }
     },
     "purchase_options": {
       "title": "Purchase options",

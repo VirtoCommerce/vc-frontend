@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Noe gikk galt. Prøv igjen.",
-      "action_disabled": "Denne butikken tillater ikke dette. Kontakt butikken."
+      "action_disabled": "Denne butikken tillater ikke dette. Kontakt butikken.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Dette produktet ligger i handlekurven mer enn én gang. Abonner på hver av linjene, eller fjern de andre, for å abonnere på denne.",
+        "NO_OWN_PRICE": "Dette produktet har ingen egen pris. Velg en av variantene for å abonnere."
+      }
     },
     "purchase_options": {
       "title": "Kjøpsalternativer",

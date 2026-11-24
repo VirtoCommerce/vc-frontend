@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Något gick fel. Försök igen.",
-      "action_disabled": "Den här butiken tillåter inte detta. Kontakta butiken."
+      "action_disabled": "Den här butiken tillåter inte detta. Kontakta butiken.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Den här produkten finns i varukorgen mer än en gång. Prenumerera på var och en av dess rader, eller ta bort de andra, för att prenumerera på den här.",
+        "NO_OWN_PRICE": "Den här produkten har inget eget pris. Välj en av dess varianter för att prenumerera."
+      }
     },
     "purchase_options": {
       "title": "Köpalternativ",

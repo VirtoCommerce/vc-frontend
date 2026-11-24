@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-      "action_disabled": "Dieser Shop erlaubt das nicht. Bitte wenden Sie sich an den Shop."
+      "action_disabled": "Dieser Shop erlaubt das nicht. Bitte wenden Sie sich an den Shop.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Dieses Produkt ist mehrmals in Ihrem Warenkorb. Abonnieren Sie jede seiner Positionen oder entfernen Sie die anderen, um diese zu abonnieren.",
+        "NO_OWN_PRICE": "Dieses Produkt hat keinen eigenen Preis. Wählen Sie eine seiner Varianten, um sie zu abonnieren."
+      }
     },
     "purchase_options": {
       "title": "Kaufoptionen",

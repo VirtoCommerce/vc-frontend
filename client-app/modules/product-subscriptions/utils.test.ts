@@ -7,6 +7,7 @@ import {
   intervalLabel,
   needsCardPaymentMethodNotice,
   parseIntervalKey,
+  subscriptionErrorMessage,
   toDateInputValue,
 } from "./utils";
 
@@ -114,5 +115,31 @@ describe("fetchAllPages", () => {
 
     await expect(fetchAllPages(fetchPage, 20)).resolves.toHaveLength(20);
     expect(fetchPage).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("subscriptionErrorMessage", () => {
+  const t = ((key: string) => `t:${key}`) as Parameters<typeof subscriptionErrorMessage>[1];
+  const refused = (extensions: Record<string, unknown>, message = "Server words") => ({
+    graphQLErrors: [{ message, extensions: { code: "SUBSCRIPTION_ERROR", ...extensions } }],
+  });
+
+  it("says a known reason in the customer's language", () => {
+    expect(subscriptionErrorMessage(refused({ data: { reason: "PRODUCT_IN_CART_MORE_THAN_ONCE" } }), t)).toBe(
+      "t:product_subscriptions.errors.reasons.PRODUCT_IN_CART_MORE_THAN_ONCE",
+    );
+  });
+
+  it("shows the server's message for a refusal without a known reason", () => {
+    expect(subscriptionErrorMessage(refused({}), t)).toBe("Server words");
+  });
+
+  it("says the store turned the action off", () => {
+    const error = { graphQLErrors: [{ extensions: { code: "SUBSCRIPTION_ACTION_DISABLED" } }] };
+    expect(subscriptionErrorMessage(error, t)).toBe("t:product_subscriptions.errors.action_disabled");
+  });
+
+  it("falls back to the generic text for anything else", () => {
+    expect(subscriptionErrorMessage(new Error("network"), t)).toBe("t:product_subscriptions.errors.generic");
   });
 });

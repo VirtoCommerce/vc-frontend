@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "出了点问题。请重试。",
-      "action_disabled": "此商店不允许此操作。请联系商店。"
+      "action_disabled": "此商店不允许此操作。请联系商店。",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "此商品在购物车中出现了多次。要订阅这一行，请订阅该商品的每一行，或删除其他行。",
+        "NO_OWN_PRICE": "此商品没有自己的价格。请选择其中一个款式进行订阅。"
+      }
     },
     "purchase_options": {
       "title": "购买选项",

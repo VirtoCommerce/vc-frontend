@@ -4,6 +4,14 @@ import type { Composer } from "vue-i18n";
 
 /** The server's error code for an action the store has turned off in its "Customer actions" settings. */
 const ACTION_DISABLED_ERROR_CODE = "SUBSCRIPTION_ACTION_DISABLED";
+// A subscription action the server refused, with the customer's reason in its message and, for the known ones, a code.
+const SUBSCRIPTION_ERROR_CODE = "SUBSCRIPTION_ERROR";
+const KNOWN_REASONS = new Set(["PRODUCT_IN_CART_MORE_THAN_ONCE", "NO_OWN_PRICE"]);
+
+type SubscriptionGraphQLErrorType = {
+  message?: string;
+  extensions?: { code?: unknown; reason?: unknown; data?: { reason?: unknown } };
+};
 
 type TranslateType = Composer["t"];
 
@@ -157,11 +165,24 @@ export function subscriptionErrorMessage(
   key = "product_subscriptions.errors.generic",
 ): string {
   Logger.warn("product-subscriptions", error);
+  const { graphQLErrors = [] } = (error ?? {}) as { graphQLErrors?: SubscriptionGraphQLErrorType[] };
   // The store turned this action off for customers after the page was loaded: say so instead of "try again".
-  const { graphQLErrors = [] } = (error ?? {}) as { graphQLErrors?: { extensions?: { code?: unknown } }[] };
   if (graphQLErrors.some((x) => x.extensions?.code === ACTION_DISABLED_ERROR_CODE)) {
     return t("product_subscriptions.errors.action_disabled");
   }
+
+  // The server refused it and said why: in the customer's language when the reason is known, else in its own words.
+  const refusal = graphQLErrors.find((x) => x.extensions?.code === SUBSCRIPTION_ERROR_CODE);
+  if (refusal) {
+    const reason = refusal.extensions?.data?.reason ?? refusal.extensions?.reason;
+    if (typeof reason === "string" && KNOWN_REASONS.has(reason)) {
+      return t(`product_subscriptions.errors.reasons.${reason}`);
+    }
+    if (refusal.message) {
+      return refusal.message;
+    }
+  }
+
   return t(key);
 }
 

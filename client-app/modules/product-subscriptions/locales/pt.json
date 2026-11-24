@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Algo deu errado. Tente novamente.",
-      "action_disabled": "Esta loja não permite isto. Contacte a loja."
+      "action_disabled": "Esta loja não permite isto. Contacte a loja.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Este produto está no seu carrinho mais de uma vez. Assine cada uma das linhas dele, ou remova as outras, para assinar esta.",
+        "NO_OWN_PRICE": "Este produto não tem preço próprio. Escolha uma das variantes para assinar."
+      }
     },
     "purchase_options": {
       "title": "Opções de compra",

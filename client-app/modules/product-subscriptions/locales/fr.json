@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Une erreur s’est produite. Veuillez réessayer.",
-      "action_disabled": "Cette boutique ne le permet pas. Veuillez contacter la boutique."
+      "action_disabled": "Cette boutique ne le permet pas. Veuillez contacter la boutique.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Ce produit figure plusieurs fois dans votre panier. Abonnez-vous à chacune de ses lignes, ou retirez les autres, pour vous abonner à celle-ci.",
+        "NO_OWN_PRICE": "Ce produit n'a pas de prix propre. Choisissez l'une de ses variantes pour vous abonner."
+      }
     },
     "purchase_options": {
       "title": "Options d’achat",

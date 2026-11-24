@@ -48,7 +48,11 @@
     },
     "errors": {
       "generic": "Jokin meni vikaan. Yritä uudelleen.",
-      "action_disabled": "Tämä kauppa ei salli tätä. Ota yhteyttä kauppaan."
+      "action_disabled": "Tämä kauppa ei salli tätä. Ota yhteyttä kauppaan.",
+      "reasons": {
+        "PRODUCT_IN_CART_MORE_THAN_ONCE": "Tämä tuote on ostoskorissasi useammin kuin kerran. Tilaa jokainen sen rivi tai poista muut, jotta voit tilata tämän.",
+        "NO_OWN_PRICE": "Tällä tuotteella ei ole omaa hintaa. Valitse jokin sen muunnelmista tilataksesi."
+      }
     },
     "purchase_options": {
       "title": "Ostovaihtoehdot",
