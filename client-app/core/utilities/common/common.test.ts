@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { replaceXFromBeginning, extractHostname, getLinkAttr, isSafeLinkUrl } from "./index";
+import { replaceXFromBeginning, extractHostname, getLinkAttr, isSafeLinkUrl, toSafeLinkUrl } from "./index";
 
 describe("getLinkAttr", () => {
   it("should return an empty object if no link is provided", () => {
@@ -56,6 +56,21 @@ describe("isSafeLinkUrl", () => {
     "https://a b.com/page",
   ])("rejects %j", (url) => {
     expect(isSafeLinkUrl(url)).toBe(false);
+  });
+});
+
+describe("toSafeLinkUrl", () => {
+  it("returns a safe link as is", () => {
+    expect(toSafeLinkUrl("/catalog")).toBe("/catalog");
+    expect(toSafeLinkUrl("https://example.com")).toBe("https://example.com");
+  });
+
+  it("returns undefined for an unsafe link", () => {
+    expect(toSafeLinkUrl("javascript:void(0)")).toBeUndefined();
+  });
+
+  it.each([[""], [undefined], [null], [42], [["/catalog"]]])("returns undefined for %j", (value) => {
+    expect(toSafeLinkUrl(value)).toBeUndefined();
   });
 });
 

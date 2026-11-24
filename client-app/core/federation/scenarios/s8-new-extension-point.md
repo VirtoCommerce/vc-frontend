@@ -5,16 +5,17 @@ host behaviour, or something the host must know before the plugin loads.
 
 ## What plugins can extend today
 
-| Kind                    | How a plugin uses it                                           | Known before the plugin loads? |
-| ----------------------- | -------------------------------------------------------------- | ------------------------------ |
-| Pages                   | `plugin.config.ts` `routes` + `addRoute()` in `init()`         | yes                            |
-| Menus (header, account) | `plugin.config.ts` `menu`                                      | yes                            |
-| Places in host pages    | `useExtensionRegistry().register()` / `registerContribution()` | yes, when declared as a slot   |
-| Host-wide registries    | `registerLocaleLoader()`, `registerCacheTypePolicies()`        | no                             |
+| Kind                    | How a plugin uses it                                                                            | Known before the plugin loads? |
+| ----------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------ |
+| Pages                   | `plugin.config.ts` `routes` + `addRoute()` in `init()`                                          | yes                            |
+| Menus (header, account) | `plugin.config.ts` `menu`                                                                       | yes                            |
+| Places in host pages    | `useExtensionRegistry().register()` / `registerContribution()`                                  | yes, when declared as a slot   |
+| Host-wide registries    | `registerLocaleLoader()`, `registerCacheTypePolicies()`, `registerProductConfigurationSource()` | no                             |
 
 The places in host pages are the extension registry's categories: the header and menus, product card and page,
-the payment steps, order details, the shared list. The full list is `ExtensionCategoryMapType` in
-`shared/common/types/extensionRegistryMap.ts`.
+the product action buttons, the payment steps, order details, the shared list. The full list is
+`ExtensionCategoryMapType` in `shared/common/types/extensionRegistryMap.ts`. The header and mobile menus also take a
+data contribution: a count, shown as a badge on a link the host draws.
 
 ## Pick the kind of change
 
@@ -58,6 +59,11 @@ Add a `register…()` function to the host and export it from the facade (S3). M
    for the current locale itself.
 2. **Safe to call twice:** keyed, so a second call replaces the first, as `registerLocaleLoader` does.
 3. **Re-run when the host re-runs the thing.** `registerLocaleLoader`'s loaders run again on every locale switch.
+
+`registerProductConfigurationSource(param, resolve)` follows all three. A product page opened with `?<param>=<value>`
+calls `resolve(value, productId)` and preselects the configuration that comes back (`undefined` keeps the defaults).
+A page already open applies a late registration, a second call for the same parameter replaces the first, and the
+page asks again for every product it loads.
 
 ## C. Something the host must know before the plugin loads
 

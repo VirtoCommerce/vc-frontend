@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { spyOnListeners } from "./event-listeners.mock";
 import {
   SHARED_COMPONENT_END_ANCHOR_ID,
   SharedComponentOverlay,
@@ -166,6 +167,31 @@ describe("shared component preview overlay", () => {
     expect(rendered.style.boxShadow).toBe("none");
   });
 
+  it("hides the placements and leaves the pointer alone while it is turned off", () => {
+    appendAnchor("first", 100);
+    appendAnchor("after", 300);
+    const onHover = vi.fn();
+    const onSelect = vi.fn();
+    const { blocker, overlay } = createOverlay(onSelect, onHover);
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    flushAnimationFrames();
+    const rendered = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']")!;
+    rendered.getBoundingClientRect = vi.fn(() => rect(0, 100, 500, 200));
+
+    overlay.setEnabled(false);
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 50, clientY: 150 }));
+    flushAnimationFrames();
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 50, clientY: 150 }));
+
+    expect(document.querySelector<HTMLElement>("[data-shared-component-overlay]")!.style.display).toBe("none");
+    expect(overlay.findPlacementAt(50, 150)).toBeNull();
+    expect(onHover).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
+
+    overlay.setEnabled(true);
+    expect(overlay.findPlacementAt(50, 150)).toBe("componentRef1");
+  });
+
   it("clears hover when a boundary disappears and when the overlay is disposed", () => {
     appendAnchor("first", 100);
     appendAnchor("after", 300);
@@ -241,6 +267,22 @@ describe("shared component preview overlay", () => {
     expect(window.scroll).toHaveBeenCalledOnce();
   });
 
+  it("scrolls to a placement after a pending render, or at once without one", () => {
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    expect(window.scroll).not.toHaveBeenCalled();
+
+    flushAnimationFrames();
+    expect(window.scroll).toHaveBeenCalledOnce();
+
+    overlay.scrollToPlacement("componentRef1");
+    expect(window.scroll).toHaveBeenCalledTimes(2);
+  });
+
   it("rerenders on resize and removes observers and event listeners on dispose", () => {
     appendAnchor("first", 100);
     appendAnchor("after", 300);
@@ -266,6 +308,26 @@ describe("shared component preview overlay", () => {
     blocker.dispatchEvent(new MouseEvent("click", { clientX: 50, clientY: 150 }));
     expect(nextAnimationFrameId).toBe(scheduledBeforeEvents);
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("removes every listener and its pending render when disposed, once", () => {
+    const addedListeners = spyOnListeners("addEventListener");
+    const removedListeners = spyOnListeners("removeEventListener");
+    const { overlay } = createOverlay();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    expect(overlay.scrollToPlacement("componentRef1")).toBe(true);
+    appendAnchor("first", 420);
+    appendAnchor("after", 620);
+
+    overlay.dispose();
+    overlay.dispose();
+    overlay.update(["before", "first", "second", "after"], [boundary]);
+    flushAnimationFrames();
+
+    expect(addedListeners().map(([, type]) => type)).toEqual(["mousemove", "mouseleave", "click", "resize"]);
+    expect(removedListeners()).toEqual(expect.arrayContaining(addedListeners()));
+    expect(resizeObserver.disconnect).toHaveBeenCalledOnce();
+    expect(window.scroll).not.toHaveBeenCalled();
   });
 });
 

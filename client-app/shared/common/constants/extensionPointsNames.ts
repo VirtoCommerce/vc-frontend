@@ -84,6 +84,7 @@ export const EXTENSION_CATEGORIES = {
   topHeaderStatus: "topHeaderStatus",
   productCard: "productCard",
   productPage: "productPage",
+  productActions: "productActions",
   paymentPage: "paymentPage",
   orderPaymentPage: "orderPaymentPage",
   cartPayment: "cartPayment",
@@ -97,6 +98,7 @@ export const EXTENSION_CATEGORIES = {
   addCardForm: "addCardForm",
   identityProviders: "identityProviders",
   signInMethods: "signInMethods",
+  pageBuilderSection: "pageBuilderSection",
   accountSecurity: "accountSecurity",
   companyInfo: "companyInfo",
 } as const satisfies { [C in ExtensionCategoryType]: C };
