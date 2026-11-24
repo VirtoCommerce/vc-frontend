@@ -41,7 +41,6 @@
       "operator": "Non puoi modificarlo mentre agisci per conto del cliente."
     },
     "messages": {
-      "confirm_email": "Conferma la tua e-mail per attivare l'autenticazione a due fattori.",
       "turned_on": "L'autenticazione a due fattori è attivata.",
       "turned_off": "L'autenticazione a due fattori è disattivata."
     },

@@ -31,7 +31,7 @@
         size="sm"
         icon
       >
-        {{ providerUnavailableText }}
+        {{ $t("shared.account.sign_in_form.errors.mfa_provider_not_available") }}
       </VcAlert>
 
       <VcAlert v-if="errors.length && !challenge" color="danger" variant="soft" size="sm" icon>
@@ -98,7 +98,6 @@ const {
   mode,
   isOn,
   canChange,
-  isLockoutReported,
   fetchSettings,
   startChange,
   requestCode,
@@ -186,13 +185,6 @@ const hint = computed(() => {
 
   return undefined;
 });
-
-// The releases that report the lockout also send the code to an unconfirmed email, so only the older ones need it
-const providerUnavailableText = computed(() =>
-  isLockoutReported.value
-    ? t("shared.account.sign_in_form.errors.mfa_provider_not_available")
-    : t("mfa.messages.confirm_email"),
-);
 
 async function onSubmit(code: string): Promise<void> {
   const enabled = targetEnabled.value;

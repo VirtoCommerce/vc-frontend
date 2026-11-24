@@ -41,7 +41,6 @@
       "operator": "Vous ne pouvez pas le modifier lorsque vous agissez au nom du client."
     },
     "messages": {
-      "confirm_email": "Confirmez votre e-mail pour activer l'authentification à deux facteurs.",
       "turned_on": "L'authentification à deux facteurs est activée.",
       "turned_off": "L'authentification à deux facteurs est désactivée."
     },

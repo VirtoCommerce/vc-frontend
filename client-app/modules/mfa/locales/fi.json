@@ -41,7 +41,6 @@
       "operator": "Et voi muuttaa tätä, kun toimit asiakkaan puolesta."
     },
     "messages": {
-      "confirm_email": "Vahvista sähköpostiosoitteesi, jotta voit ottaa kaksivaiheisen tunnistautumisen käyttöön.",
       "turned_on": "Kaksivaiheinen tunnistautuminen on käytössä.",
       "turned_off": "Kaksivaiheinen tunnistautuminen on pois käytöstä."
     },

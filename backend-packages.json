@@ -13,6 +13,10 @@
         {
           "Id": "VirtoCommerce.ProductComparison",
           "BlobName": "VirtoCommerce.ProductComparison_3.1000.0.zip"
+        },
+        {
+          "Id": "VirtoCommerce.MFA",
+          "BlobName": "VirtoCommerce.MFA_3.1006.0-pr-9-fad8.zip"
         }
       ]
     },
@@ -299,10 +303,6 @@
         {
           "Id": "VirtoCommerce.Passkeys",
           "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.MFA",
-          "Version": "3.1002.0"
         },
         {
           "Id": "VirtoCommerce.XCart",

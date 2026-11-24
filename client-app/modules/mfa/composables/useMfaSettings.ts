@@ -1,24 +1,15 @@
 import { computed, readonly, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { useModules } from "@/core/composables/useModules";
 import { Logger } from "@/core/utilities";
-import {
-  getMfaSettings,
-  getMfaSettingsWithLockout,
-  requestMfaChangeCode,
-  updateMfaOrganizationMode,
-  updateMfaUserMode,
-} from "../api/graphql";
-import { MFA_MODES, MODULE_ID } from "../constants";
-import { hasLockoutSettings } from "../utils";
+import { getMfaSettings, requestMfaChangeCode, updateMfaOrganizationMode, updateMfaUserMode } from "../api/graphql";
+import { MFA_MODES } from "../constants";
 import type { MfaSettingsFragment } from "../api/graphql/types";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export type MfaScopeType = "user" | "organization";
 
-// isLockoutEnabled is read only from the releases that have it, and the mutations don't return it
-export type MfaSettingsType = MfaSettingsFragment & { isLockoutEnabled?: boolean };
+export type MfaSettingsType = MfaSettingsFragment;
 
 type ChallengeType = {
   twoFactorToken: string;
@@ -41,14 +32,8 @@ export function useMfaSettings(
   organizationId?: MaybeRefOrGetter<string | undefined>,
 ) {
   const { t, te } = useI18n();
-  const { modules } = useModules();
 
   const isOrganization = computed(() => toValue(scope) === "organization");
-
-  const isLockoutReported = computed(() => {
-    const version = modules.value.find((module) => module.moduleId === MODULE_ID)?.version;
-    return !!version && hasLockoutSettings(version);
-  });
 
   const settings = ref<MfaSettingsType>();
   const sending = ref(false);
@@ -78,8 +63,7 @@ export function useMfaSettings(
 
   async function fetchSettings(): Promise<void> {
     try {
-      const load = isLockoutReported.value ? getMfaSettingsWithLockout : getMfaSettings;
-      settings.value = (await load(toValue(organizationId))) ?? undefined;
+      settings.value = (await getMfaSettings(toValue(organizationId))) ?? undefined;
     } catch (e) {
       Logger.error(`${useMfaSettings.name}.${fetchSettings.name}`, e);
     }
@@ -168,7 +152,6 @@ export function useMfaSettings(
     mode,
     isOn,
     canChange,
-    isLockoutReported,
     fetchSettings,
     startChange,
     requestCode,

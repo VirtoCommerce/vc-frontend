@@ -41,7 +41,6 @@
       "operator": "代表客户操作时无法更改此设置。"
     },
     "messages": {
-      "confirm_email": "请确认您的电子邮件以开启双重身份验证。",
       "turned_on": "双重身份验证已开启。",
       "turned_off": "双重身份验证已关闭。"
     },

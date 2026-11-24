@@ -41,7 +41,6 @@
       "operator": "Não pode alterar isto enquanto age em nome do cliente."
     },
     "messages": {
-      "confirm_email": "Confirme seu e-mail para ativar a autenticação de dois fatores.",
       "turned_on": "A autenticação de dois fatores está ativada.",
       "turned_off": "A autenticação de dois fatores está desativada."
     },

@@ -41,7 +41,6 @@
       "operator": "You can't change it while you act on behalf of the customer."
     },
     "messages": {
-      "confirm_email": "Confirm your email to turn on two-factor authentication.",
       "turned_on": "Two-factor authentication is on.",
       "turned_off": "Two-factor authentication is off."
     },

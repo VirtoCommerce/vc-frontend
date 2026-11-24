@@ -41,7 +41,6 @@
       "operator": "Nie możesz tego zmienić, działając w imieniu klienta."
     },
     "messages": {
-      "confirm_email": "Potwierdź swój adres e-mail, aby włączyć uwierzytelnianie dwuskładnikowe.",
       "turned_on": "Uwierzytelnianie dwuskładnikowe jest włączone.",
       "turned_off": "Uwierzytelnianie dwuskładnikowe jest wyłączone."
     },

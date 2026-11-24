@@ -1,5 +1,5 @@
 import { compareVersions } from "@/core/utilities";
-import { LOCKOUT_RELEASE, SCHEMA_RELEASES } from "./constants";
+import { SCHEMA_RELEASES } from "./constants";
 
 /** Whether a release of the MFA module serves the `mfa` xAPI schema; see SCHEMA_RELEASES. */
 export function hasMfaSchema(version: string): boolean {
@@ -14,9 +14,4 @@ export function hasMfaSchema(version: string): boolean {
   const firstRelease = SCHEMA_RELEASES.find((release) => release.startsWith(releaseLine));
 
   return !!firstRelease && compareVersions(version, firstRelease) >= 0;
-}
-
-/** Whether a release of the MFA module reports `isLockoutEnabled`; see LOCKOUT_RELEASE. */
-export function hasLockoutSettings(version: string): boolean {
-  return compareVersions(version, LOCKOUT_RELEASE) >= 0;
 }

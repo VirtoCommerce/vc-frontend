@@ -41,7 +41,6 @@
       "operator": "Du kan inte ändra detta medan du agerar för kundens räkning."
     },
     "messages": {
-      "confirm_email": "Bekräfta din e-post för att aktivera tvåfaktorsautentisering.",
       "turned_on": "Tvåfaktorsautentisering är aktiverad.",
       "turned_off": "Tvåfaktorsautentisering är inaktiverad."
     },

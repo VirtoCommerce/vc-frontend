@@ -41,7 +41,6 @@
       "operator": "Du kan ikke endre dette mens du handler på vegne av kunden."
     },
     "messages": {
-      "confirm_email": "Bekreft e-postadressen din for å slå på tofaktorautentisering.",
       "turned_on": "Tofaktorautentisering er slått på.",
       "turned_off": "Tofaktorautentisering er slått av."
     },
