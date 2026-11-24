@@ -61,5 +61,12 @@ defineSlots<{
   &[data-slot="productCard/card-button"] {
     @apply min-h-9;
   }
+
+  // One VcProductActionsButton: the icon size its row sets, plus the button's padding.
+  &[data-slot^="productActions/"] {
+    --size: calc(var(--vc-icon-size, 1.5rem) + 0.75rem);
+
+    @apply min-h-[--size] min-w-[--size];
+  }
 }
 </style>

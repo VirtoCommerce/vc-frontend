@@ -9,7 +9,12 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
+      "Modules": [
+        {
+          "Id": "VirtoCommerce.ProductComparison",
+          "BlobName": "VirtoCommerce.ProductComparison_3.1000.0.zip"
+        }
+      ]
     },
     {
       "Name": "GithubReleases",

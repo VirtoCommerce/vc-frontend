@@ -1,0 +1,21 @@
+{
+  "name": "Announcement",
+  "icon": "lucide-megaphone",
+  "displayField": "text",
+  "settings": [
+    {
+      "id": "text",
+      "label": "Text",
+      "type": "string",
+      "translatable": true,
+      "default": "Announce something here"
+    },
+    {
+      "id": "link",
+      "label": "Link",
+      "type": "string",
+      "format": "url",
+      "info": "Optional"
+    }
+  ]
+}

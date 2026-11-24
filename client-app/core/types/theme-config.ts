@@ -383,10 +383,10 @@ export interface IThemeConfigSettings {
   files_enabled?: boolean;
   /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
   module_federation_enabled?: boolean;
+  /** Reads the store's Site Builder theme: templates, rules, header, footer, brand and palette. Only `true` enables it. */
+  site_builder_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
-  product_compare_enabled?: boolean;
-  product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirectionType;
   product_quantity_control?: "stepper" | "button";

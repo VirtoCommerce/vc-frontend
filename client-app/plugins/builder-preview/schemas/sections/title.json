@@ -8,6 +8,7 @@
       "id": "subtitle",
       "label": "Subtitle",
       "type": "string",
+      "translatable": true,
       "sort": 30,
       "multiline": true
     }

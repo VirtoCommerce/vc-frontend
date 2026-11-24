@@ -1,19 +1,20 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { ref, computed } from "vue";
 import { useBreadcrumbs } from "./useBreadcrumbs";
 
-// Mock the useI18n composable
+const i18n = await vi.hoisted(async () => {
+  const { ref: createRef } = await import("vue");
+  return { locale: createRef("en") };
+});
+
+const messages: Record<string, Record<string, string>> = {
+  en: { "common.links.home": "Home", "common.links.loyalty_catalog": "Loyalty catalog" },
+  de: { "common.links.home": "Startseite" },
+};
+
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
-    t: (key: string) => {
-      if (key === "common.links.home") {
-        return "Home";
-      }
-      if (key === "common.links.loyalty_catalog") {
-        return "Loyalty catalog";
-      }
-      return key;
-    },
+    t: (key: string) => messages[i18n.locale.value]?.[key] ?? key,
   }),
 }));
 
@@ -24,6 +25,10 @@ vi.mock("vue-router", () => ({
 }));
 
 describe("useBreadcrumbs", () => {
+  beforeEach(() => {
+    i18n.locale.value = "en";
+  });
+
   it("should add a homepage link at the beginning of the breadcrumbs array", () => {
     const breadcrumbs = [{ title: "Products", route: "/products" }];
     const result = useBreadcrumbs(breadcrumbs);
@@ -108,6 +113,19 @@ describe("useBreadcrumbs", () => {
       { title: "Home", route: "/" },
       { title: "Orders", route: { name: "Orders" } },
       { title: "Order #123" },
+    ]);
+  });
+
+  it("translates the homepage link again when the locale changes", () => {
+    const result = useBreadcrumbs([{ title: "Products", route: "/products" }]);
+
+    expect(result.value[0]).toEqual({ title: "Home", route: "/" });
+
+    i18n.locale.value = "de";
+
+    expect(result.value).toEqual([
+      { title: "Startseite", route: "/" },
+      { title: "Products", route: "/products" },
     ]);
   });
 

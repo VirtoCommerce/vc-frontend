@@ -32,7 +32,7 @@ _Checked against `dev` on 2026-10-27._
       the next facade change, since any edit to that file bumps the facade.
 - [ ] **A guard for routes a plugin registers itself** (declared routes have `when`; the rest have nothing).
 - [ ] **A declared route cannot carry layout meta**: the parent's layout shows until the plugin settles.
-- [ ] **Reserved-box sizes** for slots other than `productCard/card-button` and `block`.
+- [ ] **Reserved-box sizes** for slots other than `productCard/card-button`, `productActions/*` and `block`.
 - [ ] **Production telemetry** for failed and skipped plugins and backstop overruns (Application Insights).
       Production logs nothing today.
 
