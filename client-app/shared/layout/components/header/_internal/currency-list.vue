@@ -6,8 +6,8 @@
       role="option"
       color="secondary"
       class="currency-list__item"
-      :active="currency.code === currentCurrency.code"
-      :aria-selected="currency.code === currentCurrency.code"
+      :active="isCurrent(currency)"
+      :aria-selected="isCurrent(currency)"
       :data-currency-code="currency.code"
       truncate
       @click="select(currency.code)"
@@ -41,6 +41,10 @@ const { currentLanguage } = useLanguages();
 const list = useTemplateRef<ComponentPublicInstance>("list");
 
 useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined);
+
+function isCurrent(currency: ICurrency): boolean {
+  return currency.code === currentCurrency.value.code;
+}
 
 // In the page language, capitalised as a list entry; the platform's English name where the browser lacks the code.
 function getCurrencyName(currency: ICurrency): string {

@@ -6,8 +6,8 @@
       role="option"
       color="secondary"
       class="language-list__item"
-      :active="language.cultureName === currentLanguage?.cultureName"
-      :aria-selected="language.cultureName === currentLanguage?.cultureName"
+      :active="isCurrent(language)"
+      :aria-selected="isCurrent(language)"
       :data-culture-name="language.cultureName"
       @click="select(language.cultureName)"
     >
@@ -23,6 +23,7 @@ import { useTemplateRef } from "vue";
 import { useLanguageSwitch } from "@/shared/layout/composables/useLanguageSwitch";
 import { useListboxKeyboard } from "@/shared/layout/composables/useListboxKeyboard";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
+import type { ILanguage } from "@/core/types";
 import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
@@ -36,6 +37,10 @@ const { currentLanguage, supportedLanguages, selectLanguage, getCountryCode, get
 const list = useTemplateRef<ComponentPublicInstance>("list");
 
 useListboxKeyboard(() => list.value?.$el as HTMLElement | undefined);
+
+function isCurrent(language: ILanguage): boolean {
+  return language.cultureName === currentLanguage.value?.cultureName;
+}
 
 function select(cultureName: string): void {
   void selectLanguage(cultureName);
