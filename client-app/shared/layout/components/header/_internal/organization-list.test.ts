@@ -250,6 +250,13 @@ describe("OrganizationList: keyboard", () => {
     expect(focused()).toBe(rows[2].element);
   });
 
+  it("keeps the row hook the e2e suite selects options by", async () => {
+    const wrapper = await mountList();
+    await resolveAll();
+
+    expect(wrapper.findAll("[data-vc-organization-option] [role='option']")).toHaveLength(15);
+  });
+
   it("keeps the search field a plain search box that controls the list", async () => {
     const wrapper = await mountList();
     await resolveAll();

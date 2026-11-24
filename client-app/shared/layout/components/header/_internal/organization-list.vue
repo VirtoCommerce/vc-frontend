@@ -54,6 +54,7 @@
             size="xs"
             class="organization-list__item"
             :active="contactOrganizationId === item.id"
+            :data-vc-organization-option="componentId"
             :disabled="item.isLockedForCurrentUser"
             :title="
               item.isLockedForCurrentUser
@@ -145,7 +146,8 @@ watch(
   },
 );
 
-const listboxId = useComponentId("organizations") + "-listbox";
+const componentId = useComponentId("organizations");
+const listboxId = componentId + "-listbox";
 const list = useTemplateRef("list");
 
 // Shared session state: refetch on each mount so a newly locked row is disabled, and drop the last phrase.
