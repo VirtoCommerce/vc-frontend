@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, ref } from "vue";
+import { dataChangedEvent } from "@/shared/broadcast/utils/events";
 import LanguageSelector from "./language-selector.vue";
 import VcImage from "@/ui-kit/components/atoms/image/vc-image.vue";
 
@@ -8,8 +9,9 @@ const en = { cultureName: "en-US", twoLetterLanguageName: "en", nativeName: "Eng
 const de = { cultureName: "de-DE", twoLetterLanguageName: "de", nativeName: "Deutsch (Deutschland)" };
 const pl = { cultureName: "pl-PL", twoLetterLanguageName: "pl", nativeName: "polski (Polska)" };
 
-const { getSlugInfo, currentLanguage, previousCultureSlug } = vi.hoisted(() => ({
+const { getSlugInfo, broadcastEmit, currentLanguage, previousCultureSlug } = vi.hoisted(() => ({
   getSlugInfo: vi.fn(),
+  broadcastEmit: vi.fn(),
   currentLanguage: {
     value: { cultureName: "en-US", twoLetterLanguageName: "en", nativeName: "English (United States)" },
   },
@@ -34,9 +36,8 @@ vi.mock("@/core/composables", () => ({
 
 vi.mock("@/core/api/graphql/slugInfo/queries/getSlugInfo", () => ({ getSlugInfo }));
 
-vi.mock("@/shared/broadcast", () => ({
-  dataChangedEvent: "data-changed",
-  useBroadcast: () => ({ emit: vi.fn() }),
+vi.mock("@/shared/broadcast/composables/useBroadcast", () => ({
+  useBroadcast: () => ({ emit: broadcastEmit }),
 }));
 
 const VcDropdownMenuStub = defineComponent({
@@ -109,6 +110,14 @@ describe("LanguageSelector", () => {
       expect(getSlugInfo).toHaveBeenCalledWith({ permalink: "haeufige-fragen", cultureName: "en-US" });
       expect(previousCultureSlug.value).toEqual({ cultureName: "", slug: "" });
       expect(reload).toHaveBeenCalled();
+    });
+
+    it("tells the other tabs before the page reloads", async () => {
+      getSlugInfo.mockResolvedValue({ entityInfo: { id: "faq" } });
+
+      await selectLanguage("en-US");
+
+      expect(broadcastEmit).toHaveBeenCalledWith(dataChangedEvent);
     });
 
     it("does nothing when the current language is selected", async () => {
