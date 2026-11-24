@@ -131,13 +131,13 @@ interface IProps$O {
 declare var __VLS_16$3: {
     checked: boolean;
 };
-declare var __VLS_19$1: {
+declare var __VLS_19: {
     checked: boolean;
 };
 type __VLS_Slots$u = {} & {
     default?: (props: typeof __VLS_16$3) => any;
 } & {
-    tooltip?: (props: typeof __VLS_19$1) => any;
+    tooltip?: (props: typeof __VLS_19) => any;
 };
 declare const __VLS_base$u: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
@@ -870,6 +870,7 @@ interface IProps$v {
     externalLink?: string;
     target?: "_self" | "_blank";
     title?: string;
+    /** The current or selected item's look. In a `VcMenuList role="listbox"` it is also the selection (`aria-selected`) and the list's tab stop. */
     active?: boolean;
     disabled?: boolean;
     truncate?: boolean;
@@ -877,19 +878,21 @@ interface IProps$v {
     maxLines?: number | string;
     tag?: string;
     clickable?: boolean;
+    /** ARIA role of the inner element. In a `VcMenuList` it defaults to `option` (listbox) or `menuitem` (menu); a role of your own wins. */
     role?: string;
+    /** Rendered for roles that support it (`option`, `tab`, …). In a `VcMenuList role="listbox"` it follows `active` unless you set it. */
     ariaSelected?: boolean;
     optionId?: string;
 }
-declare var __VLS_17: {};
-declare var __VLS_19: {};
-declare var __VLS_21$1: {};
+declare var __VLS_20$1: {};
+declare var __VLS_22$1: {};
+declare var __VLS_24$1: {};
 type __VLS_Slots$e = {} & {
-    prepend?: (props: typeof __VLS_17) => any;
+    prepend?: (props: typeof __VLS_20$1) => any;
 } & {
-    default?: (props: typeof __VLS_19) => any;
+    default?: (props: typeof __VLS_22$1) => any;
 } & {
-    append?: (props: typeof __VLS_21$1) => any;
+    append?: (props: typeof __VLS_24$1) => any;
 };
 declare const __VLS_base$e: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
@@ -899,6 +902,7 @@ declare const __VLS_base$e: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.Co
     size: "xs" | "sm" | "md" | "lg";
     color: VcMenuItemColorType;
     clickable: boolean;
+    ariaSelected: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$x: __VLS_WithSlots$e<typeof __VLS_base$e, __VLS_Slots$e>;
 declare const _default$x: typeof __VLS_export$x;

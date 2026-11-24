@@ -10,10 +10,11 @@
     <component
       :is="innerTag"
       :id="optionId"
+      ref="innerElement"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
-      :role="role"
+      :role="effectiveRole"
       :aria-selected="computedAriaSelected"
       :class="[
         'vc-menu-item__inner',
@@ -28,6 +29,7 @@
         },
       ]"
       @click="enabled ? $emit('click', $event) : null"
+      @focus="menuList?.onItemFocus(listItem)"
     >
       <span v-if="$slots.prepend" class="vc-menu-item__prepend">
         <slot name="prepend" />
@@ -45,10 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, provide, onMounted } from "vue";
+import { ref, computed, provide, onMounted, inject, onBeforeUnmount } from "vue";
+import { VC_MENU_LIST_ITEM_ROLES, vcMenuListKey } from "@/ui-kit/components/molecules/menu-list/vc-menu-list-context";
 import { useComponentId } from "@/ui-kit/composables";
 import { getLinkAttr } from "@/ui-kit/utilities";
 import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
+import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -62,6 +66,7 @@ interface IProps {
   externalLink?: string;
   target?: "_self" | "_blank";
   title?: string;
+  /** The current or selected item's look. In a `VcMenuList role="listbox"` it is also the selection (`aria-selected`) and the list's tab stop. */
   active?: boolean;
   disabled?: boolean;
   truncate?: boolean;
@@ -69,7 +74,9 @@ interface IProps {
   maxLines?: number | string;
   tag?: string;
   clickable?: boolean;
+  /** ARIA role of the inner element. In a `VcMenuList` it defaults to `option` (listbox) or `menuitem` (menu); a role of your own wins. */
   role?: string;
+  /** Rendered for roles that support it (`option`, `tab`, …). In a `VcMenuList role="listbox"` it follows `active` unless you set it. */
   ariaSelected?: boolean;
   optionId?: string;
 }
@@ -84,6 +91,8 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  // Without it Vue casts an unset boolean to `false`, and in a listbox `aria-selected` could not follow `active`.
+  ariaSelected: undefined,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -128,17 +137,41 @@ const isInteractive = computed(
 );
 provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
+const menuList = inject(vcMenuListKey, null);
+const innerElement = ref<HTMLElement | ComponentPublicInstance | null>(null);
+const listItem: VcMenuListItemType = {
+  el: () => {
+    const value = innerElement.value;
+
+    return value && "$el" in value ? (value.$el as HTMLElement) : value;
+  },
+  active: () => props.active,
+  disabled: () => props.disabled || !isInteractive.value,
+};
+
+if (menuList) {
+  onBeforeUnmount(menuList.register(listItem));
+}
+
+// Only an item rendered inside the list's root joins it; a teleported one stays as it is outside a list.
+const isListMember = computed(() => !!menuList?.contains(listItem));
+
+const effectiveRole = computed(() => props.role ?? (isListMember.value ? menuList?.itemRole.value : undefined));
+
+// A list has one tab stop; the arrow keys reach the other items.
+const tabindex = computed(() => (isListMember.value && !menuList?.isTabStop(listItem) ? -1 : 0));
+
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, tabindex: tabindex.value };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, tabindex: tabindex.value };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button", tabindex: 0 };
+    return { type: "button", tabindex: tabindex.value };
   }
 
   return {};
@@ -154,8 +187,9 @@ const ARIA_SELECTED_ROLES = new Set(["option", "tab", "gridcell", "row", "treeit
  * Plain buttons (implicit role="button") must not have `aria-selected`.
  */
 const computedAriaSelected = computed(() => {
-  if (props.role && ARIA_SELECTED_ROLES.has(props.role)) {
-    return props.ariaSelected;
+  if (effectiveRole.value && ARIA_SELECTED_ROLES.has(effectiveRole.value)) {
+    // In a listbox `active` is the selection; elsewhere an unset value renders `false`, as before.
+    return props.ariaSelected ?? (isListMember.value && menuList?.listRole.value === "listbox" && props.active);
   }
   return undefined;
 });
@@ -168,7 +202,7 @@ const computedAriaSelected = computed(() => {
  *   inside a <ul>, satisfying the "list" a11y rule.
  */
 const wrapperRole = computed(() => {
-  if (props.role) {
+  if (effectiveRole.value) {
     return "none";
   }
   return undefined;
@@ -176,6 +210,15 @@ const wrapperRole = computed(() => {
 
 onMounted(() => {
   parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() ?? "";
+
+  const listRole = menuList?.listRole.value;
+
+  if (import.meta.env.DEV && listRole && props.role && isListMember.value) {
+    if (!VC_MENU_LIST_ITEM_ROLES[listRole].includes(props.role)) {
+      // eslint-disable-next-line no-console
+      console.warn(`[VcMenuItem] role="${props.role}" does not belong in a VcMenuList role="${listRole}".`);
+    }
+  }
 });
 </script>
 

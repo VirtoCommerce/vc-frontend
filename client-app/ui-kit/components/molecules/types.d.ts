@@ -41,6 +41,7 @@ declare module "vue" {
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
     VcMenuItem: typeof Components.VcMenuItem;
+    VcMenuList: typeof Components.VcMenuList;
     VcNavButton: typeof Components.VcNavButton;
     VcPopover: typeof Components.VcPopover;
     /** @deprecated Use VcPriceDisplay or VcProductPrice instead */

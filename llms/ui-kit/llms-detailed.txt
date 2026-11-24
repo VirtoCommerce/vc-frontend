@@ -584,8 +584,17 @@
 - Emits: click (MouseEvent)
 - Slots: default (content), prepend (icons/checkboxes), append (badges/icons)
 - Features: router/external links, active state, line clamping, dynamic tag rendering
+- In a VcMenuList: role defaults to option/menuitem, aria-selected follows active (listbox), one tab stop per list; own role/ariaSelected win
 - Types: vc-menu-item.types.d.ts
 - Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/menu-item/vc-menu-item.stories.ts)
+
+**VcMenuList** (`client-app/ui-kit/components/molecules/menu-list/vc-menu-list.vue`)
+- Props: role (required): "listbox" (rows become option, aria-selected follows active) | "menu" (rows become menuitem)
+- Slots: default (VcMenuItem rows, at any depth; a VcScrollbar between is fine); name the list with aria-label or aria-labelledby
+- Exposes: focus() — focuses the tab stop (e.g. ArrowDown in a search field above the list)
+- Features: one tab stop (item focused last, else active, else first enabled); Up/Down wrap, Home/End, disabled and modified keys skipped; teleported rows do not join; nothing visual
+- Types: vc-menu-list.types.d.ts
+- Usage: `<VcMenuList role="listbox" aria-label="Currency"><VcMenuItem v-for="c in codes" :key="c" :active="c === current" @click="select(c)">{{ c }}</VcMenuItem></VcMenuList>`
 
 **VcDropdownMenu** (`client-app/ui-kit/components/molecules/dropdown-menu/vc-dropdown-menu.vue`) ⭐ **Real Pattern**
 - Props:

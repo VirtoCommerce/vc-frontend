@@ -35,6 +35,7 @@ export { default as VcListItem } from "./list-item/vc-list-item.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
 export { default as VcMenuItem } from "./menu-item/vc-menu-item.vue";
+export { default as VcMenuList } from "./menu-list/vc-menu-list.vue";
 export { default as VcNavButton } from "./nav-button/vc-nav-button.vue";
 export { default as VcPopover } from "./popover/vc-popover.vue";
 /** @deprecated Use VcPriceDisplay or VcProductPrice instead */
