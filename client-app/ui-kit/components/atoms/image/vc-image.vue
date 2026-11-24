@@ -20,6 +20,7 @@ export interface IProps {
   lazy?: boolean;
   src?: string;
   alt?: string;
+  /** Shown when `src` is empty or fails to load. Default: the `uiKit` plugin's `image.fallbackSrc`, then ui-kit's `no-image.svg`. */
   fallbackSrc?: string;
   /**
    * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
@@ -31,18 +32,18 @@ export interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   src: "",
-  fallbackSrc: NO_IMAGE_URL,
 });
 
 const { image } = useUiKitOptions();
 const thumbnails = computed(() => toValue(image?.thumbnails));
+const fallbackSrc = computed(() => props.fallbackSrc || toValue(image?.fallbackSrc) || NO_IMAGE_URL);
 
 const fallbackEnabled = ref(false);
 const originalEnabled = ref(false);
 
 const preparedSrc = computed<string>(() => {
   if (fallbackEnabled.value || !props.src) {
-    return isFilenameOnly(props.fallbackSrc) ? getImageUrl(props.fallbackSrc) : props.fallbackSrc;
+    return isFilenameOnly(fallbackSrc.value) ? getImageUrl(fallbackSrc.value) : fallbackSrc.value;
   }
 
   if (isFilenameOnly(props.src)) {
@@ -76,7 +77,7 @@ function setFallback(): void {
 }
 
 watch(
-  () => props.src + props.sizeSuffix + props.fallbackSrc,
+  () => props.src + props.sizeSuffix + fallbackSrc.value,
   () => {
     fallbackEnabled.value = false;
     originalEnabled.value = false;

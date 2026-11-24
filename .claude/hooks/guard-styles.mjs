@@ -38,7 +38,7 @@ export function check(toolInput, readCurrent) {
     return "`!important` is forbidden in every form (styles.md §18). Fix the conflict at its cause: kit props / `--vc-<component>-…` tokens, or selector order. If that isn't possible, ask the developer.";
   }
   if (getAdded(before.vcSelectors, after.vcSelectors).length) {
-    return "No `.vc-*` selectors outside the UI kit, `client-app/assets/styles/`, an app block's design files in `client-app/designs/<name>/blocks/` and `dark/` (a kit block's go in `client-app/ui-kit/styles/designs/<name>/`) and a preset's `client-app/assets/presets/<name>.scss` (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
+    return "No `.vc-*` selectors outside the UI kit, `client-app/assets/styles/`, a design's block files in `client-app/designs/<name>/blocks/` and `dark/` (soft's kit blocks go in `client-app/ui-kit/styles/designs/soft/`) and a preset's `client-app/assets/presets/<name>.scss` (ui-kit.md §9). Use the component's props/slots or its `--vc-<component>-…` tokens; if neither fits, tell the developer instead of working around it.";
   }
   return null;
 }

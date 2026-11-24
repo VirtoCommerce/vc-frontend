@@ -143,7 +143,7 @@ Current aliases:
 
 A block class is public API too: forks target it in `_custom.scss`, and nothing warns when it stops
 matching. Our own styles name blocks outside the component as well: a design's
-`designs/<name>/blocks/<block>.scss` (a kit block's: `ui-kit/styles/designs/<name>/blocks/`) and
+`designs/<name>/blocks/<block>.scss` (soft's kit blocks: `ui-kit/styles/designs/soft/blocks/`) and
 `dark/<block>.scss` next to it (the file name is the block, loaded by
 the design's `index.scss`) and the preset stylesheets `ui-kit/presets/<name>.scss` and `assets/presets/<name>.scss`. Rename them in the
 same change and list the rename under Breaking changes in the PR. `yarn check:designs` fails on a block

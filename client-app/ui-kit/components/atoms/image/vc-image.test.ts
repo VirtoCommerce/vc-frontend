@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { defineComponent, h } from "vue";
 import { uiKitOptionsKey } from "@/ui-kit/composables/useUiKitOptions";
 import { NO_IMAGE_URL } from "@/ui-kit/constants";
 import VcImage from "./vc-image.vue";
@@ -68,5 +69,39 @@ describe("VcImage fallback", () => {
     const wrapper = mount(VcImage);
 
     expect(wrapper.attributes("src")).toBe(NO_IMAGE_URL);
+  });
+
+  const BRANDED = "https://cdn.example.com/brand/no-image.svg";
+  const branded: IUiKitOptions = { image: { fallbackSrc: () => BRANDED } };
+
+  it("shows the plugin's fallback without src", () => {
+    const wrapper = mount(VcImage, { global: { provide: { [uiKitOptionsKey]: branded } } });
+
+    expect(wrapper.attributes("src")).toBe(BRANDED);
+  });
+
+  it("shows the plugin's fallback in a VcImage another component renders", () => {
+    const Host = defineComponent(() => () => h("div", [h(VcImage, { src: "" })]));
+    const wrapper = mount(Host, { global: { provide: { [uiKitOptionsKey]: branded } } });
+
+    expect(wrapper.findComponent(VcImage).attributes("src")).toBe(BRANDED);
+  });
+
+  it("shows the plugin's fallback when src fails to load", async () => {
+    const wrapper = mount(VcImage, { props: { src: SRC }, global: { provide: { [uiKitOptionsKey]: branded } } });
+
+    await wrapper.trigger("error");
+
+    expect(wrapper.attributes("src")).toBe(BRANDED);
+  });
+
+  it("prefers the instance's fallbackSrc to the plugin's", () => {
+    const own = "https://cdn.example.com/brand/no-photo.svg";
+    const wrapper = mount(VcImage, {
+      props: { fallbackSrc: own },
+      global: { provide: { [uiKitOptionsKey]: branded } },
+    });
+
+    expect(wrapper.attributes("src")).toBe(own);
   });
 });

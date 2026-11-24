@@ -409,12 +409,53 @@ ${loads("dark")}  }
       expect(result).toEqual({ errors: [], designCount: 1, fileCount: 4 });
     });
 
-    it("reports a ui-kit block's design file in the design folder", async () => {
-      const options = designs({ "soft/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }" }, {}, ["vc-card"]);
+    it("reports a ui-kit block's design file in the folder of a design ui-kit has a folder for", async () => {
+      const options = designs(
+        { "soft/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }" },
+        { "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }` },
+        ["vc-card"],
+      );
 
       expect((await checkDesigns(options)).errors).toEqual([
         `${path.join(options.designsDir, "soft/blocks/vc-card.scss")}  .vc-card is a ui-kit block: its design file goes in ${path.join(options.kitDesignsDir, "soft/blocks")}/`,
       ]);
+    });
+
+    describe("a design ui-kit has no folder for", () => {
+      const MYBRAND = 'html[data-design="mybrand"]';
+      const index = (kitLayer: string) => `@use "sass:meta";
+
+@layer ${kitLayer} {
+  ${MYBRAND} {
+    @include meta.load-css("blocks/vc-card");
+  }
+}
+
+@layer vc.design.app {
+  ${MYBRAND} {
+    @include meta.load-css("blocks/footer-links");
+  }
+}
+`;
+      const files = (kitLayer: string) => ({
+        "mybrand/blocks/vc-card.scss": ".vc-card { --vc-card-radius: 1rem; }",
+        "mybrand/blocks/footer-links.scss": ".footer-links { &__title { text-transform: none; } }",
+        "mybrand/index.scss": index(kitLayer),
+      });
+
+      it("passes a ui-kit block's design file in its own folder, in the kit's sublayer", async () => {
+        const result = await checkDesigns(designs(files("vc.design.kit"), {}, ["vc-card"]));
+
+        expect(result).toEqual({ errors: [], designCount: 1, fileCount: 3 });
+      });
+
+      it("reports a ui-kit block's design file loaded in the app's sublayer", async () => {
+        const options = designs(files("vc.design.app"), {}, ["vc-card"]);
+
+        expect((await checkDesigns(options)).errors).toEqual([
+          `${path.join(options.designsDir, "mybrand/index.scss")}:5  "html[data-design=mybrand] .vc-card" ships outside @layer vc.design.kit > html[data-design="mybrand"], where index.scss loads blocks/vc-card`,
+        ]);
+      });
     });
 
     it("reports an app block's design file in the ui-kit folder", async () => {

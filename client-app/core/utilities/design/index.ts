@@ -48,11 +48,21 @@ export function mergeStyles(...sets: DesignStylesType[]): DesignStylesType {
 
       merged[name] = previous
         ? async () => {
-            // A failed earlier stylesheet still lets the later one load; its error is rethrown after.
+            // A failed earlier stylesheet still lets the later one load, and its error is rethrown after.
+            // It is claimed at once: chunk-load recovery looks for the claim on a zero-delay timer.
+            let earlier: { error: unknown } | undefined;
+
             try {
               await previous();
-            } finally {
-              await load();
+            } catch (error) {
+              ignoreChunkLoadFailure(error);
+              earlier = { error };
+            }
+
+            await load();
+
+            if (earlier) {
+              throw earlier.error;
             }
           }
         : load;

@@ -23,11 +23,13 @@ what follows; the rest is review-only.
    inherited, so a block that sets the same token on its own element wins. It targets a block or BEM part only for
    a part with no token.
 3. A design's `blocks/<block>.scss` and `dark/<block>.scss` style only their own BEM block (block, elements,
-   modifiers), and restate every state that should look different (hover, disabled, modifiers). A ui-kit
-   block's files sit next to the kit, in `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`; an app
-   block's in `client-app/designs/<design>/{blocks,dark}/`. Soft's token values are kit tokens, so its
-   `_tokens.scss` sits in the kit folder too, with preset values; a value taken from an app colour
-   (`--vc-frame-bg-color: var(--body-bg-color)`) goes in the design's own `_tokens.scss`, loaded after the kit's.
+   modifiers), and restate every state that should look different (hover, disabled, modifiers). In a design
+   ui-kit has a folder for (soft), a ui-kit block's files sit next to the kit, in
+   `client-app/ui-kit/styles/designs/<design>/{blocks,dark}/`, and an app block's in
+   `client-app/designs/<design>/{blocks,dark}/`. A fork's own design keeps every block's files in its own folder,
+   since the ui-kit package never holds a fork's files; its `index.scss` loads a ui-kit block's in `vc.design.kit`.
+   Soft's token values are kit tokens, so its `_tokens.scss` sits in the kit folder too, with preset values; a value taken from an app colour
+   (`--vc-frame-bg-color: var(--body-bg-color, var(--color-body-bg, var(--color-neutral-50)))`) goes in the design's own `_tokens.scss`, loaded after the kit's.
    A fork's own design keeps its `_tokens.scss` in its own folder.
    The kit folder's own `index.scss` loads the kit files; the design's `index.scss` loads that folder
    whole (`@include meta.load-css("@/ui-kit/styles/designs/<design>")`) and its own files, never a kit file

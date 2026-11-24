@@ -60,6 +60,11 @@ interface ICheckedFileType {
   file: string;
   kind: FileKindType;
   owner: OwnerType;
+  /**
+   * Which design sublayer its rules ship in: `vc.design.kit` for a ui-kit block, `vc.design.app` for an app block.
+   * Differs from `owner` only for a ui-kit block's file in the folder of a design ui-kit has no folder for.
+   */
+  layer: OwnerType;
   /** How the `index.scss` that loads the file names it: the design's, or ui-kit's for its own files. */
   ref: string;
   keys: Set<string>;
@@ -765,12 +770,12 @@ function shippedNodes(
   return nodes;
 }
 
-function layerOf(kind: FileKindType, owner: OwnerType): string {
-  return kind === "tokens" ? "@layer theme" : `@layer vc.design.${owner}`;
+function layerOf(kind: FileKindType, layer: OwnerType): string {
+  return kind === "tokens" ? "@layer theme" : `@layer vc.design.${layer}`;
 }
 
-function placeOf({ kind, owner }: ICheckedFileType, design: string): string {
-  const layer = layerOf(kind, owner);
+function placeOf({ kind, layer: sublayer }: ICheckedFileType, design: string): string {
+  const layer = layerOf(kind, sublayer);
 
   if (kind === "tokens") {
     return layer;
@@ -782,11 +787,11 @@ function placeOf({ kind, owner }: ICheckedFileType, design: string): string {
 function shippedKey(
   rule: Rule,
   declarations: Declaration[],
-  { kind, owner }: ICheckedFileType,
+  { kind, layer }: ICheckedFileType,
   design: string,
   keepCombinator = false,
 ): string | undefined {
-  const outer = layerOf(kind, owner);
+  const outer = layerOf(kind, layer);
   const actual = wrappers(rule);
 
   if (actual !== outer && !actual.startsWith(`${outer} > `)) {
@@ -1150,12 +1155,17 @@ function kitLoadErrors(indexFile: string, kitRef: string, hasKitIndex: boolean):
   return errors;
 }
 
-/** The file names a block of a component, and sits in the ui-kit folder exactly when it is a ui-kit block. */
+/**
+ * The file names a block of a component. In a design ui-kit has a folder for (soft), it sits in that folder
+ * exactly when it is a ui-kit block. A design ui-kit has no folder for (a fork's own) keeps every block's files
+ * in its own folder: the ui-kit package never holds a fork's files.
+ */
 function blockFileErrors(
   file: string,
   kind: "blocks" | "dark",
   [dir, kitDir]: string[],
   { blocks, kitBlocks }: IDesignCheckOptions,
+  hasKitFolder: boolean,
 ): string[] {
   const block = path.basename(file, ".scss");
   const isKitBlock = kitBlocks.has(block);
@@ -1164,7 +1174,7 @@ function blockFileErrors(
     return [`${file}  .${block} is not a block of any component`];
   }
 
-  if (isKitBlock === file.startsWith(kitDir + path.sep)) {
+  if (!hasKitFolder || isKitBlock === file.startsWith(kitDir + path.sep)) {
     return [];
   }
 
@@ -1209,6 +1219,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
   }
 
   const files = layoutOf(dir, errors);
+  const hasKitFolder = existsSync(kitDir);
   const kitFiles = kitLayoutOf(kitDir, errors);
 
   for (const file of [files.index, files.tokens, kitFiles.index, kitFiles.tokens]) {
@@ -1217,15 +1228,25 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     }
   }
 
+  // A ui-kit block's file in the design's own folder (a fork's design) still ships in the kit's sublayer.
+  const layerOfBlock = (file: string, owner: OwnerType): OwnerType =>
+    owner === "kit" || (!hasKitFolder && options.kitBlocks.has(path.basename(file, ".scss"))) ? "kit" : "app";
   const sourcesOf = ({ tokens, blocks: blockList, dark }: IDesignFiles, owner: OwnerType) => [
-    ...(tokens ? [{ file: tokens, kind: "tokens" as const, owner, ref: "tokens" }] : []),
+    ...(tokens ? [{ file: tokens, kind: "tokens" as const, owner, layer: owner, ref: "tokens" }] : []),
     ...blockList.map((file) => ({
       file,
       kind: "blocks" as const,
       owner,
+      layer: layerOfBlock(file, owner),
       ref: `blocks/${path.basename(file, ".scss")}`,
     })),
-    ...dark.map((file) => ({ file, kind: "dark" as const, owner, ref: `dark/${path.basename(file, ".scss")}` })),
+    ...dark.map((file) => ({
+      file,
+      kind: "dark" as const,
+      owner,
+      layer: layerOfBlock(file, owner),
+      ref: `dark/${path.basename(file, ".scss")}`,
+    })),
   ];
   const sources = [...sourcesOf(files, "app"), ...sourcesOf(kitFiles, "kit")];
   const checked: ICheckedFileType[] = [];
@@ -1243,7 +1264,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     const { css, compileErrors } = compiled[position];
 
     if (source.kind !== "tokens") {
-      errors.push(...blockFileErrors(source.file, source.kind, [dir, kitDir], options));
+      errors.push(...blockFileErrors(source.file, source.kind, [dir, kitDir], options, hasKitFolder));
     }
 
     errors.push(...compileErrors);
