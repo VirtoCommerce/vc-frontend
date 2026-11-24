@@ -41,6 +41,7 @@
       "operator": "Et voi muuttaa tätä, kun toimit asiakkaan puolesta."
     },
     "messages": {
+      "provider_not_available": "Emme voi lähettää koodia tälle tilille. Ota yhteyttä järjestelmänvalvojaan.",
       "turned_on": "Kaksivaiheinen tunnistautuminen on käytössä.",
       "turned_off": "Kaksivaiheinen tunnistautuminen on pois käytöstä."
     },

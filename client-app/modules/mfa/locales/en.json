@@ -41,6 +41,7 @@
       "operator": "You can't change it while you act on behalf of the customer."
     },
     "messages": {
+      "provider_not_available": "We can't send a code to this account. Contact your administrator.",
       "turned_on": "Two-factor authentication is on.",
       "turned_off": "Two-factor authentication is off."
     },

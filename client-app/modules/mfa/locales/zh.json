@@ -41,6 +41,7 @@
       "operator": "代表客户操作时无法更改此设置。"
     },
     "messages": {
+      "provider_not_available": "无法向此账户发送验证码。请联系管理员。",
       "turned_on": "双重身份验证已开启。",
       "turned_off": "双重身份验证已关闭。"
     },

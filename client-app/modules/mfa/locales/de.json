@@ -41,6 +41,7 @@
       "operator": "Sie können dies nicht ändern, während Sie im Namen des Kunden handeln."
     },
     "messages": {
+      "provider_not_available": "Wir können für dieses Konto keinen Code senden. Wenden Sie sich an Ihren Administrator.",
       "turned_on": "Die Zwei-Faktor-Authentifizierung ist aktiviert.",
       "turned_off": "Die Zwei-Faktor-Authentifizierung ist deaktiviert."
     },

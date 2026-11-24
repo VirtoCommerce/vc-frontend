@@ -41,6 +41,7 @@
       "operator": "Du kan ikke endre dette mens du handler på vegne av kunden."
     },
     "messages": {
+      "provider_not_available": "Vi kan ikke sende en kode til denne kontoen. Kontakt administratoren.",
       "turned_on": "Tofaktorautentisering er slått på.",
       "turned_off": "Tofaktorautentisering er slått av."
     },

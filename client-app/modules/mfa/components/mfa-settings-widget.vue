@@ -31,7 +31,7 @@
         size="sm"
         icon
       >
-        {{ $t("shared.account.sign_in_form.errors.mfa_provider_not_available") }}
+        {{ $t("mfa.messages.provider_not_available") }}
       </VcAlert>
 
       <VcAlert v-if="errors.length && !challenge" color="danger" variant="soft" size="sm" icon>
@@ -130,7 +130,7 @@ const isRequiredByOrganization = computed(
     settings.value.requiredBy === MFA_REQUIRED_BY.organization,
 );
 
-// Without lockout the account can't pass the second factor, so the server lets no one change either mode
+// Without lockout the account can't pass the second factor, so the server lets it change neither mode
 const isLockoutDisabled = computed(
   () => settings.value?.storeMode === MFA_STORE_MODES.customerChoice && settings.value.isLockoutEnabled === false,
 );

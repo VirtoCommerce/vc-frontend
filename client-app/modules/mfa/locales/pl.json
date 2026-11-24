@@ -41,6 +41,7 @@
       "operator": "Nie możesz tego zmienić, działając w imieniu klienta."
     },
     "messages": {
+      "provider_not_available": "Nie możemy wysłać kodu na to konto. Skontaktuj się z administratorem.",
       "turned_on": "Uwierzytelnianie dwuskładnikowe jest włączone.",
       "turned_off": "Uwierzytelnianie dwuskładnikowe jest wyłączone."
     },

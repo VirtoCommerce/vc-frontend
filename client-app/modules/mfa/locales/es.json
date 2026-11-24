@@ -41,6 +41,7 @@
       "operator": "No puede cambiarlo mientras actúa en nombre del cliente."
     },
     "messages": {
+      "provider_not_available": "No podemos enviar un código a esta cuenta. Contacta con el administrador.",
       "turned_on": "La autenticación de dos factores está activada.",
       "turned_off": "La autenticación de dos factores está desactivada."
     },

@@ -41,6 +41,7 @@
       "operator": "Vous ne pouvez pas le modifier lorsque vous agissez au nom du client."
     },
     "messages": {
+      "provider_not_available": "Nous ne pouvons pas envoyer de code à ce compte. Contactez votre administrateur.",
       "turned_on": "L'authentification à deux facteurs est activée.",
       "turned_off": "L'authentification à deux facteurs est désactivée."
     },
