@@ -155,6 +155,7 @@ vi.mock("@/core/utilities", () => ({
   extractHostname: vi.fn(() => "example.test"),
   Logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
+vi.mock("@/modules/analytics", () => ({ init: vi.fn() }));
 vi.mock("@/modules/back-in-stock", () => ({ init: vi.fn() }));
 vi.mock("@/modules/customer-reviews", () => ({ init: vi.fn() }));
 vi.mock("@/modules/google-analytics", () => ({ init: vi.fn() }));

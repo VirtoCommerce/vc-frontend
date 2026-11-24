@@ -106,6 +106,11 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/mfa/api/graphql",
     schemaPath: `${backendUrl}/graphql/mfa`,
   },
+  {
+    name: "Analytics",
+    apiPath: "client-app/modules/analytics/api/graphql",
+    schemaPath: `${backendUrl}/graphql/analytics`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",

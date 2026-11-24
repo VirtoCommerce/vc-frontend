@@ -26,6 +26,7 @@ import { extractHostname, Logger } from "@/core/utilities";
 import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
+import { init as initAnalytics } from "@/modules/analytics";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
@@ -289,6 +290,7 @@ export default async () => {
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
+  initAnalytics(router);
   void initializeHotjar();
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
