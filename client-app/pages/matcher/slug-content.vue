@@ -8,6 +8,7 @@
     <CategoryComponent
       v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
+      :outline="slugInfo?.entityInfo?.outline"
       allow-set-meta
     />
 
@@ -30,14 +31,17 @@
 
     <VPMarkdown v-else-if="isMarkdownContent" :content="markdownContent" />
 
-    <StaticPage v-else-if="hasContent" />
+    <StaticPage v-else-if="hasContent" :permalink="slugInfo?.entityInfo?.semanticUrl || undefined" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onErrorCaptured, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
+import { CONTENT_FILE_OBJECT_TYPE, PAGES_OBJECT_TYPE } from "@/shared/common/constants/slug-object-types";
+import { isOwnLayoutSlugPage, joinSlugPath, usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
@@ -68,14 +72,7 @@ const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const seoUrl = computed(() => {
-  if (!props.pathMatch) {
-    return "/";
-  }
-  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
-  const paths = props.pathMatch.filter(Boolean);
-  return paths.join("/");
-});
+const seoUrl = computed(() => joinSlugPath(props.pathMatch));
 
 const {
   loading,
@@ -95,8 +92,6 @@ enum ObjectType {
   Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
   Category = "Category",
-  ContentFile = "ContentFile",
-  VirtoPages = "Pages",
   Brands = "Brands",
   Brand = "Brand",
   NewsArticle = "NewsArticle",
@@ -129,6 +124,58 @@ watchEffect(() => {
   }
 });
 
+const { setPageLayout } = usePageLayout();
+
+const hasOwnLayout = computed(() =>
+  isOwnLayoutSlugPage({
+    objectType: objectType.value,
+    document: pageDocumentContent.value,
+    isMarkdown: isMarkdownContent.value,
+  }),
+);
+
+watch(
+  () => props.isVisible && !loading.value && !hasOwnLayout.value,
+  (needsFullLayout) => {
+    if (needsFullLayout) {
+      setPageLayout("full");
+    }
+  },
+  { immediate: true },
+);
+
+const { preparingScope, holdScope } = useSearchScore();
+
+let endScopeHold: (() => void) | undefined;
+
+// The async category page prepares its scope a moment after this shows; hold it until then.
+watch(
+  () =>
+    props.isVisible &&
+    !loading.value &&
+    objectType.value === ObjectType.Category &&
+    // Without an id the category never prepares, so nothing would end the hold.
+    Boolean(slugInfo.value?.entityInfo?.objectId),
+  (isCategory, _previous, onCleanup) => {
+    if (!isCategory) {
+      return;
+    }
+    const release = holdScope();
+    const stopWaiting = watch(preparingScope, release, { once: true });
+    endScopeHold = () => {
+      stopWaiting();
+      release();
+    };
+    onCleanup(endScopeHold);
+  },
+  { immediate: true },
+);
+
+// A category page that fails to load or set up never starts preparing, so nothing else would end the hold.
+onErrorCaptured(() => {
+  endScopeHold?.();
+});
+
 function emitState(state: StateType, redirectUrl?: string) {
   emit("setState", { state, redirectUrl });
 }
@@ -147,10 +194,10 @@ watch(
       case ObjectType.NewsArticle:
         setMatchingRouteName("NewsArticle");
         break;
-      case ObjectType.ContentFile:
+      case CONTENT_FILE_OBJECT_TYPE:
         void fetchContent();
         break;
-      case ObjectType.VirtoPages:
+      case PAGES_OBJECT_TYPE:
         void fetchPageDocumentContent();
         break;
       default:

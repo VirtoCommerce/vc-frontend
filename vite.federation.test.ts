@@ -14,8 +14,13 @@ describe("federatedHostPlugin", () => {
     vi.unstubAllEnvs();
   });
 
-  it("returns no plugins with the theme config as shipped", () => {
-    expect(federatedHostPlugin()).toEqual([]);
+  it("returns the MF host plugins with the theme config as shipped", () => {
+    // federation() returns no plugins under a test runner unless told otherwise.
+    vi.stubEnv("MFE_VITE_NO_TEST_ENV_CHECK", "true");
+
+    const names = flatPlugins(federatedHostPlugin()).map(({ name }) => name);
+
+    expect(names).toContain("module-federation-vite");
   });
 
   it.each([{}, { module_federation_enabled: false }, { module_federation_enabled: "true" }])(
@@ -35,7 +40,8 @@ describe("federatedHostPlugin", () => {
   });
 
   it("defines __MF_HOST__ from the same switch", () => {
-    expect(federatedDefine()).toEqual({ __MF_HOST__: "false" });
+    expect(federatedDefine()).toEqual({ __MF_HOST__: "true" });
+    expect(federatedDefine({ module_federation_enabled: false })).toEqual({ __MF_HOST__: "false" });
     expect(federatedDefine({ module_federation_enabled: true })).toEqual({ __MF_HOST__: "true" });
     expect(federatedDefine({ module_federation_enabled: "true" })).toEqual({ __MF_HOST__: "false" });
   });

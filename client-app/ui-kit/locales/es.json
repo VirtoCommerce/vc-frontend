@@ -37,7 +37,9 @@
       "nav_previous": "Anterior",
       "nav_next": "Siguiente",
       "nav_up": "Arriba",
-      "nav_down": "Abajo"
+      "nav_down": "Abajo",
+      "select_item": "Seleccionar {name}",
+      "select_all_items": "Seleccionar todos los artículos"
     },
     "calendar": {
       "aria_label": "Calendario",
@@ -125,7 +127,8 @@
       "errors": {
         "fix_to_continue": "Corrige los errores de carga de archivos para continuar.",
         "has_max_file_count": "Has subido el número máximo de archivos posible. No se pueden realizar más cargas.",
-        "tried_more_than_max_file_count": "Intentaste subir más del número máximo de archivos permitidos."
+        "tried_more_than_max_file_count": "Intentaste subir más del número máximo de archivos permitidos.",
+        "unavailable": "La carga de archivos no está disponible."
       }
     },
     "reach_limit": {
@@ -166,6 +169,10 @@
       "rating_label": "Clasificación {value} de {maxValue}",
       "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
       "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: cargando",
+      "error": "{label}: {error}"
     }
   }
 }

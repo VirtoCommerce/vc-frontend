@@ -10,10 +10,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  value?: MoneyType;
+  value?: VcMoneyType;
   isOldPrice?: boolean;
 }
 

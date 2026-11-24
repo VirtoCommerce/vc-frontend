@@ -41,8 +41,6 @@
 
 <script lang="ts" setup>
 import { toRef } from "vue";
-import { VcWidget } from "@/ui-kit/components";
-import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import { isImage } from "../utilities";
 import type { NewsArticleContent } from "../api/graphql/types";
 

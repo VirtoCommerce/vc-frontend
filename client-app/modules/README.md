@@ -19,6 +19,9 @@ The **Core** is the main application that includes the API, router, builder, and
 
 A **Module** is an additional functionality developed with minimal impact on the **Core**.
 
+A feature that should ship with its backend module rather than with the storefront can be a Module Federation
+plugin instead: see [`core/federation/README.md`](../core/federation/README.md).
+
 ### Extension points
 
 **Extension points** are belong to the **Core**. Also called **Holes** or **Sockets**
@@ -85,6 +88,12 @@ yarn generate:graphql-types
 ```
 
 This command triggers the execution of the generator.ts script, which is responsible for generating the types.ts files for both the core application and the independent modules.
+
+To generate only some of them, pass their names (`Core` or a `name` from `independentModules`) to `--only`:
+
+```bash
+yarn generate:graphql-types --only Quotes,Loyalty
+```
 
 The `scripts/graphql-codegen/generator.ts` file also plays a crucial role in handling standalone GraphQL schemas. It includes an array called `independentModules`, where each object represents a separate GraphQL schema that needs to be generated independently.
 

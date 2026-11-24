@@ -8,32 +8,24 @@
     <component
       :is="link.route ? 'a' : 'button'"
       v-bind="$attrs"
-      :href="href"
+      :href="externalUrl ?? href"
+      :target="externalUrl ? '_blank' : undefined"
+      :rel="externalUrl ? 'noopener noreferrer' : undefined"
+      :aria-label="getCountAriaLabel(link.title, count)"
       :class="[
         isActive && link.route
           ? 'text-[--header-bottom-link-active-color]'
           : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
       ]"
       class="flex flex-col items-center gap-0.5 px-3 text-xs tracking-wide"
-      @click="(e: MouseEvent) => (link.route ? navigate(e) : undefined)"
+      @click="(e: MouseEvent) => (link.route && !externalUrl ? navigate(e) : undefined)"
     >
       <span class="relative">
         <slot name="icon">
           <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 text-primary" />
         </slot>
 
-        <transition mode="out-in" name="scale">
-          <VcBadge
-            v-if="count"
-            class="absolute -right-3 -top-2 transition-transform"
-            rounded
-            nowrap
-            size="sm"
-            max-width="none"
-          >
-            {{ $n(count, { style: "decimal", notation: "compact" }) }}
-          </VcBadge>
-        </transition>
+        <HeaderBadge :count="count" size="sm" overlay />
       </span>
 
       <span>
@@ -44,7 +36,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
+import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import HeaderBadge from "@/shared/layout/components/header-badge/header-badge.vue";
 
 interface IProps {
   link: ExtendedMenuLinkType;
@@ -55,7 +51,17 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   count: 0,
+});
+
+const { getCountAriaLabel } = useHeaderCountLabel();
+
+const externalUrl = computed(() => {
+  const { route } = props.link;
+
+  return typeof route === "string" && route && "externalLink" in getLinkAttr(route) && isSafeLinkUrl(route)
+    ? route
+    : undefined;
 });
 </script>

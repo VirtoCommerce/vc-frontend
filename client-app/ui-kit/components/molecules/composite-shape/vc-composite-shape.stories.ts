@@ -13,12 +13,31 @@ const meta: Meta<typeof VcCompositeShape> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCompositeShape />
+        `,
+      },
+    },
+  },
+};
 
 export const IconImage: StoryType = {
   args: {
     icon: "academic-cap",
     img: "basket.jpg",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCompositeShape icon="academic-cap" img="basket.jpg" />
+        `,
+      },
+    },
   },
 };
 
@@ -27,5 +46,14 @@ export const Mask: StoryType = {
     img: "basket.jpg",
     mask: "emoji-happy",
     iconMask: "ai",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCompositeShape img="basket.jpg" mask="emoji-happy" icon-mask="ai" />
+        `,
+      },
+    },
   },
 };

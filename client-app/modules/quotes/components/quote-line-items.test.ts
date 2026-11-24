@@ -3,10 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
-import { VcButton, VcInput } from "@/ui-kit/components/molecules";
+import { VcButton, VcInput, VcLineItem } from "@/ui-kit/components/molecules";
 import { VcAddToCart, VcQuantityStepper } from "@/ui-kit/components/organisms";
 import QuoteLineItems from "./quote-line-items.vue";
-import type { QuoteItemType } from "../api/graphql/types";
+import type { MoneyType, QuoteItemType } from "../api/graphql/types";
 
 vi.mock("@/core/composables", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/core/composables")>()),
@@ -53,5 +53,51 @@ describe("QuoteLineItems quantity without a tier quantity", () => {
     await settle();
 
     expect(wrapper.get("input").attributes("aria-invalid")).toBeUndefined();
+  });
+});
+
+function money(amount: number): MoneyType {
+  return { amount, formattedAmount: `$${amount}` } as MoneyType;
+}
+
+function mountWithPrices() {
+  return createWrapperFactory(mount, QuoteLineItems, {
+    global: {
+      mocks: { $cfg: { product_quantity_control: "stepper" } },
+      stubs: {
+        VcLineItems: { template: "<div><slot name='line-items' /></div>" },
+        VcLineItem: true,
+      },
+      components: { VcLineItem },
+    },
+  })({
+    props: {
+      items: [
+        {
+          id: "quote-item-1",
+          productId: "product-1",
+          listPrice: money(100),
+          selectedTierPrice: { price: money(90), quantity: 2 },
+        } as QuoteItemType,
+      ],
+    },
+  });
+}
+
+describe("QuoteLineItems price per item", () => {
+  it("shows the negotiated price instead of the list price", () => {
+    const lineItem = mountWithPrices().findComponent({ name: "VcLineItem" });
+
+    expect(lineItem.props("showPlacedPrice")).toBe(true);
+    expect(lineItem.props("actualPrice")).toEqual(money(90));
+  });
+
+  it("shows a price per item that multiplies by the quantity to the total", () => {
+    const lineItem = mountWithPrices().findComponent({ name: "VcLineItem" });
+    const shownPrice: MoneyType = lineItem.props("showPlacedPrice")
+      ? lineItem.props("actualPrice")
+      : lineItem.props("listPrice");
+
+    expect(shownPrice.amount * 2).toBe((lineItem.props("total") as MoneyType).amount);
   });
 });

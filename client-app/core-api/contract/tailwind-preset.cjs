@@ -1115,85 +1115,87 @@ const preset = {
       "lato": [
         "Lato",
         "sans-serif"
-      ]
+      ],
+      "base": "var(--vc-base-font-family, Lato, sans-serif)",
+      "heading": "var(--vc-heading-font-family, inherit)"
     },
     "fontSize": {
       "xxs": [
-        "0.625rem",
+        "var(--vc-font-size-xxs, 0.625rem)",
         {
-          "lineHeight": "0.75rem"
+          "lineHeight": "var(--vc-line-height-xxs, 0.75rem)"
         }
       ],
       "xs": [
-        "0.75rem",
+        "var(--vc-font-size-xs, 0.75rem)",
         {
-          "lineHeight": "0.875rem"
+          "lineHeight": "var(--vc-line-height-xs, 0.875rem)"
         }
       ],
       "sm": [
-        "0.875rem",
+        "var(--vc-font-size-sm, 0.875rem)",
         {
-          "lineHeight": "1.125rem"
+          "lineHeight": "var(--vc-line-height-sm, 1.125rem)"
         }
       ],
       "base": [
-        "1rem",
+        "var(--vc-font-size-base, 1rem)",
         {
-          "lineHeight": "1.25rem"
+          "lineHeight": "var(--vc-line-height-base, 1.25rem)"
         }
       ],
       "lg": [
-        "1.125rem",
+        "var(--vc-font-size-lg, 1.125rem)",
         {
-          "lineHeight": "1.375rem"
+          "lineHeight": "var(--vc-line-height-lg, 1.375rem)"
         }
       ],
       "xl": [
-        "1.25rem",
+        "var(--vc-font-size-xl, 1.25rem)",
         {
-          "lineHeight": "1.75rem"
+          "lineHeight": "var(--vc-line-height-xl, 1.75rem)"
         }
       ],
       "2xl": [
-        "1.5rem",
+        "var(--vc-font-size-2xl, 1.5rem)",
         {
-          "lineHeight": "2rem"
+          "lineHeight": "var(--vc-line-height-2xl, 2rem)"
         }
       ],
       "3xl": [
-        "1.875rem",
+        "var(--vc-font-size-3xl, 1.875rem)",
         {
-          "lineHeight": "2.25rem"
+          "lineHeight": "var(--vc-line-height-3xl, 2.25rem)"
         }
       ],
       "4xl": [
-        "2.25rem",
+        "var(--vc-font-size-4xl, 2.25rem)",
         {
-          "lineHeight": "2.5rem"
+          "lineHeight": "var(--vc-line-height-4xl, 2.5rem)"
         }
       ],
       "5xl": [
-        "3rem",
+        "var(--vc-font-size-5xl, 3rem)",
         {
-          "lineHeight": "3rem"
+          "lineHeight": "var(--vc-line-height-5xl, 3rem)"
         }
       ],
       "6xl": [
-        "3.75rem",
+        "var(--vc-font-size-6xl, 3.75rem)",
         {
-          "lineHeight": "3.75rem"
+          "lineHeight": "var(--vc-line-height-6xl, 3.75rem)"
         }
       ],
       "7xl": [
-        "4.5rem",
+        "var(--vc-font-size-7xl, 4.5rem)",
         {
-          "lineHeight": "4.5rem"
+          "lineHeight": "var(--vc-line-height-7xl, 4.5rem)"
         }
       ],
       "8xl": [
-        "6rem",
+        "var(--vc-font-size-8xl, 6rem)",
         {
-          "lineHeight": "6rem"
+          "lineHeight": "var(--vc-line-height-8xl, 6rem)"
         }
       ]
     },
@@ -2291,6 +2293,50 @@ const preset = {
         },
         "DEFAULT": "rgb(from var(--color-primary-100) r g b / <alpha-value>)"
       },
+      "borderRadius": {
+        "sm": "var(--vc-radius-sm, 0.125rem)",
+        "DEFAULT": "var(--vc-radius-default, 0.25rem)",
+        "md": "var(--vc-radius-md, 0.375rem)",
+        "lg": "var(--vc-radius-lg, 0.5rem)",
+        "xl": "var(--vc-radius-xl, 0.75rem)",
+        "2xl": "var(--vc-radius-2xl, 1rem)",
+        "3xl": "var(--vc-radius-3xl, 1.5rem)"
+      },
+      "lineHeight": {
+        "3": "var(--vc-line-height-3, .75rem)",
+        "4": "var(--vc-line-height-4, 1rem)",
+        "5": "var(--vc-line-height-5, 1.25rem)",
+        "6": "var(--vc-line-height-6, 1.5rem)",
+        "7": "var(--vc-line-height-7, 1.75rem)",
+        "8": "var(--vc-line-height-8, 2rem)",
+        "9": "var(--vc-line-height-9, 2.25rem)",
+        "10": "var(--vc-line-height-10, 2.5rem)",
+        "none": "var(--vc-line-height-none, 1)",
+        "tight": "var(--vc-line-height-tight, 1.25)",
+        "snug": "var(--vc-line-height-snug, 1.375)",
+        "normal": "var(--vc-line-height-normal, 1.5)",
+        "relaxed": "var(--vc-line-height-relaxed, 1.625)",
+        "loose": "var(--vc-line-height-loose, 2)"
+      },
+      "fontWeight": {
+        "thin": "var(--vc-font-weight-thin, 100)",
+        "extralight": "var(--vc-font-weight-extralight, 200)",
+        "light": "var(--vc-font-weight-light, 300)",
+        "normal": "var(--vc-font-weight-normal, 400)",
+        "medium": "var(--vc-font-weight-medium, 500)",
+        "semibold": "var(--vc-font-weight-semibold, 600)",
+        "bold": "var(--vc-font-weight-bold, 700)",
+        "extrabold": "var(--vc-font-weight-extrabold, 800)",
+        "black": "var(--vc-font-weight-black, 900)"
+      },
+      "letterSpacing": {
+        "tighter": "var(--vc-letter-spacing-tighter, -0.05em)",
+        "tight": "var(--vc-letter-spacing-tight, -0.025em)",
+        "normal": "var(--vc-letter-spacing-normal, 0em)",
+        "wide": "var(--vc-letter-spacing-wide, 0.025em)",
+        "wider": "var(--vc-letter-spacing-wider, 0.05em)",
+        "widest": "var(--vc-letter-spacing-widest, 0.1em)"
+      },
       "containers": {
         "xxs": "14rem"
       },
@@ -2301,13 +2347,14 @@ const preset = {
         "4.5": "1.125rem"
       },
       "boxShadow": {
-        "0": "0 1px 3px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 1px 2px -1px rgb(from var(--color-additional-950) r g b / 0.1)",
-        "sm": "0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
-        "md": "0 4px 6px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 2px 4px -2px rgb(from var(--color-additional-950) r g b / 0.1)",
-        "lg": "0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1)",
-        "xl": "0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1)",
-        "2xl": "0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25)",
-        "inner": "inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)"
+        "0": "var(--vc-shadow-0-1, 0 1px 3px 0 rgb(from var(--color-additional-950) r g b / 0.1)), var(--vc-shadow-0-2, 0 1px 2px -1px rgb(from var(--color-additional-950) r g b / 0.1))",
+        "DEFAULT": "var(--vc-shadow-default-1, 0 1px 3px 0 rgb(0 0 0 / 0.1)), var(--vc-shadow-default-2, 0 1px 2px -1px rgb(0 0 0 / 0.1))",
+        "sm": "var(--vc-shadow-sm-1, 0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05))",
+        "md": "var(--vc-shadow-md-1, 0 4px 6px 0 rgb(from var(--color-additional-950) r g b / 0.1)), var(--vc-shadow-md-2, 0 2px 4px -2px rgb(from var(--color-additional-950) r g b / 0.1))",
+        "lg": "var(--vc-shadow-lg-1, 0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1)), var(--vc-shadow-lg-2, 0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1))",
+        "xl": "var(--vc-shadow-xl-1, 0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1)), var(--vc-shadow-xl-2, 0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1))",
+        "2xl": "var(--vc-shadow-2xl-1, 0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25))",
+        "inner": "var(--vc-shadow-inner-1, inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05))"
       },
       "maxHeight": {
         "screen-60": "60vh",

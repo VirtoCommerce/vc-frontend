@@ -226,6 +226,11 @@ yarn generate:graphql-types
 
 Generates the `types.ts` files separately for `The Core App` and independent modules.
 
+To generate only some of them, pass their names (`Core` or a `name` from `independentModules`) to `--only`:
+```
+yarn generate:graphql-types --only Quotes,Loyalty
+```
+
 Every schema endpoint is probed before generation, and a `404` is the only answer treated as "the module is
 not installed on the target `APP_BACKEND_URL`". Such a module is reported as `skipped, schema not available`,
 its committed `types.ts` is left untouched, the remaining modules are still generated and the command exits
@@ -317,33 +322,10 @@ Component styles follow the BEM methodology. To avoid merge conflicts and keep y
 }
 ```
 
-## Configurable Border Radius
+## Design tokens
 
-You can easily adjust border-radius values for all components or on a per-component basis using CSS custom properties:
-
-- `--vc-radius`:
-  Sets the **global** border-radius for all components.
-  **Default:** `0.5rem` (8px)
-
-- Per-component overrides:
-  If you need a different radius for a specific component, you can override the global value by defining a custom property scoped to that component. For example:
-  - `--vc-button-radius`
-  - `--vc-widget-radius`
-  - _etc._
-
-- **Recommended** maximum border-radius: 10px (0.625rem). Larger values may appear overly rounded and disrupt visual consistency.
-
-```scss
-// client-app/assets/styles/_custom.scss
-
-:root {
-  // Change the global radius
-  --vc-radius: 0.25rem; // now 4px
-
-  // Override button radius only
-  --vc-button-radius: 0.75rem; // now 12px
-}
-```
+The radius, shadow and typography tokens a fork can set are listed in the [token table](client-app/assets/styles/README.md#token-table).
+How to set them for every design or for one is in [Customise a design](client-app/assets/styles/README.md#customise-a-design).
 
 ### Troubleshooting
 

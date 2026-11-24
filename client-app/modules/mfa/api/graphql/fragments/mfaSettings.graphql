@@ -1,0 +1,11 @@
+fragment mfaSettings on MfaSettings {
+  storeMode
+  isRequired
+  requiredBy
+  userMode
+  canChangeUserMode
+  organizationMode
+  canChangeOrganizationMode
+  isProviderAvailable
+  destination
+}

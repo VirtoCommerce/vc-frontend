@@ -9,7 +9,7 @@ type HandlerType = (id: string, data: object) => void;
 describe("useSyncMutationBatchers", () => {
   let mockBatcher1: MutationBatcherType;
   let mockBatcher2: MutationBatcherType;
-  let callback: ReturnType<typeof vi.fn>;
+  let callback: Mock;
 
   beforeEach(() => {
     mockBatcher1 = {

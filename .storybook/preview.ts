@@ -1,98 +1,56 @@
 import { setup } from "@storybook/vue3-vite";
 import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
-import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
+import {
+  CLASSIC_DESIGN,
+  DESIGN_NAMES,
+  loadDesignFonts,
+  loadPresetStyles,
+  resolveDesign,
+  setDesignAttribute,
+  setPresetAttribute,
+} from "../client-app/core/utilities/design";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import { a11yConfig } from "./a11y-config";
 import { DocsPage } from "./docs-page";
 import { createStorybookRouter } from "./router";
-import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
-import "../client-app/assets/styles/_ui-kit-tokens.scss";
-import "../client-app/assets/styles/_dark.scss";
+import "../storybook-styles/main.scss";
+
+import.meta.glob("../client-app/designs/*/index.scss", { eager: true });
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
 
 const docsTheme = create({
   base: "light",
-  fontBase: "Lato, sans-serif",
+  fontBase: "var(--vc-base-font-family, Lato, sans-serif)",
 });
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
 const router = createStorybookRouter();
 
-// Remove this after refactoring the VcImage component
-const { setThemeContext } = useThemeContext();
-setThemeContext({
-  storeId: "storybook",
-  storeName: "Storybook",
-  catalogId: "storybook",
-  storeUrl: "https://storybook.example.com",
-  defaultLanguage: {
-    twoLetterLanguageName: "en",
-    threeLetterLanguageName: "eng",
-    cultureName: "en-US",
-    nativeName: "English",
-    twoLetterRegionName: "US",
-    threeLetterRegionName: "USA",
-    isInvariant: false,
-  },
-  defaultCurrency: {
-    code: "USD",
-    symbol: "$",
-    cultureName: "en-US",
-    englishName: "US Dollar",
-    exchangeRate: 1,
-    name: "US Dollar",
-    isInvariant: false,
-  },
-  availableLanguages: [],
-  availableCurrencies: [],
-  graphQLSettings: { keepAliveInterval: 30 },
-  plugins: [],
-  settings: {
-    image_thumbnails_enabled: true,
-    image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
-    anonymousUsersAllowed: true,
-    modules: [],
-    authenticationTypes: [],
-    createAnonymousOrderEnabled: true,
-    defaultSelectedForCheckout: true,
-    emailVerificationEnabled: false,
-    emailVerificationRequired: false,
-    environmentName: "storybook",
-    passwordRequirements: {
-      requireLowercase: false,
-      requireUppercase: false,
-      requireDigit: false,
-      requiredLength: 6,
-      requiredUniqueChars: 0,
-      requireNonAlphanumeric: false,
-    },
-    seoLinkType: "short",
-    subscriptionEnabled: false,
-    taxCalculationEnabled: false,
-    isSpa: true,
-    quotesEnabled: false,
-  },
-} as StoreResponseType);
-
 // List of available theme presets
 const PRESETS = Object.keys(presets);
 type PresetNameType = keyof typeof presets;
 
+function toolbarTitle(name: string): string {
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: name is a typed string parameter
+  return name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, " ");
+}
+
 let currentStyleElement: HTMLStyleElement | null = null;
 let currentPresetName: PresetNameType | null = null;
 let loadingPreset: PresetNameType | null = null;
+let currentDesign: string | null = null;
 let i18nConfigured = false;
 
 // Enable for debugging: track DOM changes (only in dev mode)
@@ -166,6 +124,8 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
       currentStyleElement.textContent = css;
       document.head.prepend(currentStyleElement);
       currentPresetName = presetName;
+      setPresetAttribute(presetName);
+      await loadPresetStyles(presetName);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -196,7 +156,11 @@ setup((app) => {
   try {
     app.use(router);
     app.use(i18n);
-    app.use(uiKit);
+    app.use(uiKit, {
+      image: {
+        thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: { sm: "sm", md: "md", lg: "lg" } },
+      },
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Storybook Vue setup error:", error);
@@ -225,11 +189,16 @@ const preview: Preview = {
       toolbar: {
         title: "Theme preset",
         icon: "paintbrush",
-        items: PRESETS.map((preset) => ({
-          value: preset,
-          // eslint-disable-next-line sonarjs/null-dereference -- preset from Object.keys is always a string
-          title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
-        })),
+        items: PRESETS.map((preset) => ({ value: preset, title: toolbarTitle(preset) })),
+        dynamicTitle: true,
+      },
+    },
+    design: {
+      description: "Select design",
+      toolbar: {
+        title: "Design",
+        icon: "component",
+        items: [CLASSIC_DESIGN, ...DESIGN_NAMES].map((design) => ({ value: design, title: toolbarTitle(design) })),
         dynamicTitle: true,
       },
     },
@@ -237,6 +206,7 @@ const preview: Preview = {
   initialGlobals: {
     darkMode: "light",
     themePreset: "default",
+    design: CLASSIC_DESIGN,
   },
   parameters: {
     controls: {
@@ -271,6 +241,14 @@ const preview: Preview = {
       }
 
       applyDarkMode(darkMode);
+
+      const design = resolveDesign(context.globals.design);
+      setDesignAttribute(design);
+
+      if (design !== currentDesign) {
+        currentDesign = design;
+        loadDesignFonts(design);
+      }
 
       return story();
     },

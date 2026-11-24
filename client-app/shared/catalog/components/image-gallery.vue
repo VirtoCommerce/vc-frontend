@@ -62,7 +62,13 @@
     />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
-      <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
+      <VcNavButton
+        class="image-gallery__nav"
+        :label="$t('common.buttons.previous')"
+        size="xs"
+        direction="left"
+        data-nav-prev
+      />
 
       <Swiper
         class="image-gallery__thumbs"
@@ -72,8 +78,9 @@
         :navigation="{
           prevEl: `#${componentId} [data-nav-prev]`,
           nextEl: `#${componentId} [data-nav-next]`,
+          lockClass: 'image-gallery__nav--locked',
         }"
-        :loop="showThumbs && images.length > THUMBS_PER_VIEW"
+        :loop="showThumbs && canSlideThumbs"
         watch-slides-progress
         @swiper="setThumbsSwiper"
         tabindex="0"
@@ -99,7 +106,13 @@
         </SwiperSlide>
       </Swiper>
 
-      <VcNavButton :label="$t('common.buttons.next')" size="xs" direction="right" data-nav-next />
+      <VcNavButton
+        class="image-gallery__nav"
+        :label="$t('common.buttons.next')"
+        size="xs"
+        direction="right"
+        data-nav-next
+      />
     </div>
   </div>
 </template>
@@ -152,6 +165,8 @@ const focusedElementBeforeLightboxId = ref<string | null>(null);
 const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
+
+const canSlideThumbs = computed(() => props.images.length > THUMBS_PER_VIEW);
 
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
 
@@ -249,7 +264,10 @@ onUnmounted(() => {
   }
 
   &__img {
-    @apply relative w-full h-full rounded-[--radius] object-center object-contain cursor-zoom-in;
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply relative w-full h-full rounded-[--radius] cursor-zoom-in;
   }
 
   &__badges {
@@ -264,6 +282,13 @@ onUnmounted(() => {
     @apply flex justify-between items-center mt-3.5;
   }
 
+  &__nav {
+    // Swiper's navigation `lockClass`, on both buttons while every thumb fits.
+    &--locked {
+      @apply hidden;
+    }
+  }
+
   &__thumbs {
     @apply p-px w-[77%];
   }
@@ -273,7 +298,10 @@ onUnmounted(() => {
   }
 
   &__thumb-img {
-    @apply border rounded-[--radius] w-full aspect-square object-center object-contain;
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply border rounded-[--radius] w-full aspect-square;
 
     &--active {
       @apply border-primary outline outline-1 outline-primary;

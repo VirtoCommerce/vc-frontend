@@ -1,5 +1,7 @@
 <template>
   <VcProductCard
+    v-track-item="product"
+    data-vc-track="product-card"
     :view-mode="viewMode"
     :data-product-sku="product.code"
     border
@@ -8,6 +10,7 @@
   >
     <template #media>
       <VcProductImage
+        :data-vc-track="hasImageCarousel ? undefined : 'product-link'"
         :images="viewMode === 'grid' ? product.images : []"
         :img-src="product.imgSrc"
         :alt="product.name"
@@ -27,11 +30,12 @@
       >
         <AddToList :product="product" />
 
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+        <ExtensionPointList category="productActions" :product="product" :condition-params="product" />
       </VcProductActions>
     </template>
 
     <VcProductTitle
+      data-vc-track="product-link"
       :title="product.name"
       :to="link"
       lines-number="2"
@@ -74,6 +78,7 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       data-test-id="product-card-configurations-button"
+      data-vc-track="product-link"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
       :link-to="link"
@@ -97,6 +102,7 @@
 
       <VcProductButton
         class="product-card__variations-link-button"
+        data-vc-track="product-link"
         :data-test-id="`variations-${product.code}-button`"
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
@@ -160,7 +166,6 @@ import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { getPurchasableVariationsCount, getVariationsCount } from "@/shared/catalog/utilities/variations";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
@@ -204,6 +209,9 @@ const productId = computed(() => product.value.id);
 
 const catalogBasePath = useCatalogBasePath();
 const link = computed(() => getProductRoute(productId.value, props.product.slug, catalogBasePath.value));
+
+// A carousel image switches slides instead of opening the product, and its arrows are buttons that must not count as a link
+const hasImageCarousel = computed(() => props.viewMode === "grid" && (product.value.images?.length ?? 0) > 1);
 
 const actualPrice = computed(() =>
   product.value.hasVariations

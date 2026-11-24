@@ -5,6 +5,7 @@ import {
   forbiddenEvent,
   graphqlErrorEvent,
   passwordExpiredEvent,
+  TabsType,
   unauthorizedErrorEvent,
   unhandledErrorEvent,
   userLockedEvent,
@@ -81,6 +82,15 @@ describe("errorHandlerLink", () => {
     await run({ graphQLErrors: [{ message: "boom" }] });
 
     expect(emittedEvents()).toEqual([graphqlErrorEvent]);
+  });
+
+  // One toast per response, so its text and its report cover every error, not only the last one
+  it("notifies once with every GraphQL error of the response", async () => {
+    const graphQLErrors = [graphQLError(GraphQLErrorCode.Validation), { message: "boom" }];
+
+    await run({ graphQLErrors });
+
+    expect(emit.mock.calls).toEqual([[graphqlErrorEvent, graphQLErrors, TabsType.ALL]]);
   });
 
   it("stays silent when the operation opts out of the error notifications", async () => {

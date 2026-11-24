@@ -37,7 +37,9 @@
       "nav_previous": "Précédent",
       "nav_next": "Suivant",
       "nav_up": "Haut",
-      "nav_down": "Bas"
+      "nav_down": "Bas",
+      "select_item": "Sélectionner {name}",
+      "select_all_items": "Sélectionner tous les articles"
     },
     "calendar": {
       "aria_label": "Calendrier",
@@ -125,7 +127,8 @@
       "errors": {
         "fix_to_continue": "Corrigez les erreurs de téléchargement pour continuer.",
         "has_max_file_count": "Vous avez téléchargé le nombre maximum de fichiers possible. D'autres téléchargements ne sont pas possibles.",
-        "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés."
+        "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés.",
+        "unavailable": "Le téléchargement de fichiers n'est pas disponible."
       }
     },
     "reach_limit": {
@@ -166,6 +169,10 @@
       "rating_label": "Évaluation {value} sur {maxValue}",
       "read_only_button_aria_label": "Évaluation {value} sur {maxValue}, non disponible pour la sélection",
       "set_rating_aria_label": "Définir l’évaluation à {value} sur {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label} : chargement",
+      "error": "{label} : {error}"
     }
   }
 }

@@ -1,0 +1,9 @@
+fragment returnListItem on ReturnType {
+  id
+  number
+  status
+  statusDisplayValue(cultureName: $cultureName)
+  createdDate
+  customerName
+  itemsQuantity
+}

@@ -38,7 +38,7 @@
             min-width="8rem"
             color="secondary"
             variant="outline"
-            class="flex-none max-md:!hidden"
+            class="flex-none max-md:hidden"
             data-test-id="close-button"
             @click="close"
           >

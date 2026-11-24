@@ -5,7 +5,7 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice 
 import { graphqlClient } from "../../../client";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import type { ProductConnection, Query, QueryProductsArgs } from "@/core/api/graphql/types";
-import type { ProductsSearchParamsType } from "@/shared/catalog";
+import type { ProductsSearchParamsType } from "@/shared/catalog/types/search";
 
 export async function searchProducts(
   {

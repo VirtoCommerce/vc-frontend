@@ -7,7 +7,8 @@ import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
-import { federatedHostPlugin, federatedAlias, federatedDefine } from "./vite.federation.js";
+import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
+import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
@@ -17,6 +18,18 @@ const graphql = graphqlImport.default ?? graphqlImport;
 // only through the switch-gated dynamic import in app-runner, so deferring it keeps the MF
 // runtime out of a `module_federation_enabled: false` eager bundle entirely.
 const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
+
+// Everything else from node_modules goes to a single shared eager `vendor` chunk.
+function getVendorChunk(id = ""): string | undefined {
+  if (!id.includes("node_modules")) {
+    return;
+  }
+  const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
+  if (isDeferredLib) {
+    return;
+  }
+  return "vendor";
+}
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -59,6 +72,14 @@ function getBackendProxy(): Record<string, ProxyOptions> {
   };
 }
 
+function getBackendHostname(): string | undefined {
+  try {
+    return process.env.APP_BACKEND_URL ? new URL(process.env.APP_BACKEND_URL).hostname : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
   const isServe = command == "serve" && mode !== "test";
@@ -84,6 +105,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       vue(),
       // Module Federation host — empty when the theme's module_federation_enabled is false (see vite.federation.ts).
       ...federatedHostPlugin(),
+      ...themeSnapshotPlugin({ devDomain: mode === "development" ? getBackendHostname() : undefined }),
       graphql() as PluginOption,
       isServe
         ? checker({
@@ -127,17 +149,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
       assetsInlineLimit: (filePath) => (filePath.includes("/ui-kit/icons/") ? false : undefined),
       rollupOptions: {
         output: {
-          manualChunks(id = "") {
-            if (!id.includes("node_modules")) {
-              return;
-            }
-            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
-            if (isDeferredLib) {
-              return;
-            }
-            // Everything else goes to a single shared eager `vendor` chunk.
-            return "vendor";
-          },
+          // In an MF host the plugin owns chunking of shared packages and their fallbacks; a catch-all
+          // `vendor` chunk would pull them in and create a load cycle. See
+          // https://github.com/module-federation/vite#%EF%B8%8F-codesplitting-is-managed-by-the-plugin
+          manualChunks: isFederatedHost() ? undefined : getVendorChunk,
         },
       },
     },
@@ -157,7 +172,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     // Mirrors server.proxy so a production build can be smoke-tested against the backend
     // via `yarn preview` — the canonical way to run the MF host locally. (`yarn dev` also
     // works, incl. HMR for plugins that share @apollo/client — see
-    // client-app/core/federation/HOWTO.md "The dev inner loop".)
+    // client-app/core/federation/scenarios/s2-develop-locally.md, 2.1.)
     preview: {
       port: 3000,
       cors: true,

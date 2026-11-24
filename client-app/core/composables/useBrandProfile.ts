@@ -3,7 +3,23 @@ import { MODULE_XFRONTEND_KEYS } from "@/core/constants/modules";
 import { useModuleSettings } from "./useModuleSettings";
 import { useThemeContext } from "./useThemeContext";
 import { useWhiteLabeling } from "./useWhiteLabeling";
-import type { OrganizationFactsType } from "./useOrganizationSchema";
+
+export type OrganizationFactsType = {
+  id?: string;
+  name?: string;
+  url?: string;
+  /** The *store brand* logo, never a buyer organization's. Expected already absolute. */
+  logoUrl?: string;
+  /** One or two sentences on what the store sells. Expected already whitespace-collapsed. */
+  description?: string;
+  /** Absolute profile urls linking the domain to brands an agent already knows. */
+  sameAs?: string[];
+  tagline?: string;
+  /** Expected already validated as an international number. */
+  contactPhone?: string;
+  /** Expected already validated as an ISO 8601 calendar date. */
+  foundingDate?: string;
+};
 
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
 const ABSOLUTE_URL = /^https?:\/\//i;

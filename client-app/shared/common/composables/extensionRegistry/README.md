@@ -5,6 +5,9 @@
 1. Plug extra Vue components into fixed UI slots without touching core code.
 2. Add new extension points anywhere in the app quickly.
 
+A widget on a dashboard the user arranges (the account dashboard, a plugin's own) joins through `registerBlock`
+instead: [S9 · Add a widget to a dashboard](../../../../core/federation/scenarios/s9-add-a-dashboard-widget.md).
+
 ---
 
 ## Core pieces
@@ -66,8 +69,8 @@
 ### 3. Contributing data instead of markup
 
 Some extension points are host chrome: the host wants to keep its own markup and take only a value
-from you (the mobile menu's "My customers" link takes a count badge). Register a `use()` instead of
-a component:
+from you (a link in the desktop header or the mobile menu takes a count badge, `{ count }`).
+Register a `use()` instead of a component:
 
 ```ts
 // The id belongs to the plugin, so the plugin owns the constant — as `sales-rep` does with
@@ -76,6 +79,8 @@ a component:
 // compile error, not an `undefined` you find out about when the badge never appears.
 const { registerContribution } = useExtensionRegistry();
 registerContribution("mobileMenu", MY_COUNT_ID, { use: useMyCount });
+// The same link in the desktop header:
+registerContribution("headerMenu", MY_COUNT_ID, { use: useMyCount });
 ```
 
 The rules, because they are not obvious:
@@ -102,8 +107,8 @@ The rules, because they are not obvious:
   pending plugin holds this slot"). Never gate a decorate-capable point on it.
 - **A slot a federated plugin declared is held while that plugin loads.** `ExtensionPoint` renders a
   reserve box (`extension-point-reserve.vue`) instead of the fallback or the component, and
-  `ExtensionPointList` lists the declared name before anything is registered. See "Declaring
-  contributions" in `core/federation/HOWTO.md`.
+  `ExtensionPointList` lists the declared name before anything is registered. See
+  [`core/federation/declarations.md`](../../../../core/federation/declarations.md).
 
 > **Recommendation**
 >

@@ -32,6 +32,8 @@
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
+import { useScopeHandOver } from "@/shared/layout/composables/useScopeHandOver";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { PreviewerStateType, UpdateStateEventArgs } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
@@ -112,6 +114,22 @@ const visibleComponent = computed(() => {
   }
   return result;
 });
+
+const { setPageLayout } = usePageLayout();
+
+// The slug content reports its own layout; the other pages keep the full one.
+watch(
+  visibleComponent,
+  (value) => {
+    if (value !== "loader" && value !== "slugContent") {
+      setPageLayout("full");
+    }
+  },
+  { immediate: true },
+);
+
+// Hold across the loader; a category holds the scope itself (via slug-content until it prepares).
+useScopeHandOver(() => visibleComponent.value === "loader");
 
 function updateState(eventArgs: UpdateStateEventArgs, previewerId: PreviewerStateType["id"]) {
   const { state, redirectUrl } = eventArgs;

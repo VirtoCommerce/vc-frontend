@@ -29,11 +29,10 @@
 
 <script setup lang="ts">
 import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
-import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  actualPrice?: Pick<MoneyType, "amount" | "formattedAmount">;
-  listPrice?: Pick<MoneyType, "amount" | "formattedAmount">;
+  actualPrice?: VcMoneyType;
+  listPrice?: VcMoneyType;
   align?: "start" | "end";
   singleLine?: boolean;
   truncate?: boolean;
@@ -52,8 +51,9 @@ defineProps<IProps>();
   $singleLine: "";
 
   --font-size: var(--vc-product-price-font-size, theme("fontSize.base"));
+  --line-height: var(--vc-product-price-line-height, 1.335);
 
-  @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[1.335];
+  @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[var(--line-height)];
 
   &--align {
     &--start {

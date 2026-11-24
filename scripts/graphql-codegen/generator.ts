@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { parseArgs } from "node:util";
 import { generate } from "@graphql-codegen/cli";
 // By path, not as "@vc-frontend/core/codegen": this runs under vite-node with the host's vite config,
 // whose `@vc-frontend/core` alias also rewrites every subpath onto core-api/index.ts.
@@ -9,6 +10,7 @@ import {
   groupByStatus,
   isSchemaEndpointAbsent,
   normalizeBackendUrl,
+  selectTargets,
 } from "./utils.js";
 import type { ModuleType, OutcomeType } from "./utils.js";
 
@@ -20,13 +22,13 @@ const RESET = "\x1b[0m";
 
 const SUMMARY_WIDTH = 64;
 
+const CORE_NAME = "Core";
+
 const backendUrl = normalizeBackendUrl(process.env.APP_BACKEND_URL);
 
 const core = {
   apiPath: "client-app/core/api/graphql",
   commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
-  fragmentsPath: "client-app/core/api/graphql/fragments",
-  catalogFragmentsPath: "client-app/core/api/graphql/catalog/fragments",
   schemaPath: `${backendUrl}/graphql`,
   clientDirectivesPath: "client-app/core/api/graphql/_clientDirectives.graphql",
 } as const;
@@ -85,22 +87,6 @@ const independentModules: ModuleType[] = [
     requiredCommonFragments: [`${core.apiPath}/catalog/fragments/availabilityData.graphql`],
   },
   {
-    name: "SalesRep",
-    apiPath: "client-app/modules/sales-rep/api/graphql",
-    schemaPath: `${backendUrl}/graphql/sales-rep`,
-    // Codegen does not follow #import outside a module's own apiPath, so the storefront fragments the
-    // read-only order page reuses have to be listed here.
-    requiredCommonFragments: [
-      `${core.commonFragmentsPath}/money.graphql`,
-      `${core.commonFragmentsPath}/currency.graphql`,
-      `${core.catalogFragmentsPath}/property.graphql`,
-      `${core.fragmentsPath}/fullOrderFields.graphql`,
-      `${core.fragmentsPath}/shortOrderFields.graphql`,
-      `${core.fragmentsPath}/orderAddressFields.graphql`,
-      `${core.fragmentsPath}/orderLineItemFields.graphql`,
-    ],
-  },
-  {
     name: "Returns",
     apiPath: "client-app/modules/returns/api/graphql",
     schemaPath: `${backendUrl}/graphql/return`,
@@ -109,6 +95,16 @@ const independentModules: ModuleType[] = [
     name: "Skyflow",
     apiPath: "client-app/modules/skyflow/api/graphql",
     schemaPath: `${backendUrl}/graphql/skyflow`,
+  },
+  {
+    name: "Punchout",
+    apiPath: "client-app/modules/punchout/api/graphql",
+    schemaPath: `${backendUrl}/graphql/punchout`,
+  },
+  {
+    name: "Mfa",
+    apiPath: "client-app/modules/mfa/api/graphql",
+    schemaPath: `${backendUrl}/graphql/mfa`,
   },
   /* EXPERIMENTAL FEATURE
   {
@@ -125,34 +121,52 @@ async function runCodegen() {
     return;
   }
 
-  console.log(`\nGenerating GraphQL types from "${backendUrl}":`);
+  let targets: Set<string>;
 
-  const coreOutcome = await generateTypes({
-    name: "Core",
-    schemaUrl: core.schemaPath,
-    schema: [core.schemaPath, core.clientDirectivesPath],
-    documents: [
-      addExtension(core.apiPath),
-      // exclude independent modules from general modules
-      ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
-      // exclude client-only directive declarations — they are not operations
-      `!${core.clientDirectivesPath}`,
-    ],
-    typesPath: `${core.apiPath}/types.ts`,
-  });
-
-  if (coreOutcome.status !== "generated") {
-    // Without the core schema every module would fail the same way.
-    reportAbortedCore(coreOutcome);
+  try {
+    // A typo in an option or a name must not quietly fall back to generating everything.
+    const { values } = parseArgs({ options: { only: { type: "string" } } });
+    targets = selectTargets(values.only, [CORE_NAME, ...independentModules.map(({ name }) => name)]);
+  } catch (err) {
+    console.error(`${RED}✖ ${err instanceof Error ? err.message : String(err)}${RESET}`);
     process.exitCode = 1;
     return;
   }
 
-  reportOutcome(coreOutcome);
+  const selectedModules = independentModules.filter(({ name }) => targets.has(name));
+
+  console.log(`\nGenerating GraphQL types from "${backendUrl}":`);
+
+  const coreOutcomes: OutcomeType[] = [];
+
+  if (targets.has(CORE_NAME)) {
+    const coreOutcome = await generateCoreTypes();
+
+    if (coreOutcome.status !== "generated") {
+      // Without the core schema every module would fail the same way.
+      reportAbortedCore(coreOutcome);
+      process.exitCode = 1;
+      return;
+    }
+
+    reportOutcome(coreOutcome);
+    coreOutcomes.push(coreOutcome);
+  } else if (await isSchemaEndpointAbsent(core.schemaPath)) {
+    // Core is not generated, but its probe still catches a wrong backend, which would otherwise make
+    // every selected module look not installed.
+    reportAbortedCore({
+      name: CORE_NAME,
+      typesPath: `${core.apiPath}/types.ts`,
+      status: "skipped",
+      reason: `"${core.schemaPath}" answered 404`,
+    });
+    process.exitCode = 1;
+    return;
+  }
 
   // Reported as each module settles; the array keeps declaration order for the summary.
   const moduleOutcomes = await Promise.all(
-    independentModules.map((module) =>
+    selectedModules.map((module) =>
       generateTypes({
         name: module.name,
         schemaUrl: module.schemaPath,
@@ -167,12 +181,28 @@ async function runCodegen() {
     ),
   );
 
-  printSummary([coreOutcome, ...moduleOutcomes]);
+  printSummary([...coreOutcomes, ...moduleOutcomes]);
 
   // A partially installed environment is normal and stays green; a broken module does not.
   if (moduleOutcomes.some(({ status }) => status === "failed")) {
     process.exitCode = 1;
   }
+}
+
+function generateCoreTypes(): Promise<OutcomeType> {
+  return generateTypes({
+    name: CORE_NAME,
+    schemaUrl: core.schemaPath,
+    schema: [core.schemaPath, core.clientDirectivesPath],
+    documents: [
+      addExtension(core.apiPath),
+      // exclude independent modules from general modules
+      ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
+      // exclude client-only directive declarations — they are not operations
+      `!${core.clientDirectivesPath}`,
+    ],
+    typesPath: `${core.apiPath}/types.ts`,
+  });
 }
 
 async function generateTypes({
@@ -260,7 +290,7 @@ function reportAbortedCore(outcome: OutcomeType): void {
   if (outcome.status === "skipped") {
     // Not a module: an absent core endpoint means the URL or the backend itself is wrong.
     console.error(
-      `${RED}✖${RESET} ${BOLD}Core${RESET}: no GraphQL schema at "${core.schemaPath}"\n  ${outcome.reason}`,
+      `${RED}✖${RESET} ${BOLD}${CORE_NAME}${RESET}: no GraphQL schema at "${core.schemaPath}"\n  ${outcome.reason}`,
     );
   } else {
     reportFailure(outcome);

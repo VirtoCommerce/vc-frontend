@@ -37,13 +37,13 @@
                 {{ $t("pages.company.info.labels.company_logo") }}
               </VcLabel>
 
-              <div class="mt-2 text-xxs text-neutral">
-                {{ logoRequirements }}
+              <div v-if="!fileOptions.unavailable" class="mt-2 text-xxs text-neutral">
+                {{ fileRequirements(fileOptions.allowedExtensions, fileOptions.maxFileSize, fileOptions.maxFileCount) }}
               </div>
             </div>
 
             <VcFilePicker
-              :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || loadingOrganizationLogo"
+              :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || fileOptions.unavailable"
               :files="files"
               class="xs:w-6/12 xs:flex-none"
               v-bind="fileOptions"
@@ -90,9 +90,15 @@
             <VcAlert v-if="hasFailedFiles" color="danger" variant="solid-light" size="sm" icon>
               {{ files[0].errorMessage }}
             </VcAlert>
+
+            <VcAlert v-else-if="fileOptions.unavailable" color="warning" variant="soft" size="sm" icon>
+              {{ $t("ui_kit.file_uploader.errors.unavailable") }}
+            </VcAlert>
           </div>
         </VcWidget>
       </div>
+
+      <ExtensionPointList :category="EXTENSION_CATEGORIES.companyInfo" />
 
       <!-- Content block -->
       <VcWidget size="lg">
@@ -297,6 +303,7 @@ import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
+import { EXTENSION_CATEGORIES } from "@/shared/common/constants/extensionPointsNames";
 import {
   AddOrUpdateCompanyAddressModal,
   useCurrentOrganizationAddresses,
@@ -307,7 +314,7 @@ import { useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { VcConfirmationModal } from "@/ui-kit/components";
-import { fileRequirements } from "@/ui-kit/utilities";
+import { fileRequirements, isUploadingFile } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -410,11 +417,7 @@ const columns = computed<VcTableColumnType[]>(() => {
   return result;
 });
 
-const logoRequirements = computed(() =>
-  fileRequirements(fileOptions.value.allowedExtensions, fileOptions.value.maxFileSize, fileOptions.value.maxFileCount),
-);
-
-const uploadingOrganizationLogo = computed(() => files.value[0].status === "uploading");
+const uploadingOrganizationLogo = computed(() => files.value.some(isUploadingFile));
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
@@ -528,7 +531,7 @@ async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  newLogoUrl.value = uploadedFiles.value[0].url;
+  newLogoUrl.value = uploadedFiles.value[0]?.url ?? newLogoUrl.value;
 }
 
 async function onRemoveFiles() {
@@ -557,8 +560,12 @@ async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: str
 }
 
 watch(
-  () => organization.value!.name!,
-  (name) => resetOrganizationField({ value: name }),
+  () => organization.value?.name,
+  (name) => {
+    if (name) {
+      resetOrganizationField({ value: name });
+    }
+  },
   { immediate: true },
 );
 

@@ -14,10 +14,11 @@
       @keydown.enter="searchDropdownRef?.handleSearch()"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
+      @click="showSearchDropdown"
     >
-      <template #prepend>
+      <template #prepend="{ focusInput }">
         <VcButton
-          v-if="preparingScope"
+          v-if="isScopePending"
           class="search-bar__button"
           color="secondary"
           append-icon="delete-2"
@@ -25,9 +26,12 @@
           variant="soft"
           disabled
           loading
-          min-width="5rem"
+          :min-width="SCOPE_MIN_WIDTH"
           :aria-label="$t('shared.layout.search_bar.scope_loading_label')"
-        />
+        >
+          <!-- Invisible under the loader: keeps the width of the chip being replaced. -->
+          <template v-if="lastScopeLabel" #default>{{ lastScopeLabel }}</template>
+        </VcButton>
 
         <template v-else>
           <VcButton
@@ -38,9 +42,10 @@
             append-icon="delete-2"
             size="xs"
             variant="soft"
+            :min-width="SCOPE_MIN_WIDTH"
             :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
             :data-search-scope="item.label"
-            @click.stop="onScopeItemClick(item.id)"
+            @click.stop="onScopeItemClick(item.id, focusInput)"
           >
             {{ item.label }}
           </VcButton>
@@ -123,8 +128,12 @@ const searchDropdownStyle = computed<StyleValue | undefined>(() => {
 
 onClickOutside(searchBarElement, hideSearchDropdown);
 
-const { searchScopeData, removeScopeItemById, isCategoryScope, preparingScope, searchScopeFilterExpression } =
+const SCOPE_MIN_WIDTH = "5rem";
+
+const { searchScopeData, removeScopeItemById, isCategoryScope, isScopePending, searchScopeFilterExpression } =
   useSearchScore();
+
+const lastScopeLabel = ref<string>();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -162,7 +171,7 @@ const categoriesFilterExpression = computed(() => {
 });
 
 const searchPlaceholder = computed(() => {
-  return isCategoryScope.value && !preparingScope.value
+  return isCategoryScope.value && !isScopePending.value
     ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
     : t("shared.layout.search_bar.enter_keyword_placeholder");
 });
@@ -171,8 +180,15 @@ function getCategoriesNames() {
   return toCSV(searchScopeData.value.searchScope.filter((item) => item.type === "category").map((el) => el.label));
 }
 
-function onScopeItemClick(itemId: string | number) {
+function onScopeItemClick(itemId: string | number, focusInput: () => void) {
+  const wasDropdownVisible = searchDropdownVisible.value;
+
   removeScopeItemById(itemId);
+  focusInput();
+
+  if (!wasDropdownVisible) {
+    hideSearchDropdown();
+  }
 }
 
 function reset() {
@@ -211,6 +227,19 @@ const { isScannerEnabled, onBarcodeScanned } = useBarcodeSearch({
   searchDropdownRef,
   hideSearchResults: hideSearchDropdown,
 });
+
+watch(
+  [() => searchScopeData.value.searchScope.map((item) => item.label), isScopePending],
+  ([labels, pending]) => {
+    if (labels.length) {
+      // The scope holds a single category: the category page replaces it rather than adding to it.
+      lastScopeLabel.value = labels[0];
+    } else if (!pending) {
+      lastScopeLabel.value = undefined;
+    }
+  },
+  { immediate: true },
+);
 
 watch(isCategoryScope, (isCategory) => {
   if (!isCategory && searchPhrase.value && !searchPhraseInUrl.value) {

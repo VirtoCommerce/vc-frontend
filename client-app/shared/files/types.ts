@@ -2,6 +2,7 @@ export interface IFileOptions {
   maxFileCount: number;
   maxFileSize: number;
   allowedExtensions: string[];
+  unavailable?: boolean;
 }
 
 export interface ISuccessfulFileUpload {

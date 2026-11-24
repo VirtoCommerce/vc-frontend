@@ -1,5 +1,17 @@
 {
   "punchout": {
-    "mode_label": "Tryb punchout"
+    "mode_label": "Tryb punchout",
+    "create_requisition": "Utwórz zapotrzebowanie",
+    "errors": {
+      "create_requisition_failed": "Nie udało się utworzyć zapotrzebowania. Spróbuj ponownie.",
+      "session_not_found": "Nie znaleziono sesji punchout. Wróć do systemu zakupowego i rozpocznij nową sesję.",
+      "session_expired": "Sesja punchout wygasła. Wróć do systemu zakupowego i rozpocznij nową sesję.",
+      "store_not_configured": "Punchout nie jest skonfigurowany dla tego sklepu. Skontaktuj się z administratorem sklepu.",
+      "configuration_error": "Połączenie punchout nie jest poprawnie skonfigurowane. Skontaktuj się z administratorem sklepu.",
+      "message_error": "Nie udało się przygotować zapotrzebowania dla systemu zakupowego. Skontaktuj się z administratorem sklepu.",
+      "cart_not_found": "Nie znaleziono koszyka. Odśwież stronę i sprawdź koszyk.",
+      "cart_is_empty": "Wybierz co najmniej jeden produkt w koszyku, aby utworzyć zapotrzebowanie.",
+      "session_returned": "Zapotrzebowanie zostało już wysłane."
+    }
   }
 }

@@ -2,6 +2,12 @@ import { resolve } from "path";
 import { loadConfigFromFile, mergeConfig } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
+function getVendorChunk(id: string): string | undefined {
+  if (id.includes("node_modules")) {
+    return "vendor";
+  }
+}
+
 const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
   staticDirs: [{ from: "../storybook-styles/dist", to: "/assets" }],
@@ -24,6 +30,9 @@ const storybookConfig: StorybookConfig = {
           },
       resolve(__dirname, "../vite.config.ts"),
     ))!;
+    // An MF host gets no `vendor` chunk, as in vite.config.ts. See
+    // https://github.com/module-federation/vite#%EF%B8%8F-codesplitting-is-managed-by-the-plugin
+    const isFederatedHost = config.define?.__MF_HOST__ === "true";
     return mergeConfig(storybookViteConfig, {
       mode: "development",
       envPrefix: config.envPrefix,
@@ -34,11 +43,7 @@ const storybookConfig: StorybookConfig = {
         reportCompressedSize: false,
         rollupOptions: {
           output: {
-            manualChunks(id: string) {
-              if (id.includes("node_modules")) {
-                return "vendor";
-              }
-            },
+            manualChunks: isFederatedHost ? undefined : getVendorChunk,
           },
         },
       },

@@ -25,16 +25,11 @@ module.exports = {
         orphan: true,
         pathNot: [
           "(^|/)[.][^/]+[.](js|cjs|mjs|ts|json)$", // dot files
-          "[.]d[.]ts$", // TypeScript declaration files
+          "[.]d[.][cm]?ts$", // TypeScript declaration files
           "(^|/)tsconfig[.]json$", // TypeScript config
           "(^|/)(babel|webpack)[.]config[.](js|cjs|mjs|ts|json)$", // other configs
-          // Type-only modules: consumed exclusively via `import type`, which is
-          // erased pre-compilation and therefore invisible to dependency-cruiser
-          // (tsPreCompilationDeps is off), so they falsely register as orphans.
-          "[.]type[.]ts$", // dedicated type files (e.g. logger.type.ts)
-          "(^|/)types([.]ts$|/)", // type barrels and types/ folders
-          "(^|/)models/[^/]+Type[.]ts$", // page-builder type/model definitions
           "(^|/)public/", // static assets served by URL (e.g. service workers)
+          "^client-app/designs/[^/]+/design[.]ts$", // design folders, loaded by import.meta.glob
         ],
       },
       to: {},
@@ -105,6 +100,8 @@ module.exports = {
       from: {},
       to: {
         couldNotResolve: true,
+        // Types-only export of vite, reached by a triple-slash reference in env.d.ts.
+        pathNot: "^vite/client$",
       },
     },
     {
@@ -185,16 +182,6 @@ module.exports = {
         dependencyTypes: ["npm-peer"],
       },
     },
-    // BLIND TO `import type`, both of the rules below. `tsPreCompilationDeps` is off (see the note
-    // above), so a type-only edge never enters this graph and no rule here can match one - and a
-    // type-only import is exactly the coupling that breaks when a module moves to its own repo.
-    // Turning it on is not a drop-in: `true` takes the repo from 0 errors to 19 (+195 warnings) and
-    // `"specify"` to 15 (+200), because the existing rules' `dependencyTypesNot: ["type-only"]`
-    // clauses are no-ops today and start mattering all at once. The type-only half is covered by
-    // NO_HOST_INTERNAL_IMPORT / NO_DEEP_SALES_REP_IMPORT in eslint.config.js instead - which sees
-    // `import type`, but which CI does not currently run, so it holds in the IDE and in
-    // `yarn lint`, not in the pipeline. Closing that properly means either scoping the
-    // tsPreCompilationDeps work or adding lint to the validate chain.
     {
       name: "no-module-to-host-internal",
       comment:
@@ -216,21 +203,6 @@ module.exports = {
       },
     },
     {
-      name: "no-host-to-sales-rep-internals",
-      comment:
-        "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into " +
-        "its own repository, so its entry point is the only surface the host may depend on. Widen " +
-        "this rule to the next module as it is prepared for extraction.",
-      severity: "error",
-      from: {
-        pathNot: "^client-app/modules/sales-rep/",
-      },
-      to: {
-        path: "^client-app/modules/sales-rep/",
-        pathNot: "^client-app/modules/sales-rep/index[.]ts$",
-      },
-    },
-    {
       name: "no-host-to-returns-internals",
       comment:
         "The host reached past 'modules/returns/index.ts'. The module contributes its own UI " +
@@ -244,15 +216,58 @@ module.exports = {
         pathNot: "^client-app/modules/returns/index[.]ts$",
       },
     },
+    {
+      name: "no-ui-kit-to-host",
+      comment:
+        "ui-kit imported something from the rest of client-app. ui-kit is the lowest layer and is becoming " +
+        "a separate package, so it can't depend on the theme: use ui-kit's own types and helpers, or take " +
+        "a theme service through the uiKit plugin options.",
+      severity: "error",
+      from: {
+        path: "^client-app/ui-kit/",
+      },
+      to: {
+        path: "^client-app/",
+        pathNot: "^client-app/ui-kit/",
+      },
+    },
+    {
+      name: "no-host-to-ui-kit-internals",
+      comment:
+        "A file outside ui-kit imported a ui-kit file past its public entries. Once ui-kit is a package, " +
+        "every such file becomes package API. Import from @/ui-kit, its components / atoms / molecules / " +
+        "organisms / templates, composables, constants, enums, types or utilities index, or an asset in " +
+        "icons, images, locales or styles; add a missing export to the index. Tests and stories are exempt.",
+      severity: "error",
+      from: {
+        path: "^client-app/",
+        pathNot: ["^client-app/ui-kit/", "[.](test|test-d|stories)[.]ts$", "/__tests__/"],
+      },
+      to: {
+        path: "^client-app/ui-kit/",
+        pathNot: [
+          "^client-app/ui-kit/index[.]ts$",
+          "^client-app/ui-kit/(components|composables|constants|enums|utilities)/index[.]ts$",
+          "^client-app/ui-kit/components/(atoms|molecules|organisms|templates)/index[.]ts$",
+          "^client-app/ui-kit/types/index[.]d[.]ts$",
+          "^client-app/ui-kit/(icons|images|locales|styles)/",
+        ],
+      },
+    },
   ],
   options: {
-    // The generated @vc-frontend/core type contract, its build/versioning scripts and
-    // the /testing entry never run in the storefront. The contract legitimately imports
-    // peer packages (vue, @apollo/client, …), the scripts import the rollup toolchain and
-    // semver, and /testing imports vue-i18n as a consumer peer — all resolved from the
-    // ROOT package.json, not the facade's, and none of it is in the app dependency graph.
+    // Type-only imports are part of the graph: they are the coupling that breaks when ui-kit or a
+    // module moves to its own package.
+    tsPreCompilationDeps: true,
+    // The generated @vc-frontend/core type contract and its checks, its build/versioning scripts and
+    // their .d.mts sidecars, the plugin scaffolder and module check, and the /codegen and /testing
+    // entries never run in the storefront.
+    // The contract legitimately imports peer packages (vue, @apollo/client, …), the scripts
+    // import the rollup toolchain and semver, and /testing imports vue-i18n as a consumer
+    // peer — all resolved from the ROOT package.json, not the facade's, and none of it is in
+    // the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|testing\\.mjs$)",
+      path: "client-app/core-api/(contract/|contract-checks/|[^/]+[.]d[.][cm]ts$|build-types\\.mjs$|codegen\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|create-plugin\\.mjs$|plugin-module\\.mjs$|testing\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",

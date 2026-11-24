@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
       "invalid_value": "Virheellinen arvo",
+      "invalid_characters": "Sisältää virheellisiä merkkejä",
+      "html_tags_not_allowed": "HTML-tunnisteet eivät ole sallittuja",
+      "unsafe_content": "Sisältää kiellettyä sisältöä",
+      "invalid_addresses": "Osa osoitteista on virheellisiä",
+      "invalid_data": "Osa syötetyistä tiedoista on virheellisiä",
       "invalid_user_id_or_token": "Käyttäjätunnus tai token on virheellinen.",
       "product_no_longer_available": "Ei enää saatavilla",
       "item_quantity_required_field": "Tuotteen määrä ei saa olla tyhjä",
@@ -285,7 +290,8 @@
       "company_members": "Yrityksen jäsenet",
       "contact_administrator": "ota yhteyttä sivuston ylläpitäjään",
       "skip_to_main_content": "Siirry pääsisältöön",
-      "skip_to_footer": "Siirry alatunnisteeseen"
+      "skip_to_footer": "Siirry alatunnisteeseen",
+      "security": "Turvallisuus"
     },
     "titles": {
       "all_actions": "Kaikki toiminnot",
@@ -363,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -378,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -407,7 +413,9 @@
             "navigation": "Navigointi",
             "main_navigation": "Päänavigointi"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Ei tuotteita | {n} tuote | {n} tuotetta"
       },
       "footer": {
         "version": "Versio",
@@ -494,7 +502,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +534,12 @@
           "duplicate_email_login_attempt": "Useat tilit käyttävät tätä sähköpostiosoitetta.",
           "lockout_disabled": "Tällä tilillä ei voi kirjautua sisään koodilla.",
           "invalid_code": "Tämä koodi ei toiminut.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Kirjautumisistuntosi on vanhentunut. Kirjaudu uudelleen.",
+          "code_attempts_exceeded": "Liian monta virheellistä koodia. Odota muutama minuutti ja kirjaudu uudelleen.",
+          "mfa_provider_not_available": "Tälle tilille ei voi lähettää kirjautumiskoodia. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_unavailable": "Tämä tili vaatii toisen kirjautumisvaiheen, mutta se ei ole käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +559,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
-          "generic": "Jotain meni pieleen. Yritä uudelleen."
+          "generic": "Jotain meni pieleen. Yritä uudelleen.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -618,6 +641,30 @@
         "click_to_copy": "Kopioi napsauttamalla",
         "clipboard_success": "Kuponki kopioitu onnistuneesti",
         "tap_to_copy": "Napauta kopioidaksesi"
+      },
+      "dashboard": {
+        "orders_placed_week": "Tilaukset tällä viikolla",
+        "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+        "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "per_order": "Keskim. per tilaus (tänä vuonna)",
+        "vs_last_week": "{delta} vs viime viikko",
+        "vs_last_month": "{delta} vs viime kuu",
+        "vs_last_year": "{delta} vs viime vuosi",
+        "excluded_orders": "{count} tilaus muussa valuutassa ei mukana | {count} tilausta muissa valuutoissa ei mukana",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Myyntitilastot"
+        },
+        "recent_orders": {
+          "title": "Omat viimeisimmät tilaukset",
+          "view_all": "Kaikki tilaukset",
+          "filter_all": "Kaikki",
+          "empty": "Tilauksia ei ole vielä",
+          "no_results": "Ei tilauksia tällä tilalla",
+          "load_failed": "Tilauksia ei voitu ladata",
+          "statuses_label": "Näytettävät tilat"
+        }
       }
     },
     "sign_in": {
@@ -632,12 +679,7 @@
         "verify": {
           "header": "Tarkista sähköpostisi",
           "subtitle": "Lähetimme koodin osoitteeseen {email}.",
-          "code_label": "Koodi",
-          "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
-          "submit_button": "Kirjaudu sisään",
-          "resend_button": "Lähetä koodi uudelleen",
-          "use_different_email_link": "Käytä toista sähköpostiosoitetta",
-          "live_resent": "Uusi koodi lähetetty."
+          "use_different_email_link": "Käytä toista sähköpostiosoitetta"
         },
         "locked": {
           "title": "Liian monta epäonnistunutta yritystä",
@@ -653,6 +695,19 @@
           "password_button": "Kirjaudu salasanalla",
           "back_link": "Takaisin kirjautumiseen"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Syötä kirjautumiskoodi",
+        "subtitle": "Lähetimme koodin osoitteeseen {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Koodi",
+        "paste_hint": "Kirjoita tai liitä koodi. Puhelimessa napauta sitä näppäimistön yläpuolella.",
+        "submit_button": "Kirjaudu sisään",
+        "resend_button": "Lähetä koodi uudelleen",
+        "resend_countdown": "Lähetä koodi uudelleen {seconds} s kuluttua",
+        "live_resent": "Uusi koodi lähetetty."
       }
     },
     "company": {
@@ -1113,48 +1168,121 @@
       "date_new_to_old": "Päivämäärä, uusi vanhaan",
       "date_old_to_new": "Päivämäärä, vanha uuteen"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Lisää vertailuun",
-          "remove": "Poista vertailusta"
-        }
+    "dashboard": {
+      "edit": "Muokkaa asettelua",
+      "editing": "Muokataan asettelua",
+      "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+      "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+      "save": "Tallenna asettelu",
+      "cancel": "Peruuta",
+      "reset": "Palauta oletukset",
+      "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+      "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
+      "hidden_widgets": "Piilotetut widgetit",
+      "visible_stats": "Näkyvät tunnusluvut",
+      "hidden_stats": "Piilotetut tunnusluvut",
+      "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+      "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+      "max_rows": "Maksimirivit",
+      "restored": "Oletusasettelu palautettu.",
+      "empty": {
+        "title": "Kaikki lohkot on piilotettu",
+        "text": "Kaikki tämän sivun tunnusluvut ja widgetit on siirretty asetteluasetuksissa kohtaan {hidden}. Palauta oletusasettelu tuodaksesi kaiken takaisin, tai avaa {edit} ja valitse tarkalleen, mitä näytetään.",
+        "hidden": "Piilotetut",
+        "restore": "Palauta oletusasettelu"
       },
-      "notifications": {
-        "limit_reached": "Vain {productsLimit} tuotetta samasta kategoriasta voidaan vertailla",
-        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> lisättiin vertailulistaan <span class=\"hidden lg:inline\">(jäljellä - {itemsLeft})</span>",
-        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> poistettiin vertailulistasta",
-        "compare_button": "Vertaa",
-        "added_to_cart_html": "Lisätty <strong>{productName}</strong> ostoskoriin",
-        "fetch_failed": "Joidenkin verrattujen tuotteiden lataaminen epäonnistui. Yritä uudelleen."
+      "a11y": {
+        "reorder": "Järjestä {title}",
+        "hide": "Piilota {title}",
+        "show": "Näytä {title}",
+        "editing": "Muokataan asettelua. Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+        "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "moved": "{title} siirretty sijaintiin {position}/{total}.",
+        "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+        "edge": "{title} on jo sijainnissa {position}/{total}.",
+        "cancelled": "Kohteen {title} siirto peruutettu.",
+        "parked": "{title} piilotettu.",
+        "restored": "{title} näytetään.",
+        "max_rows": "Maksimirivit kohteessa {title}, välillä {min} ja {max}"
+      },
+      "stats": {
+        "load_failed": "Lataus epäonnistui"
+      }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Keskim. tilausarvo ajanjaksolla: {aov}",
+        "title": "Keskimääräinen tilausarvo"
+      },
+      "axis": {
+        "aov": "Keskim. tilausarvo, {currency}"
+      },
+      "cancelled_excluded": "Ei sisällä peruutettuja tilauksia",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "viimeiset 6 kuukautta",
+        "twelve_months": "viimeiset 12 kuukautta",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, kuluva kuu {today} asti. Myynti on nettomyyntiä tilauspäivän mukaan; peruutetut tilaukset eivät sisälly lukuihin.",
+      "footnote_closed": "{from} – {to}. Myynti on nettomyyntiä tilauspäivän mukaan; peruutetut tilaukset eivät sisälly lukuihin.",
+      "footnote_upcoming": "Tämä ajanjakso ei ole vielä alkanut.",
+      "kpi": {
+        "aov": "Keskimääräinen tilausarvo · {period}",
+        "month_to_date": "{month} tähän mennessä · päivä {day}/{days}",
+        "orders": "Tilaukset · {period}",
+        "projected": "{share} kuukaudesta · ennuste {value}",
+        "sales": "Myynti · {period}",
+        "vs_last_year": "{change} vs viime vuosi"
+      },
+      "last_year": "Viime vuosi",
+      "last_year_toggle": "Viime vuosi: {chart}",
+      "legend": {
+        "aov_closed": "Keskim. tilausarvo, päättyneet kuukaudet",
+        "current": "Tämä kuukausi, tähän mennessä",
+        "down": "lasku",
+        "last_year": "Viime vuosi",
+        "projection": "Ennuste kuun loppuun",
+        "sales_closed": "Myynti, päättyneet kuukaudet",
+        "up": "nousu",
+        "vs_last_year": "vs sama kuukausi viime vuonna"
+      },
+      "load_failed": "Raporttia ei voitu ladata. Yritä myöhemmin uudelleen.",
+      "period_label": "Ajanjakso",
+      "periods": {
+        "q1": "Q1",
+        "q2": "Q2",
+        "q3": "Q3",
+        "q4": "Q4",
+        "six_months": "6 kuukautta",
+        "twelve_months": "12 kuukautta",
+        "year": "Kuluva vuosi"
+      },
+      "sales_chart": {
+        "subtitle": "Keskimäärin {value} / päättynyt kuukausi",
+        "title": "Kuukausimyynti · {period}"
       },
       "table": {
-        "tabs": {
-          "all": "Kaikki",
-          "differences": "Erot"
-        },
-        "uncategorized": "Luokittelemattomat",
-        "unresolved_category": "Tuntematon luokka",
-        "differ_rows": "Erot: {count} / {total} riviä",
-        "clear_category": "Tyhjennä kategoria",
-        "remove_product": "Poista vertailusta",
-        "add_to_cart": "Lisää ostoskoriin",
-        "fields": {
-          "price_per_unit": "Hinta per yksikkö",
-          "price_per_unit_tooltip": "Hinta, ALV:n ulkop., per yksikkö.",
-          "customer_rating": "Asiakasarvio",
-          "availability": "Saatavuus",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. tilausmäärä",
-          "min_order_qty_tooltip": "MOQ — vähimmäismäärä yksiköitä per tilaus."
-        },
-        "pin": {
-          "pin_title": "Kiinnitä ylös",
-          "unpin_title": "Irrota",
-          "pin_label": "Kiinnitä “{label}”",
-          "unpin_label": "Irrota “{label}”"
-        }
-      }
+        "aov": "Keskim. tilausarvo",
+        "change": "vs viime vuosi",
+        "description": "Myynti, tilaukset ja keskimääräinen tilausarvo kuukausittain",
+        "last_year": "Sama kuukausi viime vuonna",
+        "month": "Kuukausi",
+        "orders": "Tilaukset",
+        "sales": "Myynti",
+        "toggle": "Näytä taulukkona"
+      },
+      "tooltip": {
+        "aov": "Keskim. tilausarvo",
+        "last_year_aov": "Keskim. tilausarvo, {month}",
+        "last_year_revenue": "Tuotto, {month}",
+        "projection": "Ennuste kuun loppuun",
+        "revenue": "Tuotto",
+        "revenue_to_date": "Tuotto tähän mennessä",
+        "vs_month": "vs {month}"
+      },
+      "upcoming": "Tulossa"
     }
   },
   "pages": {
@@ -1307,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Hallintapaneeli",
-        "last_orders_card": {
-          "title": "Viimeisimmät tilaukset",
-          "all_orders_link": "Kaikki tilaukset",
-          "order_number_label": "Tilausnumero",
-          "purchase_number_label": "Ostotilaus",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Lasku",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ei tilauksia",
-          "no_orders_message": "Tilauksia ei ole vielä"
-        },
-        "monthly_report_card": {
-          "title": "Kuukausittainen kuluraportti",
-          "budget_title": "Budjetti",
-          "total_spend_label": "Kokonaiskulutus",
-          "spend_chart_alt": "Kulutuskaavio"
-        },
-        "orders_status_card": {
-          "title": "Tilausten tila"
-        },
-        "bulk_order_card": {
-          "title": "Joukkotilauslohko"
-        }
+        "title": "Hallintapaneeli"
       },
       "change_password": {
         "meta": {
@@ -1464,6 +1568,23 @@
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",
         "no_lists": "Sinulla ei ole kuponkeja tai tarjouksia"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ei avaimia",
+        "unnamed_key": "Nimetön avain",
+        "rename_key_label": "Nimeä {name} uudelleen",
+        "delete_key_label": "Poista {name}",
+        "created": "Luotu {date}",
+        "changed": "Muutettu {date}",
+        "rename_modal": {
+          "title": "Nimeä avain uudelleen",
+          "name_label": "Nimi"
+        },
+        "delete_modal": {
+          "title": "Poista avain",
+          "message": "Et voi enää kirjautua sisään tällä avaimella."
+        }
       }
     },
     "company": {
@@ -1756,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Tuotteet"
-    },
-    "compare": {
-      "title": "Tuotteiden vertailu",
-      "meta": {
-        "keywords": "vertaa tuotteita, tuotevertailu, rinnakkainen vertailu",
-        "description": "Vertaa tuotteita rinnakkain löytääksesi tarpeisiisi parhaiten sopivan vaihtoehdon."
-      },
-      "added_count": "{count} lisätty {total}:sta",
-      "added_count_in_category": "{count} lisätty {total}:sta kategoriassa {category}",
-      "actions": {
-        "clear_all": "Tyhjennä kaikki"
-      },
-      "clear_all_modal": {
-        "title": "Tyhjennä kaikki",
-        "message": "Yhtään tuotetta ei poisteta vertailusta. | 1 tuote poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta."
-      },
-      "clear_category_modal": {
-        "title": "Tyhjennä kategoria",
-        "message": "Yhtään tuotetta kategoriasta {category} ei poisteta vertailusta. | 1 tuote kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta."
-      },
-      "empty": {
-        "title": "Vertailulistasi on tyhjä",
-        "description": "Lisää tuotteita luettelosta vertaillaksesi niiden ominaisuuksia rinnakkain. Voit verrata enintään {limit} tuotetta per kategoria.",
-        "restore_button": "Palauta tuotteet",
-        "add_button": "Lisää tuotteita"
-      },
-      "error": "Tietojen lataaminen epäonnistui",
-      "retry": "Yritä uudelleen"
     }
   },
   "identity_error": {
@@ -1803,7 +1896,11 @@
     "PasswordRequiresNonAlphanumeric": "Salasanassa on oltava vähintään yksi ei-alfanumeerinen merkki",
     "PasswordRequiresUpper": "Salasanassa on oltava vähintään yksi iso kirjain ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Salasanassa on käytettävä erilaisia merkkejä",
-    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana."
+    "RecentPasswordUsed": "Olet käyttänyt tätä salasanaa aiemmin. Luo uusi salasana.",
+    "user_not_editable": "Tätä käyttäjää ei voi muokata",
+    "sign_in_key_not_found": "Kirjautumisavainta ei löytynyt",
+    "last_sign_in_key": "Viimeistä kirjautumisavainta ei voi poistaa",
+    "operation_not_supported": "Tätä toimintoa ei tueta"
   },
   "password_tips": {
     "title": "Vinkkejä vahvan salasanan luomiseen:",
@@ -1836,10 +1933,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Samannimistä tiedostoa ei voi ladata",
     "INVALID_CONTENT": "Tiedostoa ei voi lukea",
+    "INVALID_CONTENT_TYPE": "Tiedostoa ei voi ladata",
     "EXCEPTION": "Virhe tiedoston latauksessa. Yritä uudelleen.",
-    "INVALID_SCOPE": "Tuntematon laajuus '{0}'.",
+    "INVALID_SCOPE": "Tiedostojen lataaminen ei ole käytettävissä.",
     "INVALID_EXTENSION": "Tiedostomuoto ei ole sallittu",
     "INVALID_SIZE": "Tiedoston koko ylittää sallitun {0}",
+    "INVALID_MIN_SIZE": "Tiedoston koko alittaa sallitun vähimmäiskoon {0}",
     "CANNOT_DELETE": "Virhe tiedoston poistossa"
   }
 }

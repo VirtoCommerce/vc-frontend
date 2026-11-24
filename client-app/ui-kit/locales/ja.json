@@ -37,7 +37,9 @@
       "nav_previous": "前へ",
       "nav_next": "次へ",
       "nav_up": "上へ",
-      "nav_down": "下へ"
+      "nav_down": "下へ",
+      "select_item": "{name}を選択",
+      "select_all_items": "すべての商品を選択"
     },
     "calendar": {
       "aria_label": "カレンダー",
@@ -125,7 +127,8 @@
       "errors": {
         "fix_to_continue": "ファイルアップロードエラーを修正して続行してください。",
         "has_max_file_count": "アップロード可能な最大数のファイルをアップロードしました。これ以上のアップロードはできません。",
-        "tried_more_than_max_file_count": "許可されている最大数を超えるファイルをアップロードしようとしました。"
+        "tried_more_than_max_file_count": "許可されている最大数を超えるファイルをアップロードしようとしました。",
+        "unavailable": "ファイルのアップロードは利用できません。"
       }
     },
     "reach_limit": {
@@ -166,6 +169,10 @@
       "rating_label": "評価：{value}/{maxValue}",
       "read_only_button_aria_label": "評価：{value}/{maxValue}、選択はできません",
       "set_rating_aria_label": "評価を{value}/{maxValue}に設定"
+    },
+    "stat_widget": {
+      "loading": "{label}：読み込み中",
+      "error": "{label}：{error}"
     }
   }
 }

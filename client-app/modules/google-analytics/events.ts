@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables/useCurrency";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
+import { deferLogin } from "./pending-login";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { ConfiguredPriceType } from "./types";
 import type { Product, VariationType } from "@/core/api/graphql/types";
@@ -35,10 +36,21 @@ export const events: TrackerEventsType = {
   },
 
   selectItem(item, params) {
+    const { index, ...restParams } = params ?? {};
     const gtagItem =
-      item && typeof item === "object" && "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+      item && typeof item === "object" && "productId" in item
+        ? {
+            ...lineItemToGtagItem(item, index),
+            item_list_id: params?.item_list_id,
+            item_list_name: params?.item_list_name,
+          }
+        : productToGtagItem(item, index, {
+            itemListId: params?.item_list_id,
+            itemListName: params?.item_list_name,
+            currency: currentCurrency.value?.code,
+          });
     sendEvent("select_item", {
-      ...params,
+      ...restParams,
       items: [gtagItem],
     });
   },
@@ -48,7 +60,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: item.price?.actual?.amount,
-      items: [productToGtagItem(item)],
+      items: [productToGtagItem(item, undefined, { currency: currencyCode })],
     });
   },
 
@@ -57,7 +69,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: item.price?.actual?.amount,
-      items: [productToGtagItem(item)],
+      items: [productToGtagItem(item, undefined, { currency: currencyCode })],
     });
   },
 
@@ -131,7 +143,7 @@ export const events: TrackerEventsType = {
 
   removeItemsFromCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
-    const inputItems = items.map(lineItemToGtagItem);
+    const inputItems = items.map((item, index) => lineItemToGtagItem(item, index));
 
     sendEvent("remove_from_cart", {
       ...params,
@@ -147,7 +159,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: cart.total.amount,
-      items: cart.items.map(lineItemToGtagItem),
+      items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
       items_count: cart.items.length,
     });
   },
@@ -157,7 +169,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: cart.total.amount,
-      items: cart.items.map(lineItemToGtagItem),
+      items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
       items_count: cart.items.length,
     });
   },
@@ -168,7 +180,7 @@ export const events: TrackerEventsType = {
         ...params,
         currency: cart.currency.code,
         value: cart.total.amount,
-        items: cart.items.map(lineItemToGtagItem),
+        items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart.items.length,
         coupon: cart.coupons?.[0]?.code,
       });
@@ -185,7 +197,7 @@ export const events: TrackerEventsType = {
         currency: cart?.shippingPrice.currency.code,
         value: cart?.shippingPrice.amount,
         coupon: cart?.coupons?.[0]?.code,
-        items: cart?.items.map(lineItemToGtagItem),
+        items: cart?.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart?.items.length,
       });
     } catch (e) {
@@ -201,7 +213,7 @@ export const events: TrackerEventsType = {
         currency: cart?.currency?.code,
         value: cart?.total?.amount,
         coupon: cart?.coupons?.[0]?.code,
-        items: cart?.items.map(lineItemToGtagItem),
+        items: cart?.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart?.items.length,
       });
     } catch (e) {
@@ -219,7 +231,7 @@ export const events: TrackerEventsType = {
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,
         tax: order.taxTotal?.amount,
-        items: order.items.map(lineItemToGtagItem),
+        items: order.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: order?.items?.length,
       });
     } catch (e) {
@@ -264,6 +276,12 @@ export const events: TrackerEventsType = {
   },
 
   login(method, params) {
+    // A failed attempt stays on the page and is the signed-out visitor's; a success is sent by the page it lands on.
+    if (params?.success) {
+      deferLogin(method, params);
+      return;
+    }
+
     sendEvent("login", {
       ...params,
       method,

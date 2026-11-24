@@ -204,6 +204,11 @@
       "item_can_t_be_purchased": "Этот товар нельзя приобрести",
       "item_is_out_of_stock": "Этот товар отсутствует на складе",
       "invalid_value": "Неверное значение",
+      "invalid_characters": "Содержит недопустимые символы",
+      "html_tags_not_allowed": "HTML-теги не допускаются",
+      "unsafe_content": "Содержит недопустимое содержимое",
+      "invalid_addresses": "Некоторые адреса указаны неверно",
+      "invalid_data": "Некоторые из введённых данных неверны",
       "invalid_user_id_or_token": "ID пользователя или токен недействительны",
       "product_no_longer_available": "Больше недоступен",
       "item_quantity_required_field": "Значение количества товара не может быть пустым",
@@ -285,7 +290,8 @@
       "company_members": "Сотрудники компании",
       "contact_administrator": "свяжитесь с администратором сайта",
       "skip_to_main_content": "Перейти к основному содержанию",
-      "skip_to_footer": "Перейти к подвалу"
+      "skip_to_footer": "Перейти к подвалу",
+      "security": "Безопасность"
     },
     "titles": {
       "all_actions": "Все действия",
@@ -363,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -378,7 +383,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Отложено",
-            "lists": "@:common.links.lists"
+            "lists": "@:common.links.lists",
+            "security": "@:common.links.security"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -407,7 +413,9 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
-        }
+        },
+        "link_with_count": "{title}: {count}",
+        "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"
       },
       "footer": {
         "version": "Версия",
@@ -494,7 +502,8 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members"
+          "company_members": "@:common.links.company_members",
+          "security": "@:common.links.security"
         }
       },
       "change_password_form": {
@@ -525,7 +534,12 @@
           "duplicate_email_login_attempt": "Этот адрес электронной почты используют несколько аккаунтов.",
           "lockout_disabled": "Этот аккаунт не может входить по коду.",
           "invalid_code": "Этот код не подошёл.",
-          "missing_parameter": "@:common.messages.something_went_wrong"
+          "missing_parameter": "@:common.messages.something_went_wrong",
+          "invalid_two_factor_token": "Время на вход истекло. Войдите снова.",
+          "code_attempts_exceeded": "Слишком много неверных кодов. Подождите несколько минут и войдите снова.",
+          "mfa_provider_not_available": "Не удаётся отправить код для входа на этот аккаунт. Обратитесь к администратору.",
+          "two_factor_unavailable": "Для этого аккаунта нужен второй шаг входа, но он недоступен. Обратитесь к администратору.",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.login_failed"
         }
       },
       "impersonate_form": {
@@ -545,7 +559,16 @@
           "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
           "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
           "impersonate_failed": "Проверка пройдена, но переключение на аккаунт клиента не удалось. Попробуйте ещё раз.",
-          "generic": "Что-то пошло не так. Попробуйте ещё раз."
+          "generic": "Что-то пошло не так. Попробуйте ещё раз.",
+          "invalid_two_factor_token": "@:shared.account.sign_in_form.errors.invalid_two_factor_token",
+          "code_attempts_exceeded": "@:shared.account.sign_in_form.errors.code_attempts_exceeded",
+          "sign_in_not_allowed": "@:shared.account.sign_in_form.errors.sign_in_not_allowed",
+          "lockout_disabled": "@:shared.account.sign_in_form.errors.lockout_disabled",
+          "mfa_provider_not_available": "@:shared.account.sign_in_form.errors.mfa_provider_not_available",
+          "two_factor_unavailable": "@:shared.account.sign_in_form.errors.two_factor_unavailable",
+          "two_factor_required": "@:shared.account.sign_in_form.errors.two_factor_required",
+          "user_is_locked_in_organization": "@:shared.account.sign_in_form.errors.user_is_locked_in_organization",
+          "duplicate_email_login_attempt": "@:shared.account.sign_in_form.errors.duplicate_email_login_attempt"
         }
       },
       "forgot_password_form": {
@@ -618,6 +641,30 @@
         "click_to_copy": "Нажмите, чтобы скопировать",
         "clipboard_success": "Купон успешно скопирован",
         "tap_to_copy": "Нажмите, чтобы скопировать"
+      },
+      "dashboard": {
+        "orders_placed_week": "Заказы за эту неделю",
+        "orders_placed_mtd": "Заказы с начала месяца",
+        "orders_placed_ytd": "Заказы с начала года",
+        "avg_order_value": "Средняя сумма заказа",
+        "per_order": "Среднее за заказ (за год)",
+        "vs_last_week": "{delta} к прошлой неделе",
+        "vs_last_month": "{delta} к прошлому месяцу",
+        "vs_last_year": "{delta} к прошлому году",
+        "excluded_orders": "Не учтено {count} заказов в других валютах | Не учтён {count} заказ в другой валюте | Не учтены {count} заказа в других валютах | Не учтено {count} заказов в других валютах",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Статистика продаж"
+        },
+        "recent_orders": {
+          "title": "Мои последние заказы",
+          "view_all": "Все заказы",
+          "filter_all": "Все",
+          "empty": "Еще нет заказов",
+          "no_results": "Нет заказов с этим статусом",
+          "load_failed": "Не удалось загрузить заказы",
+          "statuses_label": "Отображаемые статусы"
+        }
       }
     },
     "sign_in": {
@@ -632,12 +679,7 @@
         "verify": {
           "header": "Проверьте почту",
           "subtitle": "Мы отправили код на {email}.",
-          "code_label": "Код",
-          "paste_hint": "Введите или вставьте код. На телефоне нажмите на него над клавиатурой.",
-          "submit_button": "Войти",
-          "resend_button": "Отправить код повторно",
-          "use_different_email_link": "Использовать другой email",
-          "live_resent": "Отправлен новый код."
+          "use_different_email_link": "Использовать другой email"
         },
         "locked": {
           "title": "Слишком много неудачных попыток",
@@ -653,6 +695,19 @@
           "password_button": "Войти по паролю",
           "back_link": "Назад ко входу"
         }
+      },
+      "mfa_verify_form": {
+        "header": "Введите код для входа",
+        "subtitle": "Мы отправили код на {destination}.",
+        "back_link": "@:shared.sign_in.otp_email_sign_in_form.disabled.back_link"
+      },
+      "sign_in_code_form": {
+        "code_label": "Код",
+        "paste_hint": "Введите или вставьте код. На телефоне нажмите на него над клавиатурой.",
+        "submit_button": "Войти",
+        "resend_button": "Отправить код повторно",
+        "resend_countdown": "Отправить код повторно через {seconds} с",
+        "live_resent": "Отправлен новый код."
       }
     },
     "company": {
@@ -1113,48 +1168,121 @@
       "date_new_to_old": "Дата, от новых к старым",
       "date_old_to_new": "Дата: сначала старые"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Добавить к сравнению",
-          "remove": "Удалить из сравнения"
-        }
+    "dashboard": {
+      "edit": "Настроить расположение",
+      "editing": "Настройка расположения",
+      "hint": "— перетащите блок за маркер, чтобы изменить порядок, или скройте его кнопкой ✕.",
+      "hint_keyboard": "Клавиатура: пробел берёт блок, стрелки перемещают его, пробел отпускает, Esc отменяет.",
+      "save": "Сохранить расположение",
+      "cancel": "Отмена",
+      "reset": "Сбросить",
+      "save_failed": "Не удалось сохранить расположение. Ваши изменения сохранены на странице — попробуйте ещё раз.",
+      "load_failed": "Не удалось загрузить сохранённое расположение, поэтому показано расположение по умолчанию. Редактирование недоступно до загрузки — обновите страницу.",
+      "hidden_widgets": "Скрытые виджеты",
+      "visible_stats": "Показатели на виду",
+      "hidden_stats": "Скрытые показатели",
+      "empty_visible": "Перетащите сюда показатель, чтобы отобразить его",
+      "empty_hidden": "Перетащите сюда показатель, чтобы скрыть его",
+      "max_rows": "Макс. строк",
+      "restored": "Расположение по умолчанию восстановлено.",
+      "empty": {
+        "title": "Все блоки скрыты",
+        "text": "Все показатели и виджеты на этой странице перенесены в раздел {hidden} в настройках расположения. Восстановите расположение по умолчанию, чтобы вернуть всё, или нажмите {edit}, чтобы выбрать, что именно показывать.",
+        "hidden": "Скрытые",
+        "restore": "Восстановить расположение по умолчанию"
       },
-      "notifications": {
-        "limit_reached": "Только {productsLimit} товаров из одной категории можно сравнивать",
-        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось - {itemsLeft})</span>",
-        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> удален из списка сравнения",
-        "compare_button": "Сравнить",
-        "added_to_cart_html": "<strong>{productName}</strong> добавлен в корзину",
-        "fetch_failed": "Не удалось загрузить некоторые сравниваемые товары. Пожалуйста, попробуйте еще раз."
+      "a11y": {
+        "reorder": "Изменить порядок: {title}",
+        "hide": "Скрыть {title}",
+        "show": "Показать {title}",
+        "editing": "Настройка расположения. Клавиатура: пробел берёт блок, стрелки перемещают его, пробел отпускает, Esc отменяет.",
+        "grabbed": "Блок «{title}» взят. Позиция {position} из {total}. Перемещайте стрелками, пробел — отпустить, Escape — отменить.",
+        "grabbed_parkable": "Блок «{title}» взят. Позиция {position} из {total}. Стрелки влево и вправо — переместить, вверх и вниз — скрыть или показать, пробел — отпустить, Escape — отменить.",
+        "moved": "«{title}» перемещён на позицию {position} из {total}.",
+        "dropped": "«{title}» размещён на позиции {position} из {total}.",
+        "edge": "{title} уже на позиции {position} из {total}.",
+        "cancelled": "Перемещение «{title}» отменено.",
+        "parked": "«{title}» скрыт.",
+        "restored": "«{title}» показан.",
+        "max_rows": "Макс. строк для {title}, от {min} до {max}"
+      },
+      "stats": {
+        "load_failed": "Не удалось загрузить"
+      }
+    },
+    "reporting": {
+      "aov_chart": {
+        "subtitle_period": "Средний чек за период: {aov}",
+        "title": "Средний чек"
+      },
+      "axis": {
+        "aov": "Средний чек, {currency}"
+      },
+      "cancelled_excluded": "Отменённые заказы не учитываются",
+      "chart_periods": {
+        "quarter": "{period} {year}",
+        "six_months": "последние 6 месяцев",
+        "twelve_months": "последние 12 месяцев",
+        "year": "{year}"
+      },
+      "footnote": "{from} – {to}, текущий месяц по {today}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_closed": "{from} – {to}. Продажи — нетто, по дате заказа; отменённые заказы не учитываются.",
+      "footnote_upcoming": "Этот период ещё не начался.",
+      "kpi": {
+        "aov": "Средний чек · {period}",
+        "month_to_date": "{month} на сегодня · день {day} из {days}",
+        "orders": "Заказы · {period}",
+        "projected": "{share} месяца · прогноз {value}",
+        "sales": "Продажи · {period}",
+        "vs_last_year": "{change} к прошлому году"
+      },
+      "last_year": "Прошлый год",
+      "last_year_toggle": "Прошлый год: {chart}",
+      "legend": {
+        "aov_closed": "Средний чек, закрытые месяцы",
+        "current": "Текущий месяц, на сегодня",
+        "down": "спад",
+        "last_year": "Прошлый год",
+        "projection": "Прогноз на конец месяца",
+        "sales_closed": "Продажи, закрытые месяцы",
+        "up": "рост",
+        "vs_last_year": "к тому же месяцу прошлого года"
+      },
+      "load_failed": "Не удалось загрузить отчёт. Попробуйте позже.",
+      "period_label": "Период",
+      "periods": {
+        "q1": "I кв.",
+        "q2": "II кв.",
+        "q3": "III кв.",
+        "q4": "IV кв.",
+        "six_months": "6 месяцев",
+        "twelve_months": "12 месяцев",
+        "year": "Текущий год"
+      },
+      "sales_chart": {
+        "subtitle": "В среднем {value} за закрытый месяц",
+        "title": "Продажи по месяцам · {period}"
       },
       "table": {
-        "tabs": {
-          "all": "Все",
-          "differences": "Различия"
-        },
-        "uncategorized": "Без категории",
-        "unresolved_category": "Неизвестная категория",
-        "differ_rows": "Различаются: {count} из {total} строк",
-        "clear_category": "Очистить категорию",
-        "remove_product": "Удалить из сравнения",
-        "add_to_cart": "Добавить в корзину",
-        "fields": {
-          "price_per_unit": "Цена за единицу",
-          "price_per_unit_tooltip": "Цена без НДС за единицу.",
-          "customer_rating": "Рейтинг покупателей",
-          "availability": "Наличие",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Мин. кол-во для заказа",
-          "min_order_qty_tooltip": "MOQ — минимальное количество единиц в заказе."
-        },
-        "pin": {
-          "pin_title": "Закрепить сверху",
-          "unpin_title": "Открепить",
-          "pin_label": "Закрепить “{label}”",
-          "unpin_label": "Открепить “{label}”"
-        }
-      }
+        "aov": "Средний чек",
+        "change": "К прошлому году",
+        "description": "Продажи, заказы и средний чек по месяцам",
+        "last_year": "Тот же месяц прошлого года",
+        "month": "Месяц",
+        "orders": "Заказы",
+        "sales": "Продажи",
+        "toggle": "Показать таблицей"
+      },
+      "tooltip": {
+        "aov": "Средний чек",
+        "last_year_aov": "Средний чек, {month}",
+        "last_year_revenue": "Выручка, {month}",
+        "projection": "Прогноз на конец месяца",
+        "revenue": "Выручка",
+        "revenue_to_date": "Выручка на сегодня",
+        "vs_month": "К {month}"
+      },
+      "upcoming": "Впереди"
     }
   },
   "pages": {
@@ -1307,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Панель управления",
-        "last_orders_card": {
-          "title": "Последние заказы",
-          "all_orders_link": "Все заказы",
-          "order_number_label": "Номер заказа",
-          "purchase_number_label": "Номер закупки",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Счет",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Нет заказов",
-          "no_orders_message": "Еще нет заказов"
-        },
-        "monthly_report_card": {
-          "title": "Отчет о расходах за месяц",
-          "budget_title": "Бюджет",
-          "total_spend_label": "Всего потрачено",
-          "spend_chart_alt": "Диаграмма расходов"
-        },
-        "orders_status_card": {
-          "title": "Статус заказов"
-        },
-        "bulk_order_card": {
-          "title": "Мультизаказ"
-        }
+        "title": "Панель управления"
       },
       "change_password": {
         "meta": {
@@ -1464,6 +1568,23 @@
       "promotion_coupons": {
         "title": "Все купоны и акции",
         "no_lists": "У вас нет купонов или акций"
+      },
+      "security": {
+        "title": "@:common.links.security",
+        "no_keys": "Ключей нет",
+        "unnamed_key": "Ключ без названия",
+        "rename_key_label": "Переименовать {name}",
+        "delete_key_label": "Удалить {name}",
+        "created": "Создан {date}",
+        "changed": "Изменён {date}",
+        "rename_modal": {
+          "title": "Переименовать ключ",
+          "name_label": "Название"
+        },
+        "delete_modal": {
+          "title": "Удалить ключ",
+          "message": "Вы больше не сможете входить с помощью этого ключа."
+        }
       }
     },
     "company": {
@@ -1756,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Товары"
-    },
-    "compare": {
-      "title": "Сравнение товаров",
-      "meta": {
-        "keywords": "сравнить товары, сравнение товаров, сравнение бок о бок",
-        "description": "Сравнивайте товары бок о бок, чтобы найти лучший вариант для ваших нужд."
-      },
-      "added_count": "{count} из {total} добавлено",
-      "added_count_in_category": "{count} из {total} добавлено в {category}",
-      "actions": {
-        "clear_all": "Очистить все"
-      },
-      "clear_all_modal": {
-        "title": "Очистить все",
-        "message": "Ничего не будет удалено из сравнения. | Будет удалён {n} товар из сравнения. | Будет удалено {n} товара из сравнения. | Будет удалено {n} товаров из сравнения."
-      },
-      "clear_category_modal": {
-        "title": "Очистить категорию",
-        "message": "Ничего не будет удалено из категории {category}. | Будет удалён {n} товар из категории {category}. | Будет удалено {n} товара из категории {category}. | Будет удалено {n} товаров из категории {category}."
-      },
-      "empty": {
-        "title": "Ваш список сравнения пуст",
-        "description": "Добавляйте товары из каталога, чтобы сравнивать их характеристики бок о бок. Вы можете сравнивать до {limit} товаров в категории.",
-        "restore_button": "Восстановить товары",
-        "add_button": "Добавить товары"
-      },
-      "error": "Не удалось загрузить данные",
-      "retry": "Повторить попытку"
     }
   },
   "identity_error": {
@@ -1803,7 +1896,11 @@
     "PasswordRequiresNonAlphanumeric": "Пароли должны содержать как минимум один неалфавитный символ",
     "PasswordRequiresUpper": "Пароли должны содержать как минимум одну заглавную букву ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Пароли должны содержать разные символы",
-    "RecentPasswordUsed": "Этот пароль вы уже использовали ранее. Пожалуйста, создайте другой."
+    "RecentPasswordUsed": "Этот пароль вы уже использовали ранее. Пожалуйста, создайте другой.",
+    "user_not_editable": "Этого пользователя нельзя изменить",
+    "sign_in_key_not_found": "Ключ входа не найден",
+    "last_sign_in_key": "Нельзя удалить последний ключ входа",
+    "operation_not_supported": "Эта операция не поддерживается"
   },
   "password_tips": {
     "title": "Советы по созданию надежного пароля:",
@@ -1836,10 +1933,12 @@
   "file_error": {
     "ALREADY_EXISTS": "Невозможно загрузить файл с тем же именем.",
     "INVALID_CONTENT": "Невозможно прочитать файл.",
+    "INVALID_CONTENT_TYPE": "Невозможно загрузить файл.",
     "EXCEPTION": "Ошибка при загрузке файла. Пожалуйста, попробуйте снова.",
-    "INVALID_SCOPE": "Неизвестная область '{0}'.",
+    "INVALID_SCOPE": "Загрузка файлов недоступна.",
     "INVALID_EXTENSION": "Формат файла не разрешен.",
     "INVALID_SIZE": "Размер файла превышает допустимый {0}.",
+    "INVALID_MIN_SIZE": "Размер файла меньше допустимого минимума {0}.",
     "CANNOT_DELETE": "Ошибка при удалении файла."
   }
 }

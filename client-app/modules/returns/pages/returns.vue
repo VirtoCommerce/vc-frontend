@@ -2,128 +2,183 @@
   <div class="returns-list">
     <VcTypography tag="h1">{{ $t("returns.title") }}</VcTypography>
 
-    <div class="returns-list__toolbar">
-      <div class="returns-list__search-wrapper">
-        <VcInput
-          v-model="localKeyword"
-          maxlength="64"
-          class="returns-list__search"
+    <div class="returns-list__body">
+      <div v-if="canViewOrganizationReturns" class="returns-list__scope-tabs">
+        <VcTabSwitch
+          :model-value="scope"
+          :value="RETURN_SCOPE.OWN"
+          icon="user"
+          :label="$t('returns.scope.own')"
           :disabled="loading"
-          :placeholder="$t('returns.search_placeholder')"
-          clearable
-          @keydown.enter="applyKeyword(localKeyword)"
-          @clear="applyKeyword('')"
-        >
-          <template #append>
-            <VcButton
-              :aria-label="$t('returns.search_aria')"
-              :disabled="loading"
-              icon="search"
-              icon-size="1.25rem"
-              @click="applyKeyword(localKeyword)"
-            />
-          </template>
-        </VcInput>
+          @change="applyScope(RETURN_SCOPE.OWN)"
+        />
+
+        <VcTabSwitch
+          :model-value="scope"
+          :value="RETURN_SCOPE.ORGANIZATION"
+          icon="case"
+          :label="organization?.name"
+          :title="organization?.name"
+          :disabled="loading"
+          @change="applyScope(RETURN_SCOPE.ORGANIZATION)"
+        />
       </div>
 
-      <ReturnsFilters :statuses="statuses" :applied="filter" :disabled="loading" @change="applyFilter" />
-    </div>
-
-    <div v-if="chips.length" class="returns-list__chips">
-      <VcChip v-for="chip in chips" :key="chip.id" color="secondary" closable @close="removeChip(chip)">
-        {{ chip.label }}
-      </VcChip>
-
-      <VcChip color="secondary" variant="outline" clickable @click="resetAll">
-        <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-        <VcIcon name="reset" />
-      </VcChip>
-    </div>
-
-    <VcEmptyView
-      v-if="!loading && !returns.length"
-      :text="isSearching ? $t('returns.no_results_message') : $t('returns.no_returns_message')"
-      :variant="isSearching ? 'search' : 'empty'"
-      icon="outline-order"
-    >
-      <template v-if="isSearching" #button>
-        <VcButton prepend-icon="reset" @click="resetAll">
-          {{ $t("common.buttons.reset_filters") }}
-        </VcButton>
-      </template>
-    </VcEmptyView>
-
-    <VcWidget v-else size="lg">
-      <template #default-container>
-        <VcTable
-          :loading="loading"
-          :sort="sort"
-          :items="returns"
-          :pages="pages"
-          :page="page"
-          :skeleton-rows="itemsPerPage"
-          :description="$t('returns.meta.table_description')"
-          @row-click="goToReturn"
-          @header-click="applySorting"
-          @page-changed="changePage"
-        >
-          <template #mobile-item="{ item }">
-            <button
-              type="button"
-              class="returns-list__mobile-item"
-              @click="goToReturn(item)"
-              @keyup.enter="goToReturn(item)"
-            >
-              <div class="returns-list__mobile-cell">
-                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.number") }}</span>
-
-                <span class="returns-list__mobile-value font-black">{{ item.number }}</span>
-              </div>
-
-              <div class="returns-list__mobile-cell">
-                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.date") }}</span>
-
-                <span class="returns-list__mobile-value">{{ $d(new Date(item.createdDate)) }}</span>
-              </div>
-
-              <div class="returns-list__mobile-cell">
-                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
-
-                <span class="returns-list__mobile-value">{{ statusLabel(item.status, item.statusDisplayValue) }}</span>
-              </div>
-
-              <div class="returns-list__mobile-cell">
-                <span class="returns-list__mobile-label">{{ $t("returns.list.columns.quantity") }}</span>
-
-                <span class="returns-list__mobile-value">{{ item.itemsQuantity }}</span>
-              </div>
-            </button>
-          </template>
-
-          <VcTableColumn id="number" v-slot="{ item }" :title="$t('returns.list.columns.number')" sortable>
-            {{ item.number }}
-          </VcTableColumn>
-
-          <VcTableColumn id="createdDate" v-slot="{ item }" :title="$t('returns.list.columns.date')" sortable>
-            {{ $d(new Date(item.createdDate)) }}
-          </VcTableColumn>
-
-          <VcTableColumn id="status" v-slot="{ item }" :title="$t('returns.list.columns.status')" sortable>
-            {{ statusLabel(item.status, item.statusDisplayValue) }}
-          </VcTableColumn>
-
-          <VcTableColumn
-            id="itemsQuantity"
-            v-slot="{ item }"
-            :title="$t('returns.list.columns.quantity')"
-            align="right"
+      <div class="returns-list__toolbar">
+        <div class="returns-list__search-wrapper">
+          <VcInput
+            v-model="localKeyword"
+            maxlength="64"
+            class="returns-list__search"
+            :disabled="loading"
+            :placeholder="$t(searchPlaceholderKey)"
+            clearable
+            @keydown.enter="applyKeyword(localKeyword)"
+            @clear="applyKeyword('')"
           >
-            {{ item.itemsQuantity }}
-          </VcTableColumn>
-        </VcTable>
-      </template>
-    </VcWidget>
+            <template #append>
+              <VcButton
+                :aria-label="$t('returns.search_aria')"
+                :disabled="loading"
+                icon="search"
+                icon-size="1.25rem"
+                @click="applyKeyword(localKeyword)"
+              />
+            </template>
+          </VcInput>
+        </div>
+
+        <ReturnsFilters :statuses="filterStatuses" :applied="filter" :disabled="loading" @change="applyFilter" />
+      </div>
+
+      <div v-if="chips.length" class="returns-list__chips">
+        <VcChip v-for="chip in chips" :key="chip.id" color="secondary" closable @close="removeChip(chip)">
+          {{ chip.label }}
+        </VcChip>
+
+        <VcChip color="secondary" variant="outline" clickable @click="resetAll">
+          <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+          <VcIcon name="reset" />
+        </VcChip>
+      </div>
+
+      <VcEmptyView
+        v-if="!loading && !returns.length"
+        :text="isSearching ? $t('returns.no_results_message') : $t('returns.no_returns_message')"
+        :variant="isSearching ? 'search' : 'empty'"
+        icon="outline-order"
+      >
+        <template v-if="isSearching" #button>
+          <VcButton prepend-icon="reset" @click="resetAll">
+            {{ $t("common.buttons.reset_filters") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
+
+      <VcWidget v-else size="lg">
+        <template #default-container>
+          <VcTable
+            :loading="loading"
+            :sort="sort"
+            :items="returns"
+            :pages="pages"
+            :page="page"
+            :skeleton-rows="itemsPerPage"
+            :description="$t('returns.meta.table_description')"
+            mobile-breakpoint="lg"
+            @row-click="goToReturn"
+            @header-click="applySorting"
+            @page-changed="changePage"
+          >
+            <template #mobile-item="{ item }">
+              <button
+                type="button"
+                class="returns-list__mobile-item"
+                @click="goToReturn(item)"
+                @keyup.enter="goToReturn(item)"
+              >
+                <div class="returns-list__mobile-cell">
+                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.number") }}</span>
+
+                  <span class="returns-list__mobile-value font-black">{{ item.number }}</span>
+                </div>
+
+                <div class="returns-list__mobile-cell">
+                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.date") }}</span>
+
+                  <span class="returns-list__mobile-value">{{ $d(new Date(item.createdDate)) }}</span>
+                </div>
+
+                <div v-if="isOrganizationScope" class="returns-list__mobile-cell">
+                  <span class="returns-list__mobile-label">{{ $t("common.labels.buyer_name") }}</span>
+
+                  <span class="returns-list__mobile-value">{{ item.customerName }}</span>
+                </div>
+
+                <div class="returns-list__mobile-cell">
+                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.status") }}</span>
+
+                  <span class="returns-list__mobile-value">{{
+                    statusLabel(item.status, item.statusDisplayValue)
+                  }}</span>
+                </div>
+
+                <div class="returns-list__mobile-cell">
+                  <span class="returns-list__mobile-label">{{ $t("returns.list.columns.quantity") }}</span>
+
+                  <span class="returns-list__mobile-value">{{ item.itemsQuantity }}</span>
+                </div>
+              </button>
+            </template>
+
+            <VcTableColumn id="number" v-slot="{ item }" :title="$t('returns.list.columns.number')" sortable>
+              {{ item.number }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="createdDate"
+              v-slot="{ item }"
+              :title="$t('returns.list.columns.date')"
+              sortable
+              class="returns-list__date-col"
+            >
+              {{ $d(new Date(item.createdDate)) }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              v-if="isOrganizationScope"
+              :id="BUYER_COLUMN_ID"
+              v-slot="{ item }"
+              :title="$t('common.labels.buyer_name')"
+              sortable
+              class="returns-list__buyer-col"
+            >
+              {{ item.customerName }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="status"
+              v-slot="{ item }"
+              :title="$t('returns.list.columns.status')"
+              sortable
+              class="returns-list__status-col"
+            >
+              {{ statusLabel(item.status, item.statusDisplayValue) }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="itemsQuantity"
+              v-slot="{ item }"
+              :title="$t('returns.list.columns.quantity')"
+              align="right"
+            >
+              {{ item.itemsQuantity }}
+            </VcTableColumn>
+          </VcTable>
+        </template>
+      </VcWidget>
+    </div>
   </div>
 </template>
 
@@ -135,7 +190,8 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useReturnStatusLabel } from "@/modules/returns/composables/useReturnStatusLabel";
 import { useReturnStatuses } from "@/modules/returns/composables/useReturnStatuses";
 import { useReturns } from "@/modules/returns/composables/useReturns";
-import { RETURN_ACTION } from "@/modules/returns/constants";
+import { BUYER_COLUMN_ID, RETURN_ACTION, RETURN_SCOPE } from "@/modules/returns/constants";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { ReturnsFilterDataType } from "@/modules/returns/types";
 import ReturnsFilters from "@/modules/returns/components/returns-filters.vue";
 
@@ -163,6 +219,11 @@ const {
   filter,
   isFilterEmpty,
   itemsPerPage,
+  canViewOrganizationReturns,
+  scope,
+  isOrganizationScope,
+  isStatusInScope,
+  applyScope,
   applyKeyword,
   applyFilter,
   applySorting,
@@ -170,10 +231,18 @@ const {
   resetFilters,
 } = useReturns();
 
+const { organization } = useUser();
 const { statuses } = useReturnStatuses();
+
+const filterStatuses = computed(() => statuses.value.filter((x) => isStatusInScope(x.code)));
 const { statusLabel } = useReturnStatusLabel();
 
 const localKeyword = ref(keyword.value);
+
+// Only the organization's list has other buyers to search for.
+const searchPlaceholderKey = computed(() =>
+  isOrganizationScope.value ? "returns.search_placeholder_organization" : "returns.search_placeholder",
+);
 
 const isSearching = computed(() => Boolean(keyword.value) || !isFilterEmpty.value);
 
@@ -249,8 +318,28 @@ watch(keyword, (value) => {
 
 <style lang="scss">
 .returns-list {
+  &__scope-tabs {
+    @apply mb-3 flex w-full gap-2;
+
+    > * {
+      @apply min-w-0 flex-1;
+    }
+
+    .vc-tab-switch__label {
+      @apply truncate;
+    }
+
+    @media (width >= theme("screens.sm")) {
+      @apply w-auto;
+
+      > * {
+        @apply max-w-xs flex-none;
+      }
+    }
+  }
+
   &__toolbar {
-    @apply mb-4 mt-5 flex flex-col gap-3;
+    @apply mb-4 flex flex-col gap-3;
 
     @media (width >= theme("screens.lg")) {
       @apply flex-row items-center;
@@ -266,7 +355,23 @@ watch(keyword, (value) => {
   }
 
   &__chips {
-    @apply mt-3 flex flex-wrap gap-2;
+    @apply mb-4 flex flex-wrap gap-2;
+  }
+
+  &__date-col {
+    @apply w-28;
+  }
+
+  &__buyer-col {
+    @apply w-32;
+
+    @media (width >= theme("screens.xl")) {
+      @apply w-40;
+    }
+  }
+
+  &__status-col {
+    @apply w-36;
   }
 
   &__mobile-item {

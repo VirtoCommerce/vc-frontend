@@ -1,16 +1,17 @@
 <template>
-  <VcProductCard :background="false">
+  <VcProductCard v-track-item="product" data-vc-track="product-card" :background="false">
     <template #media>
       <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" />
 
       <VcProductActions direction="vertical" with-background>
         <AddToList :product="product" />
 
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" class="relative" />
+        <ExtensionPointList category="productActions" :product="product" :condition-params="product" />
       </VcProductActions>
     </template>
 
     <VcProductTitle
+      data-vc-track="product-link"
       lines-number="2"
       fix-height
       :to="link"
@@ -53,7 +54,6 @@ import { computed } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
 import { getVariationsCount } from "@/shared/catalog/utilities/variations";
-import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";

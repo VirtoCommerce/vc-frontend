@@ -1,9 +1,9 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { VcButton, VcInput } from "@/ui-kit/components/molecules";
 import { VcQuantityStepper } from "@/ui-kit/components/organisms";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 
 const createWrapper = createWrapperFactory(mount, VcQuantityStepper, {
   global: {
@@ -113,6 +113,16 @@ describe("VcQuantityStepper bounds", () => {
       await wrapper.get(".vc-quantity-stepper__increment").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([6]);
+    });
+
+    it("treats max 0 as a real ceiling", () => {
+      const wrapper = createWrapper({ props: { modelValue: 5, max: 0 } });
+      const input = wrapper.get("input");
+
+      expect(input.attributes("max")).toBe("0");
+      expect(input.attributes("aria-valuemax")).toBe("0");
+      expect((input.element as HTMLInputElement).validity.rangeOverflow).toBe(true);
+      expect(wrapper.get(".vc-quantity-stepper__increment").attributes("disabled")).toBeDefined();
     });
   });
 });

@@ -37,7 +37,9 @@
       "nav_previous": "Föregående",
       "nav_next": "Nästa",
       "nav_up": "Upp",
-      "nav_down": "Ner"
+      "nav_down": "Ner",
+      "select_item": "Välj {name}",
+      "select_all_items": "Välj alla artiklar"
     },
     "calendar": {
       "aria_label": "Kalender",
@@ -125,7 +127,8 @@
       "errors": {
         "fix_to_continue": "Åtgärda fel vid filuppladdning för att fortsätta.",
         "has_max_file_count": "Du har laddat upp maximalt antal filer. Ytterligare uppladdningar är inte möjliga.",
-        "tried_more_than_max_file_count": "Du försökte ladda upp fler filer än det maximalt tillåtna antalet."
+        "tried_more_than_max_file_count": "Du försökte ladda upp fler filer än det maximalt tillåtna antalet.",
+        "unavailable": "Filuppladdning är inte tillgänglig."
       }
     },
     "reach_limit": {
@@ -166,6 +169,10 @@
       "rating_label": "Betyg {value} av {maxValue}",
       "read_only_button_aria_label": "Betyg {value} av {maxValue}, inte tillgängligt för val",
       "set_rating_aria_label": "Ställ in betyg till {value} av {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: laddar",
+      "error": "{label}: {error}"
     }
   }
 }

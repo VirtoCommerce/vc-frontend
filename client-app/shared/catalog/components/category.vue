@@ -210,7 +210,7 @@
           :page-number="currentPage"
           :page-history="pageHistory"
           :products="products"
-          :saved-view-mode="savedViewMode"
+          :saved-view-mode="shownViewMode"
           :mode="catalogPaginationMode"
           :keyword="searchParams.keyword || barcodeQueryParam"
           class="category__products"
@@ -436,13 +436,11 @@ const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrien
 const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
 });
+const shownViewMode = computed(() =>
+  props.viewMode && hideViewModeSelector.value ? props.viewMode : savedViewMode.value,
+);
 
-const categoryListProperties = computed(() => ({
-  item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-  item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  related_id: currentCategory.value?.id,
-  related_type: "category",
-}));
+const reportedPositions = new Map<string, { page: number; index: number }>();
 
 // A lookup ignores `q`, so analytics report the scanned code as its term.
 const searchTerm = computed(() => (isBarcodeLookup.value ? barcodeQueryParam.value : searchQueryParam.value));
@@ -594,7 +592,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
 
   updateCurrentPage(pageNumber);
 
-  await fetchMoreProducts({
+  const { items } = await fetchMoreProducts({
     ...searchParams.value,
     page: currentPage.value,
   });
@@ -602,7 +600,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  analytics("viewItemList", products.value, categoryListProperties.value);
+  reportItemList(items, currentPage.value);
 
   if (searchTerm.value) {
     trackViewSearchResults();
@@ -630,7 +628,8 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  analytics("viewItemList", products.value, categoryListProperties.value);
+  reportedPositions.clear();
+  reportItemList(products.value, currentPage.value);
 
   if (searchTerm.value) {
     trackViewSearchResults();
@@ -672,8 +671,38 @@ function trackViewSearchResults(): void {
   });
 }
 
+function getCategoryListProperties(page: number): Record<string, string | undefined> {
+  // The search page loads no category; elsewhere a keyword list can render before its category loads.
+  if (route.name === ROUTES.SEARCH.NAME || (!currentCategory.value && searchTerm.value)) {
+    return {
+      item_list_id: `search_results_page_${page}`,
+      item_list_name: `Search results (page ${page})`,
+      related_type: "search",
+    };
+  }
+
+  return {
+    item_list_id: `category_${currentCategory.value?.slug}_page_${page}`,
+    item_list_name: `Category "${currentCategory.value?.name}" (page ${page})`,
+    related_id: currentCategory.value?.id,
+    related_type: "category",
+  };
+}
+
+function reportItemList(items: Product[], page: number): void {
+  items.forEach((item, index) => reportedPositions.set(item.id, { page, index }));
+  analytics("viewItemList", items, getCategoryListProperties(page));
+}
+
 function selectProduct(product: Product): void {
-  analytics("selectItem", product, categoryListProperties.value);
+  const position = reportedPositions.get(product.id);
+  analytics(
+    "selectItem",
+    product,
+    position
+      ? { ...getCategoryListProperties(position.page), index: position.index }
+      : getCategoryListProperties(currentPage.value),
+  );
 }
 
 function resetPage() {
@@ -734,7 +763,7 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, prepareScope } = useSearchScore();
 
 const { clearSearchResults } = useSearchBar();
 
@@ -742,15 +771,18 @@ const isMobileLg = breakpoints.smaller("lg");
 
 watch(
   () => props.categoryId,
-  async (categoryId) => {
+  async (categoryId, _previous, onCleanup) => {
     if (categoryId || props.isRoot) {
       isCategoryNotFound.value = false;
 
       setQueryScope(searchQueryParam.value);
 
-      if (categoryId) {
-        preparingScope.value = true;
-      }
+      const finishPreparing = categoryId ? prepareScope() : undefined;
+      let isCancelled = false;
+      onCleanup(() => {
+        isCancelled = true;
+        finishPreparing?.();
+      });
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -771,7 +803,11 @@ watch(
           productFilter,
         });
       } finally {
-        preparingScope.value = false;
+        finishPreparing?.();
+      }
+
+      if (isCancelled) {
+        return;
       }
 
       if (!props.isRoot) {
@@ -783,12 +819,6 @@ watch(
   },
   { immediate: true },
 );
-
-watch(props, ({ viewMode }) => {
-  if (viewMode && viewModes.includes(viewMode)) {
-    savedViewMode.value = viewMode;
-  }
-});
 
 watch(
   () => currentCategory.value?.id,

@@ -38,6 +38,15 @@ export const ROUTES = {
   SAVED_FOR_LATER: {
     NAME: "SavedForLater",
   },
+  ORDER_DETAILS: {
+    NAME: "OrderDetails",
+  },
+  MATCHER: {
+    NAME: "Matcher",
+  },
+  LOYALTY_CATALOG_MATCHER: {
+    NAME: "LoyaltyCatalogMatcher",
+  },
   PROMOTION_COUPONS: {
     NAME: "PromotionCoupons",
     PATH: "coupons",

@@ -75,3 +75,13 @@ export const Basic: StoryType = {
     ],
   },
 };
+
+export const Unavailable: StoryType = {
+  args: {
+    maxFileCount: 5,
+    maxFileSize: 1024 * 1024,
+    allowedExtensions: [],
+    files: [],
+    unavailable: true,
+  },
+};

@@ -4,7 +4,7 @@
     :data-test-id="dataTestId"
     :class="[
       'vc-chip',
-      `vc-chip--size--${size}`,
+      `vc-chip--size--${canonicalSize}`,
       `vc-chip--color--${color}`,
       `vc-chip--${canonicalVariant}--${color}`,
       {
@@ -116,6 +116,13 @@ const canonicalVariant = computed<VcChipVariantType>(() => {
     : DEFAULT_CHIP_VARIANT;
 });
 
+const DEFAULT_CHIP_SIZE: VcChipSizeType = "md";
+const CHIP_SIZES: readonly VcChipSizeType[] = ["sm", DEFAULT_CHIP_SIZE, "lg"];
+
+const canonicalSize = computed<VcChipSizeType>(() =>
+  CHIP_SIZES.includes(props.size) ? props.size : DEFAULT_CHIP_SIZE,
+);
+
 const isRouterLink = computed(() => !!props.to && props.clickable && !props.disabled);
 const isExternalLink = computed(() => !!props.externalLink && props.clickable && !props.disabled);
 
@@ -186,7 +193,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   }
 
   &--nowrap:not(#{$truncate}) {
-    @apply w-auto whitespace-nowrap #{!important};
+    @apply w-auto whitespace-nowrap;
   }
 
   &--rounded {

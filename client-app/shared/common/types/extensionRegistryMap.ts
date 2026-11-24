@@ -1,7 +1,26 @@
-import type { CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
+import type {
+  ConfigurationSectionInput,
+  CustomerOrderType,
+  Product,
+  SharingSettingType,
+} from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import type { SignInMethodContributionType } from "@/shared/account/types";
 import type { IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type { Component, MaybeRefOrGetter } from "vue";
+
+/** What a menu link entry contributes to the link the host draws: a count, shown as a badge. */
+export type MenuCountContributionType = { count?: MaybeRefOrGetter<number> };
+
+/**
+ * What the host passes to each `productActions` entry. The host may put a layout class on the
+ * entry's root, so render a single root element.
+ */
+export type ProductActionPropsType = {
+  product: Product;
+  /** The product page's current configurator selection. Absent on cards. */
+  configurationSections?: ConfigurationSectionInput[];
+};
 
 /** The plugin renders its own markup in place of the host's. */
 type ReplaceEntryType<
@@ -50,8 +69,8 @@ type ExtensionEntryType<
  * ExtensionEntryType<Props, Contributed, Condition> defines the entry for a given category.
  */
 export type ExtensionCategoryMapType = {
-  headerMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
-  mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }, { count?: MaybeRefOrGetter<number> }>;
+  headerMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }, MenuCountContributionType>;
+  mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }, MenuCountContributionType>;
   accountMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
   mobileHeader: ExtensionEntryType;
   topHeaderStatus: ExtensionEntryType;
@@ -61,6 +80,8 @@ export type ExtensionCategoryMapType = {
     (product: Product) => boolean
   >;
   productPage: ExtensionEntryType<{ product?: Product }, never, (product: Product) => boolean>;
+  /** The icon buttons beside "Add to list" on the catalog card, the related-product card and the product page. */
+  productActions: ExtensionEntryType<Partial<ProductActionPropsType>, never, (product: Product) => boolean>;
   paymentPage: ExtensionEntryType<
     { order: CustomerOrderType; paymentTypeName: string },
     never,
@@ -85,6 +106,18 @@ export type ExtensionCategoryMapType = {
     never,
     (sharingSetting?: SharingSettingType) => boolean
   >;
+  /** The cart and checkout review steps. A provider decides on its own state whether it takes over. */
+  checkout: ExtensionEntryType<never, never, () => boolean>;
+  /** The sign-in buttons, keyed by the authentication type. */
+  identityProviders: ExtensionEntryType;
+  /** The account security page, keyed by the sign-in method name. */
+  signInMethods: DecorateEntryType<SignInMethodContributionType>;
+  /** Keyed by the type stored in page and template content. A late registration re-renders the pages showing it. */
+  pageBuilderSection: ExtensionEntryType;
+  /** Widgets on Account › Security, below the sign-in methods. */
+  accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
+  /** Widgets on Company › Info, between the company name and the addresses. */
+  companyInfo: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
 };
 
 /** The parameter a category's `condition` accepts. */

@@ -4,7 +4,7 @@
       <VcIcon size="sm" :name="item.icon" />
     </template>
 
-    {{ formatTextFunction(item?.title) }}
+    <span class="account-navigation-item__title">{{ formatTextFunction(item?.title) }}</span>
 
     <template v-if="$slots.append" #append>
       <slot name="append" />
@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
-import { useLink } from "vue-router";
+import { computed, toRef } from "vue";
+import { useLink, useRoute } from "vue-router";
+import { isMenuLinkActive } from "@/core/utilities/menu";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -25,7 +26,10 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const item = toRef(props, "item");
 
-const { isActive } = useLink({ to: item.value?.route ?? {} });
+const route = useRoute();
+const { isActive: isRouteRecordActive } = useLink({ to: item.value?.route ?? {} });
+
+const isActive = computed(() => isMenuLinkActive(item.value, route, isRouteRecordActive.value));
 
 interface IProps {
   item: ExtendedMenuLinkType;
@@ -36,5 +40,12 @@ interface IProps {
 <style lang="scss">
 .account-navigation-item {
   @apply rounded-md;
+
+  // VcMenuItem breaks its content at any character; sidebar labels wrap at spaces and split a word only if it can't fit.
+  &__title {
+    @apply break-normal;
+
+    overflow-wrap: anywhere;
+  }
 }
 </style>

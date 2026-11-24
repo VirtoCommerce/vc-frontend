@@ -1,0 +1,19 @@
+@use "sass:meta";
+
+@layer theme {
+  @include meta.load-css("tokens");
+}
+
+@layer vc.design {
+  html[data-design="soft"] {
+    @include meta.load-css("blocks/vc-tab-switch-group");
+    @include meta.load-css("blocks/vc-typography");
+    @include meta.load-css("blocks/vc-widget");
+    @include meta.load-css("blocks/footer-links");
+    @include meta.load-css("blocks/vc-container");
+  }
+
+  html.dark[data-design="soft"] {
+    @include meta.load-css("dark/vc-tab-switch-group");
+  }
+}

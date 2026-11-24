@@ -157,7 +157,7 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  @apply flex items-center h-10 border-y border-neutral-200 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {
     @apply flex items-stretch;

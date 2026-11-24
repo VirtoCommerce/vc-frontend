@@ -92,3 +92,39 @@ describe("SearchDropdown search_bar impression", () => {
     expect(searchBarImpressions()).toHaveLength(1);
   });
 });
+
+describe("SearchDropdown select_item", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    analytics.mockClear();
+    searchResults.mockImplementation(() => {
+      products.value = [{ id: "product-1" }, { id: "product-2" }, { id: "product-3" }];
+      return Promise.resolve();
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    searchResults.mockReset();
+  });
+
+  it("sends the selected product with its position in the search_bar list", async () => {
+    const wrapper = mount(SearchDropdown, {
+      props: { visible: true, searchPhrase: "tablet" },
+      global: {
+        stubs: { VcScrollbar: { template: "<div><slot /></div>" }, SearchBarProductCard: true, VcButton: true },
+        mocks: { $t: (key: string) => key },
+      },
+    });
+    await vi.advanceTimersByTimeAsync(300);
+    await flushPromises();
+
+    wrapper.findAllComponents({ name: "SearchBarProductCard" })[2].vm.$emit("linkClick");
+
+    expect(analytics).toHaveBeenCalledWith(
+      "selectItem",
+      { id: "product-3" },
+      expect.objectContaining({ item_list_id: "search_bar", index: 2 }),
+    );
+  });
+});

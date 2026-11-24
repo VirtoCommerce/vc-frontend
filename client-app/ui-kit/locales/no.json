@@ -37,7 +37,9 @@
       "nav_previous": "Forrige",
       "nav_next": "Neste",
       "nav_up": "Opp",
-      "nav_down": "Ned"
+      "nav_down": "Ned",
+      "select_item": "Velg {name}",
+      "select_all_items": "Velg alle varer"
     },
     "calendar": {
       "aria_label": "Kalender",
@@ -125,7 +127,8 @@
       "errors": {
         "fix_to_continue": "Rett opp feil ved opplasting av filer for å fortsette.",
         "has_max_file_count": "Du har lastet opp maksimum antall filer. Flere opplastinger er ikke mulig.",
-        "tried_more_than_max_file_count": "Du prøvde å laste opp flere filer enn det maksimale antallet tillatt."
+        "tried_more_than_max_file_count": "Du prøvde å laste opp flere filer enn det maksimale antallet tillatt.",
+        "unavailable": "Filopplasting er ikke tilgjengelig."
       }
     },
     "reach_limit": {
@@ -166,6 +169,10 @@
       "rating_label": "Vurdering {value} av {maxValue}",
       "read_only_button_aria_label": "Vurdering {value} av {maxValue}, ikke tilgjengelig for valg",
       "set_rating_aria_label": "Sett vurdering til {value} av {maxValue}"
+    },
+    "stat_widget": {
+      "loading": "{label}: laster inn",
+      "error": "{label}: {error}"
     }
   }
 }
