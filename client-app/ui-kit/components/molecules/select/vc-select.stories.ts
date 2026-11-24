@@ -74,7 +74,9 @@ const meta: Meta<IVcSelectStoryArgs> = {
         },
       },
     },
-    modelValue: { table: { type: { summary: "V | V[] — value-field values, or the items without value-field" } } },
+    modelValue: {
+      table: { type: { summary: "V | T[] — one value (value-field, or the item); with multiple, the items" } },
+    },
   },
   args: {
     readonly: false,
@@ -635,15 +637,15 @@ export const SelectAllWithTotal: StoryType = {
   render: (args) => ({
     setup: () => {
       const TOTAL = 30;
-      const allIds = Array.from({ length: TOTAL }, (_, index) => `Buyer ${index + 1}`);
-      const items = ref(allIds.slice(0, 6));
+      const allBuyers = Array.from({ length: TOTAL }, (_, index) => `Buyer ${index + 1}`);
+      const items = ref(allBuyers.slice(0, 6));
       const selected = ref<string[]>([]);
 
       // The select can only add what is loaded; the rest of the set is the consumer's to add. With a
       // query the row acted on the loaded matches only; the rest of the selection stays.
       function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
         if (!query) {
-          selected.value = action === "select-all" ? [...allIds] : [];
+          selected.value = action === "select-all" ? [...allBuyers] : [];
         }
       }
 
@@ -671,7 +673,7 @@ export const SelectAllWithTotal: StoryType = {
         story:
           "A paged list holds one page, so `total` carries the size of the whole set for the counter, " +
           'and Select all can only add the options that are loaded. `@select-all` with `action: "select-all"` ' +
-          "is the consumer's cue to select the rest of the set — every id from the server — and " +
+          "is the consumer's cue to select the rest of the set — every buyer, as the server lists them — and " +
           '`action: "deselect-all"` the cue to clear it. With a `query` the row acted on the matching options ' +
           "only: leave the rest of the selection alone, or, with `server-filter`, add or clear the " +
           "query's matches. Bind `selected-count` too: with it a mixed row selects even when every loaded " +
@@ -681,12 +683,12 @@ export const SelectAllWithTotal: StoryType = {
       source: {
         code: `
 <script setup lang="ts">
-const { items, total, allIds } = useBuyers();
+const { items, total, allBuyers } = useBuyers();
 const selected = ref<string[]>([]);
 
 function onSelectAll({ action, query }: VcSelectSelectAllPayloadType) {
   if (!query) {
-    selected.value = action === "select-all" ? [...allIds.value] : [];
+    selected.value = action === "select-all" ? [...allBuyers.value] : [];
   }
 }
 </script>

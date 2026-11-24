@@ -46,7 +46,7 @@
           @focusout="onFocusOut($event, close)"
         >
           <template v-if="$slots.selected" #selected="scope">
-            <slot name="selected" :item="scope.item as M extends true ? V[] : T" :error="scope.error" />
+            <slot name="selected" :item="scope.item as M extends true ? T[] : T" :error="scope.error" />
           </template>
 
           <template v-if="$slots.placeholder" #placeholder="scope">
@@ -203,8 +203,8 @@ import VcSelectField from "./vc-select-field.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
-  (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
-  (event: "change", value: VcSelectEmittedType<V, M>): void;
+  (event: "update:modelValue", value: VcSelectEmittedType<T, V, M>): void;
+  (event: "change", value: VcSelectEmittedType<T, V, M>): void;
   /**
    * Select all was pressed: `action` is `select-all` when it selected, `deselect-all` when it cleared.
    * Fires alongside the model update, so a paged consumer can select or clear the options not loaded.
@@ -221,7 +221,8 @@ const emit = defineEmits<{
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: M extends true ? V[] : V;
+    /** The selected value, or in `multiple` mode the selected items, whatever `value-field` says. */
+    modelValue?: M extends true ? T[] : V;
     label?: string;
     ariaLabel?: string;
     /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
@@ -233,11 +234,15 @@ const props = withDefaults(
     itemSize?: "xs" | "sm" | "md" | "lg";
     /** Property name, or an accessor, producing the option label. */
     textField?: VcSelectFieldAccessorType<T, string>;
-    /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
-    // The accessor may infer the model type; only the key form must not. The rule resolves the key
+    /**
+     * Property name, or an accessor, producing the single-mode model value. In `multiple` mode the model
+     * holds items, and this is what an item is matched by. Defaults to the item itself.
+     */
+    // The accessor may infer the model type; only the key form must not. A multiple model of items
+    // fits any key, though TypeScript also infers V from it as the array. The rule resolves the key
     // type with T and V unknown, where it is `never`.
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
+    valueField?: VcSelectValueKeyType<T, M extends true ? T : NoInfer<V>> | ((item: T) => V);
     placeholder?: string;
     showEmptyDetails?: boolean;
     error?: boolean;
@@ -245,8 +250,9 @@ const props = withDefaults(
     autocomplete?: boolean;
     singleLineMessage?: boolean;
     /**
-     * Allows several values; the model is then an array. Rows look primitive values up and compare object
-     * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
+     * Allows several selections; the model is then an array of items. An item is matched by its `value-field`
+     * value, or by the item itself without one: primitives are looked up, objects compared deeply — for
+     * thousands of options over thousands of selections, pick a primitive `value-field`.
      */
     // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
     // eslint-disable-next-line sonarjs/no-useless-intersection
@@ -267,7 +273,7 @@ const props = withDefaults(
      * stays partial, and a press reports `select-all` for you to add the rest. Without it such a page
      * shows checked and a press clears, since the row cannot tell it from the whole selection.
      * Its value counts while a `server-filter` query narrows the list: the selected matches among
-     * `total`, loaded or not. Unfiltered the counter counts the model, which holds every value.
+     * `total`, loaded or not. Unfiltered the counter counts the model, which holds every selected item.
      * Capped at `total`, never below the selected matches that are loaded.
      */
     selectedCount?: number;
@@ -314,10 +320,10 @@ const props = withDefaults(
 
 const slots = defineSlots<{
   /**
-   * The chosen item in single mode, the selected values in multiple mode. With this slot or
+   * The chosen item in single mode, the selected items in multiple mode. With this slot or
    * `#placeholder` the trigger is a button, not a typable field, so `autocomplete` has no input.
    */
-  selected?: (props: { item: M extends true ? V[] : T; error?: boolean }) => unknown;
+  selected?: (props: { item: M extends true ? T[] : T; error?: boolean }) => unknown;
   /** Shown in the slotted trigger while nothing is selected; like `#selected`, it makes the trigger a button. */
   placeholder?: (props: { error?: boolean }) => unknown;
   /** Replaces the label of one option. */
@@ -365,10 +371,11 @@ const filterValue = ref("");
 const {
   getItemText,
   isActiveItem,
+  isSameItem,
   getItemValue,
-  getToggledValues,
+  getToggledItems,
   selectedItem: selected,
-  selectedValues,
+  selectedItems,
   hasSelection,
   filteredItems,
 } = useSelect<T, V>({
@@ -450,7 +457,7 @@ function toLabel(value: unknown): string {
 
 const selectedText = computed<string | null>(() => {
   if (props.multiple) {
-    return selectedValues.value.length ? t("ui_kit.select.items_selected", [selectedValues.value.length]) : null;
+    return selectedItems.value.length ? t("ui_kit.select.items_selected", [selectedItems.value.length]) : null;
   }
 
   const text = selected.value === undefined ? undefined : getItemText(selected.value);
@@ -459,7 +466,7 @@ const selectedText = computed<string | null>(() => {
   return text === undefined || text === null ? null : String(text);
 });
 
-const selectedSlotItem = computed(() => (props.multiple ? selectedValues.value : selected.value));
+const selectedSlotItem = computed(() => (props.multiple ? selectedItems.value : selected.value));
 
 const placeholderText = computed(() => selectedText.value ?? props.placeholder);
 
@@ -506,15 +513,15 @@ const search = computed({
   },
 });
 
-// `VcSelectEmittedType<V, M>` stays a deferred conditional type while `M` is unresolved, so the
+// `VcSelectEmittedType<T, V, M>` stays a deferred conditional type while `M` is unresolved, so the
 // value needs a cast that the lint rule, judging the resolved type, calls unnecessary. The rule
 // below reads the unconstrained `V` as `unknown`; the union names the three shapes a commit takes.
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-function commit(value: V | V[] | undefined): void {
+function commit(value: V | T[] | undefined): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  emit("update:modelValue", value as VcSelectEmittedType<V, M>);
+  emit("update:modelValue", value as VcSelectEmittedType<T, V, M>);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  emit("change", value as VcSelectEmittedType<V, M>);
+  emit("change", value as VcSelectEmittedType<T, V, M>);
 }
 
 function select(item: T) {
@@ -523,7 +530,7 @@ function select(item: T) {
   }
 
   if (props.multiple) {
-    commit(getToggledValues(item));
+    commit(getToggledItems(item));
     return;
   }
 
@@ -675,7 +682,7 @@ function clear() {
   }
 
   // Clear selection
-  if (props.multiple && selectedValues.value.length) {
+  if (props.multiple && selectedItems.value.length) {
     commit([]);
   } else if (!props.multiple && hasSelection.value) {
     commit(undefined);
@@ -709,7 +716,7 @@ watch(filterValue, (value) => {
 });
 
 if (import.meta.env.DEV) {
-  useSelectDevWarnings(props, slots, getItemValue);
+  useSelectDevWarnings(props, slots);
 }
 
 const isSelectAllShown = computed(() => props.withSelectAll && props.multiple);
@@ -729,10 +736,10 @@ const {
   isSomeSelected,
   isDisabled: isSelectAllDisabled,
   toggle: toggleAll,
-} = useSelectAll<V>({
-  rows: () =>
-    filteredItems.value.map((item, index) => ({ value: getItemValue(item), active: activeRows.value[index] })),
-  selectedValues,
+} = useSelectAll<T>({
+  rows: () => filteredItems.value.map((item, index) => ({ item, active: activeRows.value[index] })),
+  selectedItems,
+  isSameItem,
   filterValue,
   answeredQuery: echoedQuery,
   serverFilter: () => props.serverFilter,
@@ -765,9 +772,9 @@ function onSelectAll() {
     return;
   }
 
-  const { values, action } = toggleAll();
+  const { items, action } = toggleAll();
 
-  commit(values);
+  commit(items);
   emit("selectAll", { action, query: filterValue.value });
 }
 

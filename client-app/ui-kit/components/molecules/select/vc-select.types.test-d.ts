@@ -9,9 +9,13 @@ type MixedKeyItemType = { id: string; 0: string; [SYMBOL_KEY]: string };
 type OptionalItemType = { id?: string; rank?: number };
 
 describe("VcSelectEmittedType", () => {
-  it("emits undefined for a cleared single select, an array for a multiple one", () => {
-    expectTypeOf<VcSelectEmittedType<string, false>>().toEqualTypeOf<string | undefined>();
-    expectTypeOf<VcSelectEmittedType<string, true>>().toEqualTypeOf<string[]>();
+  it("emits the value or undefined (cleared) for a single select", () => {
+    expectTypeOf<VcSelectEmittedType<ItemType, string, false>>().toEqualTypeOf<string | undefined>();
+  });
+
+  it("emits the items for a multiple select, whatever the value type", () => {
+    expectTypeOf<VcSelectEmittedType<ItemType, string, true>>().toEqualTypeOf<ItemType[]>();
+    expectTypeOf<VcSelectEmittedType<ItemType, ItemType, true>>().toEqualTypeOf<ItemType[]>();
   });
 });
 

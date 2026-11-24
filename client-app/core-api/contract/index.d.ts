@@ -468,12 +468,12 @@ declare const __VLS_base$m: vue.DefineComponent<IProps$C, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
     color: VcButtonColorType;
+    tabindex: string | number;
     variant: VcButtonVariantType;
     loading: boolean;
     disabled: boolean;
     tag: string;
     truncate: boolean;
-    tabindex: string | number;
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -613,8 +613,8 @@ declare const __VLS_base$k: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.Co
     size: VcChipSizeType;
     to: RouteLocationRaw | null;
     color: VcChipColorType;
-    variant: VcChipVariantType;
     tabindex: string | number;
+    variant: VcChipVariantType;
     nowrap: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$F: __VLS_WithSlots$k<typeof __VLS_base$k, __VLS_Slots$k>;
@@ -1150,7 +1150,8 @@ declare const _default$r: typeof __VLS_export$r;
 
 declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: vue.PublicProps & __VLS_PrettifyLocal$2<{
-        modelValue?: M extends true ? V[] : V;
+        /** The selected value, or in `multiple` mode the selected items, whatever `value-field` says. */
+        modelValue?: M extends true ? T[] : V;
         label?: string;
         ariaLabel?: string;
         /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
@@ -1162,8 +1163,11 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         itemSize?: "xs" | "sm" | "md" | "lg";
         /** Property name, or an accessor, producing the option label. */
         textField?: VcSelectFieldAccessorType<T, string>;
-        /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
-        valueField?: VcSelectValueKeyType<T, NoInfer<V>> | ((item: T) => V);
+        /**
+         * Property name, or an accessor, producing the single-mode model value. In `multiple` mode the model
+         * holds items, and this is what an item is matched by. Defaults to the item itself.
+         */
+        valueField?: VcSelectValueKeyType<T, M extends true ? T : NoInfer<V>> | ((item: T) => V);
         placeholder?: string;
         showEmptyDetails?: boolean;
         error?: boolean;
@@ -1171,8 +1175,9 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         autocomplete?: boolean;
         singleLineMessage?: boolean;
         /**
-         * Allows several values; the model is then an array. Rows look primitive values up and compare object
-         * values deeply — for thousands of options over thousands of selections, pick a primitive `value-field`.
+         * Allows several selections; the model is then an array of items. An item is matched by its `value-field`
+         * value, or by the item itself without one: primitives are looked up, objects compared deeply — for
+         * thousands of options over thousands of selections, pick a primitive `value-field`.
          */
         multiple?: M & boolean;
         clearable?: boolean;
@@ -1191,7 +1196,7 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
          * stays partial, and a press reports `select-all` for you to add the rest. Without it such a page
          * shows checked and a press clears, since the row cannot tell it from the whole selection.
          * Its value counts while a `server-filter` query narrows the list: the selected matches among
-         * `total`, loaded or not. Unfiltered the counter counts the model, which holds every value.
+         * `total`, loaded or not. Unfiltered the counter counts the model, which holds every selected item.
          * Capped at `total`, never below the selected matches that are loaded.
          */
         selectedCount?: number;
@@ -1232,8 +1237,8 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
     } & {
         onSearch?: ((value: string) => any) | undefined;
         onLoadMore?: (() => any) | undefined;
-        onChange?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
-        "onUpdate:modelValue"?: ((value: VcSelectEmittedType<V, M>) => any) | undefined;
+        onChange?: ((value: VcSelectEmittedType<T, V, M>) => any) | undefined;
+        "onUpdate:modelValue"?: ((value: VcSelectEmittedType<T, V, M>) => any) | undefined;
         onSelectAll?: ((payload: VcSelectSelectAllPayloadType) => any) | undefined;
     }> & (typeof globalThis extends {
         __VLS_PROPS_FALLBACK: infer P;
@@ -1242,11 +1247,11 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
     attrs: any;
     slots: {
         /**
-         * The chosen item in single mode, the selected values in multiple mode. With this slot or
+         * The chosen item in single mode, the selected items in multiple mode. With this slot or
          * `#placeholder` the trigger is a button, not a typable field, so `autocomplete` has no input.
          */
         selected?: (props: {
-            item: M extends true ? V[] : T;
+            item: M extends true ? T[] : T;
             error?: boolean;
         }) => unknown;
         /** Shown in the slotted trigger while nothing is selected; like `#selected`, it makes the trigger a button. */
@@ -1264,8 +1269,8 @@ declare const __VLS_export$q: <T, V = T, M extends boolean = false>(__VLS_props:
         empty?: () => unknown;
     };
     emit: {
-        (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
-        (event: "change", value: VcSelectEmittedType<V, M>): void;
+        (event: "update:modelValue", value: VcSelectEmittedType<T, V, M>): void;
+        (event: "change", value: VcSelectEmittedType<T, V, M>): void;
         (event: "selectAll", payload: VcSelectSelectAllPayloadType): void;
         (event: "loadMore"): void;
         (event: "search", value: string): void;
@@ -7424,7 +7429,7 @@ type VcPopoverOffsetOptionsType = OffsetOptions;
 type VcPopoverShiftOptionsType = ShiftOptions;
 type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
 type VcProductActionsButtonColorType = VcMainColorType;
-type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
+type VcSelectEmittedType<T, V, M extends boolean> = M extends true ? T[] : V | undefined;
 type VcSelectSelectAllPayloadType = {
     action: "select-all" | "deselect-all";
     query: string;

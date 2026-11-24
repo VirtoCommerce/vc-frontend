@@ -257,13 +257,13 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("placeholder")).toBe("2 items selected");
     });
 
-    it("marks selected options with aria-selected when valueField is set", () => {
+    it("marks an item selected by its valueField, whatever object the model holds it in", () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
         textField: "name",
         valueField: "id",
         multiple: true,
-        modelValue: ["2"],
+        modelValue: [{ id: "2", name: "Belgium, as loaded before" }],
       });
 
       const flags = wrapper.findAll('[role="option"]').map((option) => option.attributes("aria-selected"));
@@ -271,7 +271,7 @@ describe("VcSelect", () => {
       expect(flags).toEqual(["false", "true"]);
     });
 
-    it("stores valueField values, not whole items", async () => {
+    it("emits whole items with valueField set", async () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
         textField: "name",
@@ -282,7 +282,36 @@ describe("VcSelect", () => {
 
       await wrapper.findAll('[role="option"]')[0].trigger("click");
 
-      expect(wrapper.emitted("update:modelValue")).toEqual([[["1"]]]);
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[OBJECT_ITEMS[0]]]]);
+      expect(wrapper.emitted("change")).toEqual([[[OBJECT_ITEMS[0]]]]);
+    });
+
+    it("removes an item by its valueField when a refetch holds it in a new object", async () => {
+      const stale = { id: "1", name: "Albania, as loaded before" };
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        valueField: "id",
+        multiple: true,
+        modelValue: [stale, OBJECT_ITEMS[1]],
+      });
+
+      await wrapper.findAll('[role="option"]')[0].trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[OBJECT_ITEMS[1]]]]);
+    });
+
+    it("removes an item deeply equal to the option without valueField", async () => {
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        multiple: true,
+        modelValue: [{ ...OBJECT_ITEMS[0] }],
+      });
+
+      await wrapper.findAll('[role="option"]')[0].trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
 
     it("treats an uninitialised model as empty", async () => {
@@ -312,7 +341,6 @@ describe("VcSelect", () => {
 
       it.each([
         ["a single id", { modelValue: "1" }, true],
-        ["a list of ids", { multiple: true, modelValue: ["1"] }, true],
         ["the item itself", { modelValue: OBJECT_ITEMS[0] }, false],
         ["no model yet", { modelValue: undefined }, false],
         ["an id with valueField", { valueField: "id", modelValue: "1" }, false],
@@ -356,6 +384,66 @@ describe("VcSelect", () => {
         expect(warn.mock.calls.filter(([message]) => String(message).includes(primitiveWarning))).toHaveLength(1);
       });
 
+      it("stays quiet for primitive items", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({ items: ITEMS, modelValue: "Albania" });
+
+        expect(warned(warn)).toBe(false);
+      });
+    });
+
+    describe("a multiple model of values instead of items", () => {
+      const valuesWarning = "a `multiple` model holds items, not `value-field` values";
+      const warned = (warn: ReturnType<typeof spyOnWarn>) =>
+        warn.mock.calls.filter(([message]) => String(message).includes(valuesWarning)).length;
+
+      it.each([
+        ["with valueField", { valueField: "id" }],
+        ["without valueField", {}],
+      ])("warns once in development %s", async (_label, props) => {
+        const warn = spyOnWarn();
+        const wrapper = createWrapper({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          multiple: true,
+          modelValue: ["1"],
+          ...props,
+        });
+
+        await wrapper.setProps({ modelValue: ["1", "2"] });
+
+        expect(warn).toHaveBeenCalledOnce();
+        expect(warned(warn)).toBe(1);
+      });
+
+      it.each([
+        ["the items themselves", [...OBJECT_ITEMS]],
+        ["an item that is not on the loaded page", [{ id: "9", name: "Zambia" }]],
+        ["a null entry", [null]],
+      ])("stays quiet for %s", (_label, modelValue) => {
+        const warn = spyOnWarn();
+
+        expect(() =>
+          createWrapper({ items: OBJECT_ITEMS, textField: "name", valueField: "id", multiple: true, modelValue }),
+        ).not.toThrow();
+        expect(warn).not.toHaveBeenCalled();
+      });
+
+      it("stays quiet for items under an accessor valueField", () => {
+        const warn = spyOnWarn();
+
+        createWrapper({
+          items: OBJECT_ITEMS,
+          textField: "name",
+          valueField: (item: { id: string }) => item.id,
+          multiple: true,
+          modelValue: [OBJECT_ITEMS[0]],
+        });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+
       it.each([
         ["objects pushed into the items", ["Other"], ["1"], (items: unknown[]) => items.push(...OBJECT_ITEMS)],
         ["an item replaced by an object", ["Other"], ["1"], (items: unknown[]) => (items[0] = OBJECT_ITEMS[0])],
@@ -376,138 +464,15 @@ describe("VcSelect", () => {
         const items = reactive<unknown[]>([...startItems]);
         const model = reactive<unknown[]>([...startModel]);
 
-        mountWithReactiveProps(() => ({ items, multiple: true, modelValue: model }));
+        mountWithReactiveProps(() => ({ items, valueField: "id", multiple: true, modelValue: model }));
         await nextTick();
 
-        expect(warned(warn)).toBe(false);
+        expect(warned(warn)).toBe(0);
 
         change(items, model);
         await nextTick();
 
-        expect(warned(warn)).toBe(true);
-      });
-
-      it("stays quiet for primitive items", () => {
-        const warn = spyOnWarn();
-
-        createWrapper({ items: ITEMS, modelValue: "Albania" });
-
-        expect(warned(warn)).toBe(false);
-      });
-    });
-
-    describe("a model that still holds items under valueField", () => {
-      it("warns once in development", async () => {
-        const warn = spyOnWarn();
-        const wrapper = createWrapper({
-          items: OBJECT_ITEMS,
-          textField: "name",
-          valueField: "id",
-          multiple: true,
-          modelValue: [OBJECT_ITEMS[0]],
-        });
-
-        await wrapper.setProps({ modelValue: [...OBJECT_ITEMS] });
-
-        expect(warn).toHaveBeenCalledOnce();
-        expect(warn.mock.calls[0][0]).toContain("holds values, not items");
-      });
-
-      it("warns for an item that is not on the loaded page", () => {
-        const warn = spyOnWarn();
-
-        createWrapper({
-          items: OBJECT_ITEMS,
-          textField: "name",
-          valueField: "id",
-          multiple: true,
-          modelValue: [{ id: "9", name: "Zambia" }],
-        });
-
-        expect(warn).toHaveBeenCalledOnce();
-      });
-
-      it("stays quiet for a null entry in the model", () => {
-        const warn = spyOnWarn();
-
-        expect(() =>
-          createWrapper({
-            items: OBJECT_ITEMS,
-            textField: "name",
-            valueField: "id",
-            multiple: true,
-            modelValue: [null],
-          }),
-        ).not.toThrow();
-        expect(warn).not.toHaveBeenCalled();
-      });
-
-      it.each([
-        ["an item pushed into the model", (model: unknown[]) => model.push({ id: "9", name: "Zambia" })],
-        ["a model entry replaced by an item", (model: unknown[]) => (model[0] = OBJECT_ITEMS[0])],
-      ])("warns after %s in place", async (_label, change) => {
-        const warn = spyOnWarn();
-        const model = reactive<unknown[]>(["1"]);
-
-        mountWithReactiveProps(() => ({
-          items: OBJECT_ITEMS,
-          textField: "name",
-          valueField: "id",
-          multiple: true,
-          modelValue: model,
-        }));
-        await nextTick();
-
-        expect(warn).not.toHaveBeenCalled();
-
-        change(model);
-        await nextTick();
-
-        expect(warn).toHaveBeenCalledOnce();
-      });
-
-      it("warns after an item that matches the model is pushed into the items", async () => {
-        const warn = spyOnWarn();
-        const items = reactive<unknown[]>([OBJECT_ITEMS[1]]);
-        const byId = (item: { id: string }) => item.id;
-
-        mountWithReactiveProps(() => ({
-          items,
-          textField: "name",
-          valueField: byId,
-          multiple: true,
-          modelValue: [OBJECT_ITEMS[0]],
-        }));
-        await nextTick();
-
-        expect(warn).not.toHaveBeenCalled();
-
-        items.push(OBJECT_ITEMS[0]);
-        await nextTick();
-
-        expect(warn).toHaveBeenCalledOnce();
-      });
-
-      it("stays quiet for a model of values", () => {
-        const warn = spyOnWarn();
-
-        createWrapper({ items: OBJECT_ITEMS, textField: "name", valueField: "id", multiple: true, modelValue: ["1"] });
-
-        expect(warn).not.toHaveBeenCalled();
-      });
-
-      it("stays quiet when valueField resolves to the item itself", () => {
-        const warn = spyOnWarn();
-
-        createWrapper({
-          items: OBJECT_ITEMS,
-          textField: "name",
-          valueField: (item: never) => item,
-          multiple: true,
-          modelValue: [OBJECT_ITEMS[0]],
-        });
-
-        expect(warn).not.toHaveBeenCalled();
+        expect(warned(warn)).toBe(1);
       });
     });
   });
@@ -650,6 +615,76 @@ describe("VcSelect", () => {
 
       expect(wrapper.get(".vc-select-all input").attributes("aria-checked")).toBe("mixed");
       expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "a" }]]);
+    });
+
+    describe("over object items, refetched as new objects", () => {
+      const COUNTRIES = [
+        { id: "1", name: "Albania" },
+        { id: "2", name: "Belgium" },
+        { id: "3", name: "China" },
+      ];
+
+      // The same countries as an earlier page or query loaded them: equal ids, other objects.
+      const loadedBefore = (index: number) => ({
+        ...COUNTRIES[index],
+        name: `${COUNTRIES[index].name}, loaded before`,
+      });
+
+      it("adds each loaded item once, by its valueField, next to its earlier object", async () => {
+        const wrapper = createWrapper({
+          ...selectAllProps,
+          items: COUNTRIES,
+          textField: "name",
+          valueField: "id",
+          total: 10,
+          selectedCount: 1,
+          modelValue: [loadedBefore(0)],
+        });
+
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("update:modelValue")).toEqual([[[loadedBefore(0), COUNTRIES[1], COUNTRIES[2]]]]);
+        expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "" }]]);
+      });
+
+      it("adds each match of a server-side query once, deeply equal items without valueField", async () => {
+        const wrapper = createWrapper({
+          ...selectAllProps,
+          items: COUNTRIES,
+          textField: "name",
+          autocomplete: true,
+          serverFilter: true,
+          onSearch: noop,
+          answeredQuery: "",
+          modelValue: [{ ...COUNTRIES[0] }],
+        });
+
+        await wrapper.get("input").trigger("click");
+        await typeAnsweredQuery(wrapper, "a");
+        await wrapper.setProps({ items: [{ ...COUNTRIES[0] }, { ...COUNTRIES[2] }], total: 2, selectedCount: 1 });
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("update:modelValue")).toEqual([[[COUNTRIES[0], COUNTRIES[2]]]]);
+        expect(wrapper.emitted("selectAll")).toEqual([[{ action: "select-all", query: "a" }]]);
+      });
+
+      it("clears the matches of a query by their valueField and keeps the items it hides", async () => {
+        const wrapper = createWrapper({
+          ...selectAllProps,
+          items: COUNTRIES,
+          textField: "name",
+          valueField: "id",
+          autocomplete: true,
+          modelValue: [loadedBefore(0), loadedBefore(1), loadedBefore(2)],
+        });
+
+        await wrapper.get("input").trigger("click");
+        await wrapper.get("input").setValue("bel");
+        await wrapper.get(".vc-select-all input").trigger("change");
+
+        expect(wrapper.emitted("update:modelValue")).toEqual([[[loadedBefore(0), loadedBefore(2)]]]);
+        expect(wrapper.emitted("selectAll")).toEqual([[{ action: "deselect-all", query: "bel" }]]);
+      });
     });
 
     it("acts on the filtered subset only", async () => {
@@ -3682,14 +3717,14 @@ describe("VcSelect", () => {
       expect(control.attributes("aria-disabled")).toBe("true");
     });
 
-    it("passes the selected values, not the items, to the selected slot in multiple mode", () => {
+    it("passes the selected items to the selected slot in multiple mode, with valueField set", () => {
       const wrapper = createWrapper(
         {
           items: OBJECT_ITEMS,
           textField: "name",
           valueField: "id",
           multiple: true,
-          modelValue: ["1", "2"],
+          modelValue: [...OBJECT_ITEMS],
           error: true,
         },
         {
@@ -3699,7 +3734,7 @@ describe("VcSelect", () => {
         },
       );
 
-      expect(wrapper.get(".probe-selected").text()).toBe('["1","2"] true');
+      expect(wrapper.get(".probe-selected").text()).toBe(`${JSON.stringify(OBJECT_ITEMS)} true`);
       expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
     });
 

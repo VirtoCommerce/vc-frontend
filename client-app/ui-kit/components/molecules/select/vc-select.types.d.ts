@@ -1,6 +1,6 @@
 declare global {
-  /** Emitted value: an array in multiple mode, otherwise a value or `undefined` (cleared). */
-  type VcSelectEmittedType<V, M extends boolean> = M extends true ? V[] : V | undefined;
+  /** Emitted value: the selected items in multiple mode, otherwise a value or `undefined` (cleared). */
+  type VcSelectEmittedType<T, V, M extends boolean> = M extends true ? T[] : V | undefined;
 
   /** The `select-all` event: what the press did, and the query narrowing the list ("" for none). */
   type VcSelectSelectAllPayloadType = {

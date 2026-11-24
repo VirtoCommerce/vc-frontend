@@ -1,4 +1,4 @@
-import { isEqual, isObjectLike } from "lodash-es";
+import { isObjectLike } from "lodash-es";
 import { getCurrentInstance, watch } from "vue";
 import { isSelectedCountKnown } from "@/ui-kit/composables";
 import type { ComponentInternalInstance } from "vue";
@@ -24,18 +24,13 @@ interface IDevWarningSlots {
 type VNodePropsType = Record<string, unknown>;
 
 /** Console warnings for VcSelect props that contradict each other. Call it during setup, in dev only. */
-export function useSelectDevWarnings<T>(
-  props: IDevWarningProps<T>,
-  slots: IDevWarningSlots,
-  getItemValue: (item: T) => unknown,
-): void {
+export function useSelectDevWarnings<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots): void {
   const instance = getCurrentInstance();
   const vnodeProps = instance?.vnode.props ?? {};
 
   warnSelectAll(props, instance);
   warnFiltering(props, slots, instance);
   warnPaging(props, slots, vnodeProps);
-  watchItemModel(props, getItemValue);
   watchPrimitiveModel(props);
 }
 
@@ -204,48 +199,15 @@ function warnPaging<T>(props: IDevWarningProps<T>, slots: IDevWarningSlots, vnod
   );
 }
 
-// A `multiple` model holding whole items instead of `valueField` values matches no option.
-function watchItemModel<T>(props: IDevWarningProps<T>, getItemValue: (item: T) => unknown): void {
-  let warnedItemModel = false;
-
-  watch(
-    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
-    ([multiple, valueField, modelValue, items]) => {
-      if (warnedItemModel || !multiple || valueField === undefined || !Array.isArray(modelValue)) {
-        return;
-      }
-
-      // An off-page selection matches no loaded item, but still carries a string value field as a key.
-      const hasItemModel = modelValue.some(
-        (value) =>
-          (typeof valueField === "string" && typeof value === "object" && value !== null && valueField in value) ||
-          items.some((item) => isEqual(item, value) && !isEqual(getItemValue(item), value)),
-      );
-
-      if (hasItemModel) {
-        warnedItemModel = true;
-        // eslint-disable-next-line no-console
-        console.warn(
-          "VcSelect: with `multiple` and `value-field` the model holds values, not items. " +
-            "Map the items to their `value-field`, or drop `value-field` to keep whole items.",
-        );
-      }
-    },
-    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
-    // index assignment in place re-runs the check.
-    { immediate: true, deep: 2 },
-  );
-}
-
-// Without `valueField` the model is the item itself, so a primitive model over object items matches
-// no option and the whole item is what a pick writes into it.
+// A model is the item itself in multiple mode, and in single mode without `valueField`; there a primitive
+// over object items matches no option, and the whole item is what a pick writes into it.
 function watchPrimitiveModel<T>(props: IDevWarningProps<T>): void {
   let warnedPrimitiveModel = false;
 
   watch(
-    () => [props.valueField, props.modelValue, props.items] as const,
-    ([valueField, modelValue, items]) => {
-      if (warnedPrimitiveModel || valueField !== undefined) {
+    () => [props.multiple, props.valueField, props.modelValue, props.items] as const,
+    ([multiple, valueField, modelValue, items]) => {
+      if (warnedPrimitiveModel || (!multiple && valueField !== undefined)) {
         return;
       }
 
@@ -256,15 +218,22 @@ function watchPrimitiveModel<T>(props: IDevWarningProps<T>): void {
       );
       const hasObjectItems = items.some((item) => isObjectLike(item));
 
-      if (hasPrimitiveValue && hasObjectItems) {
-        warnedPrimitiveModel = true;
-        // eslint-disable-next-line no-console
-        console.warn(
-          "VcSelect: the model holds a primitive but the items are objects, and without `value-field` " +
-            "the model is the item. Set `value-field` to the key the model holds.",
-        );
+      if (!hasPrimitiveValue || !hasObjectItems) {
+        return;
       }
+
+      warnedPrimitiveModel = true;
+      // eslint-disable-next-line no-console
+      console.warn(
+        multiple
+          ? "VcSelect: a `multiple` model holds items, not `value-field` values, but this one holds a primitive " +
+              "while the items are objects, so it matches no option. Put the items themselves in the model."
+          : "VcSelect: the model holds a primitive but the items are objects, and without `value-field` " +
+              "the model is the item. Set `value-field` to the key the model holds.",
+      );
     },
+    // Depth 2: the tuple, then the entries of items and of the model, so a push, a splice or an
+    // index assignment in place re-runs the check.
     { immediate: true, deep: 2 },
   );
 }

@@ -90,6 +90,50 @@ describe("useSelect with an empty multiple model", () => {
   });
 });
 
+describe("useSelect with a multiple model of items", () => {
+  type CountryType = { id: string; name: string };
+
+  const COUNTRIES: CountryType[] = [
+    { id: "1", name: "Albania" },
+    { id: "2", name: "Belgium" },
+  ];
+
+  function setupMultiple(modelValue: CountryType[], valueField?: "id") {
+    return useSelect<CountryType, string>({
+      items: COUNTRIES,
+      modelValue,
+      multiple: true,
+      filterValue: "",
+      serverFilter: false,
+      textField: "name",
+      valueField,
+    });
+  }
+
+  it("matches an item by its valueField, whatever object holds it", () => {
+    const { isActiveItem, isSameItem } = setupMultiple([{ id: "2", name: "Belgium, loaded before" }], "id");
+
+    expect(isActiveItem(COUNTRIES[1])).toBe(true);
+    expect(isActiveItem(COUNTRIES[0])).toBe(false);
+    expect(isSameItem(COUNTRIES[1], { id: "2", name: "Renamed" })).toBe(true);
+  });
+
+  it("matches an item deeply without valueField", () => {
+    const { isActiveItem, isSameItem } = setupMultiple([{ ...COUNTRIES[1] }]);
+
+    expect(isActiveItem(COUNTRIES[1])).toBe(true);
+    expect(isSameItem(COUNTRIES[1], { id: "2", name: "Renamed" })).toBe(false);
+  });
+
+  it("toggles whole items, removing one held in another object", () => {
+    const stale = { id: "1", name: "Albania, loaded before" };
+    const { getToggledItems } = setupMultiple([stale], "id");
+
+    expect(getToggledItems(COUNTRIES[1])).toEqual([stale, COUNTRIES[1]]);
+    expect(getToggledItems(COUNTRIES[0])).toEqual([]);
+  });
+});
+
 describe("useSelect remembering the selected item", () => {
   it("labels a value picked and then dropped from a reset list within one tick", () => {
     const items = ref<OptionType[]>(ITEMS);

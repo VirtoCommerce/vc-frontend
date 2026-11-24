@@ -1,12 +1,14 @@
-import { differenceWith, isEqual, unionWith } from "lodash-es";
+import { differenceWith, unionWith } from "lodash-es";
 import { computed, toValue } from "vue";
 import type { MaybeRefOrGetter } from "vue";
 
-export interface IUseSelectAllOptions<V> {
-  /** The options on screen, in render order: each one's value and whether it is selected. */
-  rows: MaybeRefOrGetter<readonly { value: V; active: boolean }[]>;
-  /** The whole selection, including values no option on screen carries. */
-  selectedValues: MaybeRefOrGetter<readonly V[]>;
+export interface IUseSelectAllOptions<T> {
+  /** The options on screen, in render order: each one's item and whether it is selected. */
+  rows: MaybeRefOrGetter<readonly { item: T; active: boolean }[]>;
+  /** The whole selection, including items no option on screen holds. */
+  selectedItems: MaybeRefOrGetter<readonly T[]>;
+  /** Whether two items are one, whatever object holds each: a page or a query refetched returns new objects. */
+  isSameItem: (left: T, right: T) => boolean;
   /** Without `serverFilter`, the typed query narrowing the options. */
   filterValue: MaybeRefOrGetter<string>;
   /** With `serverFilter`, the query the options and `total` on screen answer, as the consumer echoes it. */
@@ -34,7 +36,7 @@ export function isSelectedCountKnown(count: number | undefined): count is number
  * The Select all row of a multiple select: its `selected of total` counter, its checked and
  * indeterminate states, and the selection a press produces.
  */
-export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
+export function useSelectAll<T>(params: IUseSelectAllOptions<T>) {
   // While a query narrows the list, only the matching options count: a local filter is unknown to
   // `total`, and with `serverFilter` the consumer's `total` counts the matches of the answered query.
   const isNarrowed = computed(
@@ -58,14 +60,14 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
   });
 
   // Never below what is visibly selected. Without `total` nothing beyond the loaded options can be
-  // counted; with it, model values past it are ones no option carries.
+  // counted; with it, model items past it are ones no option holds.
   const selectedCount = computed(() => {
     const total = toValue(params.total);
 
     if (!isNarrowed.value) {
       return total === undefined
         ? selectedVisibleCount.value
-        : Math.max(Math.min(toValue(params.selectedValues).length, total), selectedVisibleCount.value);
+        : Math.max(Math.min(toValue(params.selectedItems).length, total), selectedVisibleCount.value);
     }
 
     if (!toValue(params.serverFilter) || knownSelectedCount.value === undefined) {
@@ -101,19 +103,19 @@ export function useSelectAll<V>(params: IUseSelectAllOptions<V>) {
    * select — on a counted partial set whose loaded options are all selected that adds nothing here,
    * and the consumer selects the rest on `select-all`.
    */
-  function toggle(): { values: V[]; action: VcSelectSelectAllPayloadType["action"] } {
-    const selectedValues = toValue(params.selectedValues);
-    const values = toValue(params.rows).map((row) => row.value);
+  function toggle(): { items: T[]; action: VcSelectSelectAllPayloadType["action"] } {
+    const selectedItems = toValue(params.selectedItems);
+    const items = toValue(params.rows).map((row) => row.item);
 
     if (isAllSelected.value) {
       // What a query hides stays selected; unnarrowed, the whole selection goes, loaded or not.
       return {
-        values: isNarrowed.value ? differenceWith(selectedValues, values, isEqual) : [],
+        items: isNarrowed.value ? differenceWith(selectedItems, items, params.isSameItem) : [],
         action: "deselect-all",
       };
     }
 
-    return { values: unionWith(selectedValues, values, isEqual), action: "select-all" };
+    return { items: unionWith(selectedItems, items, params.isSameItem), action: "select-all" };
   }
 
   return {

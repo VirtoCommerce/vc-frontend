@@ -6,11 +6,11 @@ export interface IUseSelectOptions<T, V> {
   /** The options, in the order given. */
   items: MaybeRefOrGetter<T[]>;
   /**
-   * The selected value, or the values in multiple mode; `undefined` is no selection, nor is a `null`
-   * that neither an option nor the last match from an earlier `items` carries.
+   * The selected value, or the selected items in multiple mode; `undefined` is no selection, nor is a
+   * single `null` that neither an option nor the last match from an earlier `items` carries.
    */
-  modelValue: MaybeRefOrGetter<V | V[] | undefined>;
-  /** Several values instead of one. */
+  modelValue: MaybeRefOrGetter<V | T[] | undefined>;
+  /** Several items instead of one value. */
   multiple: MaybeRefOrGetter<boolean | undefined>;
   /** The typed query the options are filtered by. */
   filterValue: MaybeRefOrGetter<string>;
@@ -18,7 +18,10 @@ export interface IUseSelectOptions<T, V> {
   serverFilter: MaybeRefOrGetter<boolean | undefined>;
   /** The option's label: a key or a getter; the option itself without one. */
   textField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, string> | undefined>;
-  /** The option's model value: a key or a getter; the option itself without one. */
+  /**
+   * The option's single-mode value, and what an item is matched by in multiple mode: a key or a getter;
+   * the option itself without one.
+   */
   valueField: MaybeRefOrGetter<VcSelectFieldAccessorType<T, V> | undefined>;
 }
 
@@ -37,7 +40,7 @@ function readField<T, R>(item: T, accessor: VcSelectFieldAccessorType<T, R> | un
 
 /**
  * Selection state of VcSelect: reads labels and values through `textField` / `valueField`, matches
- * options against a single or multiple model, and filters the options locally unless `serverFilter`.
+ * options against a single value or a multiple model of items, and filters the options locally unless `serverFilter`.
  */
 export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
   function getItemText(item: T): unknown {
@@ -48,8 +51,8 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
     return readField(item, toValue(params.valueField)) as V;
   }
 
-  /** The multiple-mode model: `valueField` values, or the items themselves without `valueField`; empty in single mode. */
-  const selectedValues = computed<V[]>(() => {
+  /** The multiple-mode model: the selected items; empty in single mode. */
+  const selectedItems = computed<T[]>(() => {
     if (!toValue(params.multiple)) {
       return [];
     }
@@ -58,6 +61,11 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
 
     return Array.isArray(model) ? model : [];
   });
+
+  /** Multiple mode's identity, whatever object holds an item: equal `valueField` values, else deep-equal items. */
+  function isSameItem(left: T, right: T): boolean {
+    return isEqual(getItemValue(left), getItemValue(right));
+  }
 
   // An unset model matches nothing, not an option that lacks `valueField` and so reads `undefined`;
   // `null` is a value an option may carry.
@@ -99,10 +107,11 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
     );
   });
 
-  // A primitive is looked up, so a long list over a long selection stays linear; only objects are
-  // compared deeply.
-  const selectedPrimitives = computed(() => new Set<unknown>(selectedValues.value.filter((value) => !isObject(value))));
-  const selectedObjects = computed(() => selectedValues.value.filter(isObject));
+  // What the selected items are matched by. A primitive is looked up, so a long list over a long
+  // selection stays linear; only objects are compared deeply.
+  const selectedKeys = computed<unknown[]>(() => selectedItems.value.map((item) => getItemValue(item)));
+  const selectedPrimitives = computed(() => new Set<unknown>(selectedKeys.value.filter((key) => !isObject(key))));
+  const selectedObjects = computed(() => selectedKeys.value.filter(isObject));
 
   // Multiple compares deeply, single by identity: date-filter-select.vue rebuilds its ranges and
   // relies on re-picking an equal range still emitting.
@@ -111,27 +120,26 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
 
     if (toValue(params.multiple)) {
       return isObject(itemValue)
-        ? selectedObjects.value.some((selectedValue) => isEqual(selectedValue, itemValue))
+        ? selectedObjects.value.some((selectedKey) => isEqual(selectedKey, itemValue))
         : selectedPrimitives.value.has(itemValue);
     }
 
     return isSingleModel(itemValue);
   }
 
-  function getToggledValues(item: T): V[] {
-    const itemValue = getItemValue(item);
-    const existingIndex = selectedValues.value.findIndex((selectedValue) => isEqual(selectedValue, itemValue));
+  function getToggledItems(item: T): T[] {
+    const existingIndex = selectedItems.value.findIndex((selected) => isSameItem(selected, item));
 
     if (existingIndex >= 0) {
-      return [...selectedValues.value.slice(0, existingIndex), ...selectedValues.value.slice(existingIndex + 1)];
+      return [...selectedItems.value.slice(0, existingIndex), ...selectedItems.value.slice(existingIndex + 1)];
     }
 
-    return [...selectedValues.value, itemValue];
+    return [...selectedItems.value, item];
   }
 
   const hasSelection = computed<boolean>(() => {
     if (toValue(params.multiple)) {
-      return selectedValues.value.length > 0;
+      return selectedItems.value.length > 0;
     }
 
     const model = toValue(params.modelValue);
@@ -176,15 +184,16 @@ export function useSelect<T, V>(params: IUseSelectOptions<T, V>) {
   return {
     /** The option's label, read through `textField`; the item itself without one. */
     getItemText,
-    /** The option's model value, read through `valueField`; the item itself without one. */
+    /** The option's value, read through `valueField`; the item itself without one. */
     getItemValue,
     /** Whether the option is selected. */
     isActiveItem,
+    isSameItem,
     /** The multiple-mode model with the option added, or removed when it was selected. */
-    getToggledValues,
+    getToggledItems,
     /** Single mode: the selected option, remembered across `items` swaps; the model itself without `valueField`. */
     selectedItem,
-    selectedValues,
+    selectedItems,
     /** Whether the model holds a selection, so there is something to clear. */
     hasSelection,
     /** The options to render: substring matches with prefix matches first, or `items` as given. */
