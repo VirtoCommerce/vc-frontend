@@ -43,9 +43,8 @@ function select(cultureName: string): void {
 
 <style lang="scss">
 .language-list {
-  &__scroll {
-    @apply max-h-48;
-  }
+  // The rows scroll within whatever height the list is given.
+  @apply flex flex-col;
 
   &__flag {
     @apply size-3.5 flex-none;

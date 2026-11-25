@@ -68,9 +68,8 @@ function select(code: string): void {
 
 <style lang="scss">
 .currency-list {
-  &__scroll {
-    @apply max-h-48;
-  }
+  // The rows scroll within whatever height the list is given.
+  @apply flex flex-col;
 
   &__symbol {
     @apply w-8 flex-none text-center text-neutral-600;

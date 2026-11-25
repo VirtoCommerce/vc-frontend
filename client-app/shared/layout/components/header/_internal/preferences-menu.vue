@@ -35,7 +35,7 @@
         data-test-id="preferences-menu-panel"
       >
         <div v-if="isCurrencyShown || isAppearanceShown" class="preferences-menu__column">
-          <div v-if="isCurrencyShown" class="preferences-menu__group">
+          <div v-if="isCurrencyShown" class="preferences-menu__group preferences-menu__group--list">
             <div :id="currencyLabelId" class="preferences-menu__heading">
               {{ $t("shared.layout.header.preferences_menu.currency") }}
             </div>
@@ -53,7 +53,7 @@
         </div>
 
         <div v-if="isLanguageShown" class="preferences-menu__column">
-          <div class="preferences-menu__group">
+          <div class="preferences-menu__group preferences-menu__group--list">
             <div :id="languageLabelId" class="preferences-menu__heading">
               {{ $t("shared.layout.header.preferences_menu.language") }}
             </div>
@@ -152,14 +152,28 @@ const triggerLabel = computed(() =>
 
   &__panel {
     @apply flex text-additional-950;
+
+    // The notifications dropdown's reserve in the same header row; the card's padding and border sit outside the panel.
+    max-height: calc(100vh - 10rem - 2 * (var(--vc-popover-padding, 0px) + var(--vc-popover-border-width, 0px)));
   }
 
   &__column {
-    @apply min-w-64 pb-2;
+    @apply flex min-h-0 min-w-64 flex-col pb-2;
 
     & + & {
       @apply border-s border-neutral-100;
     }
+  }
+
+  &__group {
+    // Only a list gives up height when the panel is capped: it scrolls, the appearance switch stays whole.
+    &--list {
+      @apply flex min-h-0 flex-col;
+    }
+  }
+
+  &__list {
+    @apply min-h-0;
   }
 
   &__heading {
