@@ -1,0 +1,365 @@
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { computed, defineComponent, h, ref } from "vue";
+import { useThemeSnapshot } from "@/core/theme-snapshot";
+import { publishTheme } from "@/core/theme-snapshot/published-theme.mock";
+import { registerPageBuilderSections } from "@/shared/static-content/sections";
+import CategoryPage from "./category.vue";
+
+const listingProps = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
+const loadedCategory = vi.hoisted<{ value: Record<string, unknown> }>(() => ({ value: {} }));
+const fetchedCategory = vi.hoisted<{ value: Record<string, unknown> | undefined }>(() => ({ value: undefined }));
+const siteBuilder = vi.hoisted(() => ({ isEnabled: false }));
+const heldFetches = vi.hoisted<{ value: Map<string, () => void> | undefined }>(() => ({ value: undefined }));
+const scrollToAnchor = vi.hoisted(() => vi.fn(() => Promise.resolve(true)));
+const searchScope = await vi.hoisted(async () => {
+  const { ref: createRef } = await import("vue");
+
+  return { isHandedOver: createRef(false), holds: createRef(0), holdsWhenPrepared: createRef<number>() };
+});
+
+vi.mock("@/core/theme-snapshot/enabled", () => ({ isSiteBuilderEnabled: () => siteBuilder.isEnabled }));
+vi.mock("vue-router", () => ({ useRoute: () => ({ path: "/printers", hash: "#promo" }) }));
+vi.mock("@/shared/static-content/anchors", async () => ({
+  ...(await vi.importActual<typeof import("@/shared/static-content/anchors")>("@/shared/static-content/anchors")),
+  scrollToAnchor,
+}));
+
+vi.mock("@/core/composables/useLanguages", () => ({
+  useLanguages: () => ({ currentLanguage: ref({ cultureName: "en-US" }), defaultStoreCulture: ref("en-US") }),
+}));
+vi.mock("@/core/composables", () => ({ useBreadcrumbs: () => [] }));
+vi.mock("@/shared/catalog/composables/useCategory", () => ({
+  useCategory: () => {
+    const category = ref(loadedCategory.value);
+
+    return {
+      category,
+      fetchCategory: vi.fn(async ({ categoryId }: { categoryId: string }) => {
+        await new Promise<void>((resolve) => {
+          if (heldFetches.value) {
+            heldFetches.value.set(categoryId, resolve);
+          } else {
+            resolve();
+          }
+        });
+        category.value = fetchedCategory.value ?? category.value;
+      }),
+    };
+  },
+}));
+vi.mock("@/shared/catalog/composables/useLoyaltyCatalogCurrency", () => ({ useLoyaltyCatalogCurrency: () => ref() }));
+vi.mock("@/shared/layout/composables/useSearchScore", () => ({
+  useSearchScore: () => ({
+    isCategoryScope: ref(false),
+    isScopePending: computed(() => searchScope.isHandedOver.value || searchScope.holds.value > 0),
+    holdScope: () => {
+      searchScope.holds.value++;
+      return () => {
+        searchScope.holds.value--;
+      };
+    },
+    prepareScope: () => {
+      searchScope.holdsWhenPrepared.value = searchScope.holds.value;
+      return () => undefined;
+    },
+  }),
+}));
+vi.mock("@/shared/catalog/components/category.vue", async () => {
+  const { defineComponent: define, h: render } = await import("vue");
+  const { useSearchScore } = await import("@/shared/layout/composables/useSearchScore");
+  return {
+    default: define({
+      inheritAttrs: false,
+      setup: (_props, { attrs }) => {
+        listingProps.value = attrs;
+        useSearchScore().prepareScope();
+        return () => render("section", { "data-test-id": "category-listing-section" });
+      },
+    }),
+  };
+});
+
+const Banner = defineComponent({
+  props: { text: { type: String, default: "" } },
+  setup: (props) => () => h("aside", { "data-test-id": "category-banner" }, props.text),
+});
+
+registerPageBuilderSections({ banner: Banner });
+
+const wrappers: { unmount: () => void }[] = [];
+
+function mountCategory(props: { categoryId: string; outline?: string }) {
+  const wrapper = mount(CategoryPage, {
+    props,
+    global: { stubs: { VcContainer: { template: "<div><slot /></div>" }, VcBreadcrumbs: true } },
+  });
+  wrappers.push(wrapper);
+  return wrapper;
+}
+
+describe("category page", () => {
+  beforeEach(() => {
+    useThemeSnapshot().setPublished(null);
+    listingProps.value = {};
+    loadedCategory.value = { breadcrumbs: [{ title: "Toner" }] };
+    fetchedCategory.value = undefined;
+    siteBuilder.isEnabled = false;
+    heldFetches.value = undefined;
+    scrollToAnchor.mockClear();
+    searchScope.isHandedOver.value = false;
+    searchScope.holds.value = 0;
+    searchScope.holdsWhenPrepared.value = undefined;
+  });
+
+  afterEach(() => {
+    wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
+  });
+
+  it("shows the listing alone in the built-in template", () => {
+    const wrapper = mountCategory({ categoryId: "toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+    expect(wrapper.findComponent({ name: "VcBreadcrumbs" }).exists()).toBe(true);
+    expect(listingProps.value).toMatchObject({ "category-id": "toner" });
+  });
+
+  it("chooses the template by the slug's outline and renders its sections around the listing", () => {
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            {
+              id: "listing",
+              type: "category-listing",
+              hideBreadcrumbs: true,
+              viewMode: "list",
+              hideSidebar: true,
+              cardType: "<unset>",
+              keyword: "injected",
+            },
+            { id: "bottom", type: "banner", text: "Below" },
+          ],
+        },
+      },
+    });
+
+    const wrapper = mountCategory({ categoryId: "toner", outline: "catalog/sale/toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above", "Below"]);
+    expect(wrapper.findComponent({ name: "VcBreadcrumbs" }).exists()).toBe(false);
+    expect(listingProps.value).toMatchObject({ viewMode: "list", hideSidebar: true });
+    expect(listingProps.value).not.toHaveProperty("cardType");
+    expect(listingProps.value).not.toHaveProperty("keyword");
+  });
+
+  it("does not choose the template by the outline of the category shown before", () => {
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing" },
+          ],
+        },
+      },
+    });
+    loadedCategory.value = { id: "sale-printers", outline: "catalog/sale/sale-printers", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+  });
+
+  it("waits for a category without the slug's outline before choosing its template", async () => {
+    siteBuilder.isEnabled = true;
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+    fetchedCategory.value = { id: "toner", outline: "catalog/sale/toner", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+    expect(listingProps.value).toEqual({});
+
+    await flushPromises();
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "toner", viewMode: "list" });
+  });
+
+  it("keeps the listing and the previous category's template until the next category has loaded", async () => {
+    siteBuilder.isEnabled = true;
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+    fetchedCategory.value = { id: "toner", outline: "catalog/sale/toner", breadcrumbs: [] };
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    await flushPromises();
+    const listing = wrapper.find('[data-test-id="category-listing-section"]').element;
+
+    heldFetches.value = new Map();
+    fetchedCategory.value = { id: "paper", outline: "catalog/office/paper", breadcrumbs: [] };
+    await wrapper.setProps({ categoryId: "paper" });
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').element).toBe(listing);
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "paper", viewMode: "list" });
+
+    heldFetches.value.get("paper")?.();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').element).toBe(listing);
+    expect(wrapper.findAll('[data-test-id="category-banner"]')).toHaveLength(0);
+    expect(listingProps.value).not.toHaveProperty("viewMode");
+  });
+
+  it("chooses the template by the slug's outline without waiting for the category", () => {
+    siteBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing", viewMode: "list" },
+          ],
+        },
+      },
+    });
+
+    const wrapper = mountCategory({ categoryId: "toner", outline: "catalog/sale/toner" });
+
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+    expect(listingProps.value).toMatchObject({ "category-id": "toner", viewMode: "list" });
+  });
+
+  it("shows the category once its request has finished, also when it found nothing", async () => {
+    siteBuilder.isEnabled = true;
+    fetchedCategory.value = { id: "catalog", breadcrumbs: [] };
+
+    mountCategory({ categoryId: "missing" });
+    await flushPromises();
+
+    expect(listingProps.value).toMatchObject({ "category-id": "missing" });
+  });
+
+  it("keeps the listing and its template when the previous category's request finishes after the current one's", async () => {
+    siteBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    publishTheme({
+      rules: { version: 2, category: [{ id: "sale", template: "category.sale", when: { inCategory: ["sale"] } }] },
+      templates: {
+        "category.sale": {
+          settings: {},
+          content: [
+            { id: "top", type: "banner", text: "Above" },
+            { id: "listing", type: "category-listing" },
+          ],
+        },
+      },
+    });
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    await wrapper.setProps({ categoryId: "paper" });
+
+    fetchedCategory.value = { id: "paper", outline: "catalog/sale/paper", breadcrumbs: [] };
+    heldFetches.value.get("paper")?.();
+    await flushPromises();
+    fetchedCategory.value = { id: "toner", outline: "catalog/office/toner", breadcrumbs: [] };
+    heldFetches.value.get("toner")?.();
+    await flushPromises();
+
+    expect(wrapper.find('[data-test-id="category-listing-section"]').exists()).toBe(true);
+    expect(listingProps.value).toMatchObject({ "category-id": "paper" });
+    expect(wrapper.findAll('[data-test-id="category-banner"]').map((node) => node.text())).toEqual(["Above"]);
+  });
+
+  it("holds the search scope the previous page handed over until the first category has loaded", async () => {
+    siteBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    searchScope.isHandedOver.value = true;
+
+    mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
+    await flushPromises();
+
+    expect(searchScope.holds.value).toBe(1);
+
+    heldFetches.value.get("toner")?.();
+    await flushPromises();
+
+    expect(searchScope.holdsWhenPrepared.value).toBe(1);
+    expect(searchScope.holds.value).toBe(0);
+  });
+
+  it("hands its search scope hold on for a tick when it is left before the first category has loaded", async () => {
+    siteBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+    searchScope.isHandedOver.value = true;
+
+    const wrapper = mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
+    wrapper.unmount();
+
+    expect(searchScope.holds.value).toBe(1);
+
+    await flushPromises();
+
+    expect(searchScope.holds.value).toBe(0);
+  });
+
+  it("does not hold a search scope no page handed over", async () => {
+    siteBuilder.isEnabled = true;
+    heldFetches.value = new Map();
+
+    mountCategory({ categoryId: "toner" });
+    await flushPromises();
+
+    expect(searchScope.holds.value).toBe(0);
+  });
+
+  it("does not hold the search scope when it does not wait for the category", async () => {
+    heldFetches.value = new Map();
+    searchScope.isHandedOver.value = true;
+
+    mountCategory({ categoryId: "toner" });
+    searchScope.isHandedOver.value = false;
+    await flushPromises();
+
+    expect(searchScope.holds.value).toBe(0);
+  });
+
+  it("scrolls to the section the address names", () => {
+    mountCategory({ categoryId: "toner" });
+
+    expect(scrollToAnchor).toHaveBeenCalledWith("#promo");
+  });
+});

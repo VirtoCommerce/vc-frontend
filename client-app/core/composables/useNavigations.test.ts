@@ -1,4 +1,6 @@
+import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { IPublishedTheme } from "@/core/theme-snapshot/types";
 
 const hoisted = vi.hoisted(() => {
   const mockRouter = {
@@ -10,6 +12,8 @@ const hoisted = vi.hoisted(() => {
   };
 
   const matchingRouteName = { value: "" };
+
+  const isAuthenticated = { value: true };
 
   const menuData = {
     header: {
@@ -91,7 +95,9 @@ const hoisted = vi.hoisted(() => {
   return {
     mockRouter,
     matchingRouteName,
+    isAuthenticated,
     menuData,
+    isDesignerPreview: false,
   };
 });
 
@@ -112,9 +118,23 @@ vi.mock("@/core/composables/useCurrency", () => ({
   }),
 }));
 
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({
+    isAuthenticated: hoisted.isAuthenticated,
+  }),
+}));
+
 vi.mock("@/core/composables/useThemeContext", () => ({
   useThemeContext: () => ({
     themeContext: { value: { catalogId: "test", settings: {} } },
+    modulesSettings: {
+      value: [
+        {
+          moduleId: "VirtoCommerce.WhiteLabeling",
+          settings: [{ name: "WhiteLabeling.WhiteLabelingEnabled", value: true }],
+        },
+      ],
+    },
   }),
 }));
 
@@ -122,6 +142,11 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({
     getSettingValue: () => undefined,
   }),
+}));
+
+vi.mock("@/core/theme-snapshot/designer-frame", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/core/theme-snapshot/designer-frame")>()),
+  isDesignerPreview: () => hoisted.isDesignerPreview,
 }));
 
 vi.mock("@/core/api/graphql", () => ({
@@ -151,6 +176,7 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
     vi.clearAllMocks();
     hoisted.mockRouter.currentRoute.value.matched = [];
     hoisted.matchingRouteName.value = "";
+    hoisted.isAuthenticated.value = true;
   });
 
   describe("Dashboard route", () => {
@@ -252,6 +278,52 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
       expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
     });
   });
+
+  const salesRepHub = {
+    id: "sales-rep-hub",
+    title: "Hub",
+    children: [{ id: "my-customers", route: { name: "MyCustomers" }, title: "My customers" }],
+  };
+
+  describe("Registered account sections", () => {
+    it("returns a registered section for its child route", async () => {
+      hoisted.mockRouter.currentRoute.value.matched = [{ name: "MyCustomers" }];
+      const navigations = await importComposable();
+      navigations.registerAccountSection(salesRepHub);
+      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("sales-rep-hub");
+    });
+  });
+
+  describe("Guest", () => {
+    beforeEach(() => {
+      hoisted.isAuthenticated.value = false;
+    });
+
+    it.each(["Orders", "Notifications", "Profile", "CompanyInfo"])(
+      "returns undefined for the %s route an account section lists",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
+      },
+    );
+
+    it("returns undefined for a registered section's child route", async () => {
+      hoisted.mockRouter.currentRoute.value.matched = [{ name: "MyCustomers" }];
+      const navigations = await importComposable();
+      navigations.registerAccountSection(salesRepHub);
+      expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
+    });
+
+    it.each(["Catalog", "Category", "Product"])(
+      "still returns mobileCatalogMenuItem for %s route",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("catalog");
+      },
+    );
+  });
 });
 
 describe("useNavigations - registerAccountSection", () => {
@@ -278,5 +350,181 @@ describe("useNavigations - registerAccountSection", () => {
 
     expect(navigations.registeredAccountSections.value).toHaveLength(1);
     expect(navigations.registeredAccountSections.value[0].title).toBe("sales_rep.hub.title");
+  });
+});
+
+describe("useNavigations - theme header", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    hoisted.isDesignerPreview = false;
+  });
+
+  async function publishSiteHeader(settings: Record<string, unknown>): Promise<void> {
+    const { useThemeSnapshot } = await import("@/core/theme-snapshot/useThemeSnapshot");
+    useThemeSnapshot().setPublished(createTheme(settings));
+  }
+
+  function createTheme(settings: Record<string, unknown>): IPublishedTheme {
+    return {
+      storeId: "store",
+      cultureName: "en-US",
+      publication: 1,
+      snapshot: {
+        format: 1,
+        publication: 1,
+        cultureName: "en-US",
+        templates: {},
+        header: { content: [{ id: "header", type: "site-header", ...settings }] },
+      },
+      menus: [{ name: "Header-Categories", items: [{ title: "Shoes", url: "/shoes" }] }],
+    };
+  }
+
+  it("gives the mobile menu the theme's category menu, as the desktop header", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Shoes"]);
+    expect(navigations.mobileCatalogMenuItem.value?.children).toEqual(navigations.catalogMenuItems.value);
+  });
+
+  it("shows the white-labeling main menu read after boot in place of the theme's category menu", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { useWhiteLabeling } = await import("@/core/composables/useWhiteLabeling");
+
+    useWhiteLabeling().setWhiteLabelingSettings({
+      mainMenuLinks: [{ title: "Organization", url: "/organization", priority: 0, childItems: [] }],
+    });
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
+  });
+
+  it("does not request the regular catalog menu while the theme's category menu replaces it", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+
+    await navigations.fetchCatalogMenu();
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Shoes"]);
+  });
+
+  it("requests the regular catalog menu at boot when the published theme lacks the menu it names", async () => {
+    await publishSiteHeader({ catalog_menu: "Missing-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
+    await navigations.fetchCatalogMenu();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("requests the regular catalog menu once a late theme without the category menu takes over", async () => {
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+    const { useThemeSnapshot } = await import("@/core/theme-snapshot/useThemeSnapshot");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+    await navigations.fetchCatalogMenu();
+
+    useThemeSnapshot().setLate(createTheme({}));
+    useThemeSnapshot().promoteLate();
+    await flushPromises();
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    await publishSiteHeader({});
+    await flushPromises();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("shows the regular catalog menu in the designer while the theme's category menu has not loaded", async () => {
+    hoisted.isDesignerPreview = true;
+    await publishSiteHeader({ catalog_menu: "Header-Categories" });
+    const navigations = await importComposable();
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
+    await navigations.fetchCatalogMenu();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+
+    await publishSiteHeader({ catalog_menu: "Draft-Categories" });
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("leaves the category menu out of the mobile menu when the theme hides it", async () => {
+    await publishSiteHeader({ show_catalog_menu: false });
+    const navigations = await importComposable();
+
+    expect(navigations.isCatalogMenuShown.value).toBe(false);
+    expect(navigations.mobileCatalogMenuItem.value).toBeUndefined();
+  });
+});
+
+describe("useNavigations - catalog menu", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  const WHITE_LABELING_MAIN_MENU = [{ title: "Organization", url: "/organization", priority: 0, childItems: [] }];
+
+  async function setUp() {
+    const navigations = await importComposable();
+    const { useWhiteLabeling } = await import("@/core/composables/useWhiteLabeling");
+    const { getChildCategories } = await import("@/core/api/graphql");
+    vi.mocked(getChildCategories).mockResolvedValue([{ title: "Printers" }] as never);
+
+    return { navigations, setWhiteLabelingSettings: useWhiteLabeling().setWhiteLabelingSettings, getChildCategories };
+  }
+
+  it("shows the regular catalog menu when nothing replaces it", async () => {
+    const { navigations } = await setUp();
+
+    await navigations.fetchCatalogMenu();
+
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("does not request the regular catalog menu while the white-labeling main menu replaces it", async () => {
+    const { navigations, setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+
+    await navigations.fetchCatalogMenu();
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Organization"]);
+  });
+
+  it("requests the regular catalog menu once the white-labeling main menu is gone", async () => {
+    const { navigations, setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+    await navigations.fetchCatalogMenu();
+
+    setWhiteLabelingSettings({ mainMenuLinks: [] });
+    await flushPromises();
+
+    expect(getChildCategories).toHaveBeenCalledOnce();
+    expect(navigations.catalogMenuItems.value.map((item) => item.title)).toEqual(["Printers"]);
+  });
+
+  it("does not request the catalog menu nobody fetched when the white-labeling main menu is gone", async () => {
+    const { setWhiteLabelingSettings, getChildCategories } = await setUp();
+    setWhiteLabelingSettings({ mainMenuLinks: WHITE_LABELING_MAIN_MENU });
+    await flushPromises();
+
+    setWhiteLabelingSettings({ mainMenuLinks: [] });
+    await flushPromises();
+
+    expect(getChildCategories).not.toHaveBeenCalled();
   });
 });

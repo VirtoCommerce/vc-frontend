@@ -1,0 +1,7 @@
+{
+  "name": "Recommended products",
+  "icon": "smartphone",
+  "targetTemplates": ["product"],
+  "blocks": ["recommendation"],
+  "settings": []
+}

@@ -104,6 +104,11 @@ export function isSafeLinkUrl(url: string): boolean {
   return parsed !== null && !UNSAFE_LINK_PROTOCOLS.has(parsed.protocol);
 }
 
+export function toSafeLinkUrl(value: unknown): string | undefined {
+  const url = toNonEmptyString(value);
+  return url && isSafeLinkUrl(url) ? url : undefined;
+}
+
 export type UniqByLastIterateeType<T> = keyof T | ((item: T) => unknown);
 export function uniqByLast<T>(arr: T[], iteratee: UniqByLastIterateeType<T>): T[] {
   return uniqBy(arr.slice().reverse(), iteratee).reverse();
@@ -198,6 +203,11 @@ export function presetNameToFileName(name: string): string {
   return name.toLowerCase().replaceAll(" ", "-");
 }
 
+/** The language part of a culture name, lowercased as culture names compare case-insensitively: `de-DE` → `de`. */
+export function getLanguageCode(cultureName: string): string {
+  return cultureName.split("-")[0].toLowerCase();
+}
+
 /**
  * Turns a web-safe page / file name into a human-friendly label for display.
  * Replaces `_` and `-` separators with spaces, collapses whitespace and upper-cases the
@@ -248,4 +258,12 @@ export function toFirstString(value: unknown): string {
   const first: unknown = Array.isArray(value) ? value[0] : value;
 
   return typeof first === "string" ? first : "";
+}
+
+export function toNonEmptyString(value: unknown): string | undefined {
+  return typeof value === "string" && value ? value : undefined;
+}
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

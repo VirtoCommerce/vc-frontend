@@ -6,29 +6,34 @@
     {
       "id": "title",
       "label": "Title",
-      "type": "string"
+      "type": "string",
+      "translatable": true
     },
     {
       "id": "subtitle",
       "label": "Subtitle",
-      "type": "string"
+      "type": "string",
+      "translatable": true
     },
     {
       "id": "placeholder",
       "label": "Input placeholder",
       "type": "string",
+      "translatable": true,
       "default": "customer@example.com"
     },
     {
       "id": "checkboxText",
       "label": "Checkbox label",
       "type": "text",
+      "translatable": true,
       "default": "By clicking &quot;Submit&quot;, I hereby agree to the <a href='/terms'>Terms and Policy</a>."
     },
     {
       "id": "buttonText",
       "label": "Button text",
       "type": "string",
+      "translatable": true,
       "default": "Submit"
     }
   ]
