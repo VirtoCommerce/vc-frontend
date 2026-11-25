@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useMutationBatcher, getMergeStrategyUniqueBy } from "./useMutationBatcher";

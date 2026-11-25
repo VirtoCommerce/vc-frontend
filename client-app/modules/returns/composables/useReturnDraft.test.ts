@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref, shallowRef } from "vue";
 import { RETURN_ACTION } from "@/modules/returns/constants";

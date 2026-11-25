@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { BUILT_IN_TEMPLATES, withMainSection } from "./built-in";
 import { matchesPath } from "./conditions";

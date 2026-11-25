@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { useDateField } from "@/ui-kit/composables";

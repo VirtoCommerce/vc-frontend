@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 import { computed, ref } from "vue";
 import { PRODUCT_SORTING_LIST } from "@/core/constants/products";

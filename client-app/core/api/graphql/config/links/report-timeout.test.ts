@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { ApolloLink, Observable, execute, gql } from "@apollo/client/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { reportTimeoutLink } from "./report-timeout";

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref, computed, nextTick } from "vue";
 import { useProductVariations } from "./useProductVariations";

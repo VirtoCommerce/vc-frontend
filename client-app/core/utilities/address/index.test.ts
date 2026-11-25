@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect } from "vitest";
 import { toInputAddress, getAddressName, isEqualAddresses, isMemberAddressType, stringifyAddress } from "./index";
 import type { AnyAddressType } from "../../types";
