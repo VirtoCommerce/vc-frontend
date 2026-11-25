@@ -28,7 +28,7 @@
     <!-- Lists / Skeletons -->
     <div v-if="loading || lists.length" class="lists__container">
       <div class="lists__items">
-        <template v-if="loading">
+        <template v-if="showSkeletons">
           <WishlistCardSkeleton v-for="item in 10" :key="item" />
         </template>
 
@@ -57,7 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { invoke } from "@vueuse/core";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
@@ -84,7 +85,13 @@ usePageHead({
 
 const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
+// `lists` is module-scoped and survives navigation, so on a revisit only this page's own flag knows it is stale.
+const listsFetching = ref(true);
+
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
+// Not the shared `loading` alone: a save from the Rename or Share dialog raises it for its refetch, and swapping the
+// cards out then takes away the menu trigger the dialog hands the focus back to.
+const showSkeletons = computed(() => listsFetching.value || (loading.value && !lists.value.length));
 
 function openCreateListModal() {
   if (creationButtonDisabled.value) {
@@ -130,7 +137,13 @@ function openDeleteListModal(list: WishlistType, triggerElement?: HTMLElement) {
   });
 }
 
-void fetchWishlists();
+void invoke(async () => {
+  try {
+    await fetchWishlists();
+  } finally {
+    listsFetching.value = false;
+  }
+});
 </script>
 
 <style lang="scss">
