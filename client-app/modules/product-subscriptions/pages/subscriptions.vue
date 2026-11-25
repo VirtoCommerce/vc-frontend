@@ -542,9 +542,13 @@ async function settle<T>(steps: ChangeStepType<T>[], sequential = false): Promis
     return Promise.allSettled(steps.map((x) => x.run()));
   }
   const results: PromiseSettledResult<T>[] = [];
-  for (const step of steps) {
-    results.push(...(await Promise.allSettled([step.run()])));
-  }
+  await steps.reduce(
+    (previous, step) =>
+      previous.then(async () => {
+        results.push(...(await Promise.allSettled([step.run()])));
+      }),
+    Promise.resolve(),
+  );
   return results;
 }
 
