@@ -33,7 +33,7 @@ const h = vi.hoisted(() => {
     authHeaders: { value: {} },
     fetchUser: vi.fn(),
     user,
-    // As in `useUser`: derived from the loaded user, so a reload is what changes it
+    // Derived from the user, as in `useUser`
     isAuthenticated: {
       get value() {
         return !!user.value.userName && user.value.userName !== "Anonymous";
@@ -90,8 +90,7 @@ beforeEach(() => {
   h.user.value = {};
 });
 
-// As in `useBroadcast`: emitters don't wait for the listener, so the next step runs while it may still be waiting for
-// `me`, and a listener that rejects is settled
+// As in `useBroadcast`: emitters don't wait for the listener, and a listener that rejects is settled
 async function emit(event: string): Promise<void> {
   const listener = h.listeners.get(event);
 
@@ -156,8 +155,6 @@ describe("graphqlErrorEvent", () => {
   });
 });
 
-// A session that is gone ends on Sign In, whichever of the two events comes first. A 403 with nothing to say a session
-// was lost ends on NoAccess, for a signed-in user and for a guest alike.
 describe("auth errors", () => {
   const PAGE_PATH = "/company/info?page=2";
   const PASSWORD_AND_LOCK_FLAGS = ["forcePasswordChange", "passwordExpired", "lockedState"];
@@ -226,7 +223,7 @@ describe("auth errors", () => {
     );
   });
 
-  // A session sent to Sign In stays lost until a navigation ends elsewhere, so the next test starts after one
+  // A lost session is held until a navigation ends elsewhere
   afterEach(async () => {
     await reloadUser();
     await router.push("/company/info");
@@ -367,7 +364,6 @@ describe("auth errors", () => {
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
   });
 
-  // The cancelled navigation reports its failure while Sign In is still opening
   it("keeps a late 403 off NoAccess when the push to Sign In cancels a navigation in flight", async () => {
     const open: Record<string, () => void> = {};
     router.addRoute({ path: "/slow", name: "Slow", component: {} });
@@ -417,7 +413,6 @@ describe("auth errors", () => {
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
   });
 
-  // The user is a guest on the page from then on
   it("handles the next errors as usual after a leave guard refuses the push to Sign In", async () => {
     router.beforeEach((to) => to.name !== ROUTES.SIGN_IN.NAME);
     signInWithDeadSession();
@@ -464,7 +459,7 @@ describe("auth errors", () => {
     expect(router.currentRoute.value.name).toBe("NoAccess");
   });
 
-  // A store open to anonymous users lets a guest check out: the guest's 401 leaves them there, the 403 does not
+  // A store open to guests lets them check out: a 401 leaves them there, a 403 does not
   it("sends a guest to NoAccess when a 403 arrives while a 401 is reloading the user", async () => {
     await router.push("/checkout/payment");
     h.authHeaders.value = {};
@@ -562,8 +557,7 @@ describe("auth errors", () => {
     expect(h.router.push).not.toHaveBeenCalled();
   });
 
-  // Nowhere to send the user from a public page with no way back, or from Sign In, where a signed-in user confirms
-  // who they are
+  // A signed-in user is on Sign In to confirm who they are
   it.each([
     ["/404", "unauthorized", "me", "forbidden"],
     ["/404", "forbidden", "me", "unauthorized"],

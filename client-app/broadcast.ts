@@ -101,13 +101,11 @@ export function setupBroadcastGlobalListeners() {
     }
   });
   let userReload: Promise<boolean> | undefined;
-  // A failed token refresh emits unauthorizedErrorEvent and lets the request go out without a token, so a
-  // forbiddenEvent follows. Once that session is found gone, its late events are neither a missing permission nor a
-  // reason to reload the user again. Held until the user ends up anywhere but Sign In, not until the push settles:
-  // a leave guard that never resolves would hold a push forever.
+  // A failed token refresh emits a 401 and sends the request without a token, so a 403 follows. Once the session is
+  // found gone, its late events are ignored until the user ends up anywhere but Sign In.
   let sessionLost = false;
 
-  // The push to Sign In cancels a navigation in flight, and that one fails without having led anywhere
+  // A navigation that the push to Sign In cancels fails as well, and must not end it
   function endLostSession(to: RouteLocationNormalized, failed: boolean): void {
     if (router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME && (!failed || to.name === ROUTES.SIGN_IN.NAME)) {
       sessionLost = false;
@@ -115,10 +113,10 @@ export function setupBroadcastGlobalListeners() {
   }
 
   router.afterEach((to, _from, failure) => endLostSession(to, !!failure));
-  // A chunk that fails to load rejects the navigation without reaching afterEach
+  // A chunk that fails to load skips afterEach
   router.onError((_error, to) => endLostSession(to, true));
 
-  // Resolves to true when a user who was signed in is anonymous after the reload. Both events wait for one `me` request.
+  // True when a signed-in user comes back anonymous. Both events share one `me` request.
   function reloadUser(): Promise<boolean> {
     userReload ??= (async () => {
       const wasSignedIn = isAuthenticated.value;
@@ -130,13 +128,12 @@ export function setupBroadcastGlobalListeners() {
     return userReload;
   }
 
-  // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded before this
   function redirectToSignIn(sessionGone: boolean): void {
     if (sessionLost || user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
       return;
     }
 
-    // Set where the user stays as well (Sign In, a public page): the late events are ignored there too
+    // Also where the user stays: on Sign In and on a public page
     sessionLost = sessionGone;
 
     const route = router.currentRoute.value;
@@ -147,8 +144,7 @@ export function setupBroadcastGlobalListeners() {
 
     const query = buildRedirectUrl(route);
 
-    // A page that can't be returned to is left only by a user whose session is gone: a guest stays on their checkout,
-    // and Sign In sends a user who is still signed in on to the catalog.
+    // A page with no way back is left only when the session is gone: a guest stays on their checkout
     if (query || (sessionGone && !route.meta.public)) {
       void router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
       closeAllModals();
@@ -213,8 +209,7 @@ export function setupBroadcastGlobalListeners() {
       return;
     }
 
-    // No token while the user is still held as signed in: the session may be gone, not the permission. A failed
-    // `me` (fetchUser logs it) leaves nothing to tell, so the 403 is taken as it came.
+    // Signed in but no token: the session may be gone, not the permission. fetchUser has logged a failed `me`.
     if (!authHeaders.value.Authorization && isAuthenticated.value && (await reloadUser().catch(() => false))) {
       redirectToSignIn(true);
       return;
