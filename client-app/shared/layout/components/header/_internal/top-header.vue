@@ -169,8 +169,6 @@
                 {{ backToOperatorLabel }}
               </span>
             </button>
-
-            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>
       </template>
@@ -211,7 +209,6 @@ import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
-import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();

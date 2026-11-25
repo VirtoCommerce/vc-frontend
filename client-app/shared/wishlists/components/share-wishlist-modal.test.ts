@@ -204,8 +204,12 @@ const VcTabSwitch = defineComponent({
 const VcButton = defineComponent({
   props: { disabled: { type: Boolean, default: false }, loading: { type: Boolean, default: false } },
   emits: ["click"],
-  setup(props, { slots, emit }) {
-    return () => h("button", { disabled: props.disabled, onClick: () => emit("click") }, slots.default?.());
+  setup(props, { slots, emit, expose }) {
+    const button = ref<HTMLButtonElement>();
+    // The kit's button exposes `focus()`; the dialog reaches its own Save through it.
+    expose({ focus: () => button.value?.focus() });
+    return () =>
+      h("button", { ref: button, disabled: props.disabled, onClick: () => emit("click") }, slots.default?.());
   },
 });
 
@@ -679,6 +683,19 @@ describe("ShareWishlistModal", () => {
 
       await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
       expect(mocks.updateWishlist.mock.calls[0][0]).toMatchObject({ scope: WishlistScopeType.Private });
+    });
+
+    it("hands the focus back to Save when the confirmation is dismissed", async () => {
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
+      await fireEvent.click(component.getByTestId("stop-sharing-dismiss"));
+
+      // The confirmation unmounts in place, so without the handoff the focus falls to the document.
+      await vi.waitFor(() => expect(document.activeElement).toBe(saveButton()));
+      expect(stopSharingConfirmation()).toBeNull();
+      expect(mocks.updateWishlist).not.toHaveBeenCalled();
     });
 
     it("changes nothing while the confirmation stands unanswered", async () => {

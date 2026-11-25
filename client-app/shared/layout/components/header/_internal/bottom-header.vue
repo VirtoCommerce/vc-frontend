@@ -53,7 +53,7 @@
       <SearchBar />
 
       <ul class="-mx-2 flex items-center">
-        <li v-for="item in iconsMenuItems" :key="item.id" :data-test-id="item.dataTestId">
+        <li v-for="item in mainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
           <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
             <template #default="{ extensionProps }">
               <LinkDefault :item="item" :count="toValue(extensionProps?.count)" />
@@ -110,7 +110,7 @@ interface IProps {
 defineProps<IProps>();
 
 const router = useRouter();
-const { organization } = useUser();
+const { organization, isMultiOrganization } = useUser();
 const { headerLogoUrl } = useHeaderLogo();
 const { logoWidth, logoStyle, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
@@ -136,6 +136,11 @@ const catalogMenuVisible = ref(false);
 
 const { bottom } = useElementBounding(bottomHeader);
 const route = useRoute();
+
+// The organizations menu is for members of several organizations; for the others it would leave an empty list item.
+const mainMenuItems = computed(() =>
+  iconsMenuItems.value.filter((item) => item.id !== "organizations" || isMultiOrganization.value),
+);
 
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>

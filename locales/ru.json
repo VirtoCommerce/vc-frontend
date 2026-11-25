@@ -352,6 +352,7 @@
           "switching_back": "Возвращаемся…",
           "no_results": "Результаты не найдены",
           "organization_locked_tooltip": "Эта организация заблокирована. Обратитесь к администратору для получения доступа.",
+          "search_organizations": "Поиск организаций",
           "dark_mode": {
             "system": "Тема: авто",
             "dark": "Тема: тёмная",
@@ -413,6 +414,9 @@
             "navigation": "Навигация",
             "main_navigation": "Основная навигация"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title}: {name}"
         },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Нет товаров | {n} товар | {n} товара | {n} товаров"

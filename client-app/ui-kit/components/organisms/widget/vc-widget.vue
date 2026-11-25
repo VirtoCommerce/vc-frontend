@@ -147,8 +147,11 @@ watchEffect(() => {
   --tw-shadow: var(--shadow);
 
   @media (width < theme("screens.md")) {
+    // 6px from the screen edge, for any `--vc-container-px`.
     .vc-container & {
-      @apply -mx-4.5;
+      --bleed: calc(theme("spacing[1.5]") - var(--vc-container-px, theme("padding.6")));
+
+      @apply mx-[--bleed];
     }
 
     #{$self} & {
@@ -161,6 +164,12 @@ watchEffect(() => {
   }
 
   &--size {
+    // Small widgets keep their own inset: `--vc-widget-padding-x` sets md and lg only.
+    &--xs,
+    &--sm {
+      --p-x: theme("padding.4");
+    }
+
     &--xs {
       --header-min-h: 2.375rem;
       --title-text: theme("fontSize.sm");
@@ -208,6 +217,9 @@ watchEffect(() => {
   }
 
   &--no-shadow {
+    // Without a shadow the widget keeps an edge; `no-border` drops it.
+    --border-width: max(var(--vc-widget-border-width, 1px), 1px);
+
     @apply shadow-none;
   }
 

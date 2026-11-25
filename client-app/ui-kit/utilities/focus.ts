@@ -1,6 +1,8 @@
 export const FOCUSABLE_SELECTOR =
   'a[href]:not([data-skip-autofocus]), button:not(:disabled):not([data-skip-autofocus]), input:not(:disabled):not([data-skip-autofocus]), textarea:not(:disabled):not([data-skip-autofocus]), select:not(:disabled):not([data-skip-autofocus]), [tabindex]:not([tabindex="-1"]):not([data-skip-autofocus]), [contenteditable="true"]:not([data-skip-autofocus])';
 
+const AUTOFOCUS_SELECTOR = "[data-autofocus]";
+
 function crossedFocusBoundary(event: FocusEvent): boolean {
   const other = event.relatedTarget;
   const shell = event.currentTarget as HTMLElement | null;
@@ -105,11 +107,26 @@ export function findFirstFocusableElement(
   return focusableElement || null;
 }
 
+function findAutofocusElement(container: HTMLElement | string, extendSelector?: string): HTMLElement | null {
+  const element = typeof container === "string" ? document.querySelector(container) : container;
+  const marked = element?.querySelector<HTMLElement>(AUTOFOCUS_SELECTOR);
+  const selectors = [FOCUSABLE_SELECTOR, extendSelector].filter(Boolean).join(", ");
+
+  return (marked?.matches(selectors) ? marked : marked?.querySelector<HTMLElement>(selectors)) ?? null;
+}
+
+/**
+ * Moves the focus into a container, as a dialog does when it opens. `data-autofocus` on an element inside the
+ * container picks that element, or the first focusable one inside it when the marker sits on a wrapper; without the
+ * marker it is the first focusable element in DOM order. An element marked `data-skip-autofocus` is never picked.
+ */
 export function focusFirstElement(
   container: HTMLElement | string,
   { ignoreSelector, extendSelector }: { ignoreSelector?: string; extendSelector?: string },
 ): boolean {
-  const element = findFirstFocusableElement(container, { ignoreSelector, extendSelector });
+  const element =
+    findAutofocusElement(container, extendSelector) ??
+    findFirstFocusableElement(container, { ignoreSelector, extendSelector });
 
   if (element) {
     element.focus();
