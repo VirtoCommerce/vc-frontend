@@ -5,10 +5,12 @@
 
     <!-- Desktop header -->
     <template v-else>
+      <AnnouncementBar class="app-header__announcement" />
+
       <TopHeader class="app-header__top" />
 
       <div ref="stickyHeader" class="app-header__sticky">
-        <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
+        <BottomHeader :is-menu-shown="isCatalogMenuShown && desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
         <MegaMenu v-if="isMegamenuShown" />
       </div>
@@ -24,11 +26,12 @@
 
 <script setup lang="ts">
 import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
-import { useWhiteLabeling, useThemeContext } from "@/core/composables";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
+import { useNavigations, useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { BREAKPOINTS } from "@/ui-kit/constants";
+import AnnouncementBar from "../announcement-bar/announcement-bar.vue";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
@@ -54,25 +57,38 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
+const isShown = ref(true);
+
 watch(headerHeight, (value) => {
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
 });
 
-watch([headerHeight, isMobile], ([value, mobile]) => {
+// The page's anchors scroll past the header by this height, so a page without the header gets none.
+watch([headerHeight, isMobile, isShown], ([value, mobile, shown]) => {
   if (mobile) {
     return;
   }
 
-  appHeaderHeightVar.value = `${value}px`;
+  appHeaderHeightVar.value = shown ? `${value}px` : undefined;
 });
 
 const { isAuthenticated } = useUser();
+const { isCatalogMenuShown } = useNavigations();
 
 const isMegamenuShown = computed(() => {
   return (
+    isCatalogMenuShown.value &&
     desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
     (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
   );
+});
+
+onActivated(() => {
+  isShown.value = true;
+});
+
+onDeactivated(() => {
+  isShown.value = false;
 });
 </script>
 
@@ -80,6 +96,12 @@ const isMegamenuShown = computed(() => {
 // `contents`: no box of its own, so each piece stays a flex item of the page frame and the sticky part sticks.
 .app-header {
   @apply contents;
+
+  &__announcement {
+    @apply mx-auto;
+
+    inline-size: var(--vc-frame-header-width, 100%);
+  }
 
   &__top {
     @apply relative z-[21] mx-auto;

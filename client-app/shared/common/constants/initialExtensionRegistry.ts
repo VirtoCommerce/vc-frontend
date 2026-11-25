@@ -49,6 +49,7 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   checkout: {},
   identityProviders: {},
   signInMethods: {},
+  pageBuilderSection: {},
   accountSecurity: {},
   companyInfo: {},
 };

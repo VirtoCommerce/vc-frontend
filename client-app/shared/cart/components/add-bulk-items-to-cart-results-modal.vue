@@ -116,6 +116,7 @@
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
+import { getThemeVariablesCss, THEME_VARIABLES_ID } from "@/core/plugins/config.plugin";
 import { ROUTES } from "@/router/routes/constants";
 import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
@@ -182,7 +183,9 @@ function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsModalTyp
 
 function print() {
   const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
-  const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
+  const styleLinks = Array.from(
+    document.head.querySelectorAll(`link[rel=stylesheet], style:not(#${THEME_VARIABLES_ID})`),
+  )
     .map((el) => el.outerHTML)
     .join("");
 
@@ -281,6 +284,11 @@ function print() {
       printWindow.close();
     }, 500);
   };
+
+  // Never part of the HTML above: a custom property's value may contain `</style>`.
+  const themeVariablesElement = printWindow.document.createElement("style");
+  themeVariablesElement.textContent = getThemeVariablesCss();
+  printWindow.document.head.prepend(themeVariablesElement);
 
   printWindow.document.close();
   printWindow.focus();

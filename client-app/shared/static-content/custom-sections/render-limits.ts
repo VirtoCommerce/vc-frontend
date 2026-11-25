@@ -1,0 +1,112 @@
+import { getListRows, renderParts, resolveBinding, toBindingText } from "./bindings";
+import { getCustomSectionBehaviors, getCustomSectionTags } from "./kit";
+import { DEFAULT_TAG_COST, MAX_RENDERED_TEMPLATE_TEXT, MAX_RENDERED_TEXT, RENDER_BUDGET } from "./limits";
+import { getRichText } from "./rich-text";
+import type { IBindingScope, TemplatePartType } from "./bindings";
+import type { IRichText } from "./rich-text";
+import type { ICompiledElement } from "./template";
+
+interface IRenderSize {
+  elements: number;
+  characters: number;
+  /** Of the template's own text. */
+  templateCharacters: number;
+  /** The rich texts read, handed on to the render. */
+  richTexts: Map<string, IRichText>;
+}
+
+/**
+ * Whether the section stays within the render budget and the text cap, counted before anything renders, as
+ * written, whatever `data-if` hides. Rows multiply what they hold, a short template with a long list included.
+ */
+export function fitsRenderLimits(
+  root: ICompiledElement,
+  scope: IBindingScope,
+  richTexts: Map<string, IRichText>,
+): boolean {
+  const size: IRenderSize = { elements: 0, characters: 0, templateCharacters: 0, richTexts };
+
+  addElementSize(root, scope, size, 1);
+  return !isOverLimits(size);
+}
+
+function isOverLimits(size: IRenderSize): boolean {
+  return (
+    size.elements > RENDER_BUDGET ||
+    size.characters > MAX_RENDERED_TEXT ||
+    size.templateCharacters > MAX_RENDERED_TEMPLATE_TEXT
+  );
+}
+
+/** `times`: how often the element renders where it stands; a repeating behavior renders its children twice. */
+function addElementSize(node: ICompiledElement, scope: IBindingScope, size: IRenderSize, times: number): void {
+  const listId = node.each;
+
+  if (!listId) {
+    addOwnSize(node, scope, size, times);
+    return;
+  }
+
+  const rows = getListRows(listId, scope);
+
+  // Every row adds at least its element, so the count stops within the budget's number of rows.
+  for (let index = 0; index < rows.length && !isOverLimits(size); index++) {
+    addOwnSize(node, { ...scope, row: rows[index] }, size, times);
+  }
+}
+
+function addOwnSize(node: ICompiledElement, scope: IBindingScope, size: IRenderSize, times: number): void {
+  const behaviors = getCustomSectionBehaviors();
+  const tags = getCustomSectionTags();
+  const own = node.isKitTag && Object.hasOwn(tags, node.tag) ? (tags[node.tag].cost ?? DEFAULT_TAG_COST) : 1;
+  const richText = node.html ? getRichText(node.html, scope, size.richTexts) : undefined;
+  const isRepeated = node.behaviors.some((name) => !!behaviors[name]?.repeatsChildren);
+  const attributeParts = node.attributes.flatMap(([, parts]) => parts);
+  const boundText = countBoundText(attributeParts, scope);
+
+  size.elements += (own + node.behaviors.length + (richText?.elements ?? 0)) * times;
+  size.characters += (boundText + (richText?.html.length ?? 0)) * times;
+  size.templateCharacters += countTemplateText(attributeParts) * times;
+
+  const childTimes = (isRepeated ? 2 : 1) * times;
+
+  for (const child of node.children) {
+    if (isOverLimits(size)) {
+      return;
+    }
+
+    if ("text" in child) {
+      addTextSize(child.text, scope, size, childTimes, isRepeated);
+    } else {
+      addElementSize(child, scope, size, childTimes);
+    }
+  }
+}
+
+/** Repeated, a text that is not blank renders in a span, in the run and in the copy. */
+function addTextSize(
+  text: readonly TemplatePartType[],
+  scope: IBindingScope,
+  size: IRenderSize,
+  times: number,
+  isRepeated: boolean,
+): void {
+  size.characters += countBoundText(text, scope) * times;
+  size.templateCharacters += countTemplateText(text) * times;
+
+  if (isRepeated && renderParts(text, scope).trim()) {
+    size.elements += times;
+  }
+}
+
+function countBoundText(parts: readonly TemplatePartType[], scope: IBindingScope): number {
+  return parts.reduce(
+    (sum, part) =>
+      typeof part === "string" ? sum : sum + toBindingText(resolveBinding(part.path, scope)?.value).length,
+    0,
+  );
+}
+
+function countTemplateText(parts: readonly TemplatePartType[]): number {
+  return parts.reduce((sum, part) => (typeof part === "string" ? sum + part.length : sum), 0);
+}

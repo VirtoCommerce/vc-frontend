@@ -8,7 +8,7 @@
           <VcButton
             v-for="(item, index) in buttons"
             :key="index"
-            v-bind="getSectionLinkAttr(item.link)"
+            v-bind="{ ...getSectionLinkAttr(item.link), ...getPreviewFieldAttrs(`buttons.${index}.label`) }"
             class="flex-1 lg:flex-none"
           >
             {{ item.label }}
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { getSectionLinkAttr } from "../sections";
+import { getPreviewFieldAttrs, getSectionLinkAttr } from "../sections";
 
 type ButtonType = {
   label: string;
@@ -39,7 +39,7 @@ defineProps<IProps>();
 <style lang="scss">
 .call-to-action-block {
   &.bg-neutral-800 .text-50 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>

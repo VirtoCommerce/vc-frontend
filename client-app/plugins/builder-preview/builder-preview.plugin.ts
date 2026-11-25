@@ -1,25 +1,39 @@
-import { v4 as uuidv4 } from "uuid";
-import { useGlobalInterceptors } from "@/core/api/common";
+import { shallowRef } from "vue";
+import { useFetch, useGlobalInterceptors } from "@/core/api/common";
+import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { globals, setGlobals } from "@/core/globals";
+import { getThemeVariableName } from "@/core/plugins/config.plugin";
+import { getBuilderOrigin, isSiteBuilderEnabled, isPreviewV2Frame, PREVIEW_PROTOCOL } from "@/core/theme-snapshot";
+import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
-import { addBuilderMessageListener, createPreviewLoadedNotifier } from "./builder-preview.protocol";
+import {
+  addBuilderMessageListener,
+  createPreviewLoadedNotifier,
+  isPreviewV2Type,
+  withPreviewId,
+} from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
+import { watchCustomSectionCatalog } from "./custom-sections-catalog";
+import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
 import { getRegisteredComponents } from "./register-components";
 import {
   SHARED_COMPONENT_END_ANCHOR_ID,
   SharedComponentOverlay,
   normalizeSharedComponentBoundaries,
 } from "./shared-component-overlay";
-import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
-import type { TransferDataType } from "./builder-preview.protocol";
+import { getPreviewCultureName, getPreviewPageId, guardPreviewNavigation, installPageInputGuard } from "./utils";
+import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
-import type { IThemeConfig } from "@/core/types";
-import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
-import type { App } from "vue";
+import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { PreviewV2Type } from "./preview-v2";
+import type { ConnectTokenResponseType, IThemeConfig } from "@/core/types";
+import type { IPageContent } from "@/shared/static-content/types";
+import type { App, ShallowRef } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
 
@@ -71,10 +85,7 @@ async function updatePreview(
     return;
   }
 
-  // Add-block models have no persisted id yet. Give only the preview copy an id for rendering and anchors.
-  const model: IPageContent | undefined = data.model
-    ? { ...data.model, id: data.model.id ?? `__preview__${uuidv4()}` }
-    : undefined;
+  const model: IPageContent | undefined = data.model ? withPreviewId(data.model) : undefined;
   const content = model ? [...template.content, model] : template.content;
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
@@ -85,7 +96,7 @@ async function updatePreview(
 
   if (!data.templateKey) {
     if (templateUrl) {
-      await options.router.push("/designer-preview");
+      await options.router.push(DESIGNER_PREVIEW_PATH);
     }
     staticPagePreview.value = newTemplate;
   } else if (templateUrl) {
@@ -123,7 +134,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   keys
     .filter(([key]) => key?.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key?.replaceAll("_", "-") ?? ""}`, value as string);
+      document.documentElement.style.setProperty(getThemeVariableName(key), value as string);
     });
 }
 
@@ -160,10 +171,17 @@ export function measureElement(element: HTMLElement): {
 }
 
 let templateUrl: string | undefined;
+let allowedNavigation: string | undefined;
 let previewToken: string | null | undefined;
+let previewUserId: string | null | undefined;
 let originalUserId: string | undefined;
+let originalOrganizationId: string | undefined;
 let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
+let authRenewTimer: ReturnType<typeof setTimeout> | undefined;
+
+const PREVIEW_GRANT_TYPE = "site_builder_preview";
+const AUTH_RENEW_LEAD_SECONDS = 60;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
@@ -211,14 +229,19 @@ function modifyRequests() {
 /** Largest value a CSS `z-index` accepts (2^31 - 1) — keeps the blocker above every storefront element. */
 const MAX_Z_INDEX = 2147483647;
 
-function createOverlay(builderOrigin: string): {
+function createOverlay(
+  builderOrigin: string,
+  isHoverReportedByPreviewV2: () => boolean,
+  isPageInputAllowed: () => boolean,
+): {
   bodyEl: HTMLElement | null;
+  blocker: HTMLElement | null;
   sharedComponentOverlay: SharedComponentOverlay | null;
 } {
   const bodyEl = document.getElementsByTagName("body").item(0);
 
   if (!bodyEl) {
-    return { bodyEl: null, sharedComponentOverlay: null };
+    return { bodyEl: null, blocker: null, sharedComponentOverlay: null };
   }
 
   bodyEl.style.visibility = "hidden";
@@ -234,42 +257,132 @@ function createOverlay(builderOrigin: string): {
   interactiveBlocker.style.background = "transparent";
   interactiveBlocker.style.pointerEvents = "auto";
   bodyEl.appendChild(interactiveBlocker);
+  installPageInputGuard(interactiveBlocker, isPageInputAllowed);
 
   const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
-    window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
+    postToDesigner(builderOrigin, type, { sectionId });
   };
   const sharedComponentOverlay = new SharedComponentOverlay(
     bodyEl,
     interactiveBlocker,
     (placementId) => postSectionMessage("select", placementId),
-    (placementId) => postSectionMessage("hover", placementId),
+    (placementId) => {
+      // Protocol 2 reports placements with the sections from one listener, so a late report cannot undo a newer one.
+      if (!isHoverReportedByPreviewV2()) {
+        postSectionMessage("hover", placementId);
+      }
+    },
   );
 
-  return { bodyEl, sharedComponentOverlay };
+  return { bodyEl, blocker: interactiveBlocker, sharedComponentOverlay };
 }
 
-async function handleMessage(
-  app: App,
-  options: PageBuilderPluginOptionsType,
-  bodyEl: HTMLElement | null,
-  sharedComponentOverlay: SharedComponentOverlay | null,
-  loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
-  data: TransferDataType,
-) {
-  if (data.type === "connect") {
+interface IPreviewContext {
+  app: App;
+  options: PageBuilderPluginOptionsType;
+  builderOrigin: string;
+  bodyEl: HTMLElement | null;
+  blocker: HTMLElement | null;
+  sharedComponentOverlay: SharedComponentOverlay | null;
+  loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>;
+  schemas: ShallowRef<PageBuilderSchemaType | undefined>;
+  previewV2?: PreviewV2Type;
+  enqueue: (task: () => Promise<void>) => void;
+}
+
+function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
+  if (!context.previewV2 && isSiteBuilderEnabled() && context.bodyEl && context.blocker) {
+    const { router } = context.options;
+
+    context.previewV2 = createPreviewV2({
+      router,
+      body: context.bodyEl,
+      blocker: context.blocker,
+      schemas: () => context.schemas.value,
+      post: (type, data) => postToDesigner(context.builderOrigin, type, data),
+      renderPage: async (message) => {
+        if (router.currentRoute.value.path !== DESIGNER_PREVIEW_PATH) {
+          await router.push(DESIGNER_PREVIEW_PATH);
+        }
+        await updatePreview(toTransferData(message), context.options, context.sharedComponentOverlay);
+      },
+      allowNavigation: (url) => {
+        allowedNavigation = url;
+      },
+      applyLocale: applyPreviewLocale,
+      hasPreviewToken: () => !!previewToken,
+      sharedComponents: context.sharedComponentOverlay ?? undefined,
+      enqueue: context.enqueue,
+    });
+  }
+
+  return context.previewV2;
+}
+
+function toTransferData(message: IRenderMessage): TransferDataType {
+  return {
+    source: "builder",
+    type: "page",
+    template: message.document,
+    model: message.model,
+    cultureName: message.cultureName,
+    sharedComponentBoundaries: message.sharedComponentBoundaries,
+  };
+}
+
+async function handlePreviewV2Message(context: IPreviewContext, data: PreviewV2MessageType): Promise<void> {
+  const previewV2 = getPreviewV2(context);
+
+  if (!previewV2) {
+    Logger.warn(
+      `[builder-preview] The preview protocol ${PREVIEW_PROTOCOL} needs site_builder_enabled: ignored "${data.type}"`,
+    );
+    return;
+  }
+
+  switch (data.type) {
+    case "draft":
+      previewV2.applyDraft(data.theme);
+      break;
+    case "render":
+      await previewV2.handleRender(data);
+      break;
+    case "inspector":
+      previewV2.setInspector(data.enabled);
+      break;
+    case "colorScheme":
+      previewV2.setColorScheme(data.scheme);
+      break;
+  }
+}
+
+async function handleMessage(context: IPreviewContext, data: TransferDataType | PreviewV2MessageType) {
+  if (isPreviewV2Type(data.type)) {
+    await handlePreviewV2Message(context, data as PreviewV2MessageType);
+    return;
+  }
+
+  const { app, options, bodyEl, sharedComponentOverlay, loadedNotifier } = context;
+  const message = data as TransferDataType;
+
+  if (message.type === "connect") {
+    if (message.protocol === PREVIEW_PROTOCOL) {
+      getPreviewV2(context);
+    }
     loadedNotifier.announce();
     return;
   }
 
   // Render the preview in the edited page's language before it becomes visible (VCST-5219),
   // so a non-default-language page never flashes in the store default language.
-  await applyPreviewLocale(data.cultureName);
+  await applyPreviewLocale(message.cultureName);
 
-  if (bodyEl) {
+  // Protocol 2 reveals the page on first render; `auth` can precede `previewV2` when this listener missed `connect`.
+  if (bodyEl && !context.previewV2 && message.type !== "auth") {
     bodyEl.style.visibility = "visible";
   }
 
-  switch (data.type) {
+  switch (message.type) {
     case "changed":
     case "update":
     case "remove":
@@ -278,80 +391,183 @@ async function handleMessage(
     case "page":
     case "swap":
     case "preview":
-      await updatePreview(data, options, sharedComponentOverlay);
+      await updatePreview(message, options, sharedComponentOverlay);
       break;
 
     case "hover":
-      sharedComponentOverlay?.highlight(data.sectionId ?? null);
+      sharedComponentOverlay?.highlight(message.sectionId ?? null);
+      context.previewV2?.hover(message.sectionId ?? null);
       break;
     case "select":
-      if (data.sectionId) {
-        initialSectionId = data.sectionId;
-        if (!sharedComponentOverlay?.scrollToPlacement(data.sectionId)) {
-          scrollToSection(data.sectionId);
+      if (message.sectionId) {
+        initialSectionId = message.sectionId;
+        if (!sharedComponentOverlay?.scrollToPlacement(message.sectionId)) {
+          scrollToSection(message.sectionId);
         }
       }
       break;
     case "navigate": {
       // we will know about template it or not in the next message
-      templateUrl = data.url;
+      templateUrl = message.url;
       break;
     }
     case "settings":
-      if (data.settings) {
-        updateSettings(app, data.settings);
+      if (message.settings) {
+        updateSettings(app, message.settings);
       }
       break;
-    case "auth": {
-      previewToken = data.token?.access_token || null;
-      if (!originalUserId) {
-        originalUserId = globals.userId;
-      }
-      setGlobals({ userId: data.userId || originalUserId });
-      // Force remount of all blocks with new token and restore scroll afterward
-      pendingScrollRestore = true;
-      staticPagePreview.value = undefined;
-      sharedComponentOverlay?.update([], []);
+    case "auth":
+      await applyAuth(context, message);
       break;
-    }
     default:
-      Logger.warn(`Unknown message type: ${data.type}`);
+      Logger.warn(`Unknown message type: ${message.type}`);
   }
 }
 
-function handleMessages(
-  app: App,
-  options: PageBuilderPluginOptionsType,
-  builderOrigin: string,
-  bodyEl: HTMLElement | null,
-  sharedComponentOverlay: SharedComponentOverlay | null,
-  loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
-) {
-  // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
-  // navigation), so unqueued handlers would interleave: an older message could apply its template
-  // after a newer one. Chaining them keeps preview state in the order the builder sent it.
+async function applyAuth(context: IPreviewContext, message: TransferDataType): Promise<void> {
+  clearTimeout(authRenewTimer);
+  authRenewTimer = undefined;
+
+  const { token, userId, renewal } = await resolvePreviewAuth(message);
+
+  if (renewal) {
+    authRenewTimer = setTimeout(() => postAuthRenew(context, renewal.userId), renewal.delaySeconds * 1000);
+  }
+
+  // A renewed token of the user shown: their organization, branding and loaded data stay right.
+  if (userId === previewUserId && !!token === !!previewToken) {
+    previewToken = token;
+    return;
+  }
+
+  previewToken = token;
+  // An impersonation token keeps clicks blocked even with the inspector off, from before the user's data loads.
+  context.previewV2?.refreshInteraction();
+  previewUserId = userId;
+  if (!originalUserId) {
+    originalUserId = globals.userId;
+    originalOrganizationId = globals.organizationId;
+  }
+  const organizationId = userId ? await getPreviewUserOrganizationId(userId) : originalOrganizationId;
+  const isOrganizationChanged = organizationId !== globals.organizationId;
+  setGlobals({ userId: userId || originalUserId, organizationId });
+  if (isOrganizationChanged) {
+    await loadOrganizationBranding();
+  }
+  // Remounts every block under the new token; protocol 2 restores the scroll on its own reload.
+  pendingScrollRestore = !context.previewV2;
+  staticPagePreview.value = undefined;
+  context.sharedComponentOverlay?.update([], []);
+  await context.previewV2?.reload();
+}
+
+async function resolvePreviewAuth(message: TransferDataType): Promise<{
+  token: string | null;
+  userId: string | null;
+  renewal?: { userId: string; delaySeconds: number };
+}> {
+  const userId = message.userId || null;
+
+  if (!message.code || !userId) {
+    return { token: message.token?.access_token || null, userId };
+  }
+
+  const response = await exchangePreviewCode(message.code);
+
+  if (!response) {
+    return { token: null, userId: null, renewal: { userId, delaySeconds: 0 } };
+  }
+
+  return {
+    token: response.accessToken,
+    userId,
+    renewal: { userId, delaySeconds: Math.max(0, response.expiresIn - AUTH_RENEW_LEAD_SECONDS) },
+  };
+}
+
+/** The storefront host must mint the token: one minted on the platform host fails its issuer check here. */
+async function exchangePreviewCode(code: string): Promise<{ accessToken: string; expiresIn: number } | null> {
+  try {
+    const { error, data } = await useFetch("/connect/token", {
+      onFetchError: (context) => context,
+      updateDataOnError: true,
+    })
+      .post(new URLSearchParams({ grant_type: PREVIEW_GRANT_TYPE, code }), "application/x-www-form-urlencoded")
+      .json<ConnectTokenResponseType>();
+    const accessToken = data.value?.access_token;
+    const expiresIn = data.value?.expires_in;
+
+    if (error.value || !accessToken || !expiresIn) {
+      Logger.error("[builder-preview] Failed to exchange the preview code", data.value?.error ?? error.value);
+      return null;
+    }
+
+    return { accessToken, expiresIn };
+  } catch (e) {
+    Logger.error("[builder-preview] Failed to exchange the preview code", e);
+    return null;
+  }
+}
+
+function postAuthRenew(context: IPreviewContext, userId: string): void {
+  postToDesigner(context.builderOrigin, "authRenew", { userId });
+}
+
+function postToDesigner(builderOrigin: string, type: string, data: unknown): void {
+  window.parent.postMessage({ source: "preview", type, data }, builderOrigin);
+}
+
+async function getPreviewUserOrganizationId(userId: string): Promise<string | undefined> {
+  try {
+    return (await getMe(userId))?.contact?.organizationId ?? undefined;
+  } catch (error) {
+    Logger.error("[builder-preview] Failed to read the previewed user's organization", error);
+    return undefined;
+  }
+}
+
+/** An organization's white-labeling replaces the store's branding for its members. */
+async function loadOrganizationBranding(): Promise<void> {
+  try {
+    await useWhiteLabeling().fetchWhiteLabelingSettings();
+  } catch {
+    // Already logged; the preview keeps the branding it has.
+  }
+}
+
+/** Handlers await (locale switch, navigation), so without a queue an older message could apply after a newer one. */
+function createMessageQueue(): (task: () => Promise<void>) => void {
   let messageQueue: Promise<void> = Promise.resolve();
 
-  return addBuilderMessageListener(window, builderOrigin, window.parent, (data) => {
-    messageQueue = messageQueue.then(() =>
-      handleMessage(app, options, bodyEl, sharedComponentOverlay, loadedNotifier, data).catch((error: unknown) => {
-        // Never break the chain: a failed message must not stall every following one.
-        Logger.error("Failed to handle the builder preview message", error);
-      }),
-    );
+  async function run(task: () => Promise<void>): Promise<void> {
+    try {
+      await task();
+    } catch (error) {
+      // Never break the chain: a failed message must not stall every following one.
+      Logger.error("Failed to handle the builder preview message", error);
+    }
+  }
+
+  return (task) => {
+    messageQueue = messageQueue.then(() => run(task));
+  };
+}
+
+function handleMessages(context: IPreviewContext) {
+  return addBuilderMessageListener(window, context.builderOrigin, window.parent, (data) => {
+    context.enqueue(() => handleMessage(context, data));
   });
 }
 
 function modifyRoutes(router: Router, mode: "preview" | "designer") {
   if (mode === "designer") {
-    const page = <IPageTemplate>(<unknown>{ settings: {}, content: [] });
-    staticPagePreview.value = page;
+    staticPagePreview.value = { settings: {}, content: [] };
   }
   const routes = router.getRoutes();
   const matcher = routes.find((x) => x.name === "Matcher")!;
   router.removeRoute("Matcher");
   router.addRoute({
-    path: "/designer-preview",
+    path: DESIGNER_PREVIEW_PATH,
     name: "StaticPage",
     component: mode === "preview" ? PreviewPage : StaticPage,
     props: true,
@@ -359,13 +575,7 @@ function modifyRoutes(router: Router, mode: "preview" | "designer") {
   });
   router.addRoute(matcher);
 
-  router.beforeEach((to, from, next) => {
-    if (to.path === "/designer-preview") {
-      next();
-    } else {
-      next({ path: "/designer-preview", query: to.query, hash: to.hash });
-    }
-  });
+  router.beforeEach((to, from, next) => guardPreviewNavigation(to, from, next, allowedNavigation));
 }
 
 // eslint-disable-next-line no-restricted-exports
@@ -379,12 +589,35 @@ export default {
 
     if (builderOrigin) {
       const loadedNotifier = createPreviewLoadedNotifier(window.parent, builderOrigin);
-      const { bodyEl, sharedComponentOverlay } = createOverlay(builderOrigin);
-      handleMessages(app, options, builderOrigin, bodyEl, sharedComponentOverlay, loadedNotifier);
+      const context: IPreviewContext = {
+        app,
+        options,
+        builderOrigin,
+        loadedNotifier,
+        schemas: shallowRef(),
+        enqueue: createMessageQueue(),
+        // Protocol 1 never lets the page take input; protocol 2 does with the inspector off.
+        ...createOverlay(
+          builderOrigin,
+          () => !!context.previewV2,
+          () => !!context.previewV2?.isPageInputAllowed(),
+        ),
+      };
+      handleMessages(context);
 
-      const customComponents = await getRegisteredComponents();
-      loadedNotifier.setData(customComponents);
-      await options.router.push("/designer-preview");
+      const registeredSchemas = await getRegisteredComponents();
+
+      if (isPreviewV2Frame()) {
+        watchCustomSectionCatalog(registeredSchemas, (schemas, kit) => {
+          context.schemas.value = schemas;
+          loadedNotifier.setData(buildPreviewCatalog(schemas, kit));
+        });
+      } else {
+        context.schemas.value = registeredSchemas;
+        loadedNotifier.setData(registeredSchemas);
+      }
+
+      await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
       // rendering in the page's language instead of the store default (VCST-5219).
@@ -397,7 +630,7 @@ export default {
       if (cultureName) {
         query.set("cultureName", cultureName);
       }
-      await options.router.push(`/designer-preview?${query.toString()}`);
+      await options.router.push(`${DESIGNER_PREVIEW_PATH}?${query.toString()}`);
     }
   },
 };

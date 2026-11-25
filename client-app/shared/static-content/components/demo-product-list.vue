@@ -54,7 +54,7 @@ defineProps<IProps>();
 <style lang="scss">
 .demo-product-list-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 
   li {

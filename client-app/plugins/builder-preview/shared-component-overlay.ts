@@ -1,3 +1,5 @@
+import { isRecord } from "@/core/utilities";
+import { OverlayLayer } from "./overlay-layer";
 export interface ISharedComponentBoundary {
   placementId: string;
   componentRef: string;
@@ -69,8 +71,7 @@ export function getBoundaryAnchorIds(
 }
 
 export class SharedComponentOverlay {
-  private readonly layer: HTMLDivElement;
-  private readonly resizeObserver: ResizeObserver | undefined;
+  private readonly layer: OverlayLayer;
   private rendered: IRenderedBoundary[] = [];
   private sectionIds: string[] = [];
   private boundaries: ISharedComponentBoundary[] = [];
@@ -78,35 +79,22 @@ export class SharedComponentOverlay {
   private pendingScrollPlacementId: string | null = null;
   private pendingPointerPosition: { clientX: number; clientY: number } | null = null;
   private pointerFrame: number | undefined;
-  private scheduledFrame: number | undefined;
-  private disposed = false;
 
   constructor(
     private readonly body: HTMLElement,
-    private readonly interactiveBlocker: HTMLElement,
+    interactiveBlocker: HTMLElement,
     private readonly onSelect: (placementId: string) => void,
     private readonly onHover: (placementId: string | null) => void,
   ) {
-    this.layer = document.createElement("div");
-    this.layer.dataset.sharedComponentOverlay = "true";
-    this.layer.setAttribute("aria-hidden", "true");
-    Object.assign(this.layer.style, {
-      position: "absolute",
-      inset: "0",
+    this.layer = new OverlayLayer(this.body, interactiveBlocker, {
       zIndex: "2147483645",
-      pointerEvents: "none",
+      render: () => this.render(),
+      onPointerMove: this.handlePointerMove,
+      onPointerLeave: this.handlePointerLeave,
+      onClick: this.handleClick,
+      isInitiallyEnabled: true,
     });
-    this.body.appendChild(this.layer);
-
-    this.interactiveBlocker.addEventListener("mousemove", this.handlePointerMove);
-    this.interactiveBlocker.addEventListener("mouseleave", this.handlePointerLeave);
-    this.interactiveBlocker.addEventListener("click", this.handleClick);
-    window.addEventListener("resize", this.scheduleRender);
-
-    if (typeof ResizeObserver !== "undefined") {
-      this.resizeObserver = new ResizeObserver(this.scheduleRender);
-      this.resizeObserver.observe(this.body);
-    }
+    this.layer.element.dataset.sharedComponentOverlay = "true";
   }
 
   update(sectionIds: string[], boundaries: ISharedComponentBoundary[]): void {
@@ -119,7 +107,7 @@ export class SharedComponentOverlay {
     ) {
       this.clearHover();
     }
-    this.scheduleRender();
+    this.layer.scheduleRender();
   }
 
   highlight(placementId: string | null): void {
@@ -134,56 +122,49 @@ export class SharedComponentOverlay {
       return false;
     }
 
-    if (this.scheduledFrame === undefined) {
+    if (!this.layer.isRenderScheduled) {
       const scrolled = this.flushPendingScroll();
       if (!scrolled) {
-        this.scheduleRender();
+        this.layer.scheduleRender();
       }
     }
 
     return true;
   }
 
+  setEnabled(isEnabled: boolean): void {
+    this.layer.setEnabled(isEnabled);
+
+    if (!isEnabled) {
+      this.cancelPendingPointer();
+      this.highlight(null);
+    }
+  }
+
+  findPlacementAt(clientX: number, clientY: number): string | null {
+    if (!this.layer.isEnabled) {
+      return null;
+    }
+
+    const rendered = this.rendered.find(({ element }) => {
+      const rect = element.getBoundingClientRect();
+      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+    });
+    return rendered?.boundary.placementId ?? null;
+  }
+
   dispose(): void {
-    if (this.disposed) {
+    if (this.layer.isDisposed) {
       return;
     }
 
     this.clearHover();
-    this.disposed = true;
-    if (this.scheduledFrame !== undefined) {
-      cancelAnimationFrame(this.scheduledFrame);
-      this.scheduledFrame = undefined;
-    }
     this.cancelPendingPointer();
-
-    this.resizeObserver?.disconnect();
-    window.removeEventListener("resize", this.scheduleRender);
-    this.interactiveBlocker.removeEventListener("mousemove", this.handlePointerMove);
-    this.interactiveBlocker.removeEventListener("mouseleave", this.handlePointerLeave);
-    this.interactiveBlocker.removeEventListener("click", this.handleClick);
-    this.layer.remove();
+    this.layer.dispose();
   }
 
-  private readonly scheduleRender = (): void => {
-    if (this.disposed) {
-      return;
-    }
-
-    if (this.scheduledFrame !== undefined) {
-      cancelAnimationFrame(this.scheduledFrame);
-    }
-
-    this.scheduledFrame = requestAnimationFrame(() => {
-      this.scheduledFrame = requestAnimationFrame(() => {
-        this.scheduledFrame = undefined;
-        this.render();
-      });
-    });
-  };
-
   private render(): void {
-    this.layer.replaceChildren();
+    this.layer.element.replaceChildren();
     this.rendered = this.boundaries.flatMap((boundary): IRenderedBoundary[] => {
       const anchors = getBoundaryAnchorIds(this.sectionIds, boundary);
       const startAnchor = anchors.startId && document.getElementById(SCROLL_ANCHOR_PREFIX + anchors.startId);
@@ -204,7 +185,7 @@ export class SharedComponentOverlay {
         width: `${Math.max(this.body.scrollWidth, document.documentElement.clientWidth)}px`,
         height: `${Math.max(2, endTop - top)}px`,
       });
-      this.layer.appendChild(element);
+      this.layer.element.appendChild(element);
       return [{ boundary, element }];
     });
 
@@ -287,7 +268,7 @@ export class SharedComponentOverlay {
       this.pointerFrame = undefined;
       const position = this.pendingPointerPosition;
       this.pendingPointerPosition = null;
-      if (!position || this.disposed) {
+      if (!position || this.layer.isDisposed) {
         return;
       }
 
@@ -333,17 +314,4 @@ export class SharedComponentOverlay {
     this.highlight(null);
     this.onHover(null);
   }
-
-  private findPlacementAt(clientX: number, clientY: number): string | null {
-    const rendered = this.rendered.find(({ element }) => {
-      const rect = element.getBoundingClientRect();
-      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
-    });
-    return rendered?.boundary.placementId ?? null;
-  }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  // Same shape test the preview protocol applies, arrays included — a boundary is always a plain object.
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

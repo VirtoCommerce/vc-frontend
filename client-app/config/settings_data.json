@@ -11,6 +11,8 @@
 
     "module_federation_enabled": true,
 
+    "site_builder_enabled": false,
+
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
     "product_quantity_control": "stepper",

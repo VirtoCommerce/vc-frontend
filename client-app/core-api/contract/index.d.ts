@@ -4,7 +4,7 @@
 
 import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
 import * as vue from 'vue';
-import { MaybeRefOrGetter, Plugin, Ref, ComputedRef, MaybeRef, Component, WritableComputedRef, DeepReadonly, ComponentObjectPropsOptions } from 'vue';
+import { MaybeRefOrGetter, Plugin, Ref, ComputedRef, MaybeRef, Component, ObjectDirective, ShallowRef, WritableComputedRef, DeepReadonly, ComponentObjectPropsOptions } from 'vue';
 import * as vue_router from 'vue-router';
 import { RouteLocationRaw, RouteLocationNormalizedLoaded, LocationQueryValue, Router } from 'vue-router';
 import * as yup from 'yup';
@@ -4950,6 +4950,8 @@ interface IThemeConfigSettings {
     files_enabled?: boolean;
     /** Builds the theme as a Module Federation host and loads the plugins the platform advertises. Only `true` enables it. */
     module_federation_enabled?: boolean;
+    /** Reads the store's Site Builder theme: templates, rules, header, footer, brand and palette. Only `true` enables it. */
+    site_builder_enabled?: boolean;
     bulk_order_enabled?: boolean;
     product_filters_sorting?: boolean;
     product_filters_sorting_direction?: SortDirectionType;
@@ -5047,6 +5049,8 @@ interface IThemeContext {
     availableCurrencies: ICurrency[];
     settings: IThemeConfigSettings;
     preset?: IThemeConfigPreset;
+    /** Without it the storefront has no dark theme. */
+    darkPreset?: IThemeConfigPreset;
     defaultPresetName: string;
     activePresetName?: string;
     storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
@@ -5206,6 +5210,8 @@ type ExtensionCategoryMapType = {
     identityProviders: ExtensionEntryType;
     /** The account security page, keyed by the sign-in method name. */
     signInMethods: DecorateEntryType<SignInMethodContributionType>;
+    /** Keyed by the type stored in page and template content. A late registration re-renders the pages showing it. */
+    pageBuilderSection: ExtensionEntryType;
     /** Widgets on Account › Security, below the sign-in methods. */
     accountSecurity: ExtensionEntryType<Record<string, unknown>, never, () => boolean>;
     /** Widgets on Company › Info, between the company name and the addresses. */
@@ -5311,9 +5317,142 @@ declare const EXTENSION_CATEGORIES: {
     readonly checkout: "checkout";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
+    readonly pageBuilderSection: "pageBuilderSection";
     readonly accountSecurity: "accountSecurity";
     readonly companyInfo: "companyInfo";
 };
+
+/** A checked attribute value: a `number` field gives a number, a `boolean` one a boolean. */
+type CustomSectionValueType = string | number | boolean;
+/**
+ * The directive a behavior's attribute switches on; its value is the attribute's, bindings resolved. It loads
+ * lazily, after its element may already be in the page, so it has the hooks from `mounted` on. The element mounts
+ * afresh when the value, an option or the visitor's motion preference changes, so `mounted` reads them all.
+ * `defineBehavior` builds one whose hooks run in the element's own scope; a hook written by hand runs in none, and
+ * `unmounted` must stop what it started.
+ */
+type CustomSectionDirectiveType = Pick<ObjectDirective<HTMLElement, string | undefined>, "mounted" | "beforeUpdate" | "updated" | "beforeUnmount" | "unmounted">;
+/** The types of field the server reads in a kit. */
+declare const CUSTOM_SECTION_FIELD_TYPES: readonly ["string", "number", "boolean", "select", "link", "date"];
+/** The lists of names the catalog holds once, for a select's `optionsFrom`. */
+declare const CUSTOM_SECTION_OPTION_LISTS: readonly ["icons", "masks"];
+/**
+ * An attribute of a kit tag, or the value or an option of a behavior, as the agent that writes templates and the
+ * server that checks them read it. The storefront drops a tag attribute that breaks it.
+ */
+interface ICustomSectionField {
+    /**
+     * `link`: a path on the site, an anchor of the page, or an `https:`, `mailto:` or `tel:` URL. `date`: an ISO 8601
+     * date, `2026-12-24`, meaning 00:00 UTC of that day, or a date-time with its offset, `2026-12-24T18:00:00-05:00` or
+     * `…Z`; one without an offset is refused, as it would name a different moment in each visitor's time zone.
+     */
+    type: (typeof CUSTOM_SECTION_FIELD_TYPES)[number];
+    /** The values a `select` takes; a select has these or `optionsFrom`. */
+    options?: string[];
+    /**
+     * A `select` of a list the catalog holds once: `icons`, the names `VcIcon` draws, as `kit.icons`, or `masks`, the
+     * names `VcShape` cuts its mask from, as `kit.masks`.
+     */
+    optionsFrom?: (typeof CUSTOM_SECTION_OPTION_LISTS)[number];
+    min?: number;
+    max?: number;
+    description?: string;
+}
+/** A storefront component a custom section template places as a `vc-*` tag. A kit tag has no content. */
+interface ICustomSectionTag {
+    /**
+     * Load it lazily with `defineAsyncComponent`, unless the host loads it anyway. It renders one root element that
+     * takes the attributes passed through: a repeated copy hides itself from assistive technology through them.
+     */
+    component: Component;
+    /** What the tag shows, for the agent that writes templates. */
+    description: string;
+    /**
+     * By attribute name; any other attribute is left out. Whatever type they declare, `to` and `href` hold a link and
+     * `src` an image of the asset library, as on `a` and `img`.
+     */
+    attributes: Record<string, ICustomSectionField>;
+    /** The checked attributes as the component's props; without it each goes as the prop of its camelCase name. */
+    mapProps?: (attributes: Record<string, CustomSectionValueType>) => Record<string, unknown>;
+    /** The attribute whose text fills the component's default slot, such as a button's `label`. */
+    slotAttribute?: string;
+    /**
+     * The most elements one instance renders, a whole number from 1 to 5,000, the section's render budget; 1 when
+     * left out. The budget counts it for every instance, list rows included.
+     */
+    cost?: number;
+    /**
+     * An instance does work beyond drawing, such as a request or an analytics view, which a copy would do again: the
+     * tag is left out of an element whose behavior repeats its children.
+     */
+    hasSideEffects?: boolean;
+}
+/**
+ * A behavior a custom section template switches on with the attribute `data-{name}`. Under
+ * `prefers-reduced-motion: reduce` it shows its end state at once.
+ */
+interface ICustomSectionBehavior {
+    /** Loads the directive, the first time a template uses the behavior. */
+    directive: () => Promise<CustomSectionDirectiveType>;
+    /** What the behavior does, for the agent that writes templates. */
+    description: string;
+    /** What `data-{name}` holds; none for a switch. */
+    value?: ICustomSectionField;
+    /** By option name: the attribute `data-{name}-{option}`. */
+    options?: Record<string, ICustomSectionField>;
+    /** What the directive writes for the section's CSS: a `--variable`, a `data-` attribute, or `text`. */
+    writes?: string[];
+    /**
+     * `data-` attributes of `writes` the renderer sets on the element while the directive fails to load: its end state,
+     * so what the section's CSS hides until the behavior runs still shows.
+     */
+    fallbackAttributes?: string[];
+    /**
+     * Attributes of the elements whose text the directive writes, each `data-{name}` or `data-{name}-…`: the
+     * template's text in them is not rendered.
+     */
+    textAttributes?: string[];
+    /** The renderer repeats the element's children once, the copies marked `data-sb-repeat` and hidden from assistive technology. */
+    repeatsChildren?: boolean;
+}
+
+/**
+ * Adds a tag a custom section template places as `<name>`: `vc-` and lowercase words joined by `-`. Its
+ * attributes are lowercase words too, none the server refuses on a kit tag (`on*`, `style`, `id`, `class`,
+ * `srcset`, `poster`, the invokers `command`, `commandfor` and `interestfor`…), each a field the server reads.
+ * The storefront's own tags are reserved; the first registration of a name wins. A tag that breaks a rule is
+ * ignored with a warning.
+ */
+declare function registerCustomSectionTag(name: string, tag: ICustomSectionTag): void;
+/**
+ * Adds a behavior a custom section template switches on with `data-{name}`, its options written
+ * `data-{name}-{option}`, its value and options each a field the server reads. No attribute of it may be another
+ * behavior's, and `data-each`, `data-if`, `data-html`, `data-sb-*` and `data-pb-*` are taken. The storefront's own
+ * behaviors are reserved; the first registration of a name wins. A behavior that breaks a rule is ignored with a
+ * warning. Under reduced motion a behavior shows its end state at once; its element mounts afresh when the value,
+ * an option or the motion preference changes.
+ */
+declare function registerCustomSectionBehavior(name: string, behavior: ICustomSectionBehavior): void;
+/** The storefront's own tags stay. */
+declare function unregisterCustomSectionTag(name: string): void;
+/** The storefront's own behaviors stay. */
+declare function unregisterCustomSectionBehavior(name: string): void;
+
+/** The element mounts afresh when its value, one of its options or the motion preference changes. */
+interface IBehaviorContext {
+    /** The attribute's value, bindings resolved. */
+    value: string;
+    /** With `prefers-reduced-motion: reduce` a behavior shows its end state at once. */
+    isReducedMotion: boolean;
+    /** Counts the element's updates: its children may have changed. */
+    updates: Readonly<ShallowRef<number>>;
+}
+/**
+ * The directive of a behavior, as the built-ins make theirs. `setup` runs from `mounted` inside an effect scope of
+ * the element's own, which stops on unmount: a watcher, or a listener a VueUse composable adds, ends with the
+ * element. The context reads the value and the visitor's motion preference.
+ */
+declare function defineBehavior(setup: (element: HTMLElement, context: IBehaviorContext) => void): CustomSectionDirectiveType;
 
 type NamedCategoryType = keyof typeof EXTENSION_NAMES;
 type SlotNameType<C extends ExtensionCategoryType> = C extends NamedCategoryType ? (typeof EXTENSION_NAMES)[C][keyof (typeof EXTENSION_NAMES)[C]] : string;
@@ -5395,6 +5534,12 @@ declare const ROUTES: {
     };
     readonly ORDER_DETAILS: {
         readonly NAME: "OrderDetails";
+    };
+    readonly MATCHER: {
+        readonly NAME: "Matcher";
+    };
+    readonly LOYALTY_CATALOG_MATCHER: {
+        readonly NAME: "LoyaltyCatalogMatcher";
     };
     readonly PROMOTION_COUPONS: {
         readonly NAME: "PromotionCoupons";
@@ -5623,6 +5768,7 @@ declare function _useNavigations(): {
     matchingRouteName: Readonly<vue.Ref<string, string>>;
     fetchCatalogMenu: () => Promise<void>;
     catalogMenuItems: vue.ComputedRef<ExtendedMenuLinkType[]>;
+    isCatalogMenuShown: vue.ComputedRef<boolean>;
     fetchFooterLinks: () => Promise<void>;
     footerLinks: vue.ComputedRef<ExtendedMenuLinkType[]>;
     fetchPinnedLinks: () => Promise<void>;
@@ -7236,8 +7382,8 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$c as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$d as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$I as VcAlert, _default$U as VcBadge, _default$T as VcBreadcrumbs, _default$H as VcButton, _default$G as VcCalendar, _default$S as VcCheckbox, _default$R as VcCheckboxGroup, _default$F as VcChip, _default$Q as VcContainer, _default$m as VcDatePicker, _default$l as VcDateRangePicker, _default$E as VcDialog, _default$D as VcDialogContent, _default$C as VcDialogFooter, _default$B as VcDialogHeader, _default$A as VcEmptyView, _default$P as VcIcon, _default$O as VcImage, _default$z as VcInput, _default$N as VcInputDetails, _default$M as VcLabel, _default$e as VcLayout, _default$L as VcLink, _default$y as VcLoaderOverlay, _default$K as VcMarkdownRender, _default$x as VcMenuItem, _default$k as VcModal, _default$j as VcPagination, _default$w as VcPopover, _default$v as VcProductActions, _default$u as VcProductActionsButton, _default$t as VcProductPrice, _default$s as VcProductTitle, _default$r as VcRating, _default$q as VcSelect, _default$p as VcTabSwitch, _default$i as VcTable, _default$h as VcTableColumn, _default$o as VcTextarea, _default$J as VcTooltip, _default$n as VcTypography, _default$g as VcWidget, _default$f as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerLocaleLoader, registerProductConfigurationSource, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, useAnalytics, useAnalyticsUtils, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
-export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ProductActionPropsType, ProductConfigurationSourceType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$c as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$d as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$I as VcAlert, _default$U as VcBadge, _default$T as VcBreadcrumbs, _default$H as VcButton, _default$G as VcCalendar, _default$S as VcCheckbox, _default$R as VcCheckboxGroup, _default$F as VcChip, _default$Q as VcContainer, _default$m as VcDatePicker, _default$l as VcDateRangePicker, _default$E as VcDialog, _default$D as VcDialogContent, _default$C as VcDialogFooter, _default$B as VcDialogHeader, _default$A as VcEmptyView, _default$P as VcIcon, _default$O as VcImage, _default$z as VcInput, _default$N as VcInputDetails, _default$M as VcLabel, _default$e as VcLayout, _default$L as VcLink, _default$y as VcLoaderOverlay, _default$K as VcMarkdownRender, _default$x as VcMenuItem, _default$k as VcModal, _default$j as VcPagination, _default$w as VcPopover, _default$v as VcProductActions, _default$u as VcProductActionsButton, _default$t as VcProductPrice, _default$s as VcProductTitle, _default$r as VcRating, _default$q as VcSelect, _default$p as VcTabSwitch, _default$i as VcTable, _default$h as VcTableColumn, _default$o as VcTextarea, _default$J as VcTooltip, _default$n as VcTypography, _default$g as VcWidget, _default$f as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, defineBehavior, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerCustomSectionBehavior, registerCustomSectionTag, registerLocaleLoader, registerProductConfigurationSource, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, unregisterCustomSectionBehavior, unregisterCustomSectionTag, useAnalytics, useAnalyticsUtils, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
+export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomSectionDirectiveType, CustomSectionValueType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IBehaviorContext, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ProductActionPropsType, ProductConfigurationSourceType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
