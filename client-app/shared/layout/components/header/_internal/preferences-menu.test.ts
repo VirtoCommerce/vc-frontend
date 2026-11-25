@@ -170,6 +170,19 @@ describe("PreferencesMenu: panel", () => {
     );
   });
 
+  it("names the currency list, the appearance switch and the language list by their headings", async () => {
+    const wrapper = mountPage();
+    await open(wrapper);
+    const ids = wrapper.findAll(".preferences-menu__heading").map((heading) => heading.attributes("id"));
+    const named = [
+      '[data-test-id="test-CurrencyList"]',
+      "color-mode-switch-stub",
+      '[data-test-id="test-LanguageList"]',
+    ];
+
+    expect(named.map((selector) => wrapper.get(selector).attributes("aria-labelledby"))).toEqual(ids);
+  });
+
   it("closes on Escape after focus has left the panel", async () => {
     const wrapper = mountPage();
     await open(wrapper);

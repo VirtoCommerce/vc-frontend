@@ -278,6 +278,12 @@ describe("OrganizationList: keyboard", () => {
     expect(wrapper.findAll("[data-vc-organization-option] [role='option']")).toHaveLength(15);
   });
 
+  it("names the list", async () => {
+    const wrapper = await mountList();
+
+    expect(wrapper.get('[role="listbox"]').attributes("aria-label")).toBe("common.labels.organizations");
+  });
+
   it("keeps the search field a plain search box that controls the list", async () => {
     const wrapper = await mountList();
     await resolveAll();
