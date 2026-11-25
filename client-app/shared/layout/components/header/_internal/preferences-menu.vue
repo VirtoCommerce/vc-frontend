@@ -173,6 +173,9 @@ const triggerLabel = computed(() =>
   }
 
   &__list {
+    // The account sidebar's row radius in classic.
+    --vc-menu-item-radius: theme("borderRadius.md");
+
     @apply min-h-0;
   }
 
