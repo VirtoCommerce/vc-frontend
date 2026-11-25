@@ -197,7 +197,12 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full text-left font-normal;
+
+    padding-inline: var(--vc-menu-item-padding-x, theme("padding.3"));
+    // `inherit` sits in the property itself: routed through a private variable it is no longer the keyword.
+    border-radius: var(--vc-menu-item-radius, inherit);
+    background-color: var(--vc-menu-item-bg-color, theme("colors.additional.50"));
 
     &:not(:disabled) {
       @apply text-neutral-950;
@@ -252,11 +257,11 @@ onMounted(() => {
         --vc-icon-color: var(--color-#{$color}-600);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50];
+          background-color: var(--vc-menu-item-hover-bg-color, var(--color-#{$color}-50));
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--vc-menu-item-active-bg-color, var(--color-#{$color}-100));
         }
       }
     }
@@ -264,8 +269,6 @@ onMounted(() => {
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
     &:focus-visible {
-      @apply rounded-[inherit];
-
       @include focus-ring($inset: true);
     }
 
