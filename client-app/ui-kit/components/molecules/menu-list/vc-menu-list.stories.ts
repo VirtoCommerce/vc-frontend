@@ -40,7 +40,6 @@ const meta: Meta<typeof VcMenuList> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-// Each template takes the list's role binding: `v-bind="args"` in the story, the role itself in "Show code".
 const BIND_ARGS = 'v-bind="args"';
 
 function source(code: string) {

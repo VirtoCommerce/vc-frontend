@@ -513,8 +513,7 @@ describe("VcMenuList", () => {
     });
   });
 
-  // The component id varies with the mount order.
-  describe("an item outside a list renders as before", () => {
+  describe("an item outside a list keeps its markup", () => {
     const BASELINE = {
       plain: [
         `<VcMenuItem>Plain</VcMenuItem>`,
@@ -549,6 +548,7 @@ describe("VcMenuList", () => {
     it.each(Object.entries(BASELINE))("%s", async (_name, [template, html]) => {
       const wrapper = await mountList(template);
 
+      // The component id varies with the mount order.
       expect(wrapper.html({ raw: true }).replace(/menu-item-\d+/, "menu-item-ID")).toBe(html);
     });
   });
@@ -579,7 +579,6 @@ describe("VcMenuList", () => {
       ]);
     });
 
-    // VcMenuItem passes attributes to its wrapper, so a checkable row's aria-checked cannot reach the role.
     it.each(["menuitemradio", "menuitemcheckbox"])("flags a checkable %s in a menu", async (role) => {
       await mountList(`
         <VcMenuList role="menu" aria-label="Sort">
