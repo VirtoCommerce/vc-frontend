@@ -1040,6 +1040,8 @@ export const ServerFilterSelectAll: StoryType = {
       source: {
         code: `
 <script setup lang="ts">
+type BuyerType = { id: number; name: string };
+
 const { items, loading, answeredQuery, matchCount, hasNextPage, loadNextPage, search, matchesOf } = useBuyers();
 const selected = ref<BuyerType[]>([]);
 const selectedMatchCount = computed(() => {
