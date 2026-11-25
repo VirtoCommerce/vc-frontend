@@ -63,7 +63,6 @@ import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useFooterLogo } from "@/shared/layout/composables/useFooterLogo";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
-import pkg from "../../../../../package.json";
 import FooterLinks from "./_internal/footer-links.vue";
 
 interface IProps {
@@ -77,7 +76,7 @@ const { footerLogoUrl } = useFooterLogo();
 const { footerLinks, fetchFooterLinks } = useNavigations();
 const { footerColumns: themeFooterColumns, copyright, isCreditShown, siteFooter } = useThemeChrome();
 
-const { version } = pkg;
+const version = import.meta.env.APP_VERSION;
 
 onMounted(() => {
   if (!props.compact) {
