@@ -4,9 +4,6 @@
   --vc-popover-padding: theme("spacing.4");
   --vc-popover-border-width: 1px;
 
-  // Clear air before the pill, so it does not read as one more icon link.
-  @apply ms-5;
-
   &__trigger {
     --vc-icon-color: currentColor;
 
