@@ -26,13 +26,10 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   productPage: {
     sidebarButton: "sidebar-button",
-    /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+    /** Under the add-to-cart controls of a product or of the picked variation (e.g. Subscribe & Save). */
     purchaseOptions: "purchase-options",
     variationItemButton: "variation-item-button",
-    /**
-     * Replaces a variation row's add-to-cart (variations table and list) when `variationItemButton` does not apply,
-     * the way `purchaseOptions` follows `sidebarButton` for a simple product (e.g. Subscribe & Save per variation).
-     */
+    /** Under a variation row's add-to-cart in the variations table and list (e.g. Subscribe & Save per variation). */
     variationPurchaseOptions: "variation-purchase-options",
   },
   paymentPage: {

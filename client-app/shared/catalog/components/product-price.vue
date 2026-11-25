@@ -34,32 +34,28 @@
       </div>
 
       <div class="product-price__actions">
-        <!-- The selected variation gets the same purchase options as a simple product (e.g. Subscribe & Save). -->
-        <ExtensionPoint
-          v-if="
-            variationResult &&
-            variationResult.price?.actual?.amount > 0 &&
-            !product.isConfigurable &&
-            $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, variationResult)
-          "
-          :name="EXTENSION_NAMES.productPage.purchaseOptions"
-          category="productPage"
-          :product="variationResult"
-        />
+        <template v-if="variationResult && variationResult.price?.actual?.amount > 0">
+          <component :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="variationResult">
+            <InStock
+              :is-in-stock="variationResult.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="variationResult.availabilityData?.availableQuantity"
+            />
 
-        <component
-          v-else-if="variationResult && variationResult.price?.actual?.amount > 0"
-          :is="product.isConfigurable ? AddToCart : AddToCartSimple"
-          :product="variationResult"
-        >
-          <InStock
-            :is-in-stock="variationResult.availabilityData?.isInStock"
-            :is-digital="isDigital"
-            :quantity="variationResult.availabilityData?.availableQuantity"
+            <CountInCart :product-id="variationResult.id" />
+          </component>
+
+          <ExtensionPoint
+            v-if="
+              !product.isConfigurable &&
+              $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, variationResult)
+            "
+            :key="variationResult.id"
+            :name="EXTENSION_NAMES.productPage.purchaseOptions"
+            category="productPage"
+            :product="variationResult"
           />
-
-          <CountInCart :product-id="variationResult.id" />
-        </component>
+        </template>
 
         <div v-else>
           <VcButton
@@ -117,26 +113,29 @@
           :product="product"
         />
 
-        <ExtensionPoint
-          v-else-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, product)"
-          :name="EXTENSION_NAMES.productPage.purchaseOptions"
-          category="productPage"
-          :product="product"
-        />
+        <template v-else>
+          <component :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
+            <InStock
+              :is-in-stock="product.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="product.availabilityData?.availableQuantity"
+            />
 
-        <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
-          <InStock
-            :is-in-stock="product.availabilityData?.isInStock"
-            :is-digital="isDigital"
-            :quantity="product.availabilityData?.availableQuantity"
-          />
+            <CountInCart
+              v-if="!product.isConfigurable || configurableLineItemId"
+              :product-id="product.id"
+              :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
+            />
+          </component>
 
-          <CountInCart
-            v-if="!product.isConfigurable || configurableLineItemId"
-            :product-id="product.id"
-            :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
+          <ExtensionPoint
+            v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, product)"
+            :key="product.id"
+            :name="EXTENSION_NAMES.productPage.purchaseOptions"
+            category="productPage"
+            :product="product"
           />
-        </component>
+        </template>
       </div>
     </template>
   </div>

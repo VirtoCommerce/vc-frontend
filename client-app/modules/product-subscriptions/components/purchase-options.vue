@@ -1,23 +1,7 @@
 <template>
-  <div class="purchase-options" :class="{ 'purchase-options--compact': compact }">
-    <!-- A configurable product keeps the core configured add-to-cart: the choice applies to the line it creates. -->
-    <component :is="isConfigurable ? AddToCart : AddToCartSimple" :product="product">
-      <InStock
-        v-if="!hideStock"
-        :is-in-stock="product.availabilityData?.isInStock"
-        :is-digital="product.productType === 'Digital'"
-        :quantity="product.availabilityData?.availableQuantity"
-      />
-
-      <CountInCart
-        v-if="!isConfigurable || configurableLineItemId"
-        :product-id="product.id"
-        :line-item-id="isConfigurable ? configurableLineItemId : undefined"
-      />
-    </component>
-
+  <div v-if="offer" class="purchase-options" :class="{ 'purchase-options--compact': compact }">
     <output
-      v-if="offer && lineItem && syncState"
+      v-if="lineItem && syncState"
       class="purchase-options__status"
       :class="{ 'purchase-options__status--error': syncState === 'error' }"
     >
@@ -37,7 +21,7 @@
     </output>
 
     <!-- A row of a variation list: one checkbox under the row's own add-to-cart, the frequency once it is ticked. -->
-    <div v-if="offer && compact" class="purchase-options__compact">
+    <div v-if="compact" class="purchase-options__compact">
       <VcCheckbox
         :model-value="mode === 'subscribe'"
         size="sm"
@@ -60,9 +44,13 @@
         :disabled="isSaving"
         :test-id-dropdown="`purchase-option-frequency-${product.id}`"
       />
+
+      <p v-if="mode === 'subscribe' && !isAuthenticated" class="purchase-options__compact-hint">
+        {{ $t("product_subscriptions.purchase_options.sign_in_required") }}
+      </p>
     </div>
 
-    <template v-else-if="offer">
+    <template v-else>
       <fieldset class="purchase-options__choices" :aria-label="$t('product_subscriptions.purchase_options.title')">
         <PurchaseOption
           v-model="mode"
@@ -126,17 +114,11 @@ import PurchaseOption from "./purchase-option.vue";
 import SubscriptionBenefits from "./subscription-benefits.vue";
 import SubscriptionFrequencyPicker from "./subscription-frequency-picker.vue";
 import type { Product } from "@/core/api/graphql/types";
-import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
-import AddToCart from "@/shared/cart/components/add-to-cart.vue";
-import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
-import InStock from "@/shared/catalog/components/in-stock.vue";
 
 interface IProps {
   product: Product;
   /** A row of a variation list: a checkbox and a frequency list instead of the full choice. */
   compact?: boolean;
-  /** The host shows the stock itself (the variations table has its own column). */
-  hideStock?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -148,7 +130,6 @@ const { cart } = useShortCart();
 const { loadOffers, offerFor } = useSubscriptionOffers();
 const { byLineItemId, setSubscription, removeSubscription } = useDefaultCartSubscriptions();
 
-// By the current product: on a B2C variations page the same block shows whichever variation the options select.
 const offer = computed(() => offerFor(product.value.id));
 const mode = ref<"once" | "subscribe">("once");
 const selectedInterval = ref<string>();
@@ -247,34 +228,19 @@ function defaultIntervalKey(): string | undefined {
   return interval ? intervalKey(interval.unit, interval.count) : undefined;
 }
 
-// A new product (another variation picked on a B2C page) starts from its own offer and cart line.
-watch(
-  () => product.value.id,
-  (id, previous) => {
-    if (previous !== undefined) {
-      // From the cart, never a blind reset: a variation already subscribed in the cart must keep its subscription.
-      const active = activeSubscription.value;
-      mode.value = active ? "subscribe" : "once";
-      selectedInterval.value = active ? intervalKey(active.intervalUnit, active.intervalCount) : defaultIntervalKey();
-      syncState.value = undefined;
-      syncError.value = undefined;
-    }
-    void loadOffers([id]);
-  },
-  { immediate: true },
-);
+void loadOffers([product.value.id]);
 </script>
 
 <style lang="scss">
 .purchase-options {
-  @apply flex flex-col gap-3;
+  @apply mt-3 flex flex-col gap-3;
 
   &__choices {
     @apply flex flex-col gap-2;
   }
 
   &--compact {
-    @apply gap-2;
+    @apply mt-2 gap-2;
   }
 
   &__compact {
@@ -283,6 +249,10 @@ watch(
 
   &__compact-frequency {
     @apply w-36;
+  }
+
+  &__compact-hint {
+    @apply basis-full text-xs text-neutral-600;
   }
 
   &__configuration-note {
