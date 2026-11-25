@@ -1868,6 +1868,13 @@
       "title": "Il tuo account è bloccato",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "In attesa di approvazione"
+      },
+      "title": "Il tuo account è in attesa di approvazione",
+      "message": "Grazie per esserti registrato. Il catalogo sarà disponibile non appena il team del negozio avrà approvato il tuo account. Ti avviseremo via e-mail."
+    },
     "brands": {
       "top_brands_title": "Marchi principali",
       "title": "Marchi",

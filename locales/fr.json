@@ -1868,6 +1868,13 @@
       "title": "Votre compte est bloqué",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "En attente de validation"
+      },
+      "title": "Votre compte est en attente de validation",
+      "message": "Merci pour votre inscription. Le catalogue sera accessible dès que l'équipe de la boutique aura validé votre compte. Nous vous préviendrons par e-mail."
+    },
     "brands": {
       "top_brands_title": "Meilleures marques",
       "title": "Marques",

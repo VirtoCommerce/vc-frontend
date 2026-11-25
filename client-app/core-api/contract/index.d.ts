@@ -4156,6 +4156,7 @@ type GetMeQuery = {
             firstName: string;
             lastName: string;
             fullName: string;
+            status?: string;
             organizationId?: string;
             defaultLanguage?: string;
             currencyCode?: string;
@@ -4975,6 +4976,11 @@ interface IThemeConfigSettings {
     };
     image_carousel_in_product_card_enabled?: boolean;
     registration_enabled?: boolean;
+    /**
+     * Opt-in: a signed-in customer whose contact status is set and is not `Approved` sees the awaiting-approval page
+     * instead of the catalog. An empty status counts as approved; administrators are never held back.
+     */
+    require_contact_approval?: boolean;
     social_auth_google?: boolean;
     social_auth_twitter?: boolean;
     social_auth_ad?: boolean;
@@ -5393,6 +5399,10 @@ declare const ROUTES: {
         readonly NAME: "ChangePassword";
         readonly PATH: "/change-password";
     };
+    readonly AWAITING_APPROVAL: {
+        readonly NAME: "AwaitingApproval";
+        readonly PATH: "/awaiting-approval";
+    };
     readonly SAVED_FOR_LATER: {
         readonly NAME: "SavedForLater";
     };
@@ -5682,6 +5692,8 @@ declare function _useUser(): {
             fullName: string;
         };
     } | null>;
+    isAwaitingApproval: vue.ComputedRef<boolean>;
+    canBrowseCatalog: vue.ComputedRef<boolean>;
     userGroups: vue.ComputedRef<string[]>;
     checkPermissions: (...permissions: string[]) => boolean;
     fetchUser: (options?: {
@@ -5722,6 +5734,7 @@ declare function _useUser(): {
             firstName: string;
             lastName: string;
             fullName: string;
+            status?: string;
             organizationId?: string;
             defaultLanguage?: string;
             currencyCode?: string;
@@ -5764,6 +5777,7 @@ declare function _useUser(): {
             firstName: string;
             lastName: string;
             fullName: string;
+            status?: string;
             organizationId?: string;
             defaultLanguage?: string;
             currencyCode?: string;

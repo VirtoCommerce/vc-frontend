@@ -1868,6 +1868,13 @@
       "title": "Tilisi on estetty",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Odottaa hyväksyntää"
+      },
+      "title": "Tilisi odottaa hyväksyntää",
+      "message": "Kiitos rekisteröitymisestä. Luettelo avautuu, kun kaupan tiimi on hyväksynyt tilisi. Ilmoitamme siitä sähköpostitse."
+    },
     "brands": {
       "top_brands_title": "Huippumerkit",
       "title": "Merkit",

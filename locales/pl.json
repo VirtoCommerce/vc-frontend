@@ -1868,6 +1868,13 @@
       "title": "Twoje konto jest zablokowane",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Oczekuje na zatwierdzenie"
+      },
+      "title": "Twoje konto oczekuje na zatwierdzenie",
+      "message": "Dziękujemy za rejestrację. Katalog będzie dostępny, gdy tylko zespół sklepu zatwierdzi Twoje konto. Powiadomimy Cię o tym e-mailem."
+    },
     "brands": {
       "top_brands_title": "Najlepsze marki",
       "title": "Marki",

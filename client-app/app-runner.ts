@@ -109,7 +109,7 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { setUser, user, isAuthenticated, savedUserId, checkPermissions } = useUser();
+  const { setUser, user, isAuthenticated, canBrowseCatalog, savedUserId, checkPermissions } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
@@ -275,7 +275,7 @@ export default async () => {
   // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
 
-  if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+  if (canBrowseCatalog.value) {
     void fetchCatalogMenu();
   }
 

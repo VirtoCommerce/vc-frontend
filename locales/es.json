@@ -1868,6 +1868,13 @@
       "title": "Tu cuenta está bloqueada",
       "message": "@:common.messages.blocked"
     },
+    "awaiting_approval": {
+      "meta": {
+        "title": "Pendiente de aprobación"
+      },
+      "title": "Tu cuenta está pendiente de aprobación",
+      "message": "Gracias por registrarte. El catálogo estará disponible en cuanto el equipo de la tienda apruebe tu cuenta. Te avisaremos por correo electrónico."
+    },
     "brands": {
       "top_brands_title": "Primeras marcas",
       "title": "Marcas",

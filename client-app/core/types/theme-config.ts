@@ -410,6 +410,11 @@ export interface IThemeConfigSettings {
   image_carousel_in_product_card_enabled?: boolean;
 
   registration_enabled?: boolean;
+  /**
+   * Opt-in: a signed-in customer whose contact status is set and is not `Approved` sees the awaiting-approval page
+   * instead of the catalog. An empty status counts as approved; administrators are never held back.
+   */
+  require_contact_approval?: boolean;
   social_auth_google?: boolean;
   social_auth_twitter?: boolean;
   social_auth_ad?: boolean;

@@ -24,7 +24,11 @@ vi.mock("@/core/composables/useAuth", () => ({
 }));
 vi.mock("@/shared/account", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/shared/account")>()),
-  useUser: () => ({ isAuthenticated: state.authenticated, organization: { value: undefined } }),
+  useUser: () => ({
+    isAuthenticated: state.authenticated,
+    isAwaitingApproval: { value: false },
+    organization: { value: undefined },
+  }),
 }));
 vi.mock("@/core/api/graphql", () => ({
   apolloClient: { mutate: state.merge },

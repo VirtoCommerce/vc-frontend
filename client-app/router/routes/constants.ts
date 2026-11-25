@@ -35,6 +35,10 @@ export const ROUTES = {
     NAME: "ChangePassword",
     PATH: "/change-password",
   },
+  AWAITING_APPROVAL: {
+    NAME: "AwaitingApproval",
+    PATH: "/awaiting-approval",
+  },
   SAVED_FOR_LATER: {
     NAME: "SavedForLater",
   },
