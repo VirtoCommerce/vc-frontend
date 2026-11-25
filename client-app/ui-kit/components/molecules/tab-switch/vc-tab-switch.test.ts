@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
-import { createWrapperFactory } from "@/core/utilities/tests";
 import { VcTabSwitch } from "@/ui-kit/components/molecules";
+import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 
 const createWrapper = createWrapperFactory(mount, VcTabSwitch, {
   global: {
@@ -24,6 +24,26 @@ describe("VcTabSwitch", () => {
       const wrapper = createWrapper({ props: { value: "grid", modelValue: "list" } });
 
       expect(wrapper.get("button").attributes("aria-pressed")).toBe("false");
+    });
+  });
+
+  describe("without a group", () => {
+    it("is a tab stop with no radio semantics", () => {
+      const wrapper = createWrapper({ props: { value: "grid", modelValue: "grid", name: "view" } });
+      const button = wrapper.get("button");
+
+      expect(button.attributes("tabindex")).toBe("0");
+      expect(button.attributes("role")).toBeUndefined();
+      expect(button.attributes("aria-checked")).toBeUndefined();
+      expect(wrapper.get("input").attributes("name")).toBe("view");
+    });
+
+    it("stays a tab stop with no aria-disabled when disabled", () => {
+      const wrapper = createWrapper({ props: { value: "grid", disabled: true } });
+      const button = wrapper.get("button");
+
+      expect(button.attributes("tabindex")).toBe("0");
+      expect(button.attributes("aria-disabled")).toBeUndefined();
     });
   });
 });

@@ -1,4 +1,5 @@
 import { graphqlClient } from "../../../client";
+import { refetchAddressBooks } from "../refetchAddressBooks";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
 import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
 import type {
@@ -23,6 +24,8 @@ export async function updateMemberAddresses(
     },
     context,
   });
+
+  refetchAddressBooks();
 
   return data?.updateMemberAddresses?.addresses?.items ?? [];
 }

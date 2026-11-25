@@ -1,35 +1,43 @@
 <template>
-  <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
-    <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
+  <header ref="headerElement" class="mobile-header">
+    <AnnouncementBar />
+
+    <div class="mobile-header__top">
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1]">
+    <div class="mobile-header__bottom" v-bind="getPreviewSectionAttrs(siteHeader?.id)">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
-        <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
+        <div v-if="customSlots.default" class="mobile-header__custom">
           <component :is="customSlots.default" />
         </div>
 
-        <div
-          v-else
-          class="relative z-20 flex h-14 w-full items-center justify-between gap-x-2 border-b bg-[--header-bottom-bg-color] sm:gap-x-6"
-        >
+        <div v-else class="mobile-header__bar">
           <!-- region Left slot -->
           <component :is="customSlots.left" v-if="customSlots.left" />
 
-          <div v-else class="flex h-full items-center">
+          <div v-else class="mobile-header__left">
             <button
               :aria-label="$t('common.labels.main_menu')"
               type="button"
-              class="h-full pe-3 ps-5 sm:pe-5"
+              class="mobile-header__menu-button"
               @click="mobileMenuVisible = true"
             >
-              <VcIcon class="text-primary" name="menu" :size="24" />
+              <VcIcon class="mobile-header__icon" name="menu" :size="24" />
             </button>
 
-            <router-link :to="$context.settings.default_return_url ?? '/'">
-              <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
+            <router-link :to="$context.settings.default_return_url ?? '/'" :style="logoStyle">
+              <VcImage
+                :src="headerLogoUrl"
+                :alt="$context.storeName"
+                :class="
+                  logoWidth
+                    ? 'h-auto max-h-10 w-[--header-logo-width] max-w-[40vw] [--vc-image-object-fit:contain] [--vc-image-object-position:left_center] rtl:[--vc-image-object-position:right_center]'
+                    : 'mobile-header__logo'
+                "
+                lazy
+              />
             </router-link>
           </div>
           <!-- endregion Left slot -->
@@ -37,54 +45,36 @@
           <!-- region Right slot -->
           <component :is="customSlots.right" v-if="customSlots.right" />
 
-          <div v-else class="flex h-full flex-row items-center pr-4">
+          <div v-else class="mobile-header__right">
             <a
               v-if="support_phone_number"
               :aria-label="$t('common.labels.support_phone_number')"
-              class="px-1 py-2 xs:px-2"
+              class="mobile-header__action"
               :href="`tel:${support_phone_number}`"
             >
-              <VcIcon class="text-primary" name="phone" :size="24" />
+              <VcIcon class="mobile-header__icon" name="phone" :size="24" />
             </a>
 
             <button
               :aria-label="$t('common.labels.toggle_search_bar')"
               type="button"
-              class="px-1 py-2 xs:px-2"
+              class="mobile-header__action"
               @click="toggleSearchBar"
             >
-              <VcIcon class="text-primary" name="search" :size="24" />
+              <VcIcon class="mobile-header__icon" name="search" :size="24" />
             </button>
 
-            <ExtensionPointList category="mobileHeader" class="px-1 py-2 xs:px-2" />
+            <ExtensionPointList category="mobileHeader" class="mobile-header__action" />
 
             <router-link
               :to="{ name: ROUTES.CART.NAME }"
-              :aria-label="$t('common.links.cart')"
-              class="px-1 py-2 xs:px-2"
+              :aria-label="getCountLabel($t('common.links.cart'), cart?.itemsQuantity)"
+              class="mobile-header__action"
             >
-              <span class="relative block">
-                <VcIcon class="text-primary" name="cart" :size="24" />
+              <span class="mobile-header__cart">
+                <VcIcon class="mobile-header__icon" name="cart" :size="24" />
 
-                <transition
-                  mode="out-in"
-                  enter-from-class="scale-0"
-                  leave-to-class="scale-0"
-                  enter-active-class="will-change-transform"
-                  leave-active-class="will-change-transform"
-                >
-                  <VcBadge
-                    v-if="cart?.itemsQuantity"
-                    variant="outline"
-                    size="sm"
-                    class="absolute -right-2 -top-2 transition-transform"
-                    rounded
-                    nowrap
-                    max-width="none"
-                  >
-                    {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
-                  </VcBadge>
-                </transition>
+                <HeaderBadge :count="cart?.itemsQuantity" size="sm" overlay />
               </span>
             </router-link>
           </div>
@@ -99,19 +89,16 @@
     </div>
   </header>
 
-  <!-- Height placeholder for mobile header due to fixed position -->
-  <div :style="placeholderStyle" class="h-14 print:hidden"></div>
-
   <!-- Mobile menu -->
   <transition
-    enter-from-class="-translate-x-full"
-    leave-to-class="-translate-x-full"
-    enter-active-class="will-change-transform"
-    leave-active-class="will-change-transform"
+    enter-from-class="mobile-header__menu--offscreen"
+    leave-to-class="mobile-header__menu--offscreen"
+    enter-active-class="mobile-header__menu--moving"
+    leave-active-class="mobile-header__menu--moving"
   >
     <MobileMenu
       v-if="mobileMenuVisible"
-      class="transition-transform print:hidden"
+      class="mobile-header__menu"
       :class="{ 'is-visible': mobileMenuVisible }"
       @close="mobileMenuVisible = false"
     />
@@ -120,18 +107,22 @@
 
 <script setup lang="ts">
 import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
-import { useWhiteLabeling } from "@/core/composables";
+import { computed, onActivated, onDeactivated, ref, watch } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
+import { useHeaderCountLabel } from "@/shared/layout/composables/useHeaderCountLabel";
+import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
+import AnnouncementBar from "../../announcement-bar/announcement-bar.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
-import type { StyleValue } from "vue";
+import HeaderBadge from "@/shared/layout/components/header-badge/header-badge.vue";
 
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
@@ -141,30 +132,127 @@ const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMB
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar } = useSearchBar();
+const { getCountLabel } = useHeaderCountLabel();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
-const { logoUrl } = useWhiteLabeling();
-
-const placeholderStyle = computed<StyleValue | undefined>(() =>
-  height.value ? { height: height.value + "px" } : undefined,
-);
+const { headerLogoUrl } = useHeaderLogo();
+// The theme's logo width is the desktop header's; in the phone's bar the logo shrinks to fit, keeping its proportions.
+const { logoWidth, logoStyle, siteHeader } = useThemeChrome();
 
 // Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
-// header row) can sit flush below this fixed mobile header instead of under it. VcHeader owns
-// this var on desktop (see vc-header.vue).
+// header row) can sit flush below this sticky mobile header instead of under it. AppHeader owns
+// this var on desktop (see app-header.vue).
 const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
+const isShown = ref(true);
+
 watch(
-  height,
-  (value) => {
-    appHeaderHeightVar.value = `${value}px`;
+  [height, isShown],
+  ([value, shown]) => {
+    appHeaderHeightVar.value = shown ? `${value}px` : undefined;
   },
   { immediate: true },
 );
+
+onActivated(() => {
+  isShown.value = true;
+});
+
+// Nothing of a header that is not shown may stay open or keep the page from scrolling.
+onDeactivated(() => {
+  isShown.value = false;
+  mobileMenuVisible.value = false;
+
+  if (searchBarVisible.value) {
+    toggleSearchBar();
+  }
+});
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);
 
 syncRefs(isScrollLocked, scrollLock);
 </script>
+
+<style lang="scss">
+// Two roots: the header and the menu.
+.mobile-header {
+  @apply sticky top-0 z-40 mx-auto shadow-md;
+
+  inline-size: var(--vc-frame-header-width, 100%);
+
+  @media print {
+    @apply hidden;
+  }
+
+  &__top {
+    @apply relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs;
+  }
+
+  &__bottom {
+    @apply relative z-[1];
+  }
+
+  &__custom {
+    @apply relative z-20 bg-[--header-bottom-bg-color];
+  }
+
+  &__bar {
+    @apply relative z-20 flex h-14 w-full items-center justify-between gap-x-2 border-b bg-[--header-bottom-bg-color];
+
+    @media (width >= theme("screens.sm")) {
+      @apply gap-x-6;
+    }
+  }
+
+  &__left {
+    @apply flex h-full items-center;
+  }
+
+  &__menu-button {
+    @apply h-full pe-3 ps-5;
+
+    @media (width >= theme("screens.sm")) {
+      @apply pe-5;
+    }
+  }
+
+  &__icon {
+    --vc-icon-color: var(--color-primary-500);
+  }
+
+  &__logo {
+    @apply h-8;
+  }
+
+  &__right {
+    @apply flex h-full flex-row items-center pe-4;
+  }
+
+  &__action {
+    @apply px-1 py-2;
+
+    @media (width >= theme("screens.xs")) {
+      @apply px-2;
+    }
+  }
+
+  &__cart {
+    @apply relative block;
+  }
+
+  // The menu hides itself on paper (its root's own `flex` utility would beat a rule here).
+  &__menu {
+    @apply transition-transform;
+
+    &--offscreen {
+      @apply -translate-x-full;
+    }
+
+    &--moving {
+      @apply will-change-transform;
+    }
+  }
+}
+</style>

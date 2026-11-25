@@ -1,5 +1,0 @@
-mutation UpdateSalesRepTask($command: InputUpdateSalesRepTask!) {
-  updateSalesRepTask(command: $command) {
-    ...salesRepTaskFields
-  }
-}

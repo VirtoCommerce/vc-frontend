@@ -1,5 +1,5 @@
 <template>
-  <div class="!block">
+  <div class="block">
     <div class="flex items-start justify-between gap-3">
       <VcTypography tag="h1" class="flex items-center gap-2">
         {{ $t("push_messages.title") }}

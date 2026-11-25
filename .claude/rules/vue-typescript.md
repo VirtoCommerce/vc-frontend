@@ -44,11 +44,11 @@ paths:
 27. No default exports in `.ts` app code (only `.vue`, stories, configs). Re-export components as named: `export { default as AddToCart } from "./add-to-cart.vue"`.
 28. Barrels: `shared/<domain>/index.ts` re-exports `components | composables | constants | types | utils`. Deep imports are OK when a barrel would create a cycle or pull a heavy chunk. `import/no-cycle` is an error.
 29. `lodash-es` with named imports only (never `lodash`). Use native methods where they exist (`map`, `filter`, `find`, `Set` for uniq, `== null` for isNil).
-30. **Reuse before writing helpers**: check `@/core/utilities` (address, date, line-items, logger, product, search, `truncate`, `uniqByLast`, `toCSV`, `safeDecode`, `getLinkAttr`, …) and `@/ui-kit/utilities`. Re-implementing an existing helper is a finding.
+30. **Reuse before writing helpers**: check `@/core/utilities` (address, date, line-items, logger, product, search, `truncate`, `uniqByLast`, `toCSV`, `safeDecode`, …) and `@/ui-kit/utilities` (`getLinkAttr`, `appendSuffixToFilename`, file, price, date helpers; `@/core` re-exports the moved ones). Inside ui-kit only `@/ui-kit/*` counts. Re-implementing an existing helper is a finding.
 
 ## Errors and logging
-31. `Logger.debug/warn/error` from `@/core/utilities`, never `console.*`. Leftover debug logging is a finding.
-32. Prefix log messages with their origin: `` `${useX.name}.${fn.name}` `` or `"[sales-rep] createTask failed:"`.
+31. `Logger.debug/warn/error` from `@/core/utilities` (inside ui-kit: `Logger` from `@/ui-kit/utilities`, which the app routes to its own via `setLogger`), never `console.*`; the `console` fallback in `ui-kit/utilities/logger.ts` is the one exception. Leftover debug logging is a finding.
+32. Prefix log messages with their origin: `` `${useX.name}.${fn.name}` `` or `"[<module>] <action> failed:"`.
 33. No empty/ignored `catch`: log and rethrow, or log and return a sentinel (`false`, `null`).
 
 ## Comments

@@ -131,7 +131,7 @@
             />
           </transition>
 
-          <PlaceOrder data-test-id="place-order-button" />
+          <PlaceOrder data-test-id="place-order-button" class="mt-4" />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>

@@ -24,8 +24,8 @@ export function useSignMeIn() {
   const { currencyCode: currentCurrencyCode, storeId, cultureName } = globals;
   const { mutate: clearCurrencyCart } = useMutation(ClearCartDocument);
 
-  const { isLoading: loading, execute: signIn } = useAsyncState(
-    async () => {
+  const { isLoading: loading, execute } = useAsyncState(
+    async (returnUrl?: string) => {
       localStorage.removeItem(USER_ID_LOCAL_STORAGE);
 
       unpinLocale();
@@ -78,7 +78,7 @@ export function useSignMeIn() {
         saveCurrencyCode(contactCurrency.code, false);
       }
 
-      void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
+      void broadcast.emit(openReturnUrl, returnUrl, TabsType.ALL);
     },
     null,
     { immediate: false, throwError: true },
@@ -87,6 +87,11 @@ export function useSignMeIn() {
   const errors = ref<IdentityErrorType[]>();
 
   syncRefs(authErrors, errors);
+
+  /** Without `returnUrl`, opens the `returnUrl` query of the current page or the store default. */
+  async function signIn(options: { returnUrl?: string } = {}): Promise<void> {
+    await execute(0, options.returnUrl);
+  }
 
   function resetErrors() {
     resetAuthErrors();

@@ -1,0 +1,9 @@
+#import "../../../fragments/layoutFields.graphql"
+
+# A full-document replace of the signed-in user's own layout (the user comes from the token). Returns the document
+# as stored.
+mutation SaveLayout($command: InputLayout!) {
+  saveLayout(command: $command) {
+    ...layoutFields
+  }
+}

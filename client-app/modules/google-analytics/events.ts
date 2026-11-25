@@ -143,7 +143,7 @@ export const events: TrackerEventsType = {
 
   removeItemsFromCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
-    const inputItems = items.map(lineItemToGtagItem);
+    const inputItems = items.map((item, index) => lineItemToGtagItem(item, index));
 
     sendEvent("remove_from_cart", {
       ...params,
@@ -159,7 +159,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: cart.total.amount,
-      items: cart.items.map(lineItemToGtagItem),
+      items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
       items_count: cart.items.length,
     });
   },
@@ -169,7 +169,7 @@ export const events: TrackerEventsType = {
       ...params,
       currency: currencyCode,
       value: cart.total.amount,
-      items: cart.items.map(lineItemToGtagItem),
+      items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
       items_count: cart.items.length,
     });
   },
@@ -180,7 +180,7 @@ export const events: TrackerEventsType = {
         ...params,
         currency: cart.currency.code,
         value: cart.total.amount,
-        items: cart.items.map(lineItemToGtagItem),
+        items: cart.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart.items.length,
         coupon: cart.coupons?.[0]?.code,
       });
@@ -197,7 +197,7 @@ export const events: TrackerEventsType = {
         currency: cart?.shippingPrice.currency.code,
         value: cart?.shippingPrice.amount,
         coupon: cart?.coupons?.[0]?.code,
-        items: cart?.items.map(lineItemToGtagItem),
+        items: cart?.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart?.items.length,
       });
     } catch (e) {
@@ -213,7 +213,7 @@ export const events: TrackerEventsType = {
         currency: cart?.currency?.code,
         value: cart?.total?.amount,
         coupon: cart?.coupons?.[0]?.code,
-        items: cart?.items.map(lineItemToGtagItem),
+        items: cart?.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: cart?.items.length,
       });
     } catch (e) {
@@ -231,7 +231,7 @@ export const events: TrackerEventsType = {
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,
         tax: order.taxTotal?.amount,
-        items: order.items.map(lineItemToGtagItem),
+        items: order.items.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: order?.items?.length,
       });
     } catch (e) {

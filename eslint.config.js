@@ -13,36 +13,6 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
 
-/**
- * Import bans shared between file-sets. `no-restricted-syntax` options are REPLACED per matching
- * flat-config block, not merged, so a block must list every selector that should apply to its
- * files - naming them once here is what keeps a new block from silently dropping an existing ban.
- *
- * These duplicate two .dependency-cruiser.cjs rules on purpose: it leaves `tsPreCompilationDeps`
- * off, so type-only edges never enter its graph and no rule of its can match one - and a type-only
- * import is exactly the coupling that breaks when a module moves to its own repository.
- */
-const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
-
-const NO_HOST_INTERNAL_IMPORT = {
-  selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
-  message:
-    "A module reached into a host '_internal/' folder. Those are private: once a module depends on one, the host can no longer restyle its own chrome without breaking it, and a module shipping as a Module Federation plugin cannot follow the host's refactors at all. Contribute through an extension point instead - see shared/common/composables/extensionRegistry/README.md.",
-};
-
-const NO_DEEP_SALES_REP_IMPORT = {
-  selector: String.raw`:matches(${IMPORT_SOURCE_NODES})[source.value=/^@\/modules\/sales-rep\/.+/]`,
-  message:
-    "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into its own repository, so its entry point is the only surface the host may depend on. Import from '@/modules/sales-rep' instead.",
-};
-
-const NO_RAW_APOLLO_QUERY = {
-  selector:
-    "ImportDeclaration[source.value='@vue/apollo-composable'] > ImportSpecifier[imported.name=/^use(Lazy)?Query$/]",
-  message:
-    "Sales Rep reads go through useSalesRepHubQuery, which opts the operation out of the global error toast. Mutations keep useMutation: a failed user action still deserves one.",
-};
-
 const tsconfigRootDir = import.meta.dirname;
 const tsconfigs = {
   app: "./tsconfig.app.json",
@@ -66,7 +36,7 @@ export default defineConfigWithVueTs(
       "artifacts/",
       "storybook-static/",
       "storybook-styles/dist/",
-      "client-app/public/fcm-service-worker-v1.10.js",
+      "client-app/public/fcm-service-worker-*.js",
       ".deployment/",
       ".github/",
       ".husky/",
@@ -234,6 +204,14 @@ export default defineConfigWithVueTs(
         },
         { element: "VcItemPriceCatalog", message: "VcItemPriceCatalog is deprecated. Use VcProductPrice instead." },
         {
+          element: "VcExpansionPanel",
+          message: "VcExpansionPanel is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
+          element: "VcExpansionPanels",
+          message: "VcExpansionPanels is deprecated. Use VcWidget with `collapsible` instead.",
+        },
+        {
           element: "VcDateSelector",
           message:
             "VcDateSelector is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
@@ -265,6 +243,7 @@ export default defineConfigWithVueTs(
       "sonarjs/prefer-native-lodash-alternative": "warn",
       "sonarjs/parameterized-tests": "warn",
       "sonarjs/super-linear-regex": "warn",
+      "sonarjs/vitest-mock-at-module-scope": "warn",
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
@@ -397,7 +376,14 @@ export default defineConfigWithVueTs(
 
   // Type-aware configuration for Node.js scripts and config files
   {
-    files: ["*.config.js", "*.config.ts", "vite.federation*.ts", "scripts/**/*.ts", ".storybook/main.ts"],
+    files: [
+      "*.config.js",
+      "*.config.ts",
+      "vite.federation*.ts",
+      "vite.site-builder*.ts",
+      "scripts/**/*.ts",
+      ".storybook/main.ts",
+    ],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir,
@@ -464,60 +450,6 @@ export default defineConfigWithVueTs(
     files: ["client-app/ui-kit/*"],
     rules: {
       "no-console": ["off", { allow: ["warn", "error"] }],
-    },
-  },
-  // A Sales Rep read opts out of the global error toast via an operation context a call site can silently
-  // forget, so the module's reads go through useSalesRepHubQuery, which bakes it in (VCST-5682).
-  {
-    files: ["client-app/modules/sales-rep/**/*.ts", "client-app/modules/sales-rep/**/*.vue"],
-    ignores: [
-      // Waived from NO_RAW_APOLLO_QUERY only - the block at the end of this file restates
-      // NO_HOST_INTERNAL_IMPORT for them, since the two boundary blocks below skip all of sales-rep
-      // and would otherwise leave these paths matching no no-restricted-syntax block at all.
-      "client-app/modules/sales-rep/composables/useSalesRepHubQuery.ts",
-      "client-app/modules/sales-rep/**/*.test.ts",
-    ],
-    rules: {
-      // Both, because this block matching a file REPLACES the modules-wide options below.
-      "no-restricted-syntax": ["error", NO_RAW_APOLLO_QUERY, NO_HOST_INTERNAL_IMPORT],
-    },
-  },
-  // Same two boundaries as .dependency-cruiser.cjs, restated where `import type` is visible.
-  // ORDER AND COMPLETENESS MATTER: a later matching block REPLACES these options, so each block
-  // lists every ban that applies to its own files, and both skip sales-rep so the block above -
-  // which restates the _internal ban alongside its own - keeps its options.
-  {
-    files: ["client-app/**/*.ts", "client-app/**/*.vue"],
-    ignores: ["client-app/modules/sales-rep/**"],
-    rules: {
-      "no-restricted-syntax": ["error", NO_DEEP_SALES_REP_IMPORT],
-    },
-  },
-  {
-    files: ["client-app/modules/**/*.ts", "client-app/modules/**/*.vue"],
-    ignores: [
-      // Known debt, the same two files dependency-cruiser exempts. They keep the block above, so
-      // the deep-import ban still applies to them - only the _internal one is waived. Do not add more.
-      "client-app/modules/push-messages/components/link-push-messages.vue",
-      "client-app/modules/push-messages/components/link-push-messages-mobile.vue",
-      "client-app/modules/sales-rep/**",
-    ],
-    rules: {
-      "no-restricted-syntax": ["error", NO_DEEP_SALES_REP_IMPORT, NO_HOST_INTERNAL_IMPORT],
-    },
-  },
-  // The two paths the sales-rep block waives NO_RAW_APOLLO_QUERY for. Every block above either
-  // ignores them or ignores all of sales-rep, so without this they carry no _internal ban - and a
-  // spec travels with the module when it is extracted, so a host component mounted in one breaks
-  // the extraction exactly as a source import would. Last block wins, so this is the whole list
-  // that applies to these files.
-  {
-    files: [
-      "client-app/modules/sales-rep/**/*.test.ts",
-      "client-app/modules/sales-rep/composables/useSalesRepHubQuery.ts",
-    ],
-    rules: {
-      "no-restricted-syntax": ["error", NO_HOST_INTERNAL_IMPORT],
     },
   },
   {

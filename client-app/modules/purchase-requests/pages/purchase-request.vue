@@ -41,7 +41,7 @@
       <template #sidebar>
         <QuoteSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :quote="quote">
           <template #footer>
-            <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
+            <ProceedTo class="mt-4" :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
               {{ $t("purchase_request.go_to_quote") }}
             </ProceedTo>
           </template>

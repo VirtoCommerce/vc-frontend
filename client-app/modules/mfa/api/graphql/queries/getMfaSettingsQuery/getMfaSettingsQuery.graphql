@@ -1,0 +1,7 @@
+#import "../../fragments/mfaSettings.graphql"
+
+query GetMfaSettings($storeId: String!, $organizationId: String) {
+  mfaSettings(storeId: $storeId, organizationId: $organizationId) {
+    ...mfaSettings
+  }
+}

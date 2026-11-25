@@ -290,7 +290,8 @@ async function focusPanel(): Promise<void> {
     return;
   }
 
-  floating.value.focus();
+  // preventScroll: the panel takes focus before floating-ui places it, so a plain focus() can scroll the page to it.
+  floating.value.focus({ preventScroll: true });
 }
 
 async function returnFocusToTrigger(): Promise<void> {

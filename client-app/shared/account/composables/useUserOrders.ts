@@ -5,7 +5,7 @@ import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { Logger } from "@/core/utilities";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
-import type { OrderFacetType } from "@/shared/account";
+import type { OrderFacetType } from "@/shared/account/types";
 import type { MaybeRef, Ref } from "vue";
 
 export const facets = shallowRef<OrderFacetType[] | undefined>();

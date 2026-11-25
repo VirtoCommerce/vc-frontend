@@ -53,7 +53,7 @@
       required
       :message="validationErrors.email"
       :error="!!validationErrors.email"
-      autocomplete="email"
+      autocomplete="email webauthn"
       test-id-input="email-input"
     />
 

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cancelAnchorScroll, getAnchorId, scrollToAnchor, slugifyAnchor } from "./anchors";
+import type { Mock } from "vitest";
 
 describe("slugifyAnchor", () => {
   it("lowercases and replaces spaces with dashes", () => {
@@ -42,7 +43,7 @@ describe("getAnchorId", () => {
 });
 
 describe("scrollToAnchor", () => {
-  let scrollIntoView: ReturnType<typeof vi.fn>;
+  let scrollIntoView: Mock;
 
   function addSection(id: string) {
     const section = document.createElement("div");

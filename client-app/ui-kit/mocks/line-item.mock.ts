@@ -1,106 +1,61 @@
-import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { getMoney } from "./money.mock";
-import type { Property } from "@/core/api/graphql/types";
-import type { PreparedLineItemType } from "@/core/types";
 
-const propertiesMock: Property[] = [
+const propertiesMock: VcPropertyType[] = [
   {
-    id: "1",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "Brand",
     value: "GRAINGER APPROVED",
-    hidden: false,
     label: "Brand",
   },
   {
-    id: "2",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "EYE INSIDE DIA",
     value: "3/4''",
-    hidden: false,
     label: "EYE INSIDE DIA",
   },
   {
-    id: "2",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "EYEBOLT TYPE",
     value: "Turned Wire",
-    hidden: false,
     label: "EYEBOLT TYPE",
   },
   {
-    id: "4",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "MATERIAL",
     value: "Steel",
-    hidden: false,
     label: "MATERIAL",
   },
   {
-    id: "5",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "OVERALL LENGTH",
     value: '2.50"',
-    hidden: false,
     label: "OVERALL LENGTH",
   },
   {
-    id: "6",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "SYSTEM OF MEASUREMENT",
     value: "Inch",
-    hidden: false,
     label: "SYSTEM OF MEASUREMENT",
   },
   {
-    id: "7",
-    multivalue: false,
-    propertyType: PropertyType.Product,
-    propertyValueType: PropertyValueTypes.ShortText,
     name: "THREAD SIZE",
     value: "3/8-16″",
-    hidden: false,
     label: "THREAD SIZE",
   },
 ];
 
-export const preparedLineItemMock1: PreparedLineItemType = {
+export const preparedLineItemMock1: VcLineItemType = {
   id: "52ae03eb-2bf9-4361-9e36-c53f75fe0438",
   name: "Eyebolt, 3/8-16,3/4In, Turned Wire, PK10",
   imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/5ZE93/5ZE93.jpg",
-  inStockQuantity: 199,
   listPrice: getMoney(8.85),
   extendedPrice: getMoney(4062.15),
-  quantity: 459,
   sku: "5ZE93",
-  productId: "74f89c449ad44d52a148123e587212c2",
   properties: propertiesMock.slice(0, 3),
 };
 
-export const preparedLineItemMock2: PreparedLineItemType = {
+export const preparedLineItemMock2: VcLineItemType = {
   id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
   name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
   imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
-  inStockQuantity: 25,
   listPrice: getMoney(57.25),
   actualPrice: getMoney(47.25),
   extendedPrice: getMoney(47.25),
-  quantity: 1,
   deleted: false,
   route: "/bolts/eyebolts/eye-boltcarbon-steel-46m6x70pk25",
   properties: propertiesMock.slice(0, 3),
-  minQuantity: 0,
-  maxQuantity: 25,
 };

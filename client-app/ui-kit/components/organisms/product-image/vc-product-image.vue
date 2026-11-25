@@ -6,7 +6,7 @@
       :navigation="{
         nextEl: '[data-btn=btn-next]',
         prevEl: '[data-btn=btn-prev]',
-        lockClass: '!hidden',
+        lockClass: 'hidden',
       }"
       class="vc-product-image__carousel"
       rewind
@@ -83,12 +83,11 @@
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref } from "vue";
-import type { ImageType } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
-  images?: ImageType[];
+  images?: VcProductImageType[];
   alt?: string;
   imgSrc?: string;
   lazy?: boolean;
@@ -140,7 +139,10 @@ function slideChanged(swiper: SwiperInstance) {
   &__carousel-img {
     $carouselImg: &;
 
-    @apply w-full aspect-square select-none rounded-[--radius] object-contain object-center;
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply w-full aspect-square select-none rounded-[--radius];
 
     &--clickable {
       @apply cursor-pointer;
@@ -189,7 +191,11 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__img {
     $img: &;
-    @apply w-full aspect-square rounded-[--radius] object-contain object-center;
+
+    --vc-image-object-fit: contain;
+    --vc-image-fallback-object-fit: scale-down;
+
+    @apply w-full aspect-square rounded-[--radius];
   }
 
   &__slot {

@@ -1,9 +1,10 @@
 import { createGlobalState } from "@vueuse/core";
 import { cloneDeep } from "lodash-es";
 import { computed, ref } from "vue";
-import { presets } from "@/assets/presets";
+import { darkPresets, presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { presetNameToFileName } from "@/core/utilities";
+import { resolveDesign, setPresetAttribute } from "@/core/utilities/design";
 import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
@@ -56,10 +57,14 @@ export async function getPreset(presetName: string): Promise<IThemeConfigPreset 
 function getThemeConfig() {
   const data = cloneDeep(settingsData) as IThemeConfig;
 
-  if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-    data.settings.details_browser_target = BrowserTargetType.SELF;
-    data.settings.product_page_browser_target = BrowserTargetType.SELF;
-    data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+  if (typeof data.settings === "object" && data.settings !== null) {
+    data.settings.design = resolveDesign(data.settings.design);
+
+    if (IS_DEVELOPMENT) {
+      data.settings.details_browser_target = BrowserTargetType.SELF;
+      data.settings.product_page_browser_target = BrowserTargetType.SELF;
+      data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+    }
   }
 
   return data;
@@ -99,7 +104,9 @@ function _useThemeContext() {
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.darkPreset = darkPresets[resolvedName];
       themeContext.value.activePresetName = resolvedName;
+      setPresetAttribute(resolvedName);
     } else {
       throw new Error("Missing preset");
     }

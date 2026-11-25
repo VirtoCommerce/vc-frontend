@@ -22,7 +22,7 @@ export type ExtendEventsType = ({
   lineItemToGtagItem: typeof lineItemToGtagItemFunction;
 }) => TrackerEventsType;
 
-export type ConfiguredPriceType = { list: number; actual: number };
+export type { ConfiguredPriceType } from "./utils";
 
 export type InitOptionsType = {
   extendEvents?: ExtendEventsType;

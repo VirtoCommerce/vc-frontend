@@ -4,6 +4,7 @@
 > Tech: Vue 3 Composition API + TypeScript + TailwindCSS + Headless UI
 > Architecture: Atomic Design Pattern (Atoms → Molecules → Organisms)
 > Global registration via plugin, all components prefixed with `Vc`
+> A summary that may be outdated: the component source (`vc-<name>.vue`) and `client-app/assets/styles/README.md` win.
 
 **Important:** After installation, all UI Kit components are globally registered:
 
@@ -88,7 +89,7 @@
 - Props:
   - required?: boolean
   - error?: boolean
-  - forId?: string (renders as <label for="..."> or <div>)
+  - forId?: string (renders as <label for="..."> or <div>; a bound label hides the asterisk from assistive tech, so the control must expose required itself)
   - size?: "xs" | "sm" | "md" | "lg" (auto-inherits from inputContext)
 - Slots: default (label text)
 - Features: required indicator (*), error state styling, dynamic size from parent input
@@ -124,20 +125,22 @@
 - Usage: `<VcIcon name="shopping-cart" :size="24" />`
 
 **VcImage** (`client-app/ui-kit/components/atoms/image/vc-image.vue`)
-- Props: src, alt, lazy, aspectRatio, objectFit
-- Features: lazy loading, placeholder, error state, WebP support
-- Events: load, error
+- Props: src, alt, lazy, fallbackSrc, sizeSuffix (sm/md/lg)
+- CSS vars: --vc-image-object-fit (default fill), --vc-image-object-position (default 50% 50%, the fallback image too), --vc-image-fallback-object-fit (fallback image; else --vc-image-object-fit, else scale-down)
+- Features: lazy loading, fallback image on load error, thumbnail size suffixes
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/image/vc-image.stories.ts)
 
 **VcLoader** (`client-app/ui-kit/components/atoms/loader/vc-loader.vue`)
 - Props: size (sm/md/lg), centered
 - Features: spinner animation, inline/block display
 
-**VcTypography** (`client-app/ui-kit/components/atoms/typography/vc-typography.vue`)
-- Props: variant (h1/h2/h3/h4/h5/h6/body1/body2/caption/overline), weight (light/regular/medium/semibold/bold), color, align (left/center/right/justify), truncate
+**VcTypography** (`client-app/ui-kit/components/molecules/typography/vc-typography.vue`)
+- Props: tag (default p), variant (h1/h2/h3/h4/h5/h6/base; defaults to the tag when it is h1–h6, else base), truncate, fontSize, fontWeight, textTransform, color
 - Slots: default (text content)
-- Features: semantic HTML tags, responsive sizing
+- CSS vars: --vc-typography-font-size (per variant), --vc-typography-font-weight / --vc-typography-text-transform (700 / uppercase for h1–h6, 400 / none for base), --vc-typography-line-height (default inherited), --vc-typography-letter-spacing (default tracking-wide for h1–h3, the heading role token for h4–h6), --vc-typography-color
+- Features: h1–h6 variants use the heading font; with no font-size token or prop, h1–h4 grow one step at the lg breakpoint
 - Types: vc-typography.types.d.ts
-- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/typography/vc-typography.stories.ts)
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/typography/vc-typography.stories.ts)
 
 **VcMarkdownRender** (`client-app/ui-kit/components/atoms/markdown-render/vc-markdown-render.vue`)
 - Props: content (string)
@@ -510,7 +513,7 @@
 - Events: copied
 - Features: clipboard API, tooltip feedback, success animation
 
-**VcWidget** (`client-app/ui-kit/components/molecules/widget/vc-widget.vue`)
+**VcWidget** (`client-app/ui-kit/components/organisms/widget/vc-widget.vue`)
 - Props:
   - title?: string
   - prependIcon?: string
@@ -520,6 +523,7 @@
   - collapsed?: boolean
   - shadow?: boolean (default: true)
   - border?: boolean (default: true)
+  - seamless?: boolean (draws no plate: border, background, shadow, radius, dividers and inline padding go; header and vertical spacing stay)
 - Emits: toggleCollapse (boolean)
 - Slots:
   - default-container (receives {collapsible, collapsed})
@@ -532,12 +536,12 @@
   - footer-container
   - footer
 - Features: header with actions, collapsible behavior, custom sizing, shadow/border control
-- Types: vc-widget.types.d.ts
+- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (default the per-size ladder), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
 
-**VcWidgetSkeleton** (`molecules/widget-skeleton/vc-widget-skeleton.vue`)
-- Props: height, lines
-- Features: shimmer animation, customizable
-- Types: vc-widget-skeleton.types.d.ts
+**VcWidgetSkeleton** (`client-app/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue`)
+- Props: head?: boolean, foot?: boolean, noShadow?: boolean, size?: "xs" | "sm" | "md" | "lg" (default: "md")
+- Slots: header-container, header, default-container, default, footer-container, footer (their leaf elements become placeholder bars)
+- Features: renders a VcWidget of its size, so radius, insets and header height match the loaded widget in every design; VcWidget frame props (collapsed, border, …), classes and listeners pass through, its title, prependIcon, appendIcon and collapsible do not (a placeholder renders no real content and never takes focus or toggles; collapsed still passes); pulse animation
 
 **VcStatWidget** (`client-app/ui-kit/components/organisms/stat-widget/vc-stat-widget.vue`)
 - Props:
@@ -602,10 +606,18 @@
 
 
 **VcTabSwitch** (`client-app/ui-kit/components/molecules/tab-switch/vc-tab-switch.vue`)
-- Props: modelValue, tabs (array: {key, label, icon, disabled})
-- Emits: update:modelValue
-- Features: animated indicator, responsive, icon support
-- Types: vc-tab-switch.types.d.ts
+- Props: value (required), modelValue, label, name, icon, color, hoverColor, disabled, size (sm/md), labelPosition (start/end), ariaLabel
+- Emits: change, input (v-model does not update on click: use :model-value + @change, or put it in VcTabSwitchGroup)
+- Tokens: --vc-tab-switch-color, -hover-color, -radius, -border-color, -checked-border-color, -text-color, -checked-text-color, -padding-x, -font-weight, -checked-font-weight, -checked-bg-color, -checked-shadow
+- Features: one option of a segmented choice; a `label` prop keeps its width when the checked weight differs (a default-slot label does not)
+
+**VcTabSwitchGroup** (`client-app/ui-kit/components/molecules/tab-switch-group/vc-tab-switch-group.vue`)
+- v-model: the checked VcTabSwitch value
+- Emits: change
+- Slots: default (VcTabSwitch items); name the group with aria-label or aria-labelledby
+- Tokens: --vc-tab-switch-group-gap, -padding, -radius, -bg-color
+- Features: one radiogroup, one tab stop once an item is checked; arrows (RTL-aware) move and select, Home/End, disabled items skipped
+- Types: vc-tab-switch-group.types.d.ts
 
 **VcSteps** (`client-app/ui-kit/components/molecules/steps/vc-steps.vue`)
 - Props: steps (array), current, direction (horizontal/vertical), clickable
@@ -681,9 +693,9 @@
 ### CONTENT
 
 **VcShape** (`client-app/ui-kit/components/molecules/shape/vc-shape.vue`)
-- Props: type (circle/square/triangle/etc), size, color
-- Features: decorative shapes, size/color variants
-- Types: vc-shape.types.d.ts
+- Props: size?: string, icon?: string, iconColor?: string, bgColor?: string, img?: string, mask?: string (an icon name used as the mask; wins over --vc-shape-mask-image)
+- CSS vars: --vc-shape-size, --vc-shape-bg-color, --vc-shape-color, --vc-shape-mask-image (default the polygon; a disc is `url("@/ui-kit/icons/solid/circle-mask.svg")`, the icon `mask="circle-mask"` uses; `none` drops the mask)
+- Features: icon or image in a masked tile
 
 **VcCompositeShape** (`client-app/ui-kit/components/molecules/composite-shape/vc-composite-shape.vue`)
 - Props: shapes (array), layout
@@ -829,7 +841,7 @@ Base container component for displaying product cards with three adaptive layout
      - disabled?: boolean - disabled state
      - withFromLabel?: boolean - show "from" prefix for variations
    - Features: VcPriceDisplay for formatting, strikethrough for list price, responsive sizing
-   - CSS variable: --vc-product-price-font-size
+   - CSS variables: --vc-product-price-font-size, --vc-product-price-line-height (default 1.335)
 
 7. **VcProductButton** (`client-app/ui-kit/components/molecules/product-button/vc-product-button.vue`)
    - Props:
@@ -899,6 +911,7 @@ Base container component for displaying product cards with three adaptive layout
   - compact?: boolean - compact mode (icon-only buttons)
 - Emits: update:page (number)
 - Features: scroll to top on page change, ellipsis for many pages, responsive wrapping, compact mode
+- CSS vars: --vc-pagination-page-active-bg, --vc-pagination-page-active-text, --vc-pagination-pages-gap (default normal), --vc-pagination-page-radius (default the theme's `rounded`), --vc-pagination-page-border-width (default 0, no ring), --vc-pagination-page-border-color (default the base border colour, neutral-300), --vc-pagination-page-hover-border-color (default the ring colour), --vc-pagination-page-active-border-color (default the ring colour), --vc-pagination-ellipsis-color (default the inherited text colour)
 - Types: vc-pagination.types.d.ts
 - **Real Usage Pattern:**
 
@@ -931,6 +944,8 @@ Base container component for displaying product cards with three adaptive layout
   - footer (custom footer)
   - page-limit-message
 - Features: sortable columns, auto pagination, responsive mobile/desktop views, loading skeleton, empty states
+- VcTableColumn `rowHeader?: boolean` - marks the column that identifies the row (an order number, a name): its cells are bold and take --vc-table-row-header-color. Applies only to the cells VcTable renders from VcTableColumn slots; `#desktop-item` / `#desktop-body` render their own cells, and VcTable warns in DEV when a marked column's cells are not its own
+- CSS vars: --vc-table-radius, --vc-table-max-height, --vc-table-sticky-offset, --vc-table-selected-bg-color, --vc-table-row-hover-bg-color, --vc-table-title-font-size (default text-sm), --vc-table-title-color (header text; default the inherited text colour), --vc-table-body-color (desktop body text, `#desktop-item` / `#desktop-body` rows included; default inherited), --vc-table-row-header-color (cells of a `rowHeader` column; default the row's colour)
 - **Real Usage Pattern:**
 
 ---

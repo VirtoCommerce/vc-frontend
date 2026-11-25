@@ -1,0 +1,153 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { IPublishedTheme, IThemeDraft } from "./types";
+
+const THEME: IPublishedTheme = {
+  storeId: "B2B-store",
+  cultureName: "en-US",
+  publication: 1,
+  snapshot: { format: 1, publication: 1, cultureName: "en-US", templates: {} },
+  menus: [],
+};
+
+async function loadThemeSnapshot() {
+  vi.resetModules();
+  const { useThemeSnapshot } = await import("./useThemeSnapshot");
+  return useThemeSnapshot();
+}
+
+describe("useThemeSnapshot", () => {
+  describe("hasNoTheme", () => {
+    beforeEach(() => {
+      vi.resetModules();
+    });
+
+    it("is false until a snapshot is accepted, and after a failed request", async () => {
+      const { hasNoTheme, setFailed } = await loadThemeSnapshot();
+      expect(hasNoTheme.value).toBe(false);
+
+      setFailed();
+      expect(hasNoTheme.value).toBe(false);
+    });
+
+    it("is true once the store turns out to have no theme, until a theme is accepted", async () => {
+      const { hasNoTheme, setPublished } = await loadThemeSnapshot();
+
+      setPublished(null);
+      expect(hasNoTheme.value).toBe(true);
+
+      setPublished(THEME);
+      expect(hasNoTheme.value).toBe(false);
+    });
+
+    it("is false while the designer sends a draft", async () => {
+      const { hasNoTheme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished(null);
+
+      setDraft({ brand: { logoUrl: "acme.svg" } });
+
+      expect(hasNoTheme.value).toBe(false);
+    });
+
+    it("stays as it is while a late snapshot waits for the next navigation", async () => {
+      const { hasNoTheme, setLate, promoteLate } = await loadThemeSnapshot();
+
+      setLate(null);
+      expect(hasNoTheme.value).toBe(false);
+
+      promoteLate();
+      expect(hasNoTheme.value).toBe(true);
+    });
+  });
+
+  describe("isRejected", () => {
+    it("stays after a later failure of another kind, until a snapshot is accepted", async () => {
+      const { isRejected, setFailed, setLate } = await loadThemeSnapshot();
+
+      setFailed(true);
+      setFailed();
+      expect(isRejected.value).toBe(true);
+
+      setLate(null);
+      expect(isRejected.value).toBe(false);
+    });
+  });
+
+  describe("theme palette", () => {
+    const PUBLISHED_PALETTE = { light: { color_primary_500: "#published" } };
+
+    it("takes the draft's palette, the published one when the draft leaves it out, and none for a null one", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, palette: PUBLISHED_PALETTE } });
+
+      setDraft({ brand: {} });
+      expect(theme.value?.palette).toEqual(PUBLISHED_PALETTE);
+
+      setDraft({ palette: { light: { color_primary_500: "#draft" } } });
+      expect(theme.value?.palette).toEqual({ light: { color_primary_500: "#draft" } });
+
+      setDraft({ palette: null });
+      expect(theme.value?.palette).toBeUndefined();
+    });
+  });
+
+  describe("theme customSections", () => {
+    const TYPE = {
+      format: 1 as const,
+      name: "Stats",
+      schema: { settings: [{ id: "title", type: "string" }] },
+      template: "<section>{{ settings.title }}</section>",
+      css: "",
+    };
+
+    it("takes the draft's types in place of every published one, and the published ones when the draft leaves them out", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, customSections: { "custom-stats": TYPE } } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ brand: {} });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ customSections: { "custom-hero": TYPE } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-hero"]);
+
+      setDraft({ customSections: {} });
+      expect(theme.value?.customSections).toEqual({});
+    });
+
+    it("names the asset library only as the published snapshot does", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: "https://cdn/published" } });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+
+      const draftNamingAnother = { brand: {}, assetsBaseUrl: "https://evil.example/" };
+      setDraft(draftNamingAnother);
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+    });
+
+    it("takes the draft's asset library for a store whose published snapshot names none, as before its first publication", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished(null);
+
+      setDraft({ customSections: {}, assetsBaseUrl: "https://cdn/draft" });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/draft");
+
+      const draftWithAnotherShape = { customSections: {}, assetsBaseUrl: 1 };
+      setDraft(draftWithAnotherShape as unknown as IThemeDraft);
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
+    });
+
+    it.each([[""], [1]])("names no asset library for a snapshot base of %j", async (assetsBaseUrl) => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: assetsBaseUrl as string } });
+
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
+    });
+
+    it("is empty for a snapshot without custom sections", async () => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished(THEME);
+
+      expect(theme.value?.customSections).toEqual({});
+    });
+  });
+});

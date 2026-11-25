@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, useElementBounding } from "@vueuse/core";
+import { useBreakpoints, useElementBounding, useEventListener, useMediaQuery } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/ui-kit/constants";
@@ -54,6 +54,16 @@ const { t } = useI18n();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+const isPrintMedia = useMediaQuery("print");
+const isPrinting = ref(false);
+const isPrint = computed(() => isPrintMedia.value || isPrinting.value);
+
+useEventListener(window, "beforeprint", () => {
+  isPrinting.value = true;
+});
+useEventListener(window, "afterprint", () => {
+  isPrinting.value = false;
+});
 
 const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessibility.sidebar"));
 
@@ -64,7 +74,7 @@ const content = ref<HTMLElement | null>(null);
 const { height: sidebarHeight } = useElementBounding(sidebar);
 const { height: contentHeight } = useElementBounding(content);
 
-const isStickyEnabled = computed(() => props.sticky && !isMobile.value);
+const isStickyEnabled = computed(() => props.sticky && !isMobile.value && !isPrint.value);
 
 const shouldStickSidebar = computed(() => isStickyEnabled.value && sidebarHeight.value <= contentHeight.value);
 const shouldStickContent = computed(() => isStickyEnabled.value && contentHeight.value < sidebarHeight.value);

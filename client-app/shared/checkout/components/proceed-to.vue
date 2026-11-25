@@ -5,7 +5,7 @@
     :disabled="disabled"
     :loading="props.loading"
     full-width
-    class="mt-4 print:!hidden"
+    class="print:hidden"
   >
     <slot />
   </VcButton>

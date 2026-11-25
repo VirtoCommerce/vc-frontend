@@ -98,6 +98,7 @@ interface IProps {
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
+  /** Draws the label's asterisk and exposes `aria-required`, unless `aria["aria-required"]` is "true" or "false" (any case). No native validation. */
   required?: boolean;
   message?: string;
   error?: boolean;
@@ -200,11 +201,9 @@ function forwardedAria(triggerProps: Record<string, unknown>): AriaAttributesTyp
     role: "combobox",
     "aria-haspopup": triggerProps["aria-haspopup"] as string,
     "aria-expanded": String(triggerProps["aria-expanded"] ?? false),
+    // Null, not omitted: the closed popover reports no id, and a consumer's aria-controls must not outlive it.
+    "aria-controls": ariaControlsOf(triggerProps) ?? null,
   };
-  const controls = ariaControlsOf(triggerProps);
-  if (controls !== undefined) {
-    aria["aria-controls"] = controls;
-  }
   return aria;
 }
 

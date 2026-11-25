@@ -13,7 +13,7 @@
             :src="item.product.imgSrc"
             :alt="item.product.name"
             size-suffix="md"
-            class="size-full select-none space-x-4 rounded object-cover object-center"
+            class="size-full select-none space-x-4 rounded [--vc-image-object-fit:cover]"
           />
 
           <div class="flex flex-row space-x-4">
@@ -54,7 +54,7 @@ defineProps<IProps>();
 <style lang="scss">
 .demo-product-list-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 
   li {
