@@ -120,8 +120,8 @@ describe("VcCheckbox exposed input", () => {
     onTestFinished(() => warn.mockRestore());
     const wrapper = mountCheckbox({ modelValue: false, ariaLabel: "Accept" });
 
-    // The declared type reads as writable; the computed behind it is not.
-    (wrapper.vm as VcCheckboxExposedType).inputElement = null;
+    // The instance type reads as writable; the computed behind it is not.
+    wrapper.vm.inputElement = null;
 
     expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
     expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
