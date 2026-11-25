@@ -31,11 +31,7 @@
   }
 
   &__column {
-    @apply flex min-w-0 flex-col gap-4 pb-0;
-
-    & + & {
-      @apply border-s-0;
-    }
+    @apply flex min-w-0 flex-col gap-4;
   }
 
   &__group {
@@ -45,7 +41,7 @@
   }
 
   &__heading {
-    @apply mb-1 px-2 py-0 font-bold uppercase tracking-wide;
+    @apply mb-1 px-2 font-bold uppercase tracking-wide;
   }
 
   &__list {
@@ -58,6 +54,6 @@
   }
 
   &__modes {
-    @apply mx-0 mt-0 w-full;
+    @apply w-full;
   }
 }

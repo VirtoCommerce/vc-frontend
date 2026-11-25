@@ -124,6 +124,7 @@ const triggerLabel = computed(() =>
   $opened: "";
 
   --vc-popover-bg-color: var(--color-additional-50);
+  --vc-popover-padding: theme("spacing.4");
 
   &__trigger {
     --border-color: theme("colors.neutral.200");
@@ -151,24 +152,23 @@ const triggerLabel = computed(() =>
   }
 
   &__panel {
-    @apply flex text-additional-950;
+    @apply flex gap-4 text-additional-950;
 
     // The notifications dropdown's reserve in the same header row; the card's padding and border sit outside the panel.
     max-height: calc(100vh - 10rem - 2 * (var(--vc-popover-padding, 0px) + var(--vc-popover-border-width, 0px)));
   }
 
   &__column {
-    @apply flex min-h-0 min-w-64 flex-col pb-2;
-
-    & + & {
-      @apply border-s border-neutral-100;
-    }
+    @apply flex min-h-0 min-w-64 flex-col gap-4;
   }
 
   &__group {
+    // neutral-200: the colour VcPopover gives its own card outline.
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] border border-neutral-200 p-2;
+
     // Only a list gives up height when the panel is capped: it scrolls, the appearance switch stays whole.
     &--list {
-      @apply flex min-h-0 flex-col;
+      @apply min-h-0;
     }
   }
 
@@ -177,11 +177,8 @@ const triggerLabel = computed(() =>
   }
 
   &__heading {
-    @apply px-3 pb-1 pt-3 text-xs text-neutral-600;
-  }
-
-  &__modes {
-    @apply mx-3 mt-1;
+    // px-3: the rows' own inline padding, so the caption lines up with their text.
+    @apply mb-1 px-3 text-xs text-neutral-600;
   }
 }
 </style>
