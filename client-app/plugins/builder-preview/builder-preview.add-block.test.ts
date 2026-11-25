@@ -1,4 +1,5 @@
 import { expect, it, vi } from "vitest";
+import plugin from "./builder-preview.plugin";
 import type { IPageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
@@ -35,7 +36,6 @@ vi.mock("./shared-component-overlay", () => ({
 it("renders an Add-block model, preserves its source, and removes it on the next page update", async () => {
   const addListener = vi.spyOn(window, "addEventListener");
   try {
-    const { default: plugin } = await import("./builder-preview.plugin");
     const router = {
       getRoutes: () => [{ name: "Matcher" }],
       removeRoute: vi.fn(),
