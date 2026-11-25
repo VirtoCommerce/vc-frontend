@@ -15,10 +15,6 @@
       "month": "1 mes | {count} meses",
       "year": "1 año | {count} años"
     },
-    "discount": {
-      "percent": "Ahorra un {value} %",
-      "amount": "Ahorra {value}"
-    },
     "statuses": {
       "PendingActivation": "Iniciando",
       "Active": "Activa",
@@ -288,6 +284,8 @@
       "order_now": "Pedir ahora",
       "order_now_title": "¿Pedir ahora?",
       "ordered": "Pedido realizado.",
+      "ordered_needs_action": "Tu pedido requiere tu atención. Consulta la entrega marcada en esta página.",
+      "partly_failed": "Hecho, excepto para {products}. {reason}",
       "card_label": "Pagar con",
       "choose_card": "Elige una tarjeta",
       "manage_cards": "Gestionar tarjetas",
@@ -308,7 +306,11 @@
       "manage": "Gestionar suscripciones"
     },
     "configuration": {
-      "unavailable_value": "{name} — ya no disponible"
+      "unavailable_value": "{name} — ya no disponible",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "«{text}»",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

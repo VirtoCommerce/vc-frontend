@@ -15,10 +15,6 @@
       "month": "1 个月 | {count} 个月",
       "year": "1 年 | {count} 年"
     },
-    "discount": {
-      "percent": "节省 {value}%",
-      "amount": "节省 {value}"
-    },
     "statuses": {
       "PendingActivation": "即将开始",
       "Active": "有效",
@@ -288,6 +284,8 @@
       "order_now": "立即下单",
       "order_now_title": "立即下单？",
       "ordered": "已下单。",
+      "ordered_needs_action": "您的订单需要您处理。请查看本页上标记的配送。",
+      "partly_failed": "已完成，{products} 除外。{reason}",
       "card_label": "支付方式",
       "choose_card": "选择银行卡",
       "manage_cards": "管理银行卡",
@@ -308,7 +306,11 @@
       "manage": "管理订阅"
     },
     "configuration": {
-      "unavailable_value": "{name} — 已不可用"
+      "unavailable_value": "{name} — 已不可用",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "“{text}”",
+      "separator": " · ",
+      "files_separator": "、"
     }
   }
 }

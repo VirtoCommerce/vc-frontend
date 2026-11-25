@@ -15,10 +15,6 @@
       "month": "1 month | {count} months",
       "year": "1 year | {count} years"
     },
-    "discount": {
-      "percent": "Save {value}%",
-      "amount": "Save {value}"
-    },
     "statuses": {
       "PendingActivation": "Starting",
       "Active": "Active",
@@ -288,6 +284,8 @@
       "order_now": "Order now",
       "order_now_title": "Order now?",
       "ordered": "Order placed.",
+      "ordered_needs_action": "Your order needs your attention. See the marked delivery on this page.",
+      "partly_failed": "Done, except for {products}. {reason}",
       "card_label": "Pay with",
       "choose_card": "Choose a card",
       "manage_cards": "Manage cards",
@@ -308,7 +306,11 @@
       "manage": "Manage subscriptions"
     },
     "configuration": {
-      "unavailable_value": "{name} — no longer available"
+      "unavailable_value": "{name} — no longer available",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "“{text}”",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

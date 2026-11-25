@@ -15,10 +15,6 @@
       "month": "1 månad | {count} månader",
       "year": "1 år | {count} år"
     },
-    "discount": {
-      "percent": "Spara {value} %",
-      "amount": "Spara {value}"
-    },
     "statuses": {
       "PendingActivation": "Startar",
       "Active": "Aktiv",
@@ -288,6 +284,8 @@
       "order_now": "Beställ nu",
       "order_now_title": "Beställa nu?",
       "ordered": "Beställningen är lagd.",
+      "ordered_needs_action": "Din beställning behöver din uppmärksamhet. Se den markerade leveransen på den här sidan.",
+      "partly_failed": "Klart, utom för {products}. {reason}",
       "card_label": "Betala med",
       "choose_card": "Välj ett kort",
       "manage_cards": "Hantera kort",
@@ -308,7 +306,11 @@
       "manage": "Hantera prenumerationer"
     },
     "configuration": {
-      "unavailable_value": "{name} — inte längre tillgänglig"
+      "unavailable_value": "{name} — inte längre tillgänglig",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "”{text}”",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

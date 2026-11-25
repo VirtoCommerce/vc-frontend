@@ -15,10 +15,6 @@
       "month": "1 måned | {count} måneder",
       "year": "1 år | {count} år"
     },
-    "discount": {
-      "percent": "Spar {value} %",
-      "amount": "Spar {value}"
-    },
     "statuses": {
       "PendingActivation": "Starter",
       "Active": "Aktiv",
@@ -288,6 +284,8 @@
       "order_now": "Bestill nå",
       "order_now_title": "Bestille nå?",
       "ordered": "Bestillingen er lagt inn.",
+      "ordered_needs_action": "Bestillingen din trenger oppmerksomheten din. Se den merkede leveransen på denne siden.",
+      "partly_failed": "Fullført, unntatt for {products}. {reason}",
       "card_label": "Betal med",
       "choose_card": "Velg et kort",
       "manage_cards": "Administrer kort",
@@ -308,7 +306,11 @@
       "manage": "Administrer abonnementer"
     },
     "configuration": {
-      "unavailable_value": "{name} — ikke lenger tilgjengelig"
+      "unavailable_value": "{name} — ikke lenger tilgjengelig",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "«{text}»",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

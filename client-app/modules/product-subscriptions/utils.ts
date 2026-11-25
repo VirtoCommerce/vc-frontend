@@ -1,15 +1,14 @@
 import { Logger } from "@/core/utilities";
-import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
+import { SubscriptionIntervalUnit } from "./api/graphql/types";
 import type { Composer } from "vue-i18n";
 
 /** The server's error code for an action the store has turned off in its "Customer actions" settings. */
 const ACTION_DISABLED_ERROR_CODE = "SUBSCRIPTION_ACTION_DISABLED";
-// A subscription action the server refused, with the customer's reason in its message and, for the known ones, a code.
+// A subscription action the server refused; the reasons a shopper can be told come with a code.
 const SUBSCRIPTION_ERROR_CODE = "SUBSCRIPTION_ERROR";
 const KNOWN_REASONS = new Set(["PRODUCT_IN_CART_MORE_THAN_ONCE", "NO_OWN_PRICE"]);
 
 type SubscriptionGraphQLErrorType = {
-  message?: string;
   extensions?: { code?: unknown; reason?: unknown; data?: { reason?: unknown } };
 };
 
@@ -37,44 +36,34 @@ export function intervalShortLabel(
   return t(`product_subscriptions.intervals_short.${normalizedUnit}`, { count: normalizedCount }, normalizedCount);
 }
 
-/** `from` moved forward by one delivery interval: an estimate, the real date is set when the order is placed. */
+/**
+ * `from` moved forward by one delivery interval, in UTC as the server counts, with the day clamped to the month's length
+ * (Jan 31 → Feb 28): an estimate, the real date is set when the order is placed.
+ */
 export function addInterval(from: Date, unit: SubscriptionIntervalUnit, count: number): Date {
   const result = new Date(from);
   switch (unit) {
     case SubscriptionIntervalUnit.Day:
-      result.setDate(result.getDate() + count);
-      break;
+      result.setUTCDate(result.getUTCDate() + count);
+      return result;
     case SubscriptionIntervalUnit.Week:
-      result.setDate(result.getDate() + 7 * count);
-      break;
+      result.setUTCDate(result.getUTCDate() + 7 * count);
+      return result;
     case SubscriptionIntervalUnit.Year:
-      result.setFullYear(result.getFullYear() + count);
-      break;
+      return addMonths(result, 12 * count);
     default:
-      result.setMonth(result.getMonth() + count);
+      return addMonths(result, count);
   }
-  return result;
 }
 
-/**
- * "Save 10%" or "Save $5.00". A fixed-amount discount is shown with the amount the server formatted in the record's
- * currency (`formattedAmount`); without it there is nothing correct to show, so no label.
- */
-export function discountLabel(
-  t: TranslateType,
-  discountType: SubscriptionDiscountType | null | undefined,
-  discountValue: number | null | undefined,
-  formattedAmount?: string | null,
-): string | undefined {
-  if (!discountValue || discountType === SubscriptionDiscountType.None) {
-    return undefined;
-  }
-
-  if (discountType === SubscriptionDiscountType.Percent) {
-    return t("product_subscriptions.discount.percent", { value: discountValue });
-  }
-
-  return formattedAmount ? t("product_subscriptions.discount.amount", { value: formattedAmount }) : undefined;
+function addMonths(from: Date, count: number): Date {
+  const result = new Date(from);
+  const day = result.getUTCDate();
+  result.setUTCDate(1);
+  result.setUTCMonth(result.getUTCMonth() + count);
+  const daysInMonth = new Date(Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0)).getUTCDate();
+  result.setUTCDate(Math.min(day, daysInMonth));
+  return result;
 }
 
 /** The element id of a subscription on Account › Subscriptions; a link from an order scrolls to it. */
@@ -111,22 +100,6 @@ const STATUS_COLORS: Record<string, VcMainColorType> = {
 
 export function statusColor(status: string | null | undefined): VcMainColorType {
   return (status && STATUS_COLORS[status]) || "neutral";
-}
-
-/** The date's UTC day as a date input value ("YYYY-MM-DD"): the server counts delivery days in UTC. */
-export function toDateInputValue(date: string | Date | null | undefined): string | undefined {
-  if (!date) {
-    return undefined;
-  }
-
-  const value = new Date(date);
-  if (Number.isNaN(value.getTime())) {
-    return undefined;
-  }
-
-  const month = String(value.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(value.getUTCDate()).padStart(2, "0");
-  return `${value.getUTCFullYear()}-${month}-${day}`;
 }
 
 type PageType<T> = { totalCount?: number | null; items?: T[] | null } | null | undefined;
@@ -171,16 +144,10 @@ export function subscriptionErrorMessage(
     return t("product_subscriptions.errors.action_disabled");
   }
 
-  // The server refused it and said why: in the customer's language when the reason is known, else in its own words.
   const refusal = graphQLErrors.find((x) => x.extensions?.code === SUBSCRIPTION_ERROR_CODE);
-  if (refusal) {
-    const reason = refusal.extensions?.data?.reason ?? refusal.extensions?.reason;
-    if (typeof reason === "string" && KNOWN_REASONS.has(reason)) {
-      return t(`product_subscriptions.errors.reasons.${reason}`);
-    }
-    if (refusal.message) {
-      return refusal.message;
-    }
+  const reason = refusal?.extensions?.data?.reason ?? refusal?.extensions?.reason;
+  if (typeof reason === "string" && KNOWN_REASONS.has(reason)) {
+    return t(`product_subscriptions.errors.reasons.${reason}`);
   }
 
   return t(key);
@@ -197,35 +164,6 @@ export function needsCardPaymentMethodNotice(
   return hasSubscriptionItems && !paymentMethods?.length;
 }
 
-/**
- * Price of one item with the subscription discount, as the server computes it: a percent off, or a fixed amount off
- * (never below zero), rounded to cents. Used for a configured product, whose price comes from the chosen options.
- */
-export function subscriptionUnitPrice(
-  price: number,
-  discountType: SubscriptionDiscountType | null | undefined,
-  discountValue: number | null | undefined,
-): number {
-  const result = discountedPrice(price, discountType, discountValue ?? 0);
-  return Math.round(Math.max(0, result) * 100) / 100;
-}
-
-function discountedPrice(
-  price: number,
-  discountType: SubscriptionDiscountType | null | undefined,
-  value: number,
-): number {
-  if (discountType === SubscriptionDiscountType.Percent) {
-    return price * (1 - value / 100);
-  }
-
-  if (discountType === SubscriptionDiscountType.FixedAmount) {
-    return price - value;
-  }
-
-  return price;
-}
-
 /** One choice of a configuration, from the subscription's stored copy or from a cart line. */
 export type ConfigurationChoiceType = Partial<{
   name: string | null;
@@ -236,22 +174,30 @@ export type ConfigurationChoiceType = Partial<{
 }>;
 
 /** The value of one choice: "Fanta Mango × 6", “Thank you!” or the file names. */
-export function configurationChoiceText(choice: ConfigurationChoiceType): string {
+function configurationChoiceText(t: TranslateType, choice: ConfigurationChoiceType): string {
   if (choice.productName) {
-    return choice.quantity && choice.quantity > 1 ? `${choice.productName} × ${choice.quantity}` : choice.productName;
+    return choice.quantity && choice.quantity > 1
+      ? t("product_subscriptions.configuration.product_quantity", {
+          name: choice.productName,
+          quantity: choice.quantity,
+        })
+      : choice.productName;
   }
 
   if (choice.customText) {
-    return `“${choice.customText}”`;
+    return t("product_subscriptions.configuration.custom_text", { text: choice.customText });
   }
 
   return (choice.files ?? [])
     .map((file) => file?.name)
     .filter(Boolean)
-    .join(", ");
+    .join(t("product_subscriptions.configuration.files_separator"));
 }
 
 /** A configuration in one short line: "Fanta Mango × 6 · “Thank you!” · logo.png". */
-export function configurationSummary(choices: ConfigurationChoiceType[] | null | undefined): string {
-  return (choices ?? []).map(configurationChoiceText).filter(Boolean).join(" · ");
+export function configurationSummary(t: TranslateType, choices: ConfigurationChoiceType[] | null | undefined): string {
+  return (choices ?? [])
+    .map((choice) => configurationChoiceText(t, choice))
+    .filter(Boolean)
+    .join(t("product_subscriptions.configuration.separator"));
 }

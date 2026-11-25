@@ -15,10 +15,6 @@
       "month": "{count} miesięcy | {count} miesiąc | {count} miesiące | {count} miesięcy",
       "year": "{count} lat | {count} rok | {count} lata | {count} lat"
     },
-    "discount": {
-      "percent": "Oszczędzasz {value}%",
-      "amount": "Oszczędzasz {value}"
-    },
     "statuses": {
       "PendingActivation": "Uruchamianie",
       "Active": "Aktywna",
@@ -288,6 +284,8 @@
       "order_now": "Zamów teraz",
       "order_now_title": "Zamówić teraz?",
       "ordered": "Zamówienie złożone.",
+      "ordered_needs_action": "Twoje zamówienie wymaga uwagi. Sprawdź oznaczoną dostawę na tej stronie.",
+      "partly_failed": "Gotowe, z wyjątkiem: {products}. {reason}",
       "card_label": "Zapłać kartą",
       "choose_card": "Wybierz kartę",
       "manage_cards": "Zarządzaj kartami",
@@ -308,7 +306,11 @@
       "manage": "Zarządzaj subskrypcjami"
     },
     "configuration": {
-      "unavailable_value": "{name} — już niedostępne"
+      "unavailable_value": "{name} — już niedostępne",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "„{text}”",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

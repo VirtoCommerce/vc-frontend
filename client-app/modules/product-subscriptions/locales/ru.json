@@ -15,10 +15,6 @@
       "month": "{count} месяцев | {count} месяц | {count} месяца | {count} месяцев",
       "year": "{count} лет | {count} год | {count} года | {count} лет"
     },
-    "discount": {
-      "percent": "Скидка {value}%",
-      "amount": "Скидка {value}"
-    },
     "statuses": {
       "PendingActivation": "Запускается",
       "Active": "Активна",
@@ -288,6 +284,8 @@
       "order_now": "Заказать сейчас",
       "order_now_title": "Заказать сейчас?",
       "ordered": "Заказ оформлен.",
+      "ordered_needs_action": "Заказ требует вашего внимания. Посмотрите отмеченную доставку на этой странице.",
+      "partly_failed": "Готово, кроме: {products}. {reason}",
       "card_label": "Оплата картой",
       "choose_card": "Выберите карту",
       "manage_cards": "Управление картами",
@@ -308,7 +306,11 @@
       "manage": "Управлять подписками"
     },
     "configuration": {
-      "unavailable_value": "{name} — больше не доступно"
+      "unavailable_value": "{name} — больше не доступно",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "«{text}»",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }

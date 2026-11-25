@@ -169,6 +169,7 @@ const compositionsByLineId = computed(
       subscribedLines.value.map((line) => [
         line.id,
         configurationSummary(
+          t,
           (line.configurationItems ?? []).map((x) => ({
             productName: x.type === "Product" || x.type === "Variation" ? x.name : undefined,
             customText: x.customText,

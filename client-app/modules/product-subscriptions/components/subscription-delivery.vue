@@ -33,11 +33,11 @@
         <SubscriptionItemMenu
           :subscriptions="subscriptions"
           :can-skip="renewal.canSkip"
-          :can-order-now="isOpen"
+          :can-order-now="canOrderNow"
           :disabled="!!busy"
           :test-id="`subscription-settings-${renewal.number}`"
           @skip="emitAction('skip')"
-          @order-now="$emit('orderNow', $event)"
+          @order-now="onOrderNow"
           @change-card="$emit('changeCard', $event)"
           @pause="$emit('pause', $event)"
           @cancel="$emit('cancel', $event)"
@@ -174,6 +174,15 @@
         <span class="subscription-delivery__notes">
           <span class="subscription-delivery__hint">{{ hint }}</span>
 
+          <VcLink
+            v-if="renewal.orderId && renewal.orderNumber"
+            :to="{ name: ROUTES.ORDER_DETAILS.NAME, params: { orderId: renewal.orderId } }"
+            class="subscription-delivery__order-link"
+            data-test-id="subscription-delivery-order-link"
+          >
+            {{ $t("product_subscriptions.renewal.view_order", { number: renewal.orderNumber }) }}
+          </VcLink>
+
           <span class="subscription-delivery__estimate">{{
             $t("product_subscriptions.deliveries.prices_estimate")
           }}</span>
@@ -193,6 +202,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useRenewalReasons } from "../composables/useRenewalReasons";
 import { useSubscriptionOffers } from "../composables/useSubscriptionOffers";
 import { ATTENTION_RENEWAL_STATES, UPCOMING_DELIVERY_STATE } from "../constants";
@@ -224,11 +234,14 @@ interface IProps {
   busy?: string;
   /** Subscription id -> the action in progress for it. */
   busySubscriptions?: Record<string, string | undefined>;
+  /** Subscriptions whose last order still waits for its payment: they can't be ordered again until it is paid. */
+  awaitingPaymentIds?: string[];
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   busySubscriptions: () => ({}),
+  awaitingPaymentIds: () => [],
 });
 
 const ORDERED_STATES: ReadonlySet<string> = new Set(["Ordered", "Authorized"]);
@@ -249,6 +262,7 @@ const isOpen = computed(() => OPEN_STATES.has(props.renewal.state));
 const subscriptions = computed(() =>
   props.renewal.items.map((x) => props.subscriptionsById[x.subscriptionId]).filter((x): x is SubscriptionType => !!x),
 );
+const canOrderNow = computed(() => isOpen.value && subscriptions.value.some(isOrderable));
 
 const itemCount = computed(() => props.renewal.items.filter((x) => !x.isExcluded).length);
 const total = computed(() => props.renewal.orderTotalMoney ?? props.renewal.previewTotalMoney);
@@ -282,11 +296,16 @@ const issueColor = computed<VcAlertColorType>(() =>
   props.renewal.state === "Failed" || props.renewal.state === "RetryScheduled" ? "danger" : "warning",
 );
 const issueTitle = computed(() => t(`product_subscriptions.statuses.${props.renewal.state}`));
-const issueText = computed(() =>
-  props.renewal.state === "ReviewRequired"
-    ? reviewReasonText(props.renewal)
-    : (errorText(props.renewal.lastErrorCode) ?? t("product_subscriptions.renewal.messages.action")),
-);
+const issueText = computed(() => {
+  const { state, nextAttemptDate } = props.renewal;
+  if (state === "ReviewRequired") {
+    return reviewReasonText(props.renewal);
+  }
+  if (state === "RetryScheduled" && nextAttemptDate) {
+    return t("product_subscriptions.renewal.messages.retry", { date: d(new Date(nextAttemptDate), "short") });
+  }
+  return errorText(props.renewal.lastErrorCode) ?? t("product_subscriptions.renewal.messages.action");
+});
 
 const hint = computed(() => {
   if (isAttention.value) {
@@ -340,6 +359,14 @@ function configurationOf(id: string) {
 function frequencyOf(id: string): string {
   const subscription = subscriptionOf(id);
   return subscription ? intervalLabel(t, subscription.intervalUnit, subscription.intervalCount) : "";
+}
+
+function isOrderable(subscription: SubscriptionType): boolean {
+  return subscription.canOrderNow && !props.awaitingPaymentIds.includes(subscription.id);
+}
+
+function onOrderNow(targets: SubscriptionType[]): void {
+  emit("orderNow", targets.filter(isOrderable));
 }
 
 function emitAction(action: RenewalActionType): void {
@@ -449,6 +476,10 @@ function onChangeFrequency(id: string, event: MouseEvent): void {
 
   &__hint {
     @apply text-sm text-neutral-600;
+  }
+
+  &__order-link {
+    @apply text-sm;
   }
 
   // Same text style as the hint above it.

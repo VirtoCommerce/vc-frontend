@@ -1,49 +1,36 @@
 import { describe, expect, it, vi } from "vitest";
-import { SubscriptionDiscountType, SubscriptionIntervalUnit } from "./api/graphql/types";
+import { SubscriptionIntervalUnit } from "./api/graphql/types";
 import {
-  discountLabel,
+  addInterval,
+  configurationSummary,
   fetchAllPages,
   intervalKey,
   intervalLabel,
   needsCardPaymentMethodNotice,
   parseIntervalKey,
   subscriptionErrorMessage,
-  toDateInputValue,
 } from "./utils";
 
-describe("toDateInputValue", () => {
-  it("gives the UTC day, as the server counts delivery days", () => {
-    // 20:30 in New York on Oct 26 is already Oct 27 in UTC
-    expect(toDateInputValue("2026-10-27T00:30:00Z")).toBe("2026-10-27");
-    expect(toDateInputValue(new Date(Date.UTC(2026, 0, 5, 23, 59)))).toBe("2026-01-05");
+describe("addInterval", () => {
+  const add = (iso: string, unit: SubscriptionIntervalUnit, count: number) =>
+    addInterval(new Date(iso), unit, count).toISOString();
+
+  it("clamps a month to the last day of a shorter month", () => {
+    expect(add("2026-01-31T00:00:00.000Z", SubscriptionIntervalUnit.Month, 1)).toBe("2026-02-28T00:00:00.000Z");
+    expect(add("2026-03-31T09:30:00.000Z", SubscriptionIntervalUnit.Month, 3)).toBe("2026-06-30T09:30:00.000Z");
   });
 
-  it("gives nothing for a missing or invalid date", () => {
-    expect(toDateInputValue(undefined)).toBeUndefined();
-    expect(toDateInputValue("not a date")).toBeUndefined();
-  });
-});
-
-describe("discountLabel", () => {
-  const t = ((key: string, params?: { value: unknown }) => `${key}:${String(params?.value)}`) as never;
-
-  it("shows a percent as is", () => {
-    expect(discountLabel(t, SubscriptionDiscountType.Percent, 10)).toBe("product_subscriptions.discount.percent:10");
+  it("moves a month across the year end", () => {
+    expect(add("2026-11-15T00:00:00.000Z", SubscriptionIntervalUnit.Month, 2)).toBe("2027-01-15T00:00:00.000Z");
   });
 
-  it("shows a fixed amount with the amount the server formatted", () => {
-    expect(discountLabel(t, SubscriptionDiscountType.FixedAmount, 5, "5,00 €")).toBe(
-      "product_subscriptions.discount.amount:5,00 €",
-    );
+  it("clamps Feb 29 to Feb 28 in a year that is not a leap year", () => {
+    expect(add("2028-02-29T00:00:00.000Z", SubscriptionIntervalUnit.Year, 1)).toBe("2029-02-28T00:00:00.000Z");
   });
 
-  it("shows nothing for a fixed amount the server didn't format", () => {
-    expect(discountLabel(t, SubscriptionDiscountType.FixedAmount, 5)).toBeUndefined();
-  });
-
-  it("shows nothing without a discount", () => {
-    expect(discountLabel(t, SubscriptionDiscountType.None, 10)).toBeUndefined();
-    expect(discountLabel(t, SubscriptionDiscountType.Percent, 0)).toBeUndefined();
+  it("adds days and weeks in UTC, keeping the time of day", () => {
+    expect(add("2026-03-27T23:30:00.000Z", SubscriptionIntervalUnit.Day, 3)).toBe("2026-03-30T23:30:00.000Z");
+    expect(add("2026-10-20T00:00:00.000Z", SubscriptionIntervalUnit.Week, 2)).toBe("2026-11-03T00:00:00.000Z");
   });
 });
 
@@ -130,8 +117,11 @@ describe("subscriptionErrorMessage", () => {
     );
   });
 
-  it("shows the server's message for a refusal without a known reason", () => {
-    expect(subscriptionErrorMessage(refused({}), t)).toBe("Server words");
+  it("falls back to the generic text for a refusal without a known reason, never the server's words", () => {
+    expect(subscriptionErrorMessage(refused({}), t)).toBe("t:product_subscriptions.errors.generic");
+    expect(subscriptionErrorMessage(refused({ data: { reason: "SOMETHING_NEW" } }), t)).toBe(
+      "t:product_subscriptions.errors.generic",
+    );
   });
 
   it("says the store turned the action off", () => {
@@ -141,5 +131,32 @@ describe("subscriptionErrorMessage", () => {
 
   it("falls back to the generic text for anything else", () => {
     expect(subscriptionErrorMessage(new Error("network"), t)).toBe("t:product_subscriptions.errors.generic");
+  });
+});
+
+describe("configurationSummary", () => {
+  const messages: Record<string, string> = {
+    "product_subscriptions.configuration.product_quantity": "{name} × {quantity}",
+    "product_subscriptions.configuration.custom_text": "«{text}»",
+    "product_subscriptions.configuration.separator": " · ",
+    "product_subscriptions.configuration.files_separator": ", ",
+  };
+  const t = ((key: string, named: Record<string, unknown> = {}) =>
+    messages[key].replace(/\{(\w+)\}/g, (_, name: string) => String(named[name]))) as never;
+
+  it("lists products with their quantity, texts in the locale's quotes and file names", () => {
+    expect(
+      configurationSummary(t, [
+        { name: "Drinks", productName: "Fanta Mango", quantity: 6 },
+        { name: "Snacks", productName: "Pretzels", quantity: 1 },
+        { name: "Card", customText: "Thank you!" },
+        { name: "Logo", files: [{ name: "logo.png" }, null, { name: "back.png" }] },
+      ]),
+    ).toBe("Fanta Mango × 6 · Pretzels · «Thank you!» · logo.png, back.png");
+  });
+
+  it("skips empty choices and has nothing for no configuration", () => {
+    expect(configurationSummary(t, [{ name: "Logo", files: [] }])).toBe("");
+    expect(configurationSummary(t, undefined)).toBe("");
   });
 });

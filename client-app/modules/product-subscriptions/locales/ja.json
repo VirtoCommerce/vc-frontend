@@ -15,10 +15,6 @@
       "month": "1か月 | {count}か月",
       "year": "1年 | {count}年"
     },
-    "discount": {
-      "percent": "{value}%オフ",
-      "amount": "{value}お得"
-    },
     "statuses": {
       "PendingActivation": "開始待ち",
       "Active": "有効",
@@ -288,6 +284,8 @@
       "order_now": "今すぐ注文",
       "order_now_title": "今すぐ注文しますか？",
       "ordered": "注文しました。",
+      "ordered_needs_action": "ご注文に対応が必要です。このページで強調表示されている配送をご確認ください。",
+      "partly_failed": "{products} 以外は完了しました。{reason}",
       "card_label": "支払い方法",
       "choose_card": "カードを選択",
       "manage_cards": "カードを管理",
@@ -308,7 +306,11 @@
       "manage": "定期購入を管理"
     },
     "configuration": {
-      "unavailable_value": "{name} — 利用できなくなりました"
+      "unavailable_value": "{name} — 利用できなくなりました",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "「{text}」",
+      "separator": "・",
+      "files_separator": "、"
     }
   }
 }

@@ -56,9 +56,10 @@
         <SubscriptionDelivery
           :renewal="renewal"
           :subscriptions-by-id="subscriptionsById"
-          :is-next="index === 0"
+          :is-next="renewal.id === nextDelivery?.id"
           :busy="busy[renewal.id]"
           :busy-subscriptions="busy"
+          :awaiting-payment-ids="awaitingPaymentIds"
           @renewal-action="onRenewalAction"
           @change-frequency="changeFrequency"
           @pause="confirmPause"
@@ -184,6 +185,8 @@ import type { ProductSubscriptionFieldsFragment, RenewalFieldsFragment } from ".
 import type { PreparedLineItemType } from "@/core/types";
 
 type SubscriptionType = ProductSubscriptionFieldsFragment;
+/** One request of a confirmed change: for one product, or for a whole delivery. */
+type ChangeStepType<T> = { product?: string; run: () => Promise<T> };
 
 const SUBSCRIPTIONS_PAGE_SIZE = 100;
 const RENEWALS_PAGE_SIZE = 50;
@@ -193,10 +196,13 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 // Deliveries the customer can still change, and those already ordered.
 const CHANGEABLE_STATES: ReadonlySet<string> = new Set(["Scheduled", "Notified"]);
-const UPCOMING_STATES: ReadonlySet<string> = new Set([...CHANGEABLE_STATES, "Ordered", "Authorized"]);
+const ORDERED_STATES: ReadonlySet<string> = new Set(["Ordered", "Authorized"]);
+const UPCOMING_STATES: ReadonlySet<string> = new Set([...CHANGEABLE_STATES, ...ORDERED_STATES]);
+// An order still waiting for its payment: the server places no other order for its subscriptions until it is paid.
+const AWAITING_PAYMENT_STATES: ReadonlySet<string> = new Set(["Ordered", "PaymentActionRequired", "RetryScheduled"]);
 const ACTIVE_STATUSES: ReadonlySet<string> = new Set(["Active", "PendingActivation", "PastDue"]);
 
-const { t, d, n } = useI18n();
+const { t, d, n, locale } = useI18n();
 const { currentCurrency } = useCurrency();
 const route = useRoute();
 const notifications = useNotifications();
@@ -227,8 +233,14 @@ const openDeliveries = computed(() => {
   const orderedSince = Date.now() - ORDERED_SHOWN_DAYS * DAY_MS;
   return renewals.value
     .filter((x) => ATTENTION_RENEWAL_STATES.has(x.state) || UPCOMING_STATES.has(x.state))
-    .filter((x) => CHANGEABLE_STATES.has(x.state) || new Date(x.scheduledDate).getTime() >= orderedSince);
+    .filter((x) => !ORDERED_STATES.has(x.state) || new Date(x.scheduledDate).getTime() >= orderedSince);
 });
+
+const awaitingPaymentIds = computed(() =>
+  renewals.value
+    .filter((x) => AWAITING_PAYMENT_STATES.has(x.state))
+    .flatMap((x) => x.items.map((item) => item.subscriptionId)),
+);
 
 /**
  * Deliveries the server hasn't prepared yet. A renewal is created only a few days before a delivery, so most active
@@ -237,12 +249,14 @@ const openDeliveries = computed(() => {
  */
 const upcomingDeliveries = computed<RenewalFieldsFragment[]>(() => {
   const covered = new Set(
-    renewals.value.flatMap((renewal) =>
+    openDeliveries.value.flatMap((renewal) =>
       renewal.items.map((item) => `${item.subscriptionId}|${toLocalDateOnly(new Date(renewal.scheduledDate))}`),
     ),
   );
   // A past-due subscription waits for its failed payment: its renewal card says so, it has no upcoming delivery.
-  const inRenewal = new Set(renewals.value.flatMap((renewal) => renewal.items.map((item) => item.subscriptionId)));
+  const inRenewal = new Set(
+    openDeliveries.value.flatMap((renewal) => renewal.items.map((item) => item.subscriptionId)),
+  );
   const byDay = new Map<string, SubscriptionType[]>();
   activeSubscriptions.value
     .filter((x) => !(x.status === "PastDue" && inRenewal.has(x.id)))
@@ -320,7 +334,10 @@ function toUpcomingDelivery(day: string, items: SubscriptionType[]): RenewalFiel
 function isUpcoming(renewal: RenewalFieldsFragment): boolean {
   return renewal.id.startsWith(UPCOMING_ID_PREFIX);
 }
-const nextDelivery = computed(() => deliveries.value[0]);
+const nextDelivery = computed(() => {
+  const today = toLocalDateOnly(new Date());
+  return deliveries.value.find((x) => toLocalDateOnly(new Date(x.scheduledDate)) >= today);
+});
 const actionCount = computed(() => deliveries.value.filter((x) => ATTENTION_RENEWAL_STATES.has(x.state)).length);
 
 const inactiveLines = computed<PreparedLineItemType[]>(() =>
@@ -519,15 +536,32 @@ async function changeFrequency(subscription: SubscriptionType, triggerElement?: 
   });
 }
 
-/** Asks the customer to confirm a change; OK runs it, reports it and reloads the page, an error stays in the dialog. */
-function confirmChange(options: {
+/** Runs every step, past a failure too, one at a time when `sequential`. */
+async function settle<T>(steps: ChangeStepType<T>[], sequential = false): Promise<PromiseSettledResult<T>[]> {
+  if (!sequential) {
+    return Promise.allSettled(steps.map((x) => x.run()));
+  }
+  const results: PromiseSettledResult<T>[] = [];
+  for (const step of steps) {
+    results.push(...(await Promise.allSettled([step.run()])));
+  }
+  return results;
+}
+
+/**
+ * Asks the customer to confirm a change; OK runs its steps and reloads the page. When every step fails, the error stays
+ * in the dialog; when only some do, the dialog closes and names the products that failed, so OK never repeats a step
+ * that went through.
+ */
+function confirmChange<T>(options: {
   title: string;
   variant?: "danger" | "warning";
   lead?: string;
   products?: string[];
   text?: string;
-  task: () => Promise<unknown>;
-  success: string;
+  steps: ChangeStepType<T>[];
+  sequential?: boolean;
+  done: (values: T[]) => void;
 }): void {
   openModal({
     component: SubscriptionConfirmModal,
@@ -538,9 +572,26 @@ function confirmChange(options: {
       products: options.products,
       text: options.text,
       async onConfirm(): Promise<void> {
-        await options.task();
-        notifySuccess(options.success);
+        const results = await settle(options.steps, options.sequential);
         await load();
+
+        const failed = options.steps.filter((_, i) => results[i].status === "rejected");
+        const error = results.find((x): x is PromiseRejectedResult => x.status === "rejected")?.reason;
+        if (failed.length && failed.length === results.length) {
+          throw error;
+        }
+        if (failed.length) {
+          notifications.error({
+            duration: DEFAULT_NOTIFICATION_DURATION,
+            single: true,
+            text: t("product_subscriptions.deliveries.partly_failed", {
+              products: new Intl.ListFormat(locale.value).format(failed.map((x) => x.product ?? "")),
+              reason: subscriptionErrorMessage(error, t),
+            }),
+          });
+          return;
+        }
+        options.done(results.flatMap((x) => (x.status === "fulfilled" ? [x.value] : [])));
       },
     },
   });
@@ -551,11 +602,13 @@ function confirmSkip(renewal: RenewalFieldsFragment): void {
   const date = d(new Date(renewal.scheduledDate), "short");
   const included = renewal.items.filter((x) => !x.isExcluded);
   const products = included.map((x) => x.productName ?? "");
-  // Every subscription in a delivery moves on by its own frequency; the earliest of them is the next delivery.
-  const following = included
+  const targets = included
     .map((x) => subscriptionsById.value[x.subscriptionId])
-    .filter((x): x is SubscriptionType => !!x)
-    .map((x) => addInterval(new Date(renewal.scheduledDate), x.intervalUnit, x.intervalCount).getTime());
+    .filter((x): x is SubscriptionType => !!x);
+  // Every subscription in a delivery moves on by its own frequency; the earliest of them is the next delivery.
+  const following = targets.map((x) =>
+    addInterval(new Date(renewal.scheduledDate), x.intervalUnit, x.intervalCount).getTime(),
+  );
   const next = following.length ? d(new Date(Math.min(...following)), "short") : undefined;
   const after = next
     ? t("product_subscriptions.deliveries.skip_after", { next })
@@ -563,7 +616,7 @@ function confirmSkip(renewal: RenewalFieldsFragment): void {
 
   // One product reads as one sentence; several are listed.
   const many = products.length > 1;
-  confirmChange({
+  confirmChange<unknown>({
     variant: "warning",
     title: t("product_subscriptions.deliveries.skip_title"),
     lead: many
@@ -572,16 +625,13 @@ function confirmSkip(renewal: RenewalFieldsFragment): void {
     products: many ? products : [],
     text: after,
     // An upcoming delivery has no renewal yet: each subscription skips its own next delivery, the one shown here.
-    task: () =>
-      isUpcoming(renewal)
-        ? Promise.all(
-            included
-              .map((x) => subscriptionsById.value[x.subscriptionId])
-              .filter((x): x is SubscriptionType => !!x)
-              .map((x) => skipProductSubscription({ subscriptionId: x.id, expectedNextOrderDate: x.nextOrderDate })),
-          )
-        : skipSubscriptionRenewal({ renewalId: renewal.id }),
-    success: t("product_subscriptions.deliveries.skipped"),
+    steps: isUpcoming(renewal)
+      ? targets.map((x) => ({
+          product: x.productName,
+          run: () => skipProductSubscription({ subscriptionId: x.id, expectedNextOrderDate: x.nextOrderDate }),
+        }))
+      : [{ run: () => skipSubscriptionRenewal({ renewalId: renewal.id }) }],
+    done: () => notifySuccess(t("product_subscriptions.deliveries.skipped")),
   });
 }
 
@@ -598,8 +648,11 @@ function confirmPause(targets: SubscriptionType[]): void {
       : t("product_subscriptions.deliveries.pause_text", { product: targets[0]?.productName ?? "" }),
     products: many ? targets.map((x) => x.productName ?? "") : [],
     text: many ? t("product_subscriptions.deliveries.pause_after_many") : undefined,
-    task: () => Promise.all(targets.map((x) => pauseProductSubscription({ subscriptionId: x.id }))),
-    success: t("product_subscriptions.deliveries.paused_done"),
+    steps: targets.map((x) => ({
+      product: x.productName,
+      run: () => pauseProductSubscription({ subscriptionId: x.id }),
+    })),
+    done: () => notifySuccess(t("product_subscriptions.deliveries.paused_done")),
   });
 }
 
@@ -613,17 +666,22 @@ function confirmCancel(targets: SubscriptionType[]): void {
       : t("product_subscriptions.deliveries.cancel_text", { product: targets[0]?.productName ?? "" }),
     products: many ? targets.map((x) => x.productName ?? "") : [],
     text: many ? t("product_subscriptions.deliveries.cancel_after_many") : undefined,
-    task: () => Promise.all(targets.map((x) => cancelProductSubscription({ subscriptionId: x.id }))),
-    success: t("product_subscriptions.deliveries.cancelled_done"),
+    steps: targets.map((x) => ({
+      product: x.productName,
+      run: () => cancelProductSubscription({ subscriptionId: x.id }),
+    })),
+    done: () => notifySuccess(t("product_subscriptions.deliveries.cancelled_done")),
   });
 }
 
 /**
- * Orders a delivery's products right away, after a confirmation. Each subscription makes its own order and its schedule
- * restarts from today; the store turns this on in its "Customer actions" settings.
+ * Orders a delivery's products right away, after a confirmation; their schedules restart from today. The store turns
+ * this on in its "Customer actions" settings.
  */
 function confirmOrderNow(targets: SubscriptionType[]): void {
   const many = targets.length > 1;
+  // The server orders a prepared delivery whole, for any of its subscriptions: the others are in that order already.
+  const ordered = new Set<string>();
   confirmChange({
     variant: "warning",
     title: t("product_subscriptions.deliveries.order_now_title"),
@@ -632,13 +690,30 @@ function confirmOrderNow(targets: SubscriptionType[]): void {
       : t("product_subscriptions.deliveries.order_now_lead_one", { product: targets[0]?.productName ?? "" }),
     products: many ? targets.map((x) => x.productName ?? "") : [],
     text: t("product_subscriptions.deliveries.order_now_after"),
+    steps: targets.map((target) => ({
+      product: target.productName,
+      async run() {
+        if (ordered.has(target.id)) {
+          return undefined;
+        }
+        const renewal = await orderProductSubscriptionNow({ subscriptionId: target.id });
+        renewal?.items.filter((x) => !x.isExcluded).forEach((x) => ordered.add(x.subscriptionId));
+        return renewal;
+      },
+    })),
     // One at a time: the server locks per customer, so parallel requests would only wait for each other.
-    task: async () => {
-      for (const target of targets) {
-        await orderProductSubscriptionNow({ subscriptionId: target.id });
+    sequential: true,
+    done(placed) {
+      if (placed.some((x) => x && ATTENTION_RENEWAL_STATES.has(x.state))) {
+        notifications.warning({
+          duration: DEFAULT_NOTIFICATION_DURATION,
+          single: true,
+          text: t("product_subscriptions.deliveries.ordered_needs_action"),
+        });
+      } else {
+        notifySuccess(t("product_subscriptions.deliveries.ordered"));
       }
     },
-    success: t("product_subscriptions.deliveries.ordered"),
   });
 }
 

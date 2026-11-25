@@ -15,10 +15,6 @@
       "month": "1 kuukausi | {count} kuukautta",
       "year": "1 vuosi | {count} vuotta"
     },
-    "discount": {
-      "percent": "Säästä {value} %",
-      "amount": "Säästä {value}"
-    },
     "statuses": {
       "PendingActivation": "Käynnistymässä",
       "Active": "Voimassa",
@@ -288,6 +284,8 @@
       "order_now": "Tilaa nyt",
       "order_now_title": "Tilataanko nyt?",
       "ordered": "Tilaus tehty.",
+      "ordered_needs_action": "Tilauksesi vaatii huomiotasi. Katso merkitty toimitus tältä sivulta.",
+      "partly_failed": "Tehty, paitsi seuraaville: {products}. {reason}",
       "card_label": "Maksa kortilla",
       "choose_card": "Valitse kortti",
       "manage_cards": "Hallitse kortteja",
@@ -308,7 +306,11 @@
       "manage": "Hallitse tilauksia"
     },
     "configuration": {
-      "unavailable_value": "{name} — ei enää saatavilla"
+      "unavailable_value": "{name} — ei enää saatavilla",
+      "product_quantity": "{name} × {quantity}",
+      "custom_text": "”{text}”",
+      "separator": " · ",
+      "files_separator": ", "
     }
   }
 }
