@@ -1,8 +1,8 @@
 <template>
-  <div class="flex items-center">
-    <div class="flex h-11 grow items-center bg-additional-50 pr-2.5 sm:h-auto sm:pr-0.5">
+  <div class="branch-search">
+    <div class="branch-search__field">
       <VcInput
-        class="w-full"
+        class="branch-search__input"
         size="sm"
         type="text"
         :placeholder="$t('shared.catalog.branches_modal.search_input_placeholder')"
@@ -35,3 +35,21 @@ function onInput(event: Event) {
   emit("update:input", target.value);
 }
 </script>
+
+<style lang="scss">
+.branch-search {
+  @apply flex items-center;
+
+  &__field {
+    @apply flex h-11 grow items-center pe-2.5;
+
+    @media (width >= theme("screens.sm")) {
+      @apply h-auto pe-0;
+    }
+  }
+
+  &__input {
+    @apply w-full;
+  }
+}
+</style>
