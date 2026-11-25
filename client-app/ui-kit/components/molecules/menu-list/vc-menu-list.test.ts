@@ -22,6 +22,12 @@ async function mountList(template: string, setup: () => Record<string, unknown> 
 
 type WrapperType = Awaited<ReturnType<typeof mountList>>;
 
+type CodesStateType = { codes: string[]; current?: string; disabled: string[] };
+
+function state(wrapper: WrapperType): CodesStateType {
+  return wrapper.vm as unknown as CodesStateType;
+}
+
 function inners(wrapper: WrapperType) {
   return wrapper.findAll<HTMLElement>(".vc-menu-item__inner");
 }
@@ -41,6 +47,8 @@ function codesList(extraAttrs = "") {
     </VcMenuList>
   `;
 }
+
+const DISABLED_BY_CODE = ':disabled="disabled.includes(code)"';
 
 function codesSetup(initial?: string, disabled: string[] = []) {
   return () => ({ codes: ref(["USD", "EUR", "GBP"]), current: ref(initial), disabled });
@@ -136,7 +144,7 @@ describe("VcMenuList", () => {
     });
 
     it("is the first enabled item while none is active", async () => {
-      const wrapper = await mountList(codesList(':disabled="disabled.includes(code)"'), codesSetup(undefined, ["USD"]));
+      const wrapper = await mountList(codesList(DISABLED_BY_CODE), codesSetup(undefined, ["USD"]));
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1"]);
     });
@@ -153,7 +161,7 @@ describe("VcMenuList", () => {
     });
 
     it("skips an active item that is disabled", async () => {
-      const wrapper = await mountList(codesList(':disabled="disabled.includes(code)"'), codesSetup("EUR", ["EUR"]));
+      const wrapper = await mountList(codesList(DISABLED_BY_CODE), codesSetup("EUR", ["EUR"]));
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1"]);
     });
@@ -222,21 +230,21 @@ describe("VcMenuList", () => {
 
       inners(wrapper)[2].element.focus();
       await nextTick();
-      (wrapper.vm as unknown as { current: string }).current = "USD";
+      state(wrapper).current = "USD";
       await nextTick();
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1"]);
     });
 
     it("falls back to the active item when the focused one is disabled", async () => {
-      const wrapper = await mountList(codesList(':disabled="disabled.includes(code)"'), () => ({
+      const wrapper = await mountList(codesList(DISABLED_BY_CODE), () => ({
         ...codesSetup("EUR")(),
         disabled: ref<string[]>([]),
       }));
 
       inners(wrapper)[2].element.focus();
       await nextTick();
-      (wrapper.vm as unknown as { disabled: string[] }).disabled = ["GBP"];
+      state(wrapper).disabled = ["GBP"];
       await nextTick();
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1"]);
@@ -247,7 +255,7 @@ describe("VcMenuList", () => {
 
       inners(wrapper)[2].element.focus();
       await nextTick();
-      (wrapper.vm as unknown as { codes: string[] }).codes = ["USD", "EUR"];
+      state(wrapper).codes = ["USD", "EUR"];
       await nextTick();
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1"]);
@@ -294,7 +302,7 @@ describe("VcMenuList", () => {
     it("follows the order on screen when an item is added before the others", async () => {
       const wrapper = await mountList(codesList(), codesSetup("EUR"));
 
-      (wrapper.vm as unknown as { codes: string[] }).codes = ["CHF", "USD", "EUR", "GBP"];
+      state(wrapper).codes = ["CHF", "USD", "EUR", "GBP"];
       await nextTick();
       const [chf, , eur] = inners(wrapper).map((inner) => inner.element);
 
@@ -303,7 +311,7 @@ describe("VcMenuList", () => {
     });
 
     it("steps over disabled items", async () => {
-      const wrapper = await mountList(codesList(':disabled="disabled.includes(code)"'), codesSetup("USD", ["EUR"]));
+      const wrapper = await mountList(codesList(DISABLED_BY_CODE), codesSetup("USD", ["EUR"]));
       const [usd, , gbp] = inners(wrapper).map((inner) => inner.element);
 
       keydown(usd, "ArrowDown");
