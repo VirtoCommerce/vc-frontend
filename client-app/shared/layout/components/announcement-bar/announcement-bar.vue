@@ -19,15 +19,13 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useIsHomePage } from "@/core/composables/useIsHomePage";
-import { getThemeVariableName } from "@/core/plugins/config.plugin";
+import { toPaletteVariable } from "@/core/plugins/config.plugin";
 import { DESIGNER_PREVIEW_PATH } from "@/core/theme-snapshot/query";
 import { toNonEmptyString, toSafeLinkUrl } from "@/core/utilities/common";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { useStaticPage } from "@/shared/static-content/composables/useStaticPage";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import type { StyleValue } from "vue";
-
-const TOKEN_REGEX = /^[a-z][a-z0-9_]*$/;
 
 const HOME_PERMALINK_REGEX = /^\/*$/;
 
@@ -62,13 +60,9 @@ const announcements = computed(() => {
 });
 
 const colors = computed<StyleValue>(() => ({
-  "--bg-token": toTokenVariable(announcementBar.value?.background),
-  "--text-token": toTokenVariable(announcementBar.value?.color),
+  "--bg-token": toPaletteVariable(announcementBar.value?.background),
+  "--text-token": toPaletteVariable(announcementBar.value?.color),
 }));
-
-function toTokenVariable(token: unknown): string | undefined {
-  return typeof token === "string" && TOKEN_REGEX.test(token) ? `var(${getThemeVariableName(token)})` : undefined;
-}
 </script>
 
 <style lang="scss">

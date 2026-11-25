@@ -11,11 +11,18 @@ host behaviour, or something the host must know before the plugin loads.
 | Menus (header, account) | `plugin.config.ts` `menu`                                                                       | yes                            |
 | Places in host pages    | `useExtensionRegistry().register()` / `registerContribution()`                                  | yes, when declared as a slot   |
 | Host-wide registries    | `registerLocaleLoader()`, `registerCacheTypePolicies()`, `registerProductConfigurationSource()` | no                             |
+| Custom section kit      | `registerCustomSectionTag()`, `registerCustomSectionBehavior()` in `init()`                     | no                             |
 
 The places in host pages are the extension registry's categories: the header and menus, product card and page,
 the product action buttons, the payment steps, order details, the shared list. The full list is
 `ExtensionCategoryMapType` in `shared/common/types/extensionRegistryMap.ts`. The header and mobile menus also take a
 data contribution: a count, shown as a badge on a link the host draws.
+
+A custom section kit name is shared by every plugin, so the first registration of a name wins, unlike B.2 below
+(a second call replaces the first): call `unregisterCustomSectionTag()` or `unregisterCustomSectionBehavior()` first
+to replace it.
+A behavior's directive comes from `defineBehavior`, as the built-ins' do: its setup runs in the element's own effect
+scope, which stops on unmount, and reads the visitor's motion preference.
 
 ## Pick the kind of change
 

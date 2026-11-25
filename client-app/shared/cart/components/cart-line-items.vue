@@ -85,7 +85,6 @@
       <CartItemActions
         icons
         :saveable-for-later="!hideControls?.includes('save-for-later')"
-        :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
         data-test-id="cart-item-actions-after-image"
         @save-for-later="$emit('saveForLater', [item.id])"
@@ -95,7 +94,6 @@
     <template #after-title="{ item }">
       <CartItemActions
         :saveable-for-later="!hideControls?.includes('save-for-later')"
-        :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
         data-test-id="cart-item-actions-after-title"
         @save-for-later="$emit('saveForLater', [item.id])"

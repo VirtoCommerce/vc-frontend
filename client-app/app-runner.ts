@@ -49,6 +49,7 @@ import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import { useNotifications } from "@/shared/notification";
 import {
   productTemplateSections,
+  registerCustomSections,
   registerPageBuilderSections,
   setLandingPageLayout,
   templateBlocks,
@@ -364,6 +365,7 @@ export default async () => {
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
   registerPageBuilderSections({ ...templateBlocks, ...ProductBlocks, ...productTemplateSections });
+  registerCustomSections();
 
   await router.isReady();
 

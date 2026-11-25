@@ -53,6 +53,35 @@ export interface IThemePalette {
   dark?: Record<string, string>;
 }
 
+/** A setting of a section schema, as the designer builds its form from it. */
+export interface IThemeSchemaField {
+  id?: string;
+  type?: string;
+  format?: string;
+  translatable?: boolean;
+  multiline?: boolean;
+  /** The fields of a `list` row or an `object`. */
+  element?: IThemeSchemaField[];
+  [key: string]: unknown;
+}
+
+/** A section type the theme defines: rendered from its template, with no code of its own. */
+export interface ICustomSectionDefinition {
+  format: 1;
+  /** The name in the designer's section picker; a draft may hold it per language. */
+  name: string | Record<string, string>;
+  schema: {
+    settings: IThemeSchemaField[];
+    /** Any template when left out. */
+    targetTemplates?: string[];
+    limit?: number;
+    icon?: string;
+  };
+  /** HTML with one root element and `{{ settings.<id> }}` bindings. */
+  template: string;
+  css: string;
+}
+
 export interface IThemeSnapshot {
   format: 1;
   publication: number;
@@ -66,6 +95,10 @@ export interface IThemeSnapshot {
   footer?: IThemeSectionGroup;
   brand?: IThemeBrand;
   palette?: IThemePalette;
+  /** Keyed by section type. */
+  customSections?: Record<string, ICustomSectionDefinition>;
+  /** The asset library's public base URL: a custom section's images come only from under it. */
+  assetsBaseUrl?: string;
   menus?: string[];
 }
 
@@ -90,6 +123,10 @@ export interface IThemeDraft {
   brand?: IThemeBrand;
   /** `null`: the theme has no palette (the preset shows), as its next publication will have none. */
   palette?: IThemePalette | null;
+  /** Every custom section type of the theme: replaces the published ones. */
+  customSections?: Record<string, ICustomSectionDefinition>;
+  /** The asset library's base, for a store whose published snapshot names none yet; the published one wins. */
+  assetsBaseUrl?: string;
 }
 
 export interface IThemeSlugPage {
@@ -128,6 +165,9 @@ export interface IThemeView {
   footer?: IThemeSectionGroup;
   brand: IThemeBrand;
   palette?: IThemePalette;
+  customSections: Record<string, ICustomSectionDefinition>;
+  /** The published snapshot's; while it names none, the draft's, so a draft cannot widen where images come from. */
+  assetsBaseUrl?: string;
   menus: IThemeMenu[];
   isDraft: boolean;
 }
