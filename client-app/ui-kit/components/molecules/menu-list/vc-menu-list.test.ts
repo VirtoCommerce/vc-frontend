@@ -566,6 +566,16 @@ describe("VcMenuList", () => {
       expect(warn).not.toHaveBeenCalled();
     });
 
+    it("accepts an item that sets the menu's own role", async () => {
+      await mountList(`
+        <VcMenuList role="menu" aria-label="Account">
+          <VcMenuItem role="menuitem">Orders</VcMenuItem>
+        </VcMenuList>
+      `);
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
     it("flags an item role that does not belong to the list", async () => {
       await mountList(`
         <VcMenuList role="listbox" aria-label="Currency">

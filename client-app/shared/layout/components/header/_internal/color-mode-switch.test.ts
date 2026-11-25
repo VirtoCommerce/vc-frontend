@@ -14,8 +14,9 @@ vi.mock("@/core/composables/useDarkMode", () => ({
 
 enableAutoUnmount(afterEach);
 
-function mountSwitch() {
+function mountSwitch(attrs: Record<string, string> = {}) {
   return mount(ColorModeSwitch, {
+    attrs,
     attachTo: document.body,
     global: {
       components: { VcTabSwitch, VcTabSwitchGroup },
@@ -52,5 +53,11 @@ describe("ColorModeSwitch", () => {
     await radio(wrapper, "light").trigger("click");
 
     expect(colorMode.value).toBe("light");
+  });
+
+  it("takes its name from the heading the panel points it to", () => {
+    const wrapper = mountSwitch({ "aria-labelledby": "appearance-heading" });
+
+    expect(wrapper.get('[role="radiogroup"]').attributes("aria-labelledby")).toBe("appearance-heading");
   });
 });
