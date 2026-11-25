@@ -51,7 +51,7 @@ const checkboxHtml = computed(() => sanitizeSectionHtml(props.checkboxText));
     .title,
     .subtitle,
     .checkbox-text {
-      color: white;
+      @apply text-additional-50;
     }
   }
 }
