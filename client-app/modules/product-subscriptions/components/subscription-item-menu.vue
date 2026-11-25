@@ -1,5 +1,11 @@
 <template>
-  <VcDropdownMenu v-if="hasItems" class="subscription-item-menu" placement="bottom-end" width="14rem">
+  <VcDropdownMenu
+    v-if="hasItems"
+    class="subscription-item-menu"
+    placement="bottom-end"
+    width="max-content"
+    max-height="none"
+  >
     <template #trigger="{ triggerProps }">
       <!-- The same settings button as the company members' actions menu. -->
       <VcButton
