@@ -42,7 +42,7 @@
         {
           "id": "preferences",
           "title": "shared.layout.header.preferences_menu.title",
-          "priority": 105
+          "priority": 120
         },
         {
           "id": "organizations",
