@@ -139,7 +139,11 @@ const showRangeError = computed(
   () => !isRangeOrderValid.value && Boolean(props.modelValue.startDate) && Boolean(props.modelValue.endDate),
 );
 
-function applyRange(range: RangeType): void {
+function applyRange(range?: RangeType): void {
+  if (!range) {
+    return;
+  }
+
   startValid.value = true;
   endValid.value = true;
 

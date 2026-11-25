@@ -81,8 +81,9 @@ page or widget shows on that environment: `--env` does not see gate 1.
 ## ⚠️ Watch out
 
 1. **Two facade PRs can take the same version.** Merge `dev` before `build:core-types`, and again before merging.
-2. **A changed prop on an exported component is breaking, yet the bump stays a patch:** the check compares export
-   names only. Bump by hand (`yarn bump:core minor`).
+2. **A changed prop, event or slot on an exported component still bumps a patch:** the check compares export names
+   only. Whether it is breaking, and so needs `yarn bump:core minor` by hand: note 1 of
+   [facade README §3](../../../core-api/README.md#3-versions).
 3. **Never delete a stable `core-v*` release or tag.** Every plugin pinned to it stops installing. Alphas are deleted
    by the next stable release, so never merge a plugin pinned to one.
 

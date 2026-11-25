@@ -1,10 +1,42 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import postcss from "postcss";
+import { compileString } from "sass";
+import tailwindcss from "tailwindcss";
+import loadConfig from "tailwindcss/loadConfig.js";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+import { parse } from "vue/compiler-sfc";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "./vc-input.vue";
 import type { DirectiveBinding } from "vue";
+
+enableAutoUnmount(afterEach);
+
+// Not `new URL("…", import.meta.url)`: Vite rewrites that literal form into an http:// dev-server URL.
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const CLIENT_APP = path.resolve(HERE, "../../../..");
+
+async function compileInputStyles(): Promise<string> {
+  const { descriptor } = parse(readFileSync(path.join(HERE, "vc-input.vue"), "utf8"));
+  const { css } = compileString(descriptor.styles[0].content, {
+    importers: [
+      {
+        findFileUrl: (url) => (url.startsWith("@/") ? pathToFileURL(path.join(CLIENT_APP, url.slice(2))) : null),
+      },
+    ],
+  });
+  const tailwind = tailwindcss({
+    ...loadConfig(path.resolve(CLIENT_APP, "../tailwind.config.ts")),
+    content: [{ raw: "" }],
+  });
+
+  return (await postcss([tailwind]).process(css, { from: undefined })).css;
+}
 
 const stubs = { VcLabel: true, VcButton: true, VcIcon: true, VcTooltip: true };
 
@@ -94,6 +126,179 @@ describe("VcInput aria-describedby", () => {
     describedBy.forEach((id) => {
       expect(wrapper.find(`#${id}`).exists()).toBe(true);
     });
+  });
+});
+
+describe("VcInput focus modality", () => {
+  it("marks pointer-driven focus", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+  });
+
+  it("drops the mark as soon as a key is pressed", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+
+  it.each([
+    ["Shift alone", { key: "Shift", shiftKey: true }],
+    ["Meta alone", { key: "Meta", metaKey: true }],
+    ["Control alone", { key: "Control", ctrlKey: true }],
+    ["Alt alone", { key: "Alt", altKey: true }],
+    ["AltGraph alone", { key: "AltGraph" }],
+    ["a Cmd+C copy", { key: "c", metaKey: true }],
+    ["a Ctrl+C copy", { key: "c", ctrlKey: true }],
+  ])("keeps the mark on %s, which moves no focus", async (_label, init) => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", init));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+  });
+
+  it("drops the mark on a modified navigation key such as Shift+Tab", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+
+  it("keeps the mark across a blur, since the pointer is still what is driving", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+    await wrapper.get("input").trigger("blur");
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+    expect(wrapper.emitted("blur")).toHaveLength(1);
+  });
+
+  it("reads the modality even when a handler stops the event", async () => {
+    const wrapper = createInputWrapper({ props: { readonly: true } });
+    const stopper = document.createElement("div");
+
+    stopper.addEventListener("pointerdown", (event) => event.stopPropagation());
+    stopper.addEventListener("keydown", (event) => event.stopPropagation());
+    document.body.append(stopper);
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+
+    stopper.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("vc-input--pointer-modality");
+
+    stopper.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+
+    stopper.remove();
+  });
+
+  it("leaves an editable field unmarked", async () => {
+    const wrapper = createInputWrapper();
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(wrapper.classes()).not.toContain("vc-input--pointer-modality");
+  });
+});
+
+// The ring is CSS alone, so these run VcInput's own stylesheet through jsdom's cascade.
+describe("VcInput focus ring", () => {
+  const RING = "var(--vc-focus-ring-color)";
+  const style = document.createElement("style");
+
+  beforeAll(async () => {
+    style.textContent = await compileInputStyles();
+    document.head.append(style);
+  });
+
+  afterAll(() => style.remove());
+
+  beforeEach(() => {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+  });
+
+  // The input's parent is the container, the element that draws the ring.
+  function outline(wrapper: ReturnType<typeof createInputWrapper>): string {
+    return getComputedStyle(wrapper.get("input").element.parentElement!).outline;
+  }
+
+  it("rings an expanded field while it holds focus", async () => {
+    const wrapper = createInputWrapper({
+      props: { readonly: true, aria: { "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).toContain(RING);
+  });
+
+  it("does not ring an expanded field without focus, as with an always-open inline list", () => {
+    const wrapper = createInputWrapper({
+      props: { type: "search", aria: { role: "combobox", "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    expect(outline(wrapper)).not.toContain(RING);
+  });
+
+  it("does not ring a read-only field focused by pointer unless it is expanded", async () => {
+    const wrapper = createInputWrapper({
+      props: { readonly: true, aria: { "aria-expanded": "false" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).toContain(RING);
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(outline(wrapper)).not.toContain(RING);
+
+    await wrapper.setProps({ aria: { "aria-expanded": "true" } });
+
+    expect(outline(wrapper)).toContain(RING);
+  });
+
+  it("never rings a seamless field, even expanded and focused", async () => {
+    const wrapper = createInputWrapper({
+      props: { seamless: true, aria: { "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).not.toContain(RING);
   });
 });
 

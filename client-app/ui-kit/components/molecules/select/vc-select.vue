@@ -12,146 +12,170 @@
       },
     ]"
   >
-    <!-- A slot trigger is a div, which a <label for> cannot name, so the label keeps its asterisk audible. -->
-    <VcLabel v-if="label" :for-id="hasSlotTrigger() ? undefined : triggerId" :required="required" :error="error">
+    <VcLabel v-if="label" :for-id="triggerId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
-    <VcDropdownMenu
+    <VcPopover
+      ref="popoverElement"
       class="vc-select__container"
+      tabindex="-1"
       :disabled="!enabled"
       :lazy="lazy"
       :teleport-selector="teleportSelector"
       :data-test-id="testIdDropdown"
-      tabindex="-1"
-      width="trigger"
-      :list-id="listboxId"
-      list-role="listbox"
-      :list-label="accessibleLabel"
+      :width="dropdownWidth"
+      placement="bottom-start"
+      :offset-options="4"
+      :z-index="10"
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
-        <div
-          v-if="hasSlotTrigger()"
-          :id="triggerId"
+        <!-- `!= null`: an unset GraphQL value arrives as null, and without `valueField` the model is the item. -->
+        <VcSelectButton
+          v-if="$slots.selected || $slots.placeholder"
           ref="triggerElement"
-          tabindex="0"
-          role="button"
-          :aria-label="accessibleLabel"
-          :aria-expanded="isShown"
-          aria-haspopup="listbox"
-          :aria-controls="isShown ? listboxId : undefined"
-          :aria-activedescendant="activeDescendantId"
-          :aria-invalid="error || undefined"
-          :aria-disabled="disabled || undefined"
-          :aria-describedby="detailsId"
-          class="vc-select__button"
-          @click="toggle"
-          @keydown.enter="toggle"
-          @keydown.esc="onTriggerEscape($event, close)"
-          @keydown.down.prevent="openByKeyboard($event, open, true)"
+          v-bind="triggerBindings"
+          :selected-item="selectedSlotItem"
+          :has-selection="multiple ? hasSelection : selected != null"
+          @toggle="toggle"
+          @clear="clear"
+          @navigate="onNavigate($event, open)"
+          @confirm="onConfirm($event, toggle, close)"
+          @tab="onTab"
+          @focusout="onFocusOut($event, close)"
         >
-          <div class="vc-select__button-content">
-            <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
+          <template v-if="$slots.selected" #selected="scope">
+            <slot name="selected" :item="scope.item as M extends true ? T[] : T" :error="scope.error" />
+          </template>
 
-            <slot v-else-if="!selected && $slots.placeholder" name="placeholder" v-bind="{ error }" />
-          </div>
+          <template v-if="$slots.placeholder" #placeholder="scope">
+            <slot name="placeholder" v-bind="scope" />
+          </template>
+        </VcSelectButton>
 
-          <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
-        </div>
-
-        <VcInput
+        <VcSelectField
           v-else
           ref="triggerElement"
-          v-model="search"
-          class="vc-select__input"
-          :aria-label="accessibleLabel"
-          :aria="{
-            id: triggerId,
-            role: 'combobox',
-            'aria-expanded': String(isShown),
-            'aria-haspopup': 'listbox',
-            'aria-controls': isShown ? listboxId : null,
-            'aria-activedescendant': activeDescendantId ?? null,
-            'aria-invalid': error ? 'true' : null,
-            'aria-autocomplete': autocomplete ? 'list' : null,
-            'aria-describedby': detailsId,
-          }"
-          :required="required"
-          :size="size"
-          :placeholder="placeholderText"
-          :disabled="disabled"
-          :readonly="readonly || !autocomplete"
-          :error="error"
-          truncate
-          disable-autocomplete
-          @keydown.down.prevent="openByKeyboard($event, open, true)"
-          @keydown.enter="onTriggerEnter($event, open)"
-          @focus="open"
-          @click="open"
-          @keydown.esc="onTriggerEscape($event, close)"
-        >
-          <template #append>
-            <VcButton
-              v-if="isClearButtonVisible"
-              :aria-label="$t('ui_kit.buttons.clear')"
-              :disabled="disabled"
-              type="button"
-              icon="delete-thin"
-              color="neutral"
-              variant="ghost"
-              class="vc-select__clear"
-              :icon-size="getInputClearIconSize(size)"
-              @keydown.esc="onTriggerEscape($event, close)"
-              @keydown.enter.stop.prevent
-              @keyup.enter.stop.prevent="clear"
-              @click.stop="clear"
-            />
-
-            <VcButton
-              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
-              :disabled="disabled"
-              :icon="isShown ? 'chevron-up' : 'chevron-down'"
-              type="button"
-              color="neutral"
-              variant="ghost"
-              tabindex="-1"
-              class="vc-select__arrow"
-              @keydown.esc="onTriggerEscape($event, close)"
-              @click="handleArrowClick($event, toggle)"
-            />
-          </template>
-        </VcInput>
+          v-bind="triggerBindings"
+          :search="search"
+          :placeholder-text="placeholderText"
+          :autocomplete="autocomplete"
+          @toggle="toggle"
+          @open="open"
+          @clear="clear"
+          @navigate="onNavigate($event, open)"
+          @confirm="onConfirm($event, toggle, close)"
+          @tab="onTab"
+          @update:search="onSearchInput($event, open)"
+          @beforeinput="onBeforeSearchInput"
+          @focusout="onFocusOut($event, close)"
+        />
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <VcMenuItem
-          v-for="(item, index) in filteredItems"
-          :key="index"
-          :option-id="getOptionId(index)"
-          :data-vc-select-option="componentId"
-          :active="isActiveItem(item)"
-          :aria-selected="isActiveItem(item)"
-          role="option"
-          :size="itemSize"
-          @click="onItemClick(item, close)"
-          @keydown.esc="onItemEscape($event, close)"
-          @keydown.up.prevent="prev(index)"
-          @keydown.down.prevent="next(index)"
-          @keydown.tab.prevent="handleTab($event, index)"
-        >
-          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" :aria-label="getItemText(item)" tabindex="-1" />
+        <!-- A mousedown anywhere in the dropdown, the scrollbar included, does not move focus. -->
+        <div class="vc-select__dropdown" @mousedown.prevent @focusout="onFocusOut($event, close)">
+          <VcSelectAll
+            v-if="isSelectAllShown"
+            ref="selectAllElement"
+            :checked="isAllSelected"
+            :indeterminate="isSomeSelected"
+            :accessible-label="selectAllLabel"
+            :count="selectedOfTotal"
+            :disabled="isSelectAllDisabled"
+            @change="onSelectAll"
+            @keydown.esc.stop="close()"
+            @keydown.down.prevent="focusTrigger()"
+            @keydown.tab="onSelectAllTab"
+          />
 
-          <slot name="item" v-bind="{ item, index }">
-            {{ getItemText(item) }}
-          </slot>
-        </VcMenuItem>
+          <VcScrollbar class="vc-select__scroll" vertical>
+            <!-- Only options may live in a listbox, so the pager sits beside the list, not in it. -->
+            <ul
+              :id="listboxId"
+              ref="listElement"
+              :class="['vc-select__list', { 'vc-select__list--paging': isPagerSpinnerShown }]"
+              role="listbox"
+              :aria-label="accessibleLabel"
+              :aria-multiselectable="multiple || undefined"
+            >
+              <!-- First, so a query being answered shows it above the previous query's options. -->
+              <VcMenuItem
+                v-if="isLoadingRowShown"
+                role="option"
+                :aria-selected="false"
+                disabled
+                :size="itemSize"
+                :tabindex="-1"
+                with-divider
+              >
+                <span class="vc-select__loading">
+                  <slot name="loader">
+                    <VcLoader />
 
-        <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled>
-          {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
-        </VcMenuItem>
+                    <span class="sr-only">{{ $t("ui_kit.messages.loading_text") }}</span>
+                  </slot>
+                </span>
+              </VcMenuItem>
+
+              <VcMenuItem
+                v-for="(item, index) in filteredItems"
+                :key="index"
+                :option-id="getOptionId(index)"
+                :data-vc-select-option="componentId"
+                :active="activeRows[index]"
+                :highlighted="index === highlightedIndex"
+                :highlight-ring="!isPassiveHighlight"
+                :aria-selected="activeRows[index]"
+                role="option"
+                :size="itemSize"
+                :tabindex="-1"
+                with-divider
+                @click="pick(item, close)"
+                @mousemove="highlightPassively(index)"
+              >
+                <VcCheckbox
+                  v-if="multiple"
+                  :model-value="activeRows[index]"
+                  :aria-label="toLabel(getItemText(item))"
+                  tabindex="-1"
+                />
+
+                <slot name="item" v-bind="{ item, index }">
+                  {{ getItemText(item) }}
+                </slot>
+              </VcMenuItem>
+
+              <VcMenuItem
+                v-if="!filteredItems.length && !loading"
+                role="option"
+                :aria-selected="false"
+                disabled
+                :size="itemSize"
+                :tabindex="-1"
+                with-divider
+              >
+                <slot name="empty">
+                  {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+                </slot>
+              </VcMenuItem>
+            </ul>
+
+            <VcLoadMore
+              :loading="loading"
+              :has-next-page="hasPageToLoad"
+              :item-count="items.length"
+              @load-more="$emit('loadMore')"
+            >
+              <template v-if="$slots.loader" #loader>
+                <slot name="loader" />
+              </template>
+            </VcLoadMore>
+          </VcScrollbar>
+        </div>
       </template>
-    </VcDropdownMenu>
+    </VcPopover>
 
     <VcInputDetails
       :id="detailsId"
@@ -165,130 +189,288 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// TODO: https://virtocommerce.atlassian.net/browse/ST-5117
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { isEqual, union } from "lodash-es";
-import { computed, nextTick, ref, useSlots, useTemplateRef, provide, toRef, watch } from "vue";
+<script setup lang="ts" generic="T, V = T, M extends boolean = false">
+import { useDebounceFn, useElementSize } from "@vueuse/core";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
-import { useComponentId } from "@/ui-kit/composables";
-import { getInputClearIconSize } from "@/ui-kit/utilities";
+import { useComponentId, useListboxNavigation, useSelect, useSelectAll } from "@/ui-kit/composables";
+import { FOCUSABLE_CONTENT_SELECTOR, hasNegativeTabindex, insertedText } from "@/ui-kit/utilities";
+import VcSelectAll from "./vc-select-all.vue";
+import VcSelectButton from "./vc-select-button.vue";
+import { useSelectDevWarnings } from "./vc-select-dev-warnings";
+import VcSelectField from "./vc-select-field.vue";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
-interface IProps {
-  modelValue?: object | string | Array<object | string>;
-  label?: string;
-  ariaLabel?: string;
+const emit = defineEmits<{
+  (event: "update:modelValue", value: VcSelectEmittedType<T, V, M>): void;
+  (event: "change", value: VcSelectEmittedType<T, V, M>): void;
   /**
-   * Draws the label's asterisk and exposes `aria-required` on the input trigger. A `selected`/`placeholder` slot
-   * trigger is a `role="button"`, which cannot carry it, so there only the label's asterisk shows it. No native validation.
+   * Select all was pressed: `action` is `select-all` when it selected, `deselect-all` when it cleared.
+   * Fires alongside the model update, so a paged consumer can select or clear the options not loaded.
+   * `query` is the text narrowing the list ("" for none): with one, the row acted on the matching
+   * options only, so leave the rest of the selection alone — or, with `serverFilter`, add or clear
+   * the query's matches.
    */
-  required?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-  items: any[];
-  size?: "xs" | "sm" | "md" | "auto";
-  itemSize?: "xs" | "sm" | "md" | "lg";
-  textField?: string;
-  valueField?: string;
-  placeholder?: string;
-  showEmptyDetails?: boolean;
-  error?: boolean;
-  message?: string;
-  autocomplete?: boolean;
-  singleLineMessage?: boolean;
-  multiple?: boolean;
-  clearable?: boolean;
-  testIdDropdown?: string;
-  enableTeleport?: boolean;
-  /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
-  lazy?: boolean;
-  /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
-  teleportSelector?: string;
-}
+  (event: "selectAll", payload: VcSelectSelectAllPayloadType): void;
+  /** The list is resting at its end and more pages are available. */
+  (event: "loadMore"): void;
+  /** The typed query, debounced; an emptied query is sent at once. Pair with `serverFilter` to filter on the server. */
+  (event: "search", value: string): void;
+}>();
 
-interface IEmits {
-  (event: "update:modelValue", value: any): void;
-  (event: "change", value: any): void;
-}
+const props = withDefaults(
+  defineProps<{
+    /** The selected value, or in `multiple` mode the selected items, whatever `value-field` says. */
+    modelValue?: M extends true ? NoInfer<T>[] : V;
+    label?: string;
+    ariaLabel?: string;
+    /** Draws the label's asterisk and exposes `aria-required` on the trigger. No native validation. */
+    required?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    items: T[];
+    size?: "xs" | "sm" | "md" | "auto";
+    itemSize?: "xs" | "sm" | "md" | "lg";
+    /** Property name, or an accessor, producing the option label. */
+    textField?: VcSelectFieldAccessorType<T, string>;
+    /**
+     * Property name, or an accessor, producing the single-mode model value. In `multiple` mode the model
+     * holds items, and this is what an item is matched by. Defaults to the item itself.
+     */
+    // The accessor may infer the model type; only the key form must not. A multiple model of items
+    // fits any key, though TypeScript also infers V from it as the array. The rule resolves the key
+    // type with T and V unknown, where it is `never`.
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    valueField?: VcSelectValueKeyType<T, M extends true ? T : NoInfer<V>> | ((item: T) => V);
+    placeholder?: string;
+    showEmptyDetails?: boolean;
+    error?: boolean;
+    message?: string;
+    autocomplete?: boolean;
+    singleLineMessage?: boolean;
+    /**
+     * Allows several selections; the model is then an array of items. An item is matched by its `value-field`
+     * value, or by the item itself without one: primitives are looked up, objects compared deeply — for
+     * thousands of options over thousands of selections, pick a primitive `value-field`.
+     */
+    // `& boolean` keeps Vue's Boolean cast for a valueless attribute; the rule cannot see that.
+    // eslint-disable-next-line sonarjs/no-useless-intersection
+    multiple?: M & boolean;
+    clearable?: boolean;
+    /** Adds a Select all row above the options. Multiple mode only. */
+    withSelectAll?: boolean;
+    /**
+     * With `with-select-all`: the size of the whole set for the row's counter. Defaults to the number of
+     * options currently rendered; pass it explicitly when the list is paged and `items` holds only one page.
+     * With `server-filter`, it is the number of matches for the current query, and the result count
+     * announced for it, with or without the row.
+     */
+    total?: number;
+    /**
+     * Binding it says you complete the set on `@select-all`, for a paged `with-select-all` (`total`
+     * above the loaded options, or `server-filter`): a row whose loaded options are all selected then
+     * stays partial, and a press reports `select-all` for you to add the rest. Without it such a page
+     * shows checked and a press clears, since the row cannot tell it from the whole selection.
+     * Its value counts while a `server-filter` query narrows the list: the selected matches among
+     * `total`, loaded or not. Unfiltered the counter counts the model, which holds every selected item.
+     * Capped at `total`, never below the selected matches that are loaded.
+     */
+    selectedCount?: number;
+    /**
+     * Shows the list's loading indicator: for the first page, a next one, or a `server-filter` answer.
+     * It does not say which query `items` answer — `answered-query` does.
+     */
+    loading?: boolean;
+    /**
+     * More options exist beyond `items`. While it is set, the list asks for the next page with
+     * `load-more` whenever it comes to rest at its bottom — including a page too short to scroll.
+     * `loading` must be bound alongside it, or one request becomes many. A page that fails is not
+     * asked for again while the list rests at its end: scrolling away and back retries it, or call
+     * the loader again yourself (a short list cannot scroll).
+     */
+    hasNextPage?: boolean;
+    /**
+     * Turns off client-side filtering: answer each `search` with new `items` (and `total`) and echo the
+     * query they answer in `answered-query`. Needs `autocomplete`.
+     */
+    serverFilter?: boolean;
+    /**
+     * With `server-filter`: the query the current `items` and `total` answer, echoed back. Until it
+     * matches the last `search` (spaces around either ignored), Select all is disabled, keeps counting
+     * the answered query, and no result count is announced. Echo a query you skip (too short) at once.
+     * On an error show no `items`: Apollo keeps the previous result. With Apollo `useQuery`, bind
+     * `useAnsweredQuery(useQueryReturn, (variables) => variables?.keyword)` from `@vc-frontend/core`
+     * (host code: `core/api/graphql/composables`).
+     * Not `loading.value ? prev : variables.value.keyword`: it names the new query before its result is in.
+     */
+    answeredQuery?: string;
+    testIdDropdown?: string;
+    enableTeleport?: boolean;
+    /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+    lazy?: boolean;
+    /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+    teleportSelector?: string;
+  }>(),
+  {
+    size: "md",
+    itemSize: "sm",
+  },
+);
 
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  size: "md",
-  itemSize: "sm",
-});
+const slots = defineSlots<{
+  /**
+   * The chosen item in single mode, the selected items in multiple mode. With this slot or
+   * `#placeholder` the trigger is a button, not a typable field, so `autocomplete` has no input.
+   */
+  selected?: (props: { item: M extends true ? T[] : T; error?: boolean }) => unknown;
+  /** Shown in the slotted trigger while nothing is selected; like `#selected`, it makes the trigger a button. */
+  placeholder?: (props: { error?: boolean }) => unknown;
+  /** Replaces the label of one option. */
+  item?: (props: { item: T; index: number }) => unknown;
+  /** Replaces the loading indicator, for the first page and for every next one. */
+  loader?: () => unknown;
+  /** Replaces the text of the row shown when there are no options or no matches. */
+  empty?: () => unknown;
+}>();
 
 provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
 
 const { t } = useI18n();
 const componentId = useComponentId("select");
 const triggerId = componentId + "-trigger";
-
-const slots = useSlots();
-// A function, not a computed: slots are not reactive, so the check has to run on every render.
-function hasSlotTrigger(): boolean {
-  return !!(slots.selected || slots.placeholder);
-}
-
 const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
-const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
+const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
+
+const popoverElement = useTemplateRef<{ $el: HTMLElement }>("popoverElement");
+// A ResizeObserver only: unlike useElementBounding, no window scroll listener per select.
+const { width: triggerWidth } = useElementSize(() => popoverElement.value?.$el ?? null, undefined, {
+  box: "border-box",
+});
+const dropdownWidth = computed(() => `${triggerWidth.value}px`);
 
 const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
-const filterValue = ref("");
-const focusedOptionIndex = ref(-1);
 
-function getOptionId(index: number) {
-  return `${componentId}-option-${index}`;
+// Plain variables, not refs: nothing renders them.
+// Set when Enter or Space opens the list, which then starts on the selection. Any other open (the
+// pointer, typing) starts on nothing; the arrow keys and Home/End set their own start.
+let openedByKeyboard = false;
+
+// Set while the list closes behind departing focus: activeElement is still <body> then, which
+// `holdsFocus` would read as "ours" and pull focus back.
+let focusLeft = false;
+
+// The selection a keystroke is about to replace; Tab selects the whole label. Kept until the list
+// opens, not read once: maska delivers each keystroke twice, and the open may land in between.
+let replacedRange: [number, number] | undefined;
+
+const filterValue = ref("");
+const {
+  getItemText,
+  isActiveItem,
+  isSameItem,
+  getItemValue,
+  getToggledItems,
+  selectedItem: selected,
+  selectedItems,
+  hasSelection,
+  filteredItems,
+} = useSelect<T, V>({
+  items: () => props.items,
+  modelValue: () => props.modelValue,
+  multiple: () => props.multiple,
+  filterValue,
+  serverFilter: () => props.serverFilter,
+  textField: () => props.textField,
+  valueField: () => props.valueField,
+});
+
+// Once per change of the list or the selection, not per row and render: a pointer highlight
+// re-renders every row.
+const activeRows = computed(() => filteredItems.value.map((item) => isActiveItem(item)));
+
+const {
+  highlightedIndex,
+  isPassiveHighlight,
+  activeDescendantId: highlightedOptionId,
+  getOptionId,
+  navigate,
+  highlight,
+  highlightPassively,
+  reset: resetHighlight,
+} = useListboxNavigation({
+  componentId,
+  items: filteredItems,
+  getKey: getItemValue,
+  list: useTemplateRef<HTMLElement>("listElement"),
+  // Past the last loaded option comes the next page, not the first option.
+  wrap: () => !props.hasNextPage,
+});
+
+const activeDescendantId = computed(() => (isShown.value ? highlightedOptionId.value : undefined));
+
+// With `serverFilter`, the options on screen answer the query the consumer echoes; until it echoes the
+// one sent, and while a typed one waits for its debounce, they answer an earlier query.
+const sentQuery = ref("");
+const isQueryPending = computed(() => !!props.serverFilter && filterValue.value !== sentQuery.value);
+
+// Spaces around a query are not compared: a consumer that trims echoes the trimmed text.
+const echoedQuery = computed(() => (props.answeredQuery ?? "").trim());
+
+const isAnswerPending = computed(
+  () => isQueryPending.value || (!!props.serverFilter && sentQuery.value.trim() !== echoedQuery.value),
+);
+
+function sendSearch(value: string): void {
+  sentQuery.value = value;
+  emit("search", value);
 }
 
-const activeDescendantId = computed(() => {
-  if (isShown.value && focusedOptionIndex.value >= 0) {
-    return getOptionId(focusedOptionIndex.value);
-  }
-  return undefined;
-});
-
-const liveRegionMessage = ref("");
-
-const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
-const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
-
-const selectedText = computed(() => {
-  if (Array.isArray(props.modelValue)) {
-    if (props.modelValue.length) {
-      return t("ui_kit.select.items_selected", [props.modelValue.length]);
+// Switched on, the query typed under the local filter has to reach the server.
+watch(
+  () => props.serverFilter,
+  (serverFilter) => {
+    if (serverFilter && filterValue.value) {
+      sendSearch(filterValue.value);
     }
+  },
+);
 
-    return null;
+const liveRegionMessage = computed(() => {
+  // An emptied list that is loading has no results to count yet.
+  if (!isShown.value || !filterValue.value || isAnswerPending.value || (props.loading && !filteredItems.value.length)) {
+    return "";
   }
 
-  if (props.textField && selected.value) {
-    return selected.value[props.textField];
-  }
+  // A server-side query's matches, as Select all counts them, not just the options loaded so far.
+  const count = props.serverFilter ? (props.total ?? filteredItems.value.length) : filteredItems.value.length;
 
-  return selected.value;
+  return count ? t("ui_kit.select.results_available", [count]) : t("ui_kit.select.no_results_found");
 });
+
+function toLabel(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
+
+const selectedText = computed<string | null>(() => {
+  if (props.multiple) {
+    return selectedItems.value.length ? t("ui_kit.select.items_selected", [selectedItems.value.length]) : null;
+  }
+
+  const text = selected.value === undefined ? undefined : getItemText(selected.value);
+
+  // null, not "": an empty string would suppress the placeholder that `?? placeholder` provides.
+  return text === undefined || text === null ? null : String(text);
+});
+
+const selectedSlotItem = computed(() => (props.multiple ? selectedItems.value : selected.value));
 
 const placeholderText = computed(() => selectedText.value ?? props.placeholder);
 
 const enabled = computed<boolean>(() => !props.readonly && !props.disabled);
-
-const selected = computed(() => {
-  return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
-});
-
-const hasSelection = computed(() => {
-  if (props.multiple && Array.isArray(props.modelValue)) {
-    return props.modelValue.length > 0;
-  }
-  return props.modelValue !== undefined && props.modelValue !== null;
-});
 
 const isClearButtonVisible = computed(() => {
   if (!props.clearable || props.disabled || props.readonly) {
@@ -303,203 +485,196 @@ const isClearButtonVisible = computed(() => {
   return hasSelection.value;
 });
 
+const triggerBindings = computed(() => ({
+  size: props.size,
+  opened: isShown.value,
+  clearVisible: isClearButtonVisible.value,
+  disabled: props.disabled,
+  readonly: props.readonly,
+  error: props.error,
+  required: props.required,
+  accessibleLabel: accessibleLabel.value,
+  triggerId,
+  listboxId,
+  detailsId,
+  activeDescendantId: activeDescendantId.value,
+}));
+
 const search = computed({
   get() {
     if (props.autocomplete && isShown.value) {
       return filterValue.value;
     }
 
-    return selectedText.value;
+    return selectedText.value ?? "";
   },
   set(value) {
     filterValue.value = value;
   },
 });
 
-const filteredItems = computed(() => {
-  if (!filterValue.value) {
-    return props.items;
-  }
-
-  const searching = filterValue.value.toLowerCase();
-  const items = props.items.filter((item) =>
-    String(getItemText(item) ?? "")
-      .toLowerCase()
-      .includes(searching),
-  );
-
-  const first = items.filter(
-    (item) =>
-      String(getItemText(item) ?? "")
-        .toLowerCase()
-        .indexOf(searching) === 0,
-  );
-
-  return union(first, items);
-});
-
-watch(filteredItems, (items) => {
-  focusedOptionIndex.value = -1;
-
-  if (isShown.value && filterValue.value) {
-    liveRegionMessage.value = items.length
-      ? t("ui_kit.select.results_available", [items.length])
-      : t("ui_kit.select.no_results_found");
-  } else {
-    liveRegionMessage.value = "";
-  }
-});
-
-function isActiveItem(item: any) {
-  const itemValue = getItemValue(item);
-
-  if (!Array.isArray(props.modelValue)) {
-    return itemValue === props.modelValue;
-  }
-
-  return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
+// `VcSelectEmittedType<T, V, M>` stays a deferred conditional type while `M` is unresolved, so the
+// value needs a cast that the lint rule, judging the resolved type, calls unnecessary. The rule
+// below reads the unconstrained `V` as `unknown`; the union names the three shapes a commit takes.
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+function commit(value: V | T[] | undefined): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  emit("update:modelValue", value as VcSelectEmittedType<T, V, M>);
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  emit("change", value as VcSelectEmittedType<T, V, M>);
 }
 
-function select(item?: any) {
+function select(item: T) {
   if (!enabled.value) {
     return;
   }
-
-  if (props.multiple && Array.isArray(props.modelValue)) {
-    let newValues = [...props.modelValue];
-
-    const existingIndex = newValues.findIndex((existingItem) =>
-      isEqual(getItemValue(existingItem), getItemValue(item)),
-    );
-
-    if (existingIndex >= 0) {
-      newValues = [...newValues.slice(0, existingIndex), ...newValues.slice(existingIndex + 1)];
-    } else {
-      newValues.push(item);
-    }
-
-    emit("update:modelValue", newValues);
-    emit("change", newValues);
-  } else {
-    const newValue = getItemValue(item);
-
-    if (newValue !== props.modelValue) {
-      emit("update:modelValue", newValue);
-      emit("change", newValue);
-    }
-  }
-}
-
-function getItemsElements() {
-  return Array.from(document.querySelectorAll(`[data-vc-select-option="${componentId}"] [tabindex='0']`));
-}
-
-function next(index: number) {
-  const elements = getItemsElements();
-
-  if (elements?.length) {
-    const focusItemIndex = index === elements?.length - 1 ? 0 : index + 1;
-    focusedOptionIndex.value = focusItemIndex;
-    const nextElement = elements[focusItemIndex];
-
-    if (nextElement instanceof HTMLElement) {
-      nextElement.focus();
-    }
-  }
-}
-
-function prev(index: number) {
-  const elements = getItemsElements();
-
-  if (elements?.length) {
-    const focusItemIndex = index === 0 ? elements?.length - 1 : index - 1;
-    focusedOptionIndex.value = focusItemIndex;
-    const prevElement = elements[focusItemIndex];
-
-    if (prevElement instanceof HTMLElement) {
-      prevElement.focus();
-    }
-  }
-}
-
-// The trigger keeps focus after the list closes and only opens on focus, so the keyboard had no way
-// back in: Enter had no handler, and ArrowDown called next(-1), whose focus() is a no-op on options
-// inside a display:none list.
-function openByKeyboard(event: KeyboardEvent, open: () => void, moveToFirstOption: boolean) {
-  if (isShown.value) {
-    if (moveToFirstOption) {
-      next(-1);
-    }
-
-    return;
-  }
-
-  // Nothing to open, so Enter stays the page's. ArrowDown is prevented by its own binding either way.
-  if (!enabled.value) {
-    return;
-  }
-
-  // Consumed only because it opens the list; Enter on an already open one still reaches the form.
-  event.preventDefault();
-  open();
-
-  if (moveToFirstOption) {
-    void nextTick(() => next(-1));
-  }
-}
-
-// An editable combobox leaves Enter to its form; a select-only one consumes it to open the list (APG).
-function onTriggerEnter(event: KeyboardEvent, open: () => void) {
-  if (props.autocomplete) {
-    return;
-  }
-
-  openByKeyboard(event, open, false);
-}
-
-// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog. Focus is
-// pulled back to the trigger first: the clear button unmounts when closing empties the filter, and
-// focusing before `close()` keeps the trigger's own `@focus="open"` from resurrecting the list.
-function onTriggerEscape(event: KeyboardEvent, close: () => void) {
-  if (!isShown.value) {
-    return;
-  }
-
-  event.stopPropagation();
-  focusTrigger();
-  close();
-}
-
-// Closing hides the panel with the focused option still inside it, so focus goes back to the trigger
-// first — the order the Escape paths already use, which also swallows the trigger's reopen on focus.
-function onItemClick(item: any, close: () => void) {
-  select(item);
 
   if (props.multiple) {
+    commit(getToggledItems(item));
     return;
   }
 
-  focusTrigger();
-  close();
+  if (isActiveItem(item)) {
+    return;
+  }
+
+  commit(getItemValue(item));
 }
 
-// From an option the dropdown is always open, and focus lives inside the list — hand it back.
-function onItemEscape(event: KeyboardEvent, close: () => void) {
-  event.stopPropagation();
-  focusTrigger();
-  close();
+function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
+  if (!isShown.value) {
+    open();
+
+    // The list may not be rendered yet on the very first open (lazy popover).
+    void nextTick(() => {
+      if (!filteredItems.value.length) {
+        return;
+      }
+
+      // APG: Down/Home open on the first option, Up/End on the last.
+      const shouldStartAtEnd = key === "end" || key === "up";
+
+      navigate(shouldStartAtEnd ? "end" : "home");
+    });
+    return;
+  }
+
+  navigate(key);
+}
+
+// A slotted trigger is a button, whatever `autocomplete` says. A function: slots are not reactive, and a
+// slot added or removed after mount swaps the trigger.
+function isTypable(): boolean {
+  return !!props.autocomplete && !(slots.selected || slots.placeholder);
+}
+
+// Enter is consumed only when it opens a select-only list or accepts an option; otherwise a form owns it.
+function onConfirm(event: KeyboardEvent, toggle: () => void, close: () => void) {
+  if (!isShown.value) {
+    if (isTypable() || !enabled.value) {
+      return;
+    }
+
+    event.preventDefault();
+    openedByKeyboard = true;
+    toggle();
+    return;
+  }
+
+  const item = filteredItems.value[highlightedIndex.value];
+
+  if (item === undefined) {
+    return;
+  }
+
+  event.preventDefault();
+  pick(item, close);
+}
+
+function pick(item: T, close: () => void): void {
+  select(item);
+
+  if (!props.multiple) {
+    close();
+  }
 }
 
 function toggled(value: boolean) {
   isShown.value = value;
 
-  if (!isShown.value) {
-    filterValue.value = "";
-    focusedOptionIndex.value = -1;
+  if (isShown.value) {
+    highlight(openedByKeyboard ? filteredItems.value.findIndex((item) => isActiveItem(item)) : -1);
+
+    openedByKeyboard = false;
+    replacedRange = undefined;
+    return;
+  }
+
+  filterValue.value = "";
+  resetHighlight();
+
+  if (!focusLeft && holdsFocus()) {
+    focusTrigger();
+  }
+
+  focusLeft = false;
+}
+
+// Focus returns to the trigger only if it is still ours (or nowhere): an outside click has already
+// put it where the user aimed.
+function holdsFocus(): boolean {
+  const active = document.activeElement;
+
+  if (!active || active === document.body) {
+    return true;
+  }
+
+  return owns(active);
+}
+
+function owns(node: Node): boolean {
+  // A teleported dropdown is not inside the root; the listbox id reaches it.
+  const dropdown = document.getElementById(listboxId)?.closest(".vc-select__dropdown");
+
+  return document.getElementById(componentId)?.contains(node) === true || dropdown?.contains(node) === true;
+}
+
+// Options are not tab stops, so Tab walks focus out of the select; the list closes behind it
+// (APG). Focus that goes nowhere keeps it open: a click on the page is click-outside's to close.
+function onFocusOut(event: FocusEvent, close: () => void): void {
+  const next = event.relatedTarget;
+
+  if (isShown.value && next instanceof Node && !owns(next)) {
+    focusLeft = true;
+    close();
   }
 }
 
+// Typing opens an autocomplete list (APG). Closed, the field shows the selection, so the keystroke
+// starts a fresh query rather than editing that label.
+function onSearchInput(value: string, open: () => void): void {
+  if (!props.autocomplete || isShown.value) {
+    filterValue.value = value;
+    return;
+  }
+
+  open();
+  filterValue.value = insertedText(selectedText.value ?? "", value, replacedRange);
+}
+
+function onBeforeSearchInput(event: Event): void {
+  const { target } = event;
+
+  replacedRange =
+    target instanceof HTMLInputElement && target.selectionStart !== null && target.selectionEnd !== null
+      ? [target.selectionStart, target.selectionEnd]
+      : undefined;
+}
+
 function clear() {
+  // Before the commit: the clear button may unmount with what it cleared, dropping focus to <body>.
+  focusTrigger();
+
   // In autocomplete mode - clear search first, then selection
   if (props.autocomplete && filterValue.value) {
     filterValue.value = "";
@@ -507,134 +682,216 @@ function clear() {
   }
 
   // Clear selection
-  if (props.multiple && Array.isArray(props.modelValue) && props.modelValue.length) {
-    emit("update:modelValue", []);
-    emit("change", []);
+  if (props.multiple && selectedItems.value.length) {
+    commit([]);
   } else if (!props.multiple && hasSelection.value) {
-    emit("update:modelValue", undefined);
-    emit("change", undefined);
+    commit(undefined);
   }
-}
-
-function handleArrowClick(event: MouseEvent, toggle: () => void) {
-  event.stopPropagation();
-  toggle();
 }
 
 function focusTrigger() {
-  const el = triggerElement.value;
+  triggerElement.value?.focus();
+}
 
-  if (!el) {
+const SEARCH_DEBOUNCE_MS = 300;
+
+// A query cleared before its debounce fired must not land after the clear.
+const emitSearchDebounced = useDebounceFn((value: string) => {
+  if (filterValue.value === value) {
+    sendSearch(value);
+  }
+}, SEARCH_DEBOUNCE_MS);
+
+watch(filterValue, (value) => {
+  if (props.serverFilter) {
+    // The options under the highlight stay the previous query's until the consumer answers.
+    resetHighlight();
+  }
+
+  if (value) {
+    void emitSearchDebounced(value);
+  } else {
+    sendSearch("");
+  }
+});
+
+if (import.meta.env.DEV) {
+  useSelectDevWarnings(props, slots);
+}
+
+const isSelectAllShown = computed(() => props.withSelectAll && props.multiple);
+
+// No next page of a query still being typed. The pager shows the spinner while it pages; otherwise
+// the loading row does, so exactly one shows.
+const hasPageToLoad = computed(() => props.hasNextPage && !isQueryPending.value);
+
+const isLoadingRowShown = computed(() => props.loading && !hasPageToLoad.value);
+
+const isPagerSpinnerShown = computed(() => props.loading && hasPageToLoad.value);
+
+const {
+  totalCount,
+  selectedCount: countedSelected,
+  isAllSelected,
+  isSomeSelected,
+  isDisabled: isSelectAllDisabled,
+  toggle: toggleAll,
+} = useSelectAll<T>({
+  rows: () => filteredItems.value.map((item, index) => ({ item, active: activeRows.value[index] })),
+  selectedItems,
+  isSameItem,
+  filterValue,
+  answeredQuery: echoedQuery,
+  serverFilter: () => props.serverFilter,
+  answerPending: isAnswerPending,
+  total: () => props.total,
+  selectedCount: () => props.selectedCount,
+});
+
+const selectedOfTotal = computed(() =>
+  t("ui_kit.select.selected_of_total", { selected: countedSelected.value, total: totalCount.value }),
+);
+
+const selectAllLabel = computed(() =>
+  t("ui_kit.select.select_all_label", { selected: countedSelected.value, total: totalCount.value }),
+);
+
+const selectAllElement = useTemplateRef<{ focus: () => boolean; $el: HTMLElement }>("selectAllElement");
+
+// A disabled control drops focus to <body>; the trigger keeps it inside the select instead.
+watch(isSelectAllDisabled, (disabled) => {
+  const active = document.activeElement;
+
+  if (disabled && active && selectAllElement.value?.$el.contains(active)) {
+    focusTrigger();
+  }
+});
+
+function onSelectAll() {
+  if (isSelectAllDisabled.value) {
     return;
   }
 
-  const element = "$el" in el ? el.$el : el;
-  const focusable = element.querySelector<HTMLElement>("[tabindex='0'], input") ?? element;
-  focusable.focus();
+  const { items, action } = toggleAll();
+
+  commit(items);
+  emit("selectAll", { action, query: filterValue.value });
 }
 
-function handleTab(event: KeyboardEvent, index: number) {
+// Back to the trigger it came from; forward past the select. A teleported list sits outside the select,
+// where the browser's own Tab would leave from.
+function onSelectAllTab(event: KeyboardEvent): void {
   if (event.shiftKey) {
-    prev(index);
-  } else {
-    next(index);
+    event.preventDefault();
+    focusTrigger();
+    return;
+  }
+
+  const root = document.getElementById(componentId);
+
+  if (!root || root.contains(event.target as Node)) {
+    return;
+  }
+
+  const candidates = [...document.querySelectorAll<HTMLElement>(FOCUSABLE_CONTENT_SELECTOR)].filter(
+    (element) =>
+      !hasNegativeTabindex(element) &&
+      !element.closest("[inert]") &&
+      !owns(element) &&
+      !!(root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING),
+  );
+
+  // The first one that takes focus: a hidden match does not.
+  for (const element of candidates) {
+    element.focus();
+
+    if (document.activeElement === element) {
+      event.preventDefault();
+      return;
+    }
+  }
+}
+
+function onTab(event: KeyboardEvent) {
+  if (!isSelectAllShown.value || !isShown.value || event.shiftKey) {
+    return;
+  }
+
+  if (selectAllElement.value?.focus()) {
+    event.preventDefault();
   }
 }
 </script>
 
 <style lang="scss">
 .vc-select {
-  $disabled: "";
-  $readonly: "";
-  $autocomplete: "";
-  $opened: "";
-  $error: "";
+  $scroll: "";
 
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
 
-  &--disabled {
-    $disabled: &;
-  }
-
-  &--readonly {
-    $readonly: &;
-  }
-
-  &--autocomplete {
-    $autocomplete: &;
-  }
-
-  &--opened {
-    $opened: &;
-  }
-
-  &--error {
-    $error: &;
-  }
-
   &__container {
     @apply relative rounded-[--radius];
   }
 
-  &__button {
-    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
+  // The card is the select's own: VcPopover only places it. May be teleported, so it declares its
+  // own tokens.
+  &__dropdown {
+    // VcDropdownMenu's tokens style it too, as themes and forks set them for every dropdown list.
+    --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
+    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));
+    --dropdown-bg-color: var(
+      --vc-select-dropdown-bg-color,
+      var(--vc-dropdown-menu-bg-color, var(--color-additional-50))
+    );
 
-    #{$disabled} &,
-    &:disabled {
-      @apply bg-neutral cursor-not-allowed pointer-events-none;
+    @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] shadow-lg select-none;
+  }
+
+  &__scroll {
+    $scroll: &;
+
+    @apply max-h-[--dropdown-max-height] w-full;
+  }
+
+  // The dropdown clips its corners, so corner options take its radius or their ring is cut; this holds at
+  // rest, not once the list scrolls.
+  &__list {
+    $paging: "";
+
+    // The options take the dropdown's surface, so its token tints them too.
+    --vc-menu-item-bg-color: var(--dropdown-bg-color);
+
+    @apply w-full;
+
+    // The pager's spinner shows below the list; the pager itself stays mounted without it.
+    &--paging {
+      $paging: &;
     }
 
-    #{$readonly} & {
-      @apply pointer-events-none;
+    #{$scroll}:first-child & > :first-child {
+      --vc-menu-item-radius: var(--dropdown-radius) var(--dropdown-radius) 0 0;
     }
 
-    #{$error} & {
-      @apply border-danger;
+    &:not(#{$paging}) > :last-child {
+      --vc-menu-item-radius: 0 0 var(--dropdown-radius) var(--dropdown-radius);
     }
 
-    #{$opened} & {
-      @apply ring-[3px] ring-primary-100;
+    #{$scroll}:first-child &:not(#{$paging}) > :only-child {
+      --vc-menu-item-radius: var(--dropdown-radius);
+    }
+
+    // The options' divider continues onto the spinner below, in their colour.
+    &:where(#{$paging}) {
+      @apply border-b;
+
+      border-color: var(--vc-menu-item-divider-color, var(--color-neutral-100));
     }
   }
 
-  &__button-content {
-    @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
-
-    #{$error} & {
-      @apply text-danger;
-    }
-  }
-
-  &__input {
-    @apply w-full cursor-pointer;
-
-    & input {
-      @apply cursor-pointer;
-
-      #{$opened} & {
-        @apply cursor-auto;
-      }
-    }
-  }
-
-  &__arrow {
-    #{$readonly} & {
-      @apply hidden;
-    }
-  }
-
-  &__icon {
-    @apply shrink-0 mr-3 text-neutral-900;
-
-    #{$disabled} & {
-      @apply text-neutral-400;
-    }
-
-    #{$readonly} & {
-      @apply hidden;
-    }
+  &__loading {
+    @apply flex w-full justify-center;
   }
 }
 </style>

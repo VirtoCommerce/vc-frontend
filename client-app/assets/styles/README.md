@@ -487,6 +487,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-range-calendar-radius` | VcRangeCalendar corners | `var(--vc-calendar-radius)` |
 | `--vc-range-calendar-day-radius` | VcRangeCalendar day cell corners | `var(--vc-calendar-day-radius)` |
 | `--vc-select-radius` | VcSelect corners | `var(--vc-radius)` |
+| `--vc-select-dropdown-radius` | VcSelect dropdown corners | `var(--vc-dropdown-menu-radius)` |
 | `--vc-stat-widget-radius` | VcStatWidget corners | `var(--vc-radius)` |
 | `--vc-tab-switch-radius` | VcTabSwitch corners | `var(--vc-radius)` |
 | `--vc-tab-switch-font-weight` | VcTabSwitch weight | `var(--vc-font-weight-bold)`, 700 |

@@ -325,6 +325,26 @@ export const Readonly: StoryType = {
   },
 };
 
+export const Expanded: StoryType = {
+  args: {
+    ...commonArgs,
+    readonly: true,
+    aria: { "aria-haspopup": "listbox", "aria-expanded": "true" },
+    modelValue: "Albania",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A focused field whose input is `aria-expanded="true"` draws the focus ring while the popup it controls is open, even after a mouse click. Click the field to see it; without focus an expanded field draws none, as an always-open inline list should.',
+      },
+      source: {
+        code: `<VcInput label="Country" readonly :aria="{ 'aria-haspopup': 'listbox', 'aria-expanded': String(isOpen) }" model-value="Albania" />`,
+      },
+    },
+  },
+};
+
 export const Center: StoryType = {
   render: () => ({
     components: { VcInput },
