@@ -5244,14 +5244,14 @@ type ExtensionCategoryMapType = {
     }, never, (paymentMethodCode: string) => boolean>;
     /**
      * On each cart line item (`shared/cart/components/cart-line-items.vue`): `details` under the line, `actions` next to
-     * "Save for later" (`icons` when the line shows its actions as icons, `selected` when the line is selected).
+     * "Save for later" (`icons` when the line shows its actions as icons, `disabled` while the cart can't be changed).
      * A provider decides from the line whether it has anything to show.
      */
     cartLineItem: ExtensionEntryType<{
         lineItem: PreparedLineItemType;
         readonly?: boolean;
+        disabled?: boolean;
         icons?: boolean;
-        selected?: boolean;
     }, never, (lineItem: PreparedLineItemType) => boolean>;
     /**
      * On each line of a placed order (`shared/account/components/order-line-items.vue` with `orderId`): `details` under
@@ -5360,13 +5360,10 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly productPage: {
         readonly sidebarButton: "sidebar-button";
-        /** Replaces the default add-to-cart controls when `sidebarButton` does not apply (e.g. Subscribe & Save). */
+        /** Under the add-to-cart controls of a product or of the picked variation (e.g. Subscribe & Save). */
         readonly purchaseOptions: "purchase-options";
         readonly variationItemButton: "variation-item-button";
-        /**
-         * Replaces a variation row's add-to-cart (variations table and list) when `variationItemButton` does not apply,
-         * the way `purchaseOptions` follows `sidebarButton` for a simple product (e.g. Subscribe & Save per variation).
-         */
+        /** Under a variation row's add-to-cart in the variations table and list (e.g. Subscribe & Save per variation). */
         readonly variationPurchaseOptions: "variation-purchase-options";
     };
     readonly paymentPage: {
