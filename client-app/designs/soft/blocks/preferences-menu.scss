@@ -54,6 +54,8 @@
   &__list {
     --vc-menu-item-bg-color: transparent;
     --vc-menu-item-hover-bg-color: color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+    // A shade deeper than the kit's 100, so the selected row stays stronger than the hover in every preset.
+    --vc-menu-item-active-bg-color: var(--color-secondary-200);
     --vc-menu-item-padding-x: theme("spacing.2");
     --vc-menu-item-radius: calc(var(--vc-radius) - 2px);
   }

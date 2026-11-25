@@ -1,6 +1,0 @@
-// In dark an 8% hover is as deep as the selected row's tint: the hover steps down so the selected row stays stronger.
-.preferences-menu {
-  &__list {
-    --vc-menu-item-hover-bg-color: color-mix(in srgb, var(--color-neutral-900) 4%, transparent);
-  }
-}
