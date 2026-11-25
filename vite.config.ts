@@ -1,3 +1,4 @@
+import { readFileSync } from "fs";
 import path from "path";
 import graphqlImport from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
@@ -10,6 +11,10 @@ import mkcert from "vite-plugin-mkcert";
 import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
 import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
+
+const { version: appVersion } = JSON.parse(readFileSync(path.resolve(__dirname, "package.json"), "utf-8")) as {
+  version: string;
+};
 
 const graphql = graphqlImport.default ?? graphqlImport;
 
@@ -88,6 +93,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
   process.env = {
     ...process.env,
     ...loadEnv(mode, process.cwd(), "APP_"),
+    APP_VERSION: appVersion,
   };
 
   return {
