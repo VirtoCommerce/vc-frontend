@@ -248,6 +248,29 @@ describe("OrganizationList: keyboard", () => {
     expect(focused()).toBe(rows[0].element);
   });
 
+  it("keeps the stop on the focused row while the next page loads", async () => {
+    const wrapper = await mountList();
+    hoisted.requests
+      .splice(0)
+      .forEach((request) => request.resolve({ ...page(15), pageInfo: { hasNextPage: true, endCursor: "c1" } }));
+    await flushPromises();
+    const row = options(wrapper)[5].element;
+    row.focus();
+    await nextTick();
+
+    void (await useOrganizations()).loadOrganizations();
+    await flushPromises();
+    hoisted.requests
+      .splice(0)
+      .forEach((request) => request.resolve({ ...page(0), items: page(30).items.slice(15), totalCount: 30 }));
+    await flushPromises();
+
+    expect(options(wrapper)).toHaveLength(30);
+    expect(focused()).toBe(row);
+    expect(row.getAttribute("tabindex")).toBe("0");
+    expect(options(wrapper)[0].attributes("tabindex")).toBe("-1");
+  });
+
   it("keeps the row hook the e2e suite selects options by", async () => {
     const wrapper = await mountList();
     await resolveAll();

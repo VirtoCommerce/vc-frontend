@@ -50,9 +50,12 @@ function getEnabledItems(): VcMenuListItemType[] {
 
 const activeItem = computed(() => getEnabledItems().find((item) => item.active()));
 
-// A new selection takes the stop over from the item focused last.
-watch(activeItem, () => {
-  lastFocused.value = null;
+// A new selection takes the stop over from the item focused last. An active item that is gone for a moment (its
+// row re-rendered while the list loads more) is no new selection: the stop stays where focus is.
+watch(activeItem, (item, previous) => {
+  if (item && previous) {
+    lastFocused.value = null;
+  }
 });
 
 // The item focused last is remembered only while focus stays inside: the list is entered again at its selection.

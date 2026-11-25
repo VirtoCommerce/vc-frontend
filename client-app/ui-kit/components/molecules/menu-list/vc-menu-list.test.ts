@@ -236,6 +236,20 @@ describe("VcMenuList", () => {
       expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1"]);
     });
 
+    it("stays on the item focused last while the active item is away for a moment", async () => {
+      const wrapper = await mountList(codesList(), codesSetup("EUR"));
+
+      inners(wrapper)[2].element.focus();
+      await nextTick();
+      state(wrapper).codes = ["USD", "GBP"];
+      await nextTick();
+      state(wrapper).codes = ["USD", "EUR", "GBP"];
+      await nextTick();
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "-1", "0"]);
+    });
+
     it("falls back to the active item when the focused one is disabled", async () => {
       const wrapper = await mountList(codesList(DISABLED_BY_CODE), () => ({
         ...codesSetup("EUR")(),
