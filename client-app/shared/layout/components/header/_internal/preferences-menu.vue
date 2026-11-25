@@ -123,6 +123,9 @@ const triggerLabel = computed(() =>
 .preferences-menu {
   $opened: "";
 
+  // A bordered pill next to text links needs air.
+  @apply ms-2;
+
   --vc-popover-bg-color: var(--color-additional-50);
   --vc-popover-padding: theme("spacing.4");
 
