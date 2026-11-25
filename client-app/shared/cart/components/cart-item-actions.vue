@@ -11,7 +11,7 @@
           icon-size="1.25rem"
           :icon="icons ? 'bookmark-solid' : null"
           :prepend-icon="!icons ? 'bookmark-solid' : null"
-          :variant="selected ? 'no-border' : 'solid-light'"
+          variant="soft"
           :disabled="disabled"
           :aria-label="icons ? $t('pages.cart.save_for_later') : undefined"
           data-test-id="save-for-later-button"
@@ -38,7 +38,6 @@ interface IEmits {
 }
 
 interface IProps {
-  selected?: boolean;
   saveableForLater?: boolean;
   disabled?: boolean;
   icons?: boolean;

@@ -9,6 +9,23 @@ const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning",
 const meta: Meta<typeof VcMenuItem> = {
   title: "Components/Molecules/VcMenuItem",
   component: VcMenuItem,
+  parameters: {
+    docs: {
+      description: {
+        component: [
+          "A row of a menu or a list. A theme, a design or a list restyles its rows through these CSS variables:",
+          "",
+          "| Variable | Classic value |",
+          "| --- | --- |",
+          "| `--vc-menu-item-bg-color` | additional-50; dark: the root's background (none) |",
+          "| `--vc-menu-item-hover-bg-color` | the `color` prop's 50 shade; dark: its 100 shade |",
+          "| `--vc-menu-item-active-bg-color` | the `color` prop's 100 shade |",
+          "| `--vc-menu-item-padding-x` | 0.75rem |",
+          "| `--vc-menu-item-radius` | the root's radius (none) |",
+        ].join("\n"),
+      },
+    },
+  },
   argTypes: {
     size: {
       control: "inline-radio",
@@ -220,5 +237,18 @@ export const AllStates: StoryType = {
       </div>
     </div>
     `,
+  }),
+};
+
+export const CustomTokens: StoryType = {
+  render: () => ({
+    setup: () => ({ items: ["Inbox", "Drafts", "Archive"] }),
+    template: `<div
+      class="w-64 space-y-0.5 rounded-lg border border-neutral-200 bg-neutral-50 p-1 [--vc-menu-item-active-bg-color:var(--color-secondary-100)] [--vc-menu-item-bg-color:transparent] [--vc-menu-item-hover-bg-color:var(--color-neutral-100)] [--vc-menu-item-padding-x:0.625rem] [--vc-menu-item-radius:0.5rem]"
+    >
+      <VcMenuItem v-for="(item, index) in items" :key="item" :active="index === 0">
+        {{ item }}
+      </VcMenuItem>
+    </div>`,
   }),
 };

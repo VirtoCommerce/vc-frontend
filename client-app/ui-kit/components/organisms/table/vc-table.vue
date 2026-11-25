@@ -854,8 +854,8 @@ const scrollbarStyle = computed(() => {
   return undefined;
 });
 
-const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
-const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
+const desktopBorderWidth = computed(() => (props.bordered ? "var(--vc-table-border-width, 1px)" : "0"));
+const mobileBorderWidth = computed(() => (props.mobileBordered ? "var(--vc-table-border-width, 1px)" : "0"));
 
 const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
 const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));

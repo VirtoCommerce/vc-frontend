@@ -145,6 +145,7 @@ vi.mock("@/core/theme-snapshot", () => ({
 }));
 vi.mock("@/shared/catalog/components/product", () => ({ default: {} }));
 vi.mock("@/shared/static-content", () => ({
+  registerCustomSections: vi.fn(),
   registerPageBuilderSections: vi.fn(),
   setLandingPageLayout: vi.fn(),
   templateBlocks: {},

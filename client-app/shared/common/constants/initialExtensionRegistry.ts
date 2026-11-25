@@ -8,6 +8,11 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
         () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
       ),
     },
+    organizations: {
+      component: defineAsyncComponent(
+        () => import("@/shared/layout/components/header/_internal/organization-switcher.vue"),
+      ),
+    },
   },
   mobileMenu: {
     cart: {

@@ -42,9 +42,7 @@ htmlPurifier.addHook("afterSanitizeAttributes", (node) => {
     return;
   }
 
-  const rel = new Set(node.getAttribute("rel")?.split(/\s+/).filter(Boolean));
-  NEW_WINDOW_REL_TOKENS.forEach((token) => rel.add(token));
-  node.setAttribute("rel", [...rel].join(" "));
+  node.setAttribute("rel", withNewWindowRel(node.getAttribute("rel")));
 });
 
 const SECTION_TYPE_ALIASES: Readonly<Record<string, string>> = {
@@ -133,6 +131,14 @@ function getDeclaredPropNames(component: Component): Set<string> {
   const props = (component as { props?: DeclaredPropsType }).props;
   const names = Array.isArray(props) ? props : Object.keys(props ?? {});
   return new Set(names.map((name) => camelize(name)));
+}
+
+/** A link that opens a new window gets no handle to this one. */
+export function withNewWindowRel(rel: string | null | undefined): string {
+  const tokens = new Set(rel?.split(/\s+/).filter(Boolean));
+  NEW_WINDOW_REL_TOKENS.forEach((token) => tokens.add(token));
+
+  return [...tokens].join(" ");
 }
 
 export function opensNewWindow(target: string | null): boolean {

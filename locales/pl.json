@@ -352,6 +352,7 @@
           "switching_back": "Powrót…",
           "no_results": "Nie znaleziono wyników",
           "organization_locked_tooltip": "Ta organizacja jest zablokowana. Skontaktuj się z administratorem, aby uzyskać dostęp.",
+          "search_organizations": "Szukaj organizacji",
           "dark_mode": {
             "system": "Motyw: automatyczny",
             "dark": "Motyw: ciemny",
@@ -414,6 +415,9 @@
             "navigation": "Navigacja",
             "main_navigation": "Główna nawigacja"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title}: {name}"
         },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Brak produktów | {n} produkt | {n} produkty | {n} produktów"

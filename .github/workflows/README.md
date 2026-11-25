@@ -39,7 +39,7 @@ A repository that is not vc-frontend (vc-frontend-next) turns jobs on with repos
 | `VC_E2E=true` | theme-ci `auto-tests`. Needs `VC_CI=true` as well: `auto-tests` runs after the theme-ci build and is skipped with it |
 | `VC_RELEASE=true` | release, core-facade-release, theme-release-hotfix |
 
-The cloud deploys and the Jira steps stay vc-frontend-only: the deploys target vc-frontend's environments, and Jira would get another repository's builds and release numbers on the same tickets.
+The cloud deploys, ui-kit-sync and the Jira steps stay vc-frontend-only: the deploys target vc-frontend's environments, ui-kit-sync pushes into the one ui-kit repository, and Jira would get another repository's builds and release numbers on the same tickets.
 
 Where a job writes comes from the repository too, so another repository never overwrites vc-frontend's:
 

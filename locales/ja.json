@@ -352,6 +352,7 @@
           "switching_back": "戻っています…",
           "no_results": "結果が見つかりません",
           "organization_locked_tooltip": "この組織はロックされています。アクセスするには管理者に連絡してください。",
+          "search_organizations": "組織を検索",
           "dark_mode": {
             "system": "テーマ：自動",
             "dark": "テーマ：ダーク",
@@ -414,6 +415,9 @@
             "navigation": "ナビゲーション",
             "main_navigation": "メインナビゲーション"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title}: {name}"
         },
         "link_with_count": "{title}：{count}",
         "cart_items_tooltip": "商品なし | {n} 点 | {n} 点"
