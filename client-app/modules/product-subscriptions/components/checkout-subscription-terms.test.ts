@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useSubscriptionCheckout } from "../composables/useSubscriptionCheckout";
 import CheckoutSubscriptionTerms from "./checkout-subscription-terms.vue";
 import type { CartType } from "@/core/api/graphql/types";
+import type { MaybeRefOrGetter } from "vue";
 
 const STORAGE_KEY = "vc-card-saving-requirement";
 
@@ -15,6 +16,8 @@ const h = vi.hoisted(() => ({
 const state = vi.hoisted(() => ({
   placingOrder: undefined as unknown as { value: boolean },
   subscribedItems: undefined as unknown as { value: { lineItemId: string }[] },
+  loading: undefined as unknown as { value: boolean },
+  failed: undefined as unknown as { value: boolean },
 }));
 
 vi.mock("vue-i18n", () => ({
@@ -47,14 +50,16 @@ vi.mock("../api/graphql", () => ({
 }));
 
 vi.mock("../composables/useCartSubscriptions", async () => {
-  const { computed, ref } = await import("vue");
+  const { computed, ref, toValue } = await import("vue");
   state.subscribedItems = ref([]);
+  state.loading = ref(false);
+  state.failed = ref(false);
   return {
-    useCartSubscriptions: () => ({
+    useCartSubscriptions: (cartSource: MaybeRefOrGetter<{ id?: string } | undefined>) => ({
       subscribedItems: state.subscribedItems,
-      hasSubscriptionItems: computed(() => state.subscribedItems.value.length > 0),
-      loading: ref(false),
-      failed: ref(false),
+      hasSubscriptionItems: computed(() => !!toValue(cartSource)?.id && state.subscribedItems.value.length > 0),
+      loading: state.loading,
+      failed: state.failed,
       refresh: h.refresh,
     }),
   };
@@ -208,13 +213,17 @@ describe("CheckoutSubscriptionTerms: checkout guard state", () => {
     vi.clearAllMocks();
     sessionStorage.clear();
     state.placingOrder.value = false;
+    state.loading.value = false;
+    state.failed.value = false;
+    checkout.cart.value = undefined;
+    checkout.accepted.value = false;
     state.subscribedItems.value = [{ lineItemId: "line-1" }];
     h.getSubscriptionTerms.mockResolvedValue({ text: "Terms", version: "1", hash: "hash" });
     h.acceptSubscriptionTerms.mockResolvedValue("consent-1");
   });
 
-  it("keeps Place order closed until the block shows its cart and the terms are accepted", async () => {
-    expect(checkout.canPlaceOrder.value).toBe(false);
+  it("holds a subscription cart until the terms are accepted, and nothing when no cart is reviewed", async () => {
+    expect(checkout.canPlaceOrder.value).toBe(true);
 
     const wrapper = mountTerms();
     await flushPromises();
@@ -227,7 +236,29 @@ describe("CheckoutSubscriptionTerms: checkout guard state", () => {
     wrapper.unmount();
     expect(checkout.cart.value).toBeUndefined();
     expect(checkout.accepted.value).toBe(false);
+    expect(checkout.canPlaceOrder.value).toBe(true);
+  });
+
+  it("holds the order while the cart's subscriptions load", async () => {
+    state.loading.value = true;
+    state.subscribedItems.value = [];
+
+    const wrapper = mountTerms();
+    await flushPromises();
+
     expect(checkout.canPlaceOrder.value).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("does not hold the order when the cart's subscriptions fail to load", async () => {
+    state.failed.value = true;
+    state.subscribedItems.value = [];
+
+    const wrapper = mountTerms();
+    await flushPromises();
+
+    expect(checkout.canPlaceOrder.value).toBe(true);
+    wrapper.unmount();
   });
 
   it("lets the order through without terms when the cart has no subscriptions", async () => {

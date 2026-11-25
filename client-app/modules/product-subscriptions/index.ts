@@ -96,8 +96,6 @@ export function init(router: Router, i18n: I18n) {
     condition: () => isAuthenticated.value,
   });
 
-  // Registered here, not by the terms block: the block is loaded on demand, and Place order must stay closed until it
-  // has shown the cart's subscriptions and their terms were accepted (see useSubscriptionCheckout).
   useCheckoutGuards().registerGuard(TERMS_GUARD_ID, { canPlaceOrder: useSubscriptionCheckout().canPlaceOrder });
 
   register("checkoutReview", EXTENSION_NAMES.checkoutReview.beforePlaceOrder, {

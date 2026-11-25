@@ -245,7 +245,7 @@ watch(hasSubscriptionItems, (hasItems) => {
 });
 
 // The guard reviews the cart this block shows: the order waits until its subscriptions are known, and the terms are
-// accepted when there are any. A failed load keeps it blocked until the retry succeeds.
+// accepted when there are any.
 watch(cart, (value) => (checkout.cart.value = value), { immediate: true });
 
 onMounted(() => {
