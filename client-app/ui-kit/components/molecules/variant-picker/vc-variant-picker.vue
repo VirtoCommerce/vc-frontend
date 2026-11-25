@@ -173,7 +173,7 @@ const props = withDefaults(defineProps<IProps>(), {
   badgePosition: "end",
 });
 
-const SMALL_SIZES: VcVariantPickerSizeType[] = ["xxs", "xs", "sm"];
+const SMALL_SIZES: ReadonlySet<VcVariantPickerSizeType> = new Set(["xxs", "xs", "sm"]);
 
 const slots = useSlots();
 
@@ -212,7 +212,7 @@ const isRichText = computed(
     type.value === "text" && (hasDescription.value || !!props.icon || (!!props.badge && props.badgePosition === "end")),
 );
 
-const isSmall = computed(() => SMALL_SIZES.includes(size.value));
+const isSmall = computed(() => SMALL_SIZES.has(size.value));
 const iconSize = computed<VcIconSizeType>(() => (hasDescription.value || isSmall.value ? "xs" : "sm"));
 const badgeSize = computed<VcBadgeSizeType>(() => (isSmall.value ? "xs" : "sm"));
 const badgeVariantValue = computed<VcBadgeVariantType>(() => {

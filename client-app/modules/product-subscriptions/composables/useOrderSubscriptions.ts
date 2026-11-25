@@ -1,4 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
+import { chunk } from "lodash-es";
 import { computed, shallowRef, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { getOrderSubscriptionInfos } from "../api/graphql";
@@ -37,22 +38,23 @@ const useOrderSubscriptionsState = createGlobalState(() => {
   let queued = new Set<string>();
   let flush: Promise<void> | undefined;
 
-  async function load(orderIds: string[]): Promise<void> {
-    for (let i = 0; i < orderIds.length; i += BATCH_SIZE) {
-      const batch = orderIds.slice(i, i + BATCH_SIZE);
-      try {
-        const result = await getOrderSubscriptionInfos(batch, { suppressErrorNotifications: true });
-        // Copied after the await: another page's load may have written its orders meanwhile.
-        const next = new Map(infos.value);
-        batch.forEach((id) => next.set(id, null));
-        result.forEach((info) => next.set(info.orderId, info));
-        infos.value = next;
-      } catch (e) {
-        // Asked again on the next visit.
-        batch.forEach((id) => requested.delete(id));
-        Logger.error(`${useOrderSubscriptions.name}.load`, e);
-      }
+  async function loadBatch(batch: string[]): Promise<void> {
+    try {
+      const result = await getOrderSubscriptionInfos(batch, { suppressErrorNotifications: true });
+      // Copied after the await: another batch or page may have written its orders meanwhile.
+      const next = new Map(infos.value);
+      batch.forEach((id) => next.set(id, null));
+      result.forEach((info) => next.set(info.orderId, info));
+      infos.value = next;
+    } catch (e) {
+      // Asked again on the next visit.
+      batch.forEach((id) => requested.delete(id));
+      Logger.error(`${useOrderSubscriptions.name}.load`, e);
     }
+  }
+
+  async function load(orderIds: string[]): Promise<void> {
+    await Promise.all(chunk(orderIds, BATCH_SIZE).map(loadBatch));
   }
 
   /** Asks for this order's info unless it is known or already asked; orders asked in the same tick share a request. */

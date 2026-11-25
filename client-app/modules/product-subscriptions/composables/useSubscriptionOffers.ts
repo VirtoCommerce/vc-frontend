@@ -1,4 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
+import { chunk } from "lodash-es";
 import { computed, reactive } from "vue";
 import { Logger } from "@/core/utilities";
 import { getSubscriptionOffers } from "../api/graphql";
@@ -17,18 +18,19 @@ const useSubscriptionOffersState = createGlobalState(() => {
   let queued = new Set<string>();
   let flush: Promise<void> | undefined;
 
-  async function fetchOffers(ids: string[]): Promise<void> {
-    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
-      const batch = ids.slice(i, i + BATCH_SIZE);
-      try {
-        const result = await getSubscriptionOffers(batch);
-        const byProduct = new Map((result ?? []).map((offer) => [offer.productId, offer]));
-        batch.forEach((id) => offers.set(id, byProduct.get(id) ?? null));
-      } catch (e) {
-        // The ids stay unset, so the next call asks for them again.
-        Logger.error(`${useSubscriptionOffers.name}.${loadOffers.name}`, e);
-      }
+  async function fetchBatch(batch: string[]): Promise<void> {
+    try {
+      const result = await getSubscriptionOffers(batch);
+      const byProduct = new Map((result ?? []).map((offer) => [offer.productId, offer]));
+      batch.forEach((id) => offers.set(id, byProduct.get(id) ?? null));
+    } catch (e) {
+      // The ids stay unset, so the next call asks for them again.
+      Logger.error(`${useSubscriptionOffers.name}.${loadOffers.name}`, e);
     }
+  }
+
+  async function fetchOffers(ids: string[]): Promise<void> {
+    await Promise.all(chunk(ids, BATCH_SIZE).map(fetchBatch));
   }
 
   async function loadOffers(productIds: string[]): Promise<void> {
