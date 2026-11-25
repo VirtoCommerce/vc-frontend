@@ -92,6 +92,7 @@ describe("Page Builder preview message protocol", () => {
     { source: "builder", type: "auth", token: { access_token: "token" }, userId: "user-1" },
     { source: "builder", type: "auth", token: { access_token: "token" } },
     { source: "builder", type: "auth", token: null },
+    { source: "builder", type: "auth", code: "code-1", userId: "user-1" },
   ])("accepts a valid non-template message: $type", (message) => {
     expect(isBuilderMessage(message)).toBe(true);
   });
@@ -115,6 +116,10 @@ describe("Page Builder preview message protocol", () => {
     { source: "builder", type: "auth", token: 42, userId: "user-1" },
     { source: "builder", type: "auth", token: { access_token: 42 }, userId: "user-1" },
     { source: "builder", type: "auth", token: null, userId: 42 },
+    { source: "builder", type: "auth", code: "code-1" },
+    { source: "builder", type: "auth", code: "code-1", userId: null },
+    { source: "builder", type: "auth", code: "", userId: "user-1" },
+    { source: "builder", type: "auth", code: 42, userId: "user-1" },
   ])("rejects malformed input %#", (message) => {
     expect(isBuilderMessage(message)).toBe(false);
   });
