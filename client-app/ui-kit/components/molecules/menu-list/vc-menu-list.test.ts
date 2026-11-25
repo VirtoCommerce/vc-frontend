@@ -450,7 +450,7 @@ describe("VcMenuList", () => {
     });
   });
 
-  // Captured from VcMenuItem before VcMenuList existed; the component id varies with the mount order.
+  // The component id varies with the mount order.
   describe("an item outside a list renders as before", () => {
     const BASELINE = {
       plain: [

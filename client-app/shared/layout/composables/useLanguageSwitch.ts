@@ -61,8 +61,7 @@ export function useLanguageSwitch() {
     );
   }
 
-  // The native name without a region in ASCII brackets: "Deutsch (Deutschland)" → "Deutsch". Full-width brackets
-  // stay: "中文（中国）".
+  // Drops a region in ASCII brackets ("Deutsch (Deutschland)" → "Deutsch"); full-width ones stay: "中文（中国）".
   function getLanguageName(language: ILanguage): string {
     return language.nativeName.replace(/\([^()]*\)/g, "").trim();
   }

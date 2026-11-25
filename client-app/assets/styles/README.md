@@ -230,9 +230,9 @@ Soft's organization switcher and preferences menu set `--vc-popover-padding` and
 panels subtract both from the card's size (20rem × 50vh; 38.75rem, or 23.25rem with one column).
 Override them on `html[data-design="soft"] .organization-switcher` or `html[data-design="soft"] .preferences-menu`
 in `_custom.scss`, as lengths (`0px`, not `0`). The preferences menu also sets the `--vc-menu-item-*` row
-tokens on `.preferences-menu__list`, and its appearance switch sets `--vc-icon-color` and
-`--vc-tab-switch-color` on `.color-mode-switch` (`html.dark[data-design="soft"]` for dark): override them on
-those blocks, not on `html`.
+tokens on `.preferences-menu__list` and `--vc-icon-color` on `.preferences-menu__trigger`, and its appearance
+switch sets `--vc-icon-color` and `--vc-tab-switch-color` on `.color-mode-switch` (`html.dark[data-design="soft"]`
+for dark): override them on those blocks, not on `html`.
 Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
 spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
 them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value

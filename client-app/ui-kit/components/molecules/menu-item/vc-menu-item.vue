@@ -188,7 +188,7 @@ const ARIA_SELECTED_ROLES = new Set(["option", "tab", "gridcell", "row", "treeit
  */
 const computedAriaSelected = computed(() => {
   if (effectiveRole.value && ARIA_SELECTED_ROLES.has(effectiveRole.value)) {
-    // In a listbox `active` is the selection; elsewhere an unset value renders `false`, as before.
+    // In a listbox `active` is the selection; elsewhere an unset value renders `false`.
     return props.ariaSelected ?? (isListMember.value && menuList?.listRole.value === "listbox" && props.active);
   }
   return undefined;

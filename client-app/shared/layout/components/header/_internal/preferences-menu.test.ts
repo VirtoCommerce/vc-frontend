@@ -5,7 +5,6 @@ import { VcPopover } from "@/ui-kit/components/molecules";
 import PreferencesMenu from "./preferences-menu.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
-// Hoisted: the menu, imported above, reads them while the mocks load.
 const state = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return {

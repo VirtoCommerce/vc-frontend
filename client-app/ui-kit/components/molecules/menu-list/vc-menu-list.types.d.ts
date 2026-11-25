@@ -19,7 +19,6 @@ declare global {
     contains: (item: VcMenuListItemType) => boolean;
     isTabStop: (item: VcMenuListItemType) => boolean;
     onItemFocus: (item: VcMenuListItemType) => void;
-    /** Adds an item to the list; returns the function that removes it. */
     register: (item: VcMenuListItemType) => () => void;
   };
 }

@@ -39,7 +39,9 @@ function isBefore(a: VcMenuListItemType, b: VcMenuListItemType): boolean {
   return (a.el()!.compareDocumentPosition(b.el()!) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
 }
 
-// Read in DOM order on every call: a keyed re-order moves elements without touching the registered set.
+// Sorted by DOM position on each call: a keyed re-order moves elements without touching the registered set. The
+// computeds below cache the result, so with no active item a bare re-order keeps the stop on the old first item
+// until focus, `active`, `disabled` or the set of items changes.
 function getEnabledItems(): VcMenuListItemType[] {
   return Array.from(items)
     .filter((item) => !item.disabled() && contains(item))
@@ -84,7 +86,6 @@ function register(item: VcMenuListItemType): () => void {
   };
 }
 
-// Listbox and menu keys: Up and Down move between the enabled items (wrapping), Home and End go to the ends.
 // On the element, not in the template: a handler there trips vuejs-accessibility/no-static-element-interactions.
 useEventListener(root, "keydown", (event: KeyboardEvent) => {
   // Leave modified keys to the browser: Shift+Down extends a text selection.
