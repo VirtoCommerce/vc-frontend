@@ -1129,8 +1129,7 @@
       },
       "share_wishlist_modal": {
         "title": "Compartilhar “{listName}”",
-        "who_can_access_label": "Quem tem acesso",
-        "scope_selected": "{label}, selecionado"
+        "who_can_access_label": "Quem tem acesso"
       },
       "stop_sharing_modal": {
         "title": "Parar de partilhar esta lista?",

@@ -1,5 +1,12 @@
 <template>
-  <div ref="root" class="vc-tab-switch-group" role="radiogroup" tabindex="-1" @keydown="onKeydown">
+  <div
+    ref="root"
+    :class="['vc-tab-switch-group', { 'vc-tab-switch-group--direction--vertical': isVertical }]"
+    role="radiogroup"
+    :aria-orientation="isVertical ? 'vertical' : undefined"
+    tabindex="-1"
+    @keydown="onKeydown"
+  >
     <span
       v-if="pillRect"
       ref="pill"
@@ -23,7 +30,16 @@ interface IEmits {
   (event: "change", value: VcTabSwitchGroupValueType): void;
 }
 
+interface IProps {
+  /** `vertical` stacks the items, each as wide as the group, for a group that does not fit in one row. */
+  direction?: VcTabSwitchGroupDirectionType;
+}
+
 const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  direction: "horizontal",
+});
 
 defineSlots<{
   /** `VcTabSwitch` items. Name the group with `aria-label` or `aria-labelledby`. */
@@ -42,6 +58,10 @@ const PILL_DURATION_MS = 520;
 const PILL_EASING = "cubic-bezier(0.34, 0.86, 0.22, 1)";
 // The share of the move at which the pill spans both items before it settles on the new one.
 const PILL_STRETCH_OFFSET = 0.42;
+const PILL_AXES = {
+  horizontal: { start: "left", size: "width", offsetStart: "offsetLeft", offsetSize: "offsetWidth" },
+  vertical: { start: "top", size: "height", offsetStart: "offsetTop", offsetSize: "offsetHeight" },
+} as const;
 
 const reducedMotion = usePreferredReducedMotion();
 
@@ -52,6 +72,8 @@ let pillAnimation: Animation | undefined;
 
 const name = useComponentId("tab-switch-group");
 const registeredItems = shallowReactive(new Set<VcTabSwitchGroupItemType>());
+
+const isVertical = computed(() => props.direction === "vertical");
 
 function select(value: VcTabSwitchGroupValueType): void {
   model.value = value;
@@ -82,9 +104,10 @@ function placePill(animate: boolean): void {
   const checkedEl = root.value?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]');
   // A move during a running slide starts where the pill is drawn, not at the previous target.
   const drawnPill = pillAnimation?.playState === "running" ? pill.value : null;
+  const { start, size, offsetStart, offsetSize } = isVertical.value ? PILL_AXES.vertical : PILL_AXES.horizontal;
   const from =
     drawnPill && pillRect.value
-      ? { ...pillRect.value, left: drawnPill.offsetLeft, width: drawnPill.offsetWidth }
+      ? { ...pillRect.value, [start]: drawnPill[offsetStart], [size]: drawnPill[offsetSize] }
       : pillRect.value;
   const to = checkedEl
     ? {
@@ -98,21 +121,21 @@ function placePill(animate: boolean): void {
   pillRect.value = to;
   pillAnimation?.cancel();
 
-  const isMoved = !!from && !!to && (from.left !== to.left || from.width !== to.width);
+  const isMoved = !!from && !!to && (from[start] !== to[start] || from[size] !== to[size]);
 
   if (!animate || !isMoved || reducedMotion.value === "reduce" || !pill.value) {
     return;
   }
 
-  // left/width rather than a transform: scaling would squash the rounded ends and the shadow of the stretched pill.
-  const start = Math.min(from.left, to.left);
-  const end = Math.max(from.left + from.width, to.left + to.width);
+  // Not a transform: scaling would squash the rounded ends and the shadow of the stretched pill.
+  const stretchStart = Math.min(from[start], to[start]);
+  const stretchEnd = Math.max(from[start] + from[size], to[start] + to[size]);
 
   pillAnimation = pill.value.animate(
     [
-      { left: `${from.left}px`, width: `${from.width}px` },
-      { left: `${start}px`, width: `${end - start}px`, offset: PILL_STRETCH_OFFSET },
-      { left: `${to.left}px`, width: `${to.width}px` },
+      { [start]: `${from[start]}px`, [size]: `${from[size]}px` },
+      { [start]: `${stretchStart}px`, [size]: `${stretchEnd - stretchStart}px`, offset: PILL_STRETCH_OFFSET },
+      { [start]: `${to[start]}px`, [size]: `${to[size]}px` },
     ],
     { duration: PILL_DURATION_MS, easing: PILL_EASING },
   );
@@ -159,6 +182,7 @@ function onKeydown(event: KeyboardEvent): void {
 }
 
 watch(model, () => placePill(true), { flush: "post" });
+watch(isVertical, () => placePill(false), { flush: "post" });
 
 useResizeObserver(root, () => placePill(false));
 
@@ -182,6 +206,12 @@ provide(vcTabSwitchGroupKey, {
 
   // isolate: the pill sits under the items but above the track.
   @apply relative isolate inline-flex max-w-full gap-[--gap] p-[--padding] rounded-[--radius] bg-[--bg-color];
+
+  &--direction {
+    &--vertical {
+      @apply flex-col;
+    }
+  }
 
   &__pill {
     @apply absolute -z-10 hidden pointer-events-none;

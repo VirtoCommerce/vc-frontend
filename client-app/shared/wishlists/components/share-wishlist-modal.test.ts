@@ -3,7 +3,7 @@
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
 import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineAsyncComponent, defineComponent, h, ref } from "vue";
+import { defineAsyncComponent, defineComponent, h, nextTick, ref } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import ShareWishlistModal from "./share-wishlist-modal.vue";
@@ -11,6 +11,9 @@ import type { WishlistSharingScopePayloadType } from "../composables/useWishlist
 import type { SharingTargetType, WishlistType } from "@/core/api/graphql/types";
 import type { RenderResult } from "@testing-library/vue";
 import type { PropType } from "vue";
+import VcLabel from "@/ui-kit/components/atoms/label/vc-label.vue";
+import VcTabSwitch from "@/ui-kit/components/molecules/tab-switch/vc-tab-switch.vue";
+import VcTabSwitchGroup from "@/ui-kit/components/molecules/tab-switch-group/vc-tab-switch-group.vue";
 import "@testing-library/jest-dom/vitest";
 
 // The app tags elements with `data-test-id`, not Testing Library's default `data-testid`.
@@ -62,6 +65,7 @@ vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifica
 vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
 
 const scopeAvailable = ref(true);
+const asyncScopeAvailable = ref(true);
 
 const controls = {
   canSave: ref(false),
@@ -173,34 +177,6 @@ const VcInput = defineComponent({
   },
 });
 
-const VcTabSwitch = defineComponent({
-  props: {
-    modelValue: { type: String, default: "" },
-    value: { type: String, required: true },
-    label: { type: String, default: "" },
-    icon: { type: String, default: "" },
-    disabled: { type: Boolean, default: false },
-    ariaLabel: { type: String, default: "" },
-  },
-  emits: ["change"],
-  setup(props, { emit }) {
-    return () =>
-      h("label", { "data-icon": props.icon }, [
-        h("input", {
-          type: "radio",
-          value: props.value,
-          checked: props.modelValue === props.value,
-          disabled: props.disabled,
-        }),
-        h(
-          "button",
-          { type: "button", "aria-label": props.ariaLabel, onClick: () => emit("change", props.value) },
-          props.label,
-        ),
-      ]);
-  },
-});
-
 const VcButton = defineComponent({
   props: { disabled: { type: Boolean, default: false }, loading: { type: Boolean, default: false } },
   emits: ["click"],
@@ -228,7 +204,8 @@ function renderModal(list: WishlistType) {
   component = render(ShareWishlistModal, {
     props: { list },
     global: {
-      components: { VcModal, VcInput, VcTabSwitch, VcButton },
+      // The scope switcher is the real kit pair: its roles, tab stop and keys are what the dialog is judged on.
+      components: { VcModal, VcInput, VcLabel, VcTabSwitch, VcTabSwitchGroup, VcButton },
       mocks: { $t: (key: string) => key },
       stubs: { VcIcon: true, StopSharingConfirmationModal },
     },
@@ -241,8 +218,13 @@ function scopeTab(scope: string) {
   return component.queryByTestId<HTMLElement>(`wishlist-sharing-scope-${scope}`);
 }
 
+// By attribute rather than by role: jsdom does not hide the kit's native radio, so a role query would count it too.
 function scopeRadio(scope: string) {
-  return scopeTab(scope)!.querySelector<HTMLInputElement>("input")!;
+  return scopeTab(scope)!.querySelector<HTMLElement>('[role="radio"]')!;
+}
+
+function scopeRadios() {
+  return Array.from(component.getByRole("radiogroup").querySelectorAll<HTMLElement>('[role="radio"]'));
 }
 
 function saveButton() {
@@ -287,7 +269,7 @@ function savedList(sharingKey = "sharing-key-1", ...audience: string[]): Wishlis
 }
 
 async function selectScope(scope: string) {
-  await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
+  await fireEvent.click(scopeRadio(scope));
 }
 
 function stopSharingConfirmation() {
@@ -333,6 +315,7 @@ beforeAll(() => {
     scope: ASYNC_SCOPE,
     labelKey: "test_module.async_scope.label",
     icon: "test-glyph",
+    isAvailable: () => asyncScopeAvailable.value,
     element: AsyncScopeControls,
   });
 });
@@ -344,6 +327,7 @@ beforeEach(() => {
   mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());
   scopeAvailable.value = true;
+  asyncScopeAvailable.value = true;
   controls.canSave.value = false;
   controls.dirty.value = false;
   controls.payload.value = {};
@@ -357,6 +341,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
 });
 
 describe("ShareWishlistModal", () => {
@@ -402,41 +387,30 @@ describe("ShareWishlistModal", () => {
       renderModal(privateList());
 
       expect(component.getByText("shared.wishlists.share_wishlist_modal.who_can_access_label")).toBeInTheDocument();
-      expect(scopeTab(TARGETED_SCOPE)).toHaveAttribute("data-icon", "test-glyph");
-      expect(scopeTab(WishlistScopeType.Private)!.getAttribute("data-icon")).not.toBe("");
-    });
-
-    it("names the selected tab as selected, since the kit hides the radio from assistive tech", () => {
-      renderModal(targetedList("org-1"));
-
-      const selectedTab = scopeTab(TARGETED_SCOPE)!.querySelector("button")!;
-      const otherTab = scopeTab(WishlistScopeType.Private)!.querySelector("button")!;
-
-      expect(selectedTab).toHaveAttribute("aria-label", "shared.wishlists.share_wishlist_modal.scope_selected");
-      expect(otherTab).toHaveAttribute(
-        "aria-label",
-        "shared.wishlists.add_or_update_wishlist_modal.sharing_scope.Private",
-      );
+      expect(scopeTab(TARGETED_SCOPE)!.querySelector("vc-icon-stub")).toHaveAttribute("name", "test-glyph");
+      expect(scopeTab(WishlistScopeType.Private)!.querySelector("vc-icon-stub")).toHaveAttribute("name");
     });
 
     it("orders the tabs as the scopes declare, with unordered contributions last", () => {
       renderModal(privateList());
 
-      const order = component.getAllByRole("radio").map((radio) => (radio as HTMLInputElement).value);
-      expect(order).toEqual([
-        WishlistScopeType.Private,
-        WishlistScopeType.Organization,
-        WishlistScopeType.AnyoneAnonymous,
-        TARGETED_SCOPE,
-        ASYNC_SCOPE,
-      ]);
+      const order = component.getAllByTestId(/^wishlist-sharing-scope-/).map((tab) => tab.dataset.testId);
+      expect(order).toEqual(
+        [
+          WishlistScopeType.Private,
+          WishlistScopeType.Organization,
+          WishlistScopeType.AnyoneAnonymous,
+          TARGETED_SCOPE,
+          ASYNC_SCOPE,
+        ].map((scope) => `wishlist-sharing-scope-${scope}`),
+      );
     });
 
     it("opens on the scope the list already has", () => {
       renderModal(targetedList("org-1"));
 
-      expect(scopeRadio(TARGETED_SCOPE).checked).toBe(true);
-      expect(scopeRadio(WishlistScopeType.Private).checked).toBe(false);
+      expect(scopeRadio(TARGETED_SCOPE)).toHaveAttribute("aria-checked", "true");
+      expect(scopeRadio(WishlistScopeType.Private)).toHaveAttribute("aria-checked", "false");
     });
 
     it("hides the provider's controls for a user who may not use that scope", () => {
@@ -445,6 +419,104 @@ describe("ShareWishlistModal", () => {
       renderModal(targetedList("org-1"));
 
       expect(component.queryByTestId("scope-controls")).toBeNull();
+    });
+  });
+
+  describe("the scope switcher for assistive tech and the keyboard", () => {
+    it("is one radio group, named by the visible who-can-access label", () => {
+      renderModal(privateList());
+
+      expect(component.getByRole("radiogroup")).toHaveAccessibleName(
+        "shared.wishlists.share_wishlist_modal.who_can_access_label",
+      );
+      expect(component.queryByRole("group")).toBeNull();
+    });
+
+    describe("its layout", () => {
+      function stubViewportWidth(width: number) {
+        vi.stubGlobal(
+          "matchMedia",
+          vi.fn((query: string) => {
+            const [, bound, limit] = /(min|max)-width:\s*([\d.]+)px/.exec(query) ?? [];
+
+            return {
+              matches: bound === "max" ? width <= Number(limit) : width >= Number(limit),
+              media: query,
+              addEventListener: vi.fn(),
+              removeEventListener: vi.fn(),
+            };
+          }),
+        );
+      }
+
+      function showCoreScopesOnly() {
+        scopeAvailable.value = false;
+        asyncScopeAvailable.value = false;
+      }
+
+      it("is a row of the three core scopes from md up", () => {
+        stubViewportWidth(768);
+        showCoreScopesOnly();
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).not.toHaveAttribute("aria-orientation");
+      });
+
+      it("stacks the scopes below md", () => {
+        stubViewportWidth(767);
+        showCoreScopesOnly();
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).toHaveAttribute("aria-orientation", "vertical");
+      });
+
+      it("stacks the scopes at any width once a fourth is listed", () => {
+        stubViewportWidth(768);
+        scopeAvailable.value = false;
+
+        renderModal(privateList());
+
+        expect(component.getByRole("radiogroup")).toHaveAttribute("aria-orientation", "vertical");
+      });
+    });
+
+    it("is a single tab stop: the selected scope", async () => {
+      renderModal(targetedList("org-1"));
+      // The items register with the group while they mount, so the tab stop settles a tick later.
+      await nextTick();
+
+      expect(scopeRadios().filter((radio) => radio.getAttribute("tabindex") === "0")).toEqual([
+        scopeRadio(TARGETED_SCOPE),
+      ]);
+    });
+
+    it("states the selection through aria-checked alone, and names each scope by its label only", () => {
+      renderModal(targetedList("org-1"));
+
+      expect(scopeRadios().map((radio) => radio.getAttribute("aria-checked"))).toEqual([
+        "false",
+        "false",
+        "false",
+        "true",
+        "false",
+      ]);
+      expect(scopeRadio(TARGETED_SCOPE)).toHaveAccessibleName(SCOPE_LABEL_KEY);
+      expect(scopeRadio(TARGETED_SCOPE)).not.toHaveAttribute("aria-pressed");
+    });
+
+    it("moves the selection with the arrow keys, and the dialog follows it", async () => {
+      renderModal(privateList());
+
+      await fireEvent.keyDown(scopeRadio(WishlistScopeType.Private), { key: "ArrowRight" });
+
+      expect(scopeRadio(WishlistScopeType.Organization)).toHaveAttribute("aria-checked", "true");
+      expect(scopeRadio(WishlistScopeType.Organization)).toHaveFocus();
+      expect(scopeRadio(WishlistScopeType.Private)).toHaveAttribute("aria-checked", "false");
+      // The organization scope is link-reachable and differs from the saved one.
+      expect(component.getByText(`${KEY}.sharing_link_label`)).toBeInTheDocument();
+      expect(saveButton()).not.toBeDisabled();
     });
   });
 
@@ -690,7 +762,7 @@ describe("ShareWishlistModal", () => {
       // Unanswered: the dialog stays as it was, with the new scope still only selected.
       expect(stopSharingConfirmation()).toBeInTheDocument();
       expect(mocks.updateWishlist).not.toHaveBeenCalled();
-      expect(scopeRadio(WishlistScopeType.Organization).checked).toBe(true);
+      expect(scopeRadio(WishlistScopeType.Organization)).toHaveAttribute("aria-checked", "true");
     });
 
     it("asks before dropping a recipient, even when the scope stays the same", async () => {
@@ -797,6 +869,29 @@ describe("ShareWishlistModal", () => {
       await vi.waitFor(() => expect(component.getByTestId("modal")).toHaveAttribute("data-persistent", "false"));
       expect(cancelButton()).not.toBeDisabled();
       expect(mocks.notifications.error).not.toHaveBeenCalled();
+    });
+
+    it("locks the scope switcher until the save settles", async () => {
+      let settle: () => void = () => {};
+      mocks.updateWishlist.mockImplementation(
+        () => new Promise<WishlistType>((resolve) => (settle = () => resolve(savedList()))),
+      );
+
+      renderModal(privateList());
+      await selectScope(WishlistScopeType.Organization);
+      await fireEvent.click(saveButton());
+
+      expect(scopeRadios().map((radio) => radio.getAttribute("aria-disabled"))).toEqual(Array(5).fill("true"));
+      expect(scopeRadios().filter((radio) => radio.getAttribute("tabindex") === "0")).toEqual([]);
+
+      await fireEvent.keyDown(scopeRadio(WishlistScopeType.Organization), { key: "ArrowRight" });
+      await selectScope(WishlistScopeType.Private);
+
+      expect(scopeRadio(WishlistScopeType.Organization)).toHaveAttribute("aria-checked", "true");
+
+      settle();
+
+      await vi.waitFor(() => expect(scopeRadio(WishlistScopeType.Organization)).not.toHaveAttribute("aria-disabled"));
     });
 
     it("leaves Cancel usable when nothing is being written", () => {

@@ -3,14 +3,15 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
 import { VcTabSwitch, VcTabSwitchGroup } from "@/ui-kit/components/molecules";
 
-function createWrapper(initial?: string, disabled: string[] = []) {
+function createWrapper(initial?: string, disabled: string[] = [], direction?: VcTabSwitchGroupDirectionType) {
   return mount(
     defineComponent({
       components: { VcTabSwitch, VcTabSwitchGroup },
+      props: { direction: String },
       setup: () => ({ value: ref(initial), disabled, modes: ["light", "dark", "system"] }),
 
       template: `
-        <VcTabSwitchGroup v-model="value" aria-label="Color mode">
+        <VcTabSwitchGroup v-model="value" :direction="direction" aria-label="Color mode">
           <VcTabSwitch
             v-for="mode in modes"
             :key="mode"
@@ -21,7 +22,7 @@ function createWrapper(initial?: string, disabled: string[] = []) {
         </VcTabSwitchGroup>
       `,
     }),
-    { attachTo: document.body, global: { stubs: { VcIcon: true } } },
+    { attachTo: document.body, props: { direction }, global: { stubs: { VcIcon: true } } },
   );
 }
 
@@ -102,6 +103,17 @@ describe("VcTabSwitchGroup", () => {
     expect(new Set(names).size).toBe(1);
   });
 
+  it("states its orientation only when vertical", async () => {
+    const wrapper = createWrapper("light");
+    const group = wrapper.findComponent(VcTabSwitchGroup);
+
+    expect(group.attributes("aria-orientation")).toBeUndefined();
+
+    await wrapper.setProps({ direction: "vertical" });
+
+    expect(group.attributes("aria-orientation")).toBe("vertical");
+  });
+
   describe("pill", () => {
     // jsdom has no layout and no Web Animations: each item gets a box by its label, and animate is a spy.
     const BOXES: Record<string, { left: number; width: number }> = {
@@ -111,21 +123,31 @@ describe("VcTabSwitchGroup", () => {
       // Where a running slide has drawn the pill.
       pill: { left: 20, width: 100 },
     };
+    const ROWS: Record<string, { top: number; height: number }> = {
+      light: { top: 0, height: 30 },
+      dark: { top: 30, height: 40 },
+      system: { top: 70, height: 30 },
+      pill: { top: 10, height: 50 },
+    };
 
     function stubLayout() {
-      const box = (el: HTMLElement) =>
-        (el.dataset.testId === "vc-tab-switch-group-pill"
-          ? BOXES.pill
-          : BOXES[el.getAttribute("aria-label") ?? ""]) ?? {
-          left: 0,
-          width: 0,
-        };
+      const key = (el: HTMLElement) =>
+        el.dataset.testId === "vc-tab-switch-group-pill" ? "pill" : (el.getAttribute("aria-label") ?? "");
+      const box = (el: HTMLElement) => BOXES[key(el)] ?? { left: 0, width: 0 };
+      const row = (el: HTMLElement) => ROWS[key(el)] ?? { top: 0, height: 0 };
 
       vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(function (this: HTMLElement) {
         return box(this).left;
       });
       vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(function (this: HTMLElement) {
         return box(this).width;
+      });
+
+      vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
+        return row(this).top;
+      });
+      vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) {
+        return row(this).height;
       });
 
       const animate = vi.fn();
@@ -177,6 +199,51 @@ describe("VcTabSwitchGroup", () => {
       const [keyframes] = animate.mock.calls[1] as [Keyframe[]];
 
       expect(keyframes[0]).toEqual({ left: "20px", width: "100px" });
+    });
+
+    it("slides along the stack in a vertical group", async () => {
+      const animate = stubLayout();
+      const wrapper = createWrapper("light", [], "vertical");
+      await nextTick();
+
+      await radios(wrapper)[2].trigger("click");
+
+      const [keyframes] = animate.mock.calls[0] as [Keyframe[]];
+
+      expect(keyframes).toEqual([
+        { top: "0px", height: "30px" },
+        { top: "0px", height: "100px", offset: 0.42 },
+        { top: "70px", height: "30px" },
+      ]);
+      expect(pill(wrapper).attributes("style")).toContain("top: 70px");
+    });
+
+    it("starts a vertical move during a running slide from where the pill is drawn", async () => {
+      const animate = stubLayout();
+      animate.mockReturnValue({ playState: "running", cancel: vi.fn() });
+      const wrapper = createWrapper("light", [], "vertical");
+      await nextTick();
+
+      await radios(wrapper)[2].trigger("click");
+      await radios(wrapper)[1].trigger("click");
+
+      const [keyframes] = animate.mock.calls[1] as [Keyframe[]];
+
+      expect(keyframes[0]).toEqual({ top: "10px", height: "50px" });
+    });
+
+    it("moves the pill without animation when the direction changes", async () => {
+      const animate = stubLayout();
+      vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
+        return this.closest('[aria-orientation="vertical"]') ? 30 : 0;
+      });
+      const wrapper = createWrapper("dark");
+      await nextTick();
+
+      await wrapper.setProps({ direction: "vertical" });
+
+      expect(animate).not.toHaveBeenCalled();
+      expect(pill(wrapper).attributes("style")).toContain("top: 30px");
     });
 
     it("jumps without animation when the user prefers reduced motion", async () => {

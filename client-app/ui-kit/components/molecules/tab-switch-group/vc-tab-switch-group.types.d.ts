@@ -3,6 +3,8 @@ import type { Ref } from "vue";
 declare global {
   type VcTabSwitchGroupValueType = string | number | boolean;
 
+  type VcTabSwitchGroupDirectionType = "horizontal" | "vertical";
+
   type VcTabSwitchGroupItemType = {
     value: () => VcTabSwitchGroupValueType;
     disabled: () => boolean;

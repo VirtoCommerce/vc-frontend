@@ -233,6 +233,11 @@ back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from i
 override on `html[data-design="soft"]` reaches it too. Override them on
 `html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
 short ones too.
+Soft's tab switch group block sets the `--vc-tab-switch-*` tokens of its switches on `.vc-tab-switch-group`. On
+a vertical group (`.vc-tab-switch-group--direction--vertical`) it also sets `--vc-tab-switch-group-radius`, to
+the theme radius instead of the pill one, and derives the rows' `--vc-tab-switch-radius` from it. So a value on
+`html`, or on the group from a component's own class, doesn't reach a vertical group: override it on
+`html[data-design="soft"] .vc-tab-switch-group--direction--vertical` in `_custom.scss`.
 Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
 spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
 them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
