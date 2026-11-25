@@ -66,6 +66,11 @@ interface IUiKitOptions {
          * app's images. An instance's `fallbackSrc` wins. Default: ui-kit's `no-image.svg`.
          */
         fallbackSrc?: MaybeRefOrGetter<string>;
+        /**
+         * Turns a bare file name (`"basket.jpg"`) passed to `VcImage` (`src`, `fallbackSrc`) or `VcShape` (`img`)
+         * into a URL, for example one of the app's images. Without it the file name is used as is.
+         */
+        resolveFileName?: (fileName: string) => string;
     };
     notifications?: VcNotificationsType;
 }

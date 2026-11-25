@@ -1,14 +1,13 @@
 import { readFileSync } from "node:fs";
-import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
 import postcss, { AtRule } from "postcss";
 import selectorParser from "postcss-selector-parser";
 import { compileString } from "sass";
 import tailwindcss from "tailwindcss";
-import loadConfig from "tailwindcss/loadConfig.js";
 import { describe, expect, it } from "vitest";
 import { parse } from "vue/compiler-sfc";
+import { uiKitPreset } from "../../../tailwind-preset";
 import VcButton from "./vc-button.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
 
@@ -36,11 +35,7 @@ const LAYOUT_PROPERTIES = new Set([
 ]);
 const LAYOUT_PREFIX = /^(?:inset|margin|padding|flex|grid)(?:-|$)/;
 
-const tailwind = tailwindcss({
-  // Not `new URL("…", import.meta.url)`: Vite rewrites that literal form into an http:// dev-server URL.
-  ...loadConfig(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../../../tailwind.config.ts")),
-  content: [{ raw: "" }],
-});
+const tailwind = tailwindcss({ presets: [uiKitPreset], content: [{ raw: "" }] });
 
 function readSource(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), "utf8");

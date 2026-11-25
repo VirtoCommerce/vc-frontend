@@ -1,9 +1,14 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { uiKitOptionsKey } from "@/ui-kit/composables/useUiKitOptions";
 import VcShape from "./vc-shape.vue";
+import type { IUiKitOptions } from "@/ui-kit/composables/useUiKitOptions";
 
-function mountShape(props: InstanceType<typeof VcShape>["$props"] = {}) {
-  return mount(VcShape, { props, global: { stubs: { VcIcon: true } } });
+function mountShape(props: InstanceType<typeof VcShape>["$props"] = {}, options?: IUiKitOptions) {
+  return mount(VcShape, {
+    props,
+    global: { stubs: { VcIcon: true }, provide: options ? { [uiKitOptionsKey]: options } : {} },
+  });
 }
 
 describe("VcShape mask", () => {
@@ -19,10 +24,16 @@ describe("VcShape mask", () => {
 });
 
 describe("VcShape image", () => {
-  it("looks a bare file name up among the app's images", () => {
-    expect(mountShape({ img: "basket.jpg" }).attributes("style")).toMatch(
-      /background-image: url\("[^"]*\/assets\/images\/basket\.jpg"\)/,
+  it("turns a bare file name into a URL with the plugin's resolveFileName", () => {
+    const options: IUiKitOptions = { image: { resolveFileName: (fileName) => `/app-images/${fileName}` } };
+
+    expect(mountShape({ img: "basket.jpg" }, options).attributes("style")).toContain(
+      'background-image: url("/app-images/basket.jpg")',
     );
+  });
+
+  it("uses a bare file name as is when the app passes no resolveFileName", () => {
+    expect(mountShape({ img: "basket.jpg" }).attributes("style")).toContain('background-image: url("basket.jpg")');
   });
 
   it("uses a URL as is", () => {

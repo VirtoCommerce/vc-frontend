@@ -105,3 +105,29 @@ describe("VcImage fallback", () => {
     expect(wrapper.attributes("src")).toBe(own);
   });
 });
+
+describe("VcImage file names", () => {
+  const resolving: IUiKitOptions = { image: { resolveFileName: (fileName) => `/app-images/${fileName}` } };
+
+  it("turns a bare src file name into a URL with the plugin's resolveFileName", () => {
+    const wrapper = mount(VcImage, {
+      props: { src: "visa.svg" },
+      global: { provide: { [uiKitOptionsKey]: resolving } },
+    });
+
+    expect(wrapper.attributes("src")).toBe("/app-images/visa.svg");
+  });
+
+  it("turns a bare fallbackSrc file name into a URL with the plugin's resolveFileName", () => {
+    const wrapper = mount(VcImage, {
+      props: { fallbackSrc: "no-photo.svg" },
+      global: { provide: { [uiKitOptionsKey]: resolving } },
+    });
+
+    expect(wrapper.attributes("src")).toBe("/app-images/no-photo.svg");
+  });
+
+  it("shows a bare file name as is when the app passes no resolveFileName", () => {
+    expect(mount(VcImage, { props: { src: "visa.svg" } }).attributes("src")).toBe("visa.svg");
+  });
+});

@@ -22,7 +22,7 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { installThemeSnapshotNavigation, setupThemePalette, startThemeSnapshot } from "@/core/theme-snapshot";
-import { extractHostname, Logger } from "@/core/utilities";
+import { extractHostname, getImageUrl, Logger } from "@/core/utilities";
 import { getDesign, loadDesignStyles, loadPresetStyles, setDesignAttribute } from "@/core/utilities/design";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
@@ -312,6 +312,7 @@ export default async () => {
         originalFallbackEnabled: themeContext.value.settings.image_thumbnails_original_fallback_enabled,
         suffixes: themeContext.value.settings.image_thumbnails_suffixes,
       }),
+      resolveFileName: getImageUrl,
     },
     notifications,
   });

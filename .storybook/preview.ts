@@ -2,6 +2,7 @@ import { setup } from "@storybook/vue3-vite";
 import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { setGlobals } from "../client-app/core/globals";
+import { getImageUrl } from "../client-app/core/utilities/common";
 import {
   CLASSIC_DESIGN,
   DESIGN_NAMES,
@@ -155,6 +156,7 @@ setup((app) => {
     app.use(uiKit, {
       image: {
         thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: { sm: "sm", md: "md", lg: "lg" } },
+        resolveFileName: getImageUrl,
       },
     });
   } catch (error) {

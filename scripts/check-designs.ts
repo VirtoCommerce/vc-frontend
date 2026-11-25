@@ -1249,6 +1249,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     })),
   ];
   const sources = [...sourcesOf(files, "app"), ...sourcesOf(kitFiles, "kit")];
+  const kitIndexCount = kitFiles.index ? 1 : 0;
   const checked: ICheckedFileType[] = [];
 
   const compiled = await Promise.all(
@@ -1295,7 +1296,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
   if (!files.index) {
     errors.push(`${path.join(dir, "index.scss")} is missing; a design ships only what its index.scss loads`);
 
-    return sources.length;
+    return sources.length + kitIndexCount;
   }
 
   const kitErrors = kitLoadErrors(files.index, kitRef, !!kitFiles.index);
@@ -1317,7 +1318,7 @@ async function checkFolder(dir: string, options: IDesignCheckOptions, errors: st
     );
   }
 
-  return sources.length + 1;
+  return sources.length + 1 + kitIndexCount;
 }
 
 function designFolders(designsDir: string): string[] {

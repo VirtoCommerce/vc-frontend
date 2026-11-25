@@ -61,12 +61,16 @@ test("blocks .vc-* selectors in styles outside the kit, allows them inside", () 
 
 test("allows .vc-* in a design's block and dark files, nowhere else in designs", () => {
   const style = (css) => `<style lang="scss">\n${css}\n</style>`;
-  assert.equal(edit("client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
-  assert.equal(edit("client-app/designs/soft/dark/vc-button.scss", "html.dark .vc-button {"), null);
-  assert.equal(edit(".claude/worktrees/w/client-app/designs/soft/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(edit("client-app/designs/mybrand/blocks/vc-button.scss", ".vc-button {"), null);
+  assert.equal(edit("client-app/designs/mybrand/dark/vc-button.scss", "html.dark .vc-button {"), null);
+  assert.equal(edit(".claude/worktrees/w/client-app/designs/mybrand/blocks/vc-button.scss", ".vc-button {"), null);
   assert.equal(
     check(
-      { file_path: "C:\\repo\\client-app\\designs\\soft\\dark\\vc-button.scss", old_string: "", new_string: ".vc-x {" },
+      {
+        file_path: "C:\\repo\\client-app\\designs\\mybrand\\dark\\vc-button.scss",
+        old_string: "",
+        new_string: ".vc-x {",
+      },
       () => "",
     ),
     null,
@@ -87,8 +91,8 @@ test("allows .vc-* in a preset's stylesheet, nowhere else in presets", () => {
 });
 
 test("blocks !important in a design's block file", () => {
-  assert.ok(edit("client-app/designs/soft/blocks/vc-button.scss", "  color: red !important;"));
-  assert.ok(edit("client-app/designs/soft/dark/vc-button.scss", "  @apply flex !mt-4;"));
+  assert.ok(edit("client-app/designs/mybrand/blocks/vc-button.scss", "  color: red !important;"));
+  assert.ok(edit("client-app/designs/mybrand/dark/vc-button.scss", "  @apply flex !mt-4;"));
 });
 
 test("passes .vc-* outside <style>", () => {

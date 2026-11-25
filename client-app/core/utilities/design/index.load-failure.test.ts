@@ -82,7 +82,7 @@ describe("mergeStyles with a failing chunk", () => {
     expect(later).toHaveBeenCalledOnce();
   });
 
-  it("claims both errors when both stylesheets fail", async () => {
+  it("claims and logs both errors when both stylesheets fail", async () => {
     const earlierError = new Error("kit chunk failed");
     const laterError = new Error("app chunk failed");
     const styles = mergeStyles(
@@ -95,6 +95,9 @@ describe("mergeStyles with a failing chunk", () => {
     expect(ignoreChunkLoadFailure).toHaveBeenCalledTimes(2);
     expect(ignoreChunkLoadFailure).toHaveBeenNthCalledWith(1, earlierError);
     expect(ignoreChunkLoadFailure).toHaveBeenNthCalledWith(2, laterError);
+    expect(Logger.error).toHaveBeenCalledTimes(2);
+    expect(Logger.error).toHaveBeenNthCalledWith(1, "Failed to load a stylesheet.", earlierError);
+    expect(Logger.error).toHaveBeenNthCalledWith(2, "Failed to load the preset styles.", laterError);
   });
 
   it("claims the later error when only the later stylesheet fails", async () => {

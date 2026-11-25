@@ -37,7 +37,7 @@ export const IconImage: StoryType = {
     docs: {
       source: {
         code: `
-          <VcCompositeShape icon="academic-cap" img="basket.jpg" />
+          <VcCompositeShape icon="academic-cap" :img="productImage" />
         `,
       },
     },
@@ -54,7 +54,7 @@ export const Mask: StoryType = {
     docs: {
       source: {
         code: `
-          <VcCompositeShape img="basket.jpg" mask="emoji-happy" icon-mask="ai" />
+          <VcCompositeShape :img="productImage" mask="emoji-happy" icon-mask="ai" />
         `,
       },
     },

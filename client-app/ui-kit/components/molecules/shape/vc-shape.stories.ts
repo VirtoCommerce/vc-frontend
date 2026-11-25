@@ -74,7 +74,7 @@ export const Image: StoryType = {
     docs: {
       source: {
         code: `
-          <VcShape img="main-banner.webp" size="300px" />
+          <VcShape :img="productImage" size="300px" />
         `,
       },
     },
@@ -91,7 +91,7 @@ export const ImageIcon: StoryType = {
     docs: {
       source: {
         code: `
-          <VcShape img="main-banner.webp" size="300px" icon="adjustments" />
+          <VcShape :img="productImage" size="300px" icon="adjustments" />
         `,
       },
     },
@@ -108,7 +108,7 @@ export const Mask: StoryType = {
     docs: {
       source: {
         code: `
-          <VcShape img="/static/images/home/main-banner.webp" size="300px" mask="academic-cap" />
+          <VcShape :img="productImage" size="300px" mask="academic-cap" />
         `,
       },
     },

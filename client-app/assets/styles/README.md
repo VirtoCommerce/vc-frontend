@@ -314,11 +314,10 @@ offsets and its canvas, which VcFrame resets (`--vc-frame-main-min-height` still
    merge the values of `ui-kit/styles/designs/soft/_tokens.scss` into the copy's `_tokens.scss`, which its
    `index.scss` already loads as `"tokens"` in `@layer theme` (keep the copy's `--vc-frame-bg-color` line, leave
    out the kit file's), and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy, delete
-   the `blocks/` and `dark/` files and the lines that load them. Copy
-   `ui-kit/styles/designs/soft/blocks/vc-widget.scss` to `ui-kit/styles/designs/mybrand/blocks/`, give
-   that folder an `index.scss` that loads it in `@layer vc.design.kit` ([Wiring](#wiring)), load the
-   folder from your design's `index.scss` (`@include meta.load-css("@/ui-kit/styles/designs/mybrand")`),
-   and keep the `--design-widget-*` lines of `_tokens.scss` it reads, while you keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives short widgets
+   the `blocks/` and `dark/` files, the lines that load them and the line that loads ui-kit's folder
+   (`@include meta.load-css("@/ui-kit/styles/designs/mybrand")`). Copy
+   `ui-kit/styles/designs/soft/blocks/vc-widget.scss` to the copy's `blocks/` and load it from the copy's
+   `index.scss` in `@layer vc.design.kit` ([Wiring](#wiring)), and keep the `--design-widget-*` lines of `_tokens.scss` it reads, while you keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives short widgets
    the smaller radius (`--vc-radius`) and shadowless ones an edge, gives a nested widget the plate's
    tokens instead of its parent's, and sets lg widget titles to `fontSize.base`.
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).

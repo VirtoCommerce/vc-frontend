@@ -14,7 +14,7 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useUiKitOptions } from "../../../composables/useUiKitOptions";
 import { NO_IMAGE_URL } from "../../../constants";
-import { appendSuffixToFilename, getImageUrl, isFilenameOnly } from "../../../utilities";
+import { appendSuffixToFilename, isFilenameOnly } from "../../../utilities";
 
 export interface IProps {
   lazy?: boolean;
@@ -43,11 +43,11 @@ const originalEnabled = ref(false);
 
 const preparedSrc = computed<string>(() => {
   if (fallbackEnabled.value || !props.src) {
-    return isFilenameOnly(fallbackSrc.value) ? getImageUrl(fallbackSrc.value) : fallbackSrc.value;
+    return resolveFileName(fallbackSrc.value);
   }
 
   if (isFilenameOnly(props.src)) {
-    return getImageUrl(props.src);
+    return resolveFileName(props.src);
   }
 
   const sizeSuffix = props.sizeSuffix ? thumbnails.value?.suffixes?.[props.sizeSuffix] : "";
@@ -58,6 +58,10 @@ const preparedSrc = computed<string>(() => {
 
   return appendSuffixToFilename(props.src, `_${sizeSuffix}`);
 });
+
+function resolveFileName(value: string): string {
+  return isFilenameOnly(value) ? (image?.resolveFileName?.(value) ?? value) : value;
+}
 
 /**
  * Set fallback source when image loading error occurs.

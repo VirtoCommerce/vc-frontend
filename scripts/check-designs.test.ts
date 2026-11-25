@@ -406,7 +406,7 @@ ${loads("dark")}  }
         ),
       );
 
-      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 4 });
+      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 5 });
     });
 
     it("reports a ui-kit block's design file in the folder of a design ui-kit has a folder for", async () => {
@@ -570,7 +570,7 @@ ${loads("dark")}  }
         designs({ "soft/design.ts": "export {};" }, { "soft/_tokens.scss": `${SOFT} { --vc-radius: 1rem; }` }),
       );
 
-      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 2 });
+      expect(result).toEqual({ errors: [], designCount: 1, fileCount: 3 });
     });
 
     it("reports an app colour in ui-kit's token values, while the design's own may read it", async () => {

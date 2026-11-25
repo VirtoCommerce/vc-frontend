@@ -59,7 +59,16 @@ export function mergeStyles(...sets: DesignStylesType[]): DesignStylesType {
               earlier = { error };
             }
 
-            await load();
+            try {
+              await load();
+            } catch (error) {
+              // Only the later error reaches the caller's report, so the claimed earlier one is logged here.
+              if (earlier) {
+                Logger.error("Failed to load a stylesheet.", earlier.error);
+              }
+
+              throw error;
+            }
 
             if (earlier) {
               throw earlier.error;

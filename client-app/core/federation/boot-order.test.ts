@@ -153,6 +153,7 @@ vi.mock("@/shared/static-content", () => ({
 vi.mock("@/core/api/graphql/types", () => ({ GetSlugInfoDocument: {} }));
 vi.mock("@/core/utilities", () => ({
   extractHostname: vi.fn(() => "example.test"),
+  getImageUrl: vi.fn((fileName: string) => `/images/${fileName}`),
   Logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 vi.mock("@/modules/back-in-stock", () => ({ init: vi.fn() }));
@@ -338,7 +339,7 @@ describe("app-runner boot order", () => {
     });
   });
 
-  it("hands the kit the theme's thumbnail settings and the app's notifications", async () => {
+  it("hands the kit the theme's thumbnail settings, the app's images and notifications", async () => {
     await runBoot();
 
     const options = uiKitInstall.mock.calls[0]?.[1];
@@ -348,6 +349,7 @@ describe("app-runner boot order", () => {
       originalFallbackEnabled: false,
       suffixes: { sm: "s", md: "m", lg: "l" },
     });
+    expect(options?.image?.resolveFileName?.("basket.jpg")).toBe("/images/basket.jpg");
     expect(options?.notifications).toBe(NOTIFICATIONS);
   });
 
