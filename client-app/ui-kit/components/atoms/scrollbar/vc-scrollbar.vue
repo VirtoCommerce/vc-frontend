@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
 import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } from "vue";
-import { FOCUSABLE_ELEMENT_SELECTOR, getColorValue, hasNegativeTabindex, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
+import { FOCUSABLE_CONTENT_SELECTOR, getColorValue, hasNegativeTabindex } from "@/ui-kit/utilities";
 import { isCollapsedBox, vcScrollbarKey } from "./vc-scrollbar-context";
 
 interface IEmits {
@@ -81,7 +81,7 @@ const isAtRight = ref(false);
 // Bumped on every real measurement: the edges are debounced, so a reader needs to know they are fresh.
 const measuredAt = ref(0);
 
-provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measuredAt });
+provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measuredAt, remeasure });
 
 // A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but a tab stop
 // on an `aria-activedescendant` listbox would break the combobox pattern, so it yields to an
@@ -118,7 +118,9 @@ function updateAutoTabStop(): void {
   // keeping it out takes an explicit -1. Set whether or not it overflows yet: a popup's list is
   // measured a debounce after it opens, and a Tab pressed before that would land on it.
   if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CHILD_SELECTOR)) {
-    const hasTabStop = [...target.querySelectorAll(TABBABLE_SELECTOR)].some((element) => !hasNegativeTabindex(element));
+    const hasTabStop = [...target.querySelectorAll(FOCUSABLE_CONTENT_SELECTOR)].some(
+      (element) => !hasNegativeTabindex(element),
+    );
 
     autoTabStop.value = hasTabStop ? undefined : -1;
     return;
@@ -133,7 +135,7 @@ function updateAutoTabStop(): void {
     return;
   }
 
-  autoTabStop.value = target.querySelector(FOCUSABLE_ELEMENT_SELECTOR) ? undefined : 0;
+  autoTabStop.value = target.querySelector(FOCUSABLE_CONTENT_SELECTOR) ? undefined : 0;
 }
 
 // The -1 only keeps the region out of the Tab order; a press on its own area (padding, the bar)
@@ -156,7 +158,7 @@ function onMousedown(event: MouseEvent): void {
   const container = target.closest(INTERACTIVE_CONTAINER_SELECTOR);
   const isOwnArea = target === region || (!!container && region.contains(container));
 
-  if (isOwnArea && target.closest(`${FOCUSABLE_ELEMENT_SELECTOR}, [tabindex]`) === region) {
+  if (isOwnArea && target.closest(`${FOCUSABLE_CONTENT_SELECTOR}, [tabindex]`) === region) {
     event.preventDefault();
   }
 }
@@ -172,6 +174,10 @@ function checkContent(): void {
 // maxWait: content that keeps changing (a spinner) would otherwise postpone the check forever.
 const scheduleContentUpdate = useDebounceFn(checkContent, 100, { maxWait: 300 });
 
+function remeasure(): void {
+  void scheduleContentUpdate();
+}
+
 onMounted(() => {
   void nextTick(checkContent);
 });
@@ -186,7 +192,7 @@ watch([() => props.vertical, () => props.horizontal, () => props.disabled], chec
 // The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
 // components grows: structural and text changes are seen by the MutationObserver, image loads
 // only by the capture-phase load listener (load doesn't bubble and isn't a mutation). Attributes
-// are watched too, since FOCUSABLE_ELEMENT_SELECTOR and the role guard both read them.
+// are watched too, since FOCUSABLE_CONTENT_SELECTOR and the role guard both read them.
 useResizeObserver(el, scheduleContentUpdate);
 useMutationObserver(el, scheduleContentUpdate, {
   childList: true,

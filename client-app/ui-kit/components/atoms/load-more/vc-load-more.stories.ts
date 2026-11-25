@@ -19,20 +19,9 @@ const meta: Meta<typeof VcLoadMore> = {
     },
   },
   argTypes: {
-    hasNextPage: { control: "boolean", description: "Another page exists. Nothing is requested without it." },
-    loading: {
-      control: "boolean",
-      description: "A page is on its way: shows the spinner and holds back further requests.",
-    },
-    itemCount: {
-      control: "number",
-      description:
-        "How many items are loaded — the loaded items, not the rendered rows. A request counts as answered once " +
-        "the count grows, and a count that drops is a list rebuilt for a new search. A failed page is not " +
-        "repeated while the list rests unchanged at its end; scrolling away and back, a smaller count or a " +
-        "rewrite of the rows it asked from retries it (rows added after them do not), and a list too short " +
-        "to scroll is retried by the consumer.",
-    },
+    hasNextPage: { control: "boolean" },
+    loading: { control: "boolean" },
+    itemCount: { control: "number" },
     tag: { control: "text" },
   },
 };
