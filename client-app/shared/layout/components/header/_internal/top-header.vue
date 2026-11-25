@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    class="flex h-10 items-center gap-1 border-b border-neutral-300 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11 print:hidden"
     data-test-id="top-header"
   >
     <Teleport to="body">
@@ -169,8 +169,6 @@
                 {{ backToOperatorLabel }}
               </span>
             </button>
-
-            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>
       </template>
@@ -211,7 +209,6 @@ import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
-import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();

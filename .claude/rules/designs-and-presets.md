@@ -25,7 +25,7 @@ what follows; the rest is review-only.
 4. **Block order in `index.scss`:** kit blocks (`vc-*`) first, then app blocks. At equal specificity the later rule
    wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
-   `blocks/vc-widget.scss`).
+   `blocks/organization-list.scss`).
 6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so
    classic computes exactly as before. A new token is public API: agree its name with the developer first.
 7. **Preset stylesheet** (`assets/presets/<preset>.scss`): every rule inside `@layer vc.preset`; colours only.

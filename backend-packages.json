@@ -9,7 +9,12 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
+      "Modules": [
+        {
+          "Id": "VirtoCommerce.ProductComparison",
+          "BlobName": "VirtoCommerce.ProductComparison_3.1000.0.zip"
+        }
+      ]
     },
     {
       "Name": "GithubReleases",
@@ -109,7 +114,7 @@
         },
         {
           "Id": "VirtoCommerce.Notifications",
-          "Version": "3.1018.0"
+          "Version": "3.1018.2"
         },
         {
           "Id": "VirtoCommerce.XPickup",
@@ -145,7 +150,7 @@
         },
         {
           "Id": "VirtoCommerce.OTP",
-          "Version": "3.1001.0"
+          "Version": "3.1003.0"
         },
         {
           "Id": "VirtoCommerce.XOrder",

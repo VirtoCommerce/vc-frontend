@@ -25,11 +25,17 @@
               />
             </component>
 
-            <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
+            <div
+              v-if="item.title"
+              class="my-3 text-2xl font-bold uppercase"
+              v-bind="getPreviewFieldAttrs(`slides.${index}.title`)"
+            >
               {{ item.title }}
             </div>
 
-            <div v-if="item.text" class="text-sm">{{ item.text }}</div>
+            <div v-if="item.text" class="text-sm" v-bind="getPreviewFieldAttrs(`slides.${index}.text`)">
+              {{ item.text }}
+            </div>
           </SwiperSlide>
         </Swiper>
 
@@ -52,8 +58,9 @@ import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
-import { isSafeLinkUrl } from "@/core/utilities/common";
+import { toSafeLinkUrl } from "@/core/utilities/common";
 import { BREAKPOINTS } from "@/ui-kit/constants";
+import { getPreviewFieldAttrs } from "../sections";
 
 // synced with Page builder module config/schemas/sections/slider.json and builder.io builderIOComponents
 type SlideHeightType = "small" | "medium" | "large" | "auto";
@@ -119,7 +126,7 @@ const wrapperClasses = computed(() => {
 });
 
 function getSafeUrl(item: SlideType): string | undefined {
-  return item.url && isSafeLinkUrl(item.url) ? item.url : undefined;
+  return toSafeLinkUrl(item.url);
 }
 
 function getLinkTag(item: SlideType) {
@@ -191,7 +198,7 @@ function getLinkAttr(item: SlideType) {
 
 .slider-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>

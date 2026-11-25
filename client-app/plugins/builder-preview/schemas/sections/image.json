@@ -13,6 +13,7 @@
       "id": "alttext",
       "label": "Alternative Text",
       "type": "string",
+      "translatable": true,
       "tab": "Content"
     }
   ]
