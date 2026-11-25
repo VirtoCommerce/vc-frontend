@@ -227,6 +227,7 @@ watchEffect(() => {
   $disabled: "";
 
   --bg-color: var(--color-additional-50);
+  --selected-edge-color: var(--vc-line-item-selected-edge-color, var(--color-primary-500));
 
   @apply relative flex flex-col gap-2 p-3 rounded-[--vc-radius] border shadow-md bg-[--bg-color];
 
@@ -236,7 +237,10 @@ watchEffect(() => {
 
   &--selected {
     $selected: &;
-    --bg-color: var(--color-secondary-50);
+
+    &::before {
+      @apply content-[''] absolute inset-0 z-[2] rounded-[inherit] border-s-4 border-s-[--selected-edge-color] pointer-events-none;
+    }
   }
 
   &--removable {
