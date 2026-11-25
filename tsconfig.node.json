@@ -9,6 +9,8 @@
     "client-app/core/theme-snapshot/inline-script.ts",
     "client-app/core/theme-snapshot/query.ts",
     "client-app/core/theme-snapshot/switch.ts",
+    "client-app/shared/static-content/custom-sections/design-facts.ts",
+    "client-app/shared/static-content/custom-sections/kit/limits.ts",
     "client-app/ui-kit/constants/tailwind.ts",
     "client-app/ui-kit/utilities/icon-aliases.ts",
     "*",

@@ -30,10 +30,11 @@ import { SectionOverlay } from "./section-overlay";
 import { installLeavingLinkGuard } from "./utils";
 import type { IRenderMessage, IResolvedData } from "./builder-preview.protocol";
 import type { IEditableText, IEndedEdit } from "./inline-text-editor";
-import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
+import type { PageBuilderSchemaItemType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { SharedComponentOverlay } from "./shared-component-overlay";
-import type { IThemeDraft, IThemeItem, IThemePageDocument } from "@/core/theme-snapshot";
+import type { IThemeDraft, IThemeItem, IThemePageDocument, IThemeSchemaField } from "@/core/theme-snapshot";
 import type { IThemeConfigPreset } from "@/core/types";
+import type { ICustomSectionKitCatalog } from "@/shared/static-content/custom-sections/kit/catalog";
 import type { Router } from "vue-router";
 
 export const PREVIEW_CAPABILITIES = ["templates", "layouts", "groups", "inline-edit", "color-scheme", "inspector"];
@@ -42,17 +43,8 @@ const LOG_SCOPE = "[builder-preview]";
 
 type AnswerKindType = "render" | "draft";
 
-interface ISchemaField {
-  id?: string;
-  type?: string;
-  format?: string;
-  translatable?: boolean;
-  multiline?: boolean;
-  element?: ISchemaField[];
-}
-
 interface ISchemaWithSettings {
-  settings?: ISchemaField[];
+  settings?: IThemeSchemaField[];
   includeShared?: string[];
 }
 
@@ -60,21 +52,34 @@ interface ITemplateSchema {
   previewMessage?: { templateKey?: string };
 }
 
-export function buildPreviewCatalog(schemas: PageBuilderSchemaType): Record<string, unknown> {
+/** `kit`: the tags and behaviors custom section templates may use, so the agent and the server learn them. */
+export function buildPreviewCatalog(
+  schemas: PageBuilderSchemaType,
+  kit: ICustomSectionKitCatalog,
+): Record<string, unknown> {
   const catalog = {
     ...schemas,
     templates: withBuiltInDocuments(schemas.templates),
     paletteTokens: { light: tokensOf(presets), dark: tokensOf(darkPresets) },
+    kit,
   };
 
   return {
     ...catalog,
-    hash: hashOf(JSON.stringify(catalog)),
+    hash: hashOf(JSON.stringify({ ...catalog, sections: withoutCustomSections(catalog.sections) })),
     protocol: PREVIEW_PROTOCOL,
     capabilities: PREVIEW_CAPABILITIES,
     conditions: getTemplateConditionDescriptors(),
     builtInTemplates: Object.keys(BUILT_IN_TEMPLATES),
   };
+}
+
+/**
+ * The server takes the theme's custom types from the theme, not from the catalog, so they leave the hash alone: the
+ * same storefront keeps one catalog whatever the types or the language they are shown in.
+ */
+function withoutCustomSections(sections: PageBuilderSchemaItemType): PageBuilderSchemaItemType {
+  return Object.fromEntries(Object.entries(sections).filter(([, schema]) => !schema.custom));
 }
 
 /** A template without a theme file is the built-in one: the designer opens and copies it from `default`. */
@@ -431,13 +436,13 @@ export function findSchemaField(
   schemas: PageBuilderSchemaType | undefined,
   itemType: string,
   path: (string | number)[],
-): ISchemaField | undefined {
+): IThemeSchemaField | undefined {
   const schema = (schemas?.sections[itemType] ?? schemas?.blocks[itemType]) as ISchemaWithSettings | undefined;
   const sharedFields = (schema?.includeShared ?? []).flatMap(
     (name) => (schemas?.shared[name] as ISchemaWithSettings | undefined)?.settings ?? [],
   );
-  let fields: ISchemaField[] | undefined = [...(schema?.settings ?? []), ...sharedFields];
-  let field: ISchemaField | undefined;
+  let fields: IThemeSchemaField[] | undefined = [...(schema?.settings ?? []), ...sharedFields];
+  let field: IThemeSchemaField | undefined;
 
   for (const key of path.filter((step): step is string => typeof step === "string")) {
     field = fields?.find((candidate) => candidate.id === key);

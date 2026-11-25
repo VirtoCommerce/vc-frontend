@@ -1,6 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { toNonEmptyString } from "@/core/utilities/common";
 import { isSiteBuilderEnabled } from "./enabled";
 import { resolveTranslatableValues } from "./translatable";
 import type { IPublishedTheme, IThemeDraft, IThemeView } from "./types";
@@ -30,6 +31,8 @@ function _useThemeSnapshot() {
       footer: parts?.footer ?? snapshot?.footer,
       brand: parts?.brand ?? snapshot?.brand ?? {},
       palette: parts?.palette === undefined ? snapshot?.palette : (parts.palette ?? undefined),
+      customSections: parts?.customSections ?? snapshot?.customSections ?? {},
+      assetsBaseUrl: toNonEmptyString(snapshot?.assetsBaseUrl) ?? toNonEmptyString(parts?.assetsBaseUrl),
       menus: published.value?.menus ?? [],
       isDraft: !!parts,
     };
