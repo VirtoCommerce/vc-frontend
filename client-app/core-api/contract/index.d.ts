@@ -780,8 +780,6 @@ interface IProps$w {
     error?: boolean;
     noBorder?: boolean;
     seamless?: boolean;
-    /** A popup this field controls (a select's list) is open; the field then draws the focus ring (none when `seamless`). */
-    opened?: boolean;
     hidePasswordSwitcher?: boolean;
     showEmptyDetails?: boolean;
     hideDetails?: boolean;
@@ -803,6 +801,7 @@ interface IProps$w {
     browserTooltip?: "enabled" | "disabled";
     selectOnClick?: boolean;
     testIdInput?: string;
+    /** Attributes for the native input. A focused input with `aria-expanded: "true"` (a popup the field controls is open) draws the focus ring, even after a mouse click; never when `seamless`. */
     aria?: Record<string, string | number | null>;
     disableAutocomplete?: boolean;
     tabindex?: string | number;

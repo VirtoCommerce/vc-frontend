@@ -10,7 +10,6 @@
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
         'vc-input--seamless': seamless,
-        'vc-input--opened': opened,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
@@ -130,8 +129,6 @@ export interface IProps {
   error?: boolean;
   noBorder?: boolean;
   seamless?: boolean;
-  /** A popup this field controls (a select's list) is open; the field then draws the focus ring (none when `seamless`). */
-  opened?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
   hideDetails?: boolean;
@@ -158,6 +155,7 @@ export interface IProps {
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
+  /** Attributes for the native input. A focused input with `aria-expanded: "true"` (a popup the field controls is open) draws the focus ring, even after a mouse click; never when `seamless`. */
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
   tabindex?: string | number;
@@ -181,7 +179,6 @@ const props = withDefaults(defineProps<IProps>(), {
   tabindex: 0,
   hideDetails: false,
   seamless: false,
-  opened: false,
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -322,7 +319,6 @@ provide<VcInputContextType>("inputContext", {
   $error: "";
   $noBorder: "";
   $seamless: "";
-  $opened: "";
   $center: "";
   $truncate: "";
 
@@ -389,10 +385,6 @@ provide<VcInputContextType>("inputContext", {
     $seamless: &;
   }
 
-  &--opened {
-    $opened: &;
-  }
-
   &--center {
     $center: &;
   }
@@ -411,13 +403,14 @@ provide<VcInputContextType>("inputContext", {
     font-size: var(--text-size);
     line-height: var(--line-height);
 
+    // Expanded rings only with focus, so an always-open inline list does not; `:where` keeps the focus-visible weight.
     &:has(input:focus-visible),
-    #{$opened} & {
+    &:has(input:where([aria-expanded="true"]):focus) {
       @include focus-ring;
     }
 
-    // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
-    #{$pointerModality}:not(#{$opened}) & {
+    // A read-only field takes no typing, so a mouse click on it is not a reason to ring; an open popup still is.
+    #{$pointerModality} &:not(:has(input[aria-expanded="true"])) {
       @apply outline-none;
     }
 
@@ -438,7 +431,8 @@ provide<VcInputContextType>("inputContext", {
       @apply border-0 bg-transparent p-0;
 
       // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
-      &:has(input:focus-visible) {
+      &:has(input:focus-visible),
+      &:has(input[aria-expanded="true"]) {
         @apply outline-none;
       }
 
@@ -446,10 +440,6 @@ provide<VcInputContextType>("inputContext", {
       &:has(input:disabled) {
         @apply bg-transparent;
       }
-    }
-
-    #{$seamless}#{$opened} & {
-      @apply outline-none;
     }
 
     #{$seamless}#{$sizeXs} &,

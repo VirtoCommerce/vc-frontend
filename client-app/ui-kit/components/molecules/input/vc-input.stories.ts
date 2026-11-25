@@ -51,11 +51,6 @@ const meta: Meta = {
       description:
         "Removes the details row entirely, including its `aria-describedby` association — `message`/`counter` are silently ignored, not just visually hidden. Only pair with a parent that owns its own error display and description association, as VcDateRangeInput does.",
     },
-    opened: {
-      control: "boolean",
-      description:
-        "A popup this field controls is open (a select's list), so the field draws the focus ring whether or not it holds focus (none when `seamless`).",
-    },
     noBorder: {
       control: "boolean",
       description:
@@ -330,20 +325,21 @@ export const Readonly: StoryType = {
   },
 };
 
-export const Opened: StoryType = {
+export const Expanded: StoryType = {
   args: {
     ...commonArgs,
     readonly: true,
-    opened: true,
+    aria: { "aria-haspopup": "listbox", "aria-expanded": "true" },
     modelValue: "Albania",
   },
   parameters: {
     docs: {
       description: {
-        story: "`opened` draws the focus ring while a popup the field controls is open.",
+        story:
+          'A focused field whose input is `aria-expanded="true"` draws the focus ring while the popup it controls is open, even after a mouse click. Click the field to see it; without focus an expanded field draws none, as an always-open inline list should.',
       },
       source: {
-        code: `<VcInput label="Country" readonly :opened="isOpen" model-value="Albania" />`,
+        code: `<VcInput label="Country" readonly :aria="{ 'aria-haspopup': 'listbox', 'aria-expanded': String(isOpen) }" model-value="Albania" />`,
       },
     },
   },

@@ -21,7 +21,6 @@
     :disabled="disabled"
     :readonly="readonly || !autocomplete"
     :error="error"
-    :opened="opened"
     truncate
     disable-autocomplete
     @update:model-value="$emit('update:search', String($event ?? ''))"

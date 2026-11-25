@@ -3201,19 +3201,19 @@ describe("VcSelect", () => {
       expect(document.activeElement).toBe(input.element);
     });
 
-    it("draws the field as opened only while the list is open", async () => {
+    it("expands its input, which rings the field, only while the list is open", async () => {
       const wrapper = createWrapper({ items: ITEMS });
-      const field = wrapper.get(".vc-select-field");
+      const input = wrapper.get("input");
 
-      expect(field.classes()).not.toContain("vc-input--opened");
+      expect(input.attributes("aria-expanded")).toBe("false");
 
-      await wrapper.get("input").trigger("click");
+      await input.trigger("click");
 
-      expect(field.classes()).toContain("vc-input--opened");
+      expect(input.attributes("aria-expanded")).toBe("true");
 
-      await wrapper.get("input").trigger("keydown", { key: "Escape" });
+      await input.trigger("keydown", { key: "Escape" });
 
-      expect(field.classes()).not.toContain("vc-input--opened");
+      expect(input.attributes("aria-expanded")).toBe("false");
     });
 
     it("rings the highlight moved by the keyboard, not the one moved by the pointer", async () => {

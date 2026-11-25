@@ -1,11 +1,42 @@
-import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import postcss from "postcss";
+import { compileString } from "sass";
+import tailwindcss from "tailwindcss";
+import loadConfig from "tailwindcss/loadConfig.js";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
+import { parse } from "vue/compiler-sfc";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "./vc-input.vue";
 import type { DirectiveBinding } from "vue";
+
+enableAutoUnmount(afterEach);
+
+// Not `new URL("…", import.meta.url)`: Vite rewrites that literal form into an http:// dev-server URL.
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const CLIENT_APP = path.resolve(HERE, "../../../..");
+
+async function compileInputStyles(): Promise<string> {
+  const { descriptor } = parse(readFileSync(path.join(HERE, "vc-input.vue"), "utf8"));
+  const { css } = compileString(descriptor.styles[0].content, {
+    importers: [
+      {
+        findFileUrl: (url) => (url.startsWith("@/") ? pathToFileURL(path.join(CLIENT_APP, url.slice(2))) : null),
+      },
+    ],
+  });
+  const tailwind = tailwindcss({
+    ...loadConfig(path.resolve(CLIENT_APP, "../tailwind.config.ts")),
+    content: [{ raw: "" }],
+  });
+
+  return (await postcss([tailwind]).process(css, { from: undefined })).css;
+}
 
 const stubs = { VcLabel: true, VcButton: true, VcIcon: true, VcTooltip: true };
 
@@ -195,15 +226,79 @@ describe("VcInput focus modality", () => {
   });
 });
 
-describe("VcInput opened", () => {
-  it("marks the field while a popup it controls is open", async () => {
-    const wrapper = createInputWrapper({ props: { readonly: true } });
+// The ring is CSS alone, so these run VcInput's own stylesheet through jsdom's cascade.
+describe("VcInput focus ring", () => {
+  const RING = "var(--vc-focus-ring-color)";
+  const style = document.createElement("style");
 
-    expect(wrapper.classes()).not.toContain("vc-input--opened");
+  beforeAll(async () => {
+    style.textContent = await compileInputStyles();
+    document.head.append(style);
+  });
 
-    await wrapper.setProps({ opened: true });
+  afterAll(() => style.remove());
 
-    expect(wrapper.classes()).toContain("vc-input--opened");
+  beforeEach(() => {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+  });
+
+  // The input's parent is the container, the element that draws the ring.
+  function outline(wrapper: ReturnType<typeof createInputWrapper>): string {
+    return getComputedStyle(wrapper.get("input").element.parentElement!).outline;
+  }
+
+  it("rings an expanded field while it holds focus", async () => {
+    const wrapper = createInputWrapper({
+      props: { readonly: true, aria: { "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).toContain(RING);
+  });
+
+  it("does not ring an expanded field without focus, as with an always-open inline list", () => {
+    const wrapper = createInputWrapper({
+      props: { type: "search", aria: { role: "combobox", "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    expect(outline(wrapper)).not.toContain(RING);
+  });
+
+  it("does not ring a read-only field focused by pointer unless it is expanded", async () => {
+    const wrapper = createInputWrapper({
+      props: { readonly: true, aria: { "aria-expanded": "false" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).toContain(RING);
+
+    document.dispatchEvent(new PointerEvent("pointerdown"));
+    await nextTick();
+
+    expect(outline(wrapper)).not.toContain(RING);
+
+    await wrapper.setProps({ aria: { "aria-expanded": "true" } });
+
+    expect(outline(wrapper)).toContain(RING);
+  });
+
+  it("never rings a seamless field, even expanded and focused", async () => {
+    const wrapper = createInputWrapper({
+      props: { seamless: true, aria: { "aria-expanded": "true" } },
+      attachTo: document.body,
+    });
+
+    wrapper.get("input").element.focus();
+    await nextTick();
+
+    expect(outline(wrapper)).not.toContain(RING);
   });
 });
 
