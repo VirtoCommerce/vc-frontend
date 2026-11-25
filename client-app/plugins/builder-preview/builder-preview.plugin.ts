@@ -1,5 +1,5 @@
 import { shallowRef } from "vue";
-import { useGlobalInterceptors } from "@/core/api/common";
+import { useFetch, useGlobalInterceptors } from "@/core/api/common";
 import { getMe } from "@/core/api/graphql/account/queries/getMe";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
@@ -18,6 +18,7 @@ import {
 } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
+import { watchCustomSectionCatalog } from "./custom-sections-catalog";
 import { buildPreviewCatalog, createPreviewV2 } from "./preview-v2";
 import { getRegisteredComponents } from "./register-components";
 import {
@@ -30,7 +31,7 @@ import type { IRenderMessage, PreviewV2MessageType, TransferDataType } from "./b
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { PreviewV2Type } from "./preview-v2";
-import type { IThemeConfig } from "@/core/types";
+import type { ConnectTokenResponseType, IThemeConfig } from "@/core/types";
 import type { IPageContent } from "@/shared/static-content/types";
 import type { App, ShallowRef } from "vue";
 import type { Router } from "vue-router";
@@ -177,6 +178,10 @@ let originalUserId: string | undefined;
 let originalOrganizationId: string | undefined;
 let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
+let authRenewTimer: ReturnType<typeof setTimeout> | undefined;
+
+const PREVIEW_GRANT_TYPE = "site_builder_preview";
+const AUTH_RENEW_LEAD_SECONDS = 60;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
@@ -255,7 +260,7 @@ function createOverlay(
   installPageInputGuard(interactiveBlocker, isPageInputAllowed);
 
   const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
-    window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
+    postToDesigner(builderOrigin, type, { sectionId });
   };
   const sharedComponentOverlay = new SharedComponentOverlay(
     bodyEl,
@@ -294,7 +299,7 @@ function getPreviewV2(context: IPreviewContext): PreviewV2Type | undefined {
       body: context.bodyEl,
       blocker: context.blocker,
       schemas: () => context.schemas.value,
-      post: (type, data) => window.parent.postMessage({ source: "preview", type, data }, context.builderOrigin),
+      post: (type, data) => postToDesigner(context.builderOrigin, type, data),
       renderPage: async (message) => {
         if (router.currentRoute.value.path !== DESIGNER_PREVIEW_PATH) {
           await router.push(DESIGNER_PREVIEW_PATH);
@@ -420,8 +425,14 @@ async function handleMessage(context: IPreviewContext, data: TransferDataType | 
 }
 
 async function applyAuth(context: IPreviewContext, message: TransferDataType): Promise<void> {
-  const token = message.token?.access_token || null;
-  const userId = message.userId || null;
+  clearTimeout(authRenewTimer);
+  authRenewTimer = undefined;
+
+  const { token, userId, renewal } = await resolvePreviewAuth(message);
+
+  if (renewal) {
+    authRenewTimer = setTimeout(() => postAuthRenew(context, renewal.userId), renewal.delaySeconds * 1000);
+  }
 
   // A renewed token of the user shown: their organization, branding and loaded data stay right.
   if (userId === previewUserId && !!token === !!previewToken) {
@@ -448,6 +459,62 @@ async function applyAuth(context: IPreviewContext, message: TransferDataType): P
   staticPagePreview.value = undefined;
   context.sharedComponentOverlay?.update([], []);
   await context.previewV2?.reload();
+}
+
+async function resolvePreviewAuth(message: TransferDataType): Promise<{
+  token: string | null;
+  userId: string | null;
+  renewal?: { userId: string; delaySeconds: number };
+}> {
+  const userId = message.userId || null;
+
+  if (!message.code || !userId) {
+    return { token: message.token?.access_token || null, userId };
+  }
+
+  const response = await exchangePreviewCode(message.code);
+
+  if (!response) {
+    return { token: null, userId: null, renewal: { userId, delaySeconds: 0 } };
+  }
+
+  return {
+    token: response.accessToken,
+    userId,
+    renewal: { userId, delaySeconds: Math.max(0, response.expiresIn - AUTH_RENEW_LEAD_SECONDS) },
+  };
+}
+
+/** The storefront host must mint the token: one minted on the platform host fails its issuer check here. */
+async function exchangePreviewCode(code: string): Promise<{ accessToken: string; expiresIn: number } | null> {
+  try {
+    const { error, data } = await useFetch("/connect/token", {
+      onFetchError: (context) => context,
+      updateDataOnError: true,
+    })
+      .post(new URLSearchParams({ grant_type: PREVIEW_GRANT_TYPE, code }), "application/x-www-form-urlencoded")
+      .json<ConnectTokenResponseType>();
+    const accessToken = data.value?.access_token;
+    const expiresIn = data.value?.expires_in;
+
+    if (error.value || !accessToken || !expiresIn) {
+      Logger.error("[builder-preview] Failed to exchange the preview code", data.value?.error ?? error.value);
+      return null;
+    }
+
+    return { accessToken, expiresIn };
+  } catch (e) {
+    Logger.error("[builder-preview] Failed to exchange the preview code", e);
+    return null;
+  }
+}
+
+function postAuthRenew(context: IPreviewContext, userId: string): void {
+  postToDesigner(context.builderOrigin, "authRenew", { userId });
+}
+
+function postToDesigner(builderOrigin: string, type: string, data: unknown): void {
+  window.parent.postMessage({ source: "preview", type, data }, builderOrigin);
 }
 
 async function getPreviewUserOrganizationId(userId: string): Promise<string | undefined> {
@@ -538,9 +605,18 @@ export default {
       };
       handleMessages(context);
 
-      const customComponents = await getRegisteredComponents();
-      context.schemas.value = customComponents;
-      loadedNotifier.setData(isPreviewV2Frame() ? buildPreviewCatalog(customComponents) : customComponents);
+      const registeredSchemas = await getRegisteredComponents();
+
+      if (isPreviewV2Frame()) {
+        watchCustomSectionCatalog(registeredSchemas, (schemas, kit) => {
+          context.schemas.value = schemas;
+          loadedNotifier.setData(buildPreviewCatalog(schemas, kit));
+        });
+      } else {
+        context.schemas.value = registeredSchemas;
+        loadedNotifier.setData(registeredSchemas);
+      }
+
       await options.router.push(DESIGNER_PREVIEW_PATH);
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps

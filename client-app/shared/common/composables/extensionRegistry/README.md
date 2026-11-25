@@ -8,6 +8,9 @@
 A widget on a dashboard the user arranges (the account dashboard, a plugin's own) joins through `registerBlock`
 instead: [S9 · Add a widget to a dashboard](../../../../core/federation/scenarios/s9-add-a-dashboard-widget.md).
 
+A tag or a behavior for custom section templates joins through `registerCustomSectionTag` /
+`registerCustomSectionBehavior` instead ([`kit/registry.ts`](../../../static-content/custom-sections/kit/registry.ts)).
+
 ---
 
 ## Core pieces

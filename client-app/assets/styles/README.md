@@ -59,7 +59,7 @@ How to verify:
 `_layers.scss` is the single source of the order:
 
 ```css
-@layer theme, base, plugins-vendor, vc, components, plugins, utilities;
+@layer theme, base, plugins-vendor, vc, components, plugins, utilities, custom-sections;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
 ```
@@ -69,7 +69,7 @@ How to verify:
   resolve, as in `storybook-styles/`), and the entries can never disagree.
 - Every layer name used anywhere is in this statement. `yarn check:css-layers` fails otherwise
   (it reads the app build; Storybook is not checked).
-- Top-level names other than `vc`, `plugins-vendor` and `plugins` are Tailwind v4's own, in its
+- Top-level names other than `vc`, `plugins-vendor`, `plugins` and `custom-sections` are Tailwind v4's own, in its
   own relative order, so moving to v4 does not move our layers. `plugins` is reserved for Module
   Federation plugin CSS: above every host component layer, below the host utilities.
   `plugins-vendor` is reserved for third-party CSS a plugin bundles: above host preflight, below
@@ -97,6 +97,7 @@ How to verify:
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
+| `custom-sections` | the CSS of a Site Builder custom section, added at runtime per type and scoped to its sections (`shared/static-content/custom-sections`): above every other layer, so it wins inside its own section over every layered rule; unlayered CSS (`_custom.scss`, a plugin's own stylesheet) still wins, except over a section's `!important`. It needs `@scope` (Chrome 118, Safari 17.4, Firefox 128): an older browser renders custom sections unstyled |
 
 Element-level dark token remaps stay with their dark files (`vc.kit` / `vc.app`), never in `theme`.
 

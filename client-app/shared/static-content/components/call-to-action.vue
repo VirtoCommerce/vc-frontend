@@ -39,7 +39,7 @@ defineProps<IProps>();
 <style lang="scss">
 .call-to-action-block {
   &.bg-neutral-800 .text-50 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>

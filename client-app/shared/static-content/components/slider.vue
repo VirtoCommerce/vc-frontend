@@ -198,7 +198,7 @@ function getLinkAttr(item: SlideType) {
 
 .slider-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>
