@@ -11,6 +11,8 @@
     @include meta.load-css("blocks/vc-widget");
     @include meta.load-css("blocks/footer-links");
     @include meta.load-css("blocks/vc-container");
+    @include meta.load-css("blocks/organization-switcher");
+    @include meta.load-css("blocks/organization-list");
   }
 
   html.dark[data-design="soft"] {

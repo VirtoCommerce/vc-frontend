@@ -9,6 +9,7 @@ import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
 import { federatedHostPlugin, federatedAlias, federatedDefine, isFederatedHost } from "./vite.federation.js";
+import { designFactsDefine } from "./vite.site-builder-design.js";
 import { themeSnapshotPlugin } from "./vite.site-builder.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
@@ -144,6 +145,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
       ...federatedDefine(),
+      ...designFactsDefine(),
     },
     build: {
       target: browserslistToEsbuild(),

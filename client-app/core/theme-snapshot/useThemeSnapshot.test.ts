@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { IPublishedTheme } from "./types";
+import type { IPublishedTheme, IThemeDraft } from "./types";
 
 const THEME: IPublishedTheme = {
   storeId: "B2B-store",
@@ -87,6 +87,67 @@ describe("useThemeSnapshot", () => {
 
       setDraft({ palette: null });
       expect(theme.value?.palette).toBeUndefined();
+    });
+  });
+
+  describe("theme customSections", () => {
+    const TYPE = {
+      format: 1 as const,
+      name: "Stats",
+      schema: { settings: [{ id: "title", type: "string" }] },
+      template: "<section>{{ settings.title }}</section>",
+      css: "",
+    };
+
+    it("takes the draft's types in place of every published one, and the published ones when the draft leaves them out", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, customSections: { "custom-stats": TYPE } } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ brand: {} });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-stats"]);
+
+      setDraft({ customSections: { "custom-hero": TYPE } });
+      expect(Object.keys(theme.value?.customSections ?? {})).toEqual(["custom-hero"]);
+
+      setDraft({ customSections: {} });
+      expect(theme.value?.customSections).toEqual({});
+    });
+
+    it("names the asset library only as the published snapshot does", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: "https://cdn/published" } });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+
+      const draftNamingAnother = { brand: {}, assetsBaseUrl: "https://evil.example/" };
+      setDraft(draftNamingAnother);
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/published");
+    });
+
+    it("takes the draft's asset library for a store whose published snapshot names none, as before its first publication", async () => {
+      const { theme, setPublished, setDraft } = await loadThemeSnapshot();
+      setPublished(null);
+
+      setDraft({ customSections: {}, assetsBaseUrl: "https://cdn/draft" });
+      expect(theme.value?.assetsBaseUrl).toBe("https://cdn/draft");
+
+      const draftWithAnotherShape = { customSections: {}, assetsBaseUrl: 1 };
+      setDraft(draftWithAnotherShape as unknown as IThemeDraft);
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
+    });
+
+    it.each([[""], [1]])("names no asset library for a snapshot base of %j", async (assetsBaseUrl) => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished({ ...THEME, snapshot: { ...THEME.snapshot, assetsBaseUrl: assetsBaseUrl as string } });
+
+      expect(theme.value?.assetsBaseUrl).toBeUndefined();
+    });
+
+    it("is empty for a snapshot without custom sections", async () => {
+      const { theme, setPublished } = await loadThemeSnapshot();
+      setPublished(THEME);
+
+      expect(theme.value?.customSections).toEqual({});
     });
   });
 });

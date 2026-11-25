@@ -59,7 +59,7 @@ How to verify:
 `_layers.scss` is the single source of the order:
 
 ```css
-@layer theme, base, plugins-vendor, vc, components, plugins, utilities;
+@layer theme, base, plugins-vendor, vc, components, plugins, utilities, custom-sections;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
 ```
@@ -69,7 +69,7 @@ How to verify:
   resolve, as in `storybook-styles/`), and the entries can never disagree.
 - Every layer name used anywhere is in this statement. `yarn check:css-layers` fails otherwise
   (it reads the app build; Storybook is not checked).
-- Top-level names other than `vc`, `plugins-vendor` and `plugins` are Tailwind v4's own, in its
+- Top-level names other than `vc`, `plugins-vendor`, `plugins` and `custom-sections` are Tailwind v4's own, in its
   own relative order, so moving to v4 does not move our layers. `plugins` is reserved for Module
   Federation plugin CSS: above every host component layer, below the host utilities.
   `plugins-vendor` is reserved for third-party CSS a plugin bundles: above host preflight, below
@@ -97,6 +97,7 @@ How to verify:
 | `components.tw` | `@tailwind components` |
 | `plugins` | reserved, empty |
 | `utilities` | declared, empty on Tailwind 3 |
+| `custom-sections` | the CSS of a Site Builder custom section, added at runtime per type and scoped to its sections (`shared/static-content/custom-sections`): above every other layer, so it wins inside its own section over every layered rule; unlayered CSS (`_custom.scss`, a plugin's own stylesheet) still wins, except over a section's `!important`. It needs `@scope` (Chrome 118, Safari 17.4, Firefox 128): an older browser renders custom sections unstyled |
 
 Element-level dark token remaps stay with their dark files (`vc.kit` / `vc.app`), never in `theme`.
 
@@ -225,13 +226,10 @@ overridden on that element's block, not on `html`: in the design's `blocks/<bloc
 (`vc-input.scss`, `vc-date-range-input.scss`), or on that block in `_custom.scss`. Tooltips and
 dropdown menus set `--vc-popover-radius` on their popover the same way; set `--vc-tooltip-radius`
 and `--vc-dropdown-menu-radius` instead, on `html` as usual.
-Soft's widget block sets three tokens on `.vc-widget` the same way: `--vc-widget-radius` on small,
-collapsed, header-only and footer-only widgets, `--vc-widget-border-width` on `:shadow="false"`
-widgets and `--vc-widget-padding-x` on xs and sm widgets. A widget nested in another takes all three
-back from `html` (`_tokens.scss` copies them to `--design-widget-*`), not from its parent, so your
-override on `html[data-design="soft"]` reaches it too. Override them on
-`html[data-design="soft"] .vc-widget` in `_custom.scss`: your value then applies to every widget, the
-short ones too.
+Soft's organization switcher sets `--vc-popover-padding` and `--vc-popover-border-width` on
+`.organization-switcher` the same way, and its panel subtracts both from the card's 20rem × 50vh.
+Override them on `html[data-design="soft"] .organization-switcher` in `_custom.scss`, as lengths
+(`0px`, not `0`).
 Soft's typography block sets every `--vc-typography-*` size, weight, case, line height and letter
 spacing token on the `h1`–`h6` variant modifiers, so a value on `html` doesn't reach them. Override
 them on `html[data-design="soft"] .vc-typography--variant--h1` (and so on) in `_custom.scss`: your value
@@ -265,10 +263,7 @@ offsets and its canvas, which VcFrame resets (`--vc-frame-main-min-height` still
 1. Pick a name, e.g. `mybrand`, copy `client-app/designs/soft/` to `client-app/designs/mybrand/`
    and replace `soft` with your name in the copy's `_tokens.scss` and `index.scss`. In the copy,
    delete the `blocks/` and `dark/` files and the lines that load them in `index.scss`, but keep
-   `blocks/vc-widget.scss`, and the `--design-widget-*` lines of `_tokens.scss` it reads, while you
-   keep soft's `--vc-widget-*` tokens: it keeps small widgets at classic's inset, gives short widgets
-   the smaller radius (`--vc-radius`) and shadowless ones an edge, gives a nested widget the plate's
-   tokens instead of its parent's, and sets lg widget titles to `fontSize.base`.
+   `blocks/vc-widget.scss` for soft's lg widget titles (`fontSize.base`).
 2. In `design.ts`, replace soft's font URL with your font stylesheet URLs (or leave the list empty).
 3. Edit `_tokens.scss` (already loaded in `index.scss`, see [Wiring](#wiring)): replace soft's
    values with yours and set only the tokens that differ from classic: those from the
@@ -344,6 +339,9 @@ the dark rule overrides them. Dark rules live in the same `<name>.scss`, never i
   preset's default, so a block that sets the same token on its own element (an app block, a design's
   block) wins: the footer keeps its transparent `VcWidget` plate. Never set a component's private variable
   (`--bg-color`, `--text-color`, …).
+- Soft's organizations panel paints with `--vc-plate-bg-color` (`additional-50` when unset), not
+  `--vc-widget-bg-color`: a preset that recolours its plates sets only `--vc-plate-bg-color`, as
+  paprika does; soft derives `--vc-widget-bg-color` from it, and classic widgets keep `additional-50`.
 - Target a block or BEM part only for a part with no token, and set the property itself there: the
   rule sits below the preset's `html` and styles a BEM block, element or modifier, kit (`.vc-*`) or
   app, like `.vc-widget__title` above.
@@ -475,6 +473,7 @@ this table does not list, or the table lists one the code does not read.
 | `--vc-file-uploader-radius` | VcFileUploader corners | `var(--vc-radius)` |
 | `--vc-input-radius` | VcInput and VcDateRangeInput corners | `var(--vc-radius)` |
 | `--vc-markdown-render-radius` | VcMarkdownRender corners | `var(--vc-radius)` |
+| `--vc-menu-item-radius` | VcMenuItem row corners | Not set: the root's radius (`inherit`), none by default |
 | `--vc-pagination-page-radius` | VcPagination page number corners | The `rounded` step: `var(--vc-radius-default)`, 0.25rem |
 | `--vc-popover-radius` | VcPopover corners. VcTooltip and VcDropdownMenu set it on their popover | `var(--vc-radius)` |
 | `--vc-product-card-radius` | VcProductCard corners | `var(--vc-radius)` |

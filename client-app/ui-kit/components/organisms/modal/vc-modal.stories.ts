@@ -225,3 +225,46 @@ export const ScrollableContent: StoryType = {
     },
   },
 };
+
+export const InitialFocus: StoryType = {
+  args: {
+    title: "Delete list",
+    icon: "warning",
+    variant: "danger",
+  },
+  render: (args) => ({
+    setup: () => {
+      const show = ref(false);
+      return { args, show };
+    },
+    template: `<div>
+      <VcButton @click="show = true">Open modal</VcButton>
+      <VcModal v-bind="args" :show="show" @close="show = false">
+        <p class="text-sm text-neutral-600">The list and its items will be removed.</p>
+        <template #actions="{ close }">
+          <VcButton color="danger" @click="close">Delete</VcButton>
+          <VcButton variant="outline" color="secondary" class="ms-auto" data-autofocus @click="close">Cancel</VcButton>
+        </template>
+      </VcModal>
+    </div>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A modal focuses its first focusable element when it opens. `data-autofocus` on another element (or on a wrapper around it) moves the initial focus there, so Enter on a freshly opened destructive confirmation lands on Cancel. `data-skip-autofocus` only excludes an element.",
+      },
+      source: {
+        code: `
+          <VcModal title="Delete list" variant="danger" icon="warning" :show="show" @close="show = false">
+            <p>The list and its items will be removed.</p>
+            <template #actions="{ close }">
+              <VcButton color="danger" @click="close">Delete</VcButton>
+              <VcButton variant="outline" color="secondary" data-autofocus @click="close">Cancel</VcButton>
+            </template>
+          </VcModal>
+        `,
+      },
+    },
+  },
+};
