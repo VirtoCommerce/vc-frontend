@@ -12,7 +12,7 @@ import {
 import { setupBroadcastGlobalListeners } from "./broadcast";
 import type { INotification } from "@/shared/notification";
 import type { GraphQLFormattedError } from "graphql";
-import type { RouteLocationRaw, Router } from "vue-router";
+import type { NavigationHookAfter, RouteLocationRaw, Router } from "vue-router";
 
 const h = vi.hoisted(() => {
   const user: { value: Record<string, unknown> } = { value: {} };
@@ -21,7 +21,12 @@ const h = vi.hoisted(() => {
     listeners: new Map<string, (data?: unknown) => unknown>(),
     notifyError: vi.fn(),
     report: vi.fn(),
-    router: { currentRoute: { value: {} }, push: vi.fn(), replace: vi.fn() },
+    router: {
+      currentRoute: { value: {} },
+      push: vi.fn(),
+      replace: vi.fn(),
+      afterEach: vi.fn<(hook: NavigationHookAfter) => void>(),
+    },
     client: { refetchQueries: vi.fn(), cache: { gc: vi.fn() } },
     closeAllModals: vi.fn(),
     authHeaders: { value: {} },
@@ -83,6 +88,12 @@ beforeEach(() => {
   h.fetchUser.mockReset();
   h.user.value = {};
 });
+
+// Emitters don't wait for the listener, so the next step runs while it may still be waiting for `me`
+async function emit(event: string): Promise<void> {
+  void h.listeners.get(event)?.();
+  await flushPromises();
+}
 
 function rejectedInput(field: string): GraphQLFormattedError {
   return { message: "message", extensions: { code: "VALIDATION", field, errorCode: "InvalidCharacters" } };
@@ -148,12 +159,6 @@ describe("auth errors", () => {
   let pendingUserReloads: (() => void)[];
   let reloadedUser: Record<string, unknown>;
 
-  // Emitters don't wait for the listener, so the next step runs while it may still be waiting for `me`
-  async function emit(event: string): Promise<void> {
-    void h.listeners.get(event)?.();
-    await flushPromises();
-  }
-
   // The `me` responses of every fetchUser call so far arrive
   async function reloadUser(): Promise<void> {
     pendingUserReloads.splice(0).forEach((resolve) => resolve());
@@ -162,6 +167,11 @@ describe("auth errors", () => {
 
   function pushedRouteNames(): unknown[] {
     return h.router.push.mock.calls.map(([to]) => (to as { name?: unknown }).name);
+  }
+
+  function signInWithDeadSession(): void {
+    h.user.value = SIGNED_IN_USER;
+    h.authHeaders.value = {};
   }
 
   beforeEach(async () => {
@@ -174,6 +184,7 @@ describe("auth errors", () => {
         { path: "/checkout/payment", name: "CheckoutPayment", component: {}, meta: { redirectable: false } },
       ],
     });
+    router.afterEach(h.router.afterEach.mock.calls[0][0]);
     await router.push(PAGE_PATH);
 
     h.router.currentRoute = router.currentRoute;
@@ -193,10 +204,15 @@ describe("auth errors", () => {
     );
   });
 
-  // A redirect still waiting for `me` would be shared with the next test
-  afterEach(reloadUser);
+  // A session sent to Sign In stays lost until a navigation ends elsewhere, so the next test starts after one
+  afterEach(async () => {
+    await reloadUser();
+    await router.push("/company/info");
+  });
 
   it("sends a signed-in user to NoAccess without reloading the user", async () => {
+    h.user.value = SIGNED_IN_USER;
+
     await emit(forbiddenEvent);
 
     expect(router.currentRoute.value.name).toBe("NoAccess");
@@ -212,9 +228,17 @@ describe("auth errors", () => {
     expect(h.fetchUser).not.toHaveBeenCalled();
   });
 
-  it("sends a user whose access token is gone to Sign In with a return to the page, once the user is reloaded", async () => {
-    h.user.value = SIGNED_IN_USER;
+  it("sends a guest whose request on Sign In is forbidden to NoAccess", async () => {
+    await router.push(ROUTES.SIGN_IN.PATH);
     h.authHeaders.value = {};
+
+    await emit(forbiddenEvent);
+
+    expect(router.currentRoute.value.name).toBe("NoAccess");
+  });
+
+  it("sends a user whose access token is gone to Sign In with a return to the page, once the user is reloaded", async () => {
+    signInWithDeadSession();
 
     await emit(forbiddenEvent);
 
@@ -228,19 +252,38 @@ describe("auth errors", () => {
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
   });
 
+  it("sends a user who is still signed in after the reload to NoAccess", async () => {
+    signInWithDeadSession();
+    reloadedUser = SIGNED_IN_USER;
+
+    await emit(forbiddenEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.name).toBe("NoAccess");
+    expect(pushedRouteNames()).toEqual(["NoAccess"]);
+  });
+
+  it("sends a user to NoAccess when the reload fails", async () => {
+    signInWithDeadSession();
+    h.fetchUser.mockRejectedValue(new Error("me failed"));
+
+    await emit(forbiddenEvent);
+
+    expect(router.currentRoute.value.name).toBe("NoAccess");
+  });
+
   it.each([
     ["unauthorized", "me", "forbidden"],
     ["unauthorized", "forbidden", "me"],
     ["forbidden", "unauthorized", "me"],
     ["forbidden", "me", "unauthorized"],
-  ])("ends on Sign In with one navigation when a refresh fails: %s, %s, %s", async (...steps) => {
+  ])("ends on Sign In with one reload and one navigation when a refresh fails: %s, %s, %s", async (...steps) => {
     const STEPS: Record<string, () => Promise<void>> = {
       unauthorized: () => emit(unauthorizedErrorEvent),
       forbidden: () => emit(forbiddenEvent),
       me: reloadUser,
     };
-    h.user.value = SIGNED_IN_USER;
-    h.authHeaders.value = {};
+    signInWithDeadSession();
 
     for (const step of steps) {
       await STEPS[step]();
@@ -250,6 +293,7 @@ describe("auth errors", () => {
     expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
     expect(router.currentRoute.value.query).toEqual({ returnUrl: PAGE_PATH });
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
+    expect(h.fetchUser).toHaveBeenCalledOnce();
   });
 
   // Sign In is a lazy route: the 403 can arrive after `me` and before the page has opened
@@ -258,8 +302,7 @@ describe("auth errors", () => {
     h.router.push.mockImplementation(
       (to: RouteLocationRaw) => new Promise((resolve) => (openSignIn = () => resolve(router.push(to)))),
     );
-    h.user.value = SIGNED_IN_USER;
-    h.authHeaders.value = {};
+    signInWithDeadSession();
 
     await emit(unauthorizedErrorEvent);
     await reloadUser();
@@ -271,25 +314,61 @@ describe("auth errors", () => {
     expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
   });
 
-  it("shares one user reload between the two events", async () => {
-    h.user.value = SIGNED_IN_USER;
+  it("keeps a 403 that arrives once Sign In is open there", async () => {
+    signInWithDeadSession();
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+    await emit(forbiddenEvent);
+
+    expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
+    expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME]);
+  });
+
+  // A leave guard that never resolves holds the push to Sign In forever
+  it("handles the next errors as usual once the user has moved on from a push to Sign In that never ended", async () => {
+    router.beforeEach((to) => (to.name === ROUTES.SIGN_IN.NAME ? new Promise<never>(() => {}) : true));
+    signInWithDeadSession();
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+    await router.push("/company/info");
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+    await emit(forbiddenEvent);
+
+    expect(h.fetchUser).toHaveBeenCalledTimes(2);
+    expect(router.currentRoute.value.name).toBe("NoAccess");
+  });
+
+  // A store open to anonymous users lets a guest check out: the guest's 401 leaves them there, the 403 does not
+  it("sends a guest to NoAccess when a 403 arrives while a 401 is reloading the user", async () => {
+    await router.push("/checkout/payment");
     h.authHeaders.value = {};
 
     await emit(unauthorizedErrorEvent);
     await emit(forbiddenEvent);
     await reloadUser();
 
-    expect(h.fetchUser).toHaveBeenCalledOnce();
+    expect(router.currentRoute.value.name).toBe("NoAccess");
   });
 
-  it.each(
-    [unauthorizedErrorEvent, forbiddenEvent].flatMap((event) => PASSWORD_AND_LOCK_FLAGS.map((flag) => [event, flag])),
-  )("stays on the page after %s when the reloaded user has %s", async (event, flag) => {
-    h.user.value = SIGNED_IN_USER;
+  // As on dev: nothing tells a guest's 403 from a missing permission
+  it("sends a guest to NoAccess when a 403 follows the 401 that sent them to Sign In", async () => {
     h.authHeaders.value = {};
-    reloadedUser = { [flag]: true };
 
-    await emit(event);
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+    await emit(forbiddenEvent);
+
+    expect(pushedRouteNames()).toEqual([ROUTES.SIGN_IN.NAME, "NoAccess"]);
+  });
+
+  it.each(PASSWORD_AND_LOCK_FLAGS)("stays on the page after a 401 when the reloaded user has %s", async (flag) => {
+    h.user.value = SIGNED_IN_USER;
+    reloadedUser = { ...SIGNED_IN_USER, [flag]: true };
+
+    await emit(unauthorizedErrorEvent);
     await reloadUser();
 
     expect(router.currentRoute.value.fullPath).toBe(PAGE_PATH);
@@ -299,8 +378,7 @@ describe("auth errors", () => {
   // Checkout can't be a returnUrl, so there is no way back to offer
   it("sends a session that died on a page with no way back to Sign In without a return", async () => {
     await router.push("/checkout/payment");
-    h.user.value = SIGNED_IN_USER;
-    h.authHeaders.value = {};
+    signInWithDeadSession();
 
     await emit(unauthorizedErrorEvent);
     await reloadUser();
@@ -308,6 +386,17 @@ describe("auth errors", () => {
     expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
     expect(router.currentRoute.value.query).toEqual({});
     expect(h.closeAllModals).toHaveBeenCalledOnce();
+  });
+
+  it("sends a session that died on a page already carrying a return to Sign In without another", async () => {
+    await router.push("/company/info?returnUrl=%2Fcart");
+    signInWithDeadSession();
+
+    await emit(unauthorizedErrorEvent);
+    await reloadUser();
+
+    expect(router.currentRoute.value.name).toBe(ROUTES.SIGN_IN.NAME);
+    expect(router.currentRoute.value.query).toEqual({});
   });
 
   it("stays on a page with no way back when the reloaded user is still signed in", async () => {
@@ -323,7 +412,6 @@ describe("auth errors", () => {
     expect(h.closeAllModals).not.toHaveBeenCalled();
   });
 
-  // A store open to anonymous users lets a guest check out: no session died, so the checkout is not theirs to lose
   it("leaves a guest on a page with no way back", async () => {
     await router.push("/checkout/payment");
     h.authHeaders.value = {};
@@ -337,8 +425,7 @@ describe("auth errors", () => {
 
   it("stays on a public page with no way back", async () => {
     await router.push("/403");
-    h.user.value = SIGNED_IN_USER;
-    h.authHeaders.value = {};
+    signInWithDeadSession();
 
     await emit(forbiddenEvent);
     await reloadUser();
@@ -346,46 +433,21 @@ describe("auth errors", () => {
     expect(router.currentRoute.value.fullPath).toBe("/403");
     expect(h.router.push).not.toHaveBeenCalled();
   });
-
-  it("stays on Sign In when a request made there without a token is forbidden", async () => {
-    await router.push(ROUTES.SIGN_IN.PATH);
-    h.authHeaders.value = {};
-
-    await emit(forbiddenEvent);
-    await reloadUser();
-
-    expect(router.currentRoute.value.fullPath).toBe(ROUTES.SIGN_IN.PATH);
-    expect(h.router.push).not.toHaveBeenCalled();
-  });
 });
 
 // A forced redirect leaves no modal of the page being left on top of the page it opens
 describe("forced redirects", () => {
-  const PAGE = { name: "Orders", fullPath: "/account/orders", query: {}, matched: [] };
-
-  let settleNavigation: () => void;
-
-  // Not awaited: a handler may wait for its navigation
-  async function emit(event: string) {
-    void h.listeners.get(event)?.();
-    await flushPromises();
-  }
+  const PAGE = { name: "Orders", fullPath: "/account/orders", query: {}, matched: [], meta: {} };
 
   beforeEach(() => {
     h.router.currentRoute = { value: PAGE };
-    // The navigation settles only after the test, so the modals must close without waiting for it
-    const navigation = new Promise<void>((resolve) => (settleNavigation = resolve));
+    // A navigation that never settles: the modals must close without waiting for it
+    const navigation = new Promise<void>(() => {});
     h.router.push.mockReset().mockReturnValue(navigation);
     h.router.replace.mockReset().mockReturnValue(navigation);
     h.client.refetchQueries.mockReset();
     h.user.value = {};
     h.closeAllModals.mockReset();
-  });
-
-  // A redirect still waiting for its navigation would be shared with the next test
-  afterEach(async () => {
-    settleNavigation();
-    await flushPromises();
   });
 
   it("closes the modals when an unauthorized error sends the user to Sign In", async () => {

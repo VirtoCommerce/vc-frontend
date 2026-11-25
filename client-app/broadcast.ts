@@ -99,24 +99,34 @@ export function setupBroadcastGlobalListeners() {
       client.cache.gc();
     }
   });
-  let signInRedirect: Promise<void> | undefined;
-
+  let userReload: Promise<boolean> | undefined;
   // A failed token refresh emits unauthorizedErrorEvent and lets the request go out without a token, so a
-  // forbiddenEvent follows. Both handlers share one run: one `me` request and one navigation, in either order.
-  function redirectToSignIn(): Promise<void> {
-    signInRedirect ??= reloadUserAndRedirectToSignIn().finally(() => {
-      signInRedirect = undefined;
+  // forbiddenEvent follows. Once that session is sent to Sign In, its late events are neither a missing permission nor
+  // a reason to reload the user again. Cleared by a navigation that ends anywhere else, not by the push: Sign In is a
+  // lazy route, and a leave guard that never resolves would hold a push forever.
+  let sessionLost = false;
+
+  router.afterEach(() => {
+    if (router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
+      sessionLost = false;
+    }
+  });
+
+  // Resolves to true when a user who was signed in is anonymous after the reload. Both events wait for one `me` request.
+  function reloadUser(): Promise<boolean> {
+    userReload ??= (async () => {
+      const wasSignedIn = isAuthenticated.value;
+      await fetchUser();
+      return wasSignedIn && !isAuthenticated.value;
+    })().finally(() => {
+      userReload = undefined;
     });
-    return signInRedirect;
+    return userReload;
   }
 
-  // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded first
-  async function reloadUserAndRedirectToSignIn(): Promise<void> {
-    const wasSignedIn = isAuthenticated.value;
-
-    await fetchUser();
-
-    if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
+  // The router sends a user it still holds as signed in away from Sign In, so the user is reloaded before this
+  function redirectToSignIn(sessionGone: boolean): void {
+    if (sessionLost || user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
       return;
     }
 
@@ -127,20 +137,20 @@ export function setupBroadcastGlobalListeners() {
     }
 
     const query = buildRedirectUrl(route);
+
     // A page that can't be returned to is left only by a user whose session is gone: a guest stays on their checkout,
     // and Sign In sends a user who is still signed in on to the catalog.
-    const sessionGone = wasSignedIn && !isAuthenticated.value;
-
-    if (query || (sessionGone && route.meta.redirectable === false && !route.meta.public)) {
-      const navigation = router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
+    if (query || (sessionGone && !route.meta.public)) {
+      sessionLost = sessionGone;
+      void router.push({ name: ROUTES.SIGN_IN.NAME, query: query ?? undefined });
       closeAllModals();
-      // Awaited so that the run lasts until Sign In is open: the 403 of the same dead session then joins it
-      await navigation;
     }
   }
 
   on(unauthorizedErrorEvent, async () => {
-    await redirectToSignIn();
+    if (!sessionLost) {
+      redirectToSignIn(await reloadUser());
+    }
   });
   on(graphqlErrorEvent, (errors) => {
     const graphQLErrors = errors as GraphQLFormattedError[];
@@ -192,15 +202,14 @@ export function setupBroadcastGlobalListeners() {
 
   on(forbiddenEvent, async () => {
     if (!authHeaders.value.Authorization) {
-      // No token while the user is still held as signed in, or while that user is on the way to Sign In: the session
-      // is gone, not the permission
-      if (isAuthenticated.value || signInRedirect) {
-        await redirectToSignIn();
+      if (sessionLost) {
         return;
       }
 
-      // The 403 of a dead session can also arrive after its redirect, when only the page tells it from a guest's
-      if (router.currentRoute.value.name === ROUTES.SIGN_IN.NAME) {
+      // No token while the user is still held as signed in: the session may be gone, not the permission. A failed
+      // `me` (fetchUser logs it) leaves nothing to tell, so the 403 is taken as it came.
+      if (isAuthenticated.value && (await reloadUser().catch(() => false))) {
+        redirectToSignIn(true);
         return;
       }
     }
