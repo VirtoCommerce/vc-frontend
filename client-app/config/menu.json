@@ -40,6 +40,11 @@
           "priority": 100
         },
         {
+          "id": "preferences",
+          "title": "shared.layout.header.preferences_menu.title",
+          "priority": 120
+        },
+        {
           "id": "organizations",
           "title": "common.labels.organizations",
           "icon": "case",

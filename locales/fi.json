@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "Asetukset",
+          "trigger_label": "{title}: {value}",
+          "currency": "Valuutta",
+          "appearance": "Ulkoasu",
+          "language": "Kieli",
+          "color_modes": {
+            "light": "Vaalea",
+            "dark": "Tumma",
+            "system": "Järjestelmä"
+          }
+        },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Ei tuotteita | {n} tuote | {n} tuotetta"
       },

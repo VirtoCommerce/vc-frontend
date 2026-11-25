@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
-import { VcMenuItem } from "@/ui-kit/components/molecules";
+import { VcMenuItem, VcMenuList } from "@/ui-kit/components/molecules";
 import type { VueWrapper } from "@vue/test-utils";
 
 type RequestType = {
@@ -42,7 +42,7 @@ enableAutoUnmount(afterEach);
 const stubs = {
   VcInput: {
     name: "VcInput",
-    props: ["modelValue"],
+    props: ["modelValue", "aria"],
     emits: ["clear", "input", "keydown", "update:modelValue"],
     template: '<div class="test-input"><slot name="append" /></div>',
   },
@@ -82,7 +82,7 @@ async function mountList(): Promise<VueWrapper> {
 
   const wrapper = mount(Panel, {
     attachTo: document.body,
-    global: { stubs, components: { VcMenuItem }, mocks: { $t: (key: string) => key } },
+    global: { stubs, components: { VcMenuItem, VcMenuList }, mocks: { $t: (key: string) => key } },
   });
   await flushPromises();
   return wrapper;
@@ -227,28 +227,70 @@ describe("OrganizationList: keyboard", () => {
     expect(focused()).toBe(rows[3].element);
   });
 
-  it("enters the list from the panel: Down at the first row, Up at the last", async () => {
+  it("is one tab stop: the current organization", async () => {
     const wrapper = await mountRows();
-    const panel = wrapper.get<HTMLElement>(".test-panel");
-    const rows = options(wrapper);
 
-    panel.element.focus();
-    await panel.trigger("keydown", { key: "ArrowUp" });
-    expect(focused()).toBe(rows[3].element);
-
-    panel.element.focus();
-    await panel.trigger("keydown", { key: "ArrowDown" });
-    expect(focused()).toBe(rows[0].element);
+    expect(options(wrapper).map((row) => row.attributes("tabindex"))).toEqual(["0", "-1", "-1", "-1"]);
   });
 
-  it("enters the list from the search field at the first row", async () => {
+  it("enters the list from the search field at the current organization", async () => {
     const wrapper = await mountList();
     await resolveAll();
+    const rows = options(wrapper);
 
+    rows[2].element.focus();
+    await nextTick();
+    wrapper.get<HTMLElement>(".test-panel").element.focus();
+    await nextTick();
     wrapper.findComponent({ name: "VcInput" }).vm.$emit("keydown", new KeyboardEvent("keydown", { key: "ArrowDown" }));
     await nextTick();
 
-    expect(focused()).toBe(options(wrapper)[0].element);
+    expect(focused()).toBe(rows[0].element);
+  });
+
+  it("keeps the stop on the focused row while the next page loads", async () => {
+    const wrapper = await mountList();
+    hoisted.requests
+      .splice(0)
+      .forEach((request) => request.resolve({ ...page(15), pageInfo: { hasNextPage: true, endCursor: "c1" } }));
+    await flushPromises();
+    const row = options(wrapper)[5].element;
+    row.focus();
+    await nextTick();
+
+    void (await useOrganizations()).loadOrganizations();
+    await flushPromises();
+    hoisted.requests
+      .splice(0)
+      .forEach((request) => request.resolve({ ...page(0), items: page(30).items.slice(15), totalCount: 30 }));
+    await flushPromises();
+
+    expect(options(wrapper)).toHaveLength(30);
+    expect(focused()).toBe(row);
+    expect(row.getAttribute("tabindex")).toBe("0");
+    expect(options(wrapper)[0].attributes("tabindex")).toBe("-1");
+  });
+
+  it("keeps the row hook the e2e suite selects options by", async () => {
+    const wrapper = await mountList();
+    await resolveAll();
+
+    expect(wrapper.findAll("[data-vc-organization-option] [role='option']")).toHaveLength(15);
+  });
+
+  it("names the list", async () => {
+    const wrapper = await mountList();
+
+    expect(wrapper.get('[role="listbox"]').attributes("aria-label")).toBe("common.labels.organizations");
+  });
+
+  it("keeps the search field a plain search box that controls the list", async () => {
+    const wrapper = await mountList();
+    await resolveAll();
+
+    const aria = wrapper.findComponent({ name: "VcInput" }).props("aria");
+
+    expect(aria).toEqual({ "aria-controls": wrapper.get('[role="listbox"]').attributes("id") });
   });
 });
 
@@ -287,5 +329,22 @@ describe("OrganizationList: choosing", () => {
     expect(wrapper.emitted("selected")).toBeUndefined();
     expect(options(wrapper)[0].attributes("aria-selected")).toBe("true");
     expect(options(wrapper)[1].attributes("aria-selected")).toBe("false");
+  });
+
+  it("keeps the stop on the focused row when the switch fails", async () => {
+    hoisted.trySwitch.mockResolvedValue(false);
+    const wrapper = await mountList();
+    await resolveAll();
+    const row = options(wrapper)[3];
+
+    row.element.focus();
+    await nextTick();
+    await row.trigger("click");
+    await flushPromises();
+
+    expect(hoisted.trySwitch).toHaveBeenCalledWith("org-3");
+    expect(focused()).toBe(row.element);
+    expect(row.attributes("tabindex")).toBe("0");
+    expect(options(wrapper)[0].attributes("tabindex")).toBe("-1");
   });
 });

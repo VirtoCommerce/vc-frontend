@@ -13,9 +13,12 @@
     @include meta.load-css("blocks/vc-container");
     @include meta.load-css("blocks/organization-switcher");
     @include meta.load-css("blocks/organization-list");
+    @include meta.load-css("blocks/preferences-menu");
+    @include meta.load-css("blocks/color-mode-switch");
   }
 
   html.dark[data-design="soft"] {
     @include meta.load-css("dark/vc-tab-switch-group");
+    @include meta.load-css("dark/color-mode-switch");
   }
 }

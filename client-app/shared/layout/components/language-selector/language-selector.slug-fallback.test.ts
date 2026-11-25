@@ -30,8 +30,7 @@ vi.mock("@/core/composables/useLanguages", () => ({
 
 vi.mock("@/core/api/graphql/slugInfo/queries/getSlugInfo", () => ({ getSlugInfo: hoisted.getSlugInfo }));
 
-vi.mock("@/shared/broadcast", () => ({
-  dataChangedEvent: "data-changed",
+vi.mock("@/shared/broadcast/composables/useBroadcast", () => ({
   useBroadcast: () => ({ emit: vi.fn() }),
 }));
 

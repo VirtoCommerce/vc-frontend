@@ -36,10 +36,10 @@
 </template>
 
 <script setup lang="ts">
-import { onKeyStroke } from "@vueuse/core";
 import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables/useUser";
+import { usePopoverEscape } from "@/shared/layout/composables/usePopoverEscape";
 import { useComponentId } from "@/ui-kit/composables";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import OrganizationList from "./organization-list.vue";
@@ -61,6 +61,8 @@ const openCount = ref(0);
 const isOpen = ref(false);
 const trigger = useTemplateRef<InstanceType<typeof BottomHeaderLink>>("trigger");
 
+usePopoverEscape(() => trigger.value?.$el as HTMLElement | undefined, isOpen);
+
 const triggerLabel = computed(() =>
   organization.value?.name
     ? t("shared.layout.header.organization_switcher.trigger_label", {
@@ -77,15 +79,6 @@ function onToggle(opened: boolean): void {
     openCount.value++;
   }
 }
-
-// VcPopover takes Escape only in its panel and on its trigger: from anywhere else, close it through the trigger.
-onKeyStroke("Escape", (event: KeyboardEvent) => {
-  if (!isOpen.value || event.defaultPrevented) {
-    return;
-  }
-
-  (trigger.value?.$el as HTMLElement | undefined)?.click();
-});
 </script>
 
 <style lang="scss">

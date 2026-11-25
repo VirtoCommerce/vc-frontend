@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "Inställningar",
+          "trigger_label": "{title}: {value}",
+          "currency": "Valuta",
+          "appearance": "Utseende",
+          "language": "Språk",
+          "color_modes": {
+            "light": "Ljust",
+            "dark": "Mörkt",
+            "system": "System"
+          }
+        },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Inga artiklar | {n} artikel | {n} artiklar"
       },

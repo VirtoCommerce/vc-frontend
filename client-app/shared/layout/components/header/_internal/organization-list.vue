@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="organization-list">
+  <div class="organization-list">
     <VcAlert v-if="switchError" class="organization-list__error" color="danger" size="sm" variant="tonal" icon>
       {{ switchError }}
     </VcAlert>
@@ -21,15 +21,9 @@
         :placeholder="$t('shared.layout.header.top_header.search_organizations')"
         :aria-label="$t('shared.layout.header.top_header.search_organizations')"
         :clearable="!!searchPhrase"
-        :aria="{
-          role: 'combobox',
-          'aria-expanded': 'true',
-          'aria-haspopup': 'listbox',
-          'aria-controls': listboxId,
-          'aria-activedescendant': activeDescendantId ?? null,
-        }"
+        :aria="{ 'aria-controls': listboxId }"
         @keydown.enter="search"
-        @keydown.down.prevent="moveFocus(1)"
+        @keydown.down.prevent="list?.focus()"
         @input="onSearchInput"
         @clear="onSearchClear"
       >
@@ -46,58 +40,56 @@
     </div>
 
     <div class="organization-list__items">
-      <VcScrollbar
+      <VcMenuList
         :id="listboxId"
-        vertical
+        ref="list"
         role="listbox"
         :aria-label="$t('common.labels.organizations')"
-        class="organization-list__scroll"
-        test-id="organizations-list"
+        class="organization-list__options"
       >
-        <VcMenuItem
-          v-for="(item, index) in displayedOrganizations"
-          :key="item.id"
-          size="xs"
-          role="option"
-          class="organization-list__item"
-          :active="contactOrganizationId === item.id"
-          :option-id="getOptionId(index)"
-          :data-vc-organization-option="componentId"
-          :aria-selected="contactOrganizationId === item.id"
-          :disabled="item.isLockedForCurrentUser"
-          :title="
-            item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
-          "
-          @click="selectOrganization(item.id)"
-          @keydown.up.prevent="moveFocus(-1)"
-          @keydown.down.prevent="moveFocus(1)"
-        >
-          <VcRadioButton
-            :model-value="contactOrganizationId"
-            :label="item.name"
-            :value="item.id"
-            :max-lines="2"
-            :title="item.name"
-            word-break="break-word"
-            :data-organization-name="item.name"
+        <VcScrollbar vertical class="organization-list__scroll" test-id="organizations-list">
+          <VcMenuItem
+            v-for="item in displayedOrganizations"
+            :key="item.id"
+            size="xs"
+            class="organization-list__item"
+            :active="contactOrganizationId === item.id"
+            :data-vc-organization-option="componentId"
             :disabled="item.isLockedForCurrentUser"
+            :title="
+              item.isLockedForCurrentUser
+                ? $t('shared.layout.header.top_header.organization_locked_tooltip')
+                : undefined
+            "
+            @click="selectOrganization(item.id)"
+          >
+            <VcRadioButton
+              :model-value="contactOrganizationId"
+              :label="item.name"
+              :value="item.id"
+              :max-lines="2"
+              :title="item.name"
+              word-break="break-word"
+              :data-organization-name="item.name"
+              :disabled="item.isLockedForCurrentUser"
+            />
+
+            <template v-if="item.isLockedForCurrentUser" #append>
+              <VcIcon name="lock-closed" size="xs" />
+            </template>
+          </VcMenuItem>
+
+          <VcInfinityScrollLoader
+            v-if="hasNextPage"
+            :loading="loading"
+            :page-number="currentPage"
+            :pages-count="pagesCount"
+            distance="50"
+            class="organization-list__loader"
+            @visible="loadOrganizations"
           />
-
-          <template v-if="item.isLockedForCurrentUser" #append>
-            <VcIcon name="lock-closed" size="xs" />
-          </template>
-        </VcMenuItem>
-
-        <VcInfinityScrollLoader
-          v-if="hasNextPage"
-          :loading="loading"
-          :page-number="currentPage"
-          :pages-count="pagesCount"
-          distance="50"
-          class="organization-list__loader"
-          @visible="loadOrganizations"
-        />
-      </VcScrollbar>
+        </VcScrollbar>
+      </VcMenuList>
 
       <!-- Outside the listbox (only options belong there) and always rendered, so an empty result is announced. -->
       <output>
@@ -114,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useEventListener } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useOrganizationSwitcher } from "@/shared/account/composables/useOrganizationSwitcher";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -156,28 +148,13 @@ watch(
 
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
-const activeDescendantId = ref<string>();
-const root = useTemplateRef<HTMLElement>("root");
+const list = useTemplateRef("list");
 
 // Shared session state: refetch on each mount so a newly locked row is disabled, and drop the last phrase.
 onMounted(() => {
   searchPhrase.value = "";
   void search();
 });
-
-// The popover focuses its panel on every open, so arrows enter the list from there too.
-useEventListener(
-  () => root.value?.closest<HTMLElement>("[role='dialog']"),
-  "keydown",
-  (event: KeyboardEvent) => {
-    if (event.target !== event.currentTarget || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) {
-      return;
-    }
-
-    event.preventDefault();
-    moveFocus(event.key === "ArrowDown" ? 1 : -1);
-  },
-);
 
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
@@ -188,37 +165,6 @@ const displayedOrganizations = computed(() => {
 
   return withoutCurrent;
 });
-
-watch(displayedOrganizations, () => {
-  activeDescendantId.value = undefined;
-});
-
-function getOptionId(index: number): string {
-  return `${componentId}-option-${index}`;
-}
-
-// Locked rows are disabled buttons that can't take focus, so they're left out and arrows step over them.
-function getOptionElements(): HTMLElement[] {
-  return Array.from(root.value?.querySelectorAll<HTMLElement>("[role='option']:not(:disabled)") ?? []);
-}
-
-function moveFocus(step: 1 | -1): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  let current = elements.indexOf(document.activeElement as HTMLElement);
-  // From the panel, Down enters at the top and Up at the bottom; the search field takes Down only.
-  if (current === -1 && step === -1) {
-    current = 0;
-  }
-  const target = elements[(current + step + elements.length) % elements.length];
-
-  activeDescendantId.value = target?.id;
-  target?.focus();
-}
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {

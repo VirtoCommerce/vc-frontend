@@ -13,12 +13,14 @@ type HoistedType = {
   entries: Record<string, Record<string, EntryType>>;
   menuItems: { value: ExtendedMenuLinkType[] };
   iconsMenuLinks: { value: ExtendedMenuLinkType[] | undefined };
+  hasPreferences: { value: boolean };
 };
 
 const h = vi.hoisted((): HoistedType => ({
   entries: {},
   menuItems: { value: [] },
   iconsMenuLinks: { value: undefined },
+  hasPreferences: { value: true },
 }));
 
 const BUILT_IN_CART: ExtendedMenuLinkType = {
@@ -30,6 +32,8 @@ const BUILT_IN_CART: ExtendedMenuLinkType = {
 };
 
 const MY_LIST: ExtendedMenuLinkType = { id: "my-list", title: "My list", route: { name: "MyList" } };
+
+const PREFERENCES: ExtendedMenuLinkType = { id: "preferences", title: "Preferences", dataTestId: "test-preferences-item" };
 
 vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", () => ({
   useExtensionRegistry: () => ({
@@ -50,6 +54,10 @@ vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
   useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
 }));
 vi.mock("@/shared/static-content/sections", () => ({ getPreviewSectionAttrs: () => ({}) }));
+
+vi.mock("@/shared/layout/composables/usePreferencesMenu", () => ({
+  usePreferencesMenu: () => ({ hasPreferences: h.hasPreferences }),
+}));
 
 vi.mock("./search-bar/search-bar.vue", () => ({ default: { name: "SearchBar", render: () => null } }));
 vi.mock("./catalog-menu.vue", () => ({ default: { name: "CatalogMenu", render: () => null } }));
@@ -127,6 +135,20 @@ describe("BottomHeader", () => {
 
     expect(wrapper.text()).toContain("My list");
     expect(wrapper.findComponent(VcBadgeStub).exists()).toBe(false);
+  });
+
+  it.each([
+    ["lists", true],
+    ["leaves out", false],
+  ])("%s the preferences item as the store offers a choice or not", (_, hasPreferences) => {
+    h.entries = {};
+    h.menuItems.value = [MY_LIST, PREFERENCES];
+    h.hasPreferences.value = hasPreferences;
+
+    const wrapper = mountHeader();
+
+    expect(wrapper.find('[data-test-id="test-preferences-item"]').exists()).toBe(hasPreferences);
+    expect(wrapper.text()).toContain("My list");
   });
 });
 

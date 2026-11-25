@@ -10,31 +10,10 @@
     </Teleport>
 
     <div class="flex min-w-0 shrink items-center gap-3">
-      <LanguageSelector
-        v-if="$context.availableLanguages && $context.availableLanguages.length > 1"
-        class="flex-none"
-      />
-
-      <CurrencySelector
-        v-if="!isLoyaltyCatalogRoute && $context.availableCurrencies && $context.availableCurrencies.length > 1"
-        class="h-full flex-none"
-      />
-
       <ShipToSelector />
     </div>
 
     <div class="ms-auto flex min-w-0 shrink-0 items-center">
-      <template v-if="isDarkModeAvailable">
-        <DarkModeToggle
-          tooltip
-          test-id="dark-mode-toggle"
-          icon-size="sm"
-          class="p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
-        />
-
-        <span class="mx-3 h-5 w-px bg-primary" />
-      </template>
-
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
@@ -197,27 +176,18 @@
 
 <script setup lang="ts">
 import { onClickOutside, onKeyStroke } from "@vueuse/core";
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
-import { useDarkMode } from "@/core/composables";
+import { ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
-import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
-import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
-import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
 
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
-const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
-
-const route = useRoute();
-const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);

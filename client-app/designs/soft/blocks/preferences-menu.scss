@@ -1,0 +1,59 @@
+.preferences-menu {
+  // The plate surface the organizations panel beside it takes; the rows are transparent on it.
+  --vc-popover-bg-color: var(--vc-plate-bg-color, var(--color-additional-50));
+  --vc-popover-padding: theme("spacing.4");
+  --vc-popover-border-width: 1px;
+
+  &__trigger {
+    --vc-icon-color: currentColor;
+
+    @apply px-[0.6875rem] py-[0.4375rem] text-xs/[1.55];
+  }
+
+  &__value {
+    @apply tracking-[0.02em];
+  }
+
+  &__panel {
+    // The card's padding and border surround the panel, so the panel leaves them out of the design's card width.
+    $inset: calc(2 * (var(--vc-popover-padding) + var(--vc-popover-border-width)));
+
+    // A flexible row passes the panel's max-height down to the columns; an auto row keeps the content's height.
+    @apply grid grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] grid-rows-1 gap-4;
+
+    width: calc(38.75rem - #{$inset});
+
+    &--single {
+      @apply grid-cols-1;
+
+      width: calc(23.25rem - #{$inset});
+    }
+  }
+
+  &__column {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  &__group {
+    @apply flex flex-col gap-0.5 rounded-[--vc-radius] border p-2;
+
+    border-color: color-mix(in srgb, var(--color-neutral-900) 12%, transparent);
+  }
+
+  &__heading {
+    @apply mb-1 px-2 font-bold uppercase tracking-wide;
+  }
+
+  &__list {
+    --vc-menu-item-bg-color: transparent;
+    --vc-menu-item-hover-bg-color: color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+    // A shade deeper than the kit's 100, so the selected row stays stronger than the hover in every preset.
+    --vc-menu-item-active-bg-color: var(--color-secondary-200);
+    --vc-menu-item-padding-x: theme("spacing.2");
+    --vc-menu-item-radius: calc(var(--vc-radius) - 2px);
+  }
+
+  &__modes {
+    @apply w-full;
+  }
+}

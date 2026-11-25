@@ -1,0 +1,5 @@
+// primary-700, not 500: it contrasts more with the dark pill and track in every dark preset.
+.color-mode-switch {
+  --vc-icon-color: theme("colors.primary.700");
+  --vc-tab-switch-color: theme("colors.primary.700");
+}

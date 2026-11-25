@@ -418,6 +418,18 @@
         "organization_switcher": {
           "trigger_label": "{title}: {name}"
         },
+        "preferences_menu": {
+          "title": "Preferencje",
+          "trigger_label": "{title}: {value}",
+          "currency": "Waluta",
+          "appearance": "Motyw",
+          "language": "Język",
+          "color_modes": {
+            "light": "Jasny",
+            "dark": "Ciemny",
+            "system": "Systemowy"
+          }
+        },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Brak produktów | {n} produkt | {n} produkty | {n} produktów"
       },

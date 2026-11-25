@@ -95,6 +95,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useHeaderLogo } from "@/shared/layout/composables/useHeaderLogo";
+import { usePreferencesMenu } from "@/shared/layout/composables/usePreferencesMenu";
 import { useThemeChrome } from "@/shared/layout/composables/useThemeChrome";
 import { getPreviewSectionAttrs } from "@/shared/static-content/sections";
 import CatalogMenu from "./catalog-menu.vue";
@@ -111,6 +112,7 @@ defineProps<IProps>();
 
 const router = useRouter();
 const { organization, isMultiOrganization } = useUser();
+const { hasPreferences } = usePreferencesMenu();
 const { headerLogoUrl } = useHeaderLogo();
 const { logoWidth, logoStyle, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
@@ -137,9 +139,13 @@ const catalogMenuVisible = ref(false);
 const { bottom } = useElementBounding(bottomHeader);
 const route = useRoute();
 
-// The organizations menu is for members of several organizations; for the others it would leave an empty list item.
+// The organizations menu is for members of several organizations, the preferences menu for stores that offer a choice;
+// otherwise each would leave an empty list item.
 const mainMenuItems = computed(() =>
-  iconsMenuItems.value.filter((item) => item.id !== "organizations" || isMultiOrganization.value),
+  iconsMenuItems.value.filter(
+    (item) =>
+      (item.id !== "organizations" || isMultiOrganization.value) && (item.id !== "preferences" || hasPreferences.value),
+  ),
 );
 
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));

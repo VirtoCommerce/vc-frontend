@@ -1,0 +1,9 @@
+.color-mode-switch {
+  // The mode glyphs keep the brand colour, the checked one too.
+  --vc-icon-color: theme("colors.primary.500");
+  --vc-tab-switch-color: theme("colors.primary.500");
+
+  &__mode {
+    @apply flex-1;
+  }
+}
