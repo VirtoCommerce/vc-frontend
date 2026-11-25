@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { savedCardExpiry, savedCardLabel } from "../utils/saved-card-label";
-import type { SavedPaymentMethodFieldsFragment } from "../api/graphql/types";
+import type { SavedPaymentMethodFieldsFragment } from "@/core/api/graphql/types";
 
 interface IProps {
   methods: SavedPaymentMethodFieldsFragment[];

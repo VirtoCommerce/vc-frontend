@@ -1,8 +1,8 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
+import { GetCardPaymentMethodsDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import { GetCardPaymentMethodsDocument } from "../../types";
-import type { GetCardPaymentMethodsQuery } from "../../types";
+import type { GetCardPaymentMethodsQuery } from "@/core/api/graphql/types";
 
 /** The store's payment methods that can save cards, with the public parameters their card forms need. */
 export async function getCardPaymentMethods(

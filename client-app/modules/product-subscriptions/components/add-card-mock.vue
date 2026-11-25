@@ -54,8 +54,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { addSavedPaymentMethod } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
-import { addSavedPaymentMethod } from "@/shared/payment/api/graphql";
 import { MOCK_PAYMENT_CODE, MOCK_TEST_CARDS } from "../constants";
 import { subscriptionErrorMessage } from "../utils";
 import ThreeDsModal from "./three-ds-modal.vue";

@@ -1,8 +1,8 @@
 import { createSharedComposable } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { getSavedPaymentMethods, removeSavedPaymentMethod, setDefaultSavedPaymentMethod } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
-import { getSavedPaymentMethods, removeSavedPaymentMethod, setDefaultSavedPaymentMethod } from "../api/graphql";
-import type { SavedPaymentMethodFieldsFragment } from "../api/graphql/types";
+import type { SavedPaymentMethodFieldsFragment } from "@/core/api/graphql/types";
 
 /** The signed-in customer's saved cards (x-cart), shared by the card forms and the account's payment methods page. */
 function _useSavedPaymentMethods() {

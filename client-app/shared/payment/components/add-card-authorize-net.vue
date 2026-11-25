@@ -86,15 +86,15 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { addSavedPaymentMethod } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useCustomerAddresses } from "@/shared/account/composables";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
-import { addSavedPaymentMethod } from "../api/graphql";
 import { mapAcceptJsErrors } from "../utils/accept-js-errors";
 import { savedCardErrorMessage as errorMessage } from "../utils/saved-card-label";
-import type { GetCardPaymentMethodsQuery } from "../api/graphql/types";
+import type { GetCardPaymentMethodsQuery } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
 

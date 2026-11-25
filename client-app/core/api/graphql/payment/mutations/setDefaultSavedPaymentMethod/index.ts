@@ -1,7 +1,7 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
-import { SetDefaultSavedPaymentMethodDocument } from "../../types";
-import type { InputSavedPaymentMethodId, SetDefaultSavedPaymentMethodMutation } from "../../types";
+import { SetDefaultSavedPaymentMethodDocument } from "@/core/api/graphql/types";
+import type { InputSavedPaymentMethodId, SetDefaultSavedPaymentMethodMutation } from "@/core/api/graphql/types";
 
 export async function setDefaultSavedPaymentMethod(
   command: InputSavedPaymentMethodId,

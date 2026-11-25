@@ -50,7 +50,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { savedCardExpiry, savedCardLabel } from "../utils/saved-card-label";
-import type { SavedPaymentMethodFieldsFragment } from "../api/graphql/types";
+import type { SavedPaymentMethodFieldsFragment } from "@/core/api/graphql/types";
 
 interface IProps {
   method: SavedPaymentMethodFieldsFragment;

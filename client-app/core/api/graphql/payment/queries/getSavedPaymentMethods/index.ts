@@ -1,8 +1,8 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
+import { GetSavedPaymentMethodsDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import { GetSavedPaymentMethodsDocument } from "../../types";
-import type { GetSavedPaymentMethodsQuery } from "../../types";
+import type { GetSavedPaymentMethodsQuery } from "@/core/api/graphql/types";
 
 /** The signed-in customer's saved cards in the current store. */
 export async function getSavedPaymentMethods(

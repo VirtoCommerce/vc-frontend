@@ -46,7 +46,6 @@ export default defineConfigWithVueTs(
       "content/",
       "client-app/modules/**/api/graphql/types.ts",
       "client-app/core/api/graphql/**/types.ts",
-      "client-app/shared/**/api/graphql/types.ts",
       "coverage/",
       ".history/",
     ],

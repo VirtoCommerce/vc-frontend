@@ -1,9 +1,9 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getCardPaymentMethods, getSavedPaymentMethods } from "@/shared/payment/api/graphql";
+import { getCardPaymentMethods, getSavedPaymentMethods } from "@/core/api/graphql";
 import PaymentMethodsPage from "./payment-methods.vue";
 
-vi.mock("@/shared/payment/api/graphql", () => ({
+vi.mock("@/core/api/graphql", () => ({
   getSavedPaymentMethods: vi.fn(),
   getCardPaymentMethods: vi.fn(),
   removeSavedPaymentMethod: vi.fn(),

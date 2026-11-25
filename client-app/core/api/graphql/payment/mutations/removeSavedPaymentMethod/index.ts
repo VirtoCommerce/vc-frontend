@@ -1,7 +1,7 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
-import { RemoveSavedPaymentMethodDocument } from "../../types";
-import type { InputSavedPaymentMethodId, RemoveSavedPaymentMethodMutation } from "../../types";
+import { RemoveSavedPaymentMethodDocument } from "@/core/api/graphql/types";
+import type { InputSavedPaymentMethodId, RemoveSavedPaymentMethodMutation } from "@/core/api/graphql/types";
 
 export async function removeSavedPaymentMethod(
   command: InputSavedPaymentMethodId,

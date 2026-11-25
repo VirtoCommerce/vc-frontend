@@ -2901,6 +2901,8 @@ type LineItemType = {
     productOuterId?: Maybe<Scalars['String']['output']>;
     /** Product type: Physical, Digital, or Subscription */
     productType?: Maybe<Scalars['String']['output']>;
+    /** Purchase order line number */
+    purchaseOrderLineNumber?: Maybe<Scalars['String']['output']>;
     /** Line item quantity value */
     quantity: Scalars['Int']['output'];
     /** Requirement for line item shipping */

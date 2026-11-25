@@ -133,16 +133,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { getCardPaymentMethods } from "@/core/api/graphql";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { useNotifications } from "@/shared/notification";
-import { getCardPaymentMethods } from "@/shared/payment/api/graphql";
 import { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
 import { AUTHORIZE_NET_PAYMENT_METHOD_CODE } from "@/shared/payment/constants";
 import { savedCardErrorMessage } from "@/shared/payment/utils/saved-card-label";
-import type { GetCardPaymentMethodsQuery } from "@/shared/payment/api/graphql/types";
+import type { GetCardPaymentMethodsQuery } from "@/core/api/graphql/types";
 import AddCardAuthorizeNet from "@/shared/payment/components/add-card-authorize-net.vue";
 import SavedCard from "@/shared/payment/components/saved-card.vue";
 
