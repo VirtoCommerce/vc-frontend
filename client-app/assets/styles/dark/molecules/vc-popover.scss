@@ -1,0 +1,8 @@
+// A floating surface must not be the colour of what is under it. A preset may name its raised fill
+// and edge; without them the panel colour is lifted, so every dark preset gets a visible layer.
+.vc-popover {
+  &__content {
+    border: 1px solid var(--vc-raised-border);
+    background-color: var(--props-bg-color, var(--vc-raised-bg));
+  }
+}

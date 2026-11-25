@@ -1,0 +1,6 @@
+// The tile is black in every theme, so the play icon stays light.
+.product-videos {
+  &__play:not(:hover) {
+    color: var(--color-neutral-950);
+  }
+}

@@ -19,4 +19,18 @@
       --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
     }
   }
+
+  // The light hover cue is a larger drop shadow, which is black on near-black here. Lift the tile
+  // itself: solid tiles mix toward the preset's hover colour like solid buttons, the others get a
+  // faint white wash (as menu rows do) and a stronger edge.
+  &:hover:not(&--disabled) {
+    @apply border-neutral-400 bg-[color-mix(in_srgb,var(--bg-color),white_8%)] shadow-none;
+  }
+
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color}:hover:not(&--disabled) {
+      background-color: color-mix(in srgb, var(--bg-color), var(--color-vc-solid-hover-mix, white) 12%);
+      border-color: color-mix(in srgb, var(--border-color), var(--color-vc-solid-hover-mix, white) 12%);
+    }
+  }
 }

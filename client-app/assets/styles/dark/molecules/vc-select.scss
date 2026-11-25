@@ -1,0 +1,7 @@
+// The default border (neutral-300) is a surface step in dark, 1.6-2.4:1 on the card. The field edge
+// is what identifies the control, so it takes the same step as VcInput.
+.vc-select {
+  &__button {
+    @apply border-neutral-400;
+  }
+}

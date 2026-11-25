@@ -1,0 +1,12 @@
+// The brand fill at -500 holds neither the panel-coloured text (3.4-3.7:1 in three presets) nor
+// white. The band takes the dark solid fill, like a solid primary button, with the text colour on it.
+.home {
+  &__cta {
+    background-color: var(--color-vc-background-solid-primary, var(--color-primary-200));
+  }
+
+  &__cta-title,
+  &__cta-text {
+    color: var(--color-vc-text-solid-primary, var(--color-additional-950));
+  }
+}

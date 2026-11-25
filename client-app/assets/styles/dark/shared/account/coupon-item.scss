@@ -1,0 +1,6 @@
+// secondary-500 on the secondary-50 chip is 3.2-4.2:1 in dark presets.
+.coupon-item {
+  &__click-label {
+    @apply text-secondary-700;
+  }
+}

@@ -179,7 +179,20 @@ const colors = {
 const colorSet = {
   colors,
   backgroundColor: colors,
-  textColor: colors,
+  // Status colours as text go through an optional --vc-fg-* alias: unset in light mode (the -500
+  // step applies), set in dark mode where -500 is a fill step and too dim for text.
+  textColor: {
+    ...colors,
+    ...Object.fromEntries(
+      (["danger", "success", "info", "warning"] as const).map((name) => [
+        name,
+        {
+          ...colors[name],
+          DEFAULT: `rgb(from var(--vc-fg-${name}, var(--color-${name}-500)) r g b / <alpha-value>)`,
+        },
+      ]),
+    ),
+  },
   textDecorationColor: colors,
   boxShadowColor: colors,
 
