@@ -118,6 +118,7 @@ describe("LanguageSelector", () => {
       await selectLanguage("en-US");
 
       expect(broadcastEmit).toHaveBeenCalledWith(dataChangedEvent);
+      expect(broadcastEmit.mock.invocationCallOrder[0]).toBeLessThan(reload.mock.invocationCallOrder[0]);
     });
 
     it("does nothing when the current language is selected", async () => {
