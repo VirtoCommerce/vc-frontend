@@ -7,9 +7,10 @@
     icon-size="1.25rem"
     :icon="icons ? 'refresh-cw' : undefined"
     :prepend-icon="icons ? undefined : 'refresh-cw'"
-    :variant="selected ? 'surface' : 'soft'"
+    variant="soft"
+    :disabled="disabled"
     :title="icons ? $t('product_subscriptions.cart.subscribe_button') : undefined"
-    :data-test-id="`cart-line-subscribe-${lineItem.id}`"
+    :data-test-id="testId"
     @click="openPurchaseOptions()"
   >
     <template v-if="!icons">{{ $t("product_subscriptions.cart.subscribe_button") }}</template>
@@ -25,9 +26,9 @@ import type { PreparedLineItemType } from "@/core/types";
 interface IProps {
   lineItem: PreparedLineItemType;
   readonly?: boolean;
+  disabled?: boolean;
   /** Icon only, as "Save for later" shows next to it in narrow lines. */
   icons?: boolean;
-  selected?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -37,4 +38,6 @@ const { offer, subscription, openPurchaseOptions } = useCartLineSubscription(toR
 
 // A subscribed line changes its choice from the summary under the line.
 const isShown = computed(() => !props.readonly && isAuthenticated.value && !!offer.value && !subscription.value);
+// The line renders its actions twice (as icons by the image and in full by the title) and shows one by width.
+const testId = computed(() => `cart-line-subscribe-${props.icons ? "icon-" : ""}button-${props.lineItem.id}`);
 </script>

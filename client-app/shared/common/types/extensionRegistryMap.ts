@@ -110,11 +110,11 @@ export type ExtensionCategoryMapType = {
   >;
   /**
    * On each cart line item (`shared/cart/components/cart-line-items.vue`): `details` under the line, `actions` next to
-   * "Save for later" (`icons` when the line shows its actions as icons, `selected` when the line is selected).
+   * "Save for later" (`icons` when the line shows its actions as icons, `disabled` while the cart can't be changed).
    * A provider decides from the line whether it has anything to show.
    */
   cartLineItem: ExtensionEntryType<
-    { lineItem: PreparedLineItemType; readonly?: boolean; icons?: boolean; selected?: boolean },
+    { lineItem: PreparedLineItemType; readonly?: boolean; disabled?: boolean; icons?: boolean },
     never,
     (lineItem: PreparedLineItemType) => boolean
   >;

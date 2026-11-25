@@ -102,8 +102,8 @@
           :names="[EXTENSION_NAMES.cartLineItem.actions]"
           :condition-params="item"
           :line-item="item"
-          :readonly="readonly || disabled"
-          :selected="sharedSelectedItemIds?.includes(item.id)"
+          :readonly="readonly"
+          :disabled="disabled"
           icons
         />
       </CartItemActions>
@@ -123,8 +123,8 @@
           :names="[EXTENSION_NAMES.cartLineItem.actions]"
           :condition-params="item"
           :line-item="item"
-          :readonly="readonly || disabled"
-          :selected="sharedSelectedItemIds?.includes(item.id)"
+          :readonly="readonly"
+          :disabled="disabled"
         />
       </CartItemActions>
     </template>

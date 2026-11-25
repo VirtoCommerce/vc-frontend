@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { computed, ref, shallowRef, toValue } from "vue";
+import { computed, shallowRef, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { getOrderSubscriptionInfos } from "../api/graphql";
 import type { GetOrderSubscriptionInfosQuery } from "../api/graphql/types";
@@ -33,26 +33,26 @@ const BATCH_SIZE = 100;
 const useOrderSubscriptionsState = createGlobalState(() => {
   /** Order id -> its info, or null when the order has nothing to do with subscriptions. */
   const infos = shallowRef<Map<string, OrderInfoType | null>>(new Map());
-  const loading = ref(false);
   const requested = new Set<string>();
   let queued = new Set<string>();
   let flush: Promise<void> | undefined;
 
   async function load(orderIds: string[]): Promise<void> {
-    const next = new Map(infos.value);
     for (let i = 0; i < orderIds.length; i += BATCH_SIZE) {
       const batch = orderIds.slice(i, i + BATCH_SIZE);
       try {
         const result = await getOrderSubscriptionInfos(batch, { suppressErrorNotifications: true });
+        // Copied after the await: another page's load may have written its orders meanwhile.
+        const next = new Map(infos.value);
         batch.forEach((id) => next.set(id, null));
         result.forEach((info) => next.set(info.orderId, info));
+        infos.value = next;
       } catch (e) {
         // Asked again on the next visit.
         batch.forEach((id) => requested.delete(id));
         Logger.error(`${useOrderSubscriptions.name}.load`, e);
       }
     }
-    infos.value = next;
   }
 
   /** Asks for this order's info unless it is known or already asked; orders asked in the same tick share a request. */
@@ -66,12 +66,7 @@ const useOrderSubscriptionsState = createGlobalState(() => {
       const ids = [...queued];
       queued = new Set();
       flush = undefined;
-      loading.value = true;
-      try {
-        await load(ids);
-      } finally {
-        loading.value = false;
-      }
+      await load(ids);
     });
     return flush;
   }
@@ -93,11 +88,12 @@ const useOrderSubscriptionsState = createGlobalState(() => {
     });
   }
 
+  /** The renewal that placed this order on its date; an order the customer placed with Order now has none. */
   function renewalFor(orderId: MaybeRefOrGetter<string | undefined>) {
     return computed<OrderRenewalType | undefined>(() => {
       const id = toValue(orderId);
       const info = id ? infos.value.get(id) : undefined;
-      return info?.renewalId && info.renewalScheduledDate
+      return info?.renewalId && info.renewalScheduledDate && !info.isManualRenewal
         ? { id: info.renewalId, number: info.renewalNumber ?? undefined, scheduledDate: info.renewalScheduledDate }
         : undefined;
     });
@@ -116,7 +112,7 @@ const useOrderSubscriptionsState = createGlobalState(() => {
     });
   }
 
-  return { ensure, subscriptionFor, subscriptionsOf, renewalFor, loading };
+  return { ensure, subscriptionFor, subscriptionsOf, renewalFor };
 });
 
 export function useOrderSubscriptions() {

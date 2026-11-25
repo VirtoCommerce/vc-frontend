@@ -1,5 +1,9 @@
 <template>
-  <div class="subscription-frequency-picker" :class="{ 'subscription-frequency-picker--disabled': disabled }">
+  <div
+    class="subscription-frequency-picker"
+    :class="{ 'subscription-frequency-picker--disabled': disabled }"
+    :inert="disabled || undefined"
+  >
     <VcLabel size="xs">
       {{ $t("product_subscriptions.purchase_options.deliver_every") }}
     </VcLabel>
@@ -51,7 +55,7 @@ const options = computed(() =>
   props.intervals.map((x) => ({ key: intervalKey(x.unit, x.count), label: intervalShortLabel(t, x.unit, x.count) })),
 );
 function select(key: string | string[] | undefined): void {
-  if (typeof key === "string" && !props.disabled) {
+  if (typeof key === "string") {
     model.value = key;
   }
 }
@@ -61,9 +65,9 @@ function select(key: string | string[] | undefined): void {
 .subscription-frequency-picker {
   @apply flex flex-col gap-2;
 
-  // The picker has no disabled state; while a change is saved the whole choice is locked.
+  // The picker has no disabled state; while a change is saved the whole choice is inert.
   &--disabled {
-    @apply pointer-events-none opacity-60;
+    @apply opacity-60;
   }
 }
 </style>

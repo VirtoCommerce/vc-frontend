@@ -23,8 +23,29 @@
         </VcListItem>
       </VcList>
 
+      <VcAlert
+        v-if="failed"
+        color="danger"
+        variant="soft"
+        size="sm"
+        icon
+        data-test-id="subscription-card-modal-load-error"
+      >
+        {{ $t("shared.payment.saved_cards.load_failed") }}
+
+        <VcButton
+          size="xs"
+          variant="outline"
+          class="subscription-card-modal__retry"
+          data-test-id="subscription-card-modal-retry-button"
+          @click="loadCards"
+        >
+          {{ $t("shared.payment.saved_cards.retry") }}
+        </VcButton>
+      </VcAlert>
+
       <VcSelect
-        v-if="cardItems.length"
+        v-else-if="cardItems.length"
         v-model="selectedId"
         :label="$t('product_subscriptions.deliveries.card_label')"
         :items="cardItems"
@@ -85,14 +106,12 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-const { activeMethods, fetch } = useSavedPaymentMethods();
+const { activeMethods, loaded, failed, fetch } = useSavedPaymentMethods();
 
 const selectedId = ref<string>();
 const loading = ref(false);
-const loaded = ref(false);
 const error = ref<string>();
 
-// Only active, unexpired cards can be chosen; the card in use is listed even when it no longer is.
 const cardItems = computed(() =>
   activeMethods.value.map((x) => ({
     id: x.id,
@@ -121,14 +140,15 @@ async function save(close: () => void): Promise<void> {
   }
 }
 
-onMounted(async () => {
+async function loadCards(): Promise<void> {
   await fetch({ suppressErrorNotifications: true });
-  loaded.value = true;
   // Preselect the card in use while it can still be chosen.
   if (props.currentCardId && activeMethods.value.some((x) => x.id === props.currentCardId)) {
     selectedId.value ??= props.currentCardId;
   }
-});
+}
+
+onMounted(loadCards);
 </script>
 
 <style lang="scss">
@@ -139,6 +159,10 @@ onMounted(async () => {
 
   &__product {
     @apply line-clamp-2;
+  }
+
+  &__retry {
+    @apply mt-2;
   }
 
   &__link {
