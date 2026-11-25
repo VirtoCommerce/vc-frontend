@@ -10,3 +10,5 @@ export const VC_MENU_LIST_ITEM_ROLES: Record<VcMenuListRoleType, readonly string
   listbox: ["option"],
   menu: ["menuitem"],
 };
+
+export const VC_MENU_LIST_CHECKABLE_ROLES: readonly string[] = ["menuitemradio", "menuitemcheckbox"];

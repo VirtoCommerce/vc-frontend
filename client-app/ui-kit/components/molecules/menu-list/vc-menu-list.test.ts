@@ -571,22 +571,28 @@ describe("VcMenuList", () => {
         <VcMenuList role="listbox" aria-label="Currency">
           <VcMenuItem role="menuitem">USD</VcMenuItem>
           <VcMenuItem role="option">EUR</VcMenuItem>
+          <VcMenuItem role="menuitemcheckbox">GBP</VcMenuItem>
         </VcMenuList>
       `);
 
       expect(warn.mock.calls).toEqual([
         ['[VcMenuItem] role="menuitem" does not belong in a VcMenuList role="listbox".'],
+        ['[VcMenuItem] role="menuitemcheckbox" does not belong in a VcMenuList role="listbox".'],
       ]);
     });
 
-    it.each(["menuitemradio", "menuitemcheckbox"])("flags a checkable %s in a menu", async (role) => {
+    it.each(["menuitemradio", "menuitemcheckbox"])("flags a checkable %s in a menu, with the cause", async (role) => {
       await mountList(`
         <VcMenuList role="menu" aria-label="Sort">
           <VcMenuItem role="${role}">Name</VcMenuItem>
         </VcMenuList>
       `);
 
-      expect(warn).toHaveBeenCalledWith(`[VcMenuItem] role="${role}" does not belong in a VcMenuList role="menu".`);
+      expect(warn.mock.calls).toEqual([
+        [
+          `[VcMenuItem] role="${role}" is not supported in a VcMenuList role="menu": its aria-checked would land on VcMenuItem's wrapper.`,
+        ],
+      ]);
     });
   });
 });

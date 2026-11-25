@@ -48,7 +48,11 @@
 
 <script setup lang="ts">
 import { ref, computed, provide, onMounted, inject, onBeforeUnmount } from "vue";
-import { VC_MENU_LIST_ITEM_ROLES, vcMenuListKey } from "@/ui-kit/components/molecules/menu-list/vc-menu-list-context";
+import {
+  VC_MENU_LIST_CHECKABLE_ROLES,
+  VC_MENU_LIST_ITEM_ROLES,
+  vcMenuListKey,
+} from "@/ui-kit/components/molecules/menu-list/vc-menu-list-context";
 import { useComponentId } from "@/ui-kit/composables";
 import { getLinkAttr } from "@/ui-kit/utilities";
 import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
@@ -215,8 +219,12 @@ onMounted(() => {
 
   if (import.meta.env.DEV && listRole && props.role && isListMember.value) {
     if (!VC_MENU_LIST_ITEM_ROLES[listRole].includes(props.role)) {
+      const problem =
+        listRole === "menu" && VC_MENU_LIST_CHECKABLE_ROLES.includes(props.role)
+          ? `is not supported in a VcMenuList role="menu": its aria-checked would land on VcMenuItem's wrapper`
+          : `does not belong in a VcMenuList role="${listRole}"`;
       // eslint-disable-next-line no-console
-      console.warn(`[VcMenuItem] role="${props.role}" does not belong in a VcMenuList role="${listRole}".`);
+      console.warn(`[VcMenuItem] role="${props.role}" ${problem}.`);
     }
   }
 });
