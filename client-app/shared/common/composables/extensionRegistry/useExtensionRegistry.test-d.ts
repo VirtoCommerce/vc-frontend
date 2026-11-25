@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from "vitest";
 import { defineComponent } from "vue";
 import { useExtensionRegistry } from "./useExtensionRegistry";
+import type { Product } from "@/core/api/graphql/types";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 const { register, registerContribution } = useExtensionRegistry();
@@ -20,12 +21,24 @@ describe("register", () => {
     // @ts-expect-error -- signInMethods renders only contributions, so a component would never show
     register("signInMethods", "name", { component: Widget });
   });
+
+  it("gives a product action's condition the product", () => {
+    register("productActions", "name", { component: Widget, condition: (product) => product.isConfigurable });
+
+    expectTypeOf<Parameters<typeof register<"productActions">>[2]["condition"]>().toEqualTypeOf<
+      ((product: Product) => boolean) | undefined
+    >();
+
+    // @ts-expect-error -- product actions are buttons the plugin draws, not data the host renders
+    registerContribution("productActions", "name", { use: () => ({ count: 1 }) });
+  });
 });
 
 describe("registerContribution", () => {
-  it("takes only a category that declared a contributed shape — today, mobileMenu and signInMethods", () => {
-    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"mobileMenu" | "signInMethods">();
+  it("takes only a category that declared a contributed shape — today, the two menus and signInMethods", () => {
+    expectTypeOf(registerContribution).parameter(0).toEqualTypeOf<"headerMenu" | "mobileMenu" | "signInMethods">();
 
+    registerContribution("headerMenu", "name", { use: () => ({ count: 1 }) });
     registerContribution("mobileMenu", "name", { use: () => ({ count: 1 }) });
 
     // @ts-expect-error -- accountMenu declares no contributed shape, so nothing would read this
@@ -48,5 +61,7 @@ describe("registerContribution", () => {
 
     // @ts-expect-error -- mobileMenu contributes a count, not a label
     registerContribution("mobileMenu", "name", { use: () => ({ label: "x" }) });
+    // @ts-expect-error -- headerMenu contributes a count, not a label
+    registerContribution("headerMenu", "name", { use: () => ({ label: "x" }) });
   });
 });

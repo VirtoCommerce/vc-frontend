@@ -1,0 +1,24 @@
+{
+  "name": "Page template",
+  "info": "Wraps the pages that use it: sets their layout and adds sections around their own (Page content).",
+  "path": "default/templates/page.json",
+  "type": "themes",
+  "previewMessage": {
+    "templateKey": "page"
+  },
+  "default": true,
+  "settings": [
+    {
+      "id": "layout",
+      "label": "Layout",
+      "type": "select",
+      "default": "full",
+      "info": "Full: the site's header and footer. Minimal: the logo only. Blank: just the page.",
+      "options": [
+        { "label": "Full", "value": "full" },
+        { "label": "Minimal", "value": "minimal" },
+        { "label": "Blank", "value": "blank" }
+      ]
+    }
+  ]
+}

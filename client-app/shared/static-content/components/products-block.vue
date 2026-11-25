@@ -107,7 +107,7 @@ watchEffect(async () => {
 
 .products-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>

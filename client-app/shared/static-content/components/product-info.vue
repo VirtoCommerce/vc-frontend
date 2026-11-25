@@ -22,11 +22,12 @@
       <div class="product-info__content">
         <div v-if="model?.blocks?.length" class="product-info__blocks">
           <template v-for="(block, index) in model.blocks">
-            <component
-              :is="block.type"
+            <PageBuilderSection
               v-if="shouldShowBlock(block)"
               :id="getAnchorId(block)"
               :key="block.id || index"
+              :component="getRegisteredSection(ProductBlocks, block.type)"
+              :item="block"
               :model="block"
               :product="product"
               v-bind="getBlockProperties(block)"
@@ -41,8 +42,11 @@
 <script setup lang="ts">
 import { computed, toRef } from "vue";
 import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
+import ProductBlocks from "@/shared/catalog/components/product";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { getAnchorId } from "@/shared/static-content/anchors";
+import { getRegisteredSection } from "../sections";
+import PageBuilderSection from "./page-builder-section.vue";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
@@ -78,8 +82,9 @@ function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) 
   return {};
 }
 
+// A block is a part of the product; a page section of the same type would render as a page-wide section here.
 function shouldShowBlock(block: NonNullable<IPageContent["blocks"]>[number]) {
-  if (BLOCKS_TO_HIDE.includes(block.type ?? "")) {
+  if (BLOCKS_TO_HIDE.includes(block.type ?? "") || !getRegisteredSection(ProductBlocks, block.type)) {
     return false;
   }
 

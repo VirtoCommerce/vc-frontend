@@ -36,9 +36,14 @@ on 2026-10-14._
 A plugin can:
 
 1. add **pages** (routes),
-2. add **menu items** (header, account menu),
-3. fill **places in host pages** (the extension registry: product card, payment step, order page…),
-4. use **host services**: the router, the Apollo client, the user, module settings, notifications, modals.
+2. add **menu items** (header, account menu), and put a count on a header or mobile menu link,
+3. fill **places in host pages** (the extension registry: product card and its action buttons, payment step, order
+   page…),
+4. use **host services**: the router, the Apollo client, the user, the cart, module settings, notifications, modals,
+5. hook into **host behaviour**: locale loading, Apollo cache policies, the product page's preselected configuration
+   (`registerProductConfigurationSource`),
+6. add **tags and behaviors** to the kit that custom section templates use (`registerCustomSectionTag`,
+   `registerCustomSectionBehavior`).
 
 **Plugin or in-repo module?**
 
@@ -232,6 +237,8 @@ What the host does **not** do:
    third-party CSS; VCST-5760 moves plugin sheets into them. A plugin styles itself only with host kit components
    and host tokens, and host designs and presets never target its blocks:
    [Modules and remote plugins](../../assets/styles/README.md#modules-and-remote-plugins).
+   Until VCST-5760 lands, a scaffolded plugin puts its Tailwind output into the `plugins` layer itself
+   (`src/styles.css`): unlayered, its plain `.flex-col` would beat the host's `lg:flex-row` by source order.
 4. **No integrity check** of plugin files. Deferred while plugins come from our own backend.
 
 What an environment must provide: a CSP (`'self'` covers platform plugins), and trusted hosting for anything

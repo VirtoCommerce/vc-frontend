@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -642,6 +641,30 @@
         "click_to_copy": "Kopioi napsauttamalla",
         "clipboard_success": "Kuponki kopioitu onnistuneesti",
         "tap_to_copy": "Napauta kopioidaksesi"
+      },
+      "dashboard": {
+        "orders_placed_week": "Tilaukset tällä viikolla",
+        "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+        "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "per_order": "Keskim. per tilaus (tänä vuonna)",
+        "vs_last_week": "{delta} vs viime viikko",
+        "vs_last_month": "{delta} vs viime kuu",
+        "vs_last_year": "{delta} vs viime vuosi",
+        "excluded_orders": "{count} tilaus muussa valuutassa ei mukana | {count} tilausta muissa valuutoissa ei mukana",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Myyntitilastot"
+        },
+        "recent_orders": {
+          "title": "Omat viimeisimmät tilaukset",
+          "view_all": "Kaikki tilaukset",
+          "filter_all": "Kaikki",
+          "empty": "Tilauksia ei ole vielä",
+          "no_results": "Ei tilauksia tällä tilalla",
+          "load_failed": "Tilauksia ei voitu ladata",
+          "statuses_label": "Näytettävät tilat"
+        }
       }
     },
     "sign_in": {
@@ -1145,47 +1168,46 @@
       "date_new_to_old": "Päivämäärä, uusi vanhaan",
       "date_old_to_new": "Päivämäärä, vanha uuteen"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Lisää vertailuun",
-          "remove": "Poista vertailusta"
-        }
+    "dashboard": {
+      "edit": "Muokkaa asettelua",
+      "editing": "Muokataan asettelua",
+      "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+      "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+      "save": "Tallenna asettelu",
+      "cancel": "Peruuta",
+      "reset": "Palauta oletukset",
+      "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+      "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
+      "hidden_widgets": "Piilotetut widgetit",
+      "visible_stats": "Näkyvät tunnusluvut",
+      "hidden_stats": "Piilotetut tunnusluvut",
+      "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+      "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+      "max_rows": "Maksimirivit",
+      "restored": "Oletusasettelu palautettu.",
+      "empty": {
+        "title": "Kaikki lohkot on piilotettu",
+        "text": "Kaikki tämän sivun tunnusluvut ja widgetit on siirretty asetteluasetuksissa kohtaan {hidden}. Palauta oletusasettelu tuodaksesi kaiken takaisin, tai avaa {edit} ja valitse tarkalleen, mitä näytetään.",
+        "hidden": "Piilotetut",
+        "restore": "Palauta oletusasettelu"
       },
-      "notifications": {
-        "limit_reached": "Vain {productsLimit} tuotetta samasta kategoriasta voidaan vertailla",
-        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> lisättiin vertailulistaan <span class=\"hidden lg:inline\">(jäljellä - {itemsLeft})</span>",
-        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> poistettiin vertailulistasta",
-        "compare_button": "Vertaa",
-        "added_to_cart_html": "Lisätty <strong>{productName}</strong> ostoskoriin",
-        "fetch_failed": "Joidenkin verrattujen tuotteiden lataaminen epäonnistui. Yritä uudelleen."
+      "a11y": {
+        "reorder": "Järjestä {title}",
+        "hide": "Piilota {title}",
+        "show": "Näytä {title}",
+        "editing": "Muokataan asettelua. Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+        "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+        "moved": "{title} siirretty sijaintiin {position}/{total}.",
+        "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+        "edge": "{title} on jo sijainnissa {position}/{total}.",
+        "cancelled": "Kohteen {title} siirto peruutettu.",
+        "parked": "{title} piilotettu.",
+        "restored": "{title} näytetään.",
+        "max_rows": "Maksimirivit kohteessa {title}, välillä {min} ja {max}"
       },
-      "table": {
-        "tabs": {
-          "all": "Kaikki",
-          "differences": "Erot"
-        },
-        "uncategorized": "Luokittelemattomat",
-        "unresolved_category": "Tuntematon luokka",
-        "differ_rows": "Erot: {count} / {total} riviä",
-        "clear_category": "Tyhjennä kategoria",
-        "remove_product": "Poista vertailusta",
-        "add_to_cart": "Lisää ostoskoriin",
-        "fields": {
-          "price_per_unit": "Hinta per yksikkö",
-          "price_per_unit_tooltip": "Hinta, ALV:n ulkop., per yksikkö.",
-          "customer_rating": "Asiakasarvio",
-          "availability": "Saatavuus",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. tilausmäärä",
-          "min_order_qty_tooltip": "MOQ — vähimmäismäärä yksiköitä per tilaus."
-        },
-        "pin": {
-          "pin_title": "Kiinnitä ylös",
-          "unpin_title": "Irrota",
-          "pin_label": "Kiinnitä “{label}”",
-          "unpin_label": "Irrota “{label}”"
-        }
+      "stats": {
+        "load_failed": "Lataus epäonnistui"
       }
     },
     "reporting": {
@@ -1215,7 +1237,7 @@
         "vs_last_year": "{change} vs viime vuosi"
       },
       "last_year": "Viime vuosi",
-      "last_year_toggle": "Näytä viime vuosi kaaviossa ”{chart}”",
+      "last_year_toggle": "Viime vuosi: {chart}",
       "legend": {
         "aov_closed": "Keskim. tilausarvo, päättyneet kuukaudet",
         "current": "Tämä kuukausi, tähän mennessä",
@@ -1413,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Hallintapaneeli",
-        "last_orders_card": {
-          "title": "Viimeisimmät tilaukset",
-          "all_orders_link": "Kaikki tilaukset",
-          "order_number_label": "Tilausnumero",
-          "purchase_number_label": "Ostotilaus",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Lasku",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ei tilauksia",
-          "no_orders_message": "Tilauksia ei ole vielä"
-        },
-        "monthly_report_card": {
-          "title": "Kuukausittainen kuluraportti",
-          "budget_title": "Budjetti",
-          "total_spend_label": "Kokonaiskulutus",
-          "spend_chart_alt": "Kulutuskaavio"
-        },
-        "orders_status_card": {
-          "title": "Tilausten tila"
-        },
-        "bulk_order_card": {
-          "title": "Joukkotilauslohko"
-        }
+        "title": "Hallintapaneeli"
       },
       "change_password": {
         "meta": {
@@ -1879,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Tuotteet"
-    },
-    "compare": {
-      "title": "Tuotteiden vertailu",
-      "meta": {
-        "keywords": "vertaa tuotteita, tuotevertailu, rinnakkainen vertailu",
-        "description": "Vertaa tuotteita rinnakkain löytääksesi tarpeisiisi parhaiten sopivan vaihtoehdon."
-      },
-      "added_count": "{count} lisätty {total}:sta",
-      "added_count_in_category": "{count} lisätty {total}:sta kategoriassa {category}",
-      "actions": {
-        "clear_all": "Tyhjennä kaikki"
-      },
-      "clear_all_modal": {
-        "title": "Tyhjennä kaikki",
-        "message": "Yhtään tuotetta ei poisteta vertailusta. | 1 tuote poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta."
-      },
-      "clear_category_modal": {
-        "title": "Tyhjennä kategoria",
-        "message": "Yhtään tuotetta kategoriasta {category} ei poisteta vertailusta. | 1 tuote kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta."
-      },
-      "empty": {
-        "title": "Vertailulistasi on tyhjä",
-        "description": "Lisää tuotteita luettelosta vertaillaksesi niiden ominaisuuksia rinnakkain. Voit verrata enintään {limit} tuotetta per kategoria.",
-        "restore_button": "Palauta tuotteet",
-        "add_button": "Lisää tuotteita"
-      },
-      "error": "Tietojen lataaminen epäonnistui",
-      "retry": "Yritä uudelleen"
     }
   },
   "identity_error": {

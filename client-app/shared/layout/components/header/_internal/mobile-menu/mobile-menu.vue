@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
+    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color] print:hidden"
   >
     <div class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">

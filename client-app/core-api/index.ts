@@ -32,21 +32,24 @@ export {
   VcLoaderOverlay,
   VcMenuItem,
   VcPopover,
+  VcProductActions,
+  VcProductActionsButton,
+  VcProductPrice,
+  VcProductTitle,
   VcRating,
   VcSelect,
   VcTabSwitch,
   VcTextarea,
   VcTypography,
 } from "@/ui-kit/components/molecules";
-// `VcImage` needs the host too: its thumbnail logic reads the theme's `image_thumbnails_*`
-// settings, and `useThemeContext`'s getter THROWS ("Theme context is missing.") until the host has
-// set the context at boot. Only a filename-only `src` returns before that read — any URL `src`
-// throws outside the host, so a plugin's own dev server or specs must stub it.
+// `VcImage` builds thumbnail URLs only when the app passes `image.thumbnails` to
+// `app.use(uiKit, options)`; without it (a plugin's own dev server or specs) it shows `src` as is.
 export {
   VcBadge,
   VcBreadcrumbs,
   VcCheckbox,
   VcCheckboxGroup,
+  VcContainer,
   VcIcon,
   VcImage,
   VcInputDetails,
@@ -79,11 +82,34 @@ export { VcLayout } from "@/ui-kit/components/templates";
  * and the root export is types-only outside the MF shared scope.
  */
 export { default as OrderStatus } from "@/shared/account/components/order-status.vue";
+/**
+ * The stock chip the host's product cards and pages show: digital, in stock (with the quantity) or out of stock.
+ * Props are contract.
+ */
+export { default as InStock } from "@/shared/catalog/components/in-stock.vue";
 
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 // The registration keys the host matches against.
 export { EXTENSION_CATEGORIES, EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+// What the host passes to a `productActions` entry, and the count a `headerMenu` or `mobileMenu` entry contributes.
+export type { MenuCountContributionType, ProductActionPropsType } from "@/shared/common/types/extensionRegistryMap";
+// The custom section kit: tags and behaviors a Site Builder section template may use.
+export {
+  registerCustomSectionBehavior,
+  registerCustomSectionTag,
+  unregisterCustomSectionBehavior,
+  unregisterCustomSectionTag,
+} from "@/shared/static-content/custom-sections/kit/registry";
+export { defineBehavior } from "@/shared/static-content/custom-sections/behaviors/define-behavior";
+export type { IBehaviorContext } from "@/shared/static-content/custom-sections/behaviors/define-behavior";
+export type {
+  CustomSectionDirectiveType,
+  CustomSectionValueType,
+  ICustomSectionBehavior,
+  ICustomSectionField,
+  ICustomSectionTag,
+} from "@/shared/static-content/custom-sections/types";
 // Declared contributions (`@vc-frontend/core/manifest`).
 export type { SlotContextMapType, SlotIdType } from "@/shared/common/types/slotContext";
 export { usePluginsStatus } from "@/core/federation/contributions/status";
@@ -128,6 +154,20 @@ export { usePageHead } from "@/core/composables/usePageHead";
 // back/forward. Each write pushes a history entry; `updateMethod: "replace"` overwrites it instead.
 export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
+// The cart the header counts: an add through it updates the header, and `cart.id` names the cart.
+export { useShortCart } from "@/shared/cart/composables/useCart";
+// The host's add-to-cart bookkeeping, so a plugin's own add to cart reports what the host's buttons do: the
+// analytics event, and the recommendations' historical event.
+export { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+export { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+// Product properties grouped and formatted as the product page shows them: hidden ones out, multivalues joined.
+export { getPropertiesGroupedByName } from "@/core/utilities/properties";
+// The quantity rules the host's add-to-cart controls validate with: min, max, pack size, available stock.
+export { useQuantityValidationSchema } from "@/ui-kit/composables";
+// A URL parameter a plugin owns preselects the product page's configuration.
+export { registerProductConfigurationSource } from "@/shared/catalog/composables/useProductConfigurationSources";
+export type { ProductConfigurationSourceType } from "@/shared/catalog/composables/useProductConfigurationSources";
+export type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
@@ -227,11 +267,11 @@ export { default as CouponItemSkeleton } from "@/shared/account/components/coupo
 // protected file URL as the signed-in user; `downloadFile` saves one through it.
 export { useFetch } from "@/core/api/common/composables/useFetch";
 export { downloadFile } from "@/shared/files/utils";
-export { getFileSize } from "@/ui-kit/utilities/file-size";
+export { getFileSize } from "@/ui-kit/utilities";
 // The date fields' own display format, so a plugin echoing a picked date shows it the way the field did.
-export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities/date";
+export { formatDateLocale, tryParseDate } from "@/ui-kit/utilities";
 // The host's breakpoint scale, for a plugin that switches layout in script (`useBreakpoints(BREAKPOINTS)`).
-export { BREAKPOINTS } from "@/ui-kit/constants/tailwind";
+export { BREAKPOINTS } from "@/ui-kit/constants";
 export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";
@@ -249,6 +289,48 @@ export type { CustomerOrderType } from "@/core/api/graphql/types";
 // Already reachable through the list-sharing types; exported so a plugin can name it.
 export type { SharingTargetType } from "@/core/api/graphql/types";
 
+// Dashboard layout engine (VCST-6078). A dashboard page owns a layout controller (`useLayout(scope)`), hands it
+// to `<LayoutSurface>` and shapes its statistics queries from the same object (`useStatDataNeeds`); its blocks
+// join drag-and-drop, hiding and persistence through `registerBlock(scope, block)` and render inside
+// `<LayoutWidget>`. The Sales Rep Hub plugin runs its dashboards on this engine instead of carrying a copy.
+// Direct file paths, not the `shared/dashboard` barrel (same reason as the composables above), and nothing
+// from its `_internal/` folders: the surface and the widget are the two components whose look is the contract.
+export { default as LayoutSurface } from "@/shared/dashboard/components/layout-surface.vue";
+export { default as LayoutWidget } from "@/shared/dashboard/components/layout-widget.vue";
+export { useLayout } from "@/shared/dashboard/composables/useLayout";
+export { useBlockChrome } from "@/shared/dashboard/composables/useBlockChrome";
+export { useStatDataNeeds } from "@/shared/dashboard/composables/useStatDataNeeds";
+export { registerBlock, unregisterBlock } from "@/shared/dashboard/registry";
+export { knownHiddenTabs, toggleTabRule, visibleTabRules } from "@/shared/dashboard/settings";
+export { buildStatCards, statBlocks, statDataNeeds } from "@/shared/dashboard/stat-cards";
+export {
+  buildStatisticsWindows,
+  formatSignedPercent,
+  formatStatCount,
+  formatStatMoney,
+} from "@/shared/dashboard/statistics";
+export { MIN_ROWS } from "@/shared/dashboard/constants";
+export type { ILayoutBlockChromeType } from "@/shared/dashboard/composables/useBlockChrome";
+export type {
+  IStatCardDefType,
+  StatCardDataType,
+  StatNeedResultType,
+  StatQueryStateType,
+} from "@/shared/dashboard/stat-cards";
+export type { SignedPercentType, StatisticsWindowsType } from "@/shared/dashboard/statistics";
+export type {
+  BlockSettingsType,
+  BlockSettingType,
+  BlockType,
+  IStatBlock,
+  IWidgetBlock,
+  LayoutControllerType,
+  LayoutRegionIdType,
+  LayoutVisibilityType,
+  MaxRowsSettingType,
+  StatCardType,
+  StatDataNeedsType,
+} from "@/shared/dashboard/types";
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 export const CORE_VERSION: string = version;

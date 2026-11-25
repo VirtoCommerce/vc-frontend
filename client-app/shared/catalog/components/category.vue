@@ -210,7 +210,7 @@
           :page-number="currentPage"
           :page-history="pageHistory"
           :products="products"
-          :saved-view-mode="savedViewMode"
+          :saved-view-mode="shownViewMode"
           :mode="catalogPaginationMode"
           :keyword="searchParams.keyword || barcodeQueryParam"
           class="category__products"
@@ -436,6 +436,9 @@ const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrien
 const hideViewModeSelector = computed(() => {
   return !!props.viewMode && viewModes.includes(props.viewMode);
 });
+const shownViewMode = computed(() =>
+  props.viewMode && hideViewModeSelector.value ? props.viewMode : savedViewMode.value,
+);
 
 const reportedPositions = new Map<string, { page: number; index: number }>();
 
@@ -775,7 +778,11 @@ watch(
       setQueryScope(searchQueryParam.value);
 
       const finishPreparing = categoryId ? prepareScope() : undefined;
-      onCleanup(() => finishPreparing?.());
+      let isCancelled = false;
+      onCleanup(() => {
+        isCancelled = true;
+        finishPreparing?.();
+      });
 
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
@@ -799,6 +806,10 @@ watch(
         finishPreparing?.();
       }
 
+      if (isCancelled) {
+        return;
+      }
+
       if (!props.isRoot) {
         isCategoryNotFound.value = !data;
       }
@@ -808,12 +819,6 @@ watch(
   },
   { immediate: true },
 );
-
-watch(props, ({ viewMode }) => {
-  if (viewMode && viewModes.includes(viewMode)) {
-    savedViewMode.value = viewMode;
-  }
-});
 
 watch(
   () => currentCategory.value?.id,

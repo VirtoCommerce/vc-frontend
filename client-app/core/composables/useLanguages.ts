@@ -5,6 +5,7 @@ import { setLocale as setLocaleForYup } from "yup";
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import { QueryParamName } from "@/core/enums";
 import { runLocaleLoaders } from "@/core/locale-loaders";
+import { PINNED_LOCALE_KEY, URL_LOCALE_PATTERN } from "@/core/theme-snapshot/query";
 import { getDefaultNumberFormats } from "@/i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
@@ -12,12 +13,11 @@ import { useCurrency } from "./useCurrency";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
-import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
-const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
+const pinnedLocale = useLocalStorage<string | null>(PINNED_LOCALE_KEY, null);
 const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: string }>("previousCultureSlug", {
   cultureName: "",
   slug: "",
@@ -44,7 +44,7 @@ const supportedLocalesRegex = computed(
   () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
 );
 
-const possibleLocaleRegex = computed(() => /^\/?(?<locale>[a-z]{2}(?:-[A-Z]{2})?)(\/|$)/i);
+const possibleLocaleRegex = computed(() => new RegExp(URL_LOCALE_PATTERN, "i"));
 
 const currentLanguage = ref<ILanguage>();
 const currentMaybeShortLocale = computed(() => {
@@ -60,10 +60,10 @@ function tryShortLocale(localeOrCultureName: string) {
     : localeOrCultureName;
 }
 
-function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
+function fetchLocaleMessages(locale: string): Promise<Record<string, LocaleMessageValue>> {
   const localesPathPrefix = "../../../locales";
 
-  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
+  const locales = import.meta.glob<boolean, string, Record<string, LocaleMessageValue>>("../../../locales/*.json"); // can't use variables in import
 
   // The locale may originate from user-controlled input (e.g. a `?cultureName=` query param).
   // Reject anything that isn't a plain locale identifier before using it to index the bundle map,

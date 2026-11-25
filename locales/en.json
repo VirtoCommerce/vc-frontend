@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -642,6 +641,30 @@
         "click_to_copy": "Click to copy",
         "clipboard_success": "Coupon copied successfully",
         "tap_to_copy": "Tap to copy"
+      },
+      "dashboard": {
+        "orders_placed_week": "Orders placed · WEEK",
+        "orders_placed_mtd": "Orders placed · MTD",
+        "orders_placed_ytd": "Orders placed · YTD",
+        "avg_order_value": "Avg order value",
+        "per_order": "Average per order (YTD)",
+        "vs_last_week": "{delta} vs last week",
+        "vs_last_month": "{delta} vs last month",
+        "vs_last_year": "{delta} vs last year",
+        "excluded_orders": "{count} order in another currency not included | {count} orders in other currencies not included",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Sales Statistics"
+        },
+        "recent_orders": {
+          "title": "My recent orders",
+          "view_all": "All orders",
+          "filter_all": "All",
+          "empty": "There are no orders yet",
+          "no_results": "No orders with this status",
+          "load_failed": "Couldn't load orders",
+          "statuses_label": "Statuses to show"
+        }
       }
     },
     "sign_in": {
@@ -1145,47 +1168,46 @@
       "date_new_to_old": "Date, new to old",
       "date_old_to_new": "Date, old to new"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Add to Compare",
-          "remove": "Remove from Compare"
-        }
+    "dashboard": {
+      "edit": "Edit layout",
+      "editing": "Editing layout",
+      "hint": "— drag a block by its handle to reorder it, or hide it with ✕.",
+      "hint_keyboard": "Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
+      "save": "Save layout",
+      "cancel": "Cancel",
+      "reset": "Reset",
+      "save_failed": "The layout could not be saved. Your changes are still here — try again.",
+      "load_failed": "The saved layout could not be loaded, so the default arrangement is shown. Editing is unavailable until it loads — try refreshing the page.",
+      "hidden_widgets": "Hidden widgets",
+      "visible_stats": "Visible stats",
+      "hidden_stats": "Hidden stats",
+      "empty_visible": "Drag a stat here to show it",
+      "empty_hidden": "Drag a stat here to hide it",
+      "max_rows": "Max rows",
+      "restored": "Default layout restored.",
+      "empty": {
+        "title": "All blocks are hidden",
+        "text": "Every stat and widget on this page has been moved to {hidden} in layout settings. Restore the default layout to bring everything back, or open {edit} to choose exactly what to show.",
+        "hidden": "Hidden",
+        "restore": "Restore default layout"
       },
-      "notifications": {
-        "limit_reached": "Only {productsLimit} products from the same category can be compared",
-        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
-        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
-        "compare_button": "Compare",
-        "added_to_cart_html": "Added <strong>{productName}</strong> to cart",
-        "fetch_failed": "Couldn't load some compared products. Please try again."
+      "a11y": {
+        "reorder": "Reorder {title}",
+        "hide": "Hide {title}",
+        "show": "Show {title}",
+        "editing": "Editing layout. Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
+        "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
+        "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
+        "moved": "{title} moved to position {position} of {total}.",
+        "dropped": "{title} dropped at position {position} of {total}.",
+        "edge": "{title} is already at position {position} of {total}.",
+        "cancelled": "Move of {title} cancelled.",
+        "parked": "{title} hidden.",
+        "restored": "{title} shown.",
+        "max_rows": "Max rows for {title}, between {min} and {max}"
       },
-      "table": {
-        "tabs": {
-          "all": "All",
-          "differences": "Differences"
-        },
-        "uncategorized": "Uncategorized",
-        "unresolved_category": "Unknown category",
-        "differ_rows": "Differ: {count} of {total} rows",
-        "clear_category": "Clear category",
-        "remove_product": "Remove from compare",
-        "add_to_cart": "Add to cart",
-        "fields": {
-          "price_per_unit": "Price per unit",
-          "price_per_unit_tooltip": "Price, excl. VAT, per unit.",
-          "customer_rating": "Customer rating",
-          "availability": "Availability",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. order qty",
-          "min_order_qty_tooltip": "MOQ — minimum number of units per order."
-        },
-        "pin": {
-          "pin_title": "Pin to top",
-          "unpin_title": "Unpin",
-          "pin_label": "Pin “{label}”",
-          "unpin_label": "Unpin “{label}”"
-        }
+      "stats": {
+        "load_failed": "Couldn't load"
       }
     },
     "reporting": {
@@ -1215,7 +1237,7 @@
         "vs_last_year": "{change} vs last year"
       },
       "last_year": "Last year",
-      "last_year_toggle": "Show last year on {chart}",
+      "last_year_toggle": "Last year: {chart}",
       "legend": {
         "aov_closed": "AOV, closed months",
         "current": "This month, to date",
@@ -1413,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Latest orders",
-          "all_orders_link": "All orders",
-          "order_number_label": "Order number",
-          "purchase_number_label": "Purchase order",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Invoice",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "No orders",
-          "no_orders_message": "There are no orders yet"
-        },
-        "monthly_report_card": {
-          "title": "Monthly spend report",
-          "budget_title": "Budget",
-          "total_spend_label": "Totally spent",
-          "spend_chart_alt": "Spending chart"
-        },
-        "orders_status_card": {
-          "title": "Orders status"
-        },
-        "bulk_order_card": {
-          "title": "Bulk order pad"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {
@@ -1879,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Products"
-    },
-    "compare": {
-      "title": "Compare products",
-      "meta": {
-        "keywords": "compare products, product comparison, side by side comparison",
-        "description": "Compare products side by side to find the best option for your needs."
-      },
-      "added_count": "{count} of {total} added",
-      "added_count_in_category": "{count} of {total} added in {category}",
-      "actions": {
-        "clear_all": "Clear all"
-      },
-      "clear_all_modal": {
-        "title": "Clear all",
-        "message": "No products will be removed from comparison. | All 1 product will be removed from comparison. | All {n} products will be removed from comparison. | All {n} products will be removed from comparison."
-      },
-      "clear_category_modal": {
-        "title": "Clear category",
-        "message": "No products in {category} will be removed from comparison. | All 1 product in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison."
-      },
-      "empty": {
-        "title": "Your compare list is empty",
-        "description": "Add products from the catalog to compare their characteristics side by side. You can compare up to {limit} products per category.",
-        "restore_button": "Restore products",
-        "add_button": "Add products"
-      },
-      "error": "Failed to load data",
-      "retry": "Try again"
     }
   },
   "identity_error": {

@@ -2,9 +2,13 @@ import { VcLineItems } from "..";
 import { preparedLineItemMock1, preparedLineItemMock2 } from "../../../mocks/line-item.mock";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const meta: Meta<typeof VcLineItems> = {
+// VcLineItems hands the caller's own item type back to its slots; the quantity stories read `item.quantity`.
+type StoryLineItemType = VcLineItemType & { quantity?: number };
+
+const meta: Meta<typeof VcLineItems<StoryLineItemType>> = {
   title: "Components/Molecules/VcLineItems",
-  component: VcLineItems,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcLineItems as any,
   args: {
     readonly: false,
     disabled: false,
@@ -118,6 +122,7 @@ export const AddToCart: StoryType = {
       {
         ...preparedLineItemMock2,
         id: "3",
+        quantity: 1,
       },
     ],
     removable: true,
@@ -136,7 +141,10 @@ export const AddToCart: StoryType = {
           />
 
           <div class="flex gap-1 mt-1.5">
-            <VcChip size="xs" variant="outline-dark" color="neutral" rounded>10 in Cart</VcChip>
+            <VcChip size="sm" variant="tonal" color="neutral" rounded>
+              <VcIcon name="cart" variant="solid" />
+              10
+            </VcChip>
           </div>
       </template>
     </VcLineItems>`,

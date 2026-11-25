@@ -14,7 +14,7 @@ jobs:
       VERSION_SUFFIX: ""
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -30,7 +30,7 @@ jobs:
           fi
 
       - name: Set up Node 22
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
 
@@ -42,15 +42,15 @@ jobs:
         uses: warchant/setup-sonar-scanner@911ef81b14b267a261d70ac94e43d3c822a709d5 # v10
 
       - name: Install VirtoCommerce.GlobalTool
-        uses: VirtoCommerce/.github/actions/setup-vcbuild@v3.1000.7
+        uses: VirtoCommerce/.github/actions/setup-vcbuild@stable
 
       - name: Setup Git Credentials
-        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@v3.1000.7
+        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@v3.1000.11
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
       - name: Get Image Version
-        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.7
+        uses: VirtoCommerce/.github/actions/get-image-version@v3.1000.11
         id: image
         with:
           projectType: "theme"
@@ -98,7 +98,7 @@ jobs:
 
       - name: Publish to Blob
         id: blobRelease
-        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.7
+        uses: VirtoCommerce/.github/actions/publish-blob-release@v3.1000.11
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
 

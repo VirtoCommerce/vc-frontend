@@ -1,7 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, ref } from "vue";
+import { usePageLayout } from "@/shared/layout/composables/usePageLayout";
 import VPPageBuilder from "./vp-page-builder.vue";
+import type { Ref } from "vue";
 
 const routePath = ref("/page-a");
 const routeHash = ref("#text2");
@@ -21,11 +23,10 @@ vi.mock("@/core/composables", () => ({
   useBreadcrumbs: () => [],
 }));
 
-vi.mock("@/plugins/builder-preview/block-mapping", () => ({
-  getBlockType: () => "section",
+const { scrollToAnchor, usePageSeoInfo } = vi.hoisted(() => ({
+  scrollToAnchor: vi.fn(() => Promise.resolve(true)),
+  usePageSeoInfo: vi.fn(),
 }));
-
-const { scrollToAnchor } = vi.hoisted(() => ({ scrollToAnchor: vi.fn(() => Promise.resolve(true)) }));
 
 vi.mock("@/shared/static-content/anchors", async () => {
   const actual = await vi.importActual<typeof import("@/shared/static-content/anchors")>(
@@ -36,10 +37,27 @@ vi.mock("@/shared/static-content/anchors", async () => {
 });
 
 vi.mock("@/shared/static-content", async () => {
-  const anchors = await import("@/shared/static-content/anchors");
   const { useAnchorScroll } = await import("@/shared/static-content/composables/useAnchorScroll");
+  const { default: PageBuilderPage } = await import("@/shared/static-content/components/page-builder-page.vue");
+  const { registerPageBuilderSections } = await import("@/shared/static-content/sections");
+  const { defineComponent, h } = await import("vue");
+  const section = defineComponent({ props: { title: String }, setup: (props) => () => h("section", props.title) });
+  registerPageBuilderSections({ "test-block": section });
 
-  return { ...anchors, useAnchorScroll };
+  return { useAnchorScroll, usePageSeoInfo, PageBuilderPage };
+});
+
+vi.mock("@/shared/static-content/components/page-template.vue", async () => {
+  const { defineComponent } = await import("vue");
+
+  return {
+    default: defineComponent({
+      setup:
+        (_props, { slots }) =>
+        () =>
+          slots.default?.(),
+    }),
+  };
 });
 
 const mountedWrappers: Array<{ unmount: () => void }> = [];
@@ -117,6 +135,29 @@ describe("VPPageBuilder", () => {
     },
   );
 
+  it("does not render a section of an unregistered type", () => {
+    const wrapper = mountPageBuilder(
+      JSON.stringify({ settings: { hideBreadcrumbs: true }, content: [{ id: "unknown", type: "iframe" }] }),
+    );
+
+    expect(wrapper.find("#unknown").exists()).toBe(false);
+    expect(wrapper.find("iframe").exists()).toBe(false);
+  });
+
+  it("passes only declared settings to a section", () => {
+    const wrapper = mountPageBuilder(
+      JSON.stringify({
+        settings: { hideBreadcrumbs: true },
+        content: [{ id: "known", type: "test-block", title: "Title", onmouseover: "alert(1)", style: "color: red" }],
+      }),
+    );
+
+    const section = wrapper.find("#known");
+    expect(section.text()).toBe("Title");
+    expect(section.attributes("onmouseover")).toBeUndefined();
+    expect(section.attributes("style")).toBeUndefined();
+  });
+
   it("recovers when a valid document follows an invalid update", async () => {
     const wrapper = mountPageBuilder("invalid-json");
     expect(wrapper.html()).not.toContain("section");
@@ -126,11 +167,34 @@ describe("VPPageBuilder", () => {
 
     expect(wrapper.find("#recovered").exists()).toBe(true);
   });
+
+  it("gives a document that does not parse the full layout, so the header does not wait for it", () => {
+    usePageLayout().setPageLayout("blank");
+
+    mountPageBuilder("invalid-json");
+
+    expect(usePageLayout().pageLayout.value).toBe("full");
+  });
+
+  it("gives the head the page's SEO info, named by its live name", async () => {
+    const wrapper = mountPageBuilder(
+      pageContent("seo", { name: "Old name", seoInfo: { pageTitle: "Spring sale" } }),
+      "spring-sale",
+    );
+    const [seoInfo, fallbackTitle] = usePageSeoInfo.mock.calls[0] as [() => unknown, Ref<string>];
+
+    expect(seoInfo()).toEqual({ pageTitle: "Spring sale" });
+    expect(fallbackTitle.value).toBe("Spring sale");
+
+    await wrapper.setProps({ content: pageContent("seo", { seoInfo: { metaDescription: "Next page" } }) });
+
+    expect(seoInfo()).toEqual({ metaDescription: "Next page" });
+  });
 });
 
-function mountPageBuilder(content?: string) {
+function mountPageBuilder(content?: string, name?: string) {
   const wrapper = mount(VPPageBuilder, {
-    props: { content },
+    props: { content, name },
     global: {
       stubs: {
         VcBreadcrumbs: true,

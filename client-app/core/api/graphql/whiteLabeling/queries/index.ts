@@ -5,15 +5,16 @@ import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/t
 import type { DocumentNode } from "graphql";
 
 const FOOTER_LINKS_DEPTH = 1;
+const MAIN_MENU_LINKS_DEPTH = 1;
 
-function getFooterLinksTreeString(level: number): string {
+function getMenuLinksTreeString(level: number): string {
   return level > 0
     ? `
       childItems {
         title
         url
         priority
-        ${getFooterLinksTreeString(level - 1)}
+        ${getMenuLinksTreeString(level - 1)}
       }
     `
     : "";
@@ -38,11 +39,17 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
           sizes
           href
         }
+        mainMenuLinks {
+          title
+          url
+          priority
+          ${getMenuLinksTreeString(MAIN_MENU_LINKS_DEPTH)}
+        }
         footerLinks {
           title
           url
           priority
-          ${getFooterLinksTreeString(maxLevelFooterLinks)}
+          ${getMenuLinksTreeString(maxLevelFooterLinks)}
         }
       }
     }

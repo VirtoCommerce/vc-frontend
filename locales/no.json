@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -642,6 +641,30 @@
         "click_to_copy": "Klikk for å kopiere",
         "clipboard_success": "Kupong kopiert vellykket",
         "tap_to_copy": "Trykk for å kopiere"
+      },
+      "dashboard": {
+        "orders_placed_week": "Ordrer denne uken",
+        "orders_placed_mtd": "Ordrer hittil denne måneden",
+        "orders_placed_ytd": "Ordrer hittil i år",
+        "avg_order_value": "Gjennomsnittlig ordreverdi",
+        "per_order": "Gjennomsnitt per ordre (hittil i år)",
+        "vs_last_week": "{delta} vs forrige uke",
+        "vs_last_month": "{delta} vs forrige måned",
+        "vs_last_year": "{delta} vs i fjor",
+        "excluded_orders": "{count} bestilling i en annen valuta er ikke inkludert | {count} bestillinger i andre valutaer er ikke inkludert",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Salgsstatistikk"
+        },
+        "recent_orders": {
+          "title": "Mine nylige bestillinger",
+          "view_all": "Alle bestillinger",
+          "filter_all": "Alle",
+          "empty": "Ingen bestillinger ennå",
+          "no_results": "Ingen bestillinger med denne statusen",
+          "load_failed": "Kunne ikke laste inn bestillingene",
+          "statuses_label": "Statuser som vises"
+        }
       }
     },
     "sign_in": {
@@ -1145,47 +1168,46 @@
       "date_new_to_old": "Dato, ny til gammel",
       "date_old_to_new": "Dato, gammel til ny"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Legg til i sammenligning",
-          "remove": "Fjern fra sammenligning"
-        }
+    "dashboard": {
+      "edit": "Rediger oppsett",
+      "editing": "Redigerer oppsett",
+      "hint": "— dra en blokk etter håndtaket for å endre rekkefølgen, eller skjul den med ✕.",
+      "hint_keyboard": "Tastatur: mellomromstasten tar tak i en blokk, piltastene flytter den, mellomrom slipper den, Esc avbryter.",
+      "save": "Lagre oppsett",
+      "cancel": "Avbryt",
+      "reset": "Tilbakestill",
+      "save_failed": "Oppsettet kunne ikke lagres. Endringene dine er fortsatt her — prøv igjen.",
+      "load_failed": "Det lagrede oppsettet kunne ikke lastes, så standardrekkefølgen vises. Redigering er utilgjengelig til det er lastet — last siden på nytt.",
+      "hidden_widgets": "Skjulte moduler",
+      "visible_stats": "Synlige nøkkeltall",
+      "hidden_stats": "Skjulte nøkkeltall",
+      "empty_visible": "Dra et nøkkeltall hit for å vise det",
+      "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
+      "max_rows": "Maks. rader",
+      "restored": "Standardoppsettet er gjenopprettet.",
+      "empty": {
+        "title": "Alle blokker er skjult",
+        "text": "Alle nøkkeltall og moduler på denne siden er flyttet til {hidden} i oppsettinnstillingene. Gjenopprett standardoppsettet for å få alt tilbake, eller åpne {edit} for å velge nøyaktig hva som skal vises.",
+        "hidden": "Skjulte",
+        "restore": "Gjenopprett standardoppsett"
       },
-      "notifications": {
-        "limit_reached": "Kun {productsLimit} produkter fra samme kategori kan sammenlignes",
-        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> er lagt til i sammenligningslisten <span class=\"hidden lg:inline\">(elementer igjen - {itemsLeft})</span>",
-        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> ble fjernet fra sammenligningslisten",
-        "compare_button": "Sammenlign",
-        "added_to_cart_html": "Lagt til <strong>{productName}</strong> i handlekurven",
-        "fetch_failed": "Kunne ikke laste inn noen sammenlignede produkter. Prøv igjen."
+      "a11y": {
+        "reorder": "Endre rekkefølge på {title}",
+        "hide": "Skjul {title}",
+        "show": "Vis {title}",
+        "editing": "Redigerer oppsett. Tastatur: mellomromstasten tar tak i en blokk, piltastene flytter den, mellomrom slipper den, Esc avbryter.",
+        "grabbed": "{title} tatt opp. Posisjon {position} av {total}. Bruk piltastene for å flytte, mellomrom for å slippe, escape for å avbryte.",
+        "grabbed_parkable": "{title} tatt opp. Posisjon {position} av {total}. Bruk venstre og høyre piltast for å flytte, opp og ned for å skjule eller vise, mellomrom for å slippe, escape for å avbryte.",
+        "moved": "{title} flyttet til posisjon {position} av {total}.",
+        "dropped": "{title} sluppet på posisjon {position} av {total}.",
+        "edge": "{title} er allerede på plass {position} av {total}.",
+        "cancelled": "Flytting av {title} avbrutt.",
+        "parked": "{title} skjult.",
+        "restored": "{title} vist.",
+        "max_rows": "Maks. rader for {title}, mellom {min} og {max}"
       },
-      "table": {
-        "tabs": {
-          "all": "Alle",
-          "differences": "Forskjeller"
-        },
-        "uncategorized": "Ukategorisert",
-        "unresolved_category": "Ukjent kategori",
-        "differ_rows": "Forskjellig: {count} av {total} rader",
-        "clear_category": "Fjern kategori",
-        "remove_product": "Fjern fra sammenligning",
-        "add_to_cart": "Legg i handlekurv",
-        "fields": {
-          "price_per_unit": "Pris per enhet",
-          "price_per_unit_tooltip": "Pris, ekskl. mva, per enhet.",
-          "customer_rating": "Kunderangering",
-          "availability": "Tilgjengelighet",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. bestillingsantall",
-          "min_order_qty_tooltip": "MOQ — minimum antall enheter per bestilling."
-        },
-        "pin": {
-          "pin_title": "Fest øverst",
-          "unpin_title": "Løsne",
-          "pin_label": "Fest “{label}”",
-          "unpin_label": "Løsne “{label}”"
-        }
+      "stats": {
+        "load_failed": "Kunne ikke laste"
       }
     },
     "reporting": {
@@ -1215,7 +1237,7 @@
         "vs_last_year": "{change} vs i fjor"
       },
       "last_year": "I fjor",
-      "last_year_toggle": "Vis tall for i fjor i diagrammet «{chart}»",
+      "last_year_toggle": "I fjor: {chart}",
       "legend": {
         "aov_closed": "Snittordreverdi, avsluttede måneder",
         "current": "Denne måneden, hittil",
@@ -1413,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashbord",
-        "last_orders_card": {
-          "title": "Siste bestillinger",
-          "all_orders_link": "Alle bestillinger",
-          "order_number_label": "Bestillingsnummer",
-          "purchase_number_label": "Innkjøpsordre",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Faktura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Ingen bestillinger",
-          "no_orders_message": "Ingen bestillinger ennå"
-        },
-        "monthly_report_card": {
-          "title": "Månedlig kostnadsrapport",
-          "budget_title": "Budsjett",
-          "total_spend_label": "Totalt forbruk",
-          "spend_chart_alt": "Forbruksgraf"
-        },
-        "orders_status_card": {
-          "title": "Bestillingsstatus"
-        },
-        "bulk_order_card": {
-          "title": "Massebestillingsblokk"
-        }
+        "title": "Dashbord"
       },
       "change_password": {
         "meta": {
@@ -1879,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Produkter"
-    },
-    "compare": {
-      "title": "Sammenlign produkter",
-      "meta": {
-        "keywords": "sammenlign produkter, produkt sammenligning, side om side sammenligning",
-        "description": "Sammenlign produkter side om side for å finne det beste alternativet for dine behov."
-      },
-      "added_count": "{count} av {total} lagt til",
-      "added_count_in_category": "{count} av {total} lagt til i {category}",
-      "actions": {
-        "clear_all": "Fjern alle"
-      },
-      "clear_all_modal": {
-        "title": "Fjern alle",
-        "message": "Ingen produkter vil bli fjernet fra sammenligningen. | 1 produkt vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen."
-      },
-      "clear_category_modal": {
-        "title": "Fjern kategori",
-        "message": "Ingen produkter i {category} vil bli fjernet fra sammenligningen. | 1 produkt i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen."
-      },
-      "empty": {
-        "title": "Sammenligningslisten din er tom",
-        "description": "Legg til produkter fra katalogen for å sammenligne deres egenskaper side om side. Du kan sammenligne opptil {limit} produkter per kategori.",
-        "restore_button": "Gjenopprett produkter",
-        "add_button": "Legg til produkter"
-      },
-      "error": "Kunne ikke laste inn data",
-      "retry": "Prøv igjen"
     }
   },
   "identity_error": {

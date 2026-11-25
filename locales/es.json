@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -642,6 +641,30 @@
         "click_to_copy": "Haz clic para copiar",
         "clipboard_success": "Cupón copiado con éxito",
         "tap_to_copy": "Toca para copiar"
+      },
+      "dashboard": {
+        "orders_placed_week": "Pedidos de esta semana",
+        "orders_placed_mtd": "Pedidos del mes en curso",
+        "orders_placed_ytd": "Pedidos del año en curso",
+        "avg_order_value": "Valor medio del pedido",
+        "per_order": "Promedio por pedido (año en curso)",
+        "vs_last_week": "{delta} vs. semana pasada",
+        "vs_last_month": "{delta} vs. mes pasado",
+        "vs_last_year": "{delta} vs. año pasado",
+        "excluded_orders": "{count} pedido en otra moneda no incluido | {count} pedidos en otras monedas no incluidos",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Estadísticas de ventas"
+        },
+        "recent_orders": {
+          "title": "Mis pedidos recientes",
+          "view_all": "Todos los pedidos",
+          "filter_all": "Todos",
+          "empty": "Aún no hay pedidos",
+          "no_results": "No hay pedidos con este estado",
+          "load_failed": "No se pudieron cargar los pedidos",
+          "statuses_label": "Estados que se muestran"
+        }
       }
     },
     "sign_in": {
@@ -1145,47 +1168,46 @@
       "date_new_to_old": "Fecha, de más reciente a más antigua",
       "date_old_to_new": "Fecha, de antiguo a nuevo"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Añadir a Comparar",
-          "remove": "Eliminar de Comparar"
-        }
+    "dashboard": {
+      "edit": "Editar diseño",
+      "editing": "Editando el diseño",
+      "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+      "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+      "save": "Guardar diseño",
+      "cancel": "Cancelar",
+      "reset": "Restablecer",
+      "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+      "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+      "hidden_widgets": "Widgets ocultos",
+      "visible_stats": "Métricas visibles",
+      "hidden_stats": "Métricas ocultas",
+      "empty_visible": "Arrastre una métrica aquí para mostrarla",
+      "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+      "max_rows": "Filas máximas",
+      "restored": "Se restableció el diseño predeterminado.",
+      "empty": {
+        "title": "Todos los bloques están ocultos",
+        "text": "Todas las métricas y widgets de esta página se han movido a {hidden} en la configuración del diseño. Restablezca el diseño predeterminado para recuperarlo todo o abra {edit} para elegir exactamente qué mostrar.",
+        "hidden": "Ocultos",
+        "restore": "Restablecer diseño predeterminado"
       },
-      "notifications": {
-        "limit_reached": "Solo se pueden comparar {productsLimit} productos de la misma categoría",
-        "added_html": "El producto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> se ha añadido a la lista de comparación <span class=\"hidden lg:inline\">(elementos restantes - {itemsLeft})</span>",
-        "removed_html": "El producto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> se ha eliminado de la lista de comparación",
-        "compare_button": "Comparar",
-        "added_to_cart_html": "Se ha añadido <strong>{productName}</strong> al carrito",
-        "fetch_failed": "No se pudieron cargar algunos productos comparados. Inténtalo de nuevo."
+      "a11y": {
+        "reorder": "Reordenar {title}",
+        "hide": "Ocultar {title}",
+        "show": "Mostrar {title}",
+        "editing": "Editando el diseño. Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+        "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+        "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+        "moved": "{title} movido a la posición {position} de {total}.",
+        "dropped": "{title} soltado en la posición {position} de {total}.",
+        "edge": "{title} ya está en la posición {position} de {total}.",
+        "cancelled": "Movimiento de {title} cancelado.",
+        "parked": "{title} oculto.",
+        "restored": "{title} visible.",
+        "max_rows": "Filas máximas para {title}, entre {min} y {max}"
       },
-      "table": {
-        "tabs": {
-          "all": "Todos",
-          "differences": "Diferencias"
-        },
-        "uncategorized": "No categorizado",
-        "unresolved_category": "Categoría desconocida",
-        "differ_rows": "Diferencias: {count} de {total} filas",
-        "clear_category": "Limpiar categoría",
-        "remove_product": "Eliminar de la comparación",
-        "add_to_cart": "Añadir al carrito",
-        "fields": {
-          "price_per_unit": "Precio por unidad",
-          "price_per_unit_tooltip": "Precio, sin IVA, por unidad.",
-          "customer_rating": "Valoración del cliente",
-          "availability": "Disponibilidad",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Cantidad mínima de pedido",
-          "min_order_qty_tooltip": "MOQ — número mínimo de unidades por pedido."
-        },
-        "pin": {
-          "pin_title": "Fijar en la parte superior",
-          "unpin_title": "Desfijar",
-          "pin_label": "Fijar “{label}”",
-          "unpin_label": "Desfijar “{label}”"
-        }
+      "stats": {
+        "load_failed": "No se pudo cargar"
       }
     },
     "reporting": {
@@ -1215,7 +1237,7 @@
         "vs_last_year": "{change} vs. año pasado"
       },
       "last_year": "Año pasado",
-      "last_year_toggle": "Mostrar el año pasado en el gráfico «{chart}»",
+      "last_year_toggle": "Año pasado: {chart}",
       "legend": {
         "aov_closed": "Ticket medio, meses cerrados",
         "current": "Este mes, hasta la fecha",
@@ -1413,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Panel de control",
-        "last_orders_card": {
-          "title": "Últimos pedidos",
-          "all_orders_link": "Todos los pedidos",
-          "order_number_label": "Número de pedido",
-          "purchase_number_label": "Orden de compra",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Factura",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Sin pedidos",
-          "no_orders_message": "Aún no hay pedidos"
-        },
-        "monthly_report_card": {
-          "title": "Informe de gastos mensual",
-          "budget_title": "Presupuesto",
-          "total_spend_label": "Totalmente gastado",
-          "spend_chart_alt": "Gráfico de gastos"
-        },
-        "orders_status_card": {
-          "title": "Estado de los pedidos"
-        },
-        "bulk_order_card": {
-          "title": "Bloc de pedidos en masa"
-        }
+        "title": "Panel de control"
       },
       "change_password": {
         "meta": {
@@ -1879,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Productos"
-    },
-    "compare": {
-      "title": "Comparar productos",
-      "meta": {
-        "keywords": "comparar productos, comparación de productos, comparación lado a lado",
-        "description": "Compara productos uno al lado del otro para encontrar la mejor opción para tus necesidades."
-      },
-      "added_count": "{count} de {total} añadidos",
-      "added_count_in_category": "{count} de {total} añadidos en {category}",
-      "actions": {
-        "clear_all": "Limpiar todo"
-      },
-      "clear_all_modal": {
-        "title": "Limpiar todo",
-        "message": "No se eliminará ningún producto de la comparación. | Se eliminará 1 producto de la comparación. | Se eliminarán {n} productos de la comparación. | Se eliminarán {n} productos de la comparación."
-      },
-      "clear_category_modal": {
-        "title": "Limpiar categoría",
-        "message": "No se eliminará ningún producto de {category} de la comparación. | Se eliminará 1 producto en {category} de la comparación. | Se eliminarán {n} productos en {category} de la comparación. | Se eliminarán {n} productos en {category} de la comparación."
-      },
-      "empty": {
-        "title": "Tu lista de comparación está vacía",
-        "description": "Añade productos del catálogo para comparar sus características una al lado de la otra. Puedes comparar hasta {limit} productos por categoría.",
-        "restore_button": "Restaurar productos",
-        "add_button": "Añadir productos"
-      },
-      "error": "Error al cargar datos",
-      "retry": "Intentar de nuevo"
     }
   },
   "identity_error": {

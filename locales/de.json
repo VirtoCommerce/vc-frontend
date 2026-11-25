@@ -369,7 +369,6 @@
           "home": "@:common.links.home",
           "catalog": "@:common.links.catalog",
           "bulk_order": "@:common.links.bulk_order",
-          "compare": "@:common.links.compare",
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
@@ -642,6 +641,30 @@
         "click_to_copy": "Zum Kopieren anklicken",
         "clipboard_success": "Gutschein erfolgreich kopiert",
         "tap_to_copy": "Zum Kopieren tippen"
+      },
+      "dashboard": {
+        "orders_placed_week": "Bestellungen diese Woche",
+        "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+        "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
+        "avg_order_value": "Durchschn. Bestellwert",
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)",
+        "vs_last_week": "{delta} ggü. Vorwoche",
+        "vs_last_month": "{delta} ggü. Vormonat",
+        "vs_last_year": "{delta} ggü. Vorjahr",
+        "excluded_orders": "{count} Bestellung in anderer Währung nicht enthalten | {count} Bestellungen in anderen Währungen nicht enthalten",
+        "sub_with_excluded": "{sub} · {note}",
+        "sales_report": {
+          "title": "Verkaufsstatistik"
+        },
+        "recent_orders": {
+          "title": "Meine letzten Bestellungen",
+          "view_all": "Alle Bestellungen",
+          "filter_all": "Alle",
+          "empty": "Es liegen noch keine Bestellungen vor",
+          "no_results": "Keine Bestellungen mit diesem Status",
+          "load_failed": "Bestellungen konnten nicht geladen werden",
+          "statuses_label": "Anzuzeigende Status"
+        }
       }
     },
     "sign_in": {
@@ -1145,47 +1168,46 @@
       "date_new_to_old": "Datum, neu nach alt",
       "date_old_to_new": "Datum, alt bis neu"
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Zum Vergleich hinzufügen",
-          "remove": "Aus dem Vergleich entfernen"
-        }
+    "dashboard": {
+      "edit": "Layout bearbeiten",
+      "editing": "Layout wird bearbeitet",
+      "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+      "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+      "save": "Layout speichern",
+      "cancel": "Abbrechen",
+      "reset": "Zurücksetzen",
+      "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+      "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
+      "hidden_widgets": "Ausgeblendete Widgets",
+      "visible_stats": "Sichtbare Kennzahlen",
+      "hidden_stats": "Ausgeblendete Kennzahlen",
+      "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
+      "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+      "max_rows": "Max Zeilen",
+      "restored": "Standardlayout wiederhergestellt.",
+      "empty": {
+        "title": "Alle Blöcke sind ausgeblendet",
+        "text": "Alle Kennzahlen und Widgets auf dieser Seite wurden in den Layout-Einstellungen in den Bereich {hidden} verschoben. Stellen Sie das Standardlayout wieder her, um alles zurückzuholen, oder öffnen Sie {edit}, um genau festzulegen, was angezeigt wird.",
+        "hidden": "Ausgeblendet",
+        "restore": "Standardlayout wiederherstellen"
       },
-      "notifications": {
-        "limit_reached": "Nur {productsLimit} Produkte aus derselben Kategorie können verglichen werden",
-        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde zur Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
-        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
-        "compare_button": "Vergleichen",
-        "added_to_cart_html": "<strong>{productName}</strong> zum Warenkorb hinzugefügt",
-        "fetch_failed": "Einige Vergleichsprodukte konnten nicht geladen werden. Bitte versuche es erneut."
+      "a11y": {
+        "reorder": "{title} umsortieren",
+        "hide": "{title} ausblenden",
+        "show": "{title} einblenden",
+        "editing": "Layout wird bearbeitet. Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+        "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+        "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
+        "moved": "{title} auf Position {position} von {total} verschoben.",
+        "dropped": "{title} auf Position {position} von {total} abgelegt.",
+        "edge": "{title} ist bereits an Position {position} von {total}.",
+        "cancelled": "Verschieben von {title} abgebrochen.",
+        "parked": "{title} ausgeblendet.",
+        "restored": "{title} eingeblendet.",
+        "max_rows": "Max Zeilen für {title}, zwischen {min} und {max}"
       },
-      "table": {
-        "tabs": {
-          "all": "Alle",
-          "differences": "Unterschiede"
-        },
-        "uncategorized": "Nicht kategorisiert",
-        "unresolved_category": "Unbekannte Kategorie",
-        "differ_rows": "Unterschiede: {count} von {total} Zeilen",
-        "clear_category": "Kategorie löschen",
-        "remove_product": "Aus dem Vergleich entfernen",
-        "add_to_cart": "In den Warenkorb legen",
-        "fields": {
-          "price_per_unit": "Preis pro Einheit",
-          "price_per_unit_tooltip": "Preis, exkl. MwSt., pro Einheit.",
-          "customer_rating": "Kundenbewertung",
-          "availability": "Verfügbarkeit",
-          "sku": "@:common.labels.sku",
-          "min_order_qty": "Mindestbestellmenge",
-          "min_order_qty_tooltip": "MOQ – Mindestanzahl an Einheiten pro Bestellung."
-        },
-        "pin": {
-          "pin_title": "Oben anheften",
-          "unpin_title": "Anheftung aufheben",
-          "pin_label": "„{label}“ anheften",
-          "unpin_label": "„{label}“ anheften aufheben"
-        }
+      "stats": {
+        "load_failed": "Laden fehlgeschlagen"
       }
     },
     "reporting": {
@@ -1215,7 +1237,7 @@
         "vs_last_year": "{change} ggü. Vorjahr"
       },
       "last_year": "Vorjahr",
-      "last_year_toggle": "Vorjahr im Diagramm „{chart}“ anzeigen",
+      "last_year_toggle": "Vorjahr: {chart}",
       "legend": {
         "aov_closed": "Ø Bestellwert, abgeschlossene Monate",
         "current": "Dieser Monat, bis heute",
@@ -1413,31 +1435,7 @@
         "meta": {
           "title": "@:pages.account.dashboard.title"
         },
-        "title": "Dashboard",
-        "last_orders_card": {
-          "title": "Neueste Bestellungen",
-          "all_orders_link": "Alle Bestellungen",
-          "order_number_label": "Bestellnummer",
-          "purchase_number_label": "Einkaufsbestellung",
-          "status_label": "@:common.labels.status",
-          "invoice_label": "Rechnung",
-          "date_label": "@:common.labels.date",
-          "total_label": "@:common.labels.total",
-          "no_orders_img_alt": "Keine Bestellungen",
-          "no_orders_message": "Es liegen noch keine Bestellungen vor"
-        },
-        "monthly_report_card": {
-          "title": "Monatlicher Ausgabenbericht",
-          "budget_title": "Budget",
-          "total_spend_label": "Insgesamt ausgegeben",
-          "spend_chart_alt": "Ausgabenübersicht"
-        },
-        "orders_status_card": {
-          "title": "Bestellstatus"
-        },
-        "bulk_order_card": {
-          "title": "Großbestellung"
-        }
+        "title": "Dashboard"
       },
       "change_password": {
         "meta": {
@@ -1879,34 +1877,6 @@
     },
     "brand": {
       "products_title": "Produkte"
-    },
-    "compare": {
-      "title": "Produkte vergleichen",
-      "meta": {
-        "keywords": "Produkte vergleichen, Produktvergleich, nebeneinanderliegender Vergleich",
-        "description": "Vergleichen Sie Produkte nebeneinander, um die beste Option für Ihre Bedürfnisse zu finden."
-      },
-      "added_count": "{count} von {total} hinzugefügt",
-      "added_count_in_category": "{count} von {total} in {category} hinzugefügt",
-      "actions": {
-        "clear_all": "Alle löschen"
-      },
-      "clear_all_modal": {
-        "title": "Alle löschen",
-        "message": "Es wird kein Produkt aus dem Vergleich entfernt. | 1 Produkt wird aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt."
-      },
-      "clear_category_modal": {
-        "title": "Kategorie löschen",
-        "message": "Es wird kein Produkt aus {category} aus dem Vergleich entfernt. | 1 Produkt in {category} wird aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt."
-      },
-      "empty": {
-        "title": "Ihre Vergleichsliste ist leer",
-        "description": "Fügen Sie Produkte aus dem Katalog hinzu, um deren Eigenschaften nebeneinander zu vergleichen. Sie können bis zu {limit} Produkte pro Kategorie vergleichen.",
-        "restore_button": "Produkte wiederherstellen",
-        "add_button": "Produkte hinzufügen"
-      },
-      "error": "Daten konnten nicht geladen werden",
-      "retry": "Erneut versuchen"
     }
   },
   "identity_error": {

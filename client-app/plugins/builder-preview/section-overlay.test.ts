@@ -1,0 +1,160 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { spyOnListeners } from "./event-listeners.mock";
+import { SectionOverlay } from "./section-overlay";
+
+function addSection(id: string, parent: HTMLElement = document.body): HTMLElement {
+  const element = document.createElement("section");
+  element.setAttribute("data-pb-section", id);
+  element.getBoundingClientRect = () => ({ top: 0, left: 0, width: 100, height: 50 }) as DOMRect;
+  element.scrollIntoView = vi.fn();
+  parent.appendChild(element);
+  return element;
+}
+
+function createOverlay(placementAt?: (clientX: number, clientY: number) => string | null) {
+  const blocker = document.createElement("div");
+  const onSelect = vi.fn();
+  const onHover = vi.fn();
+  const overlay = new SectionOverlay(document.body, blocker, onSelect, onHover, placementAt);
+  overlay.setEnabled(true);
+  overlay.setLabels({ section: "Section", block: "Block" });
+  return { overlay, blocker, onSelect, onHover };
+}
+
+function selectedLabel(): string | undefined {
+  const box = document.querySelector<HTMLElement>("[data-test-id='page-builder-section-selection']");
+
+  return box?.style.display === "block" ? (box.textContent ?? "") : undefined;
+}
+
+describe("SectionOverlay", () => {
+  let resizeCallbacks: (() => void)[];
+  let disconnectResizeObserver: () => void;
+
+  beforeEach(() => {
+    resizeCallbacks = [];
+    disconnectResizeObserver = vi.fn();
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 0;
+    });
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          resizeCallbacks.push(callback);
+        }
+
+        observe(): void {}
+
+        disconnect(): void {
+          disconnectResizeObserver();
+        }
+      },
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
+  it("outlines a selected block's section until the block has an element of its own", () => {
+    const { overlay } = createOverlay();
+    addSection("section");
+
+    overlay.select("block", "section");
+    expect(selectedLabel()).toBe("Section");
+
+    addSection("block");
+    overlay.scheduleRender();
+    expect(selectedLabel()).toBe("Block");
+  });
+
+  it("scrolls to a selection that renders after it was selected, once", () => {
+    const { overlay } = createOverlay();
+
+    overlay.select("section", null, true);
+    expect(selectedLabel()).toBeUndefined();
+
+    const section = addSection("section");
+    resizeCallbacks.forEach((callback) => callback());
+    resizeCallbacks.forEach((callback) => callback());
+
+    expect(selectedLabel()).toBe("Section");
+    expect(section.scrollIntoView).toHaveBeenCalledOnce();
+  });
+
+  it("hovers a shared component's placement as a whole and leaves its click to the placement's overlay", () => {
+    const { blocker, onSelect, onHover } = createOverlay(() => "placement");
+    addSection("section");
+    document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
+
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 10, clientY: 10 }));
+    delete (document as Partial<Document>).elementsFromPoint;
+
+    expect(onHover).toHaveBeenCalledExactlyOnceWith("placement");
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("reports the section the pointer moves to from a placement, and nothing after it", () => {
+    const { blocker, onHover } = createOverlay((clientX) => (clientX < 100 ? "placement" : null));
+    addSection("section");
+    document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
+
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 200, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 210, clientY: 10 }));
+    delete (document as Partial<Document>).elementsFromPoint;
+
+    expect(onHover.mock.calls).toEqual([["placement"], ["section"]]);
+  });
+
+  it("hides the selection and leaves the pointer alone while it is turned off", () => {
+    const { overlay, blocker, onSelect, onHover } = createOverlay();
+    addSection("section");
+    document.elementsFromPoint = () => [document.querySelector("[data-pb-section]")!];
+    overlay.select("section");
+    expect(selectedLabel()).toBe("Section");
+
+    overlay.setEnabled(false);
+    blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+    blocker.dispatchEvent(new MouseEvent("click", { clientX: 10, clientY: 10 }));
+    delete (document as Partial<Document>).elementsFromPoint;
+
+    expect(selectedLabel()).toBeUndefined();
+    expect(onHover).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("removes its layer, listeners, observer and pending render when disposed, once", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    let nextFrameId = 1;
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback): number => {
+      frames.set(nextFrameId, callback);
+      return nextFrameId++;
+    });
+    vi.stubGlobal("cancelAnimationFrame", (id: number): void => {
+      frames.delete(id);
+    });
+    const addedListeners = spyOnListeners("addEventListener");
+    const removedListeners = spyOnListeners("removeEventListener");
+    const { overlay } = createOverlay();
+    const section = addSection("section");
+    overlay.select("section", null, true);
+
+    overlay.dispose();
+    overlay.dispose();
+    overlay.select("section", null, true);
+    frames.forEach((callback) => callback(0));
+    frames.forEach((callback) => callback(0));
+
+    expect(document.querySelector("[data-test-id='page-builder-overlay-layer']")).toBeNull();
+    expect(addedListeners().map(([, type]) => type)).toEqual(["mousemove", "mouseleave", "click", "resize", "scroll"]);
+    expect(removedListeners()).toEqual(expect.arrayContaining(addedListeners()));
+    expect(disconnectResizeObserver).toHaveBeenCalledOnce();
+    expect(section.scrollIntoView).not.toHaveBeenCalled();
+  });
+});
