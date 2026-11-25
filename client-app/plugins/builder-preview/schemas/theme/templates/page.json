@@ -1,0 +1,62 @@
+{
+  "name": "Pages",
+  "previewRule": "{{item.settings.permalink}}",
+  "request": [
+    {
+      "url": "/api/pagebuilder/search?storeId={{location.params.storeId}}&theme={{config.themeName}}&type=pages",
+      "method": "get",
+      "cacheable": true,
+      "response": {
+        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined, key: x })).reduce((acc, x) => ({ ...acc, [x.key]: x }), {})",
+        "isArray": true
+      }
+    }
+  ],
+  "type": "pages",
+  "settings": [
+    {
+      "id": "header",
+      "label": "Page Header / H1",
+      "type": "string"
+    },
+    {
+      "id": "hideBreadcrumbs",
+      "label": "Hide Breadcrumbs",
+      "type": "checkbox"
+    },
+    {
+      "id": "template",
+      "label": "Template",
+      "type": "string",
+      "info": "A page template key (page.landing). Empty: as the store's template rules choose."
+    },
+    {
+      "id": "layout",
+      "label": "Layout",
+      "type": "select",
+      "default": null,
+      "info": "Empty: as the page's template says (Full by default).",
+      "options": [
+        {
+          "label": "Full",
+          "value": "full"
+        },
+        {
+          "label": "Minimal",
+          "value": "minimal"
+        },
+        {
+          "label": "Blank",
+          "value": "blank"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "metadata": {
+      "parent": "page",
+      "template": "page",
+      "contentType": "pages"
+    }
+  }
+}

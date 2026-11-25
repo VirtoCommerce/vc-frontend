@@ -1,13 +1,16 @@
 import { shallowMount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, defineComponent, h, ref } from "vue";
 import { getItem, vTrackItem } from "@/core/plugins/dom-analytics/registry";
 import { createI18n } from "@/i18n";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { uiKit } from "@/ui-kit";
 import enMessages from "../../../../locales/en.json";
 import ProductCard from "./product-card.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { VueWrapper } from "@vue/test-utils";
+import ExtensionPointList from "@/shared/common/components/extension-point-list.vue";
+import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 const catalogFilters = vi.hoisted(() => ({ inStock: false }));
 
@@ -93,7 +96,7 @@ function mountCard(options: Parameters<typeof createProduct>[0]) {
         $cfg: {},
         $canRenderExtensionPoint: () => false,
       },
-      stubs: { VcProductCard: ProductCardShellStub, ExtensionPoint: true },
+      stubs: { VcProductCard: ProductCardShellStub, ExtensionPoint: true, ExtensionPointList: true },
       renderStubDefaultSlot: true,
     },
   });
@@ -161,5 +164,72 @@ describe("product card analytics roles", () => {
     expect(wrapper.attributes("data-vc-track")).toBe("product-card");
     expect(getItem(wrapper.element)).toBe(wrapper.props("product"));
     expect(wrapper.findAll("[data-vc-track='product-link']").length).toBeGreaterThan(0);
+  });
+});
+
+describe("product card actions", () => {
+  const ProductAction = defineComponent({
+    name: "ProductAction",
+    props: { product: { type: Object, required: true } },
+    template: "<button type='button'>compare</button>",
+  });
+
+  /** The action row sits in the media slot, which the variations shell does not render. */
+  const ProductCardMediaStub = defineComponent({
+    name: "VcProductCard",
+
+    setup(_props, { slots }) {
+      return () => h("div", [slots.media?.(), slots.default?.()]);
+    },
+  });
+
+  function mountCardActions(product: Product) {
+    const i18n = createI18n("en", "USD");
+    i18n.global.setLocaleMessage("en", enMessages);
+
+    return shallowMount(ProductCard, {
+      props: { product },
+      global: {
+        plugins: [i18n, uiKit],
+        directives: { trackItem: vTrackItem },
+        components: { ExtensionPoint, ExtensionPointList },
+        mocks: {
+          $cfg: {},
+          $canRenderExtensionPoint: () => false,
+        },
+        stubs: { VcProductCard: ProductCardMediaStub, ExtensionPoint: false, ExtensionPointList: false },
+        renderStubDefaultSlot: true,
+      },
+    });
+  }
+
+  afterEach(() => {
+    useExtensionRegistry().unregister("productActions", "compare");
+  });
+
+  it("renders a registered action right after Add to list, with the card's product", () => {
+    useExtensionRegistry().register("productActions", "compare", { component: ProductAction });
+    const product = createProduct({ siblings: 0 });
+
+    const wrapper = mountCardActions(product);
+    const action = wrapper.getComponent(ProductAction);
+
+    expect(action.props("product")).toEqual(product);
+    expect(wrapper.getComponent({ name: "AddToList" }).element.nextElementSibling).toBe(action.element);
+  });
+
+  it("shows an action only on the cards whose product its condition accepts", () => {
+    useExtensionRegistry().register("productActions", "compare", {
+      component: ProductAction,
+      condition: (product) => !product.hasVariations,
+    });
+    const plainProduct = { ...createProduct({ siblings: 0 }), hasVariations: false };
+
+    expect(mountCardActions(plainProduct).findComponent(ProductAction).exists()).toBe(true);
+    expect(
+      mountCardActions(createProduct({ siblings: 0 }))
+        .findComponent(ProductAction)
+        .exists(),
+    ).toBe(false);
   });
 });

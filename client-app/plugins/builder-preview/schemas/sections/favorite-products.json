@@ -36,7 +36,8 @@
         {
           "id": "text",
           "label": "Text",
-          "type": "string"
+          "type": "string",
+          "translatable": true
         },
         {
           "id": "color",
@@ -57,7 +58,8 @@
         {
           "id": "text",
           "label": "Text",
-          "type": "string"
+          "type": "string",
+          "translatable": true
         },
         {
           "id": "color",
