@@ -281,11 +281,14 @@ describe("VcMenuList", () => {
     });
 
     it("goes to the ends with Home and End", async () => {
-      const wrapper = await mountList(codesList(), codesSetup("EUR"));
-      const [usd, eur, gbp] = inners(wrapper).map((inner) => inner.element);
+      const wrapper = await mountList(codesList(), () => ({
+        ...codesSetup("EUR")(),
+        codes: ref(["USD", "EUR", "GBP", "JPY"]),
+      }));
+      const [usd, eur, gbp, jpy] = inners(wrapper).map((inner) => inner.element);
 
       keydown(eur, "End");
-      expect(document.activeElement).toBe(gbp);
+      expect(document.activeElement).toBe(jpy);
 
       keydown(gbp, "Home");
       expect(document.activeElement).toBe(usd);
