@@ -10,9 +10,9 @@ $-sizes: (
   ),
   // No 2.375rem spacing token.
   sm: (
-    height: 2.375rem,
-    text: "base",
-  ),
+      height: 2.375rem,
+      text: "base",
+    ),
   md: (
     height: theme("spacing.11"),
     text: "base",
