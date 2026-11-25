@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import path from "path";
 import graphqlImport from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
