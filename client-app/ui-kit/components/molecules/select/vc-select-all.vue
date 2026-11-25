@@ -41,7 +41,7 @@ defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const checkboxComponent = useTemplateRef<{ inputElement: HTMLInputElement | null }>("checkboxComponent");
+const checkboxComponent = useTemplateRef<VcCheckboxExposedType>("checkboxComponent");
 
 defineExpose({
   // The checkbox is outside the listbox and possibly teleported, so Tab hands focus over explicitly.

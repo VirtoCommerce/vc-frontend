@@ -195,7 +195,7 @@ import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect, useSelectAll } from "@/ui-kit/composables";
-import { hasNegativeTabindex, insertedText, TABBABLE_SELECTOR } from "@/ui-kit/utilities";
+import { FOCUSABLE_CONTENT_SELECTOR, hasNegativeTabindex, insertedText } from "@/ui-kit/utilities";
 import VcSelectAll from "./vc-select-all.vue";
 import VcSelectButton from "./vc-select-button.vue";
 import { useSelectDevWarnings } from "./vc-select-dev-warnings";
@@ -793,7 +793,7 @@ function onSelectAllTab(event: KeyboardEvent): void {
     return;
   }
 
-  const candidates = [...document.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)].filter(
+  const candidates = [...document.querySelectorAll<HTMLElement>(FOCUSABLE_CONTENT_SELECTOR)].filter(
     (element) =>
       !hasNegativeTabindex(element) &&
       !element.closest("[inert]") &&

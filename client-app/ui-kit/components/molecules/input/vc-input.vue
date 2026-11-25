@@ -330,21 +330,7 @@ provide<VcInputContextType>("inputContext", {
   @apply flex flex-col;
 
   &--size {
-    @each $size in (xs, sm, md) {
-      &--#{$size} {
-        --height: #{field-height($size)};
-        --text-size: #{field-text-size($size)};
-        --line-height: #{field-line-height($size)};
-      }
-    }
-
-    // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
-    // ancestor's same-named property: `--height` and `--line-height` are generic names.
-    &--auto {
-      --height: initial;
-      --text-size: initial;
-      --line-height: initial;
-    }
+    @include field-size-properties;
 
     &--xs {
       $sizeXs: &;

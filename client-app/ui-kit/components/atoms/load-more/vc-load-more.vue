@@ -72,7 +72,10 @@ const shouldAskMore = computed(() => props.hasNextPage && !props.loading && scro
 
 const isSpinnerShown = computed(() => props.loading && props.hasNextPage);
 
-type ContentType = { size: number; text: string };
+interface IAskedAt {
+  size: number;
+  text: string;
+}
 
 // `size` is the progress measure; the text tells a list rebuilt to the same size. Read only when
 // needed: it serialises the whole region.
@@ -84,7 +87,7 @@ function readText(): string {
  * What the region held when the last page was asked for; null until asked, and again once the list is
  * rebuilt, left or runs out.
  */
-const askedAt = ref<ContentType | null>(null);
+const askedAt = ref<IAskedAt | null>(null);
 
 /** Asks once per list content. */
 function reconsider(): void {
@@ -125,18 +128,21 @@ watch(
 );
 
 // A list that ran out and was rebuilt counts from scratch. A next page that appears on a list already
-// at rest gets no measurement of its own, so it is reconsidered here.
-watch(
-  () => props.hasNextPage,
-  (hasNextPage) => {
-    if (!hasNextPage) {
-      askedAt.value = null;
-      return;
-    }
+// at rest gets no measurement of its own, so it is reconsidered here. A count that changed in the same
+// tick leaves the edges describing the old rows, and may change no row at all: a fresh measurement decides.
+watch([() => props.hasNextPage, () => props.itemCount], ([hasNextPage, count], [, oldCount]) => {
+  if (!hasNextPage) {
+    askedAt.value = null;
+    return;
+  }
 
-    reconsider();
-  },
-);
+  if (count !== oldCount) {
+    scrollbar?.remeasure();
+    return;
+  }
+
+  reconsider();
+});
 
 watch(() => scrollbar?.measuredAt.value, reconsider);
 

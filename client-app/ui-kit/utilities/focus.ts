@@ -17,13 +17,11 @@ const FOCUSABLE_ELEMENTS = [
 ];
 
 /**
- * Roughly the natively focusable elements, `tabindex="-1"` ones included, and any other element with a
- * `tabindex` other than -1.
+ * Content that can take focus: roughly the natively focusable elements, `tabindex="-1"` ones included,
+ * and any other element with a `tabindex` other than -1. Unlike `FOCUSABLE_SELECTOR` (autofocus
+ * candidates), it skips nothing; filter the matches with `hasNegativeTabindex` to keep tab stops only.
  */
-export const FOCUSABLE_ELEMENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
-
-/** The same elements without `tabindex="-1"`. Other negative values still match; drop them with `hasNegativeTabindex`. */
-export const TABBABLE_SELECTOR = FOCUSABLE_ELEMENTS.map((selector) => `${selector}:not([tabindex="-1"])`).join(", ");
+export const FOCUSABLE_CONTENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
 
 /**
  * Whether the `tabindex` attribute keeps the element out of the Tab order, parsed as HTML parses integers:

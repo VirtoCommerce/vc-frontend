@@ -3,9 +3,10 @@ import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
-import { createWrapperFactory } from "@/ui-kit/test-mocks/wrapper-factory";
 import VcCheckbox from "./vc-checkbox.vue";
 import type { ComponentMountingOptions } from "@vue/test-utils";
+
+type MountOptionsType = ComponentMountingOptions<typeof VcCheckbox>;
 
 const mountGlobal = {
   components: { VcInputDetails },
@@ -13,16 +14,14 @@ const mountGlobal = {
   directives: { "html-safe": {} },
 };
 
-function mountCheckbox(props = {}, slots: ComponentMountingOptions<typeof VcCheckbox>["slots"] = {}) {
+/** `global` is spread over the defaults one level deep, which keeps the symbol keys of a `provide`. */
+function mountCheckbox(props = {}, slots: MountOptionsType["slots"] = {}, global: MountOptionsType["global"] = {}) {
   return mount(VcCheckbox, {
     props: { name: "terms", ...props },
     slots,
-    global: mountGlobal,
+    global: { ...mountGlobal, ...global },
   });
 }
-
-const STUBS = { VcTooltip: true, VcInputDetails: true };
-const createWrapper = createWrapperFactory(mount, VcCheckbox, { global: { stubs: STUBS } });
 
 describe("VcCheckbox error state", () => {
   it("marks the input invalid and points it at the rendered message", () => {
@@ -111,7 +110,7 @@ describe("VcCheckbox accessible name", () => {
 
 describe("VcCheckbox exposed input", () => {
   it("exposes its native input", () => {
-    const wrapper = createWrapper({ props: { modelValue: false, ariaLabel: "Accept" } });
+    const wrapper = mountCheckbox({ modelValue: false, ariaLabel: "Accept" });
 
     expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
   });
@@ -119,9 +118,10 @@ describe("VcCheckbox exposed input", () => {
   it("keeps the exposed input read-only for a parent", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     onTestFinished(() => warn.mockRestore());
-    const wrapper = createWrapper({ props: { modelValue: false, ariaLabel: "Accept" } });
+    const wrapper = mountCheckbox({ modelValue: false, ariaLabel: "Accept" });
 
-    (wrapper.vm as { inputElement: HTMLInputElement | null }).inputElement = null;
+    // The declared type reads as writable; the computed behind it is not.
+    (wrapper.vm as VcCheckboxExposedType).inputElement = null;
 
     expect(wrapper.vm.inputElement).toBe(wrapper.get("input").element);
     expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
@@ -130,11 +130,11 @@ describe("VcCheckbox exposed input", () => {
   });
 
   it("exposes null inside an interactive parent, which renders no input", () => {
-    // Mounted directly: the factory's deep merge drops symbol keys from `provide`.
-    const wrapper = mount(VcCheckbox, {
-      props: { modelValue: false, ariaLabel: "Accept" },
-      global: { stubs: STUBS, provide: { [INTERACTIVE_PARENT_KEY as symbol]: ref(true) } },
-    });
+    const wrapper = mountCheckbox(
+      { modelValue: false, ariaLabel: "Accept" },
+      {},
+      { provide: { [INTERACTIVE_PARENT_KEY as symbol]: ref(true) } },
+    );
 
     expect(wrapper.find("input").exists()).toBe(false);
     expect(wrapper.vm.inputElement).toBeNull();
@@ -148,13 +148,11 @@ describe("VcCheckbox with prevent-default", () => {
   ])(
     "shows the new state after a click that %s, once the browser restores the cancelled one",
     async (_label, from, to) => {
-      const wrapper = createWrapper({
-        props: {
-          modelValue: from,
-          ariaLabel: "Accept",
-          preventDefault: true,
-          "onUpdate:modelValue": (value: boolean) => void wrapper.setProps({ modelValue: value }),
-        },
+      const wrapper = mountCheckbox({
+        modelValue: from,
+        ariaLabel: "Accept",
+        preventDefault: true,
+        "onUpdate:modelValue": (value: boolean) => void wrapper.setProps({ modelValue: value }),
       });
       const input = wrapper.get("input").element as HTMLInputElement;
 

@@ -1,3 +1,13 @@
+import { vi } from "vitest";
+
+/** VcScrollbar debounces its content check (the observers behind it) by 100 ms. */
+export const CONTENT_DEBOUNCE_MS = 100;
+
+/** Runs the fake timers past VcScrollbar's debounced content check. */
+export async function afterContentSettles(): Promise<void> {
+  await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
+}
+
 type ScrollBoxType = {
   clientHeight: number;
   scrollHeight: number;

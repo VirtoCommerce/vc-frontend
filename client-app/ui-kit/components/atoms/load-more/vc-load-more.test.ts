@@ -1,20 +1,13 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { defineComponent, h, nextTick, reactive } from "vue";
-import { describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
+import { afterContentSettles, describeScrollBox } from "@/ui-kit/test-mocks/describe-scroll-box";
 import VcIcon from "../icon/vc-icon.vue";
 import VcLoader from "../loader/vc-loader.vue";
 import VcScrollbar from "../scrollbar/vc-scrollbar.vue";
 import VcLoadMore from "./vc-load-more.vue";
 
 enableAutoUnmount(afterEach);
-
-// VcScrollbar debounces its content check by 100 ms.
-const CONTENT_DEBOUNCE_MS = 100;
-
-async function afterContentSettles() {
-  await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
-}
 
 function spyOnWarn() {
   const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
@@ -626,6 +619,20 @@ describe("VcLoadMore", () => {
 
       expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
+
+    it("asks when a next page appears together with a count that grew though no visible row changed", async () => {
+      const { state, onLoadMore, region } = mountList({ rows: 2, itemCount: 2, hasNextPage: false });
+
+      describeFittingContent(region);
+      await afterContentSettles();
+
+      // Nothing in the region changes, so only a measurement it asks for can decide.
+      state.itemCount = 4;
+      state.hasNextPage = true;
+      await afterContentSettles();
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("asks when a next page appears on an idle list already at its bottom", async () => {
@@ -640,5 +647,20 @@ describe("VcLoadMore", () => {
     await nextTick();
 
     expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not ask for a list that a next page replaced with rows overflowing from the top", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 3, hasNextPage: false });
+
+    describeFittingContent(region);
+    await afterContentSettles();
+
+    // The short list rested at its bottom; the edges still say so until the new rows are measured.
+    state.rows = 20;
+    state.hasNextPage = true;
+    describeScrollBox(region, { clientHeight: 400, scrollHeight: 2000, scrollTop: 0 });
+    await afterContentSettles();
+
+    expect(onLoadMore).not.toHaveBeenCalled();
   });
 });

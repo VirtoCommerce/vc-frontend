@@ -241,8 +241,6 @@ onMounted(() => {
 
     &--highlighted {
       $highlighted: &;
-
-      @apply outline-none;
     }
 
     &--truncate {
@@ -305,11 +303,6 @@ onMounted(() => {
     // The background step alone is under 3:1 (WCAG 1.4.11) and `--active` overrides it.
     &#{$highlightRing} {
       @include focus-ring($inset: true);
-    }
-
-    // `:where` keeps this at the specificity of the `:focus-visible` rule below, which must still win.
-    &:where(:not(#{$highlighted})):focus {
-      @apply outline-none;
     }
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the

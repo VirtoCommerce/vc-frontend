@@ -1,17 +1,10 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { h, nextTick } from "vue";
-import { describeScrollBox as describeBox } from "@/ui-kit/test-mocks/describe-scroll-box";
+import { afterContentSettles, describeScrollBox as describeBox } from "@/ui-kit/test-mocks/describe-scroll-box";
 import VcScrollbar from "./vc-scrollbar.vue";
 
 enableAutoUnmount(afterEach);
-
-// The observers behind the content check are debounced by 100 ms.
-const CONTENT_DEBOUNCE_MS = 100;
-
-async function afterContentSettles() {
-  await vi.advanceTimersByTimeAsync(CONTENT_DEBOUNCE_MS + 60);
-}
 
 function mountScrollbar(rows: number, props: Record<string, unknown> = {}) {
   return mount(VcScrollbar, {
