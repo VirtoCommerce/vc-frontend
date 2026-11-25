@@ -428,6 +428,27 @@ describe("VcMenuList", () => {
     expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1", "-1", "-1", "0"]);
   });
 
+  it("keeps a list's remembered row when another list's selection moves", async () => {
+    const wrapper = await mountList(
+      `
+        <div>
+          ${codesList()}
+          <VcMenuList role="listbox" aria-label="Other">
+            <VcMenuItem v-for="code in codes" :key="code" :active="code === 'USD'">{{ code }}</VcMenuItem>
+          </VcMenuList>
+        </div>
+      `,
+      codesSetup("EUR"),
+    );
+
+    inners(wrapper)[5].element.focus();
+    await nextTick();
+    state(wrapper).current = "GBP";
+    await nextTick();
+
+    expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "-1", "0", "-1", "-1", "0"]);
+  });
+
   describe("an item teleported out of the list", () => {
     async function mountWithTeleported() {
       return mountList(`
