@@ -1,6 +1,14 @@
 import DOMPurify from "dompurify";
 import { camelize } from "vue";
-import { getLinkAttr, isSafeLinkUrl } from "@/core/utilities/common";
+import {
+  FIELD_ATTRIBUTE,
+  isDesignerPreview,
+  isSiteBuilderEnabled,
+  isPreviewV2Frame,
+  SECTION_ATTRIBUTE,
+} from "@/core/theme-snapshot";
+import { getLinkAttr, toSafeLinkUrl } from "@/core/utilities/common";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Component } from "vue";
 
 const HEADING_TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
@@ -34,10 +42,44 @@ htmlPurifier.addHook("afterSanitizeAttributes", (node) => {
     return;
   }
 
-  const rel = new Set(node.getAttribute("rel")?.split(/\s+/).filter(Boolean));
-  NEW_WINDOW_REL_TOKENS.forEach((token) => rel.add(token));
-  node.setAttribute("rel", [...rel].join(" "));
+  node.setAttribute("rel", withNewWindowRel(node.getAttribute("rel")));
 });
+
+const SECTION_TYPE_ALIASES: Readonly<Record<string, string>> = {
+  text: "text-block",
+  image: "image-block",
+  title: "title-block",
+};
+
+export function registerPageBuilderSections(sections: Record<string, Component>): void {
+  const { register } = useExtensionRegistry();
+
+  Object.entries(sections).forEach(([type, component]) => register("pageBuilderSection", type, { component }));
+  Object.entries(SECTION_TYPE_ALIASES)
+    .filter(([, type]) => Object.hasOwn(sections, type))
+    .forEach(([alias, type]) => register("pageBuilderSection", alias, { component: sections[type] }));
+}
+
+/** Reactive: a section registered later renders where it is already used. */
+export function getPageBuilderSection(type: unknown): Component | undefined {
+  const entries = useExtensionRegistry().getEntries("pageBuilderSection");
+
+  return typeof type === "string" && Object.hasOwn(entries, type) ? (entries[type]?.component ?? undefined) : undefined;
+}
+
+export function getPreviewSectionAttrs(id: unknown): Record<string, string> {
+  return isPreviewV2Frame() && typeof id === "string" ? { [SECTION_ATTRIBUTE]: id } : {};
+}
+
+/** Names the setting by its path (`buttons.1.label`), so the preview can tell two settings with the same text apart. */
+export function getPreviewFieldAttrs(path: string): Record<string, string> {
+  return isPreviewV2Frame() ? { [FIELD_ATTRIBUTE]: path } : {};
+}
+
+/** Off in the designer preview, which shows every section at once. */
+export function isLazySectionsEnabled(): boolean {
+  return isSiteBuilderEnabled() && !isDesignerPreview();
+}
 
 /** Own keys only: a type such as `toString` must not resolve to `Object.prototype`. */
 export function getRegisteredSection(
@@ -54,7 +96,7 @@ export function toHeadingTag(value: unknown): HeadingTagType {
 }
 
 export function getSectionLinkAttr(link: string | undefined): ReturnType<typeof getLinkAttr> {
-  return getLinkAttr(link && isSafeLinkUrl(link) ? link : undefined);
+  return getLinkAttr(toSafeLinkUrl(link));
 }
 
 export function sanitizeSectionHtml(html: string | undefined): string {
@@ -91,7 +133,15 @@ function getDeclaredPropNames(component: Component): Set<string> {
   return new Set(names.map((name) => camelize(name)));
 }
 
-function opensNewWindow(target: string | null): boolean {
+/** A link that opens a new window gets no handle to this one. */
+export function withNewWindowRel(rel: string | null | undefined): string {
+  const tokens = new Set(rel?.split(/\s+/).filter(Boolean));
+  NEW_WINDOW_REL_TOKENS.forEach((token) => tokens.add(token));
+
+  return [...tokens].join(" ");
+}
+
+export function opensNewWindow(target: string | null): boolean {
   // eslint-disable-next-line sonarjs/null-dereference -- false positive: `target` is checked for null first
   return target !== null && !SAME_CONTEXT_TARGETS.has(target.toLowerCase());
 }

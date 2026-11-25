@@ -1,13 +1,35 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, nextTick, ref } from "vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import BottomHeader from "./bottom-header.vue";
+import type { ExtendedMenuLinkType } from "@/core/types";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
+import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
 
 type EntryType = { use?: () => Record<string, unknown> };
 
-const h = vi.hoisted((): { entries: Record<string, Record<string, EntryType>> } => ({ entries: {} }));
+type HoistedType = {
+  entries: Record<string, Record<string, EntryType>>;
+  menuItems: { value: ExtendedMenuLinkType[] };
+  iconsMenuLinks: { value: ExtendedMenuLinkType[] | undefined };
+};
+
+const h = vi.hoisted((): HoistedType => ({
+  entries: {},
+  menuItems: { value: [] },
+  iconsMenuLinks: { value: undefined },
+}));
+
+const BUILT_IN_CART: ExtendedMenuLinkType = {
+  id: "cart",
+  route: { name: "Cart" },
+  title: "Cart",
+  icon: "cart-2",
+  dataTestId: "desktop-main-menu-cart-link",
+};
+
+const MY_LIST: ExtendedMenuLinkType = { id: "my-list", title: "My list", route: { name: "MyList" } };
 
 vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", () => ({
   useExtensionRegistry: () => ({
@@ -20,16 +42,14 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
 }));
 
 vi.mock("@/core/composables", () => ({
-  useNavigations: () => ({
-    catalogMenuItems: ref([]),
-    desktopMainMenuItems: ref([{ id: "my-list", title: "My list", route: { name: "MyList" } }]),
-  }),
-  useWhiteLabeling: () => ({ logoUrl: ref("") }),
+  useNavigations: () => ({ catalogMenuItems: ref([]), desktopMainMenuItems: h.menuItems }),
 }));
-
-vi.mock("@/shared/account/composables/useUser", () => ({
-  useUser: () => ({ organization: ref() }),
+vi.mock("@/shared/account/composables/useUser", () => ({ useUser: () => ({ organization: ref() }) }));
+vi.mock("@/shared/layout/composables/useHeaderLogo", () => ({ useHeaderLogo: () => ({ headerLogoUrl: ref("") }) }));
+vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
+  useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
 }));
+vi.mock("@/shared/static-content/sections", () => ({ getPreviewSectionAttrs: () => ({}) }));
 
 vi.mock("./search-bar/search-bar.vue", () => ({ default: { name: "SearchBar", render: () => null } }));
 vi.mock("./catalog-menu.vue", () => ({ default: { name: "CatalogMenu", render: () => null } }));
@@ -52,6 +72,8 @@ function mountHeader() {
       { path: "/", component: page },
       { path: "/catalog", name: "Catalog", component: page },
       { path: "/my-list", name: "MyList", component: page },
+      { path: "/cart", name: "Cart", component: page },
+      { path: "/:pathMatch(.*)*", component: page },
     ],
   });
 
@@ -70,6 +92,11 @@ function mountHeader() {
 }
 
 describe("BottomHeader", () => {
+  beforeEach(() => {
+    h.menuItems.value = [MY_LIST];
+    h.iconsMenuLinks.value = undefined;
+  });
+
   it("shows the count a headerMenu entry contributes as a badge on the host's link", () => {
     h.entries = { headerMenu: { "my-list": { use: () => ({ count: 4 }) } } };
 
@@ -100,5 +127,35 @@ describe("BottomHeader", () => {
 
     expect(wrapper.text()).toContain("My list");
     expect(wrapper.findComponent(VcBadgeStub).exists()).toBe(false);
+  });
+});
+
+describe("BottomHeader icons menu", () => {
+  beforeEach(() => {
+    h.entries = {};
+    h.menuItems.value = [BUILT_IN_CART];
+    h.iconsMenuLinks.value = undefined;
+  });
+
+  function shownItems(): ExtendedMenuLinkType[] {
+    return mountHeader()
+      .findAllComponents(LinkDefault)
+      .map((link) => link.props("item") as ExtendedMenuLinkType);
+  }
+
+  it("shows the built-in links without a theme menu", () => {
+    expect(shownItems()).toEqual([BUILT_IN_CART]);
+  });
+
+  it("shows the theme link's title on a link to a built-in page, with that page's icon and count", () => {
+    h.iconsMenuLinks.value = [{ title: "Basket", route: "/cart" }];
+
+    expect(shownItems()).toEqual([{ ...BUILT_IN_CART, title: "Basket" }]);
+  });
+
+  it("shows a theme link to another page as the theme has it", () => {
+    h.iconsMenuLinks.value = [{ title: "Help", route: "/help" }];
+
+    expect(shownItems()).toEqual([{ id: "/help", title: "Help", route: "/help" }]);
   });
 });

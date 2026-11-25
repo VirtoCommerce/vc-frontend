@@ -27,7 +27,7 @@ const headingTag = computed(() => toHeadingTag(props.heading));
 <style lang="scss">
 .title-block {
   &.bg-neutral-800 {
-    color: white;
+    @apply text-additional-50;
   }
 }
 </style>
