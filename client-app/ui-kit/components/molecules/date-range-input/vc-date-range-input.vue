@@ -292,19 +292,7 @@ defineExpose({
   container-type: inline-size;
 
   &--size {
-    @each $size in (xs, sm, md) {
-      &--#{$size} {
-        --height: #{field-height($size)};
-        --text-size: #{field-text-size($size)};
-      }
-    }
-
-    // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
-    // ancestor's same-named property.
-    &--auto {
-      --height: initial;
-      --text-size: initial;
-    }
+    @include field-size-properties;
   }
 
   &--error {
