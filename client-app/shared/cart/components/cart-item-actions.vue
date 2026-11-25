@@ -9,7 +9,7 @@
       icon-size="1.25rem"
       :icon="icons ? 'bookmark-solid' : null"
       :prepend-icon="!icons ? 'bookmark-solid' : null"
-      :variant="selected ? 'no-border' : 'solid-light'"
+      variant="soft"
       :disabled="disabled"
       data-test-id="save-for-later-button"
       @click="$emit('saveForLater')"
@@ -27,7 +27,6 @@ interface IEmits {
 }
 
 interface IProps {
-  selected?: boolean;
   saveableForLater?: boolean;
   disabled?: boolean;
   icons?: boolean;

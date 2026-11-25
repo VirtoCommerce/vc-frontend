@@ -41,7 +41,9 @@ A plugin can:
    page…),
 4. use **host services**: the router, the Apollo client, the user, the cart, module settings, notifications, modals,
 5. hook into **host behaviour**: locale loading, Apollo cache policies, the product page's preselected configuration
-   (`registerProductConfigurationSource`).
+   (`registerProductConfigurationSource`),
+6. add **tags and behaviors** to the kit that custom section templates use (`registerCustomSectionTag`,
+   `registerCustomSectionBehavior`).
 
 **Plugin or in-repo module?**
 

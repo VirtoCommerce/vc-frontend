@@ -9,5 +9,7 @@
 @layer vc.design.app {
   html[data-design="soft"] {
     @include meta.load-css("blocks/footer-links");
+    @include meta.load-css("blocks/organization-switcher");
+    @include meta.load-css("blocks/organization-list");
   }
 }

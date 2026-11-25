@@ -8,6 +8,7 @@ import { applyGatesLink } from "./apply-gates";
 import { httpLink } from "./http";
 import { operationTypeLink } from "./operation-type-link";
 import { queuedMutationsLink } from "./queued-mutations/queued-mutations";
+import { reportTimeoutLink } from "./report-timeout";
 import { timeoutLink } from "./timeout";
 import { wsLink } from "./ws";
 
@@ -46,6 +47,8 @@ export const link = from([
       return definition.kind === "OperationDefinition" && definition.operation === "subscription";
     },
     wsLink,
-    httpLink,
+    // `reportTimeoutLink` stays subscribed after its caller is gone, so it goes right above `httpLink`: no other link
+    // may keep running for an abandoned request, and a WebSocket subscription has to close on unsubscribe.
+    from([reportTimeoutLink, httpLink]),
   ),
 ]);

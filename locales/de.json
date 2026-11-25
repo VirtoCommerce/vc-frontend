@@ -351,6 +351,7 @@
           "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
           "organization_locked_tooltip": "Diese Organisation ist gesperrt. Wenden Sie sich für Zugriff an Ihren Administrator.",
+          "search_organizations": "Organisationen suchen",
           "dark_mode": {
             "system": "Design: automatisch",
             "dark": "Design: dunkel",
@@ -412,6 +413,9 @@
             "navigation": "Navigationsleiste",
             "main_navigation": "Hauptnavigation"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title}: {name}"
         },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Keine Artikel | {n} Artikel | {n} Artikel"

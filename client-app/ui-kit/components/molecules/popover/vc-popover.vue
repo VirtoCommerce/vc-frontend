@@ -399,6 +399,9 @@ watch(opened, (value: boolean) => {
     --bg-color: var(--props-bg-color, var(--vc-popover-bg-color, transparent));
     --radius: var(--props-radius, var(--vc-popover-radius, var(--vc-radius, 0.5rem)));
     --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
+    --padding: var(--vc-popover-padding, 0px);
+    --border-width: var(--vc-popover-border-width, 0px);
+    --border-color: var(--vc-popover-border-color, var(--color-neutral-200));
 
     // Radius only shapes the focus ring a dialog panel gets when it takes focus: the body itself
     // paints nothing, the card is drawn by &__content.
@@ -422,7 +425,7 @@ watch(opened, (value: boolean) => {
   }
 
   &__content {
-    @apply bg-[--bg-color] rounded-[--radius];
+    @apply border-[length:--border-width] border-[--border-color] bg-[--bg-color] p-[--padding] rounded-[--radius];
 
     #{$shadow} & {
       @apply shadow-lg;

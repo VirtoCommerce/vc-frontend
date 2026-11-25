@@ -38,7 +38,7 @@ what follows; the rest is review-only.
    which wins, so an app block on a kit component's root (`footer-links` on a `VcWidget`) beats the kit block
    whichever file loads first.
 5. Keep that specificity equal: a `:not()` / `:has()` condition in a design block goes inside `:where()` (soft's
-   `ui-kit/styles/designs/soft/blocks/vc-widget.scss`).
+   `client-app/designs/soft/blocks/organization-list.scss`).
 6. **A kit component's code changes for a design only through a new token** whose fallback is today's value, so
    classic computes exactly as before. A new token is public API: agree its name with the developer first.
 7. **Preset stylesheet** (`<preset>.scss` next to its JSON): every rule inside `@layer vc.preset`; colours only.

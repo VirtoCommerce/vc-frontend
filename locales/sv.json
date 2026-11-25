@@ -351,6 +351,7 @@
           "switching_back": "Byter tillbaka…",
           "no_results": "Inga resultat hittades",
           "organization_locked_tooltip": "Den här organisationen är låst. Kontakta din administratör för åtkomst.",
+          "search_organizations": "Sök organisationer",
           "dark_mode": {
             "system": "Tema: automatiskt",
             "dark": "Tema: mörkt",
@@ -412,6 +413,9 @@
             "navigation": "Navigering",
             "main_navigation": "Huvudnavigering"
           }
+        },
+        "organization_switcher": {
+          "trigger_label": "{title}: {name}"
         },
         "link_with_count": "{title}: {count}",
         "cart_items_tooltip": "Inga artiklar | {n} artikel | {n} artiklar"

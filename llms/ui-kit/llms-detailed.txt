@@ -536,7 +536,7 @@
   - footer-container
   - footer
 - Features: header with actions, collapsible behavior, custom sizing, shadow/border control
-- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (default the per-size ladder), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
+- CSS vars: --vc-widget-radius, --vc-widget-border-width (default 1px; a length: 0px, not 0; at least 1px on a widget without its shadow, unless its border is off or it is seamless), --vc-widget-border-color, --vc-widget-divide-color, --vc-widget-bg-color, --vc-widget-shadow (default the shadow-md parts), --vc-widget-padding-x (md and lg only, default their per-size ladder; xs and sm keep 1rem), --vc-widget-title-font-weight / --vc-widget-title-text-transform / --vc-widget-title-letter-spacing (default the heading role tokens, else 700 / uppercase / inherited)
 
 **VcWidgetSkeleton** (`client-app/ui-kit/components/organisms/widget-skeleton/vc-widget-skeleton.vue`)
 - Props: head?: boolean, foot?: boolean, noShadow?: boolean, size?: "xs" | "sm" | "md" | "lg" (default: "md")
@@ -945,7 +945,7 @@ Base container component for displaying product cards with three adaptive layout
   - page-limit-message
 - Features: sortable columns, auto pagination, responsive mobile/desktop views, loading skeleton, empty states
 - VcTableColumn `rowHeader?: boolean` - marks the column that identifies the row (an order number, a name): its cells are bold and take --vc-table-row-header-color. Applies only to the cells VcTable renders from VcTableColumn slots; `#desktop-item` / `#desktop-body` render their own cells, and VcTable warns in DEV when a marked column's cells are not its own
-- CSS vars: --vc-table-radius, --vc-table-max-height, --vc-table-sticky-offset, --vc-table-selected-bg-color, --vc-table-row-hover-bg-color, --vc-table-title-font-size (default text-sm), --vc-table-title-color (header text; default the inherited text colour), --vc-table-body-color (desktop body text, `#desktop-item` / `#desktop-body` rows included; default inherited), --vc-table-row-header-color (cells of a `rowHeader` column; default the row's colour)
+- CSS vars: --vc-table-radius, --vc-table-border-width (frame width with bordered / mobile-bordered; default 1px), --vc-table-max-height, --vc-table-sticky-offset, --vc-table-selected-bg-color, --vc-table-row-hover-bg-color, --vc-table-title-font-size (default text-sm), --vc-table-title-color (header text; default the inherited text colour), --vc-table-body-color (desktop body text, `#desktop-item` / `#desktop-body` rows included; default inherited), --vc-table-row-header-color (cells of a `rowHeader` column; default the row's colour)
 - **Real Usage Pattern:**
 
 ---
