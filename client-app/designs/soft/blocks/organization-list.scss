@@ -1,0 +1,48 @@
+// The panel (organization-switcher.scss) caps the height; only the outlined list scrolls.
+.organization-list {
+  @apply flex flex-col;
+
+  &__error {
+    @apply m-0 mb-2.5;
+  }
+
+  &__search {
+    // The control step (8px) the rows share, not the tile's --vc-radius; the in-field button takes 2px less.
+    --vc-input-radius: theme("borderRadius.lg");
+
+    @apply border-b-0 bg-transparent p-0 pb-2.5;
+  }
+
+  &__label {
+    @apply pb-1.5 font-bold uppercase tracking-wider;
+
+    &--static {
+      @apply px-0 pt-0;
+    }
+  }
+
+  &__items {
+    @apply my-0 flex min-h-0 flex-1 flex-col border border-neutral-200 p-1 pb-1.5;
+
+    border-radius: var(--vc-radius);
+  }
+
+  &__scroll {
+    @apply max-h-none min-h-0 flex-1;
+  }
+
+  // Rows rest on the panel surface, no stripes of their own.
+  &__item {
+    --vc-menu-item-bg-color: transparent;
+    --vc-menu-item-padding-x: theme("spacing[2.5]");
+    --vc-menu-item-radius: theme("borderRadius.lg");
+
+    &:where(:not(:first-child)) {
+      @apply mt-0.5;
+    }
+  }
+
+  &__empty {
+    @apply px-2.5;
+  }
+}

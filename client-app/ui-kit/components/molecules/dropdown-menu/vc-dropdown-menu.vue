@@ -115,6 +115,8 @@ const computedWidth = computed(() => {
   .vc-popover__body:has(&__list) {
     --vc-popover-radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
     --vc-popover-bg-color: var(--vc-dropdown-menu-bg-color, var(--color-additional-50));
+    --vc-popover-padding: 0px;
+    --vc-popover-border-width: 0px;
   }
 
   &__list {

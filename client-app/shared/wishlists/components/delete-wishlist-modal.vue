@@ -16,7 +16,15 @@
         {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
       </VcButton>
 
-      <VcButton class="ms-auto" color="secondary" variant="outline" @click="close">
+      <!-- The dialog opens on Cancel, so Enter on a freshly opened dialog does not delete. -->
+      <VcButton
+        data-test-id="cancel-button"
+        data-autofocus
+        class="ms-auto"
+        color="secondary"
+        variant="outline"
+        @click="close"
+      >
         {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
       </VcButton>
     </template>
