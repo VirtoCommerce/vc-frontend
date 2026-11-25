@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { VcMenuItem, VcMenuList } from "..";
+import { VcInput, VcMenuItem, VcMenuList } from "..";
 import { VcScrollbar } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -39,27 +39,41 @@ const meta: Meta<typeof VcMenuList> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
+// Each template takes the list's role binding: `v-bind="args"` in the story, the role itself in "Show code".
+const BIND_ARGS = 'v-bind="args"';
+
+function source(code: string) {
+  return { docs: { source: { code } } };
+}
+
+const LISTBOX = (role: string) => `<VcMenuList ${role} aria-label="Currency" class="w-64">
+  <VcScrollbar vertical class="max-h-48">
+    <VcMenuItem
+      v-for="code in currencies"
+      :key="code"
+      color="secondary"
+      :active="code === current"
+      @click="current = code"
+    >
+      {{ code }}
+    </VcMenuItem>
+  </VcScrollbar>
+</VcMenuList>`;
+
 export const Listbox: StoryType = {
   render: (args) => ({
     components: { VcMenuItem, VcMenuList, VcScrollbar },
     setup: () => ({ args, currencies: CURRENCIES, current: ref("EUR") }),
-    template: `
-      <VcMenuList v-bind="args" aria-label="Currency" class="w-64">
-        <VcScrollbar vertical class="max-h-48">
-          <VcMenuItem
-            v-for="code in currencies"
-            :key="code"
-            color="secondary"
-            :active="code === current"
-            @click="current = code"
-          >
-            {{ code }}
-          </VcMenuItem>
-        </VcScrollbar>
-      </VcMenuList>
-    `,
+    template: LISTBOX(BIND_ARGS),
   }),
+  parameters: source(LISTBOX('role="listbox"')),
 };
+
+const MENU_OF_LINKS = (role: string) => `<VcMenuList ${role} aria-label="Account" class="w-64">
+  <VcMenuItem external-link="#orders" active>Orders</VcMenuItem>
+  <VcMenuItem external-link="#lists">Lists</VcMenuItem>
+  <VcMenuItem external-link="#addresses">Addresses</VcMenuItem>
+</VcMenuList>`;
 
 export const MenuOfLinks: StoryType = {
   args: {
@@ -68,27 +82,53 @@ export const MenuOfLinks: StoryType = {
   render: (args) => ({
     components: { VcMenuItem, VcMenuList },
     setup: () => ({ args }),
-    template: `
-      <VcMenuList v-bind="args" aria-label="Account" class="w-64">
-        <VcMenuItem external-link="#orders" active>Orders</VcMenuItem>
-        <VcMenuItem external-link="#lists">Lists</VcMenuItem>
-        <VcMenuItem external-link="#addresses">Addresses</VcMenuItem>
-      </VcMenuList>
-    `,
+    template: MENU_OF_LINKS(BIND_ARGS),
   }),
+  parameters: source(MENU_OF_LINKS('role="menu"')),
 };
+
+const DISABLED_ITEMS_NO_ACTIVE = (role: string) => `<VcMenuList ${role} aria-label="Organization" class="w-64">
+  <VcMenuItem disabled>Locked organization</VcMenuItem>
+  <VcMenuItem :active="current === 'north'" @click="current = 'north'">North branch</VcMenuItem>
+  <VcMenuItem disabled>Archived organization</VcMenuItem>
+  <VcMenuItem :active="current === 'south'" @click="current = 'south'">South branch</VcMenuItem>
+</VcMenuList>`;
 
 export const DisabledItemsNoActive: StoryType = {
   render: (args) => ({
     components: { VcMenuItem, VcMenuList },
     setup: () => ({ args, current: ref<string>() }),
-    template: `
-      <VcMenuList v-bind="args" aria-label="Organization" class="w-64">
-        <VcMenuItem disabled>Locked organization</VcMenuItem>
-        <VcMenuItem :active="current === 'north'" @click="current = 'north'">North branch</VcMenuItem>
-        <VcMenuItem disabled>Archived organization</VcMenuItem>
-        <VcMenuItem :active="current === 'south'" @click="current = 'south'">South branch</VcMenuItem>
-      </VcMenuList>
-    `,
+    template: DISABLED_ITEMS_NO_ACTIVE(BIND_ARGS),
   }),
+  parameters: source(DISABLED_ITEMS_NO_ACTIVE('role="listbox"')),
+};
+
+const WITH_SEARCH_FIELD = (role: string) => `<div class="w-64">
+  <VcInput aria-label="Search currencies" @keydown.down.prevent="list?.focus()" />
+
+  <VcMenuList ref="list" ${role} aria-label="Currency" class="mt-2">
+    <VcMenuItem
+      v-for="code in currencies"
+      :key="code"
+      color="secondary"
+      :active="code === current"
+      @click="current = code"
+    >
+      {{ code }}
+    </VcMenuItem>
+  </VcMenuList>
+</div>`;
+
+export const WithSearchField: StoryType = {
+  render: (args) => ({
+    components: { VcInput, VcMenuItem, VcMenuList },
+    setup: () => ({
+      args,
+      currencies: CURRENCIES.slice(0, 4),
+      current: ref("EUR"),
+      list: ref<{ focus: () => void }>(),
+    }),
+    template: WITH_SEARCH_FIELD(BIND_ARGS),
+  }),
+  parameters: source(WITH_SEARCH_FIELD('role="listbox"')),
 };
