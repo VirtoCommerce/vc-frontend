@@ -464,12 +464,12 @@ declare const __VLS_base$n: vue.DefineComponent<IProps$D, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
     color: VcButtonColorType;
+    tabindex: string | number;
     variant: VcButtonVariantType;
     loading: boolean;
     disabled: boolean;
     tag: string;
     truncate: boolean;
-    tabindex: string | number;
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -609,8 +609,8 @@ declare const __VLS_base$l: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.Co
     size: VcChipSizeType;
     to: RouteLocationRaw | null;
     color: VcChipColorType;
-    variant: VcChipVariantType;
     tabindex: string | number;
+    variant: VcChipVariantType;
     nowrap: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$F: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;

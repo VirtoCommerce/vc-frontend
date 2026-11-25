@@ -12,7 +12,7 @@
     </VcAlert>
 
     <VcRadioButton
-      v-if="organization && !loading"
+      v-if="organization && organizations.length > 0"
       :model-value="contactOrganizationId"
       :value="organization.id"
       class="multi-organization-menu__radio"

@@ -1,6 +1,40 @@
 export const FOCUSABLE_SELECTOR =
   'a[href]:not([data-skip-autofocus]), button:not(:disabled):not([data-skip-autofocus]), input:not(:disabled):not([data-skip-autofocus]), textarea:not(:disabled):not([data-skip-autofocus]), select:not(:disabled):not([data-skip-autofocus]), [tabindex]:not([tabindex="-1"]):not([data-skip-autofocus]), [contenteditable="true"]:not([data-skip-autofocus])';
 
+const FOCUSABLE_ELEMENTS = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  'input:not([disabled]):not([type="hidden"])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+  '[contenteditable="true"]',
+  "audio[controls]",
+  "video[controls]",
+  "summary",
+  "iframe",
+];
+
+/**
+ * Content that can take focus, roughly: the natively focusable elements, `tabindex="-1"` ones included,
+ * and any other element with a `tabindex` other than -1. It reads attributes only, so a control in a
+ * disabled `<fieldset>` or a `hidden` element still matches. Unlike `FOCUSABLE_SELECTOR` (autofocus
+ * candidates), it ignores `data-skip-autofocus`, skips hidden inputs, and adds `area`, `summary`, `iframe`
+ * and media controls. `hasNegativeTabindex` drops the matches a negative `tabindex` keeps out of the Tab order.
+ */
+export const FOCUSABLE_CONTENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
+
+/**
+ * Whether the `tabindex` attribute keeps the element out of the Tab order, parsed as HTML parses integers:
+ * "-0" reads as 0, and a value with no digits after the sign is ignored. The attribute, not `tabIndex`:
+ * that reads -1 for a media control or a contenteditable without one.
+ */
+export function hasNegativeTabindex(element: Element): boolean {
+  const match = /^[\t\n\f\r ]*([+-]?\d+)/.exec(element.getAttribute("tabindex") ?? "");
+  return !!match && Number(match[1]) < 0;
+}
+
 function crossedFocusBoundary(event: FocusEvent): boolean {
   const other = event.relatedTarget;
   const shell = event.currentTarget as HTMLElement | null;
