@@ -5,5 +5,5 @@ export const vcMenuListKey: InjectionKey<VcMenuListContextType> = Symbol("vc-men
 /** The item roles each list role owns; an item that sets another role gets a dev warning at mount. */
 export const VC_MENU_LIST_ITEM_ROLES: Record<VcMenuListRoleType, readonly string[]> = {
   listbox: ["option"],
-  menu: ["menuitem", "menuitemradio", "menuitemcheckbox"],
+  menu: ["menuitem"],
 };

@@ -98,13 +98,13 @@ describe("VcMenuList", () => {
 
     it("keeps a role the item sets itself", async () => {
       const wrapper = await mountList(`
-        <VcMenuList role="menu" aria-label="Sort">
-          <VcMenuItem role="menuitemradio">Name</VcMenuItem>
-          <VcMenuItem>Price</VcMenuItem>
+        <VcMenuList role="listbox" aria-label="Currency">
+          <VcMenuItem role="menuitem">USD</VcMenuItem>
+          <VcMenuItem>EUR</VcMenuItem>
         </VcMenuList>
       `);
 
-      expect(attrsOf(wrapper, "role")).toEqual(["menuitemradio", "menuitem"]);
+      expect(attrsOf(wrapper, "role")).toEqual(["menuitem", "option"]);
     });
   });
 
@@ -525,6 +525,17 @@ describe("VcMenuList", () => {
       expect(warn.mock.calls).toEqual([
         ['[VcMenuItem] role="menuitem" does not belong in a VcMenuList role="listbox".'],
       ]);
+    });
+
+    // VcMenuItem passes attributes to its wrapper, so a checkable row's aria-checked cannot reach the role.
+    it.each(["menuitemradio", "menuitemcheckbox"])("flags a checkable %s in a menu", async (role) => {
+      await mountList(`
+        <VcMenuList role="menu" aria-label="Sort">
+          <VcMenuItem role="${role}">Name</VcMenuItem>
+        </VcMenuList>
+      `);
+
+      expect(warn).toHaveBeenCalledWith(`[VcMenuItem] role="${role}" does not belong in a VcMenuList role="menu".`);
     });
   });
 });
