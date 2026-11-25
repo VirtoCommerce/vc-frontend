@@ -225,12 +225,29 @@ describe("VcMenuList", () => {
       expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "0", "-1"]);
     });
 
-    it("moves to a new active item", async () => {
+    it("follows a new active item while focus is outside the list", async () => {
       const wrapper = await mountList(codesList(), codesSetup("EUR"));
+
+      state(wrapper).current = "USD";
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1"]);
+    });
+
+    it("stays on the focused item when the active item changes, until focus leaves the list", async () => {
+      const wrapper = await mountList(
+        `<div><button type="button" class="outside">Outside</button>${codesList()}</div>`,
+        codesSetup("EUR"),
+      );
 
       inners(wrapper)[2].element.focus();
       await nextTick();
       state(wrapper).current = "USD";
+      await nextTick();
+
+      expect(attrsOf(wrapper, "tabindex")).toEqual(["-1", "-1", "0"]);
+
+      (wrapper.get(".outside").element as HTMLElement).focus();
       await nextTick();
 
       expect(attrsOf(wrapper, "tabindex")).toEqual(["0", "-1", "-1"]);

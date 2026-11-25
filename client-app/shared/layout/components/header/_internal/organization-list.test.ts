@@ -330,4 +330,21 @@ describe("OrganizationList: choosing", () => {
     expect(options(wrapper)[0].attributes("aria-selected")).toBe("true");
     expect(options(wrapper)[1].attributes("aria-selected")).toBe("false");
   });
+
+  it("keeps the stop on the focused row when the switch fails", async () => {
+    hoisted.trySwitch.mockResolvedValue(false);
+    const wrapper = await mountList();
+    await resolveAll();
+    const row = options(wrapper)[3];
+
+    row.element.focus();
+    await nextTick();
+    await row.trigger("click");
+    await flushPromises();
+
+    expect(hoisted.trySwitch).toHaveBeenCalledWith("org-3");
+    expect(focused()).toBe(row.element);
+    expect(row.attributes("tabindex")).toBe("0");
+    expect(options(wrapper)[0].attributes("tabindex")).toBe("-1");
+  });
 });

@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import { computed, onMounted, provide, shallowReactive, shallowRef, toRef, useAttrs, useTemplateRef, watch } from "vue";
+import { computed, onMounted, provide, shallowReactive, shallowRef, toRef, useAttrs, useTemplateRef } from "vue";
 import { vcMenuListKey } from "./vc-menu-list-context";
 
 interface IProps {
@@ -50,15 +50,8 @@ function getEnabledItems(): VcMenuListItemType[] {
 
 const activeItem = computed(() => getEnabledItems().find((item) => item.active()));
 
-// A new selection takes the stop over from the item focused last. An active item that is gone for a moment (its
-// row re-rendered while the list loads more) is no new selection: the stop stays where focus is.
-watch(activeItem, (item, previous) => {
-  if (item && previous) {
-    lastFocused.value = null;
-  }
-});
-
-// The item focused last is remembered only while focus stays inside: the list is entered again at its selection.
+// While focus is inside, the item focused last is the stop whatever `active` does; leaving the list forgets it, so
+// the list is entered again at its selection.
 useEventListener(root, "focusout", (event: FocusEvent) => {
   const next = event.relatedTarget;
 
