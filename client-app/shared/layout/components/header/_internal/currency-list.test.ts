@@ -51,6 +51,7 @@ function option(wrapper: Awaited<ReturnType<typeof mountList>>, code: string) {
 }
 
 beforeEach(() => {
+  state.currentCurrency.value = { code: "USD" };
   state.currentLanguage.value = { cultureName: "de-DE" };
   state.selectCurrency.mockReset();
 });
@@ -70,11 +71,12 @@ describe("CurrencyList", () => {
   });
 
   it("is one tab stop: the current currency", async () => {
+    state.currentCurrency.value = { code: "EUR" };
     const wrapper = await mountList();
 
     expect(["USD", "EUR", "QQQ"].map((code) => option(wrapper, code).attributes("tabindex"))).toEqual([
-      "0",
       "-1",
+      "0",
       "-1",
     ]);
   });

@@ -47,6 +47,7 @@ function option(wrapper: Awaited<ReturnType<typeof mountList>>, cultureName: str
 }
 
 beforeEach(() => {
+  state.currentLanguage.value = { cultureName: "en-US", nativeName: "English" };
   state.selectLanguage.mockReset();
 });
 
@@ -68,9 +69,10 @@ describe("LanguageList", () => {
   });
 
   it("is one tab stop: the current language", async () => {
+    state.currentLanguage.value = { cultureName: "de-DE", nativeName: "Deutsch" };
     const wrapper = await mountList();
 
-    expect(["en-US", "de-DE"].map((name) => option(wrapper, name).attributes("tabindex"))).toEqual(["0", "-1"]);
+    expect(["en-US", "de-DE"].map((name) => option(wrapper, name).attributes("tabindex"))).toEqual(["-1", "0"]);
   });
 
   it("starts the switch and reports the choice", async () => {
