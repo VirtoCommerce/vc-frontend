@@ -124,5 +124,6 @@ describe("BottomHeader", () => {
     const wrapper = mountHeader();
 
     expect(wrapper.find('[data-test-id="test-preferences-item"]').exists()).toBe(hasPreferences);
+    expect(wrapper.text()).toContain("My list");
   });
 });
