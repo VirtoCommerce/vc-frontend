@@ -17,9 +17,11 @@ const FOCUSABLE_ELEMENTS = [
 ];
 
 /**
- * Content that can take focus: roughly the natively focusable elements, `tabindex="-1"` ones included,
- * and any other element with a `tabindex` other than -1. Unlike `FOCUSABLE_SELECTOR` (autofocus
- * candidates), it skips nothing; filter the matches with `hasNegativeTabindex` to keep tab stops only.
+ * Content that can take focus, roughly: the natively focusable elements, `tabindex="-1"` ones included,
+ * and any other element with a `tabindex` other than -1. It reads attributes only, so a control in a
+ * disabled `<fieldset>` or a `hidden` element still matches. Unlike `FOCUSABLE_SELECTOR` (autofocus
+ * candidates), it ignores `data-skip-autofocus`, skips hidden inputs, and adds `area`, `summary`, `iframe`
+ * and media controls. `hasNegativeTabindex` drops the matches a negative `tabindex` keeps out of the Tab order.
  */
 export const FOCUSABLE_CONTENT_SELECTOR = FOCUSABLE_ELEMENTS.join(", ");
 
