@@ -29,6 +29,7 @@ const meta: Meta<typeof VcMenuList> = {
           "- Keys: Up and Down move between the enabled rows and wrap, Home and End go to the ends;",
           "  keys with Shift, Ctrl, Alt or Meta are left to the browser.",
           "- Rows may sit at any depth (a `VcScrollbar` between them is fine); a row teleported out of the list does not join it.",
+          "- Inside a popover, put it in `VcPopover`'s `#content`: `VcDropdownMenu` already renders its content in a list.",
           "- `focus()` (template ref) moves focus to the tab stop — e.g. ArrowDown in a search field above the list.",
         ].join("\n"),
       },
