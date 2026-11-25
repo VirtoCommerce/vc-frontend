@@ -86,6 +86,12 @@ async function open(wrapper: VueWrapper): Promise<void> {
   expect(trigger(wrapper).attributes("aria-expanded")).toBe("true");
 }
 
+type FlagType = "isCurrencyShown" | "isAppearanceShown" | "isLanguageShown";
+
+function headings(wrapper: VueWrapper): (string | undefined)[] {
+  return wrapper.findAll(".preferences-menu__heading").map((heading) => heading.text().split(".").at(-1));
+}
+
 beforeEach(() => {
   state.isCurrencyShown.value = true;
   state.isAppearanceShown.value = true;
@@ -142,6 +148,26 @@ describe("PreferencesMenu: panel", () => {
     await flushPromises();
 
     expect(trigger(wrapper).attributes("aria-expanded")).toBe("false");
+  });
+
+  it.each<[string, FlagType[], string[], boolean]>([
+    ["nothing", [], ["currency", "appearance", "language"], false],
+    ["the currency", ["isCurrencyShown"], ["appearance", "language"], false],
+    ["the appearance", ["isAppearanceShown"], ["currency", "language"], false],
+    ["the language", ["isLanguageShown"], ["currency", "appearance"], true],
+    ["the currency and the appearance", ["isCurrencyShown", "isAppearanceShown"], ["language"], true],
+  ])("shows only the groups on offer, %s left out", async (_, hidden, groups, isSingle) => {
+    hidden.forEach((flag) => {
+      state[flag].value = false;
+    });
+    const wrapper = mountPage();
+    await open(wrapper);
+
+    expect(headings(wrapper)).toEqual(groups);
+    expect(wrapper.findAll(".preferences-menu__column")).toHaveLength(isSingle ? 1 : 2);
+    expect(wrapper.get('[data-test-id="preferences-menu-panel"]').classes("preferences-menu__panel--single")).toBe(
+      isSingle,
+    );
   });
 
   it("closes on Escape after focus has left the panel", async () => {
