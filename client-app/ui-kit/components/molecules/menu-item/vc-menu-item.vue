@@ -66,7 +66,7 @@ interface IProps {
   externalLink?: string;
   target?: "_self" | "_blank";
   title?: string;
-  /** The current or selected item's look. In a `VcMenuList role="listbox"` it is also the selection (`aria-selected`) and the list's tab stop. */
+  /** The current or selected item's look. In any `VcMenuList` it is also the tab stop; in a `role="listbox"` also the selection (`aria-selected`). */
   active?: boolean;
   disabled?: boolean;
   truncate?: boolean;
