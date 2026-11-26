@@ -1,3 +1,0 @@
-mutation RemoveCartItemSubscription($command: InputRemoveCartItemSubscription!) {
-  removeCartItemSubscription(command: $command)
-}

@@ -1,7 +1,0 @@
-#import "../../fragments/productSubscriptionFields.graphql"
-
-mutation PauseProductSubscription($command: InputPauseProductSubscription!) {
-  pauseProductSubscription(command: $command) {
-    ...productSubscriptionFields
-  }
-}

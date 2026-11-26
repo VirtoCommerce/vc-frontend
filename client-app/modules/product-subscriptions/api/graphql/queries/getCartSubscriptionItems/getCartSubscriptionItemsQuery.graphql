@@ -1,7 +1,0 @@
-#import "../../fragments/subscriptionCartItemFields.graphql"
-
-query GetCartSubscriptionItems($cartId: String!) {
-  cartSubscriptionItems(cartId: $cartId) {
-    ...subscriptionCartItemFields
-  }
-}

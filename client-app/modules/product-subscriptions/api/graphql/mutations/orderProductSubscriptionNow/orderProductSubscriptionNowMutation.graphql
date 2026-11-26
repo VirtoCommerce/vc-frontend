@@ -1,7 +1,0 @@
-#import "../../fragments/renewalFields.graphql"
-
-mutation OrderProductSubscriptionNow($command: InputProductSubscriptionId!) {
-  orderProductSubscriptionNow(command: $command) {
-    ...renewalFields
-  }
-}

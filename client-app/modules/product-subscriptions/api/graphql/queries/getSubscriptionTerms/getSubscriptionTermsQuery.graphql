@@ -1,7 +1,0 @@
-query GetSubscriptionTerms($storeId: String!, $cultureName: String) {
-  subscriptionTerms(storeId: $storeId, cultureName: $cultureName) {
-    version
-    text
-    hash
-  }
-}

@@ -1,7 +1,0 @@
-#import "../../fragments/renewalFields.graphql"
-
-mutation SkipSubscriptionRenewal($command: InputSubscriptionRenewalId!) {
-  skipSubscriptionRenewal(command: $command) {
-    ...renewalFields
-  }
-}
