@@ -63,4 +63,8 @@ function _useSavedPaymentMethods() {
   };
 }
 
-export const useSavedPaymentMethods = createSharedComposable(_useSavedPaymentMethods);
+const useSavedPaymentMethodsShared = createSharedComposable(_useSavedPaymentMethods);
+
+export function useSavedPaymentMethods() {
+  return useSavedPaymentMethodsShared();
+}

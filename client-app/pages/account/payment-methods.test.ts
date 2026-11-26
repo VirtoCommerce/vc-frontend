@@ -18,9 +18,17 @@ vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ success: vi.fn(), error: vi.fn() }) }));
 
-vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", () => ({
-  useExtensionRegistry: () => ({ canRender: () => false }),
-}));
+const registry = vi.hoisted(() => ({ registered: { value: [] as string[] } }));
+
+vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", async () => {
+  const { ref } = await import("vue");
+  registry.registered = ref<string[]>([]);
+  return {
+    useExtensionRegistry: () => ({
+      canRender: (_category: string, name: string) => registry.registered.value.includes(name),
+    }),
+  };
+});
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
@@ -40,7 +48,7 @@ function mountPage() {
         VcConfirmationModal: true,
         VcCheckbox: true,
         VcRadioButton: true,
-        ExtensionPoint: true,
+        ExtensionPoint: { name: "ExtensionPoint", props: ["category", "name"], template: "<div />" },
       },
     },
   });
@@ -53,6 +61,26 @@ describe("payment methods page", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    registry.registered.value = [];
+  });
+
+  it("shows a plugin's card form that registers after the card payment methods have loaded", async () => {
+    vi.mocked(getSavedPaymentMethods).mockResolvedValue([]);
+    vi.mocked(getCardPaymentMethods).mockResolvedValue([
+      { paymentMethodCode: "PluginCard", name: "Plugin card" },
+    ] as Awaited<ReturnType<typeof getCardPaymentMethods>>);
+
+    const wrapper = mountPage();
+    await flushPromises();
+    expect(wrapper.findComponent({ name: "ExtensionPoint" }).exists()).toBe(false);
+
+    registry.registered.value = ["PluginCard"];
+    await flushPromises();
+
+    expect(wrapper.findComponent({ name: "ExtensionPoint" }).props()).toMatchObject({
+      category: "addCardForm",
+      name: "PluginCard",
+    });
   });
 
   it("shows an error with a retry instead of the empty view when the cards fail to load", async () => {

@@ -771,3 +771,12 @@ export function useFullCart() {
 
   return useFullCartShared(cartId);
 }
+
+/**
+ * The cart the cart and checkout pages show (the route's cart, else the default one), for code that only reads it:
+ * its lines and payment methods, and a refetch after the caller's own mutation changed it on the server.
+ */
+export function useCurrentCart() {
+  const { cart, availablePaymentMethods, forceFetch } = useFullCart();
+  return { cart, availablePaymentMethods, refetch: forceFetch };
+}

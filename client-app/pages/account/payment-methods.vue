@@ -131,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCardPaymentMethods } from "@/core/api/graphql";
 import { usePageHead } from "@/core/composables";
@@ -172,6 +172,13 @@ const formMethods = computed(() =>
 );
 const provider = computed(() => formMethods.value.find((x) => x.paymentMethodCode === providerCode.value));
 
+// A plugin's card form can register after the methods have loaded.
+watch(formMethods, (forms) => {
+  if (!forms.some((x) => x.paymentMethodCode === providerCode.value)) {
+    providerCode.value = forms[0]?.paymentMethodCode;
+  }
+});
+
 function providerName(paymentMethodCode: string): string | undefined {
   return cardMethods.value.length > 1
     ? (cardMethods.value.find((x) => x.paymentMethodCode === paymentMethodCode)?.name ?? undefined)
@@ -187,7 +194,6 @@ async function loadCardMethods() {
   cardMethodsFailed.value = false;
   try {
     cardMethods.value = await getCardPaymentMethods({ suppressErrorNotifications: true });
-    providerCode.value = formMethods.value[0]?.paymentMethodCode;
   } catch (e) {
     Logger.error("payment-methods.loadCardMethods", e);
     cardMethodsFailed.value = true;
