@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
+import { normalizePath } from "vite";
 import type { Plugin } from "vite";
 
 /**
@@ -15,6 +17,8 @@ export interface IInlineAssetUrlsOptions {
   root: string;
   publicDir: string;
   base: string;
+  /** Whether the dev server may serve this `.svg` as a `data:` URL rather than a path. */
+  mayInlineSvg: (file: string) => boolean;
 }
 
 /** Returns the rewritten code, or `undefined` when there is nothing to inline. */
@@ -28,26 +32,27 @@ export function inlineAssetUrlImports(
   }
 
   const importerDir = path.dirname(importer.split("?")[0]);
-  let inlined = 0;
 
   const result = code.replace(URL_IMPORT_RE, (statement, clause: string, specifier: string) => {
     const binding = DEFAULT_BINDING_RE.exec(clause);
-    const file = specifier.startsWith("/") ? path.join(options.root, specifier) : path.resolve(importerDir, specifier);
+    // Vite passes `root`, `publicDir` and `importer` with forward slashes on every OS.
+    const file = normalizePath(
+      specifier.startsWith("/") ? path.join(options.root, specifier) : path.resolve(importerDir, specifier),
+    );
     const isServedFromRoot =
-      file.startsWith(options.root + path.sep) &&
-      !file.startsWith(options.publicDir + path.sep) &&
-      !file.includes(`${path.sep}node_modules${path.sep}`);
+      file.startsWith(`${options.root}/`) &&
+      !file.startsWith(`${options.publicDir}/`) &&
+      !file.includes("/node_modules/");
 
-    if (!binding || !isServedFromRoot) {
+    if (!binding || !isServedFromRoot || (file.endsWith(".svg") && options.mayInlineSvg(file))) {
       return statement;
     }
 
-    inlined++;
-    const url = options.base + path.relative(options.root, file).split(path.sep).join("/");
+    const url = options.base + file.slice(options.root.length + 1);
     return `const ${binding[1] ?? binding[2]} = ${JSON.stringify(url)};`;
   });
 
-  return inlined ? result : undefined;
+  return result === code ? undefined : result;
 }
 
 export function inlineAssetUrls(): Plugin {
@@ -58,7 +63,15 @@ export function inlineAssetUrls(): Plugin {
     // After vite:import-glob and vite:asset-import-meta-url have expanded the globs.
     enforce: "post",
     configResolved(config) {
-      options = { root: config.root, publicDir: config.publicDir, base: config.base };
+      const limit = config.build.assetsInlineLimit;
+
+      options = {
+        root: config.root,
+        publicDir: config.publicDir,
+        base: config.base,
+        // The dev server inlines a small `.svg` as a `data:` URL unless `assetsInlineLimit` returns `false` for it.
+        mayInlineSvg: (file) => typeof limit !== "function" || limit(file, readFileSync(file)) !== false,
+      };
     },
     transform(code, id) {
       const result = inlineAssetUrlImports(code, id, options);
