@@ -18,7 +18,8 @@
       "see_less": "Näytä vähemmän",
       "show_hide_password": "Näytä/piilota salasana",
       "toggle_dropdown": "Avaa/sulje pudotusvalikko",
-      "update_cart": "Päivitä ostoskori"
+      "update_cart": "Päivitä ostoskori",
+      "scroll_to_top": "Vieritä ylös"
     },
     "accessibility": {
       "close_alert": "Sulje hälytys",

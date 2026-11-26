@@ -8,13 +8,15 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getImageUrl, getIconUrl, getColorValue } from "../../../utilities";
+import { useUiKitOptions } from "../../../composables/useUiKitOptions";
+import { getIconUrl, getColorValue, isFilenameOnly } from "../../../utilities";
 
 interface IProps {
   size?: string;
   icon?: string;
   iconColor?: string;
   bgColor?: string;
+  /** A URL, or a file name the `uiKit` plugin's `image.resolveFileName` turns into one. */
   img?: string;
   /** An icon name used as the mask. Without it the shape takes `--vc-shape-mask-image`, a polygon by default. */
   mask?: string;
@@ -24,7 +26,11 @@ const props = withDefaults(defineProps<IProps>(), {
   img: "",
 });
 
-const imgUrl = computed(() => getImageUrl(props.img));
+const { image } = useUiKitOptions();
+
+const imgUrl = computed(() =>
+  isFilenameOnly(props.img) ? (image?.resolveFileName?.(props.img) ?? props.img) : props.img,
+);
 
 const style = computed(() => ({
   backgroundImage: props.img ? `url("${imgUrl.value}")` : "none",

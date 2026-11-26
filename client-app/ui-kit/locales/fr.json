@@ -18,7 +18,8 @@
       "see_less": "Voir moins",
       "show_hide_password": "Afficher/masquer le mot de passe",
       "toggle_dropdown": "Basculer le menu déroulant",
-      "update_cart": "Mettre à jour le panier"
+      "update_cart": "Mettre à jour le panier",
+      "scroll_to_top": "Haut de page"
     },
     "accessibility": {
       "close_alert": "Fermer l'alerte",

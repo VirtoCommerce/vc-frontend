@@ -5,6 +5,11 @@ export { appendSuffixToFilename, getLinkAttr } from "@/ui-kit/utilities";
 
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
+/** The URL of a file in the app's `client-app/assets/images/`, the `uiKit` plugin's `image.resolveFileName`. */
+export function getImageUrl(fileName?: string): string {
+  return new URL(`../../../assets/images/${fileName}`, import.meta.url).href;
+}
+
 /** `null` rather than a throw, so a URL that does not parse is treated like one that is absent. */
 function parseUrl(url: string, base: string): URL | null {
   try {

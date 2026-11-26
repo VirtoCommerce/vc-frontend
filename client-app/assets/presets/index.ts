@@ -1,39 +1,14 @@
-import blackGoldDark from './black-gold.dark.json'
-import blackGold from './black-gold.json'
-import coffeeDark from './coffee.dark.json'
-import coffee from './coffee.json'
-import defaultDark from './default.dark.json'
-import defaultPreset from './default.json'
-import mercuryDark from './mercury.dark.json'
-import mercury from './mercury.json'
-import paprikaDark from './paprika.dark.json'
-import paprika from './paprika.json'
-import purplePinkDark from './purple-pink.dark.json'
-import purplePink from './purple-pink.json'
-import redDark from './red.dark.json'
-import red from './red.json'
-import watermelonDark from './watermelon.dark.json'
-import watermelon from './watermelon.json'
+import { darkPresets as kitDarkPresets, presets as kitPresets } from "@/ui-kit/presets";
 import type { IThemeConfigPreset } from "@/core/types";
 
+// The stock presets come from ui-kit. A theme's own bundled preset is <name>.json (and <name>.dark.json), imported
+// and listed below after the spread; a stock name replaces that whole preset, light and dark separately. A <name>.scss
+// in this folder is not listed here: it is loaded by name (core/utilities/design) for the active preset, after
+// ui-kit's <name>.scss when the stock preset has one.
 export const presets: Record<string, IThemeConfigPreset> = {
-  ['black-gold']: blackGold,
-  default: defaultPreset,
-  mercury: mercury,
-  ['purple-pink']: purplePink,
-  watermelon: watermelon,
-  coffee: coffee,
-  red: red,
-  paprika: paprika,
+  ...kitPresets,
 };
 
 export const darkPresets: Record<string, IThemeConfigPreset> = {
-  ['black-gold']: blackGoldDark,
-  default: defaultDark,
-  coffee: coffeeDark,
-  mercury: mercuryDark,
-  watermelon: watermelonDark,
-  ['purple-pink']: purplePinkDark,
-  red: redDark,
-  paprika: paprikaDark,
+  ...kitDarkPresets,
 };

@@ -18,7 +18,8 @@
       "see_less": "Se mindre",
       "show_hide_password": "Vis/skjul passord",
       "toggle_dropdown": "Veksle nedtrekksmeny",
-      "update_cart": "Oppdater handlekurv"
+      "update_cart": "Oppdater handlekurv",
+      "scroll_to_top": "Rull til toppen"
     },
     "accessibility": {
       "close_alert": "Lukk varsel",

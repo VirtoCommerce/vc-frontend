@@ -7,7 +7,6 @@ const SIZES = ["xs", "sm", "md"];
 const meta: Meta<typeof VcDateRangeInput> = {
   title: "Components/Molecules/VcDateRangeInput",
   component: VcDateRangeInput,
-  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
   parameters: {
     docs: {
       description: {

@@ -4,3 +4,5 @@
 @layer theme, base, plugins-vendor, vc, components, plugins, utilities, custom-sections;
 @layer base.tw, components.tw;
 @layer vc.vendor, vc.kit, vc.app, vc.design, vc.preset, vc.print;
+// A design's app blocks beat its kit blocks, whichever file loads first.
+@layer vc.design.kit, vc.design.app;

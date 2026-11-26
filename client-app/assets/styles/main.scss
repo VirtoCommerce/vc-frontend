@@ -5,14 +5,10 @@
   @tailwind components;
 }
 
+@include meta.load-css("@/ui-kit/styles");
+
 @layer theme {
   @include meta.load-css("colors");
-  @include meta.load-css("ui-kit-tokens");
-
-  :root {
-    //Recommended maximum border-radius: 10px (0.625rem)
-    --vc-radius: 0.5rem;
-  }
 }
 
 @layer vc.app {
@@ -31,10 +27,6 @@
   }
 
   @include meta.load-css("dark-app");
-}
-
-@layer vc.kit {
-  @include meta.load-css("dark-kit");
 }
 
 @layer vc.print {

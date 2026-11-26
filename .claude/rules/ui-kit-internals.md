@@ -29,9 +29,9 @@ How the rest of the app uses the kit is in `ui-kit.md`.
      `--max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));`. Token-first chains are legacy;
    - states captured with `$disabled: ""; &--disabled { $disabled: &; }` and reused (`&:hover:not(#{$disabled})`);
    - variant × colour matrices generated with `@each` over `$colors` / `$variants`, not copy-pasted;
-   - colour tokens for variants live in `assets/styles/_ui-kit-tokens.scss` as
+   - colour tokens for variants live in `ui-kit/styles/_ui-kit-tokens.scss` as
      `--vc-<comp>-<variant>-<color>-<part>: var(--color-vc-<part>-<variant>-<color>, <palette fallback>)`;
-   - dark remaps in `assets/styles/dark/<layer>/vc-<name>.scss`, print in `assets/styles/print/<layer>/...`;
+   - dark remaps in `ui-kit/styles/dark/<layer>/vc-<name>.scss`, print in `ui-kit/styles/print/<layer>/...`;
    - focus ring via the `focus-ring` mixin, small targets via `hit-area`, motion under `prefers-reduced-motion`.
 6. **Public tokens are API.** A new `--vc-*` variable must be consumed (a token nothing reads is dead) and must not
    pin a related value (a font-size token next to a literal line-height desyncs). Renaming or removing one follows
