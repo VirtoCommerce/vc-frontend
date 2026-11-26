@@ -139,7 +139,10 @@ type __VLS_Slots$u = {} & {
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$u: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$u: vue.DefineComponent<IProps$O, {
+    /** The native input, for a parent that hands focus to it; null inside an interactive parent, which renders none. */
+    inputElement: vue.ComputedRef<HTMLInputElement | null>;
+}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
 }, string, vue.PublicProps, Readonly<IProps$O> & Readonly<{
@@ -797,6 +800,7 @@ interface IProps$x {
     browserTooltip?: "enabled" | "disabled";
     selectOnClick?: boolean;
     testIdInput?: string;
+    /** Attributes for the native input. A focused input with `aria-expanded: "true"` (a popup the field controls is open) draws the focus ring, even after a mouse click; never when `seamless`. */
     aria?: Record<string, string | number | null>;
     disableAutocomplete?: boolean;
     tabindex?: string | number;
@@ -880,6 +884,22 @@ interface IProps$v {
     role?: string;
     ariaSelected?: boolean;
     optionId?: string;
+    /**
+     * The active option of an `aria-activedescendant` list, where DOM focus stays on the combobox
+     * and cannot provide the usual focus ring.
+     */
+    highlighted?: boolean;
+    /**
+     * Draws the focus ring on a highlighted item. Turn it off for a highlight that follows the pointer.
+     */
+    highlightRing?: boolean;
+    /** Tab order of the inner element; -1 for options of an `aria-activedescendant` listbox. */
+    tabindex?: number | `${number}`;
+    /**
+     * Draws a separator above the item unless it is the first in its list. Its colour is
+     * `--vc-menu-item-divider-color`.
+     */
+    withDivider?: boolean;
 }
 declare var __VLS_17: {};
 declare var __VLS_19: {};
@@ -898,7 +918,9 @@ declare const __VLS_base$e: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.Co
 }>, {
     size: "xs" | "sm" | "md" | "lg";
     color: VcMenuItemColorType;
+    tabindex: number | `${number}`;
     clickable: boolean;
+    highlightRing: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$x: __VLS_WithSlots$e<typeof __VLS_base$e, __VLS_Slots$e>;
 declare const _default$x: typeof __VLS_export$x;

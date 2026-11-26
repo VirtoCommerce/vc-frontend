@@ -1,11 +1,16 @@
 .vc-menu-item {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
   $active: "";
+  $highlighted: "";
 
   // The light rules' tokens, so a list's override reaches dark too; only the defaults differ.
   &__inner {
     &--active {
       $active: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
     }
 
     &:not(#{$active}) {
@@ -14,6 +19,11 @@
 
     @each $color in $colors {
       &--color--#{$color} {
+        // -50, not hover's -100, so a keyboard highlight does not read as the selected item.
+        &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
+        }
+
         &:hover {
           background-color: var(--vc-menu-item-hover-bg-color, var(--color-#{$color}-100));
         }

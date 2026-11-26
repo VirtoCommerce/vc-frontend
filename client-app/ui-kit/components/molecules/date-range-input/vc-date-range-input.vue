@@ -265,6 +265,8 @@ defineExpose({
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/field-size" as *;
+
 .vc-date-range-input {
   $error: "";
   $disabled: "";
@@ -290,21 +292,7 @@ defineExpose({
   container-type: inline-size;
 
   &--size {
-    &--xs {
-      --height: theme("spacing.8");
-      --text-size: theme("fontSize.sm[0]");
-    }
-
-    &--sm {
-      // No 2.375rem spacing token — literal, same as vc-input.
-      --height: 2.375rem;
-      --text-size: theme("fontSize.base[0]");
-    }
-
-    &--md {
-      --height: theme("spacing.11");
-      --text-size: theme("fontSize.base[0]");
-    }
+    @include field-size-properties;
   }
 
   &--error {

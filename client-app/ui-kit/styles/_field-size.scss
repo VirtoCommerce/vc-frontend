@@ -1,0 +1,60 @@
+@use "sass:map";
+
+// VcInput's field scale, shared by fields that sit beside it. Functions and mixins only: nothing is
+// emitted until a component includes it, so nothing leaks into a nested component.
+
+$-sizes: (
+  xs: (
+    height: theme("spacing.8"),
+    text: "sm",
+  ),
+  // No 2.375rem spacing token.
+  sm: (
+      height: 2.375rem,
+      text: "base",
+    ),
+  md: (
+    height: theme("spacing.11"),
+    text: "base",
+  ),
+);
+
+// A size the scale does not hold would otherwise compile to no height and a broken theme() call.
+@function -size($size, $key) {
+  @if not map.has-key($-sizes, $size) {
+    @error "field-size: unknown size `#{$size}`; the scale holds #{map.keys($-sizes)}.";
+  }
+
+  @return map.get($-sizes, $size, $key);
+}
+
+@function field-height($size) {
+  @return -size($size, height);
+}
+
+@function field-text-size($size) {
+  @return theme("fontSize.#{-size($size, text)}[0]");
+}
+
+@function field-line-height($size) {
+  @return theme("fontSize.#{-size($size, text)}[1].lineHeight");
+}
+
+// A field block's size modifiers: include it inside the block's `&--size`.
+@mixin field-size-properties {
+  @each $size in map.keys($-sizes) {
+    &--#{$size} {
+      --height: #{field-height($size)};
+      --text-size: #{field-text-size($size)};
+      --line-height: #{field-line-height($size)};
+    }
+  }
+
+  // Guaranteed-invalid, so the declarations reading them are unset rather than taking an
+  // ancestor's same-named property: `--height` and `--line-height` are generic names.
+  &--auto {
+    --height: initial;
+    --text-size: initial;
+    --line-height: initial;
+  }
+}

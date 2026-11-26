@@ -4,6 +4,7 @@ export * from "./useComponentId";
 export * from "./useDateField";
 export * from "./useDateRangeField";
 export * from "./useFocusManagement";
+export * from "./useFocusModality";
 export * from "./useHorizontalScrollSync";
 export * from "./useListeners";
 export * from "./useQuantityField";
