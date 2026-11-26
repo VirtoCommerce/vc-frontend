@@ -65,7 +65,9 @@ export type MfaSettings = {
   canChangeOrganizationMode: Scalars['Boolean']['output'];
   canChangeUserMode: Scalars['Boolean']['output'];
   destination?: Maybe<Scalars['String']['output']>;
-  /** Whether a code can be delivered to the user, for example the email is confirmed. */
+  /** Whether the account has lockout enabled. Without it the user can't pass the second factor, and neither mode can be changed. */
+  isLockoutEnabled: Scalars['Boolean']['output'];
+  /** Whether a code can be delivered to the user, for example the user has an email. */
   isProviderAvailable: Scalars['Boolean']['output'];
   /** Whether the password sign-in to the store requires the code. */
   isRequired: Scalars['Boolean']['output'];
