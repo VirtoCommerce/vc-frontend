@@ -2,31 +2,35 @@
   <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length && !hasAvailableSavedForLaterItems">
     <VcLoaderOverlay v-if="loading" no-bg />
 
-    <VcEmptyPage
-      v-else
-      :title="title ?? $t('pages.cart.title')"
-      image="basket.jpg"
-      icon="outline-cart"
-      :breadcrumbs="hideBreadcrumbs ? [] : breadcrumbs"
-    >
-      <div class="mb-6 text-lg font-bold">
-        {{ $t("pages.cart.empty_cart_description") }}
-      </div>
+    <VcContainer v-else :has-bg-image="false">
+      <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="max-lg:hidden" />
 
-      <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
+      <VcTypography tag="h1">
+        {{ title ?? $t("pages.cart.title") }}
+      </VcTypography>
 
-        <VcButton v-else to="/" prepend-icon="shopping-bag">
-          {{ $t("common.buttons.continue_shopping") }}
-        </VcButton>
+      <VcEmptyView
+        size="xl"
+        reason="no-data"
+        entity="cart"
+        :text="$t('pages.cart.empty_cart_description')"
+        :description="$t('pages.cart.empty_states.empty_cart.description')"
+      >
+        <template #button>
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+            {{ $t("common.buttons.continue_shopping") }}
+          </VcButton>
 
-        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
-          {{ $t("common.buttons.add_with_bulk_order") }}
-        </VcButton>
-      </div>
-    </VcEmptyPage>
+          <VcButton v-else to="/" prepend-icon="shopping-bag">
+            {{ $t("common.buttons.continue_shopping") }}
+          </VcButton>
+
+          <VcButton :to="{ name: 'BulkOrder' }" variant="outline" color="secondary" prepend-icon="bulk">
+            {{ $t("common.buttons.add_with_bulk_order") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
+    </VcContainer>
   </template>
 
   <VcContainer v-else class="relative max-lg:pb-12">

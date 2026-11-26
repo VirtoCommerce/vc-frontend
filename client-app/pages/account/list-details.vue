@@ -108,8 +108,10 @@
         <!-- Empty list -->
         <VcEmptyView
           v-else-if="list?.items?.length === 0"
-          :text="$t('shared.wishlists.list_details.empty_list')"
-          icon="outline-lists"
+          reason="no-data"
+          entity="lists"
+          :text="$t('shared.wishlists.list_details.empty_states.no_data.title')"
+          :description="$t('shared.wishlists.list_details.empty_states.no_data.description')"
         >
           <template #button>
             <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">

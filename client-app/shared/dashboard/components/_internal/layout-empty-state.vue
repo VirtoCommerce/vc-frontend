@@ -1,10 +1,5 @@
 <template>
-  <VcEmptyView class="layout-empty-state">
-    <template #icon>
-      <!-- eslint-disable-next-line vue/no-v-html -- a static asset from this repo, never user content -->
-      <div class="layout-empty-state__art" aria-hidden="true" v-html="artRaw" />
-    </template>
-
+  <VcEmptyView class="layout-empty-state" size="lg" reason="cleared" entity="dashboard">
     <VcTypography tag="h2" class="layout-empty-state__title">
       {{ t("shared.dashboard.empty.title") }}
     </VcTypography>
@@ -46,7 +41,6 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import artRaw from "../../assets/layout-empty-state.svg?raw";
 
 interface IProps {
   /** The restore write is in flight. */
@@ -67,10 +61,6 @@ const { t } = useI18n();
 <style lang="scss">
 .layout-empty-state {
   @apply mx-auto w-full max-w-xl;
-
-  &__art {
-    @apply w-[14.75rem] max-w-full;
-  }
 
   &__title {
     @apply pt-3 [word-break:break-word];

@@ -204,15 +204,22 @@
       v-if="!contacts.length && !contactsLoading"
       :text="
         keyword || filter || roleIds.length || statuses.length
-          ? $t('pages.company.members.no_results_message')
-          : $t('pages.company.members.no_members_message')
+          ? $t('pages.company.members.empty_states.no_results.title')
+          : $t('pages.company.members.empty_states.no_data.title')
       "
-      icon="outline-order"
-      :variant="!!keyword || !!filter || !!roleIds.length || !!statuses.length ? 'search' : 'empty'"
+      :description="
+        keyword || filter || roleIds.length || statuses.length
+          ? $t('pages.company.members.empty_states.no_results.description')
+          : $t('pages.company.members.empty_states.no_data.description')
+      "
+      :reason="keyword || filter || roleIds.length || statuses.length ? 'no-results' : 'no-data'"
+      entity="members"
     >
       <template #button>
         <VcButton
           v-if="keyword || filter || roleIds.length || statuses.length"
+          variant="outline"
+          color="secondary"
           prepend-icon="reset"
           @click="resetFiltersWithKeyword"
         >

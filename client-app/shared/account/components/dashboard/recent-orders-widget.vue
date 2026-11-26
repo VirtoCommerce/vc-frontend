@@ -55,21 +55,25 @@
           <!-- A failure replaces the table: the previous rows would otherwise read as this filter's result. -->
           <VcEmptyView
             v-if="failed && !loading"
+            reason="error"
             :text="$t('shared.account.dashboard.recent_orders.load_failed')"
-            variant="error"
+            :description="$t('shared.account.dashboard.recent_orders.empty_states.load_failed.description')"
           />
 
           <!-- With a status chosen, an empty list means "none in this status", not "never ordered". -->
           <VcEmptyView
             v-else-if="!orders.length && !loading && status"
+            reason="no-results"
             :text="$t('shared.account.dashboard.recent_orders.no_results')"
-            icon="outline-order"
+            :description="$t('shared.account.dashboard.recent_orders.empty_states.no_results.description')"
           />
 
           <VcEmptyView
             v-else-if="!orders.length && !loading"
-            :text="$t('shared.account.dashboard.recent_orders.empty')"
-            icon="outline-order"
+            reason="no-data"
+            entity="orders"
+            :text="$t('shared.account.dashboard.recent_orders.empty_states.no_data.title')"
+            :description="$t('shared.account.dashboard.recent_orders.empty_states.no_data.description')"
           >
             <template #button>
               <VcButton v-if="continue_shopping_link" :external-link="continue_shopping_link">

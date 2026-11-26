@@ -67,7 +67,7 @@ interface IUiKitOptions {
 
 declare const uiKit: Plugin<[IUiKitOptions?]>;
 
-interface IProps$Q {
+interface IProps$R {
     color?: VcBadgeColorType;
     size?: VcBadgeSizeType;
     variant?: VcBadgeVariantType;
@@ -81,7 +81,7 @@ declare var __VLS_1$a: {};
 type __VLS_Slots$v = {} & {
     default?: (props: typeof __VLS_1$a) => any;
 };
-declare const __VLS_base$v: vue.DefineComponent<IProps$Q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$Q> & Readonly<{}>, {
+declare const __VLS_base$v: vue.DefineComponent<IProps$R, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$R> & Readonly<{}>, {
     size: VcBadgeSizeType;
     color: VcBadgeColorType;
     variant: VcBadgeVariantType;
@@ -95,13 +95,13 @@ type __VLS_WithSlots$v<T, S> = T & {
     };
 };
 
-interface IProps$P {
+interface IProps$Q {
     items: IBreadcrumb[];
 }
-declare const __VLS_export$T: vue.DefineComponent<IProps$P, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$P> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$T: vue.DefineComponent<IProps$Q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$Q> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$T: typeof __VLS_export$T;
 
-interface IProps$O {
+interface IProps$P {
     modelValue?: boolean;
     /**
      * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
@@ -139,10 +139,10 @@ type __VLS_Slots$u = {} & {
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$u: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$u: vue.DefineComponent<IProps$P, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$O> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$P> & Readonly<{
     onChange?: ((value: boolean) => any) | undefined;
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
@@ -165,17 +165,17 @@ type __VLS_WithSlots$u<T, S> = T & {
 };
 
 type CheckboxGroupValueType = string | number | object;
-interface IProps$N {
+interface IProps$O {
     modelValue?: (string | number | object)[];
 }
 declare var __VLS_1$9: {};
 type __VLS_Slots$t = {} & {
     default?: (props: typeof __VLS_1$9) => any;
 };
-declare const __VLS_base$t: vue.DefineComponent<IProps$N, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$t: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
     "update:modelValue": (value: CheckboxGroupValueType[]) => any;
-}, string, vue.PublicProps, Readonly<IProps$N> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$O> & Readonly<{
     onChange?: ((value: CheckboxGroupValueType[]) => any) | undefined;
     "onUpdate:modelValue"?: ((value: CheckboxGroupValueType[]) => any) | undefined;
 }>, {
@@ -190,7 +190,7 @@ type __VLS_WithSlots$t<T, S> = T & {
     };
 };
 
-interface IProps$M {
+interface IProps$N {
     loading?: boolean;
     maxWidth?: string;
     bgColor?: string;
@@ -201,7 +201,7 @@ declare var __VLS_1$8: {};
 type __VLS_Slots$s = {} & {
     default?: (props: typeof __VLS_1$8) => any;
 };
-declare const __VLS_base$s: vue.DefineComponent<IProps$M, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$M> & Readonly<{}>, {
+declare const __VLS_base$s: vue.DefineComponent<IProps$N, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$N> & Readonly<{}>, {
     hasBgImage: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$Q: __VLS_WithSlots$s<typeof __VLS_base$s, __VLS_Slots$s>;
@@ -222,7 +222,7 @@ declare function getFileSize(bytes?: number): IFileSize;
 
 type IconVariantType = "solid" | "outline";
 
-interface IProps$L {
+interface IProps$M {
     name?: string;
     size?: VcIconSizeType;
     color?: string;
@@ -230,13 +230,13 @@ interface IProps$L {
     label?: string;
     strokeWidth?: number;
 }
-declare const __VLS_export$P: vue.DefineComponent<IProps$L, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$L> & Readonly<{}>, {
+declare const __VLS_export$P: vue.DefineComponent<IProps$M, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$M> & Readonly<{}>, {
     name: string;
     color: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$P: typeof __VLS_export$P;
 
-interface IProps$K {
+interface IProps$L {
     lazy?: boolean;
     src?: string;
     alt?: string;
@@ -248,13 +248,13 @@ interface IProps$K {
      */
     sizeSuffix?: "sm" | "md" | "lg";
 }
-declare const __VLS_export$O: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
+declare const __VLS_export$O: vue.DefineComponent<IProps$L, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$L> & Readonly<{}>, {
     src: string;
     fallbackSrc: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$O: typeof __VLS_export$O;
 
-interface IProps$J {
+interface IProps$K {
     id?: string;
     message?: string;
     singleLine?: boolean;
@@ -264,12 +264,12 @@ interface IProps$J {
     textLength?: number;
     maxLength?: number | string;
 }
-declare const __VLS_export$N: vue.DefineComponent<IProps$J, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$J> & Readonly<{}>, {
+declare const __VLS_export$N: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
     textLength: number;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$N: typeof __VLS_export$N;
 
-interface IProps$I {
+interface IProps$J {
     required?: boolean;
     error?: boolean;
     /**
@@ -279,11 +279,11 @@ interface IProps$I {
     forId?: string;
     size?: "xs" | "sm" | "md" | "lg";
 }
-declare var __VLS_8$8: {};
+declare var __VLS_8$7: {};
 type __VLS_Slots$r = {} & {
-    default?: (props: typeof __VLS_8$8) => any;
+    default?: (props: typeof __VLS_8$7) => any;
 };
-declare const __VLS_base$r: vue.DefineComponent<IProps$I, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$I> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_base$r: vue.DefineComponent<IProps$J, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$J> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$M: __VLS_WithSlots$r<typeof __VLS_base$r, __VLS_Slots$r>;
 declare const _default$M: typeof __VLS_export$M;
 
@@ -293,16 +293,16 @@ type __VLS_WithSlots$r<T, S> = T & {
     };
 };
 
-interface IProps$H {
+interface IProps$I {
     to?: RouteLocationRaw;
     externalLink?: RouteLocationRaw;
     disabled?: boolean;
 }
-declare var __VLS_8$7: {};
+declare var __VLS_8$6: {};
 type __VLS_Slots$q = {} & {
-    default?: (props: typeof __VLS_8$7) => any;
+    default?: (props: typeof __VLS_8$6) => any;
 };
-declare const __VLS_base$q: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$H> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_base$q: vue.DefineComponent<IProps$I, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$I> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$L: __VLS_WithSlots$q<typeof __VLS_base$q, __VLS_Slots$q>;
 declare const _default$L: typeof __VLS_export$L;
 
@@ -312,13 +312,13 @@ type __VLS_WithSlots$q<T, S> = T & {
     };
 };
 
-interface IProps$G {
+interface IProps$H {
     src: string;
 }
-declare const __VLS_export$K: vue.DefineComponent<IProps$G, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$G> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$K: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$H> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$K: typeof __VLS_export$K;
 
-interface IProps$F {
+interface IProps$G {
     placement?: VcTooltipPlacementType;
     strategy?: VcTooltipStrategyType;
     flipOptions?: VcTooltipFlipOptionsType;
@@ -348,17 +348,17 @@ declare var __VLS_9$4: {
     tooltipId: string;
 };
 declare var __VLS_12$2: {};
-declare var __VLS_15$1: {};
+declare var __VLS_15$2: {};
 type __VLS_Slots$p = {} & {
     default?: (props: typeof __VLS_9$4) => any;
 } & {
     trigger?: (props: typeof __VLS_12$2) => any;
 } & {
-    content?: (props: typeof __VLS_15$1) => any;
+    content?: (props: typeof __VLS_15$2) => any;
 };
-declare const __VLS_base$p: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$p: vue.DefineComponent<IProps$G, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     shown: (isShown: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$G> & Readonly<{
     onShown?: ((isShown: boolean) => any) | undefined;
 }>, {
     width: string;
@@ -375,7 +375,7 @@ type __VLS_WithSlots$p<T, S> = T & {
     };
 };
 
-interface IProps$E {
+interface IProps$F {
     color?: VcAlertColorType;
     icon?: boolean | string;
     variant?: VcAlertVariantType;
@@ -385,18 +385,18 @@ interface IProps$E {
     closable?: boolean;
 }
 declare var __VLS_1$7: {};
-declare var __VLS_8$6: {};
-declare var __VLS_10$2: {};
+declare var __VLS_8$5: {};
+declare var __VLS_10$1: {};
 type __VLS_Slots$o = {} & {
     'main-icon'?: (props: typeof __VLS_1$7) => any;
 } & {
-    default?: (props: typeof __VLS_8$6) => any;
+    default?: (props: typeof __VLS_8$5) => any;
 } & {
-    'close-icon'?: (props: typeof __VLS_10$2) => any;
+    'close-icon'?: (props: typeof __VLS_10$1) => any;
 };
-declare const __VLS_base$o: vue.DefineComponent<IProps$E, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$o: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     size: VcAlertSizeType;
@@ -412,7 +412,7 @@ type __VLS_WithSlots$o<T, S> = T & {
     };
 };
 
-interface IProps$D {
+interface IProps$E {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -452,22 +452,22 @@ type __VLS_Slots$n = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$n: vue.DefineComponent<IProps$D, {
+declare const __VLS_base$n: vue.DefineComponent<IProps$E, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
+    tag: string;
     color: VcButtonColorType;
     variant: VcButtonVariantType;
     loading: boolean;
     disabled: boolean;
-    tag: string;
     truncate: boolean;
     tabindex: string | number;
     noWrap: boolean;
@@ -482,7 +482,7 @@ type __VLS_WithSlots$n<T, S> = T & {
     };
 };
 
-interface IProps$C {
+interface IProps$D {
     modelValue?: string;
     size?: VcCalendarSizeType;
     min?: string;
@@ -536,13 +536,13 @@ declare var __VLS_99: {
 type __VLS_Slots$m = {} & {
     day?: (props: typeof __VLS_99) => any;
 };
-declare const __VLS_base$m: vue.DefineComponent<IProps$C, {
+declare const __VLS_base$m: vue.DefineComponent<IProps$D, {
     focusActiveCell: () => void;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     clear: () => any;
     "update:modelValue": (value: string | undefined) => any;
     "update:month": (value: string) => any;
-}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{
     onClear?: (() => any) | undefined;
     "onUpdate:modelValue"?: ((value: string | undefined) => any) | undefined;
     "onUpdate:month"?: ((value: string) => any) | undefined;
@@ -572,7 +572,7 @@ type __VLS_WithSlots$m<T, S> = T & {
     };
 };
 
-interface IProps$B {
+interface IProps$C {
     color?: VcChipColorType;
     variant?: VcChipVariantType;
     size?: VcChipSizeType;
@@ -599,10 +599,10 @@ type __VLS_Slots$l = {} & {
 } & {
     'close-icon'?: (props: typeof __VLS_16$1) => any;
 };
-declare const __VLS_base$l: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$l: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: () => any;
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{
     onClick?: (() => any) | undefined;
     onClose?: (() => any) | undefined;
 }>, {
@@ -634,7 +634,7 @@ declare function useQuantityValidationSchema(payload: {
     quantitySchema: vue.ComputedRef<NumberSchema<number | undefined, yup.AnyObject, undefined, "">>;
 };
 
-interface IProps$A {
+interface IProps$B {
     dividers?: boolean;
     width?: string;
     maxHeight?: string;
@@ -646,7 +646,7 @@ declare var __VLS_1$6: {};
 type __VLS_Slots$k = {} & {
     default?: (props: typeof __VLS_1$6) => any;
 };
-declare const __VLS_base$k: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
+declare const __VLS_base$k: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{}>, {
     size: VcDialogSizeType;
     autoFocus: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -659,17 +659,17 @@ type __VLS_WithSlots$k<T, S> = T & {
     };
 };
 
-interface IProps$z {
+interface IProps$A {
     scrollable?: boolean;
 }
-declare var __VLS_8$5: {};
-declare var __VLS_10$1: {};
+declare var __VLS_8$4: {};
+declare var __VLS_10: {};
 type __VLS_Slots$j = {} & {
-    container?: (props: typeof __VLS_8$5) => any;
+    container?: (props: typeof __VLS_8$4) => any;
 } & {
-    default?: (props: typeof __VLS_10$1) => any;
+    default?: (props: typeof __VLS_10) => any;
 };
-declare const __VLS_base$j: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{}>, {
+declare const __VLS_base$j: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
     scrollable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$D: __VLS_WithSlots$j<typeof __VLS_base$j, __VLS_Slots$j>;
@@ -702,22 +702,22 @@ type __VLS_WithSlots$i<T, S> = T & {
     };
 };
 
-interface IProps$y {
+interface IProps$z {
     color?: VcMainColorType;
     icon?: string;
     closable?: boolean;
     size?: VcDialogSizeType;
 }
 declare var __VLS_1$4: {};
-declare var __VLS_8$4: {};
+declare var __VLS_8$3: {};
 type __VLS_Slots$h = {} & {
     main?: (props: typeof __VLS_1$4) => any;
 } & {
-    default?: (props: typeof __VLS_8$4) => any;
+    default?: (props: typeof __VLS_8$3) => any;
 };
-declare const __VLS_base$h: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$h: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     color: VcMainColorType;
@@ -732,23 +732,36 @@ type __VLS_WithSlots$h<T, S> = T & {
     };
 };
 
-interface IProp {
+interface IProps$y {
+    /** The title. */
     text?: string;
+    /** The line under the title: what will show up here, or what to do next. */
+    description?: string;
+    /** Small text under the actions, e.g. "Error code: 404". */
+    hint?: string;
+    /** Why the place is empty: sets the tone, the glyph and, for system reasons, the drawn icon. */
+    reason?: VcEmptyViewReasonType;
+    /** What is missing: the glyph and the drawn icon of a content reason (no-data, cleared, caught-up, done). */
+    entity?: VcEmptyViewEntityType;
+    /** `auto` takes sm / md / lg from the width the view is given (< 37.5rem / < 60rem / wider). */
+    size?: VcEmptyViewSizeType;
+    /** Legacy: kit icon name; known names map to an entity, others stay as the glyph. */
     icon?: string;
+    /** Legacy: `empty` = no-data, `search` = no-results, `error` = error. `reason` wins. */
     variant?: VcEmptyViewVariantType;
 }
 declare var __VLS_1$3: {};
-declare var __VLS_8$3: {};
-declare var __VLS_10: {};
+declare var __VLS_13$1: {};
+declare var __VLS_15$1: {};
 type __VLS_Slots$g = {} & {
     icon?: (props: typeof __VLS_1$3) => any;
 } & {
-    default?: (props: typeof __VLS_8$3) => any;
+    default?: (props: typeof __VLS_13$1) => any;
 } & {
-    button?: (props: typeof __VLS_10) => any;
+    button?: (props: typeof __VLS_15$1) => any;
 };
-declare const __VLS_base$g: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
-    variant: VcEmptyViewVariantType;
+declare const __VLS_base$g: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{}>, {
+    size: VcEmptyViewSizeType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export$A: __VLS_WithSlots$g<typeof __VLS_base$g, __VLS_Slots$g>;
 declare const _default$A: typeof __VLS_export$A;
@@ -7448,6 +7461,38 @@ type VcChipVariantType =
 type VcChipSizeType = "sm" | "md" | "lg";
 type VcDialogSizeType = "xs" | "sm" | "md";
 type VcEmptyViewVariantType = "empty" | "search" | "error";
+type VcEmptyViewSizeType = "auto" | "xs" | "sm" | "md" | "lg" | "xl";
+type VcEmptyViewReasonType =
+    "no-data" | "no-results" | "cleared" | "caught-up" | "error" | "no-access" | "not-found" | "done";
+type VcEmptyViewEntityType =
+    | "activity"
+    | "addresses"
+    | "back-in-stock"
+    | "branches"
+    | "cart"
+    | "catalog"
+    | "compare"
+    | "coupons"
+    | "customers"
+    | "dashboard"
+    | "documents"
+    | "lists"
+    | "members"
+    | "missions"
+    | "news"
+    | "notifications"
+    | "orders"
+    | "payment-methods"
+    | "points"
+    | "purchase-requests"
+    | "quotes"
+    | "records"
+    | "returns"
+    | "sales-reps"
+    | "saved-for-later"
+    | "subscriptions"
+    | "tasks"
+    | "variations";
 type VcInputSizeType = "xs" | "sm" | "md" | "auto";
 type VcMenuItemColorType = VcMainColorType;
 type VcPopoverPlacementType = Placement;

@@ -6,6 +6,12 @@
       "delete_credit_card_modal": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to remove the credit card?"
+      },
+      "empty_states": {
+        "no_data": {
+          "title": "No saved cards yet",
+          "description": "Cards you save at checkout will appear here."
+        }
       }
     }
   }

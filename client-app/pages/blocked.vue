@@ -1,20 +1,27 @@
 <template>
-  <VcEmptyPage image="lock.jpg" icon="outline-security">
-    <VcTypography tag="h1" class="order-first mb-5 sm:pe-8 lg:pe-16">
-      {{ $t("pages.blocked.title") }}
-    </VcTypography>
+  <VcContainer :has-bg-image="false">
+    <VcEmptyView
+      size="xl"
+      reason="no-access"
+      :text="$t('pages.blocked.title')"
+      :description="$t('pages.blocked.empty_state.description')"
+    >
+      <template #icon>
+        <VcEmptyIcon name="account-blocked" />
+      </template>
 
-    <VcTypography class="sm:pe-8 lg:pe-16">
-      {{ $t("pages.blocked.message") }}
-      <ContactAdministratorLink />.
-    </VcTypography>
-  </VcEmptyPage>
+      <template #button>
+        <VcButton to="/contacts" variant="outline" color="secondary">
+          {{ $t("pages.blocked.empty_state.contact_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { ContactAdministratorLink } from "@/shared/common";
 
 const { t } = useI18n();
 

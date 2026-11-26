@@ -1,0 +1,27 @@
+// Drawn empty-state icons in dark mode. The dark scales are inverted, so the parts drawn on light steps would turn
+// dark (lens glass, paper) and the ground shadows would come out lighter than the object. The remaps sit on the
+// root (included by _dark-kit.scss), so a preset stylesheet can still set its own plate on html[data-preset].
+@mixin root-tokens {
+  // Plates: a lifted disc tinted with the scale's 500 step.
+  --vc-empty-icon-plate-secondary-100-color: var(--color-secondary-200);
+  --vc-empty-icon-plate-primary-200-color: color-mix(in srgb, var(--color-primary-500) 22%, var(--color-additional-50));
+  --vc-empty-icon-plate-danger-100-color: color-mix(in srgb, var(--color-danger-500) 26%, var(--color-additional-50));
+
+  // Ground shadows: one tone darker than the plate they sit on.
+  --vc-empty-icon-shadow-secondary-400-color: color-mix(in srgb, var(--color-secondary-500) 30%, var(--color-secondary-200));
+  --vc-empty-icon-shadow-secondary-300-color: color-mix(in srgb, var(--color-secondary-500) 60%, var(--color-secondary-200));
+  --vc-empty-icon-shadow-primary-400-color: color-mix(in srgb, var(--color-primary-500) 32%, var(--color-additional-50));
+  --vc-empty-icon-shadow-danger-100-color: color-mix(
+    in srgb,
+    var(--vc-empty-icon-plate-danger-100-color),
+    var(--color-additional-50) 30%
+  );
+
+  // Light object parts stay light: a light tint of the same hue.
+  --vc-empty-icon-light-secondary-100-color: color-mix(in srgb, var(--color-secondary-500) 22%, var(--color-additional-950));
+  --vc-empty-icon-light-secondary-200-color: color-mix(in srgb, var(--color-secondary-500) 42%, var(--color-additional-950));
+  --vc-empty-icon-light-primary-50-color: color-mix(in srgb, var(--color-primary-500) 12%, var(--color-additional-950));
+  --vc-empty-icon-light-primary-100-color: color-mix(in srgb, var(--color-primary-500) 30%, var(--color-additional-950));
+
+  --vc-empty-icon-badge-success-color: var(--color-success-400);
+}

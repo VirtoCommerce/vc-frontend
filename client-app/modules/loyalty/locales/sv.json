@@ -95,6 +95,16 @@
           "count_requirement": "Lägg {target} separata ordrar",
           "close": "Stäng",
           "redeem_products": "Lös in produkter"
+        },
+        "empty_states": {
+          "load_error": {
+            "title": "Couldn’t load missions",
+            "description": "Check your connection and try again."
+          },
+          "no_data": {
+            "title": "No missions yet",
+            "description": "New ways to earn points will appear here. Check back soon."
+          }
         }
       }
     }

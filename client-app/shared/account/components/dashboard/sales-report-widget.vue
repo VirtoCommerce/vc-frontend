@@ -11,8 +11,10 @@
     <!-- Charts of zeros would read as a quiet period; a user who never ordered gets the way to the catalog instead. -->
     <VcEmptyView
       v-if="hasOrders === false && !failed"
-      :text="$t('shared.account.dashboard.recent_orders.empty')"
-      icon="outline-order"
+      reason="no-data"
+      entity="orders"
+      :text="$t('shared.account.dashboard.recent_orders.empty_states.no_data.title')"
+      :description="$t('shared.account.dashboard.recent_orders.empty_states.no_data.description')"
       data-test-id="sales-report-empty-section"
     >
       <template #button>

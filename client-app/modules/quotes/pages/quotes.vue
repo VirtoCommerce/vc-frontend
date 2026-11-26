@@ -37,12 +37,15 @@
     <!-- Empty view -->
     <VcEmptyView
       v-if="!fetching && !quotes.length"
-      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quote_message')"
-      icon="outline-quotes"
-      :variant="!!keyword ? 'search' : 'empty'"
+      :text="$t(keyword ? 'quotes.empty_states.no_results.title' : 'quotes.empty_states.no_data.title')"
+      :description="
+        $t(keyword ? 'quotes.empty_states.no_results.description' : 'quotes.empty_states.no_data.description')
+      "
+      :reason="keyword ? 'no-results' : 'no-data'"
+      entity="quotes"
     >
       <template #button>
-        <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+        <VcButton v-if="keyword" variant="outline" color="secondary" prepend-icon="reset" @click="resetKeyword">
           {{ $t("quotes.buttons.reset_search") }}
         </VcButton>
       </template>

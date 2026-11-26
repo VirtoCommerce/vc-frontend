@@ -4,7 +4,13 @@
       "title": "最新ニュース",
       "not-found": "ニュースはありません",
       "search-placeholder": "検索",
-      "written-by": "作成者:"
+      "written-by": "作成者:",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "作成者:",

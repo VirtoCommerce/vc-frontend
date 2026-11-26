@@ -46,7 +46,13 @@
       </VcInput>
     </div>
 
-    <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.list.not-found')" icon="outline-document" />
+    <VcEmptyView
+      v-if="!loading && !newsArticles?.length"
+      reason="no-data"
+      entity="news"
+      :text="$t('news.list.empty_states.no_data.title')"
+      :description="$t('news.list.empty_states.no_data.description')"
+    />
 
     <div v-else>
       <div v-if="loading" class="news-articles__grid">

@@ -60,7 +60,12 @@
         "quantity": "Количество"
       },
       "quantity_for": "Количество к возврату для «{name}»",
-      "continue": "Продолжить"
+      "continue": "Продолжить",
+      "empty_states": {
+        "nothing_returnable": {
+          "description": "Items may be past the return window or not eligible for return."
+        }
+      }
     },
     "ineligibility": {
       "RETURNS_DISABLED": "Возвраты отключены для этого магазина",
@@ -97,6 +102,16 @@
         "status": "Статус",
         "quantity": "Кол-во"
       }
+    },
+    "empty_states": {
+      "no_data": {
+        "title": "No returns yet",
+        "description": "Returns you start from an order will appear here with their status."
+      },
+      "no_results": {
+        "title": "No returns match your search",
+        "description": "Try another keyword or remove the status or date filter."
+      }
     }
   },
   "return_details": {
@@ -115,7 +130,13 @@
       "requested": "Запрошено",
       "approved": "Одобрено"
     },
-    "table_description": "возвращаемые товары"
+    "table_description": "возвращаемые товары",
+    "empty_states": {
+      "not_found": {
+        "title": "Return not found",
+        "description": "It may have been canceled or belong to another account."
+      }
+    }
   },
   "return_cancel": {
     "title": "Отмена возврата",

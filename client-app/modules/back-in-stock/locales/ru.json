@@ -9,7 +9,17 @@
     "list_details": {
       "empty_list": "Список ожидаемых товаров пуст",
       "no_results_message": "Результаты не найдены",
-      "empty_list_button": "Продолжить покупки"
+      "empty_list_button": "Продолжить покупки",
+      "empty_states": {
+        "no_data": {
+          "title": "No back-in-stock alerts yet",
+          "description": "Use “Notify me” on an out-of-stock product and it will appear here."
+        },
+        "no_results": {
+          "title": "No products match your search",
+          "description": "Check the spelling or try another keyword."
+        }
+      }
     },
     "messages": {
       "click_to_receive_alert": "Нажмите, чтобы получить уведомление",

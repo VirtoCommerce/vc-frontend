@@ -4,7 +4,13 @@
       "title": "Последние новости",
       "not-found": "Новостей не найдено",
       "search-placeholder": "Поиск",
-      "written-by": "Автор:"
+      "written-by": "Автор:",
+      "empty_states": {
+        "no_data": {
+          "title": "No news yet",
+          "description": "New articles will appear here."
+        }
+      }
     },
     "details": {
       "written-by": "Автор:",

@@ -21,7 +21,13 @@
       />
     </div>
 
-    <VcEmptyView v-else :text="$t('pages.account.promotion_coupons.no_lists')" icon="outline-lists" />
+    <VcEmptyView
+      v-else
+      reason="no-data"
+      entity="coupons"
+      :text="$t('pages.account.promotion_coupons.empty_states.no_data.title')"
+      :description="$t('pages.account.promotion_coupons.empty_states.no_data.description')"
+    />
   </div>
 </template>
 

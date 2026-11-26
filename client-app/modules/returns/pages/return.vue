@@ -6,7 +6,12 @@
 
     <VcTypography tag="h1">{{ pageTitle }}</VcTypography>
 
-    <VcEmptyView v-if="!loading && !orderReturn" :text="$t('return_details.not_found_message')" icon="outline-order" />
+    <VcEmptyView
+      v-if="!loading && !orderReturn"
+      reason="not-found"
+      :text="$t('return_details.empty_states.not_found.title')"
+      :description="$t('return_details.empty_states.not_found.description')"
+    />
 
     <template v-else-if="orderReturn">
       <VcWidget :title="$t('return_details.summary_section')" size="lg">

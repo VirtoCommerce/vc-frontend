@@ -71,14 +71,25 @@
       v-if="!orders.length && !ordersLoading"
       :text="
         keyword || !isFilterEmpty
-          ? $t('pages.account.orders.no_results_message')
-          : $t('pages.account.orders.no_orders_message')
+          ? $t('pages.account.orders.empty_states.no_results.title')
+          : $t('pages.account.orders.empty_states.no_data.title')
       "
-      icon="outline-order"
-      :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
+      :description="
+        keyword || !isFilterEmpty
+          ? $t('pages.account.orders.empty_states.no_results.description')
+          : $t('pages.account.orders.empty_states.no_data.description')
+      "
+      :reason="keyword || !isFilterEmpty ? 'no-results' : 'no-data'"
+      entity="orders"
     >
       <template #button>
-        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton
+          v-if="keyword || !isFilterEmpty"
+          variant="outline"
+          color="secondary"
+          prepend-icon="reset"
+          @click="resetFiltersWithKeyword"
+        >
           {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
 

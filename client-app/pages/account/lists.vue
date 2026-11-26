@@ -46,7 +46,13 @@
     </div>
 
     <!-- Empty -->
-    <VcEmptyView v-else :text="$t('pages.account.lists.no_lists')" icon="outline-lists">
+    <VcEmptyView
+      v-else
+      reason="no-data"
+      entity="lists"
+      :text="$t('pages.account.lists.empty_states.no_data.title')"
+      :description="$t('pages.account.lists.empty_states.no_data.description')"
+    >
       <template #button>
         <VcButton data-test-id="create-wishlist-button" prepend-icon="plus" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}

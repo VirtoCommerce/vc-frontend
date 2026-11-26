@@ -65,12 +65,17 @@
 
       <VcEmptyView
         v-if="!loading && !returns.length"
-        :text="isSearching ? $t('returns.no_results_message') : $t('returns.no_returns_message')"
-        :variant="isSearching ? 'search' : 'empty'"
-        icon="outline-order"
+        :text="isSearching ? $t('returns.empty_states.no_results.title') : $t('returns.empty_states.no_data.title')"
+        :description="
+          isSearching
+            ? $t('returns.empty_states.no_results.description')
+            : $t('returns.empty_states.no_data.description')
+        "
+        :reason="isSearching ? 'no-results' : 'no-data'"
+        entity="returns"
       >
         <template v-if="isSearching" #button>
-          <VcButton prepend-icon="reset" @click="resetAll">
+          <VcButton variant="outline" color="secondary" prepend-icon="reset" @click="resetAll">
             {{ $t("common.buttons.reset_filters") }}
           </VcButton>
         </template>

@@ -30,7 +30,14 @@
       <template v-else-if="!items.length">
         <slot v-if="$slots['mobile-empty']" name="mobile-empty" />
 
-        <VcEmptyView v-else variant="search" :text="$t('ui_kit.table.empty')" />
+        <VcEmptyView
+          v-else
+          reason="no-data"
+          entity="records"
+          size="md"
+          :text="$t('ui_kit.table.empty_states.no_data.title')"
+          :description="$t('ui_kit.table.empty_states.no_data.description')"
+        />
       </template>
 
       <!-- Mobile item view -->
@@ -180,7 +187,13 @@
 
           <tr v-else>
             <td :colspan="stateColspan" class="vc-table__state-cell">
-              <VcEmptyView variant="search" :text="$t('ui_kit.table.empty')" />
+              <VcEmptyView
+                reason="no-data"
+                entity="records"
+                size="md"
+                :text="$t('ui_kit.table.empty_states.no_data.title')"
+                :description="$t('ui_kit.table.empty_states.no_data.description')"
+              />
             </td>
           </tr>
         </tbody>
@@ -826,7 +839,7 @@ const DefaultErrorState = defineComponent({
     return () =>
       h(
         VcEmptyView,
-        { variant: "error", text: t("ui_kit.table.error") },
+        { variant: "error", size: "md", text: t("ui_kit.table.error") },
         hasRetryListener.value
           ? {
               button: () =>

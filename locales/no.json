@@ -178,7 +178,8 @@
       "other": "Annet",
       "vendor_name": "Leverandør: {name}",
       "not_available": "Ikke tilgjengelig",
-      "product_reviews": "Produktomtaler"
+      "product_reviews": "Produktomtaler",
+      "error_code": "Error code: {code}"
     },
     "prefixes": {
       "please": "Vennligst",
@@ -250,7 +251,13 @@
       "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
       "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette.",
       "page_loading": "Laster inn siden…",
-      "page_loading_slow": "Det tar lengre tid enn vanlig å laste inn denne siden. Du kan vente eller laste inn siden på nytt."
+      "page_loading_slow": "Det tar lengre tid enn vanlig å laste inn denne siden. Du kan vente eller laste inn siden på nytt.",
+      "empty_states": {
+        "no_addresses": {
+          "title": "No saved addresses yet",
+          "description": "Addresses you add here or at checkout will appear here."
+        }
+      }
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",
@@ -667,7 +674,19 @@
           "empty": "Ingen bestillinger ennå",
           "no_results": "Ingen bestillinger med denne statusen",
           "load_failed": "Kunne ikke laste inn bestillingene",
-          "statuses_label": "Statuser som vises"
+          "statuses_label": "Statuser som vises",
+          "empty_states": {
+            "load_failed": {
+              "description": "Check your connection and try again."
+            },
+            "no_results": {
+              "description": "Pick another status to see more orders."
+            },
+            "no_data": {
+              "title": "No orders yet",
+              "description": "Orders you place will appear here."
+            }
+          }
         }
       }
     },
@@ -850,7 +869,13 @@
           },
           "list": "Liste",
           "table": "Tabell",
-          "no_results": "Ingen resultater funnet"
+          "no_results": "Ingen resultater funnet",
+          "empty_states": {
+            "no_results": {
+              "title": "No variations match these filters",
+              "description": "Remove a filter to see all options of this product."
+            }
+          }
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1093,7 +1118,13 @@
         "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
-        "list_icon": "Listeikon"
+        "list_icon": "Listeikon",
+        "empty_states": {
+          "no_data": {
+            "title": "This list is empty",
+            "description": "Products you add to this list will appear here."
+          }
+        }
       },
       "add_to_wishlists_modal": {
         "title": "Velg liste",
@@ -1286,7 +1317,13 @@
         "revenue_to_date": "Inntekter hittil",
         "vs_month": "vs {month}"
       },
-      "upcoming": "Kommende"
+      "upcoming": "Kommende",
+      "empty_states": {
+        "load_failed": {
+          "title": "Couldn’t load the report",
+          "description": "Check your connection and try again."
+        }
+      }
     }
   },
   "pages": {
@@ -1295,28 +1332,44 @@
       "error_text": "Ugyldig forespørsel",
       "message": "Brukeren har ikke lenger tillatelse til å logge på. Kontakt administratoren.",
       "img_alt": "Ugyldig forespørsel",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You can’t sign in right now",
+        "description": "Your access was turned off. Ask your company admin or contact support to restore it."
+      }
     },
     "403": {
       "error_code": "403",
       "error_text": "Tilgang nektet",
       "message": "Du har ikke tillatelse til å få tilgang til den forespurte siden",
       "img_alt": "Tilgang nektet",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "You don’t have access to this page",
+        "description": "Ask your company admin to grant access, or sign in with another account."
+      }
     },
     "404": {
       "error_code": "404",
       "error_text": "Side ikke funnet",
       "message": "Det oppsto en feil. Vil du at vi tar deg tilbake til hjemmesiden?",
       "img_alt": "Side ikke funnet",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "description": "The page may have moved or the link is out of date. Search the catalog or go back to the homepage."
+      }
     },
     "500": {
       "error_code": "500",
       "error_text": "Intern serverfeil",
       "message": "Det oppsto en feil. Vil du at vi tar deg tilbake til hjemmesiden?",
       "img_alt": "Intern serverfeil",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "empty_state": {
+        "title": "Couldn’t load this page",
+        "description": "Something went wrong on our side. Try again in a moment.",
+        "try_again_button": "Try again"
+      }
     },
     "home": {
       "meta": {
@@ -1469,6 +1522,16 @@
         "buttons": {
           "no_orders": "Fortsett å bla",
           "reset_search": "Tilbakestill søk"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No orders yet",
+            "description": "Orders you place, or that your sales rep places for you, will appear here."
+          },
+          "no_results": {
+            "title": "No orders match your search",
+            "description": "Check the order number or search by product name or PO number."
+          }
         }
       },
       "order_details": {
@@ -1543,7 +1606,13 @@
         "no_lists": "Du har ikke opprettet noen lister ennå",
         "create_list_button": "Opprett liste",
         "create_list_button_mobile": "Opprett",
-        "lists_icon": "Listeikon"
+        "lists_icon": "Listeikon",
+        "empty_states": {
+          "no_data": {
+            "title": "No lists yet",
+            "description": "Create a list to save products you buy often and reorder them in one click."
+          }
+        }
       },
       "list_details": {
         "meta": {
@@ -1571,7 +1640,13 @@
       },
       "promotion_coupons": {
         "title": "Alle kuponger og kampanjer",
-        "no_lists": "Du har ingen kuponger eller kampanjer"
+        "no_lists": "Du har ingen kuponger eller kampanjer",
+        "empty_states": {
+          "no_data": {
+            "title": "No coupons or promotions yet",
+            "description": "Coupons and promotions available to your account will appear here."
+          }
+        }
       },
       "security": {
         "title": "@:common.links.security",
@@ -1618,6 +1693,12 @@
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "Legg til ny"
+        },
+        "empty_states": {
+          "no_addresses": {
+            "title": "No company addresses yet",
+            "description": "Add shipping and billing addresses your members can use at checkout."
+          }
         }
       },
       "members": {
@@ -1664,6 +1745,16 @@
         "notifications": {
           "invite_revoked": "Invitasjonen er trukket tilbake",
           "invite_resent": "Invitasjonen er sendt på nytt"
+        },
+        "empty_states": {
+          "no_data": {
+            "title": "No members yet",
+            "description": "Invite colleagues to order, approve and manage your company account."
+          },
+          "no_results": {
+            "title": "No members match your search",
+            "description": "Check the name or email, or remove a role or status filter."
+          }
         }
       }
     },
@@ -1678,7 +1769,16 @@
       "save_for_later": "Lagre til senere",
       "saved_for_later": "Lagret til senere",
       "saved_for_later_not_found": "Du har ikke lagret noen produkter for senere",
-      "move_to_cart": "Flytt til handlekurv"
+      "move_to_cart": "Flytt til handlekurv",
+      "empty_states": {
+        "saved_for_later": {
+          "title": "Nothing saved for later",
+          "description": "Use “Save for later” in the cart to keep products here without buying them now."
+        },
+        "empty_cart": {
+          "description": "Browse the catalog or reorder from a saved list — items you add will show up here."
+        }
+      }
     },
     "checkout": {
       "meta": {
@@ -1735,7 +1835,17 @@
       "show_all_results": "Vis alle resultater",
       "load_previous_page": "Last inn forrige side",
       "load_next_page": "Last inn neste side",
-      "available_variations": "Ingen tilgjengelige varianter | 1 tilgjengelig variant | {count} tilgjengelige varianter"
+      "available_variations": "Ingen tilgjengelige varianter | 1 tilgjengelig variant | {count} tilgjengelige varianter",
+      "empty_states": {
+        "no_data": {
+          "title": "No products in this category yet",
+          "description": "New items are added regularly. Try a related category or search the whole catalog."
+        },
+        "no_results": {
+          "title": "No products match your search or filters",
+          "description": "Check the spelling, try fewer filters, or turn off “Show in stock”."
+        }
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1870,14 +1980,28 @@
         "title": "Blokkert"
       },
       "title": "Kontoen din er blokkert",
-      "message": "@:common.messages.blocked"
+      "message": "@:common.messages.blocked",
+      "empty_state": {
+        "description": "Contact your company admin or our support team to restore access.",
+        "contact_button": "Contact support"
+      }
     },
     "brands": {
       "top_brands_title": "Toppmerker",
       "title": "Merker",
       "search": "Søk",
       "button_all": "Alle",
-      "no_results": "Ingen resultater funnet"
+      "no_results": "Ingen resultater funnet",
+      "empty_states": {
+        "no_results": {
+          "title": "No brands match your search",
+          "description": "Check the spelling or try another keyword."
+        },
+        "not_found": {
+          "title": "Brand not found",
+          "description": "The brand may have been removed or the link is out of date."
+        }
+      }
     },
     "brand": {
       "products_title": "Produkter"

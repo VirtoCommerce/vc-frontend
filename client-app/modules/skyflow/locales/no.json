@@ -6,6 +6,12 @@
       "delete_credit_card_modal": {
         "title": "Bekreft sletting",
         "message": "Er du sikker på at du vil slette kredittkortet?"
+      },
+      "empty_states": {
+        "no_data": {
+          "title": "No saved cards yet",
+          "description": "Cards you save at checkout will appear here."
+        }
       }
     }
   }

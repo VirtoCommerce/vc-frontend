@@ -8,8 +8,10 @@
 
     <VcEmptyView
       v-if="!loading && !items.length"
+      reason="no-data"
+      entity="returns"
       :text="$t('returns.select_items.nothing_returnable')"
-      icon="outline-order"
+      :description="$t('returns.select_items.empty_states.nothing_returnable.description')"
     />
 
     <template v-else>
