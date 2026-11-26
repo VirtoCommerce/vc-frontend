@@ -10,6 +10,7 @@ declare global {
     /** @deprecated Use "tonal" instead. */
     | "outline-dark";
   type VcAlertSizeType = "sm" | "md";
+  type VcAlertActionsPositionType = "bottom" | "end";
 }
 
 export {};

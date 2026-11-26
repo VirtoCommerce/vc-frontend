@@ -107,7 +107,8 @@
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
-import { getInputClearIconSize } from "@/ui-kit/utilities";
+import { getInputButtonSize, getInputClearIconSize } from "@/ui-kit/utilities";
+import { provideButtonContext } from "../button/vc-button-context";
 import type { MaskOptions } from "maska";
 import type { AriaAttributes } from "vue";
 
@@ -299,6 +300,8 @@ function inputClick() {
 provide<VcInputContextType>("inputContext", {
   size: _size,
 });
+
+provideButtonContext(() => ({ size: getInputButtonSize(props.size) }));
 </script>
 
 <style lang="scss">

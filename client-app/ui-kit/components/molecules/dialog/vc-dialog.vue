@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { provide, toRef } from "vue";
 import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
+import { provideButtonContext } from "../button/vc-button-context";
 import { vcDialogKey } from "./vc-dialog-context";
 
 interface IProps {
@@ -47,6 +48,7 @@ const { onKeydown: onTrapKeydown } = useFocusManagement({
 
 const sizeRef = toRef(props, "size");
 provide(vcDialogKey, { size: sizeRef });
+provideButtonContext(() => ({ size: props.size }));
 </script>
 
 <style lang="scss">

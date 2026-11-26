@@ -6,6 +6,7 @@
       `vc-alert--size--${size}`,
       {
         'vc-alert--shadow': shadow,
+        'vc-alert--actions-end': isActionsEnd(),
       },
     ]"
   >
@@ -19,6 +20,18 @@
       <div v-if="title" class="vc-alert__title">{{ title }}</div>
 
       <slot />
+
+      <div v-if="$slots.actions && !isActionsEnd()" class="vc-alert__actions vc-alert__actions--bottom">
+        <VcButtonContextProvider v-bind="actionButtonContext">
+          <slot name="actions" />
+        </VcButtonContextProvider>
+      </div>
+    </div>
+
+    <div v-if="isActionsEnd()" class="vc-alert__actions vc-alert__actions--end">
+      <VcButtonContextProvider v-bind="actionButtonContext">
+        <slot name="actions" />
+      </VcButtonContextProvider>
     </div>
 
     <div v-if="closable">
@@ -37,8 +50,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
+import VcButtonContextProvider from "../button/vc-button-context-provider.vue";
 
 interface IEmits {
   (event: "close"): void;
@@ -52,6 +66,8 @@ interface IProps {
   title?: string;
   shadow?: boolean;
   closable?: boolean;
+  /** Where the `actions` slot renders: under the text, or at the end of the row before the close button. */
+  actionsPosition?: VcAlertActionsPositionType;
 }
 
 defineEmits<IEmits>();
@@ -60,7 +76,10 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
+  actionsPosition: "bottom",
 });
+
+const slots = useSlots();
 
 const DEFAULT_ALERT_VARIANT: VcAlertVariantType = "solid";
 const CANONICAL_ALERT_VARIANTS: readonly VcAlertVariantType[] = [DEFAULT_ALERT_VARIANT, "soft", "outline", "tonal"];
@@ -70,6 +89,23 @@ const canonicalVariant = computed<VcAlertVariantType>(() => {
   return (CANONICAL_ALERT_VARIANTS as readonly string[]).includes(resolved)
     ? (resolved as VcAlertVariantType)
     : DEFAULT_ALERT_VARIANT;
+});
+
+// Only "end" is special: any other value (a typo, a string from settings) falls back to "bottom".
+// A function, not a computed: slot presence is not reactive, so a cached value would go stale.
+function isActionsEnd(): boolean {
+  return !!slots.actions && props.actionsPosition === "end";
+}
+
+// Buttons in the actions slot take this look unless they set their own props.
+const actionButtonContext = computed<VcButtonContextType>(() => {
+  const isSolid = canonicalVariant.value === "solid";
+
+  return {
+    size: "xxs",
+    color: isSolid ? "accent" : "secondary",
+    variant: isSolid ? "surface" : "outline",
+  };
 });
 
 const iconName = computed<string>(() => {
@@ -97,6 +133,9 @@ const iconName = computed<string>(() => {
 
 <style lang="scss">
 .vc-alert {
+  $sm: "";
+  $actionsEnd: "";
+
   --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
 
   @apply flex items-start border rounded-[--radius] bg-[--bg-color] border-[--border-color] text-[--text-color];
@@ -107,16 +146,30 @@ const iconName = computed<string>(() => {
 
   &--size {
     &--sm {
-      --icon-size: 1.125rem;
+      $sm: &;
 
-      @apply ps-[0.438rem] pe-[0.625rem] py-[0.313rem] text-xs/[0.875rem];
+      --icon-size: 1.125rem;
+      --line-height: 0.875rem;
+
+      @apply ps-[0.438rem] pe-[0.625rem] py-[0.438rem] text-xs/[--line-height];
     }
 
     &--md {
       --icon-size: 1.25rem;
+      --line-height: 1.125rem;
 
-      @apply p-[0.688rem] text-sm/[1.125rem];
+      @apply p-[0.688rem] text-sm/[--line-height];
     }
+  }
+
+  // With actions in the end position the alert is taller than the text's
+  // line box: the actions and the close button center on the alert. A one-line text
+  // centers with them; with a title or wrapped text the icon stays on the first line,
+  // as in the bottom-actions layout — icon and content align by their first baseline.
+  &--actions-end {
+    $actionsEnd: &;
+
+    @apply items-center;
   }
 
   $colors: info, success, warning, danger;
@@ -135,15 +188,31 @@ const iconName = computed<string>(() => {
     }
   }
 
+  // A one-line alert without a title has the icon, text and close button on one
+  // vertical center; when the text wraps, nothing re-centers — the icon and the
+  // close button stay anchored to the first line and new lines are added below.
+  // The symmetric negative margin-block keeps each control's margin box equal to
+  // the line height, so a one-line alert keeps its minimal symmetric height.
   &__icon {
     --vc-icon-size: var(--icon-size);
     --vc-icon-color: var(--icon-color);
 
-    @apply shrink-0 me-2;
+    @apply shrink-0 me-2 my-[calc((var(--line-height)_-_var(--icon-size))/2)];
+
+    #{$actionsEnd} & {
+      @apply self-baseline flex items-center my-0 h-[--line-height] leading-[--line-height];
+
+      // a zero-width character gives the icon box a text baseline matching the content
+      &::before {
+        content: "\200b";
+
+        @apply w-0 overflow-hidden;
+      }
+    }
   }
 
   &__content {
-    @apply grow self-center flex flex-col justify-center [word-break:break-word];
+    @apply grow flex flex-col [word-break:break-word];
 
     &:first-child {
       @apply ps-1;
@@ -152,6 +221,11 @@ const iconName = computed<string>(() => {
         @apply px-1;
       }
     }
+
+    #{$actionsEnd} & {
+      // the xxs button height: a one-line text centers on the action buttons
+      @apply self-baseline justify-center min-h-[1.625rem];
+    }
   }
 
   &__title {
@@ -159,10 +233,31 @@ const iconName = computed<string>(() => {
   }
 
   &__close-button {
+    --close-button-size: 1.75rem;
     --vc-icon-size: 0.875rem;
     --vc-icon-color: var(--close-button-icon-color);
 
-    @apply flex items-center justify-center -my-1 -me-2 size-7;
+    @apply flex items-center justify-center my-[calc((var(--line-height)_-_var(--close-button-size))/2)] -me-2 size-[--close-button-size];
+
+    #{$actionsEnd} & {
+      @apply ms-1;
+    }
+  }
+
+  &__actions {
+    @apply flex shrink-0 gap-2;
+
+    &--bottom {
+      @apply flex-wrap mt-2;
+
+      #{$sm} & {
+        @apply mt-1.5;
+      }
+    }
+
+    &--end {
+      @apply ms-3;
+    }
   }
 }
 </style>

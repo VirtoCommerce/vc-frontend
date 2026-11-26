@@ -15,6 +15,12 @@ declare global {
     | "no-background";
   type VcButtonTypeType = "button" | "reset" | "submit";
   type VcButtonSizeType = "xxs" | "xs" | "sm" | "md" | "lg";
+  /** What a container gives the buttons inside it; a button's own prop always wins. */
+  type VcButtonContextType = {
+    size?: VcButtonSizeType;
+    color?: VcButtonColorType;
+    variant?: VcButtonVariantType;
+  };
   type VcButtonExposedType = {
     focus: () => void;
     blur: () => void;

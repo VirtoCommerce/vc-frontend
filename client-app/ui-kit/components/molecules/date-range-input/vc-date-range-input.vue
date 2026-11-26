@@ -81,7 +81,8 @@
 import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId, useDateRangeField, useShellFocusEvents } from "@/ui-kit/composables";
-import { getInputClearIconSize, sideAttr } from "@/ui-kit/utilities";
+import { getInputButtonSize, getInputClearIconSize, sideAttr } from "@/ui-kit/utilities";
+import { provideButtonContext } from "../button/vc-button-context";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IDateInputExposed {
@@ -175,9 +176,10 @@ const hasClearableContent = computed<boolean>(
     !!endInputRef.value?.hasText,
 );
 
-// Sizes slot buttons (clear + #append) the way VcInput sizes its own decorators.
+// Sizes the label and the shell's buttons (clear + #append) the way VcInput sizes its own.
 const size = computed(() => props.size);
 provide<VcInputContextType>("inputContext", { size });
+provideButtonContext(() => ({ size: getInputButtonSize(props.size) }));
 
 const detailsId = useComponentId("date-range-input") + "-details";
 

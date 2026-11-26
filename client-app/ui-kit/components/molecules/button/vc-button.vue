@@ -13,8 +13,8 @@
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
-      `vc-button--color--${color}`,
-      `vc-button--${canonicalVariant}--${color}`,
+      `vc-button--color--${_color}`,
+      `vc-button--${canonicalVariant}--${_color}`,
       {
         'vc-button--icon': !!icon,
         'vc-button--square': square,
@@ -58,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, ref } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
-import { vcDialogKey } from "../dialog/vc-dialog-context";
+import { injectButtonContext } from "./vc-button-context";
 import type { IconVariantType } from "@/ui-kit/utilities";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -75,8 +75,20 @@ interface IAttributes {
 }
 
 interface IProps {
+  /**
+   * Taken from the nearest container's button context when not set.
+   * @default "primary"
+   */
   color?: VcButtonColorType;
+  /**
+   * Taken from the nearest container's button context when not set.
+   * @default "md"
+   */
   size?: VcButtonSizeType;
+  /**
+   * Taken from the nearest container's button context when not set.
+   * @default "solid"
+   */
   variant?: VcButtonVariantType;
   type?: VcButtonTypeType;
   disabled?: boolean;
@@ -103,8 +115,6 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  color: "primary",
-  variant: "solid",
   type: "button",
   disabled: false,
   loading: false,
@@ -116,37 +126,13 @@ const props = withDefaults(defineProps<IProps>(), {
   tabindex: 0,
 });
 
-const canonicalVariant = computed(() => resolveVariant("VcButton", props.variant));
+const buttonContext = injectButtonContext();
 
-const inputContext = inject<VcInputContextType | null>("inputContext", null);
-const dialogContext = inject(vcDialogKey, { size: ref("md") });
+const _size = computed<VcButtonSizeType>(() => props.size ?? buttonContext?.value.size ?? "md");
+const _color = computed<VcButtonColorType>(() => props.color ?? buttonContext?.value.color ?? "primary");
+const _variant = computed<VcButtonVariantType>(() => props.variant ?? buttonContext?.value.variant ?? "solid");
 
-const _size = computed(() => {
-  if (props.size) {
-    return props.size;
-  }
-
-  const inputSize = inputContext?.size.value;
-  const dialogSize = dialogContext?.size.value;
-
-  if (inputSize) {
-    if (inputSize === "xs") {
-      return "xxs";
-    }
-
-    if (inputSize === "sm") {
-      return "xs";
-    }
-
-    return "sm";
-  }
-
-  if (dialogSize) {
-    return dialogSize;
-  }
-
-  return "md";
-});
+const canonicalVariant = computed(() => resolveVariant("VcButton", _variant.value));
 
 const enabled = computed<boolean>(() => !props.disabled && !props.loading);
 const isRouterLink = computed<boolean>(() => !!props.to && enabled.value);
