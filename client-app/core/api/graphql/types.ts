@@ -6566,7 +6566,6 @@ export type Query = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
   tasks?: Maybe<WorkTaskConnection>;
-  themeSnapshot?: Maybe<ThemeSnapshot>;
   user?: Maybe<UserType>;
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
@@ -7561,14 +7560,6 @@ export type QueryTasksArgs = {
   responsibleId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   startDueDate?: InputMaybe<Scalars['DateTime']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryThemeSnapshotArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  domain?: InputMaybe<Scalars['String']['input']>;
-  permalink?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -9074,39 +9065,6 @@ export type TermFacet = Facet & {
   order?: Maybe<Scalars['Int']['output']>;
   /** Terms */
   terms: Array<FacetTermType>;
-};
-
-export type ThemeSnapshot = {
-  /** The snapshot JSON, as Site Builder published it */
-  content: Scalars['String']['output'];
-  /** The language the texts are in */
-  cultureName: Scalars['String']['output'];
-  /** The link lists the header and footer name, under the names they hold */
-  menus: Array<MenuLinkListType>;
-  /** The number of the theme publication */
-  publication: Scalars['Int']['output'];
-  /** What is at the permalink asked for, for an anonymous visitor; null without a permalink, with nothing at it or when the lookup failed */
-  slug?: Maybe<ThemeSnapshotSlug>;
-  /** The store the snapshot belongs to */
-  storeId: Scalars['String']['output'];
-};
-
-export type ThemeSnapshotSlug = {
-  /** The id of the object at the permalink */
-  objectId: Scalars['String']['output'];
-  /** The slug's object type: Pages, ContentFile, CatalogProduct, Category… */
-  objectType: Scalars['String']['output'];
-  /** A content page (Pages, ContentFile) as it was read; null for other object types and a page that was not read */
-  page?: Maybe<ThemeSnapshotSlugPage>;
-};
-
-export type ThemeSnapshotSlugPage = {
-  /** The page's permalink */
-  permalink?: Maybe<Scalars['String']['output']>;
-  /** A JSON object of the page's settings that choose its template and layout: layout, template and the settings the page rules' setting conditions name. Null when the page's content is not a JSON object with a settings object */
-  settings?: Maybe<Scalars['String']['output']>;
-  /** A page from the database: its document's source. Null for a file page */
-  source?: Maybe<Scalars['String']['output']>;
 };
 
 export type TierPriceType = {
