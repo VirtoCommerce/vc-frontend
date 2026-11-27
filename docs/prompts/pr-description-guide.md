@@ -20,13 +20,15 @@ readers' questions, in the order they ask them**.
 ```markdown
 ## Description
 <what changed for the shopper or the store operator, in domain terms; the defect it fixes;
- a screenshot or recording for a visible change; a companion backend PR, if one exists;
+ for a visible change: the designs, presets and theme (light / dark) it shows in, with screenshots;
+ a companion backend PR, if one exists;
  the "no new surface" line where it is true — no backend bump / no new settings / no new public API /
- no new dependencies>
+ no facade change / no new dependencies>
 
 ## Backend requirements
 ## Settings
 ## New public surface
+## Plugins (@vc-frontend/core)
 ## Breaking changes
 ## New dependencies
 
@@ -44,6 +46,10 @@ these headings. Keep them exactly as written: `## References` and its two lines 
 
 ## What each section answers
 
+**Description** — «what changed, and where do I look?» For a visible change, name where it shows: the design
+(`classic`, `soft` or both), the presets (one or all), light and dark. QA checks exactly that; a fork on the other
+design knows it is not touched. Add screenshots of what you named.
+
 **Backend requirements** — «can I deploy this zip on the environment I have?» The modules and versions the build
 needs: a `backend-packages.json` bump, a query that now selects a field only a newer module serves, a mutation
 added in a paired backend PR (link it). A frontend that asks for a field the backend does not know gets a 400 on
@@ -55,9 +61,23 @@ that gate a feature, `settings_data.json` keys, `APP_*` environment variables. G
 store looks like with it.
 
 **New public surface** — «what may a fork or a plugin now use?» New `ui-kit` props, slots, emits and CSS custom
-properties; new `--vc-*` tokens and public BEM classes; new extension points; new `@vc-frontend/core` exports
-(with the contract bump); new routes; new locale keys. Phrase it from the reader: not «extracted a slot», but «a
-fork can replace the price block through the `price` slot without copying the card».
+properties; new `--vc-*` tokens and public BEM classes; new extension points; new routes; new locale keys. Phrase
+it from the reader: not «extracted a slot», but «a fork can replace the price block through the `price` slot without
+copying the card».
+
+**Plugins (@vc-frontend/core)** — «will my plugin still load?» Plugins import only the facade, so any change to it
+goes here, with three facts:
+
+1. The facade version, old → new, and why that level. On 0.x an added export is a patch and
+   `yarn build:core-types` bumps it; a removed or renamed export, or a shared library (Vue, Apollo…) moved to a new
+   major, is a minor that you bump with `yarn bump:core` (the table in
+   [core-api/README.md](../../client-app/core-api/README.md)).
+2. The `@vc-frontend/core` range in `federation.mjs`, if it changed.
+3. `BACKEND_REQUIREMENTS` in `core-api/backend-requirements.mjs`, if it changed: the lowest backend a module that
+   ships a plugin must declare.
+
+List new facade exports here, not under New public surface. `None` when nothing under `client-app/core-api/`
+changed and the contract did not move.
 
 **Breaking changes** — see the split below. Lists the removed or renamed public classes, `--vc-*` tokens,
 props, slots and emits that [styles.md](../../.claude/rules/styles.md) and
@@ -66,7 +86,9 @@ props, slots and emits that [styles.md](../../.claude/rules/styles.md) and
 **New dependencies** — npm packages added to `dependencies` (they ship in the bundle; say why an existing one does
 not do the job) and notable `devDependencies`. Version bumps of existing packages are not new dependencies.
 
-**Checklist** — the team's own; tick it honestly.
+**Checklist** — the team's own; tick it honestly. Two items catch what no check does: new locale keys translated in
+every locale (`yarn check-locales` reports only missing keys, not English copies), and a facade change shipped with
+a regenerated, committed contract (`yarn build:core-types`).
 
 ## Three mechanics, without which the skeleton is decoration
 
@@ -87,7 +109,7 @@ behind a trade-off belong in the PR — but below everything a reader needs in o
 |---|---|---|
 | Type or contract change | a fork's or plugin's `vue-tsc` / build | a removed export, a prop type narrowed, a facade member removed or resignatured |
 | Moved or restructured code | the fork's next upstream merge | a component moved, renamed or split; a composable merged into another; a file a fork overrides deleted |
-| Behaviour or styling change | runtime, with no warning | a renamed BEM class or `--vc-*` token (the fork's styles silently stop applying), a removed emit (Vue drops the listener without a word), a renamed locale key, a changed default, a query that now needs a newer backend |
+| Behaviour or styling change | runtime, with no warning | a renamed BEM class or `--vc-*` token (the fork's styles silently stop applying), a removed emit (Vue drops the listener without a word), a renamed locale key, a changed default, a query that now needs a newer backend, a style moved to another cascade layer or a selector made more specific (a fork's override in its design's `blocks/` stops winning) |
 
 The third is the one an undifferentiated list hides and the one nothing in the toolchain catches.
 
@@ -134,6 +156,8 @@ lives in the repository is fine.
 - A `Tests` section. Test coverage is a review dimension; the reviewer reads the test files regardless.
 - A renamed class, token or emit mentioned in passing in the description rather than under `Breaking changes`.
 - A `backend-packages.json` or GraphQL change with `Backend requirements` left empty.
+- A change under `client-app/core-api/` with `Plugins` saying `None`.
+- A visual change with no word on which design, preset or theme it shows in.
 - No `None` anywhere in a description for a change that plainly adds no public surface — the sections were dropped
   rather than answered.
 - Prose explaining what an earlier revision of the branch did, above the sections describing what ships.
