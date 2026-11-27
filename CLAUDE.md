@@ -38,7 +38,7 @@ Typecheck only via `yarn validate:types`: the root `tsconfig.json` is `"files": 
 
 The backend is set via `APP_BACKEND_URL` in `.env.local`. The dev server proxies `/graphql` (incl. WS), `/api`, `/connect/*`, `/cms-content` and the other auth/well-known paths to it (`vite.config.ts`).
 
-Pre-commit runs `eslint --fix` (js/ts/vue) and `prettier --write` (graphql/json) via lint-staged. Commit messages follow Conventional Commits (commitlint), e.g. `feat(VCST-1234): ...`. CI does not run ESLint, so warnings only surface locally. PR descriptions follow `.github/pull_request_template.md` (Description, Jira-link, Artifact URL); a correct Jira link auto-links the PR to the ticket.
+Pre-commit runs `eslint --fix` (js/ts/vue) and `prettier --write` (graphql/json) via lint-staged. Commit messages follow Conventional Commits (commitlint), e.g. `feat(VCST-1234): ...`. CI does not run ESLint, so warnings only surface locally. PR descriptions follow `.github/pull_request_template.md` and [docs/prompts/pr-description-guide.md](docs/prompts/pr-description-guide.md): every section answered, `None` where it does not apply; a correct Jira link auto-links the PR to the ticket; CI fills `Artifact URL`.
 
 ## Conventions that apply to every rule file
 
