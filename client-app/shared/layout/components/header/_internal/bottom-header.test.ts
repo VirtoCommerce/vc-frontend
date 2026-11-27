@@ -30,6 +30,8 @@ const BUILT_IN_CART: ExtendedMenuLinkType = {
 };
 
 const MY_LIST: ExtendedMenuLinkType = { id: "my-list", title: "My list", route: { name: "MyList" } };
+const NOTIFICATIONS: ExtendedMenuLinkType = { id: "push-messages", title: "Notifications", icon: "notification-v2" };
+const ORGANIZATIONS: ExtendedMenuLinkType = { id: "organizations", title: "Organizations", icon: "case" };
 
 vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", () => ({
   useExtensionRegistry: () => ({
@@ -44,7 +46,9 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
 vi.mock("@/core/composables", () => ({
   useNavigations: () => ({ catalogMenuItems: ref([]), desktopMainMenuItems: h.menuItems }),
 }));
-vi.mock("@/shared/account/composables/useUser", () => ({ useUser: () => ({ organization: ref() }) }));
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({ organization: ref(), isMultiOrganization: ref(true) }),
+}));
 vi.mock("@/shared/layout/composables/useHeaderLogo", () => ({ useHeaderLogo: () => ({ headerLogoUrl: ref("") }) }));
 vi.mock("@/shared/layout/composables/useThemeChrome", () => ({
   useThemeChrome: () => ({ logoWidth: ref(), logoStyle: ref(), iconsMenuLinks: h.iconsMenuLinks, siteHeader: ref() }),
@@ -151,6 +155,13 @@ describe("BottomHeader icons menu", () => {
     h.iconsMenuLinks.value = [{ title: "Basket", route: "/cart" }];
 
     expect(shownItems()).toEqual([{ ...BUILT_IN_CART, title: "Basket" }]);
+  });
+
+  it("keeps the built-in items without a route, such as the organization switcher, in their places", () => {
+    h.menuItems.value = [NOTIFICATIONS, BUILT_IN_CART, ORGANIZATIONS];
+    h.iconsMenuLinks.value = [{ title: "Help", route: "/help" }];
+
+    expect(shownItems()).toEqual([NOTIFICATIONS, { id: "/help", title: "Help", route: "/help" }, ORGANIZATIONS]);
   });
 
   it("shows a theme link to another page as the theme has it", () => {

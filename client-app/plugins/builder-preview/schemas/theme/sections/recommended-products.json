@@ -3,5 +3,17 @@
   "icon": "smartphone",
   "targetTemplates": ["product"],
   "blocks": ["recommendation"],
-  "settings": []
+  "settings": [],
+  "default": {
+    "blocks": [
+      {
+        "type": "recommendation",
+        "model": "related-products"
+      },
+      {
+        "type": "recommendation",
+        "model": "bought-together"
+      }
+    ]
+  }
 }

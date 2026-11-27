@@ -138,6 +138,29 @@ describe("useThemeChrome", () => {
     expect(useThemeChrome().footerColumns.value?.map((column) => column.id)).toEqual(["help"]);
   });
 
+  it("keeps the header's own icons and a footer block's own links when the menu they name is empty", () => {
+    publish(
+      {
+        header: { content: [{ id: "h", type: "site-header", icons_menu: "empty" }] },
+        footer: {
+          content: [
+            {
+              id: "f",
+              type: "site-footer",
+              blocks: [{ id: "b", type: "footer-menu", menu: "empty", links: [{ label: "Sale", link: "/sale" }] }],
+            },
+          ],
+        },
+      },
+      [{ name: "Empty", items: [] }],
+    );
+
+    const chrome = useThemeChrome();
+
+    expect(chrome.iconsMenuLinks.value).toBeUndefined();
+    expect(chrome.footerColumns.value?.[0].children).toEqual([{ title: "Sale", route: "/sale" }]);
+  });
+
   it("lets white-labeling's footer links replace the theme's footer menus", () => {
     whiteLabeling.footerLinks = [{ title: "Company" }];
     publish({ footer: { content: [{ id: "f", type: "site-footer", blocks: [{ id: "b", type: "footer-menu" }] }] } });

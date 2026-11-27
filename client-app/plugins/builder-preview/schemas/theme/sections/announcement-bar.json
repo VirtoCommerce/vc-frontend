@@ -13,15 +13,23 @@
     },
     {
       "id": "background",
-      "label": "Bar",
+      "label": "Background color",
       "type": "color-token",
       "default": "color_neutral_900"
     },
     {
       "id": "color",
-      "label": "Text",
+      "label": "Text color",
       "type": "color-token",
       "default": "color_additional_50"
     }
-  ]
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "announcement",
+        "text": "Announce something here"
+      }
+    ]
+  }
 }
