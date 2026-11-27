@@ -17,6 +17,7 @@
 import { usePreferredReducedMotion, useResizeObserver } from "@vueuse/core";
 import { computed, onMounted, provide, ref, shallowReactive, useTemplateRef, watch } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
+import { getRovingFocusTarget } from "@/ui-kit/utilities";
 import { vcTabSwitchGroupKey } from "./vc-tab-switch-group-context";
 
 interface IEmits {
@@ -32,12 +33,6 @@ defineSlots<{
 
 const model = defineModel<VcTabSwitchGroupValueType>();
 
-const ARROW_STEPS = new Map([
-  ["ArrowDown", 1],
-  ["ArrowRight", 1],
-  ["ArrowUp", -1],
-  ["ArrowLeft", -1],
-]);
 const PILL_DURATION_MS = 520;
 const PILL_EASING = "cubic-bezier(0.34, 0.86, 0.22, 1)";
 // The share of the move at which the pill spans both items before it settles on the new one.
@@ -122,32 +117,12 @@ function placePill(animate: boolean): void {
 function onKeydown(event: KeyboardEvent): void {
   const el = root.value;
 
-  // Leave modified arrows to the browser: Alt+Left goes back in history.
-  if (!el || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+  if (!el) {
     return;
   }
 
   const items = Array.from(el.querySelectorAll<HTMLElement>('[role="radio"]:not([aria-disabled="true"])'));
-  const index = items.indexOf(event.target as HTMLElement);
-
-  if (index === -1) {
-    return;
-  }
-
-  const isHorizontal = event.key === "ArrowLeft" || event.key === "ArrowRight";
-  // In RTL the horizontal arrows swap: the right one points to the previous item.
-  const direction = isHorizontal && getComputedStyle(el).direction === "rtl" ? -1 : 1;
-  const step = (ARROW_STEPS.get(event.key) ?? 0) * direction;
-
-  let target: HTMLElement | undefined;
-
-  if (step) {
-    target = items[(index + step + items.length) % items.length];
-  } else if (event.key === "Home") {
-    target = items[0];
-  } else if (event.key === "End") {
-    target = items.at(-1);
-  }
+  const target = getRovingFocusTarget(event, items, el);
 
   if (!target) {
     return;

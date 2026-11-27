@@ -13,6 +13,32 @@ const meta: Meta<typeof VcVariantPickerGroup> = {
       control: "object",
       description: "Selected value (string) or array of selected values (string[])",
     },
+    columns: {
+      control: "inline-radio",
+      options: [1, 2, 3, 4],
+      table: { type: { summary: "1 | 2 | 3 | 4" } },
+    },
+    fullWidth: {
+      control: "boolean",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Keyboard in a single-choice group (a radio group): the group is one Tab stop. Tab enters on the selected " +
+          "picker, or on the first shown one while none is selected or truncation hides the selected one, and the " +
+          "next Tab goes to the +N button or leaves the group. The arrow keys move the focus between the shown " +
+          "pickers and wrap at the ends: Down and Right go forward, Up and Left back (in RTL Right goes back and " +
+          "Left forward); Home and End go to the first and the last. An arrow only moves the focus: Space or Enter " +
+          "selects the focused picker.\n\n" +
+          "Keyboard in a `multiple` group (checkboxes): every picker is a Tab stop. Tab and Shift+Tab step through " +
+          "the shown pickers and the +N button, and so do the arrow keys, which stop at the ends; Space or Enter " +
+          "toggles the focused picker.\n\n" +
+          "The +N button is a Tab stop after the pickers. Enter and Space on it show the hidden pickers and focus " +
+          "the first of them.",
+      },
+    },
   },
   args: {
     modelValue: "",
@@ -999,6 +1025,141 @@ export const MultiColorSingleSelect: StoryType = {
             />
           </VcVariantPickerGroup>
         `,
+      },
+    },
+  },
+};
+
+const PERIODS = [
+  { value: "2w", label: "2 weeks", discount: 15, price: { amount: 56.1, formattedAmount: "$56.10" } },
+  { value: "1m", label: "1 month", discount: 12, price: { amount: 58.08, formattedAmount: "$58.08" } },
+  { value: "2m", label: "2 months", discount: 10, price: { amount: 59.4, formattedAmount: "$59.40" } },
+  { value: "3m", label: "3 months", discount: 5, price: { amount: 62.7, formattedAmount: "$62.70" } },
+  { value: "4m", label: "4 months", discount: 4, price: { amount: 63.36, formattedAmount: "$63.36" } },
+  { value: "6m", label: "6 months", discount: 3, price: { amount: 64.02, formattedAmount: "$64.02" } },
+];
+
+const renderPeriods =
+  (template: string, count = 4) =>
+  () => ({
+    setup: () => ({ model: ref("1m"), periods: PERIODS.slice(0, count) }),
+    template: `<div class="p-6">${template}</div>`,
+  });
+
+const CARD_COLUMNS_TEMPLATE = `<VcVariantPickerGroup
+  v-model="model"
+  type="card"
+  name="period"
+  aria-label="Delivery frequency"
+  :columns="2"
+  class="w-80"
+>
+  <VcVariantPicker v-for="period in periods" :key="period.value" :value="period.value" is-available>
+    <template #prepend>
+      <span class="flex size-8 items-center justify-center rounded-full bg-accent-50">
+        <VcIcon name="calendar" />
+      </span>
+    </template>
+
+    <template #default>{{ period.label }}</template>
+
+    <template #description>
+      <VcProductPrice :actual-price="period.price" single-line />
+    </template>
+
+    <template #corner>
+      <VcBadge color="success" size="xs" rounded nowrap>−{{ period.discount }}%</VcBadge>
+    </template>
+  </VcVariantPicker>
+</VcVariantPickerGroup>`;
+
+export const CardColumns: StoryType = {
+  render: renderPeriods(CARD_COLUMNS_TEMPLATE),
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          "`columns` lays the pickers out in equal columns; cards and text tiles fill their cell, so the cards of a " +
+          "row share its height. While a picker has " +
+          "`corner` content, the group keeps room for it above the first row and between the pickers.",
+      },
+      source: {
+        code: CARD_COLUMNS_TEMPLATE,
+      },
+    },
+  },
+};
+
+const CARD_FULL_WIDTH_TEMPLATE = `<VcVariantPickerGroup
+  v-model="model"
+  type="card"
+  name="period"
+  aria-label="Delivery frequency"
+  full-width
+  class="w-[36rem]"
+>
+  <VcVariantPicker v-for="period in periods" :key="period.value" :value="period.value" is-available>
+    <template #default>{{ period.label }}</template>
+
+    <template #description>
+      <VcProductPrice :actual-price="period.price" single-line />
+    </template>
+
+    <template #append>
+      <VcBadge color="success" rounded nowrap>−{{ period.discount }}%</VcBadge>
+    </template>
+  </VcVariantPicker>
+</VcVariantPickerGroup>`;
+
+export const CardFullWidth: StoryType = {
+  render: renderPeriods(CARD_FULL_WIDTH_TEMPLATE, 3),
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          "`full-width` without `columns`: the cards of a row share its width and height, none narrower than its " +
+          "content.",
+      },
+      source: {
+        code: CARD_FULL_WIDTH_TEMPLATE,
+      },
+    },
+  },
+};
+
+const CARD_TRUNCATE_TEMPLATE = `<VcVariantPickerGroup
+  v-model="model"
+  type="card"
+  name="period"
+  aria-label="Delivery frequency"
+  :columns="2"
+  truncate
+  :max-rows="2"
+  class="w-80"
+>
+  <VcVariantPicker v-for="period in periods" :key="period.value" :value="period.value" is-available>
+    <template #default>{{ period.label }}</template>
+
+    <template #description>
+      <VcProductPrice :actual-price="period.price" single-line />
+    </template>
+  </VcVariantPicker>
+</VcVariantPickerGroup>`;
+
+export const CardTruncate: StoryType = {
+  render: renderPeriods(CARD_TRUNCATE_TEMPLATE, 6),
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          "`truncate` fits the pickers and the +N button, in the next cell, into `max-rows` rows, in every `columns` " +
+          "value. The first picker always stays: in one column with `max-rows` 1 the button takes a second row.",
+      },
+      source: {
+        code: CARD_TRUNCATE_TEMPLATE,
       },
     },
   },

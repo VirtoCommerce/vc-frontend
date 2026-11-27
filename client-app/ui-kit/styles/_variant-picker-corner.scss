@@ -1,0 +1,6 @@
+// Where VcVariantPicker's `corner` slot content sits: this far above the picker's top edge and past its end
+// edge. The picker places the content and, on its own, keeps this room; VcVariantPickerGroup keeps it for its
+// direct-child pickers. Variables only — a rule here would be emitted once per consumer.
+
+$corner-rise: 0.5rem;
+$corner-overhang: 0.375rem;
