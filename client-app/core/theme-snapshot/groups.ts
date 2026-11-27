@@ -29,21 +29,20 @@ export const useThemeGroups = createGlobalState(() => {
     return groups.value[group].find((item) => item.type === type && !item.hidden);
   }
 
+  /** Undefined while the menu is unread, missing or empty, so the part showing it keeps its own content. */
   function getMenuLinks(name: unknown, isCatalogItem = false): ExtendedMenuLinkType[] | undefined {
     if (typeof name !== "string" || !name) {
       return undefined;
     }
 
     const menu = findPublishedMenu(name);
+    const links = menu
+      ? menu.items.map((item) => toMenuLink(item, isCatalogItem))
+      : draftMenus
+          .get(getDraftMenuKey(name, currentLanguage.value?.cultureName))
+          ?.map((item) => convertToExtendedMenuLink(item, isCatalogItem));
 
-    if (menu) {
-      return menu.items.map((item) => toMenuLink(item, isCatalogItem));
-    }
-
-    // Undefined until `loadDraftMenus` reads it, so the part showing it keeps its own content meanwhile.
-    return draftMenus
-      .get(getDraftMenuKey(name, currentLanguage.value?.cultureName))
-      ?.map((item) => convertToExtendedMenuLink(item, isCatalogItem));
+    return links?.length ? links : undefined;
   }
 
   /** Reads the menus a draft names that the published snapshot does not carry, each once per language. */

@@ -51,6 +51,18 @@ describe("useThemeGroups", () => {
     expect(getMenuLinks("published")?.map((link) => link.title)).toEqual(["Home"]);
   });
 
+  it("gives no links for a menu that is missing or empty, so the part showing it keeps its own content", async () => {
+    menuApi.getMenu.mockResolvedValue([]);
+    publishTheme({}, { menus: [{ name: "Empty", items: [] }] });
+    const { getMenuLinks, loadDraftMenus } = useThemeGroups();
+
+    await loadDraftMenus(["gone", "empty"]);
+
+    expect(menuApi.getMenu).toHaveBeenCalledExactlyOnceWith("gone", "en-US");
+    expect(getMenuLinks("gone")).toBeUndefined();
+    expect(getMenuLinks("empty")).toBeUndefined();
+  });
+
   it("asks for a menu the draft names again after its request failed", async () => {
     menuApi.getMenu
       .mockRejectedValueOnce(new Error("offline"))

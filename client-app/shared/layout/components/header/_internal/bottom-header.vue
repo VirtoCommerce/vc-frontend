@@ -115,19 +115,28 @@ const { headerLogoUrl } = useHeaderLogo();
 const { logoWidth, logoStyle, iconsMenuLinks, siteHeader } = useThemeChrome();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 
-const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  iconsMenuLinks.value
-    ? iconsMenuLinks.value.map((link) => {
-        const routeName = typeof link.route === "string" ? router.resolve(link.route).name : undefined;
-        const builtIn = desktopMainMenuItems.value.find(
-          (item) => typeof item.route === "object" && "name" in item.route && item.route.name === routeName,
-        );
-        return builtIn
-          ? { ...builtIn, title: link.title }
-          : { ...link, id: typeof link.route === "string" ? link.route : link.title };
-      })
-    : desktopMainMenuItems.value,
-);
+const iconsMenuItems = computed<ExtendedMenuLinkType[]>(() => {
+  if (!iconsMenuLinks.value) {
+    return desktopMainMenuItems.value;
+  }
+
+  const themeItems = iconsMenuLinks.value.map((link) => {
+    const routeName = typeof link.route === "string" ? router.resolve(link.route).name : undefined;
+    const builtIn = desktopMainMenuItems.value.find(
+      (item) => typeof item.route === "object" && "name" in item.route && item.route.name === routeName,
+    );
+    return builtIn
+      ? { ...builtIn, title: link.title }
+      : { ...link, id: typeof link.route === "string" ? link.route : link.title };
+  });
+
+  // A built-in item without a route is a control, such as the organization switcher, that no link can stand for.
+  const controls = desktopMainMenuItems.value.filter((item) => !item.route);
+  const firstLinkIndex = desktopMainMenuItems.value.findIndex((item) => item.route);
+  const themeItemsIndex = firstLinkIndex === -1 ? controls.length : firstLinkIndex;
+
+  return [...controls.slice(0, themeItemsIndex), ...themeItems, ...controls.slice(themeItemsIndex)];
+});
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);

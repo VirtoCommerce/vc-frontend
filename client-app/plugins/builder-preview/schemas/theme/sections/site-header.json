@@ -35,7 +35,7 @@
       "id": "icons_menu",
       "label": "Menu",
       "type": "menu",
-      "info": "A store link list. Links to Bulk order, Compare, Lists, Orders or Cart keep their icon and count. Empty: those five."
+      "info": "A store link list. Links to Bulk order, Lists, Orders, Cart or another page the header has an icon for keep that icon and count. The organization switcher and notifications stay. Empty: the header's own icons."
     }
   ]
 }
