@@ -19,17 +19,23 @@ readers' questions, in the order they ask them**.
 
 ```markdown
 ## Description
+
 <what changed for the shopper or the store operator, in domain terms; the defect it fixes;
- for a visible change: the designs, presets and theme (light / dark) it shows in, with screenshots;
- a companion backend PR, if one exists;
- the "no new surface" line where it is true — no backend bump / no new settings / no new public API /
- no facade change / no new dependencies>
+for a visible change: the designs, presets and theme (light / dark) it shows in, with screenshots;
+a companion backend PR, if one exists;
+the "no new surface" line where it is true — no backend bump / no new settings / no new public API /
+no facade change / no new dependencies>
 
 ## Backend requirements
+
 ## Settings
+
 ## New public surface
+
 ## Plugins (@vc-frontend/core)
+
 ## Breaking changes
+
 ## New dependencies
 
 ## Checklist
@@ -37,7 +43,9 @@ readers' questions, in the order they ask them**.
 > **Note (…)** — deep rationale, rejected alternatives, measurement detail
 
 ## References
+
 ### Jira-link:
+
 ### Artifact URL:
 ```
 
@@ -86,7 +94,7 @@ props, slots and emits that [styles.md](../../.claude/rules/styles.md) and
 **New dependencies** — npm packages added to `dependencies` (they ship in the bundle; say why an existing one does
 not do the job) and notable `devDependencies`. Version bumps of existing packages are not new dependencies.
 
-**Checklist** — the team's own; tick it honestly. Two items catch what no check does: new locale keys translated in
+**Checklist** — the team's own; tick it honestly. Two items catch what no PR check does: new locale keys translated in
 every locale (`yarn check-locales` reports only missing keys, not English copies), and a facade change shipped with
 a regenerated, committed contract (`yarn build:core-types`).
 
@@ -105,11 +113,11 @@ behind a trade-off belong in the PR — but below everything a reader needs in o
 
 ## Breaking changes splits three ways, because it breaks at three different times
 
-| Kind | Breaks at | Example |
-|---|---|---|
-| Type or contract change | a fork's or plugin's `vue-tsc` / build | a removed export, a prop type narrowed, a facade member removed or resignatured |
-| Moved or restructured code | the fork's next upstream merge | a component moved, renamed or split; a composable merged into another; a file a fork overrides deleted |
-| Behaviour or styling change | runtime, with no warning | a renamed BEM class or `--vc-*` token (the fork's styles silently stop applying), a removed emit (Vue drops the listener without a word), a renamed locale key, a changed default, a query that now needs a newer backend, a style moved to another cascade layer or a selector made more specific (a fork's override in its design's `blocks/` stops winning) |
+| Kind                        | Breaks at                              | Example                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type or contract change     | a fork's or plugin's `vue-tsc` / build | a removed export, a prop type narrowed, a facade member removed or resignatured                                                                                                                                                                                                                                                                                |
+| Moved or restructured code  | the fork's next upstream merge         | a component moved, renamed or split; a composable merged into another; a file a fork overrides deleted                                                                                                                                                                                                                                                         |
+| Behaviour or styling change | runtime, with no warning               | a renamed BEM class or `--vc-*` token (the fork's styles silently stop applying), a removed emit (Vue drops the listener without a word), a renamed locale key, a changed default, a query that now needs a newer backend, a style moved to another cascade layer or a selector made more specific (a fork's override in its design's `blocks/` stops winning) |
 
 The third is the one an undifferentiated list hides and the one nothing in the toolchain catches.
 
@@ -120,8 +128,8 @@ considered rather than forgotten. A facade change also names its version bump (`
 ## References
 
 - **Jira-link** — the full URL, `https://virtocommerce.atlassian.net/browse/VCST-1234`. A correct link shows the PR
-  on the work item's Development panel; nobody needs to add it in Jira by hand. Write `None` when there is no ticket. The PR title carries the key
-  too, in Conventional Commits form: `fix(VCST-1234): …`.
+  on the work item's Development panel; nobody needs to add it in Jira by hand. Write `None` when there is no
+  ticket. The PR title carries the key too, in Conventional Commits form: `fix(VCST-1234): …`.
 - **Artifact URL** — written by CI after every build: it replaces the line right after `Artifact URL:` with the
   prerelease zip of the current head. Leave that line empty, never paste or predict a URL, and do not write
   `Artifact URL:` anywhere else in the body — CI rewrites the line after its first occurrence.
