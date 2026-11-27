@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { buildReportingPlan } from "@/shared/reporting";
 import { excludedOrdersCount, useAccountSalesReport } from "./useAccountSalesReport";
+import type { SalesReportScopeType } from "./useAccountSalesReport";
 import type { GetMonthlyOrderStatisticsQuery } from "@/core/api/graphql/types";
 import type { ReportingPeriodType } from "@/shared/reporting";
 import type { MaybeRefOrGetter, Ref } from "vue";
@@ -17,14 +18,16 @@ const queries = vi.hoisted(
     ({}) as {
       monthly: QueryStateType;
       monthlyVariables?: Ref<Record<string, unknown>>;
+      monthlyEnabled?: Ref<boolean>;
       history: QueryStateType;
       historyVariables: unknown[];
     },
 );
 
 vi.mock("@/core/api/graphql/orders", () => ({
-  useGetMonthlyOrderStatisticsQuery: (variables: Ref<Record<string, unknown>>) => {
+  useGetMonthlyOrderStatisticsQuery: (variables: Ref<Record<string, unknown>>, enabled?: Ref<boolean>) => {
     queries.monthlyVariables = variables;
+    queries.monthlyEnabled = enabled;
     return { ...queries.monthly, onError: vi.fn() };
   },
   useGetOrderStatisticsHistoryQuery: (variables: Ref<unknown>) => {
@@ -54,6 +57,7 @@ beforeEach(() => {
   queries.monthly = { result: ref(undefined), loading: ref(false), error: ref(null) };
   queries.history = { result: ref(undefined), loading: ref(false), error: ref(null) };
   queries.monthlyVariables = undefined;
+  queries.monthlyEnabled = undefined;
   queries.historyVariables = [];
 });
 
@@ -67,9 +71,13 @@ describe("excludedOrdersCount", () => {
 });
 
 describe("useAccountSalesReport", () => {
-  function run(period: MaybeRefOrGetter<ReportingPeriodType> = "year") {
+  function run(
+    period: MaybeRefOrGetter<ReportingPeriodType> = "year",
+    reportScope?: MaybeRefOrGetter<SalesReportScopeType | undefined>,
+    isEnabled?: MaybeRefOrGetter<boolean>,
+  ) {
     const scope = effectScope();
-    const report = scope.run(() => useAccountSalesReport(period));
+    const report = scope.run(() => useAccountSalesReport(period, reportScope, isEnabled));
     if (!report) {
       throw new Error("the scope did not run");
     }
@@ -131,12 +139,36 @@ describe("useAccountSalesReport", () => {
       currencyCode: "USD",
       cultureName: "en-US",
     });
+    // The dashboard counts the user's own orders: no scope is sent.
+    expect(queries.monthlyVariables?.value.isOrganizationScope).toBeUndefined();
+    expect(queries.monthlyVariables?.value.memberId).toBeUndefined();
 
     period.value = "q2";
     await nextTick();
 
     const plan = buildReportingPlan("q2", new Date());
     expect(queries.monthlyVariables?.value).toMatchObject({ from0: plan.months[0].from, use3: false });
+  });
+
+  it("asks for the organization's orders, or one member's", async () => {
+    const reportScope = ref<SalesReportScopeType>({ organization: true });
+    run("year", reportScope);
+
+    expect(queries.monthlyVariables?.value).toMatchObject({ isOrganizationScope: true, memberId: undefined });
+
+    reportScope.value = { organization: true, memberId: "contact-1" };
+    await nextTick();
+
+    expect(queries.monthlyVariables?.value).toMatchObject({ isOrganizationScope: true, memberId: "contact-1" });
+  });
+
+  // A member who never ordered gets zeros: the empty state would also take away the picker that leads back.
+  it("asks for the organization's history, never one member's", () => {
+    run("year", { organization: true, memberId: "contact-1" });
+
+    expect(queries.historyVariables).toEqual([
+      { storeId: "B2B-store", currencyCode: "USD", cultureName: "en-US", isOrganizationScope: true },
+    ]);
   });
 
   // The month slots are positional, so last period's figures must never be read against the months just picked.
@@ -187,6 +219,27 @@ describe("useAccountSalesReport", () => {
     queries.history.loading.value = true;
 
     expect(run().loading.value).toBe(false);
+  });
+
+  // Waiting is not an empty period: tiles of zeros would read as one.
+  it("does not ask for the months while not enabled, and reads as loading until it is", async () => {
+    const isEnabled = ref(false);
+    const report = run("year", { organization: true }, isEnabled);
+
+    expect(queries.monthlyEnabled?.value).toBe(false);
+    expect(report.loading.value).toBe(true);
+
+    isEnabled.value = true;
+    await nextTick();
+
+    expect(queries.monthlyEnabled?.value).toBe(true);
+    expect(report.loading.value).toBe(false);
+  });
+
+  it("asks for the months by default", () => {
+    run();
+
+    expect(queries.monthlyEnabled?.value).toBe(true);
   });
 
   it("reports a failed read", () => {

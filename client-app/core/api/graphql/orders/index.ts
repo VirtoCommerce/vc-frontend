@@ -6,4 +6,5 @@ export * from "./queries/getOrder";
 export * from "./queries/getOrderStatistics";
 export * from "./queries/getOrderStatisticsHistory";
 export * from "./queries/getOrders";
+export * from "./queries/getOrganizationOrderCustomers";
 export * from "./queries/getOrganizationOrders";

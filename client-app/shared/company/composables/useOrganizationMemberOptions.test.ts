@@ -1,0 +1,121 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { effectScope, ref } from "vue";
+import {
+  memberName,
+  ORGANIZATION_MEMBER_OPTIONS_LIMIT,
+  useOrganizationMemberOptions,
+} from "./useOrganizationMemberOptions";
+import type { Ref } from "vue";
+
+const query = vi.hoisted(
+  () => ({}) as { result: Ref<unknown>; loading: Ref<boolean>; error: Ref<unknown>; variables: unknown[] },
+);
+
+vi.mock("@/core/api/graphql/organization", () => ({
+  useGetOrganizationMemberOptionsQuery: (variables: Ref<unknown>) => {
+    query.variables.push(variables.value);
+    return { result: query.result, loading: query.loading, error: query.error, onError: vi.fn() };
+  },
+}));
+vi.mock("@/core/globals", () => ({ globals: { userId: "user-1", cultureName: "en-US" } }));
+vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
+
+function run(organizationId = "org-1") {
+  const scope = effectScope();
+  const options = scope.run(() => useOrganizationMemberOptions(() => organizationId));
+  if (!options) {
+    throw new Error("the scope did not run");
+  }
+  return options;
+}
+
+beforeEach(() => {
+  query.result = ref(undefined);
+  query.loading = ref(false);
+  query.error = ref(null);
+  query.variables = [];
+});
+
+describe("useOrganizationMemberOptions", () => {
+  it("asks for the organization's members by name, as many as the picker can hold", () => {
+    run();
+
+    expect(query.variables).toEqual([
+      { id: "org-1", userId: "user-1", first: ORGANIZATION_MEMBER_OPTIONS_LIMIT, sort: "name:asc" },
+    ]);
+  });
+
+  it("offers each member by contact id and name, with the accounts that place their orders", () => {
+    query.result.value = {
+      organization: {
+        contacts: {
+          totalCount: 2,
+          items: [
+            { id: "c-1", name: "alice", fullName: "Alice Adams", securityAccounts: [{ id: "u-1" }, { id: "u-2" }] },
+            { id: "c-2", name: "bob", fullName: "" },
+          ],
+        },
+      },
+    };
+
+    const { options } = run();
+
+    expect(options.value).toEqual([
+      { id: "c-1", name: "Alice Adams", accountIds: ["u-1", "u-2"] },
+      { id: "c-2", name: "bob", accountIds: [] },
+    ]);
+  });
+
+  // The server sorts by `name`, which a member shown by e-mail or first and last name does not carry.
+  it("orders the members by the name it shows", () => {
+    query.result.value = {
+      organization: {
+        contacts: {
+          totalCount: 3,
+          items: [
+            { id: "c-1", name: "", emails: ["zoe@example.com"] },
+            { id: "c-2", name: "bob" },
+            { id: "c-3", name: "", firstName: "Alice", lastName: "Adams" },
+          ],
+        },
+      },
+    };
+
+    expect(run().options.value.map((option) => option.name)).toEqual(["Alice Adams", "bob", "zoe@example.com"]);
+  });
+
+  it("is loading only until there is a list, not while a cached list is refreshed", () => {
+    query.loading.value = true;
+    const { loading } = run();
+
+    expect(loading.value).toBe(true);
+
+    query.result.value = { organization: { contacts: { totalCount: 0, items: [] } } };
+
+    expect(loading.value).toBe(false);
+  });
+
+  it("reports a failed read instead of an empty list", () => {
+    query.error.value = new Error("down");
+
+    const { options, failed } = run();
+
+    expect(failed.value).toBe(true);
+    expect(options.value).toEqual([]);
+  });
+});
+
+describe("memberName", () => {
+  it.each([
+    [{ id: "c-1", fullName: "Alice Adams", name: "alice" }, "Alice Adams"],
+    [{ id: "c-2", fullName: "   ", name: "bob" }, "bob"],
+    [{ id: "c-3", fullName: "", name: "", firstName: "Carol", lastName: "Clark" }, "Carol Clark"],
+    [
+      { id: "c-4", fullName: " ", name: " ", firstName: "", lastName: "", emails: ["dan@example.com"] },
+      "dan@example.com",
+    ],
+    [{ id: "c-5", fullName: "", name: undefined, emails: [] }, "c-5"],
+  ])("names %o as %s", (contact, expected) => {
+    expect(memberName(contact)).toBe(expected);
+  });
+});

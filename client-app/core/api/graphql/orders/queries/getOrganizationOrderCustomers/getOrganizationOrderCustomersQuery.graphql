@@ -1,0 +1,14 @@
+# Which accounts have placed orders for the organization: one term per customer id, from the order index's facet, no
+# order rows. The caller's filter narrows the orders (store, not cancelled). Company → Reporting lists only the members
+# found here (VCST-6651).
+query GetOrganizationOrderCustomers($organizationId: String, $filter: String) {
+  organizationOrders(organizationId: $organizationId, filter: $filter, first: 0, facet: "customerid") {
+    term_facets {
+      name
+      terms {
+        term
+        count
+      }
+    }
+  }
+}
