@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { useHead } from "@unhead/vue";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { ref } from "vue";

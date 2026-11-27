@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import productTemplateDefault from "@/config/product-default.json";
 import productInfo from "./product-info.json";

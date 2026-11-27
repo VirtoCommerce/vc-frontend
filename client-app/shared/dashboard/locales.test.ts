@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 import { createI18n } from "@/i18n";
 import { useLayoutAnnouncer } from "./composables/_internal/useLayoutAnnouncer";

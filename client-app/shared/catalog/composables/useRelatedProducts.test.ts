@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useRelatedProducts } from "./useRelatedProducts";
 import type { ProductAssociation } from "@/core/api/graphql/types";

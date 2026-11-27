@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { CustomerOrderType, LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 

@@ -1,12 +1,14 @@
 import { fileURLToPath } from "node:url";
 import path from "path";
 import { mergeConfig, defineConfig, configDefaults } from "vitest/config";
+import { inlineAssetUrls } from "./scripts/vitest-inline-asset-urls.js";
 import viteConfig from "./vite.config.js";
 
 export default defineConfig((env) =>
   mergeConfig(
     viteConfig(env),
     defineConfig({
+      plugins: [inlineAssetUrls()],
       test: {
         environment: "jsdom",
         exclude: [...configDefaults.exclude, "client-app/e2e/*", "**/.claude/**"],

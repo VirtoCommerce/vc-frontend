@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { computed, nextTick, ref } from "vue";
 import { buildReportingPlan } from "../reporting";

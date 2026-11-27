@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FacetTypes } from "@/core/api/graphql/types";
 import { useCartPickupLocations, COUNTRY_NAME_FACET, REGION_NAME_FACET, CITY_FACET } from "./useCartPickupLocations";

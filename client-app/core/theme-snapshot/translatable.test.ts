@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { isTranslatableDictionary, pickTranslation, resolveTranslatableValues } from "./translatable";
 

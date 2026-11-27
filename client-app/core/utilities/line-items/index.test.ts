@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi } from "vitest";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import {
