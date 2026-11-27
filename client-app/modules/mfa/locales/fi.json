@@ -37,10 +37,11 @@
       "admin_managed": "Kaupan ylläpitäjä hallitsee kaksivaiheista tunnistautumista.",
       "locked": "Järjestelmänvalvojan asettama: et voi poistaa sitä käytöstä.",
       "organization": "Yrityksesi on ottanut sen käyttöön kaikille jäsenilleen, joten et voi muuttaa sitä täällä.",
+      "lockout_disabled": "Kaksivaiheinen tunnistautuminen ei ole käytettävissä tililläsi, joten et voi muuttaa sitä täällä. Ota yhteyttä järjestelmänvalvojaan.",
       "operator": "Et voi muuttaa tätä, kun toimit asiakkaan puolesta."
     },
     "messages": {
-      "confirm_email": "Vahvista sähköpostiosoitteesi, jotta voit ottaa kaksivaiheisen tunnistautumisen käyttöön.",
+      "provider_not_available": "Emme voi lähettää koodia tälle tilille. Ota yhteyttä järjestelmänvalvojaan.",
       "turned_on": "Kaksivaiheinen tunnistautuminen on käytössä.",
       "turned_off": "Kaksivaiheinen tunnistautuminen on pois käytöstä."
     },

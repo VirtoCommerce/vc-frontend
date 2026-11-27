@@ -37,10 +37,11 @@
       "admin_managed": "Die Zwei-Faktor-Authentifizierung wird vom Shop-Administrator verwaltet.",
       "locked": "Vom Administrator festgelegt: Sie können sie nicht deaktivieren.",
       "organization": "Ihr Unternehmen hat sie für alle Mitglieder aktiviert, daher können Sie dies hier nicht ändern.",
+      "lockout_disabled": "Die Zwei-Faktor-Authentifizierung ist für Ihr Konto nicht verfügbar, daher können Sie dies hier nicht ändern. Wenden Sie sich an Ihren Administrator.",
       "operator": "Sie können dies nicht ändern, während Sie im Namen des Kunden handeln."
     },
     "messages": {
-      "confirm_email": "Bestätigen Sie Ihre E-Mail-Adresse, um die Zwei-Faktor-Authentifizierung zu aktivieren.",
+      "provider_not_available": "Wir können für dieses Konto keinen Code senden. Wenden Sie sich an Ihren Administrator.",
       "turned_on": "Die Zwei-Faktor-Authentifizierung ist aktiviert.",
       "turned_off": "Die Zwei-Faktor-Authentifizierung ist deaktiviert."
     },

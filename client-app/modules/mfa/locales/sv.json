@@ -37,10 +37,11 @@
       "admin_managed": "Butiksadministratören hanterar tvåfaktorsautentiseringen.",
       "locked": "Inställd av administratören: du kan inte inaktivera den.",
       "organization": "Ditt företag har aktiverat den för alla sina medlemmar, så du kan inte ändra den här.",
+      "lockout_disabled": "Tvåfaktorsautentisering är inte tillgänglig för ditt konto, så du kan inte ändra den här. Kontakta administratören.",
       "operator": "Du kan inte ändra detta medan du agerar för kundens räkning."
     },
     "messages": {
-      "confirm_email": "Bekräfta din e-post för att aktivera tvåfaktorsautentisering.",
+      "provider_not_available": "Vi kan inte skicka någon kod till det här kontot. Kontakta administratören.",
       "turned_on": "Tvåfaktorsautentisering är aktiverad.",
       "turned_off": "Tvåfaktorsautentisering är inaktiverad."
     },

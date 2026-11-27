@@ -37,10 +37,11 @@
       "admin_managed": "Butikkadministratoren administrerer tofaktorautentisering.",
       "locked": "Satt av administratoren: du kan ikke slå den av.",
       "organization": "Bedriften din har slått den på for alle medlemmene sine, så du kan ikke endre den her.",
+      "lockout_disabled": "Tofaktorautentisering er ikke tilgjengelig for kontoen din, så du kan ikke endre den her. Kontakt administratoren.",
       "operator": "Du kan ikke endre dette mens du handler på vegne av kunden."
     },
     "messages": {
-      "confirm_email": "Bekreft e-postadressen din for å slå på tofaktorautentisering.",
+      "provider_not_available": "Vi kan ikke sende en kode til denne kontoen. Kontakt administratoren.",
       "turned_on": "Tofaktorautentisering er slått på.",
       "turned_off": "Tofaktorautentisering er slått av."
     },

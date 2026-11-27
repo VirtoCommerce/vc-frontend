@@ -31,7 +31,7 @@
         size="sm"
         icon
       >
-        {{ $t("mfa.messages.confirm_email") }}
+        {{ $t("mfa.messages.provider_not_available") }}
       </VcAlert>
 
       <VcAlert v-if="errors.length && !challenge" color="danger" variant="soft" size="sm" icon>
@@ -130,6 +130,11 @@ const isRequiredByOrganization = computed(
     settings.value.requiredBy === MFA_REQUIRED_BY.organization,
 );
 
+// Without lockout the account can't pass the second factor, so the server lets it change neither mode
+const isLockoutDisabled = computed(
+  () => settings.value?.storeMode === MFA_STORE_MODES.customerChoice && settings.value.isLockoutEnabled === false,
+);
+
 // The server refuses a change made on behalf of the customer, so the operator gets no switch
 const isOperator = computed(() => !!operator.value);
 
@@ -168,6 +173,10 @@ const hint = computed(() => {
 
   if (isRequiredByOrganization.value) {
     return t("mfa.hints.organization");
+  }
+
+  if (isLockoutDisabled.value) {
+    return t("mfa.hints.lockout_disabled");
   }
 
   if (isOperator.value && canChange.value) {

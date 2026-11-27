@@ -37,10 +37,11 @@
       "admin_managed": "Uwierzytelnianiem dwuskładnikowym zarządza administrator sklepu.",
       "locked": "Ustawione przez administratora: nie możesz go wyłączyć.",
       "organization": "Twoja firma włączyła je dla wszystkich swoich członków, więc nie możesz go tutaj zmienić.",
+      "lockout_disabled": "Uwierzytelnianie dwuskładnikowe nie jest dostępne dla Twojego konta, więc nie możesz go tutaj zmienić. Skontaktuj się z administratorem.",
       "operator": "Nie możesz tego zmienić, działając w imieniu klienta."
     },
     "messages": {
-      "confirm_email": "Potwierdź swój adres e-mail, aby włączyć uwierzytelnianie dwuskładnikowe.",
+      "provider_not_available": "Nie możemy wysłać kodu na to konto. Skontaktuj się z administratorem.",
       "turned_on": "Uwierzytelnianie dwuskładnikowe jest włączone.",
       "turned_off": "Uwierzytelnianie dwuskładnikowe jest wyłączone."
     },

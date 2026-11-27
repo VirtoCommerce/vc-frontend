@@ -7,5 +7,6 @@ fragment mfaSettings on MfaSettings {
   organizationMode
   canChangeOrganizationMode
   isProviderAvailable
+  isLockoutEnabled
   destination
 }
