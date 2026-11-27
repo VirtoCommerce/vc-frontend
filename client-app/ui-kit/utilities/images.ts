@@ -1,9 +1,5 @@
 import type { IconVariantType } from "./icons";
 
-export function getImageUrl(fileName?: string) {
-  return new URL(`../../assets/images/${fileName}`, import.meta.url).href;
-}
-
 export function getFlagIconUrl(name?: string) {
   return new URL(`../icons/flags/${name}.svg`, import.meta.url).href;
 }

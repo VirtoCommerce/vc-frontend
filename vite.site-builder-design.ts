@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import loadConfig from "tailwindcss/loadConfig.js";
 import { BREAKPOINTS } from "./client-app/ui-kit/constants/tailwind.js";
+import { uiKitPreset } from "./client-app/ui-kit/tailwind-preset.js";
 import { ICON_ALIASES } from "./client-app/ui-kit/utilities/icon-aliases.js";
 import type { IDesignFacts, IDesignToken } from "./client-app/shared/static-content/custom-sections/design-facts.js";
 
@@ -16,7 +17,11 @@ const ICON_EXTENSION = ".svg";
 const ELEMENT_START_REGEX = /<[a-z][\w:-]*/gi;
 
 /** The stylesheets that declare or read the tokens outside the Tailwind theme. */
-const STYLE_SOURCES = ["client-app/assets/styles/main.scss", "client-app/assets/styles/_typography-roles.scss"];
+const STYLE_SOURCES = [
+  "client-app/ui-kit/styles/_ui-kit-tokens.scss",
+  "client-app/assets/styles/main.scss",
+  "client-app/assets/styles/_typography-roles.scss",
+];
 
 const TOKEN_DESCRIPTIONS: [RegExp, (key: string) => string][] = [
   [/^--vc-base-font-family$/, () => "The page font."],
@@ -69,7 +74,8 @@ function describeToken(name: string): string | undefined {
 }
 
 export function collectDesignFacts(): IDesignFacts {
-  const themeText = JSON.stringify(loadConfig(path.join(ROOT, "tailwind.config.ts")).theme);
+  // The scales sit in ui-kit's preset, which `loadConfig` does not resolve; the theme config only extends them.
+  const themeText = JSON.stringify([uiKitPreset.theme, loadConfig(path.join(ROOT, "tailwind.config.ts")).theme]);
   const styleTexts = STYLE_SOURCES.map((file) => readFileSync(path.join(ROOT, file), "utf8"));
   const declared = styleTexts.flatMap((text) =>
     [...text.matchAll(DECLARATION_REGEX)].map(([, name, value]): [string, string] => [name, value.trim()]),

@@ -18,7 +18,8 @@
       "see_less": "Показать меньше",
       "show_hide_password": "Показать/скрыть пароль",
       "toggle_dropdown": "Переключить выпадающее меню",
-      "update_cart": "Обновить корзину"
+      "update_cart": "Обновить корзину",
+      "scroll_to_top": "Прокрутить вверх"
     },
     "accessibility": {
       "close_alert": "Закрыть уведомление",

@@ -18,7 +18,8 @@
       "see_less": "少なく見る",
       "show_hide_password": "パスワードを表示/非表示",
       "toggle_dropdown": "ドロップダウンを切り替え",
-      "update_cart": "カートを更新"
+      "update_cart": "カートを更新",
+      "scroll_to_top": "トップへスクロール"
     },
     "accessibility": {
       "close_alert": "アラートを閉じる",

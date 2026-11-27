@@ -18,7 +18,8 @@
       "see_less": "收起",
       "show_hide_password": "显示/隐藏密码",
       "toggle_dropdown": "切换下拉菜单",
-      "update_cart": "更新购物车"
+      "update_cart": "更新购物车",
+      "scroll_to_top": "回到顶部"
     },
     "accessibility": {
       "close_alert": "关闭提醒",

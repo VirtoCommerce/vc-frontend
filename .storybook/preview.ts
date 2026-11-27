@@ -2,6 +2,7 @@ import { setup } from "@storybook/vue3-vite";
 import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { setGlobals } from "../client-app/core/globals";
+import { getImageUrl } from "../client-app/core/utilities/common";
 import {
   CLASSIC_DESIGN,
   DESIGN_NAMES,
@@ -21,7 +22,6 @@ import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
 
-import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
 import "../storybook-styles/main.scss";
 
@@ -103,10 +103,7 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
   loadingPreset = presetName;
 
   try {
-    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
-      default: IThemeConfigPreset;
-    };
-    const preset = module.default;
+    const preset: IThemeConfigPreset | undefined = presets[presetName];
 
     if (preset) {
       if (currentStyleElement && currentStyleElement.parentNode) {
@@ -159,6 +156,7 @@ setup((app) => {
     app.use(uiKit, {
       image: {
         thumbnails: { enabled: true, originalFallbackEnabled: true, suffixes: { sm: "sm", md: "md", lg: "lg" } },
+        resolveFileName: getImageUrl,
       },
     });
   } catch (error) {

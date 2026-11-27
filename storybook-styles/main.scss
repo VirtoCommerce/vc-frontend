@@ -1,11 +1,9 @@
 @use "../client-app/assets/styles/layers";
 @use "sass:meta";
 
+@include meta.load-css("../client-app/ui-kit/styles");
+
+// This Storybook hosts the app's stories too, so it maps the app colours like the app's main.scss.
 @layer theme {
   @include meta.load-css("../client-app/assets/styles/colors");
-  @include meta.load-css("../client-app/assets/styles/ui-kit-tokens");
-}
-
-@layer vc.kit {
-  @include meta.load-css("../client-app/assets/styles/dark-kit");
 }

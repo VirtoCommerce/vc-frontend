@@ -234,6 +234,8 @@ watchEffect(() => {
 
 <style lang="scss">
 .vc-line-items {
+  --subtotal-color: var(--vc-line-items-subtotal-color, theme("colors.neutral.900"));
+
   @apply @container;
 
   &__container {
@@ -343,7 +345,7 @@ watchEffect(() => {
   }
 
   &__subtotal {
-    @apply ms-auto justify-self-end flex items-center gap-2 text-[--price-color];
+    @apply ms-auto justify-self-end flex items-center gap-2 text-[--subtotal-color];
   }
 
   &__subtotal-label {

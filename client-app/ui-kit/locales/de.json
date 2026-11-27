@@ -18,7 +18,8 @@
       "see_less": "Weniger anzeigen",
       "show_hide_password": "Passwort anzeigen/verbergen",
       "toggle_dropdown": "Dropdown umschalten",
-      "update_cart": "Warenkorb aktualisieren"
+      "update_cart": "Warenkorb aktualisieren",
+      "scroll_to_top": "Nach oben scrollen"
     },
     "accessibility": {
       "close_alert": "Benachrichtigung schließen",
