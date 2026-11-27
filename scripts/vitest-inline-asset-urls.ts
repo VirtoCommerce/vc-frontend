@@ -86,8 +86,8 @@ export function inlineAssetUrls(): Plugin {
       const result = await inlineAssetUrlImports(
         code,
         async (specifier) => {
-          // Vite's own resolver, so `resolve.alias` and every other resolve rule apply.
-          const resolved = await this.resolve(specifier, id);
+          // Vite's own resolver, given the request as written, so `resolve.alias` and every other resolve rule apply.
+          const resolved = await this.resolve(`${specifier}?url`, id);
           return resolved && !resolved.external ? resolved.id.split("?")[0] : undefined;
         },
         options,

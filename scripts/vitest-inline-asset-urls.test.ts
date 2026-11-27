@@ -1,8 +1,11 @@
 // @vitest-environment node
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
-import { normalizePath } from "vite";
-import { describe, expect, it } from "vitest";
-import { inlineAssetUrlImports } from "./vitest-inline-asset-urls.js";
+import { createServer, normalizePath } from "vite";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { inlineAssetUrlImports, inlineAssetUrls } from "./vitest-inline-asset-urls.js";
+import type { ViteDevServer } from "vite";
 
 // `/repo` on POSIX, `C:/repo` on Windows: the form Vite passes on each OS.
 const ROOT = normalizePath(path.resolve("/repo"));
@@ -99,5 +102,55 @@ describe("inlineAssetUrlImports", () => {
 
   it("returns undefined for code without `?url` imports", async () => {
     expect(await inlineAssetUrlImports('import x from "./x.svg?raw";', resolveImport, OPTIONS)).toBeUndefined();
+  });
+});
+
+describe("inlineAssetUrls in a Vite dev server", () => {
+  let fixtureRoot: string;
+  let server: ViteDevServer;
+
+  beforeAll(async () => {
+    fixtureRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "inline-asset-urls-")));
+    mkdirSync(path.join(fixtureRoot, "src/assets"), { recursive: true });
+    writeFileSync(path.join(fixtureRoot, "src/assets/a.png"), "");
+    writeFileSync(path.join(fixtureRoot, "src/assets/b.png"), "");
+    writeFileSync(
+      path.join(fixtureRoot, "src/entry.js"),
+      [
+        `import aliased from "@/assets/a.png${URL_QUERY}";`,
+        `import relative from "./assets/b.png${URL_QUERY}";`,
+        `import rootRelative from "/src/assets/a.png${URL_QUERY}";`,
+        "export { aliased, relative, rootRelative };",
+      ].join("\n"),
+    );
+
+    server = await createServer({
+      configFile: false,
+      root: fixtureRoot,
+      logLevel: "silent",
+      server: { middlewareMode: true, hmr: false, ws: false },
+      optimizeDeps: { noDiscovery: true },
+      plugins: [inlineAssetUrls()],
+      resolve: {
+        alias: [
+          { find: "@", replacement: path.join(fixtureRoot, "src") },
+          // Matches the file but not the `?url` request, so Vite does not apply it to the imports above.
+          { find: /^\/src\/assets\/a\.png$/, replacement: "/src/assets/b.png" },
+        ],
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await server.close();
+    rmSync(fixtureRoot, { recursive: true, force: true });
+  });
+
+  it("inlines the URL of the file Vite resolves the `?url` request to", async () => {
+    const result = await server.transformRequest("/src/entry.js");
+
+    expect(result?.code).toContain('const aliased = "/src/assets/a.png";');
+    expect(result?.code).toContain('const relative = "/src/assets/b.png";');
+    expect(result?.code).toContain('const rootRelative = "/src/assets/a.png";');
   });
 });
