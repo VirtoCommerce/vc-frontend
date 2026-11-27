@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import path from "node:path";
 import { normalizePath } from "vite";
 import type { Plugin } from "vite";
 
@@ -21,25 +20,35 @@ export interface IInlineAssetUrlsOptions {
   mayInlineSvg: (file: string) => boolean;
 }
 
+/** Resolves an import specifier the way Vite does, to an absolute file path, or `undefined`. */
+export type ResolveImportType = (specifier: string) => Promise<string | undefined>;
+
 /** Returns the rewritten code, or `undefined` when there is nothing to inline. */
-export function inlineAssetUrlImports(
+export async function inlineAssetUrlImports(
   code: string,
-  importer: string,
+  resolveImport: ResolveImportType,
   options: IInlineAssetUrlsOptions,
-): string | undefined {
+): Promise<string | undefined> {
   if (!code.includes("?url")) {
     return;
   }
 
-  const importerDir = path.dirname(importer.split("?")[0]);
+  const specifiers = new Set(Array.from(code.matchAll(URL_IMPORT_RE), ([, , specifier]) => specifier));
+  const files = new Map<string, string | undefined>();
+
+  await Promise.all(
+    Array.from(specifiers, async (specifier) => {
+      const file = await resolveImport(specifier);
+      // Vite passes `root` and `publicDir` with forward slashes on every OS.
+      files.set(specifier, file === undefined ? undefined : normalizePath(file));
+    }),
+  );
 
   const result = code.replace(URL_IMPORT_RE, (statement, clause: string, specifier: string) => {
     const binding = DEFAULT_BINDING_RE.exec(clause);
-    // Vite passes `root`, `publicDir` and `importer` with forward slashes on every OS.
-    const file = normalizePath(
-      specifier.startsWith("/") ? path.join(options.root, specifier) : path.resolve(importerDir, specifier),
-    );
+    const file = files.get(specifier);
     const isServedFromRoot =
+      file !== undefined &&
       file.startsWith(`${options.root}/`) &&
       !file.startsWith(`${options.publicDir}/`) &&
       !file.includes("/node_modules/");
@@ -73,8 +82,16 @@ export function inlineAssetUrls(): Plugin {
         mayInlineSvg: (file) => typeof limit !== "function" || limit(file, readFileSync(file)) !== false,
       };
     },
-    transform(code, id) {
-      const result = inlineAssetUrlImports(code, id, options);
+    async transform(code, id) {
+      const result = await inlineAssetUrlImports(
+        code,
+        async (specifier) => {
+          // Vite's own resolver, so `resolve.alias` and every other resolve rule apply.
+          const resolved = await this.resolve(specifier, id);
+          return resolved && !resolved.external ? resolved.id.split("?")[0] : undefined;
+        },
+        options,
+      );
       // `map: null` keeps the incoming source map: every rewrite stays on its import's line.
       return result === undefined ? undefined : { code: result, map: null };
     },
