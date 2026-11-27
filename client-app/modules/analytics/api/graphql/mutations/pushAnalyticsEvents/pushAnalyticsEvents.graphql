@@ -1,0 +1,3 @@
+mutation PushAnalyticsEvents($command: InputPushAnalyticsEvents!) {
+  pushAnalyticsEvents(command: $command)
+}
