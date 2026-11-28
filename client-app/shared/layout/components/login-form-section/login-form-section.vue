@@ -65,11 +65,11 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useThemeContext } from "@/core/composables";
+import { getImageUrl } from "@/core/utilities";
 import { SignInForm, useUser } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import { useOtpEmailAuthentication } from "@/shared/sign-in/composables/useOtpEmailAuthentication";
 import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
-import { getImageUrl } from "@/ui-kit/utilities";
 import OtpEmailSignInForm from "@/shared/sign-in/components/otp-email-sign-in-form.vue";
 
 const { t } = useI18n();

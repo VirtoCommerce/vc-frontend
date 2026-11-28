@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import { graphqlErrorEvent, TabsType, unhandledErrorEvent } from "@/shared/broadcast";

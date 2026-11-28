@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { App } from "vue";
 import type { AppInsightsPluginOptions } from "vue3-application-insights";

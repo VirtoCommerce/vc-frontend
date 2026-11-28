@@ -1,8 +1,0 @@
-@use "../client-app/assets/styles/layers";
-@use "../client-app/assets/styles/vendors/swiper-base";
-
-@layer vc.vendor {
-  :root {
-    --swiper-theme-color: var(--color-primary-500);
-  }
-}

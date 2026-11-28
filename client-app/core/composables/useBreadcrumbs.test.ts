@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, it, expect, vi } from "vitest";
 import { ref, computed } from "vue";
 import { useBreadcrumbs } from "./useBreadcrumbs";

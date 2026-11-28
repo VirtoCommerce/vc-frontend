@@ -1,5 +1,5 @@
 // Shared focus indicator. Mixins only — a rule here would be emitted once per consumer.
-// The ring's values live in `--vc-focus-ring-*` (assets/styles/_ui-kit-tokens.scss); this
+// The ring's values live in `--vc-focus-ring-*` (_ui-kit-tokens.scss); this
 // mixin owns its structure, so a structural change lands in one place.
 
 @mixin focus-ring($inset: false) {

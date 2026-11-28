@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect } from "vitest";
 import { getDisplayTotals } from "./index";
 import type { CustomerOrderType, MoneyType, OrderTotalType } from "@/core/api/graphql/types";

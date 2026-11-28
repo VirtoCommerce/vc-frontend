@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { buildAlternateLinks } from "./alternate-links";
 import { fakeGetLocalizedPath as getLocalizedPath } from "./test-utils";

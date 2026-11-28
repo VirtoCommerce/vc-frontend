@@ -18,7 +18,8 @@
       "see_less": "See less",
       "show_hide_password": "Show/hide password",
       "toggle_dropdown": "Toggle dropdown",
-      "update_cart": "Update cart"
+      "update_cart": "Update cart",
+      "scroll_to_top": "Scroll to top"
     },
     "accessibility": {
       "close_alert": "Close alert",

@@ -24,4 +24,6 @@ declare const __SB_ICON_ELEMENTS__: number;
 interface ImportMetaEnv {
   /** JSON map of remote name -> mf-manifest.json URL. Inlined at BUILD time (see core/federation/README.md). */
   readonly APP_MODULES_FEDERATION_REMOTES?: string;
+  /** Host app version from the root package.json. Set in vite.config.ts. */
+  readonly APP_VERSION: string;
 }

@@ -673,6 +673,60 @@ export type CommonVendor = {
   rating?: Maybe<Rating>;
 };
 
+export type CompareListCategoryType = {
+  /** The category */
+  category?: Maybe<Category>;
+  /** Category ID; null for products without a category */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The category's compared products, by position, at most the store's limit */
+  items: Array<CompareListItemType>;
+};
+
+export type CompareListConfigurationSectionType = {
+  /** The section as the catalog has it now (name, options); null when it no longer exists */
+  configurationSection?: Maybe<ConfigurationSectionType>;
+  /** Text of a Text section */
+  customText?: Maybe<Scalars['String']['output']>;
+  /** Product ID of the chosen option */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Quantity of the chosen option */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Configuration section ID */
+  sectionId: Scalars['String']['output'];
+  /** Section type: Product or Text */
+  type: Scalars['String']['output'];
+};
+
+export type CompareListItemType = {
+  /** Category the product is compared in; null for products without a category */
+  categoryId?: Maybe<Scalars['String']['output']>;
+  /** The chosen configuration of a configurable product */
+  configurationSections: Array<CompareListConfigurationSectionType>;
+  /** When the product was added */
+  createdDate: Scalars['DateTime']['output'];
+  /** Compare list item ID */
+  id: Scalars['String']['output'];
+  /** Position within the category */
+  position: Scalars['Int']['output'];
+  /** The product; null when it no longer exists or isn't visible in the store */
+  product?: Maybe<Product>;
+  /** Product ID */
+  productId: Scalars['String']['output'];
+};
+
+export type CompareListType = {
+  /** Compared products grouped by category, in the order the categories were first added */
+  categories: Array<CompareListCategoryType>;
+  /** Compare list ID */
+  id: Scalars['String']['output'];
+  /** Compared products, by category, then by position */
+  items: Array<CompareListItemType>;
+  /** Number of compared products; each category counts up to the store's limit */
+  itemsCount: Scalars['Int']['output'];
+  /** Store ID */
+  storeId: Scalars['String']['output'];
+};
+
 export type ConfigurableProductOptionInput = {
   /** Product ID */
   productId: Scalars['String']['input'];
@@ -910,6 +964,12 @@ export type CouponType = {
   code?: Maybe<Scalars['String']['output']>;
   /** Is coupon was applied successfully */
   isAppliedSuccessfully: Scalars['Boolean']['output'];
+};
+
+export type CreatePunchoutRequisitionCommandType = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
 };
 
 export type CreateQuoteCommandType = {
@@ -2242,6 +2302,30 @@ export type InputClearCartType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputClearCompareListCategoryType = {
+  /** Category ID as the compare list returns it; null for products without a category */
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
+  userId: Scalars['String']['input'];
+};
+
+export type InputClearCompareListType = {
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
+  userId: Scalars['String']['input'];
+};
+
 export type InputClearPaymentsType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -2287,6 +2371,15 @@ export type InputCloneWishlistType = {
   storeId: Scalars['String']['input'];
   /** Owner ID */
   userId: Scalars['String']['input'];
+};
+
+export type InputCompareListProductType = {
+  /** Category to compare the product in; empty for none */
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  /** The chosen configuration of a configurable product: Product and Text sections */
+  configurationSections?: InputMaybe<Array<ConfigurationSectionInput>>;
+  /** Product ID */
+  productId: Scalars['String']['input'];
 };
 
 export type InputConfirmEmailType = {
@@ -2624,6 +2717,34 @@ export type InputMergeCartType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputMergeCompareListType = {
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** ID of the guest's compare list to merge into this one */
+  secondListId: Scalars['String']['input'];
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
+  userId: Scalars['String']['input'];
+};
+
+export type InputMoveCompareListItemType = {
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** ID of the compare list item to move */
+  itemId: Scalars['String']['input'];
+  /** New position within the item's category, from 0 */
+  position: Scalars['Int']['input'];
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
+  userId: Scalars['String']['input'];
+};
+
 export type InputMoveWishlistItemType = {
   /** Destination List ID */
   destinationListId: Scalars['String']['input'];
@@ -2870,6 +2991,19 @@ export type InputRemoveCartType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputRemoveCompareListItemsType = {
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** IDs of the compare list items to remove */
+  itemIds: Array<Scalars['String']['input']>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
+  userId: Scalars['String']['input'];
+};
+
 export type InputRemoveConfigurationItemType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -3042,6 +3176,19 @@ export type InputSaveForLaterType = {
   /** Store ID */
   storeId: Scalars['String']['input'];
   /** Owner ID */
+  userId: Scalars['String']['input'];
+};
+
+export type InputSaveProductsToCompareListType = {
+  /** Culture name ("en-US") for the returned products */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code ("USD") for the returned products */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Products to compare; a product already in the list with the same configuration stays where it is */
+  products: Array<InputCompareListProductType>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** The signed-in user's ID, or the guest's anonymous ID */
   userId: Scalars['String']['input'];
 };
 
@@ -3995,6 +4142,8 @@ export type Mutations = {
   changeWishlist?: Maybe<WishlistType>;
   clearAllPushMessages?: Maybe<Scalars['Boolean']['output']>;
   clearCart?: Maybe<CartType>;
+  clearCompareList?: Maybe<CompareListType>;
+  clearCompareListCategory?: Maybe<CompareListType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
   cloneWishlist?: Maybe<WishlistType>;
@@ -4006,6 +4155,7 @@ export type Mutations = {
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
   createPasskey?: Maybe<IdentityResultType>;
+  createPunchoutRequisition?: Maybe<PunchoutCheckoutType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createReturn?: Maybe<ReturnType>;
@@ -4033,6 +4183,8 @@ export type Mutations = {
   markPushMessageRead?: Maybe<Scalars['Boolean']['output']>;
   markPushMessageUnread?: Maybe<Scalars['Boolean']['output']>;
   mergeCart?: Maybe<CartType>;
+  mergeCompareList?: Maybe<CompareListType>;
+  moveCompareListItem?: Maybe<CompareListType>;
   moveFromSavedForLater?: Maybe<CartWithListType>;
   moveToSavedForLater?: Maybe<CartWithListType>;
   moveWishlistItem?: Maybe<WishlistType>;
@@ -4047,6 +4199,7 @@ export type Mutations = {
   removeCartAddress?: Maybe<CartType>;
   removeCartItem?: Maybe<CartType>;
   removeCartItems?: Maybe<CartType>;
+  removeCompareListItems?: Maybe<CompareListType>;
   removeConfigurationItem?: Maybe<CartType>;
   removeConfigurationItems?: Maybe<CartType>;
   removeCoupon?: Maybe<CartType>;
@@ -4064,6 +4217,7 @@ export type Mutations = {
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   revokeOrganizationInvite?: Maybe<ContactType>;
   saveLayout?: Maybe<Layout>;
+  saveProductsToCompareList?: Maybe<CompareListType>;
   saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
   selectAllCartConfigurationItems?: Maybe<CartType>;
   selectAllCartItems?: Maybe<CartType>;
@@ -4334,6 +4488,16 @@ export type MutationsClearCartArgs = {
 };
 
 
+export type MutationsClearCompareListArgs = {
+  command: InputClearCompareListType;
+};
+
+
+export type MutationsClearCompareListCategoryArgs = {
+  command: InputClearCompareListCategoryType;
+};
+
+
 export type MutationsClearPaymentsArgs = {
   command: InputClearPaymentsType;
 };
@@ -4386,6 +4550,11 @@ export type MutationsCreateOrganizationArgs = {
 
 export type MutationsCreatePasskeyArgs = {
   command: InputCreatePasskeyType;
+};
+
+
+export type MutationsCreatePunchoutRequisitionArgs = {
+  command: CreatePunchoutRequisitionCommandType;
 };
 
 
@@ -4514,6 +4683,16 @@ export type MutationsMergeCartArgs = {
 };
 
 
+export type MutationsMergeCompareListArgs = {
+  command: InputMergeCompareListType;
+};
+
+
+export type MutationsMoveCompareListItemArgs = {
+  command: InputMoveCompareListItemType;
+};
+
+
 export type MutationsMoveFromSavedForLaterArgs = {
   command: InputSaveForLaterType;
 };
@@ -4581,6 +4760,11 @@ export type MutationsRemoveCartItemArgs = {
 
 export type MutationsRemoveCartItemsArgs = {
   command: InputRemoveItemsType;
+};
+
+
+export type MutationsRemoveCompareListItemsArgs = {
+  command: InputRemoveCompareListItemsType;
 };
 
 
@@ -4666,6 +4850,11 @@ export type MutationsRevokeOrganizationInviteArgs = {
 
 export type MutationsSaveLayoutArgs = {
   command: InputLayout;
+};
+
+
+export type MutationsSaveProductsToCompareListArgs = {
+  command: InputSaveProductsToCompareListType;
 };
 
 
@@ -5059,6 +5248,8 @@ export type OrderLineItemType = {
   productId: Scalars['String']['output'];
   productOuterId?: Maybe<Scalars['String']['output']>;
   productType?: Maybe<Scalars['String']['output']>;
+  /** Purchase order line number */
+  purchaseOrderLineNumber?: Maybe<Scalars['String']['output']>;
   quantity: Scalars['Int']['output'];
   reserveQuantity: Scalars['Int']['output'];
   shippingMethodCode?: Maybe<Scalars['String']['output']>;
@@ -6254,6 +6445,17 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
+export type PunchoutCheckoutType = {
+  cxml?: Maybe<Scalars['String']['output']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
+  formField?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
+export type PunchoutResultType = {
+  success: Scalars['Boolean']['output'];
+};
+
 /** A connection from an object to a list of objects of type `PushMessage`. */
 export type PushMessageConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -6298,6 +6500,7 @@ export type Query = {
   checkEmailUniqueness?: Maybe<Scalars['Boolean']['output']>;
   checkUsernameUniqueness?: Maybe<Scalars['Boolean']['output']>;
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
+  compareList?: Maybe<CompareListType>;
   configurationItems?: Maybe<ConfigurationItemsResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
@@ -6356,6 +6559,7 @@ export type Query = {
   promotionCoupons?: Maybe<PromotionCouponConnection>;
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
+  punchoutMockQuery?: Maybe<PunchoutResultType>;
   pushMessages?: Maybe<PushMessageConnection>;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
@@ -6556,6 +6760,14 @@ export type QueryChildCategoriesArgs = {
   productFilter?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryCompareListArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -8033,15 +8245,15 @@ export type SalesRepCommunicationResult = {
 };
 
 export type SalesRepContact = {
-  /** About the Sales Rep. */
+  /** About the contact. */
   about?: Maybe<Scalars['String']['output']>;
-  /** Email addresses to contact the Sales Rep. */
+  /** Email addresses of the contact. */
   emails?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** First name. */
   firstName?: Maybe<Scalars['String']['output']>;
   /** Full name. */
   fullName?: Maybe<Scalars['String']['output']>;
-  /** Contact (member) id of the Sales Rep. */
+  /** Contact (member) id. */
   id: Scalars['String']['output'];
   /** Last name. */
   lastName?: Maybe<Scalars['String']['output']>;
@@ -8049,7 +8261,7 @@ export type SalesRepContact = {
   middleName?: Maybe<Scalars['String']['output']>;
   /** Display name. */
   name?: Maybe<Scalars['String']['output']>;
-  /** Phone numbers to contact the Sales Rep. */
+  /** Phone numbers of the contact. */
   phones?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Photo URL. */
   photoUrl?: Maybe<Scalars['String']['output']>;
@@ -8143,6 +8355,10 @@ export type SalesRepCustomer = {
   organizationId: Scalars['String']['output'];
   /** Organization (customer) name. */
   organizationName?: Maybe<Scalars['String']['output']>;
+  /** Primary phone number (the primary contact's, falling back to the organization's). */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Primary contact of the organization (its owner, or the first contact member). */
+  primaryContact?: Maybe<SalesRepContact>;
 };
 
 
@@ -8984,7 +9200,8 @@ export type UserType = {
   phoneNumberConfirmed: Scalars['Boolean']['output'];
   photoUrl?: Maybe<Scalars['String']['output']>;
   roles?: Maybe<Array<Maybe<RoleType>>>;
-  securityStamp: Scalars['String']['output'];
+  /** @deprecated No longer exposed for security reasons; always returns null. */
+  securityStamp?: Maybe<Scalars['String']['output']>;
   storeId?: Maybe<Scalars['String']['output']>;
   twoFactorEnabled: Scalars['Boolean']['output'];
   userName: Scalars['String']['output'];

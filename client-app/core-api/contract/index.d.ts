@@ -61,6 +61,16 @@ type VcNotificationsType = {
 interface IUiKitOptions {
     image?: {
         thumbnails?: MaybeRefOrGetter<VcImageThumbnailsType>;
+        /**
+         * The image `VcImage` shows when `src` is empty or fails to load, site-wide: a URL, or a file name in the
+         * app's images. An instance's `fallbackSrc` wins. Default: ui-kit's `no-image.svg`.
+         */
+        fallbackSrc?: MaybeRefOrGetter<string>;
+        /**
+         * Turns a bare file name (`"basket.jpg"`) passed to `VcImage` (`src`, `fallbackSrc`) or `VcShape` (`img`)
+         * into a URL, for example one of the app's images. Without it the file name is used as is.
+         */
+        resolveFileName?: (fileName: string) => string;
     };
     notifications?: VcNotificationsType;
 }
@@ -240,6 +250,7 @@ interface IProps$W {
     lazy?: boolean;
     src?: string;
     alt?: string;
+    /** Shown when `src` is empty or fails to load. Default: the `uiKit` plugin's `image.fallbackSrc`, then ui-kit's `no-image.svg`. */
     fallbackSrc?: string;
     /**
      * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
@@ -250,7 +261,6 @@ interface IProps$W {
 }
 declare const __VLS_export$10: vue.DefineComponent<IProps$W, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$W> & Readonly<{}>, {
     src: string;
-    fallbackSrc: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$10: typeof __VLS_export$10;
 

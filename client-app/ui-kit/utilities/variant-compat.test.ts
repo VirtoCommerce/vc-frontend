@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LEGACY_VARIANT_MAP, resolveVariant, resetWarnedPairs } from "./variant-compat";
 

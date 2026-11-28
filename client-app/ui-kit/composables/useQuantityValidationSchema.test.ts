@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { ref } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/ui-kit/constants";

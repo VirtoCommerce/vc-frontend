@@ -38,9 +38,9 @@ export const a11yConfig: Parameters["a11y"] = {
     rules: {},
   },
 
-  // Context to check (which part of the DOM to check)
-  // Default is #storybook-root, can be overridden per story
-  context: "#storybook-root",
+  // Context to check (which part of the DOM to check): the story root and #popover-host, which the uiKit
+  // plugin adds to body and where VcPopover teleports its panels by default; can be overridden per story
+  context: { include: ["#storybook-root", "#popover-host"] },
 
   // Disable automatic check on story change (manual mode)
   manual: false,

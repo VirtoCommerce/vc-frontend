@@ -3,6 +3,7 @@ import { IS_DEVELOPMENT } from "@/core/constants/environment";
 import { Logger } from "@/core/utilities/logger";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { customFonts } from "@/designs/custom-fonts";
+import { presetStyles as kitPresetStyles } from "@/ui-kit/presets";
 import type { IDesignConfig, IThemeConfig } from "@/core/types";
 
 export const CLASSIC_DESIGN = "classic";
@@ -37,8 +38,57 @@ export function byFileName<T>(modules: Record<string, T>): Record<string, T> {
 
 const DESIGN_STYLES: DesignStylesType = byDesignName(import.meta.glob("@/designs/*/index.scss"));
 
-/** A preset's optional stylesheet, `client-app/assets/presets/<name>.scss`, next to its JSON. */
-const PRESET_STYLES: DesignStylesType = byFileName(import.meta.glob("@/assets/presets/*.scss"));
+/** Joins stylesheet sets by name: a name in several sets loads each, in the order given, so a later one wins. */
+export function mergeStyles(...sets: DesignStylesType[]): DesignStylesType {
+  const merged: DesignStylesType = {};
+
+  for (const set of sets) {
+    for (const [name, load] of Object.entries(set)) {
+      const previous = ownValue(merged, name);
+
+      merged[name] = previous
+        ? async () => {
+            // A failed earlier stylesheet still lets the later one load, and its error is rethrown after.
+            // It is claimed at once: chunk-load recovery looks for the claim on a zero-delay timer.
+            let earlier: { error: unknown } | undefined;
+
+            try {
+              await previous();
+            } catch (error) {
+              ignoreChunkLoadFailure(error);
+              earlier = { error };
+            }
+
+            try {
+              await load();
+            } catch (error) {
+              // Only the later error reaches the caller's report, so the claimed earlier one is logged here.
+              if (earlier) {
+                Logger.error("Failed to load a stylesheet.", earlier.error);
+              }
+
+              throw error;
+            }
+
+            if (earlier) {
+              throw earlier.error;
+            }
+          }
+        : load;
+    }
+  }
+
+  return merged;
+}
+
+/**
+ * A preset's optional stylesheet, `<name>.scss` next to its JSON: ui-kit's for a stock preset, the theme's
+ * (`client-app/assets/presets/`) for its own preset or for its app blocks in a stock one, loaded after ui-kit's.
+ */
+const PRESET_STYLES: DesignStylesType = mergeStyles(
+  kitPresetStyles,
+  byFileName(import.meta.glob("@/assets/presets/*.scss")),
+);
 
 const DESIGN_CONFIGS: Record<string, IDesignConfig> = byDesignName(
   import.meta.glob<IDesignConfig>("@/designs/*/design.ts", { eager: true, import: "design" }),

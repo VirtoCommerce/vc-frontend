@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi } from "vitest";
 import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "./useMissionCard";
 import type { MissionDataType } from "./useMissionCard";

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { getFieldValidationErrors } from "./utils";
 import type { GraphQLFormattedError } from "graphql";

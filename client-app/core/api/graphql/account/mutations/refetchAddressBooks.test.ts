@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 import { OperationNames } from "@/core/api/graphql/types";
 import { refetchAddressBooks } from "./refetchAddressBooks";

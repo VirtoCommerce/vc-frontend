@@ -1,0 +1,4 @@
+// The element the uiKit plugin adds to body for VcPopover's teleported panels: above the page, taking no space.
+#popover-host {
+  @apply absolute bottom-0 end-0 z-[9999] size-0;
+}

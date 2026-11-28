@@ -1,5 +1,8 @@
+import { productImageMocks } from "@/ui-kit/mocks";
 import { VcImage } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
+const [productImage] = productImageMocks;
 
 const meta: Meta<typeof VcImage> = {
   title: "Components/Atoms/VcImage",
@@ -34,14 +37,14 @@ type StoryType = StoryObj<typeof meta>;
 
 export const Basic: StoryType = {
   args: {
-    src: "product-example-1.webp",
+    src: productImage,
     alt: "Product image",
   },
   parameters: {
     docs: {
       source: {
         code: `
-          <VcImage src="product-example-1.webp" alt="Product image" />
+          <VcImage src="https://example.com/product-1.webp" alt="Product image" />
         `,
       },
     },
@@ -50,7 +53,7 @@ export const Basic: StoryType = {
 
 export const WithLazyLoading: StoryType = {
   args: {
-    src: "product-example-1.webp",
+    src: productImage,
     alt: "Product image",
     lazy: true,
   },
@@ -58,7 +61,7 @@ export const WithLazyLoading: StoryType = {
     docs: {
       source: {
         code: `
-          <VcImage src="product-example-1.webp" alt="Product image" lazy />
+          <VcImage src="https://example.com/product-1.webp" alt="Product image" lazy />
         `,
       },
     },
@@ -69,13 +72,13 @@ export const WithFallback: StoryType = {
   args: {
     src: "non-existent-image.webp",
     alt: "Product image",
-    fallbackSrc: "product-example-1.webp",
+    fallbackSrc: productImage,
   },
   parameters: {
     docs: {
       source: {
         code: `
-          <VcImage src="non-existent-image.webp" alt="Product image" fallback-src="product-example-1.webp" />
+          <VcImage src="non-existent-image.webp" alt="Product image" fallback-src="https://example.com/product-1.webp" />
         `,
       },
     },
@@ -95,7 +98,7 @@ export const ObjectFit: StoryType = {
     `,
   }),
   args: {
-    src: "product-example-1.webp",
+    src: productImage,
     alt: "Product image",
   },
   parameters: {
@@ -106,9 +109,9 @@ export const ObjectFit: StoryType = {
       },
       source: {
         code: `
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64" />
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:contain]" />
-<VcImage src="product-example-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:contain]" />
+<VcImage src="https://example.com/product-1.webp" alt="Product image" class="size-64 [--vc-image-object-fit:cover] [--vc-image-object-position:left]" />
         `,
       },
     },
