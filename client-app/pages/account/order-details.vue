@@ -28,6 +28,13 @@
       </div>
     </div>
 
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('orderDetails', EXTENSION_NAMES.orderDetails.notice, order)"
+      :name="EXTENSION_NAMES.orderDetails.notice"
+      category="orderDetails"
+      :order="order"
+    />
+
     <VcLayout sidebar-position="right" sticky>
       <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
@@ -46,13 +53,13 @@
                 />
               </div>
 
-              <OrderLineItems :items="group.items" />
+              <OrderLineItems :items="group.items" :order-id="order.id" />
             </div>
           </template>
         </div>
 
         <!-- Items not grouped by Vendor -->
-        <OrderLineItems v-else :items="mainCurrencyOrderItems" />
+        <OrderLineItems v-else :items="mainCurrencyOrderItems" :order-id="order.id" />
 
         <!-- Items in other currencies (always flat, never grouped by vendor) -->
         <template v-for="group in otherCurrencyOrderItemGroups" :key="group.currencyCode">
@@ -61,7 +68,7 @@
               {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
             </h4>
 
-            <OrderLineItems :items="group.items" :subtotal-currency-code="group.currencyCode" />
+            <OrderLineItems :items="group.items" :subtotal-currency-code="group.currencyCode" :order-id="order.id" />
           </div>
         </template>
       </VcWidget>

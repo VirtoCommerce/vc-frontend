@@ -27,8 +27,12 @@ export {
   VcDialogContent,
   VcDialogFooter,
   VcDialogHeader,
+  VcDropdownMenu,
   VcEmptyView,
   VcInput,
+  VcLineItems,
+  VcList,
+  VcListItem,
   VcLoaderOverlay,
   VcMenuItem,
   VcPopover,
@@ -38,9 +42,12 @@ export {
   VcProductTitle,
   VcRating,
   VcSelect,
+  VcShape,
   VcTabSwitch,
   VcTextarea,
   VcTypography,
+  VcVariantPicker,
+  VcVariantPickerGroup,
 } from "@/ui-kit/components/molecules";
 // `VcImage` builds thumbnail URLs only when the app passes `image.thumbnails` to
 // `app.use(uiKit, options)`; without it (a plugin's own dev server or specs) it shows `src` as is.
@@ -55,10 +62,14 @@ export {
   VcInputDetails,
   VcLabel,
   VcLink,
+  VcLoader,
   VcMarkdownRender,
+  VcPriceDisplay,
+  VcRadioButton,
   VcTooltip,
 } from "@/ui-kit/components/atoms";
 export {
+  VcAddToCart,
   VcDatePicker,
   VcDateRangePicker,
   VcModal,
@@ -156,6 +167,18 @@ export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
 // The cart the header counts: an add through it updates the header, and `cart.id` names the cart.
 export { useShortCart } from "@/shared/cart/composables/useCart";
+// The cart the cart and checkout pages show, read-only: its lines and payment methods, and a refetch after a plugin's
+// own mutation changed it.
+export { useCurrentCart } from "@/shared/cart/composables/useCart";
+// Whether an order is being placed, so a plugin's block on the checkout page locks its controls meanwhile.
+export { useOrderPlacement } from "@/shared/checkout/composables/useCheckout";
+// The line the product page's add to cart changes for a configurable product, once its configuration is in the cart.
+export { useConfigurableLineItemId } from "@/shared/catalog/composables/useConfigurableLineItemId";
+// A cart or order line in the shape the host's line lists (`VcLineItems`) render.
+export { prepareLineItem } from "@/core/utilities/line-items";
+export type { PreparedLineItemType } from "@/core/types";
+// A configured line's chosen options, listed the way the host's cart and order lines show them.
+export { default as ConfigurationItems } from "@/shared/common/components/configuration-items.vue";
 // The host's add-to-cart bookkeeping, so a plugin's own add to cart reports what the host's buttons do: the
 // analytics event, and the recommendations' historical event.
 export { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
@@ -170,7 +193,13 @@ export type { ProductConfigurationSourceType } from "@/shared/catalog/composable
 export type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
+// How long the host keeps a notification it shows for a few seconds, for a plugin's own notifications.
+export { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants/notifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+// Blocks Place order until a plugin's own condition holds (a terms checkbox it renders, a required choice). Every
+// registered guard must allow the order; unregister the guard when the plugin's block leaves the page.
+export { useCheckoutGuards } from "@/shared/checkout/composables/useCheckoutGuards";
+export type { CheckoutGuardType } from "@/shared/checkout/composables/useCheckoutGuards";
 // What the sharing modal hands a scope's `onSaved`, and the shape a scope's element must expose
 // for the modal to read it.
 export type {
@@ -263,6 +292,20 @@ export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
 export { default as CouponItem } from "@/shared/account/components/coupon-item.vue";
 export { default as CouponItemSkeleton } from "@/shared/account/components/coupon-item-skeleton.vue";
 
+// Saved cards: the shopper's stored payment methods and the card form, so a payment method that saves cards (a
+// plugin's own, or one a plugin needs a saved card for) lists, labels and adds them the way the host's pages do.
+// `useCardSavingRequirement` says whether the checkout's card must be saved and with which consent. The two
+// components are frozen: their props and events are contract.
+export { useSavedPaymentMethods } from "@/shared/payment/composables/useSavedPaymentMethods";
+export { useCardSavingRequirement } from "@/shared/payment/composables/useCardSavingRequirement";
+export { savedCardExpiry, savedCardLabel } from "@/shared/payment/utils/saved-card-label";
+export { addSavedPaymentMethod } from "@/core/api/graphql/payment/mutations/addSavedPaymentMethod";
+export { authorizePayment } from "@/core/api/graphql/payment/mutations/authorizePayment";
+export { initializePayment } from "@/core/api/graphql/payment/mutations/initializePayment";
+export { default as BankCardForm } from "@/shared/payment/components/bank-card-form.vue";
+export { default as SavedCardPicker } from "@/shared/payment/components/saved-card-picker.vue";
+export type { BankCardType } from "@/shared/payment/types";
+
 // Files. `useFetch` is the host's fetch with its auth interceptors, so a plugin can read a
 // protected file URL as the signed-in user; `downloadFile` saves one through it.
 export { useFetch } from "@/core/api/common/composables/useFetch";
@@ -286,6 +329,8 @@ export { PlatformPermissions, XApiPermissions } from "@/core/enums";
 // take one, and rollup names it only internally — so a plugin could pass an order but not
 // declare the variable it passed.
 export type { CustomerOrderType } from "@/core/api/graphql/types";
+// What the host passes to a `productPage` entry and to a `checkoutReview` one, and a price as the API returns it.
+export type { CartType, MoneyType, Product } from "@/core/api/graphql/types";
 // Already reachable through the list-sharing types; exported so a plugin can name it.
 export type { SharingTargetType } from "@/core/api/graphql/types";
 

@@ -1,5 +1,6 @@
 <template>
-  <form class="flex flex-col gap-y-3" autocomplete="off">
+  <!-- Embedded in a parent's form, the fields render in a div: a form can't hold another form. -->
+  <component :is="embedded ? 'div' : 'form'" class="flex flex-col gap-y-3" :autocomplete="embedded ? undefined : 'off'">
     <VcInput
       v-model="cardNumber"
       :mask="cardMaskOptions"
@@ -70,7 +71,7 @@
         @keyup.enter="$emit('submit')"
       />
     </div>
-  </form>
+  </component>
 </template>
 
 <script setup lang="ts">
@@ -102,16 +103,21 @@ interface IProps {
   readonly?: boolean;
   disabled?: boolean;
   errors?: BankCardErrorsType;
+  /** The form sits inside a parent `<form>`, which submits it: the fields render in a `<div>` instead of a `<form>`. */
+  embedded?: boolean;
 }
 
 const { t } = useI18n();
 
+// Starts from the bound model, so a parent can prefill the card (re-mount the form to apply a later change).
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- a one-time snapshot of the initial values is intended
+const initialModel = props.modelValue;
 const initialValues: BankCardType = {
-  number: "",
-  cardholderName: "",
-  month: "",
-  year: "",
-  securityCode: "",
+  number: initialModel?.number ?? "",
+  cardholderName: initialModel?.cardholderName ?? "",
+  month: initialModel?.month ?? "",
+  year: initialModel?.year ?? "",
+  securityCode: initialModel?.securityCode ?? "",
 };
 
 const cardMaskOptions = { mask: "#### #### #### #### ###" };

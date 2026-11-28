@@ -34,19 +34,28 @@
       </div>
 
       <div class="product-price__actions">
-        <component
-          v-if="variationResult && variationResult.price?.actual?.amount > 0"
-          :is="product.isConfigurable ? AddToCart : AddToCartSimple"
-          :product="variationResult"
-        >
-          <InStock
-            :is-in-stock="variationResult.availabilityData?.isInStock"
-            :is-digital="isDigital"
-            :quantity="variationResult.availabilityData?.availableQuantity"
-          />
+        <template v-if="variationResult && variationResult.price?.actual?.amount > 0">
+          <component :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="variationResult">
+            <InStock
+              :is-in-stock="variationResult.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="variationResult.availabilityData?.availableQuantity"
+            />
 
-          <CountInCart :product-id="variationResult.id" />
-        </component>
+            <CountInCart :product-id="variationResult.id" />
+          </component>
+
+          <ExtensionPoint
+            v-if="
+              !product.isConfigurable &&
+              $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, variationResult)
+            "
+            :key="variationResult.id"
+            :name="EXTENSION_NAMES.productPage.purchaseOptions"
+            category="productPage"
+            :product="variationResult"
+          />
+        </template>
 
         <div v-else>
           <VcButton
@@ -104,19 +113,29 @@
           :product="product"
         />
 
-        <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
-          <InStock
-            :is-in-stock="product.availabilityData?.isInStock"
-            :is-digital="isDigital"
-            :quantity="product.availabilityData?.availableQuantity"
-          />
+        <template v-else>
+          <component :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
+            <InStock
+              :is-in-stock="product.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="product.availabilityData?.availableQuantity"
+            />
 
-          <CountInCart
-            v-if="!product.isConfigurable || configurableLineItemId"
-            :product-id="product.id"
-            :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
+            <CountInCart
+              v-if="!product.isConfigurable || configurableLineItemId"
+              :product-id="product.id"
+              :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
+            />
+          </component>
+
+          <ExtensionPoint
+            v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.purchaseOptions, product)"
+            :key="product.id"
+            :name="EXTENSION_NAMES.productPage.purchaseOptions"
+            category="productPage"
+            :product="product"
           />
-        </component>
+        </template>
       </div>
     </template>
   </div>

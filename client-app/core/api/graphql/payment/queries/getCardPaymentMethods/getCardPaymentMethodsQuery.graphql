@@ -1,0 +1,11 @@
+query GetCardPaymentMethods($storeId: String!) {
+  cardPaymentMethods(storeId: $storeId) {
+    paymentMethodCode
+    name
+    logoUrl
+    publicParameters {
+      key
+      value
+    }
+  }
+}

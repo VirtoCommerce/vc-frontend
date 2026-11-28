@@ -55,6 +55,14 @@
     </template>
 
     <template #after-content="{ item }">
+      <ExtensionPointList
+        category="cartLineItem"
+        :names="[EXTENSION_NAMES.cartLineItem.details]"
+        :condition-params="item"
+        :line-item="item"
+        :readonly="readonly || disabled"
+      />
+
       <ConfigurationItems
         v-if="item.isConfigurable"
         :configuration-items="item.configurationItems"
@@ -88,16 +96,37 @@
         :disabled="disabled"
         data-test-id="cart-item-actions-after-image"
         @save-for-later="$emit('saveForLater', [item.id])"
-      />
+      >
+        <ExtensionPointList
+          category="cartLineItem"
+          :names="[EXTENSION_NAMES.cartLineItem.actions]"
+          :condition-params="item"
+          :line-item="item"
+          :readonly="readonly"
+          :disabled="disabled"
+          icons
+        />
+      </CartItemActions>
     </template>
 
     <template #after-title="{ item }">
+      <!-- A line with its own actions shows "Save for later" as an icon, so the row stays one line. -->
       <CartItemActions
+        :icons="hasLineActions(item)"
         :saveable-for-later="!hideControls?.includes('save-for-later')"
         :disabled="disabled"
         data-test-id="cart-item-actions-after-title"
         @save-for-later="$emit('saveForLater', [item.id])"
-      />
+      >
+        <ExtensionPointList
+          category="cartLineItem"
+          :names="[EXTENSION_NAMES.cartLineItem.actions]"
+          :condition-params="item"
+          :line-item="item"
+          :readonly="readonly"
+          :disabled="disabled"
+        />
+      </CartItemActions>
     </template>
   </VcLineItems>
 </template>
@@ -109,6 +138,8 @@ import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { useComponentId } from "@/ui-kit/composables";
 import { QUANTITY_VALIDATION_ERROR_CODES } from "../enums";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
@@ -149,6 +180,7 @@ const validationErrors = toRef(props, "validationErrors");
 const { browserTarget } = useBrowserTarget();
 
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
+const { canRender } = useExtensionRegistry();
 
 function withLineItemId(route: RouteLocationRaw, lineItemId: string): RouteLocationRaw {
   if (typeof route === "string") {
@@ -169,6 +201,10 @@ const preparedLineItems = computed(() =>
 watchEffect(() => setErrors(validationErrors.value));
 
 const componentId = useComponentId("cart-line-items");
+
+function hasLineActions(item: PreparedLineItemType): boolean {
+  return !props.readonly && canRender("cartLineItem", EXTENSION_NAMES.cartLineItem.actions, item);
+}
 
 function getErrorsId(itemId: string): string {
   return `${componentId}-${itemId}-errors`;

@@ -1003,3 +1003,124 @@ export const MultiColorSingleSelect: StoryType = {
     },
   },
 };
+
+const PERIODS = [
+  { value: "2w", label: "2 weeks", discount: 15, price: { amount: 56.1, formattedAmount: "$56.10" } },
+  { value: "1m", label: "1 month", discount: 12, price: { amount: 58.08, formattedAmount: "$58.08" } },
+  { value: "2m", label: "2 months", discount: 10, price: { amount: 59.4, formattedAmount: "$59.40" } },
+  { value: "3m", label: "3 months", discount: 5, price: { amount: 62.7, formattedAmount: "$62.70" } },
+];
+
+const renderPeriods =
+  (picker: string, wrapperClass = "w-72") =>
+  (args: Record<string, unknown>) => ({
+    setup: () => {
+      const model = ref<string | string[]>("1m");
+      return { args, model, periods: PERIODS };
+    },
+    template: `
+    <div class="${wrapperClass}">
+      <VcVariantPickerGroup v-bind="args" v-model="model" type="text" name="period">
+        ${picker}
+      </VcVariantPickerGroup>
+    </div>
+  `,
+  });
+
+export const TwoLines: StoryType = {
+  args: { columns: 2 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :description="'Save ' + p.discount + '%'" />
+  `),
+};
+
+export const PriceDescription: StoryType = {
+  args: { columns: 2, size: "sm" },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available>
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `),
+};
+
+export const Icons: StoryType = {
+  args: { columns: 2 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="(p, i) in periods" :key="p.value" :value="p.value" :label="p.label" is-available icon="calendar" :icon-position="i % 2 ? 'end' : 'start'" />
+  `),
+};
+
+export const IconTwoLinesBadge: StoryType = {
+  args: { columns: 1 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available icon="calendar" :badge="'−' + p.discount + '%'">
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `),
+};
+
+export const BadgeEnd: StoryType = {
+  args: { columns: 1 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :badge="'−' + p.discount + '%'">
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `),
+};
+
+export const BadgeTop: StoryType = {
+  args: { columns: 2 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :badge="'−' + p.discount + '%'" badge-position="top">
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `),
+};
+
+export const BadgeTopTintedSurface: StoryType = {
+  args: { columns: 2, size: "sm", surface: "tinted" },
+  render: renderPeriods(
+    `
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :badge="'−' + p.discount + '%'" badge-position="top">
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `,
+    "w-72 p-3 rounded-[--vc-radius] bg-secondary-50 [--vc-variant-picker-surface-color:var(--color-secondary-50)]",
+  ),
+};
+
+export const BadgeTopDarkSurface: StoryType = {
+  args: { columns: 2, surface: "dark" },
+  render: renderPeriods(
+    `
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :badge="'−' + p.discount + '%'" badge-position="top">
+      <template #description><VcProductPrice :actual-price="p.price" single-line /></template>
+    </VcVariantPicker>
+  `,
+    "w-80 p-3 rounded-[--vc-radius] bg-secondary-900 [--vc-variant-picker-surface-color:var(--color-secondary-900)]",
+  ),
+};
+
+export const FillWidth: StoryType = {
+  args: { fill: true },
+  render: renderPeriods(
+    `
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available :badge="'−' + p.discount + '%'" badge-position="top" />
+  `,
+    "w-[36rem]",
+  ),
+};
+
+export const TextWidthInColumns: StoryType = {
+  args: { columns: 2, fill: false },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="p in periods" :key="p.value" :value="p.value" :label="p.label" is-available />
+  `),
+};
+
+export const UnavailableTwoLines: StoryType = {
+  args: { columns: 2 },
+  render: renderPeriods(`
+    <VcVariantPicker v-for="(p, i) in periods" :key="p.value" :value="p.value" :label="p.label" :description="'Save ' + p.discount + '%'" :is-available="i !== 3" :tooltip="i === 3 ? 'Not offered for this product' : undefined" />
+  `),
+};

@@ -27,14 +27,26 @@
           v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
         />
 
-        <AddToCartSimple v-else :product="variation">
-          <InStock
-            :is-in-stock="variation.availabilityData.isInStock"
-            :quantity="variation.availabilityData.availableQuantity"
-          />
+        <template v-else>
+          <AddToCartSimple :product="variation">
+            <InStock
+              :is-in-stock="variation.availabilityData.isInStock"
+              :quantity="variation.availabilityData.availableQuantity"
+            />
 
-          <CountInCart :product-id="variation.id" />
-        </AddToCartSimple>
+            <CountInCart :product-id="variation.id" />
+          </AddToCartSimple>
+
+          <ExtensionPoint
+            v-if="
+              $canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationPurchaseOptions, variation)
+            "
+            :name="EXTENSION_NAMES.productPage.variationPurchaseOptions"
+            category="productPage"
+            :product="variation"
+            compact
+          />
+        </template>
       </VcLineItem>
 
       <VcPagination

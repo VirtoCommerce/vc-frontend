@@ -77,7 +77,7 @@ interface IUiKitOptions {
 
 declare const uiKit: Plugin<[IUiKitOptions?]>;
 
-interface IProps$Q {
+interface IProps$10 {
     color?: VcBadgeColorType;
     size?: VcBadgeSizeType;
     variant?: VcBadgeVariantType;
@@ -87,31 +87,31 @@ interface IProps$Q {
     square?: boolean;
     maxWidth?: string;
 }
-declare var __VLS_1$a: {};
-type __VLS_Slots$v = {} & {
-    default?: (props: typeof __VLS_1$a) => any;
+declare var __VLS_1$e: {};
+type __VLS_Slots$D = {} & {
+    default?: (props: typeof __VLS_1$e) => any;
 };
-declare const __VLS_base$v: vue.DefineComponent<IProps$Q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$Q> & Readonly<{}>, {
+declare const __VLS_base$D: vue.DefineComponent<IProps$10, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$10> & Readonly<{}>, {
     size: VcBadgeSizeType;
     color: VcBadgeColorType;
     variant: VcBadgeVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$U: __VLS_WithSlots$v<typeof __VLS_base$v, __VLS_Slots$v>;
-declare const _default$U: typeof __VLS_export$U;
+declare const __VLS_export$16: __VLS_WithSlots$D<typeof __VLS_base$D, __VLS_Slots$D>;
+declare const _default$16: typeof __VLS_export$16;
 
-type __VLS_WithSlots$v<T, S> = T & {
+type __VLS_WithSlots$D<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$P {
+interface IProps$$ {
     items: IBreadcrumb[];
 }
-declare const __VLS_export$T: vue.DefineComponent<IProps$P, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$P> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$T: typeof __VLS_export$T;
+declare const __VLS_export$15: vue.DefineComponent<IProps$$, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$$> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$15: typeof __VLS_export$15;
 
-interface IProps$O {
+interface IProps$_ {
     modelValue?: boolean;
     /**
      * Form field name. Used as the accessible name only when there is neither `ariaLabel` nor a default slot.
@@ -144,15 +144,15 @@ declare var __VLS_16$3: {
 declare var __VLS_19$1: {
     checked: boolean;
 };
-type __VLS_Slots$u = {} & {
+type __VLS_Slots$C = {} & {
     default?: (props: typeof __VLS_16$3) => any;
 } & {
     tooltip?: (props: typeof __VLS_19$1) => any;
 };
-declare const __VLS_base$u: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$C: vue.DefineComponent<IProps$_, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
     "update:modelValue": (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$O> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$_> & Readonly<{
     onChange?: ((value: boolean) => any) | undefined;
     "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
@@ -165,59 +165,59 @@ declare const __VLS_base$u: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.Co
         disabled?: boolean;
     };
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$S: __VLS_WithSlots$u<typeof __VLS_base$u, __VLS_Slots$u>;
-declare const _default$S: typeof __VLS_export$S;
+declare const __VLS_export$14: __VLS_WithSlots$C<typeof __VLS_base$C, __VLS_Slots$C>;
+declare const _default$14: typeof __VLS_export$14;
 
-type __VLS_WithSlots$u<T, S> = T & {
+type __VLS_WithSlots$C<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
 type CheckboxGroupValueType = string | number | object;
-interface IProps$N {
+interface IProps$Z {
     modelValue?: (string | number | object)[];
 }
-declare var __VLS_1$9: {};
-type __VLS_Slots$t = {} & {
-    default?: (props: typeof __VLS_1$9) => any;
+declare var __VLS_1$d: {};
+type __VLS_Slots$B = {} & {
+    default?: (props: typeof __VLS_1$d) => any;
 };
-declare const __VLS_base$t: vue.DefineComponent<IProps$N, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$B: vue.DefineComponent<IProps$Z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: CheckboxGroupValueType[]) => any;
     "update:modelValue": (value: CheckboxGroupValueType[]) => any;
-}, string, vue.PublicProps, Readonly<IProps$N> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$Z> & Readonly<{
     onChange?: ((value: CheckboxGroupValueType[]) => any) | undefined;
     "onUpdate:modelValue"?: ((value: CheckboxGroupValueType[]) => any) | undefined;
 }>, {
     modelValue: (string | number | object)[];
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$R: __VLS_WithSlots$t<typeof __VLS_base$t, __VLS_Slots$t>;
-declare const _default$R: typeof __VLS_export$R;
+declare const __VLS_export$13: __VLS_WithSlots$B<typeof __VLS_base$B, __VLS_Slots$B>;
+declare const _default$13: typeof __VLS_export$13;
 
-type __VLS_WithSlots$t<T, S> = T & {
+type __VLS_WithSlots$B<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$M {
+interface IProps$Y {
     loading?: boolean;
     maxWidth?: string;
     bgColor?: string;
     hasBgImage?: boolean;
     noPadding?: boolean;
 }
-declare var __VLS_1$8: {};
-type __VLS_Slots$s = {} & {
-    default?: (props: typeof __VLS_1$8) => any;
+declare var __VLS_1$c: {};
+type __VLS_Slots$A = {} & {
+    default?: (props: typeof __VLS_1$c) => any;
 };
-declare const __VLS_base$s: vue.DefineComponent<IProps$M, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$M> & Readonly<{}>, {
+declare const __VLS_base$A: vue.DefineComponent<IProps$Y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$Y> & Readonly<{}>, {
     hasBgImage: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$Q: __VLS_WithSlots$s<typeof __VLS_base$s, __VLS_Slots$s>;
-declare const _default$Q: typeof __VLS_export$Q;
+declare const __VLS_export$12: __VLS_WithSlots$A<typeof __VLS_base$A, __VLS_Slots$A>;
+declare const _default$12: typeof __VLS_export$12;
 
-type __VLS_WithSlots$s<T, S> = T & {
+type __VLS_WithSlots$A<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -232,7 +232,7 @@ declare function getFileSize(bytes?: number): IFileSize;
 
 type IconVariantType = "solid" | "outline";
 
-interface IProps$L {
+interface IProps$X {
     name?: string;
     size?: VcIconSizeType;
     color?: string;
@@ -240,13 +240,13 @@ interface IProps$L {
     label?: string;
     strokeWidth?: number;
 }
-declare const __VLS_export$P: vue.DefineComponent<IProps$L, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$L> & Readonly<{}>, {
+declare const __VLS_export$11: vue.DefineComponent<IProps$X, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$X> & Readonly<{}>, {
     name: string;
     color: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$P: typeof __VLS_export$P;
+declare const _default$11: typeof __VLS_export$11;
 
-interface IProps$K {
+interface IProps$W {
     lazy?: boolean;
     src?: string;
     alt?: string;
@@ -259,12 +259,12 @@ interface IProps$K {
      */
     sizeSuffix?: "sm" | "md" | "lg";
 }
-declare const __VLS_export$O: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
+declare const __VLS_export$10: vue.DefineComponent<IProps$W, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$W> & Readonly<{}>, {
     src: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$O: typeof __VLS_export$O;
+declare const _default$10: typeof __VLS_export$10;
 
-interface IProps$J {
+interface IProps$V {
     id?: string;
     message?: string;
     singleLine?: boolean;
@@ -274,12 +274,12 @@ interface IProps$J {
     textLength?: number;
     maxLength?: number | string;
 }
-declare const __VLS_export$N: vue.DefineComponent<IProps$J, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$J> & Readonly<{}>, {
+declare const __VLS_export$$: vue.DefineComponent<IProps$V, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$V> & Readonly<{}>, {
     textLength: number;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$N: typeof __VLS_export$N;
+declare const _default$$: typeof __VLS_export$$;
 
-interface IProps$I {
+interface IProps$U {
     required?: boolean;
     error?: boolean;
     /**
@@ -290,45 +290,107 @@ interface IProps$I {
     size?: "xs" | "sm" | "md" | "lg";
 }
 declare var __VLS_8$8: {};
-type __VLS_Slots$r = {} & {
+type __VLS_Slots$z = {} & {
     default?: (props: typeof __VLS_8$8) => any;
 };
-declare const __VLS_base$r: vue.DefineComponent<IProps$I, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$I> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$M: __VLS_WithSlots$r<typeof __VLS_base$r, __VLS_Slots$r>;
-declare const _default$M: typeof __VLS_export$M;
+declare const __VLS_base$z: vue.DefineComponent<IProps$U, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$U> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$_: __VLS_WithSlots$z<typeof __VLS_base$z, __VLS_Slots$z>;
+declare const _default$_: typeof __VLS_export$_;
 
-type __VLS_WithSlots$r<T, S> = T & {
+type __VLS_WithSlots$z<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$H {
+interface IProps$T {
     to?: RouteLocationRaw;
     externalLink?: RouteLocationRaw;
     disabled?: boolean;
 }
 declare var __VLS_8$7: {};
-type __VLS_Slots$q = {} & {
+type __VLS_Slots$y = {} & {
     default?: (props: typeof __VLS_8$7) => any;
 };
-declare const __VLS_base$q: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$H> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$L: __VLS_WithSlots$q<typeof __VLS_base$q, __VLS_Slots$q>;
-declare const _default$L: typeof __VLS_export$L;
+declare const __VLS_base$y: vue.DefineComponent<IProps$T, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$T> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$Z: __VLS_WithSlots$y<typeof __VLS_base$y, __VLS_Slots$y>;
+declare const _default$Z: typeof __VLS_export$Z;
 
-type __VLS_WithSlots$q<T, S> = T & {
+type __VLS_WithSlots$y<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$G {
+declare const __VLS_export$Y: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const _default$Y: typeof __VLS_export$Y;
+
+interface IProps$S {
     src: string;
 }
-declare const __VLS_export$K: vue.DefineComponent<IProps$G, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$G> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$K: typeof __VLS_export$K;
+declare const __VLS_export$X: vue.DefineComponent<IProps$S, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$S> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$X: typeof __VLS_export$X;
 
-interface IProps$F {
+interface IProps$R {
+    value?: Pick<VcMoneyType, "formattedAmount">;
+}
+declare const __VLS_export$W: vue.DefineComponent<IProps$R, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$R> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$W: typeof __VLS_export$W;
+
+interface IProps$Q {
+    label?: string;
+    name?: string;
+    value: string;
+    disabled?: boolean;
+    size?: "xs" | "sm" | "md";
+    labelPosition?: "left" | "right";
+    showEmptyDetails?: boolean;
+    message?: string;
+    error?: boolean;
+    singleLineMessage?: boolean;
+    wordBreak?: string;
+    maxLines?: number;
+    noIndicator?: boolean;
+    testIdInput?: string;
+    ariaLabel?: string;
+    tabindex?: number;
+}
+type __VLS_Props$2 = IProps$Q;
+type __VLS_ModelProps$2 = {
+    modelValue?: IProps$Q["value"];
+};
+type __VLS_PublicProps$2 = __VLS_Props$2 & __VLS_ModelProps$2;
+declare var __VLS_9$5: {
+    checked: boolean;
+    value: string;
+    label: string | undefined;
+};
+type __VLS_Slots$x = {} & {
+    default?: (props: typeof __VLS_9$5) => any;
+};
+declare const __VLS_base$x: vue.DefineComponent<__VLS_PublicProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
+    "update:modelValue": (value: string | undefined) => any;
+} & {
+    input: (value: string) => any;
+    change: (value: string) => any;
+}, string, vue.PublicProps, Readonly<__VLS_PublicProps$2> & Readonly<{
+    onInput?: ((value: string) => any) | undefined;
+    onChange?: ((value: string) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: string | undefined) => any) | undefined;
+}>, {
+    size: "xs" | "sm" | "md";
+    labelPosition: "left" | "right";
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$V: __VLS_WithSlots$x<typeof __VLS_base$x, __VLS_Slots$x>;
+declare const _default$V: typeof __VLS_export$V;
+
+type __VLS_WithSlots$x<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$P {
     placement?: VcTooltipPlacementType;
     strategy?: VcTooltipStrategyType;
     flipOptions?: VcTooltipFlipOptionsType;
@@ -359,16 +421,16 @@ declare var __VLS_9$4: {
 };
 declare var __VLS_12$2: {};
 declare var __VLS_15$1: {};
-type __VLS_Slots$p = {} & {
+type __VLS_Slots$w = {} & {
     default?: (props: typeof __VLS_9$4) => any;
 } & {
     trigger?: (props: typeof __VLS_12$2) => any;
 } & {
     content?: (props: typeof __VLS_15$1) => any;
 };
-declare const __VLS_base$p: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$w: vue.DefineComponent<IProps$P, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     shown: (isShown: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$F> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$P> & Readonly<{
     onShown?: ((isShown: boolean) => any) | undefined;
 }>, {
     width: string;
@@ -376,16 +438,16 @@ declare const __VLS_base$p: vue.DefineComponent<IProps$F, {}, {}, {}, {}, vue.Co
     offsetOptions: VcTooltipOffsetOptionsType;
     hover: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$J: __VLS_WithSlots$p<typeof __VLS_base$p, __VLS_Slots$p>;
-declare const _default$J: typeof __VLS_export$J;
+declare const __VLS_export$U: __VLS_WithSlots$w<typeof __VLS_base$w, __VLS_Slots$w>;
+declare const _default$U: typeof __VLS_export$U;
 
-type __VLS_WithSlots$p<T, S> = T & {
+type __VLS_WithSlots$w<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$E {
+interface IProps$O {
     color?: VcAlertColorType;
     icon?: boolean | string;
     variant?: VcAlertVariantType;
@@ -394,35 +456,35 @@ interface IProps$E {
     shadow?: boolean;
     closable?: boolean;
 }
-declare var __VLS_1$7: {};
+declare var __VLS_1$b: {};
 declare var __VLS_8$6: {};
 declare var __VLS_10$2: {};
-type __VLS_Slots$o = {} & {
-    'main-icon'?: (props: typeof __VLS_1$7) => any;
+type __VLS_Slots$v = {} & {
+    'main-icon'?: (props: typeof __VLS_1$b) => any;
 } & {
     default?: (props: typeof __VLS_8$6) => any;
 } & {
     'close-icon'?: (props: typeof __VLS_10$2) => any;
 };
-declare const __VLS_base$o: vue.DefineComponent<IProps$E, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$v: vue.DefineComponent<IProps$O, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$O> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     size: VcAlertSizeType;
     color: VcAlertColorType;
     variant: VcAlertVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$I: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
-declare const _default$I: typeof __VLS_export$I;
+declare const __VLS_export$T: __VLS_WithSlots$v<typeof __VLS_base$v, __VLS_Slots$v>;
+declare const _default$T: typeof __VLS_export$T;
 
-type __VLS_WithSlots$o<T, S> = T & {
+type __VLS_WithSlots$v<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$D {
+interface IProps$N {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -453,7 +515,7 @@ declare var __VLS_16$2: {};
 declare var __VLS_23: {};
 declare var __VLS_25: {};
 declare var __VLS_32: {};
-type __VLS_Slots$n = {} & {
+type __VLS_Slots$u = {} & {
     prepend?: (props: typeof __VLS_16$2) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
@@ -462,13 +524,13 @@ type __VLS_Slots$n = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$n: vue.DefineComponent<IProps$D, {
+declare const __VLS_base$u: vue.DefineComponent<IProps$N, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$N> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
@@ -483,16 +545,16 @@ declare const __VLS_base$n: vue.DefineComponent<IProps$D, {
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$H: __VLS_WithSlots$n<typeof __VLS_base$n, __VLS_Slots$n>;
-declare const _default$H: typeof __VLS_export$H;
+declare const __VLS_export$S: __VLS_WithSlots$u<typeof __VLS_base$u, __VLS_Slots$u>;
+declare const _default$S: typeof __VLS_export$S;
 
-type __VLS_WithSlots$n<T, S> = T & {
+type __VLS_WithSlots$u<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$C {
+interface IProps$M {
     modelValue?: string;
     size?: VcCalendarSizeType;
     min?: string;
@@ -543,16 +605,16 @@ declare var __VLS_99: {
     outsideVisibleView: boolean;
     unavailable: boolean;
 };
-type __VLS_Slots$m = {} & {
+type __VLS_Slots$t = {} & {
     day?: (props: typeof __VLS_99) => any;
 };
-declare const __VLS_base$m: vue.DefineComponent<IProps$C, {
+declare const __VLS_base$t: vue.DefineComponent<IProps$M, {
     focusActiveCell: () => void;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     clear: () => any;
     "update:modelValue": (value: string | undefined) => any;
     "update:month": (value: string) => any;
-}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$M> & Readonly<{
     onClear?: (() => any) | undefined;
     "onUpdate:modelValue"?: ((value: string | undefined) => any) | undefined;
     "onUpdate:month"?: ((value: string) => any) | undefined;
@@ -573,16 +635,16 @@ declare const __VLS_base$m: vue.DefineComponent<IProps$C, {
     weekdayFormat: VcCalendarWeekdayFormatType;
     dayDescriptions: Record<string, string>;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$G: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
-declare const _default$G: typeof __VLS_export$G;
+declare const __VLS_export$R: __VLS_WithSlots$t<typeof __VLS_base$t, __VLS_Slots$t>;
+declare const _default$R: typeof __VLS_export$R;
 
-type __VLS_WithSlots$m<T, S> = T & {
+type __VLS_WithSlots$t<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$B {
+interface IProps$L {
     color?: VcChipColorType;
     variant?: VcChipVariantType;
     size?: VcChipSizeType;
@@ -604,15 +666,15 @@ interface IProps$B {
 }
 declare var __VLS_14: {};
 declare var __VLS_16$1: {};
-type __VLS_Slots$l = {} & {
+type __VLS_Slots$s = {} & {
     default?: (props: typeof __VLS_14) => any;
 } & {
     'close-icon'?: (props: typeof __VLS_16$1) => any;
 };
-declare const __VLS_base$l: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$s: vue.DefineComponent<IProps$L, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: () => any;
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$L> & Readonly<{
     onClick?: (() => any) | undefined;
     onClose?: (() => any) | undefined;
 }>, {
@@ -623,10 +685,10 @@ declare const __VLS_base$l: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.Co
     tabindex: string | number;
     nowrap: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$F: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
-declare const _default$F: typeof __VLS_export$F;
+declare const __VLS_export$Q: __VLS_WithSlots$s<typeof __VLS_base$s, __VLS_Slots$s>;
+declare const _default$Q: typeof __VLS_export$Q;
 
-type __VLS_WithSlots$l<T, S> = T & {
+type __VLS_WithSlots$s<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -644,7 +706,7 @@ declare function useQuantityValidationSchema(payload: {
     quantitySchema: vue.ComputedRef<NumberSchema<number | undefined, yup.AnyObject, undefined, "">>;
 };
 
-interface IProps$A {
+interface IProps$K {
     dividers?: boolean;
     width?: string;
     maxHeight?: string;
@@ -652,91 +714,153 @@ interface IProps$A {
     autoFocus?: boolean;
     trapFocus?: boolean;
 }
-declare var __VLS_1$6: {};
-type __VLS_Slots$k = {} & {
-    default?: (props: typeof __VLS_1$6) => any;
+declare var __VLS_1$a: {};
+type __VLS_Slots$r = {} & {
+    default?: (props: typeof __VLS_1$a) => any;
 };
-declare const __VLS_base$k: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
+declare const __VLS_base$r: vue.DefineComponent<IProps$K, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$K> & Readonly<{}>, {
     size: VcDialogSizeType;
     autoFocus: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$E: __VLS_WithSlots$k<typeof __VLS_base$k, __VLS_Slots$k>;
-declare const _default$E: typeof __VLS_export$E;
+declare const __VLS_export$P: __VLS_WithSlots$r<typeof __VLS_base$r, __VLS_Slots$r>;
+declare const _default$P: typeof __VLS_export$P;
 
-type __VLS_WithSlots$k<T, S> = T & {
+type __VLS_WithSlots$r<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$z {
+interface IProps$J {
     scrollable?: boolean;
 }
 declare var __VLS_8$5: {};
 declare var __VLS_10$1: {};
-type __VLS_Slots$j = {} & {
+type __VLS_Slots$q = {} & {
     container?: (props: typeof __VLS_8$5) => any;
 } & {
     default?: (props: typeof __VLS_10$1) => any;
 };
-declare const __VLS_base$j: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{}>, {
+declare const __VLS_base$q: vue.DefineComponent<IProps$J, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$J> & Readonly<{}>, {
     scrollable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$D: __VLS_WithSlots$j<typeof __VLS_base$j, __VLS_Slots$j>;
-declare const _default$D: typeof __VLS_export$D;
+declare const __VLS_export$O: __VLS_WithSlots$q<typeof __VLS_base$q, __VLS_Slots$q>;
+declare const _default$O: typeof __VLS_export$O;
 
-type __VLS_WithSlots$j<T, S> = T & {
+type __VLS_WithSlots$q<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-declare var __VLS_1$5: {};
-declare var __VLS_3$2: {};
-type __VLS_Slots$i = {} & {
-    container?: (props: typeof __VLS_1$5) => any;
+declare var __VLS_1$9: {};
+declare var __VLS_3$3: {};
+type __VLS_Slots$p = {} & {
+    container?: (props: typeof __VLS_1$9) => any;
 } & {
-    default?: (props: typeof __VLS_3$2) => any;
+    default?: (props: typeof __VLS_3$3) => any;
 };
-declare const __VLS_base$i: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$p: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
 }, string, vue.PublicProps, Readonly<{}> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const __VLS_export$C: __VLS_WithSlots$i<typeof __VLS_base$i, __VLS_Slots$i>;
-declare const _default$C: typeof __VLS_export$C;
+declare const __VLS_export$N: __VLS_WithSlots$p<typeof __VLS_base$p, __VLS_Slots$p>;
+declare const _default$N: typeof __VLS_export$N;
 
-type __VLS_WithSlots$i<T, S> = T & {
+type __VLS_WithSlots$p<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$y {
+interface IProps$I {
     color?: VcMainColorType;
     icon?: string;
     closable?: boolean;
     size?: VcDialogSizeType;
 }
-declare var __VLS_1$4: {};
+declare var __VLS_1$8: {};
 declare var __VLS_8$4: {};
-type __VLS_Slots$h = {} & {
-    main?: (props: typeof __VLS_1$4) => any;
+type __VLS_Slots$o = {} & {
+    main?: (props: typeof __VLS_1$8) => any;
 } & {
     default?: (props: typeof __VLS_8$4) => any;
 };
-declare const __VLS_base$h: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$o: vue.DefineComponent<IProps$I, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$I> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     color: VcMainColorType;
     closable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$B: __VLS_WithSlots$h<typeof __VLS_base$h, __VLS_Slots$h>;
-declare const _default$B: typeof __VLS_export$B;
+declare const __VLS_export$M: __VLS_WithSlots$o<typeof __VLS_base$o, __VLS_Slots$o>;
+declare const _default$M: typeof __VLS_export$M;
 
-type __VLS_WithSlots$h<T, S> = T & {
+type __VLS_WithSlots$o<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$H {
+    placement?: VcDropdownMenuPlacementType;
+    maxHeight?: string;
+    offsetOptions?: VcDropdownMenuOffsetOptionsType;
+    hover?: boolean;
+    disabled?: boolean;
+    width?: string;
+    zIndex?: number | string;
+    dividers?: boolean;
+    listRole?: string;
+    listId?: string;
+    listLabel?: string;
+    /** Defer rendering menu content until the menu is first opened (forwarded to VcPopover). */
+    lazy?: boolean;
+    /** Teleport target selector for the menu content; defaults to the global popover host (forwarded to VcPopover). */
+    teleportSelector?: string;
+}
+declare var __VLS_11$2: {
+    toggle: () => void;
+    open: () => void;
+    close: () => void;
+    opened: boolean;
+    triggerProps: {
+        onMouseenter: (() => void) | undefined;
+        onMouseleave: (() => void) | undefined;
+        onFocusin: (() => void) | undefined;
+        onFocusout: (() => void) | undefined;
+        onClick: (() => void) | undefined;
+        onKeydown: (e: KeyboardEvent) => void;
+        "aria-haspopup": ("menu" | "dialog" | "grid" | "listbox" | "tree") | undefined;
+        "aria-expanded": boolean;
+        "aria-controls": string | undefined;
+        role: "button";
+    };
+};
+declare var __VLS_20$1: {
+    close: () => void;
+};
+type __VLS_Slots$n = {} & {
+    trigger?: (props: typeof __VLS_11$2) => any;
+} & {
+    content?: (props: typeof __VLS_20$1) => any;
+};
+declare const __VLS_base$n: vue.DefineComponent<IProps$H, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    toggle: (value: boolean) => any;
+}, string, vue.PublicProps, Readonly<IProps$H> & Readonly<{
+    onToggle?: ((value: boolean) => any) | undefined;
+}>, {
+    dividers: boolean;
+    zIndex: number | string;
+    placement: VcDropdownMenuPlacementType;
+    offsetOptions: VcDropdownMenuOffsetOptionsType;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$L: __VLS_WithSlots$n<typeof __VLS_base$n, __VLS_Slots$n>;
+declare const _default$L: typeof __VLS_export$L;
+
+type __VLS_WithSlots$n<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -747,29 +871,29 @@ interface IProp {
     icon?: string;
     variant?: VcEmptyViewVariantType;
 }
-declare var __VLS_1$3: {};
+declare var __VLS_1$7: {};
 declare var __VLS_8$3: {};
 declare var __VLS_10: {};
-type __VLS_Slots$g = {} & {
-    icon?: (props: typeof __VLS_1$3) => any;
+type __VLS_Slots$m = {} & {
+    icon?: (props: typeof __VLS_1$7) => any;
 } & {
     default?: (props: typeof __VLS_8$3) => any;
 } & {
     button?: (props: typeof __VLS_10) => any;
 };
-declare const __VLS_base$g: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
+declare const __VLS_base$m: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
     variant: VcEmptyViewVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$A: __VLS_WithSlots$g<typeof __VLS_base$g, __VLS_Slots$g>;
-declare const _default$A: typeof __VLS_export$A;
+declare const __VLS_export$K: __VLS_WithSlots$m<typeof __VLS_base$m, __VLS_Slots$m>;
+declare const _default$K: typeof __VLS_export$K;
 
-type __VLS_WithSlots$g<T, S> = T & {
+type __VLS_WithSlots$m<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$x {
+interface IProps$G {
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
     readonly?: boolean;
@@ -812,8 +936,8 @@ interface IProps$x {
     tabindex?: string | number;
     mask?: string | MaskOptions;
 }
-declare const __VLS_export$z: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
-    props: vue.PublicProps & __VLS_PrettifyLocal$2<(IProps$x & {
+declare const __VLS_export$J: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$3<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$3<(IProps$G & {
         modelValue?: T;
     }) & {
         onBlur?: ((blurEvent: FocusEvent) => any) | undefined;
@@ -844,7 +968,84 @@ declare const __VLS_export$z: <T extends string | number | null>(__VLS_props: No
 }>) => vue.VNode & {
     __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
 };
-declare const _default$z: typeof __VLS_export$z;
+declare const _default$J: typeof __VLS_export$J;
+
+type __VLS_PrettifyLocal$3<T> = (T extends any ? {
+    [K in keyof T]: T[K];
+} : {
+    [K in keyof T as K]: T[K];
+}) & {};
+
+interface IEmits<T extends VcLineItemType> {
+    (event: "remove:items", value: string[]): void;
+    (event: "select:items", value: {
+        itemIds: string[];
+        selected: boolean;
+    }): void;
+    (event: "linkClick", value: T): void;
+}
+interface IProps$F<T extends VcLineItemType> {
+    disabled?: boolean;
+    readonly?: boolean;
+    removable?: boolean;
+    items?: T[];
+    sharedSelectedItemIds?: string[];
+    selectable?: boolean;
+    withImage?: boolean;
+    withProperties?: boolean;
+    withPrice?: boolean;
+    withTotal?: boolean;
+    withSubtotal?: boolean;
+    withHeader?: boolean;
+    browserTarget?: BrowserTargetType;
+    /** Currency code used to format the subtotal (e.g. for foreign-currency groups). Defaults to the app currency. */
+    subtotalCurrencyCode?: string;
+}
+declare const __VLS_export$I: <T extends VcLineItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$2<IProps$F<T> & {
+        "onRemove:items"?: ((value: string[]) => any) | undefined;
+        onLinkClick?: ((value: T) => any) | undefined;
+        "onSelect:items"?: ((value: {
+            itemIds: string[];
+            selected: boolean;
+        }) => any) | undefined;
+    }> & (typeof globalThis extends {
+        __VLS_PROPS_FALLBACK: infer P;
+    } ? P : {});
+    expose: (exposed: {}) => void;
+    attrs: any;
+    slots: {
+        titles?: (props: {}) => any;
+    } & {
+        'line-items'?: (props: {}) => any;
+    } & {
+        'before-content'?: (props: {
+            item: T;
+        }) => any;
+    } & {
+        default?: (props: {
+            item: T;
+        }) => any;
+    } & {
+        'after-content'?: (props: {
+            item: T;
+        }) => any;
+    } & {
+        'after-image'?: (props: {
+            item: T;
+        }) => any;
+    } & {
+        'after-title'?: (props: {
+            item: T;
+        }) => any;
+    } & {
+        'after-items'?: (props: {}) => any;
+    };
+    emit: IEmits<T>;
+}>) => vue.VNode & {
+    __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
+};
+declare const _default$I: typeof __VLS_export$I;
 
 type __VLS_PrettifyLocal$2<T> = (T extends any ? {
     [K in keyof T]: T[K];
@@ -852,28 +1053,63 @@ type __VLS_PrettifyLocal$2<T> = (T extends any ? {
     [K in keyof T as K]: T[K];
 }) & {};
 
-interface IProps$w {
-    visible?: boolean;
-    fixedSpinner?: boolean;
-    noBg?: boolean;
-}
-declare var __VLS_12$1: {};
-type __VLS_Slots$f = {} & {
-    default?: (props: typeof __VLS_12$1) => any;
+declare var __VLS_1$6: {};
+type __VLS_Slots$l = {} & {
+    default?: (props: typeof __VLS_1$6) => any;
 };
-declare const __VLS_base$f: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$w> & Readonly<{}>, {
-    visible: boolean;
-}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$y: __VLS_WithSlots$f<typeof __VLS_base$f, __VLS_Slots$f>;
-declare const _default$y: typeof __VLS_export$y;
+declare const __VLS_base$l: vue.DefineComponent<{}, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const __VLS_export$H: __VLS_WithSlots$l<typeof __VLS_base$l, __VLS_Slots$l>;
+declare const _default$H: typeof __VLS_export$H;
 
-type __VLS_WithSlots$f<T, S> = T & {
+type __VLS_WithSlots$l<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$v {
+interface IProps$E {
+    title?: string;
+    description?: string;
+}
+declare var __VLS_1$5: {};
+declare var __VLS_3$2: {};
+type __VLS_Slots$k = {} & {
+    title?: (props: typeof __VLS_1$5) => any;
+} & {
+    default?: (props: typeof __VLS_3$2) => any;
+};
+declare const __VLS_base$k: vue.DefineComponent<IProps$E, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$E> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$G: __VLS_WithSlots$k<typeof __VLS_base$k, __VLS_Slots$k>;
+declare const _default$G: typeof __VLS_export$G;
+
+type __VLS_WithSlots$k<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$D {
+    visible?: boolean;
+    fixedSpinner?: boolean;
+    noBg?: boolean;
+}
+declare var __VLS_12$1: {};
+type __VLS_Slots$j = {} & {
+    default?: (props: typeof __VLS_12$1) => any;
+};
+declare const __VLS_base$j: vue.DefineComponent<IProps$D, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$D> & Readonly<{}>, {
+    visible: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$F: __VLS_WithSlots$j<typeof __VLS_base$j, __VLS_Slots$j>;
+declare const _default$F: typeof __VLS_export$F;
+
+type __VLS_WithSlots$j<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$C {
     color?: VcMenuItemColorType;
     size?: "xs" | "sm" | "md" | "lg";
     to?: RouteLocationRaw;
@@ -894,32 +1130,32 @@ interface IProps$v {
 declare var __VLS_17: {};
 declare var __VLS_19: {};
 declare var __VLS_21$1: {};
-type __VLS_Slots$e = {} & {
+type __VLS_Slots$i = {} & {
     prepend?: (props: typeof __VLS_17) => any;
 } & {
     default?: (props: typeof __VLS_19) => any;
 } & {
     append?: (props: typeof __VLS_21$1) => any;
 };
-declare const __VLS_base$e: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$i: vue.DefineComponent<IProps$C, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$v> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$C> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
     color: VcMenuItemColorType;
     clickable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$x: __VLS_WithSlots$e<typeof __VLS_base$e, __VLS_Slots$e>;
-declare const _default$x: typeof __VLS_export$x;
+declare const __VLS_export$E: __VLS_WithSlots$i<typeof __VLS_base$i, __VLS_Slots$i>;
+declare const _default$E: typeof __VLS_export$E;
 
-type __VLS_WithSlots$e<T, S> = T & {
+type __VLS_WithSlots$i<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$u {
+interface IProps$B {
     placement?: VcPopoverPlacementType;
     strategy?: VcPopoverStrategyType;
     flipOptions?: VcPopoverFlipOptionsType;
@@ -967,7 +1203,7 @@ type HaspopupTokenType = Exclude<VcPopoverRoleType, "tooltip">;
 declare function open(): void;
 declare function close$2(): void;
 declare function toggle(): void;
-declare var __VLS_1$2: {
+declare var __VLS_1$4: {
     open: typeof open;
     close: typeof close$2;
     toggle: typeof toggle;
@@ -999,16 +1235,16 @@ declare var __VLS_3$1: {
 declare var __VLS_11$1: {
     close: typeof close$2;
 };
-type __VLS_Slots$d = {} & {
-    default?: (props: typeof __VLS_1$2) => any;
+type __VLS_Slots$h = {} & {
+    default?: (props: typeof __VLS_1$4) => any;
 } & {
     trigger?: (props: typeof __VLS_3$1) => any;
 } & {
     content?: (props: typeof __VLS_11$1) => any;
 };
-declare const __VLS_base$d: vue.DefineComponent<IProps$u, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$h: vue.DefineComponent<IProps$B, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggle: (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$u> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$B> & Readonly<{
     onToggle?: ((value: boolean) => any) | undefined;
 }>, {
     zIndex: number | string;
@@ -1016,36 +1252,36 @@ declare const __VLS_base$d: vue.DefineComponent<IProps$u, {}, {}, {}, {}, vue.Co
     enableTeleport: boolean | null;
     teleportSelector: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$w: __VLS_WithSlots$d<typeof __VLS_base$d, __VLS_Slots$d>;
-declare const _default$w: typeof __VLS_export$w;
+declare const __VLS_export$D: __VLS_WithSlots$h<typeof __VLS_base$h, __VLS_Slots$h>;
+declare const _default$D: typeof __VLS_export$D;
 
-type __VLS_WithSlots$d<T, S> = T & {
+type __VLS_WithSlots$h<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$t {
+interface IProps$A {
     direction?: "horizontal" | "vertical";
     withBackground?: boolean;
 }
-declare var __VLS_1$1: {};
-type __VLS_Slots$c = {} & {
-    default?: (props: typeof __VLS_1$1) => any;
+declare var __VLS_1$3: {};
+type __VLS_Slots$g = {} & {
+    default?: (props: typeof __VLS_1$3) => any;
 };
-declare const __VLS_base$c: vue.DefineComponent<IProps$t, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$t> & Readonly<{}>, {
+declare const __VLS_base$g: vue.DefineComponent<IProps$A, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$A> & Readonly<{}>, {
     direction: "horizontal" | "vertical";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$v: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
-declare const _default$v: typeof __VLS_export$v;
+declare const __VLS_export$C: __VLS_WithSlots$g<typeof __VLS_base$g, __VLS_Slots$g>;
+declare const _default$C: typeof __VLS_export$C;
 
-type __VLS_WithSlots$c<T, S> = T & {
+type __VLS_WithSlots$g<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$s {
+interface IProps$z {
     disabled?: boolean;
     loading?: boolean;
     active?: boolean;
@@ -1056,18 +1292,18 @@ interface IProps$s {
     icon?: string;
     iconSize?: VcIconSizeType;
 }
-declare const __VLS_export$u: vue.DefineComponent<IProps$s, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$B: vue.DefineComponent<IProps$z, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: () => any;
-}, string, vue.PublicProps, Readonly<IProps$s> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$z> & Readonly<{
     onClick?: (() => any) | undefined;
 }>, {
     color: VcProductActionsButtonColorType;
     icon: string;
     tooltipText: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$u: typeof __VLS_export$u;
+declare const _default$B: typeof __VLS_export$B;
 
-interface IProps$r {
+interface IProps$y {
     actualPrice?: VcMoneyType;
     listPrice?: VcMoneyType;
     align?: "start" | "end";
@@ -1076,10 +1312,10 @@ interface IProps$r {
     disabled?: boolean;
     withFromLabel?: boolean;
 }
-declare const __VLS_export$t: vue.DefineComponent<IProps$r, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$r> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$t: typeof __VLS_export$t;
+declare const __VLS_export$A: vue.DefineComponent<IProps$y, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$y> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$A: typeof __VLS_export$A;
 
-interface IProps$q {
+interface IProps$x {
     to?: RouteLocationRaw | null;
     target?: BrowserTargetType;
     title?: string;
@@ -1089,28 +1325,28 @@ interface IProps$q {
     tabindex?: number | string;
 }
 declare var __VLS_9$3: {};
-type __VLS_Slots$b = {} & {
+type __VLS_Slots$f = {} & {
     default?: (props: typeof __VLS_9$3) => any;
 };
-declare const __VLS_base$b: vue.DefineComponent<IProps$q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$f: vue.DefineComponent<IProps$x, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (globalEvent: PointerEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$q> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$x> & Readonly<{
     onClick?: ((globalEvent: PointerEvent) => any) | undefined;
 }>, {
     to: RouteLocationRaw | null;
     tabindex: number | string;
     linesNumber: number | string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$s: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
-declare const _default$s: typeof __VLS_export$s;
+declare const __VLS_export$z: __VLS_WithSlots$f<typeof __VLS_base$f, __VLS_Slots$f>;
+declare const _default$z: typeof __VLS_export$z;
 
-type __VLS_WithSlots$b<T, S> = T & {
+type __VLS_WithSlots$f<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$p {
+interface IProps$w {
     mode?: "mini" | "full";
     readOnly?: boolean;
     reviewCount?: number;
@@ -1121,9 +1357,9 @@ interface IProps$p {
     label?: string;
     buttonAriaLabel?: (index: number) => string;
 }
-declare const __VLS_export$r: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$y: vue.DefineComponent<IProps$w, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     setRating: (value: number) => any;
-}, string, vue.PublicProps, Readonly<IProps$p> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$w> & Readonly<{
     onSetRating?: ((value: number) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md";
@@ -1132,9 +1368,9 @@ declare const __VLS_export$r: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.
     maxValue: number;
     withText: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$r: typeof __VLS_export$r;
+declare const _default$y: typeof __VLS_export$y;
 
-interface IProps$o {
+interface IProps$v {
     modelValue?: object | string | Array<object | string>;
     label?: string;
     ariaLabel?: string;
@@ -1169,40 +1405,65 @@ declare var __VLS_16: {
     item: any;
     error: boolean;
 };
-declare var __VLS_18$2: {
+declare var __VLS_18$3: {
     error: boolean;
 };
 declare var __VLS_76: {
     item: any;
     index: number;
 };
-type __VLS_Slots$a = {} & {
+type __VLS_Slots$e = {} & {
     selected?: (props: typeof __VLS_16) => any;
 } & {
-    placeholder?: (props: typeof __VLS_18$2) => any;
+    placeholder?: (props: typeof __VLS_18$3) => any;
 } & {
     item?: (props: typeof __VLS_76) => any;
 };
-declare const __VLS_base$a: vue.DefineComponent<IProps$o, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$e: vue.DefineComponent<IProps$v, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: any) => any;
     "update:modelValue": (value: any) => any;
-}, string, vue.PublicProps, Readonly<IProps$o> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$v> & Readonly<{
     onChange?: ((value: any) => any) | undefined;
     "onUpdate:modelValue"?: ((value: any) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "auto";
     itemSize: "xs" | "sm" | "md" | "lg";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$q: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
-declare const _default$q: typeof __VLS_export$q;
+declare const __VLS_export$x: __VLS_WithSlots$e<typeof __VLS_base$e, __VLS_Slots$e>;
+declare const _default$x: typeof __VLS_export$x;
 
-type __VLS_WithSlots$a<T, S> = T & {
+type __VLS_WithSlots$e<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-declare const __VLS_export$p: <T extends string | number | boolean>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+interface IProps$u {
+    size?: string;
+    icon?: string;
+    iconColor?: string;
+    bgColor?: string;
+    img?: string;
+    /** An icon name used as the mask. Without it the shape takes `--vc-shape-mask-image`, a polygon by default. */
+    mask?: string;
+}
+declare var __VLS_1$2: {};
+type __VLS_Slots$d = {} & {
+    default?: (props: typeof __VLS_1$2) => any;
+};
+declare const __VLS_base$d: vue.DefineComponent<IProps$u, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$u> & Readonly<{}>, {
+    img: string;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$w: __VLS_WithSlots$d<typeof __VLS_base$d, __VLS_Slots$d>;
+declare const _default$w: typeof __VLS_export$w;
+
+type __VLS_WithSlots$d<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+declare const __VLS_export$v: <T extends string | number | boolean>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: vue.PublicProps & __VLS_PrettifyLocal$1<({
         label?: string;
         name?: string;
@@ -1245,7 +1506,7 @@ declare const __VLS_export$p: <T extends string | number | boolean>(__VLS_props:
 }>) => vue.VNode & {
     __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
 };
-declare const _default$p: typeof __VLS_export$p;
+declare const _default$v: typeof __VLS_export$v;
 
 type __VLS_PrettifyLocal$1<T> = (T extends any ? {
     [K in keyof T]: T[K];
@@ -1253,7 +1514,7 @@ type __VLS_PrettifyLocal$1<T> = (T extends any ? {
     [K in keyof T as K]: T[K];
 }) & {};
 
-interface IProps$n {
+interface IProps$t {
     modelValue?: string;
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
@@ -1274,17 +1535,17 @@ interface IProps$n {
     rows?: number | string;
     ariaLabel?: string;
 }
-declare const __VLS_export$o: vue.DefineComponent<IProps$n, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$u: vue.DefineComponent<IProps$t, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     "update:modelValue": (value: string) => any;
-}, string, vue.PublicProps, Readonly<IProps$n> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$t> & Readonly<{
     "onUpdate:modelValue"?: ((value: string) => any) | undefined;
 }>, {
     modelModifiers: Record<string, boolean>;
     rows: number | string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$o: typeof __VLS_export$o;
+declare const _default$u: typeof __VLS_export$u;
 
-interface IProps$m {
+interface IProps$s {
     tag?: string;
     variant?: VcTypographyVariantType;
     truncate?: boolean;
@@ -1294,14 +1555,197 @@ interface IProps$m {
     color?: string;
 }
 declare var __VLS_8$2: {};
-type __VLS_Slots$9 = {} & {
+type __VLS_Slots$c = {} & {
     default?: (props: typeof __VLS_8$2) => any;
 };
-declare const __VLS_base$9: vue.DefineComponent<IProps$m, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$m> & Readonly<{}>, {
+declare const __VLS_base$c: vue.DefineComponent<IProps$s, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$s> & Readonly<{}>, {
     tag: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$n: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
-declare const _default$n: typeof __VLS_export$n;
+declare const __VLS_export$t: __VLS_WithSlots$c<typeof __VLS_base$c, __VLS_Slots$c>;
+declare const _default$t: typeof __VLS_export$t;
+
+type __VLS_WithSlots$c<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$r {
+    type?: VcVariantPickerType;
+    modelValue?: string | string[];
+    value: string | string[];
+    size?: VcVariantPickerSizeType;
+    name?: string;
+    isAvailable?: boolean;
+    tooltip?: string;
+    tooltipEnableTeleport?: boolean;
+    tooltipTeleportSelector?: string;
+    tabindex?: string | number;
+    testId?: string;
+    /**
+     * Text shown in a `text` picker instead of `value`. Top line of a two-line tile.
+     */
+    label?: string;
+    /**
+     * Second line of a `text` picker (price, stock, a note). The `description` slot takes any content,
+     * e.g. `VcProductPrice` with `single-line`.
+     */
+    description?: string;
+    /**
+     * Icon of a `text` picker. In a two-line tile it sits in a circle, centred vertically.
+     */
+    icon?: string;
+    iconPosition?: VcVariantPickerIconPositionType;
+    /**
+     * Short text of a `VcBadge` on a `text` picker: a discount, "Popular", "New".
+     */
+    badge?: string;
+    badgeColor?: VcBadgeColorType;
+    /**
+     * `end` places the badge inside the tile on the right, `top` on the top-right corner.
+     */
+    badgePosition?: VcVariantPickerBadgePositionType;
+    /**
+     * By default the badge is `soft`; a corner badge over a `tinted` or `dark` group surface is `outline`.
+     */
+    badgeVariant?: VcBadgeVariantType;
+}
+declare var __VLS_18$2: {};
+declare var __VLS_43: {};
+type __VLS_Slots$b = {} & {
+    description?: (props: typeof __VLS_18$2) => any;
+} & {
+    tooltip?: (props: typeof __VLS_43) => any;
+};
+declare const __VLS_base$b: vue.DefineComponent<IProps$r, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    change: (value: string | string[]) => any;
+    "update:modelValue": (value: string | string[]) => any;
+}, string, vue.PublicProps, Readonly<IProps$r> & Readonly<{
+    onChange?: ((value: string | string[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: string | string[]) => any) | undefined;
+}>, {
+    size: VcVariantPickerSizeType;
+    type: VcVariantPickerType;
+    iconPosition: VcVariantPickerIconPositionType;
+    badgeColor: VcBadgeColorType;
+    badgePosition: VcVariantPickerBadgePositionType;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$s: __VLS_WithSlots$b<typeof __VLS_base$b, __VLS_Slots$b>;
+declare const _default$s: typeof __VLS_export$s;
+
+type __VLS_WithSlots$b<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$q {
+    modelValue?: string | string[];
+    multiple?: boolean;
+    size?: VcVariantPickerSizeType;
+    type?: VcVariantPickerType;
+    name?: string;
+    truncate?: boolean;
+    maxRows?: number;
+    ariaLabel?: string;
+    testId?: string;
+    /**
+     * `auto` keeps tiles at their own width and wraps them; a number lays them out in that many equal columns.
+     */
+    columns?: VcVariantPickerGroupColumnsType;
+    /**
+     * Tile width: `false` sizes each tile by its text, `true` stretches tiles to the container (with `columns="auto"`
+     * they share each row but never get narrower than their text). Not set: stretch when `columns` is a number.
+     */
+    fill?: boolean;
+    /**
+     * What the group sits on. On `tinted` (a *-50/100 panel) and `dark` surfaces corner badges switch to `outline`.
+     * Set `--vc-variant-picker-surface-color` to the same colour for the badge ring.
+     */
+    surface?: VcVariantPickerGroupSurfaceType;
+}
+declare var __VLS_1$1: {};
+type __VLS_Slots$a = {} & {
+    default?: (props: typeof __VLS_1$1) => any;
+};
+declare const __VLS_base$a: vue.DefineComponent<IProps$q, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    change: (value: string | string[]) => any;
+    "update:modelValue": (value: string | string[]) => any;
+}, string, vue.PublicProps, Readonly<IProps$q> & Readonly<{
+    onChange?: ((value: string | string[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((value: string | string[]) => any) | undefined;
+}>, {
+    fill: boolean;
+    surface: VcVariantPickerGroupSurfaceType;
+    columns: VcVariantPickerGroupColumnsType;
+    multiple: boolean;
+    maxRows: number;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$r: __VLS_WithSlots$a<typeof __VLS_base$a, __VLS_Slots$a>;
+declare const _default$r: typeof __VLS_export$r;
+
+type __VLS_WithSlots$a<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$p {
+    name?: string;
+    modelValue?: number;
+    loading?: boolean;
+    disabled?: boolean;
+    minQuantity?: number;
+    maxQuantity?: number;
+    packSize?: number;
+    countInCart?: number;
+    availableQuantity?: number;
+    isActive?: boolean;
+    isAvailable?: boolean;
+    isBuyable?: boolean;
+    isInStock?: boolean;
+    message?: string;
+    showEmptyDetails?: boolean;
+    error?: boolean;
+    hideButton?: boolean;
+    readonly?: boolean;
+    timeout?: number;
+    validateOnMount?: boolean;
+    size?: "sm" | "md";
+    /** Extra ARIA attributes forwarded to the quantity input. */
+    aria?: Record<string, string | number | null>;
+}
+declare var __VLS_26: {};
+declare var __VLS_28: {};
+type __VLS_Slots$9 = {} & {
+    append?: (props: typeof __VLS_26) => any;
+} & {
+    default?: (props: typeof __VLS_28) => any;
+};
+declare const __VLS_base$9: vue.DefineComponent<IProps$p, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    "update:modelValue": (value: number) => any;
+    "update:cartItemQuantity": (quantity: number) => any;
+    "update:validation": (value: {
+        isValid: true;
+    } | {
+        isValid: false;
+        errorMessage: string;
+    }) => any;
+}, string, vue.PublicProps, Readonly<IProps$p> & Readonly<{
+    "onUpdate:modelValue"?: ((value: number) => any) | undefined;
+    "onUpdate:cartItemQuantity"?: ((quantity: number) => any) | undefined;
+    "onUpdate:validation"?: ((value: {
+        isValid: true;
+    } | {
+        isValid: false;
+        errorMessage: string;
+    }) => any) | undefined;
+}>, {
+    size: "sm" | "md";
+    validateOnMount: boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$q: __VLS_WithSlots$9<typeof __VLS_base$9, __VLS_Slots$9>;
+declare const _default$q: typeof __VLS_export$q;
 
 type __VLS_WithSlots$9<T, S> = T & {
     new (): {
@@ -1310,7 +1754,7 @@ type __VLS_WithSlots$9<T, S> = T & {
 };
 
 type AriaAttributesType = Record<string, string | number | null>;
-interface IProps$l {
+interface IProps$o {
     /** ISO YYYY-MM-DD canonical value. */
     modelValue?: string;
     size?: VcInputSizeType;
@@ -1373,7 +1817,7 @@ interface IProps$l {
     hideDetails?: boolean;
     dataTestId?: string;
 }
-declare const __VLS_export$m: vue.DefineComponent<IProps$l, {
+declare const __VLS_export$p: vue.DefineComponent<IProps$o, {
     inputElement: vue.ComputedRef<HTMLInputElement | null>;
     /** Drops uncommitted text and re-reads the model; for shells that commit on this field's behalf. */
     reset: () => void | undefined;
@@ -1384,7 +1828,7 @@ declare const __VLS_export$m: vue.DefineComponent<IProps$l, {
     "update:modelValue": (value: string | undefined) => any;
     "update:valid": (value: boolean) => any;
     "update:errorText": (value: string | undefined) => any;
-}, string, vue.PublicProps, Readonly<IProps$l> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$o> & Readonly<{
     onBlur?: ((focusEvent: FocusEvent) => any) | undefined;
     onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
     onClear?: (() => any) | undefined;
@@ -1401,9 +1845,9 @@ declare const __VLS_export$m: vue.DefineComponent<IProps$l, {
     updateOn: VcDateFieldUpdateOnType;
     closeOnSelect: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$m: typeof __VLS_export$m;
+declare const _default$p: typeof __VLS_export$p;
 
-interface IProps$k {
+interface IProps$n {
     /** Both endpoints as ISO YYYY-MM-DD. Either side may be undefined — a partial range is valid. */
     modelValue?: VcDateRangeType;
     size?: VcInputSizeType;
@@ -1465,14 +1909,14 @@ interface IProps$k {
     layout?: VcDateRangePickerLayoutType;
     dataTestId?: string;
 }
-declare const __VLS_export$l: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$o: vue.DefineComponent<IProps$n, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     blur: (focusEvent: FocusEvent) => any;
     focus: (focusEvent: FocusEvent) => any;
     clear: () => any;
     "update:modelValue": (value: VcDateRangeType | undefined) => any;
     "update:valid": (value: boolean) => any;
     "update:errorText": (value: string | undefined) => any;
-}, string, vue.PublicProps, Readonly<IProps$k> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$n> & Readonly<{
     onBlur?: ((focusEvent: FocusEvent) => any) | undefined;
     onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
     onClear?: (() => any) | undefined;
@@ -1486,9 +1930,9 @@ declare const __VLS_export$l: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.
     updateOn: VcDateFieldUpdateOnType;
     closeOnSelect: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$l: typeof __VLS_export$l;
+declare const _default$o: typeof __VLS_export$o;
 
-interface IProps$j {
+interface IProps$m {
     show?: boolean;
     hideActions?: boolean;
     isPersistent?: boolean;
@@ -1523,19 +1967,19 @@ type __VLS_Slots$8 = {} & {
 } & {
     actions?: (props: typeof __VLS_77) => any;
 };
-declare const __VLS_base$8: vue.DefineComponent<IProps$j, {
+declare const __VLS_base$8: vue.DefineComponent<IProps$m, {
     close: typeof close$1;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     close: () => any;
-}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$m> & Readonly<{
     onClose?: (() => any) | undefined;
 }>, {
     show: boolean;
     variant: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
     scrollable: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$k: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
-declare const _default$k: typeof __VLS_export$k;
+declare const __VLS_export$n: __VLS_WithSlots$8<typeof __VLS_base$8, __VLS_Slots$8>;
+declare const _default$n: typeof __VLS_export$n;
 
 type __VLS_WithSlots$8<T, S> = T & {
     new (): {
@@ -1543,25 +1987,25 @@ type __VLS_WithSlots$8<T, S> = T & {
     };
 };
 
-interface IProps$i {
+interface IProps$l {
     page?: number;
     pages?: number;
     scrollTarget?: HTMLElement;
     scrollOffset?: number;
     compact?: boolean;
 }
-declare const __VLS_export$j: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$m: vue.DefineComponent<IProps$l, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     "update:page": (page: number) => any;
-}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$l> & Readonly<{
     "onUpdate:page"?: ((page: number) => any) | undefined;
 }>, {
     page: number;
     pages: number;
     scrollOffset: number;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$j: typeof __VLS_export$j;
+declare const _default$m: typeof __VLS_export$m;
 
-declare const __VLS_export$i: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+declare const __VLS_export$l: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: vue.PublicProps & __VLS_PrettifyLocal<{
         columns?: VcTableColumnType[];
         items?: T[];
@@ -1695,7 +2139,7 @@ declare const __VLS_export$i: <T extends VcTableItemType>(__VLS_props: NonNullab
 }>) => vue.VNode & {
     __ctx?: NonNullable<Awaited<typeof __VLS_setup>>;
 };
-declare const _default$i: typeof __VLS_export$i;
+declare const _default$l: typeof __VLS_export$l;
 
 type __VLS_PrettifyLocal<T> = (T extends any ? {
     [K in keyof T]: T[K];
@@ -1740,7 +2184,7 @@ type __VLS_PrettifyLocal<T> = (T extends any ? {
  *   </template>
  * </VcTable>
  */
-interface IProps$h {
+interface IProps$k {
     /** Unique identifier for the column */
     id: string;
     /** Column header title */
@@ -1756,10 +2200,10 @@ interface IProps$h {
     /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
     fixed?: "start" | "end";
 }
-declare const __VLS_export$h: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$h: typeof __VLS_export$h;
+declare const __VLS_export$k: vue.DefineComponent<IProps$k, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$k> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$k: typeof __VLS_export$k;
 
-interface IProps$g {
+interface IProps$j {
     title?: string;
     prependIcon?: string;
     appendIcon?: string;
@@ -1812,17 +2256,17 @@ type __VLS_Slots$7 = {} & {
 } & {
     footer?: (props: typeof __VLS_40) => any;
 };
-declare const __VLS_base$7: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_base$7: vue.DefineComponent<IProps$j, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     toggleCollapse: (value: boolean) => any;
-}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$j> & Readonly<{
     onToggleCollapse?: ((value: boolean) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
     shadow: boolean;
     border: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$g: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
-declare const _default$g: typeof __VLS_export$g;
+declare const __VLS_export$j: __VLS_WithSlots$7<typeof __VLS_base$7, __VLS_Slots$7>;
+declare const _default$j: typeof __VLS_export$j;
 
 type __VLS_WithSlots$7<T, S> = T & {
     new (): {
@@ -1831,7 +2275,7 @@ type __VLS_WithSlots$7<T, S> = T & {
 };
 
 /** Renders a VcWidget; its frame props, classes and listeners pass through, its title, icons and collapsible do not. */
-interface IProps$f {
+interface IProps$i {
     head?: boolean;
     foot?: boolean;
     noShadow?: boolean;
@@ -1856,11 +2300,11 @@ type __VLS_Slots$6 = {} & {
 } & {
     footer?: (props: typeof __VLS_24) => any;
 };
-declare const __VLS_base$6: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {
+declare const __VLS_base$6: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$i> & Readonly<{}>, {
     size: "xs" | "sm" | "md" | "lg";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$f: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
-declare const _default$f: typeof __VLS_export$f;
+declare const __VLS_export$i: __VLS_WithSlots$6<typeof __VLS_base$6, __VLS_Slots$6>;
+declare const _default$i: typeof __VLS_export$i;
 
 type __VLS_WithSlots$6<T, S> = T & {
     new (): {
@@ -1868,7 +2312,7 @@ type __VLS_WithSlots$6<T, S> = T & {
     };
 };
 
-interface IProps$e {
+interface IProps$h {
     sidebarPosition?: "left" | "right";
     sticky?: boolean;
     sidebarAriaLabel?: string;
@@ -1883,11 +2327,11 @@ type __VLS_Slots$5 = {} & {
 } & {
     sidebar?: (props: typeof __VLS_5) => any;
 };
-declare const __VLS_base$5: vue.DefineComponent<IProps$e, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{}>, {
+declare const __VLS_base$5: vue.DefineComponent<IProps$h, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$h> & Readonly<{}>, {
     sidebarPosition: "left" | "right";
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$e: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
-declare const _default$e: typeof __VLS_export$e;
+declare const __VLS_export$h: __VLS_WithSlots$5<typeof __VLS_base$5, __VLS_Slots$5>;
+declare const _default$h: typeof __VLS_export$h;
 
 type __VLS_WithSlots$5<T, S> = T & {
     new (): {
@@ -1895,18 +2339,18 @@ type __VLS_WithSlots$5<T, S> = T & {
     };
 };
 
-interface IProps$d {
+interface IProps$g {
     status?: string;
     displayValue?: string;
     icon?: string;
     truncate?: boolean;
 }
-declare const __VLS_export$d: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{}>, {
+declare const __VLS_export$g: vue.DefineComponent<IProps$g, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$g> & Readonly<{}>, {
     truncate: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$d: typeof __VLS_export$d;
+declare const _default$g: typeof __VLS_export$g;
 
-interface IProps$c {
+interface IProps$f {
     isInStock?: boolean;
     isAvailable?: boolean;
     isDigital?: boolean;
@@ -1914,13 +2358,13 @@ interface IProps$c {
     size?: VcChipSizeType;
     textEnabled?: boolean;
 }
-declare const __VLS_export$c: vue.DefineComponent<IProps$c, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{}>, {
+declare const __VLS_export$f: vue.DefineComponent<IProps$f, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$f> & Readonly<{}>, {
     size: VcChipSizeType;
     quantity: number | null;
     isAvailable: boolean;
     textEnabled: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$c: typeof __VLS_export$c;
+declare const _default$f: typeof __VLS_export$f;
 
 type Maybe<T> = T;
 type InputMaybe<T> = T;
@@ -2030,6 +2474,10 @@ type Asset = {
     typeId: Scalars['String']['output'];
     /** The URL of the asset. */
     url: Scalars['StoreAssetUrl']['output'];
+};
+type AuthorizePaymentResultType = {
+    errorMessage?: Maybe<Scalars['String']['output']>;
+    isSuccess: Scalars['Boolean']['output'];
 };
 type AvailabilityData = {
     /** Available quantity */
@@ -2719,6 +3167,38 @@ type ImageType = {
     /** The URL of the image */
     url: Scalars['StoreAssetUrl']['output'];
 };
+type InitializePaymentResultType = {
+    actionHtmlForm?: Maybe<Scalars['String']['output']>;
+    actionRedirectUrl?: Maybe<Scalars['String']['output']>;
+    errorMessage?: Maybe<Scalars['String']['output']>;
+    isSuccess: Scalars['Boolean']['output'];
+    orderId?: Maybe<Scalars['String']['output']>;
+    orderNumber?: Maybe<Scalars['String']['output']>;
+    paymentActionType?: Maybe<Scalars['String']['output']>;
+    paymentId?: Maybe<Scalars['String']['output']>;
+    paymentMethodCode?: Maybe<Scalars['String']['output']>;
+    publicParameters?: Maybe<Array<Maybe<KeyValueType>>>;
+    storeId?: Maybe<Scalars['String']['output']>;
+};
+type InputAddSavedPaymentMethod = {
+    /** What the payment provider's card form posted: tokens, nonces, billing address. */
+    parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
+    paymentMethodCode: Scalars['String']['input'];
+    setDefault?: InputMaybe<Scalars['Boolean']['input']>;
+    storeId: Scalars['String']['input'];
+};
+type InputAuthorizePaymentType = {
+    /** Culture name */
+    cultureName?: InputMaybe<Scalars['String']['input']>;
+    /** Order Id */
+    orderId?: InputMaybe<Scalars['String']['input']>;
+    /** Input parameters */
+    parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
+    /** Payment Id */
+    paymentId: Scalars['String']['input'];
+    /** Store Id */
+    storeId?: InputMaybe<Scalars['String']['input']>;
+};
 type InputConfirmEmailType = {
     /** Confirm email token */
     token: Scalars['String']['input'];
@@ -2732,6 +3212,18 @@ type InputDynamicPropertyValueType = {
     name: Scalars['String']['input'];
     /** Dynamic property value. ID must be passed for dictionary item */
     value?: InputMaybe<Scalars['DynamicPropertyValue']['input']>;
+};
+type InputInitializePaymentType = {
+    /** Culture name */
+    cultureName?: InputMaybe<Scalars['String']['input']>;
+    /** Order Id */
+    orderId?: InputMaybe<Scalars['String']['input']>;
+    /** Input parameters */
+    parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
+    /** Payment Id */
+    paymentId: Scalars['String']['input'];
+    /** Store Id */
+    storeId?: InputMaybe<Scalars['String']['input']>;
 };
 type InputInviteUserType = {
     /** Customer order Id to be associated with this user. */
@@ -2748,6 +3240,12 @@ type InputInviteUserType = {
     storeId: Scalars['String']['input'];
     /** Optional URL suffix: you may provide here relative URL to your page which handle registration by invite */
     urlSuffix?: InputMaybe<Scalars['String']['input']>;
+};
+type InputKeyValueType = {
+    /** Dictionary key */
+    key: Scalars['String']['input'];
+    /** Dictionary value */
+    value?: InputMaybe<Scalars['String']['input']>;
 };
 type InputNewBulkItemType = {
     /** Product SKU */
@@ -2814,6 +3312,12 @@ type InventoryInfo = {
     preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
     /** Inventory reserved quantity */
     reservedQuantity: Scalars['Long']['output'];
+};
+type KeyValueType = {
+    /** Dictionary key */
+    key: Scalars['String']['output'];
+    /** Dictionary value */
+    value?: Maybe<Scalars['String']['output']>;
 };
 type LanguageType = {
     /** Culture name format (e.g. en-US) */
@@ -2911,6 +3415,8 @@ type LineItemType = {
     productOuterId?: Maybe<Scalars['String']['output']>;
     /** Product type: Physical, Digital, or Subscription */
     productType?: Maybe<Scalars['String']['output']>;
+    /** Purchase order line number */
+    purchaseOrderLineNumber?: Maybe<Scalars['String']['output']>;
     /** Line item quantity value */
     quantity: Scalars['Int']['output'];
     /** Requirement for line item shipping */
@@ -4275,6 +4781,407 @@ type UpdateShortCartItemQuantityMutation = {
         }>;
     };
 };
+type GetFullCartQuery = {
+    cart?: {
+        purchaseOrderNumber?: string;
+        comment?: string;
+        itemsQuantity: number;
+        id: string;
+        availableGifts: Array<{
+            id: string;
+            imageUrl?: string;
+            name: string;
+            lineItemId?: string;
+            quantity: number;
+        }>;
+        availableShippingMethods: Array<{
+            id: string;
+            code: string;
+            logoUrl?: string;
+            optionName?: string;
+            optionDescription?: string;
+            price: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+        }>;
+        availablePaymentMethods: Array<{
+            code: string;
+            name?: string;
+            description?: string;
+            logoUrl?: string;
+            paymentMethodGroupType: string;
+            allowCartPayment: boolean;
+        }>;
+        items: Array<{
+            name: string;
+            inStockQuantity: number;
+            imageUrl?: string;
+            selectedForCheckout: boolean;
+            productType?: string;
+            showPlacedPrice: boolean;
+            id: string;
+            sku: string;
+            quantity: number;
+            productId: string;
+            currencyCode?: string;
+            listTotal: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            product?: {
+                id: string;
+                slug?: string;
+                minQuantity?: number;
+                maxQuantity?: number;
+                isConfigurable: boolean;
+                packSize: number;
+                masterVariation?: {
+                    id: string;
+                    slug?: string;
+                };
+                properties: Array<{
+                    name: string;
+                    colorCode?: string;
+                    value?: string | number | boolean | null;
+                    valueDisplayOrder?: number;
+                    propertyType: PropertyType;
+                    hidden: boolean;
+                    propertyValueType: PropertyValueTypes;
+                    label: string;
+                    displayOrder?: number;
+                    group?: {
+                        id: string;
+                        name?: string;
+                        displayOrder?: number;
+                        description?: string;
+                    };
+                }>;
+                availabilityData: {
+                    isActive: boolean;
+                    isAvailable: boolean;
+                    isBuyable: boolean;
+                    isInStock: boolean;
+                    availableQuantity: number;
+                };
+            };
+            vendor?: {
+                id: string;
+                name: string;
+                rating?: {
+                    value: number;
+                    reviewCount: number;
+                };
+            };
+            extendedPrice: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            placedPrice: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            listPrice: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            salePrice: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            discountTotal: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            validationErrors: Array<{
+                errorCode?: string;
+                errorMessage?: string;
+                objectId?: string;
+                objectType?: string;
+                errorParameters?: Array<{
+                    key: string;
+                    value: string;
+                }>;
+            }>;
+            configurationItems?: Array<{
+                id: string;
+                name?: string;
+                customText?: string;
+                type: string;
+                extendedPrice: {
+                    amount: number;
+                    formattedAmount: string;
+                    formattedAmountWithoutCurrency: string;
+                    currency: {
+                        code: string;
+                        symbol: string;
+                    };
+                };
+                files?: Array<{
+                    name: string;
+                    url: string;
+                }>;
+                configurationSection?: {
+                    name?: string;
+                };
+            }>;
+        }>;
+        gifts: Array<{
+            id: string;
+            imageUrl?: string;
+            name: string;
+            lineItemId?: string;
+            quantity: number;
+        }>;
+        coupons: Array<{
+            code?: string;
+            isAppliedSuccessfully: boolean;
+        }>;
+        discounts: Array<{
+            description?: string;
+            amount: number;
+            coupon?: string;
+        }>;
+        shipments: Array<{
+            id: string;
+            shipmentMethodCode?: string;
+            shipmentMethodOption?: string;
+            deliveryAddress?: {
+                id?: string;
+                name?: string;
+                organization?: string;
+                firstName?: string;
+                lastName?: string;
+                line1?: string;
+                line2?: string;
+                city?: string;
+                countryCode?: string;
+                countryName?: string;
+                regionId?: string;
+                regionName?: string;
+                postalCode: string;
+                phone?: string;
+                email?: string;
+                addressType?: number;
+                outerId?: string;
+            };
+            price: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            discountAmount: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            pickupLocation?: {
+                id: string;
+                name: string;
+                description?: string;
+                geoLocation?: string;
+                deliveryDays?: number;
+                storageDays?: number;
+                contactEmail?: string;
+                contactPhone?: string;
+                workingHours?: string;
+                isActive: boolean;
+                address?: {
+                    id: string;
+                    key?: string;
+                    name?: string;
+                    organization?: string;
+                    countryCode?: string;
+                    countryName?: string;
+                    city?: string;
+                    postalCode?: string;
+                    line1?: string;
+                    line2?: string;
+                    regionId?: string;
+                    regionName?: string;
+                    phone?: string;
+                    email?: string;
+                    outerId?: string;
+                    description?: string;
+                    addressType?: number;
+                };
+            };
+        }>;
+        payments: Array<{
+            id: string;
+            paymentGatewayCode?: string;
+            billingAddress?: {
+                id?: string;
+                name?: string;
+                organization?: string;
+                firstName?: string;
+                lastName?: string;
+                line1?: string;
+                line2?: string;
+                city?: string;
+                countryCode?: string;
+                countryName?: string;
+                regionId?: string;
+                regionName?: string;
+                postalCode: string;
+                phone?: string;
+                email?: string;
+                addressType?: number;
+                outerId?: string;
+            };
+        }>;
+        currency: {
+            code: string;
+            symbol: string;
+        };
+        cartTotals?: Array<{
+            isDefaultTotalCurrency: boolean;
+            total: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            subTotal: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            discountTotal: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+            taxTotal: {
+                amount: number;
+                formattedAmount: string;
+                formattedAmountWithoutCurrency: string;
+                currency: {
+                    code: string;
+                    symbol: string;
+                };
+            };
+        }>;
+        total: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        discountTotal: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        subTotal: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        shippingPrice: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        shippingTotal: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        taxTotal: {
+            amount: number;
+            formattedAmount: string;
+            formattedAmountWithoutCurrency: string;
+            currency: {
+                code: string;
+                symbol: string;
+            };
+        };
+        validationErrors: Array<{
+            errorCode?: string;
+            errorMessage?: string;
+            objectId?: string;
+            objectType?: string;
+            errorParameters?: Array<{
+                key: string;
+                value: string;
+            }>;
+        }>;
+    };
+};
 type GetShortCartQuery = {
     cart?: {
         itemsQuantity: number;
@@ -4304,6 +5211,34 @@ type GetShortCartQuery = {
 type GetSearchHistoryQuery = {
     searchHistory?: {
         queries?: Array<string>;
+    };
+};
+type SavedPaymentMethodFieldsFragment = {
+    id: string;
+    paymentMethodCode: string;
+    brand?: string;
+    last4?: string;
+    expirationMonth?: number;
+    expirationYear?: number;
+    cardholderName?: string;
+    status: string;
+    isDefault: boolean;
+    isExpired: boolean;
+    createdDate: any;
+};
+type AddSavedPaymentMethodMutation = {
+    addSavedPaymentMethod?: {
+        id: string;
+        paymentMethodCode: string;
+        brand?: string;
+        last4?: string;
+        expirationMonth?: number;
+        expirationYear?: number;
+        cardholderName?: string;
+        status: string;
+        isDefault: boolean;
+        isExpired: boolean;
+        createdDate: any;
     };
 };
 type GetStoreQuery = {
@@ -4457,6 +5392,48 @@ interface ILanguage {
     threeLetterRegionName: string;
 }
 
+type AnyLineItemType = {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    product?: Product;
+    productId?: string;
+    sku?: string;
+    quantity?: number;
+    inStockQuantity?: number;
+    productType?: string;
+    price?: MoneyType;
+    listPrice?: MoneyType;
+    salePrice?: MoneyType;
+    placedPrice?: MoneyType;
+    extendedPrice?: MoneyType;
+    proposalPrices?: {
+        price: MoneyType;
+        quantity: number;
+    };
+    selectedTierPrice?: {
+        price: MoneyType;
+        quantity: number;
+    };
+    isConfigurable?: boolean;
+    hasVariations?: boolean;
+    variations?: VariationType[];
+    configurationItems?: {
+        id: string;
+        name?: string;
+        customText?: string;
+        type: string;
+        extendedPrice?: MoneyType;
+        files?: Array<{
+            name: string;
+        } | null> | null;
+        configurationSection?: {
+            name?: string | null;
+        } | null;
+    }[];
+    showPlacedPrice?: boolean;
+    listTotal?: MoneyType;
+};
 type VendorGroupType<T> = {
     items: T[];
     vendor?: CommonVendor;
@@ -4464,6 +5441,46 @@ type VendorGroupType<T> = {
 type CurrencyGroupType<T> = {
     currencyCode: string;
     items: T[];
+};
+type PreparedLineItemType = {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    inStockQuantity?: number;
+    listPrice?: MoneyType;
+    actualPrice?: MoneyType;
+    extendedPrice?: MoneyType;
+    quantity?: number;
+    deleted?: boolean;
+    route?: RouteLocationRaw;
+    properties?: Property[];
+    minQuantity?: number;
+    maxQuantity?: number;
+    packSize?: number;
+    availabilityData?: AvailabilityData;
+    productType?: string;
+    sku?: string;
+    productId?: string;
+    countInCart?: number;
+    isConfigurable?: boolean;
+    hasVariations?: boolean;
+    variations?: VariationType[];
+    configurationItems?: {
+        id: string;
+        name?: string;
+        customText?: string;
+        type: string;
+        extendedPrice?: MoneyType;
+        files?: Array<{
+            name: string;
+        } | null> | null;
+        configurationSection?: {
+            name?: string | null;
+        } | null;
+    }[];
+    showPlacedPrice?: boolean;
+    listTotal?: MoneyType;
+    product?: Product;
 };
 
 type AccountNavigationSectionType = {
@@ -4581,6 +5598,8 @@ declare const DESKTOP_MENU_MODES: {
     readonly horizontal: "horizontal";
 };
 type DesktopMenuModeType = keyof typeof DESKTOP_MENU_MODES;
+
+declare const DEFAULT_NOTIFICATION_DURATION = 15000;
 
 declare const STATUS_ORDERS_FACET_NAME = "status";
 
@@ -5202,10 +6221,51 @@ type ExtensionCategoryMapType = {
     cartPayment: ExtensionEntryType<IPaymentMethodParameters, never, ({ paymentTypeName }: {
         paymentTypeName: string;
     }) => boolean>;
+    /**
+     * The add-card form on the account's payment methods page (`pages/account/payment-methods.vue`), per payment method that
+     * can save cards; registered under the payment method's code. The component emits `added` when the card is saved.
+     */
+    addCardForm: ExtensionEntryType<{
+        paymentMethodCode: string;
+        setDefault: boolean;
+    }, never, (paymentMethodCode: string) => boolean>;
+    /**
+     * On each cart line item (`shared/cart/components/cart-line-items.vue`): `details` under the line, `actions` next to
+     * "Save for later" (`icons` when the line shows its actions as icons, `disabled` while the cart can't be changed).
+     * A provider decides from the line whether it has anything to show.
+     */
+    cartLineItem: ExtensionEntryType<{
+        lineItem: PreparedLineItemType;
+        readonly?: boolean;
+        disabled?: boolean;
+        icons?: boolean;
+    }, never, (lineItem: PreparedLineItemType) => boolean>;
+    /**
+     * On each line of a placed order (`shared/account/components/order-line-items.vue` with `orderId`): `details` under
+     * the line, as `cartLineItem.details` in the cart. A provider decides from the line whether it has anything to show.
+     */
+    orderLineItem: ExtensionEntryType<{
+        lineItem: PreparedLineItemType;
+        orderId: string;
+    }, never, (lineItem: PreparedLineItemType) => boolean>;
+    /**
+     * Before placing the order: on the multi-step checkout's review step, above the order summary
+     * (`pages/checkout/review.vue`), and on single-page checkout below the billing section (`pages/cart.vue`).
+     */
+    checkoutReview: ExtensionEntryType<{
+        cart?: CartType;
+    }, never, (cart?: CartType) => boolean>;
     /** The order details page. A provider decides from the order whether it has anything to offer. */
     orderDetails: ExtensionEntryType<{
         order?: CustomerOrderType;
     }, never, (order?: CustomerOrderType) => boolean>;
+    /**
+     * Next to the order number in Order history (`shared/account/components/orders/orders-table.vue` and the mobile
+     * `order-card.vue`). A provider decides from the order whether it has anything to show.
+     */
+    orderListItem: ExtensionEntryType<{
+        order: CustomerOrderType;
+    }, never, (order: CustomerOrderType) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
@@ -5287,7 +6347,11 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly productPage: {
         readonly sidebarButton: "sidebar-button";
+        /** Under the add-to-cart controls of a product or of the picked variation (e.g. Subscribe & Save). */
+        readonly purchaseOptions: "purchase-options";
         readonly variationItemButton: "variation-item-button";
+        /** Under a variation row's add-to-cart in the variations table and list (e.g. Subscribe & Save per variation). */
+        readonly variationPurchaseOptions: "variation-purchase-options";
     };
     readonly paymentPage: {
         readonly paymentMethods: "payment-methods";
@@ -5297,9 +6361,27 @@ declare const CUSTOM_EXTENSION_NAMES: {
     };
     readonly orderDetails: {
         readonly actions: "actions";
+        /** Above the order's line items, under the title (e.g. "Placed automatically by your subscription"). */
+        readonly notice: "notice";
+    };
+    /** Next to the order number in Order history (table row and mobile card). */
+    readonly orderListItem: {
+        readonly badge: "badge";
     };
     readonly sharedList: {
         readonly provenanceNote: "provenance-note";
+    };
+    readonly cartLineItem: {
+        readonly details: "details";
+        /** Next to "Save for later" on the cart line (Subscribe). */
+        readonly actions: "actions";
+    };
+    /** Under an order line in Order history, as `cartLineItem.details` in the cart (Subscribed). */
+    readonly orderLineItem: {
+        readonly details: "details";
+    };
+    readonly checkoutReview: {
+        readonly beforePlaceOrder: "before-place-order";
     };
     readonly checkout: {
         readonly placeOrder: "place-order";
@@ -5319,8 +6401,13 @@ declare const EXTENSION_CATEGORIES: {
     readonly orderPaymentPage: "orderPaymentPage";
     readonly cartPayment: "cartPayment";
     readonly orderDetails: "orderDetails";
+    readonly orderListItem: "orderListItem";
     readonly sharedList: "sharedList";
+    readonly cartLineItem: "cartLineItem";
+    readonly orderLineItem: "orderLineItem";
+    readonly checkoutReview: "checkoutReview";
     readonly checkout: "checkout";
+    readonly addCardForm: "addCardForm";
     readonly identityProviders: "identityProviders";
     readonly signInMethods: "signInMethods";
     readonly pageBuilderSection: "pageBuilderSection";
@@ -5550,6 +6637,10 @@ declare const ROUTES: {
     readonly PROMOTION_COUPONS: {
         readonly NAME: "PromotionCoupons";
         readonly PATH: "coupons";
+    };
+    readonly PAYMENT_METHODS: {
+        readonly NAME: "PaymentMethods";
+        readonly PATH: "payment-methods";
     };
     readonly ACCOUNT: {
         readonly NAME: "Account";
@@ -6054,6 +7145,53 @@ declare function useShortCart(): {
     updateItemCartQuantity: (productId: string, quantity: number, itemCurrencyCode?: string) => _vue_apollo_composable.MutateResult<UpdateShortCartItemQuantityMutation>;
     changing: vue.ComputedRef<boolean>;
 };
+/**
+ * The cart the cart and checkout pages show (the route's cart, else the default one), for code that only reads it:
+ * its lines and payment methods, and a refetch after the caller's own mutation changed it on the server.
+ */
+declare function useCurrentCart(): {
+    cart: vue.ComputedRef<CartType | undefined>;
+    availablePaymentMethods: vue.ComputedRef<PaymentMethodType[]>;
+    refetch: () => Promise<GetFullCartQuery | _apollo_client_core.ApolloQueryResult<GetFullCartQuery> | undefined>;
+};
+
+/**
+ * Whether the checkout is busy placing an order, read-only and without the rest of `useCheckout`. It stays `true` from
+ * the order request until the shopper is sent to the payment or completion page (and while the checkout initializes).
+ */
+declare function useOrderPlacement(): {
+    placingOrder: Readonly<vue.Ref<boolean, boolean>>;
+};
+
+declare function useConfigurableLineItemId(): {
+    configurableLineItemId: vue.ComputedRef<string | undefined>;
+};
+
+declare function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType;
+
+type ConfigurationItemFileType = {
+    name: string;
+    url?: string | null;
+};
+type ConfigurationItemLikeType = {
+    id: string;
+    type: string;
+    name?: string | null;
+    customText?: string | null;
+    configurationSection?: {
+        name?: string | null;
+    } | null;
+    extendedPrice?: MoneyType | null;
+    files?: Array<ConfigurationItemFileType | null> | null;
+};
+interface IProps$e {
+    configurationItems?: ConfigurationItemLikeType[];
+    lineItemId?: string;
+    allowEdit?: boolean;
+    route?: RouteLocationRaw;
+}
+declare const __VLS_export$e: vue.DefineComponent<IProps$e, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$e> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$e: typeof __VLS_export$e;
 
 interface ICustomAnalyticsEventMap {
 }
@@ -6496,6 +7634,16 @@ declare function _useWishlistSharingScopes(): {
 };
 declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
 
+type CheckoutGuardType = {
+    /** True when the order can be placed as far as this guard is concerned. */
+    canPlaceOrder: MaybeRefOrGetter<boolean>;
+};
+declare function useCheckoutGuards(): {
+    registerGuard: (id: string, guard: CheckoutGuardType) => () => void;
+    unregisterGuard: (id: string) => void;
+    canPlaceOrder: vue.ComputedRef<boolean>;
+};
+
 declare function _useThemeContext(): {
     setThemeContext: (store: StoreResponseType) => void;
     addPresetToThemeContext: (presetName: string) => Promise<void>;
@@ -6571,17 +7719,17 @@ declare function useSignMeIn(): {
     resetErrors: () => void;
 };
 
-interface IProps$b {
+interface IProps$d {
     text: string;
     icon: string;
     loading?: boolean;
 }
-declare const __VLS_export$b: vue.DefineComponent<IProps$b, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$d: vue.DefineComponent<IProps$d, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     signIn: () => any;
-}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$d> & Readonly<{
     onSignIn?: (() => any) | undefined;
 }>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$b: typeof __VLS_export$b;
+declare const _default$d: typeof __VLS_export$d;
 
 /**
  * Converts ISO 8601 date-only (YYYY-MM-DD) to full date (YYYY-MM-DDTHH:mm:ss.sssZ)
@@ -6696,36 +7844,38 @@ declare function useOrderView(source: MaybeRefOrGetter<CustomerOrderType | undef
     shipToTitle: vue.ComputedRef<string>;
 };
 
-interface IProps$a {
+interface IProps$c {
     items?: OrderLineItemType[] | LineItemType[];
     subtotalCurrencyCode?: string;
+    /** A placed order's id: its lines then show what modules add to them (`orderLineItem`); not set for a cart. */
+    orderId?: string;
 }
-declare const __VLS_export$a: vue.DefineComponent<IProps$a, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$a> & Readonly<{}>, {
+declare const __VLS_export$c: vue.DefineComponent<IProps$c, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$c> & Readonly<{}>, {
     items: OrderLineItemType[] | LineItemType[];
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$a: typeof __VLS_export$a;
+declare const _default$c: typeof __VLS_export$c;
 
-interface IProps$9 {
+interface IProps$b {
     items: (GiftItemType | OrderLineItemType)[];
 }
-declare const __VLS_export$9: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$9: typeof __VLS_export$9;
+declare const __VLS_export$b: vue.DefineComponent<IProps$b, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$b> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$b: typeof __VLS_export$b;
 
-interface IProps$8 {
+interface IProps$a {
     disabled?: boolean;
     readonly?: boolean;
     comment?: string;
 }
-declare const __VLS_export$8: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+declare const __VLS_export$a: vue.DefineComponent<IProps$a, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     "update:comment": (value: string) => any;
-}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$a> & Readonly<{
     "onUpdate:comment"?: ((value: string) => any) | undefined;
 }>, {
     comment: string;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$8: typeof __VLS_export$8;
+declare const _default$a: typeof __VLS_export$a;
 
-interface IProps$7 {
+interface IProps$9 {
     cart: CartType | CustomerOrderType;
     selectedItems?: LineItemType[];
     noShipping?: boolean;
@@ -6741,9 +7891,9 @@ type __VLS_Slots$4 = {} & {
 } & {
     footnote?: (props: typeof __VLS_85) => any;
 };
-declare const __VLS_base$4: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$7: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
-declare const _default$7: typeof __VLS_export$7;
+declare const __VLS_base$4: vue.DefineComponent<IProps$9, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$9> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$9: __VLS_WithSlots$4<typeof __VLS_base$4, __VLS_Slots$4>;
+declare const _default$9: typeof __VLS_export$9;
 
 type __VLS_WithSlots$4<T, S> = T & {
     new (): {
@@ -6751,16 +7901,16 @@ type __VLS_WithSlots$4<T, S> = T & {
     };
 };
 
-interface IProps$6 {
+interface IProps$8 {
     address: AnyAddressType;
 }
 declare var __VLS_6: {};
 type __VLS_Slots$3 = {} & {
     actions?: (props: typeof __VLS_6) => any;
 };
-declare const __VLS_base$3: vue.DefineComponent<IProps$6, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$6> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$6: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
-declare const _default$6: typeof __VLS_export$6;
+declare const __VLS_base$3: vue.DefineComponent<IProps$8, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$8> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$8: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
+declare const _default$8: typeof __VLS_export$8;
 
 type __VLS_WithSlots$3<T, S> = T & {
     new (): {
@@ -6768,11 +7918,11 @@ type __VLS_WithSlots$3<T, S> = T & {
     };
 };
 
-interface IProps$5 {
+interface IProps$7 {
     name?: string;
 }
-declare const __VLS_export$5: vue.DefineComponent<IProps$5, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$5> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$5: typeof __VLS_export$5;
+declare const __VLS_export$7: vue.DefineComponent<IProps$7, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$7> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$7: typeof __VLS_export$7;
 
 declare function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string;
 
@@ -6862,7 +8012,7 @@ type ReportingStatisticsType = {
 /** One response as the report reads it. `plan` must be the plan the response was fetched for. */
 declare function toReportingData(plan: ReportingPlanType, statistics: ReportingStatisticsType): ReportingDataType;
 
-interface IProps$4 {
+interface IProps$6 {
     /**
      * The figures to show, with the plan they were fetched for: build the query from `useReportingPlan` and
      * `buildReportingVariables`, and take `data` from `useReportingData`. Until the first figures arrive the panel shows
@@ -6881,11 +8031,11 @@ interface IProps$4 {
     /** Prefixes every test id inside the panel, so two panels on one page keep theirs apart. */
     testId?: string;
 }
-type __VLS_Props = IProps$4;
-type __VLS_ModelProps = {
+type __VLS_Props$1 = IProps$6;
+type __VLS_ModelProps$1 = {
     "period": ReportingPeriodType;
 };
-type __VLS_PublicProps = __VLS_Props & __VLS_ModelProps;
+type __VLS_PublicProps$1 = __VLS_Props$1 & __VLS_ModelProps$1;
 declare var __VLS_8: {};
 declare var __VLS_65: {};
 type __VLS_Slots$2 = {} & {
@@ -6893,9 +8043,9 @@ type __VLS_Slots$2 = {} & {
 } & {
     'footnote-append'?: (props: typeof __VLS_65) => any;
 };
-declare const __VLS_base$2: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
+declare const __VLS_base$2: vue.DefineComponent<__VLS_PublicProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
     "update:period": (value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any;
-}, string, vue.PublicProps, Readonly<__VLS_PublicProps> & Readonly<{
+}, string, vue.PublicProps, Readonly<__VLS_PublicProps$1> & Readonly<{
     "onUpdate:period"?: ((value: "year" | "6m" | "12m" | "q1" | "q2" | "q3" | "q4") => any) | undefined;
 }>, {
     data: ReportingDataType;
@@ -6904,8 +8054,8 @@ declare const __VLS_base$2: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {
     withTable: boolean;
     withTiles: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
-declare const _default$4: typeof __VLS_export$4;
+declare const __VLS_export$6: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
+declare const _default$6: typeof __VLS_export$6;
 
 type __VLS_WithSlots$2<T, S> = T & {
     new (): {
@@ -6938,7 +8088,7 @@ declare function useReportingData<TStatistics extends ReportingStatisticsType>(p
  */
 declare function useReportingPlan(period: MaybeRefOrGetter<ReportingPeriodType>): vue.ComputedRef<ReportingPlanType>;
 
-interface IProps$3 {
+interface IProps$5 {
     coupon: PromotionCouponType;
     /**
      * Layout for narrow containers (e.g. a widget column): name, description and expiry stack between the label and
@@ -6950,11 +8100,11 @@ declare var __VLS_9: {};
 type __VLS_Slots$1 = {} & {
     'after-description'?: (props: typeof __VLS_9) => any;
 };
-declare const __VLS_base$1: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{}>, {
+declare const __VLS_base$1: vue.DefineComponent<IProps$5, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$5> & Readonly<{}>, {
     compact: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$3: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
-declare const _default$3: typeof __VLS_export$3;
+declare const __VLS_export$5: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
+declare const _default$5: typeof __VLS_export$5;
 
 type __VLS_WithSlots$1<T, S> = T & {
     new (): {
@@ -6962,13 +8112,174 @@ type __VLS_WithSlots$1<T, S> = T & {
     };
 };
 
-interface IProps$2 {
+interface IProps$4 {
     /** Matches CouponItem's compact layout, so the placeholder has the shape of the card that replaces it. */
     compact?: boolean;
 }
-declare const __VLS_export$2: vue.DefineComponent<IProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$2> & Readonly<{}>, {
+declare const __VLS_export$4: vue.DefineComponent<IProps$4, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{}>, {
     compact: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$4: typeof __VLS_export$4;
+
+declare function useSavedPaymentMethods(): {
+    methods: vue.Ref<{
+        id: string;
+        paymentMethodCode: string;
+        brand?: string | undefined;
+        last4?: string | undefined;
+        expirationMonth?: number | undefined;
+        expirationYear?: number | undefined;
+        cardholderName?: string | undefined;
+        status: string;
+        isDefault: boolean;
+        isExpired: boolean;
+        createdDate: any;
+    }[], SavedPaymentMethodFieldsFragment[] | {
+        id: string;
+        paymentMethodCode: string;
+        brand?: string | undefined;
+        last4?: string | undefined;
+        expirationMonth?: number | undefined;
+        expirationYear?: number | undefined;
+        cardholderName?: string | undefined;
+        status: string;
+        isDefault: boolean;
+        isExpired: boolean;
+        createdDate: any;
+    }[]>;
+    activeMethods: vue.ComputedRef<{
+        id: string;
+        paymentMethodCode: string;
+        brand?: string | undefined;
+        last4?: string | undefined;
+        expirationMonth?: number | undefined;
+        expirationYear?: number | undefined;
+        cardholderName?: string | undefined;
+        status: string;
+        isDefault: boolean;
+        isExpired: boolean;
+        createdDate: any;
+    }[]>;
+    defaultMethod: vue.ComputedRef<{
+        id: string;
+        paymentMethodCode: string;
+        brand?: string | undefined;
+        last4?: string | undefined;
+        expirationMonth?: number | undefined;
+        expirationYear?: number | undefined;
+        cardholderName?: string | undefined;
+        status: string;
+        isDefault: boolean;
+        isExpired: boolean;
+        createdDate: any;
+    }>;
+    loading: vue.Ref<boolean, boolean>;
+    loaded: vue.Ref<boolean, boolean>;
+    failed: vue.Ref<boolean, boolean>;
+    fetch: (options?: {
+        suppressErrorNotifications?: boolean;
+    }) => Promise<void>;
+    methodsFor: (paymentMethodCode: string) => SavedPaymentMethodFieldsFragment[];
+    remove: (id: string) => Promise<void>;
+    setDefault: (id: string) => Promise<void>;
+};
+
+interface ICardSavingRequirement {
+    /** The consent record that covers saving the card, e.g. accepted auto-renewal terms. */
+    consentId?: string;
+    /** The cart the consent was given for; it also covers the order placed from that cart. */
+    cartId?: string;
+    requiredAt: number;
+}
+/** What a payment form is paying: a cart at checkout, or an order. */
+interface ICardSavingTarget {
+    cart?: {
+        id?: string;
+    } | null;
+    order?: {
+        id?: string;
+        shoppingCartId?: string | null;
+    } | null;
+}
+/** The requirement, when it covers what the form pays: the same cart, or the order placed from that cart. */
+declare function readCardSaving(target: ICardSavingTarget): ICardSavingRequirement | undefined;
+/**
+ * Lets a module require that the card of a checkout is saved, e.g. because a subscription will charge it later. The
+ * card forms of that checkout then save the card without asking and send the consent with the payment. Kept for the
+ * browser tab session, two hours at most, so it survives the step from placing the order to paying it.
+ *
+ * `revision` changes whenever the requirement is set or cleared: a form shown before the consent was given (e.g. on
+ * single-page checkout, where the terms are accepted below the card form) watches it and reads the requirement again.
+ */
+declare function useCardSavingRequirement(): {
+    require: (consentId: string | undefined, cartId: string) => void;
+    read: typeof readCardSaving;
+    clear: () => void;
+    revision: Readonly<vue.Ref<number, number>>;
+};
+
+/**
+ * How a saved card is named to the customer: brand and last 4 digits, never more of the number.
+ * `fallbackBrand` is the translated word for a card whose brand is unknown, e.g. `t("shared.payment.saved_cards.card")`.
+ */
+declare function savedCardLabel(brand: string | null | undefined, last4: string | null | undefined, fallbackBrand: string): string;
+/** The card's expiry as "MM/YY", or undefined when either part is missing. */
+declare function savedCardExpiry(month: string | number | null | undefined, year: string | number | null | undefined): string | undefined;
+
+declare function addSavedPaymentMethod(command: InputAddSavedPaymentMethod): Promise<AddSavedPaymentMethodMutation["addSavedPaymentMethod"]>;
+
+declare function authorizePayment(payload: InputAuthorizePaymentType): Promise<AuthorizePaymentResultType>;
+
+declare function initializePayment(payload: InputInitializePaymentType): Promise<InitializePaymentResultType>;
+
+type BankCardType = {
+    cardholderName: string;
+    number: string;
+    month: string;
+    year: string;
+    securityCode: string;
+};
+type BankCardErrorsType = Partial<BankCardType>;
+
+interface IProps$3 {
+    modelValue: BankCardType;
+    valid?: boolean;
+    readonly?: boolean;
+    disabled?: boolean;
+    errors?: BankCardErrorsType;
+    /** The form sits inside a parent `<form>`, which submits it: the fields render in a `<div>` instead of a `<form>`. */
+    embedded?: boolean;
+}
+declare const __VLS_export$3: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
+    submit: () => any;
+    "update:modelValue": (bankCardData: Partial<BankCardType>) => any;
+    "update:valid": (value: boolean) => any;
+}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{
+    onSubmit?: (() => any) | undefined;
+    "onUpdate:modelValue"?: ((bankCardData: Partial<BankCardType>) => any) | undefined;
+    "onUpdate:valid"?: ((value: boolean) => any) | undefined;
+}>, {
+    errors: BankCardErrorsType;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$3: typeof __VLS_export$3;
+
+interface IProps$2 {
+    methods: SavedPaymentMethodFieldsFragment[];
+    /** The value that stands for "use a new card". */
+    newCardValue: string;
+    name: string;
+    disabled?: boolean;
+}
+type __VLS_Props = IProps$2;
+type __VLS_ModelProps = {
+    modelValue: string;
+};
+type __VLS_PublicProps = __VLS_Props & __VLS_ModelProps;
+declare const __VLS_export$2: vue.DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {
+    "update:modelValue": (value: string) => any;
+}, string, vue.PublicProps, Readonly<__VLS_PublicProps> & Readonly<{
+    "onUpdate:modelValue"?: ((value: string) => any) | undefined;
+}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default$2: typeof __VLS_export$2;
 
 declare const useFetch: typeof _vueuse_core.useFetch;
@@ -7388,8 +8699,8 @@ declare const MIN_ROWS = 1;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { _default$9 as AcceptedGifts, _default$6 as AddressInfo, BREAKPOINTS, CORE_VERSION, ContentType, _default$3 as CouponItem, _default$2 as CouponItemSkeleton, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$b as IdentityProvider, _default$c as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$8 as OrderCommentSection, _default$a as OrderLineItems, _default$d as OrderStatus, _default$7 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$4 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$I as VcAlert, _default$U as VcBadge, _default$T as VcBreadcrumbs, _default$H as VcButton, _default$G as VcCalendar, _default$S as VcCheckbox, _default$R as VcCheckboxGroup, _default$F as VcChip, _default$Q as VcContainer, _default$m as VcDatePicker, _default$l as VcDateRangePicker, _default$E as VcDialog, _default$D as VcDialogContent, _default$C as VcDialogFooter, _default$B as VcDialogHeader, _default$A as VcEmptyView, _default$P as VcIcon, _default$O as VcImage, _default$z as VcInput, _default$N as VcInputDetails, _default$M as VcLabel, _default$e as VcLayout, _default$L as VcLink, _default$y as VcLoaderOverlay, _default$K as VcMarkdownRender, _default$x as VcMenuItem, _default$k as VcModal, _default$j as VcPagination, _default$w as VcPopover, _default$v as VcProductActions, _default$u as VcProductActionsButton, _default$t as VcProductPrice, _default$s as VcProductTitle, _default$r as VcRating, _default$q as VcSelect, _default$p as VcTabSwitch, _default$i as VcTable, _default$h as VcTableColumn, _default$o as VcTextarea, _default$J as VcTooltip, _default$n as VcTypography, _default$g as VcWidget, _default$f as VcWidgetSkeleton, _default$5 as VendorName, XApiPermissions, apolloClient, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, defineBehavior, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, registerBlock, registerCacheTypePolicies, registerCustomSectionBehavior, registerCustomSectionTag, registerLocaleLoader, registerProductConfigurationSource, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, unregisterCustomSectionBehavior, unregisterCustomSectionTag, useAnalytics, useAnalyticsUtils, useAuth, useBlockChrome, useBreadcrumbs, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
-export type { BlockSettingType, BlockSettingsType, BlockType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomSectionDirectiveType, CustomSectionValueType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IBehaviorContext, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, OrdersFilterDataType, PluginStateType, ProductActionPropsType, ProductConfigurationSourceType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
+export { _default$b as AcceptedGifts, _default$8 as AddressInfo, BREAKPOINTS, _default$3 as BankCardForm, CORE_VERSION, _default$e as ConfigurationItems, ContentType, _default$5 as CouponItem, _default$4 as CouponItemSkeleton, DEFAULT_NOTIFICATION_DURATION, EXTENSION_CATEGORIES, EXTENSION_NAMES, _default$d as IdentityProvider, _default$f as InStock, _default$1 as LayoutSurface, _default as LayoutWidget, Logger, MIN_ROWS, _default$a as OrderCommentSection, _default$c as OrderLineItems, _default$g as OrderStatus, _default$9 as OrderSummary, PlatformPermissions, QueryParamName, REPORTING_DEFAULT_PERIOD, REPORTING_MONTH_SLOTS, REPORTING_PERIODS, ROUTES, _default$6 as ReportingPanel, STATUS_ORDERS_FACET_NAME, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$2 as SavedCardPicker, _default$q as VcAddToCart, _default$T as VcAlert, _default$16 as VcBadge, _default$15 as VcBreadcrumbs, _default$S as VcButton, _default$R as VcCalendar, _default$14 as VcCheckbox, _default$13 as VcCheckboxGroup, _default$Q as VcChip, _default$12 as VcContainer, _default$p as VcDatePicker, _default$o as VcDateRangePicker, _default$P as VcDialog, _default$O as VcDialogContent, _default$N as VcDialogFooter, _default$M as VcDialogHeader, _default$L as VcDropdownMenu, _default$K as VcEmptyView, _default$11 as VcIcon, _default$10 as VcImage, _default$J as VcInput, _default$$ as VcInputDetails, _default$_ as VcLabel, _default$h as VcLayout, _default$I as VcLineItems, _default$Z as VcLink, _default$H as VcList, _default$G as VcListItem, _default$Y as VcLoader, _default$F as VcLoaderOverlay, _default$X as VcMarkdownRender, _default$E as VcMenuItem, _default$n as VcModal, _default$m as VcPagination, _default$D as VcPopover, _default$W as VcPriceDisplay, _default$C as VcProductActions, _default$B as VcProductActionsButton, _default$A as VcProductPrice, _default$z as VcProductTitle, _default$V as VcRadioButton, _default$y as VcRating, _default$x as VcSelect, _default$w as VcShape, _default$v as VcTabSwitch, _default$l as VcTable, _default$k as VcTableColumn, _default$u as VcTextarea, _default$U as VcTooltip, _default$t as VcTypography, _default$s as VcVariantPicker, _default$r as VcVariantPickerGroup, _default$j as VcWidget, _default$i as VcWidgetSkeleton, _default$7 as VendorName, XApiPermissions, addSavedPaymentMethod, apolloClient, authorizePayment, buildReportingPlan, buildReportingVariables, buildStatCards, buildStatisticsWindows, defineBehavior, downloadFile, formatDateLocale, formatSignedPercent, formatStatCount, formatStatMoney, getFileSize, getFilterExpression as getOrdersFilterExpression, getProductRoute, getPropertiesGroupedByName, globals, graphqlClient, initializePayment, isMenuLinkActive, isReportingPeriod, knownHiddenTabs, prepareLineItem, registerBlock, registerCacheTypePolicies, registerCustomSectionBehavior, registerCustomSectionTag, registerLocaleLoader, registerProductConfigurationSource, savedCardExpiry, savedCardLabel, statBlocks, statDataNeeds, toEndDateFilterValue, toLocalDateOnly, toReportingData, toStartDateFilterValue, toggleTabRule, tryParseDate, uiKit, unregisterBlock, unregisterCustomSectionBehavior, unregisterCustomSectionTag, useAnalytics, useAnalyticsUtils, useAuth, useBlockChrome, useBreadcrumbs, useCardSavingRequirement, useCheckoutGuards, useConfigurableLineItemId, useCurrentCart, useErrorsTranslator, useExtensionRegistry, useFetch, useHistoricalEvents, useLayout, useModal, useModuleSettings, useNavigations, useNotifications, useOrderPlacement, useOrderView, usePageHead, usePluginsStatus, useQuantityValidationSchema, useReportingData, useReportingPlan, useRouteQueryParam, useSavedPaymentMethods, useShortCart, useSignMeIn, useStatDataNeeds, useThemeContext, useUser, useWishlistSharingScopes, visibleTabRules };
+export type { BankCardType, BlockSettingType, BlockSettingsType, BlockType, CartType, CheckoutGuardType, ComparableConditionType, ConditionNodeType, ConditionScalarType, ConditionType, ConfigurationSectionInput, CustomSectionDirectiveType, CustomSectionValueType, CustomerOrderType, ExtendedMenuLinkType, FieldBuilderType, GlobalConditionType, HostRouteNameType, I18n, IAccountMenuContributionType, IBehaviorContext, ICustomSectionBehavior, ICustomSectionField, ICustomSectionTag, IHeaderMenuContributionType, ILanguage, ILayoutBlockChromeType, IMenuLinkContributionType, IPluginContributionsType, IPluginManifestConfigType, IPluginStatusType, IRouteContributionType, ISlotContributionType, IStatBlock, IStatCardDefType, IThemeConfigSettings, IThemeContext, IWidgetBlock, IWishlistSharingScopeControlsType, IWishlistSharingScopeExposeType, IdentityErrorType$1 as IdentityErrorType, LayoutControllerType, LayoutRegionIdType, LayoutVisibilityType, LocaleLoaderType, MaxRowsSettingType, MenuContributionType, MenuCountContributionType, MenuDeclarationType, MenuLinkDeclarationType, MenuType, MoneyType, OrdersFilterDataType, PluginStateType, PreparedLineItemType, Product, ProductActionPropsType, ProductConfigurationSourceType, ReportingDataType, ReportingMonthSlotType, ReportingPeriodTotalsType, ReportingPeriodType, ReportingPlanType, ReportingRawMonthType, ReportingSettledType, ReportingStatisticsType, ReportingVariablesType, RouteDeclarationType, SharingTargetType, SignInKeyType, SignInMethodContributionType, SignedPercentType, SlotConditionType, SlotContextMapType, SlotDeclarationType, SlotIdType, SlotPolicyType, StatCardDataType, StatCardType, StatDataNeedsType, StatNeedResultType, StatQueryStateType, StatisticsWindowsType, WishlistSharingScopePayloadType, WishlistSharingScopeSavedContextType };
 
 // ── host ui-kit ambient types, inlined so this contract stands alone ──
 type VcBadgeColorType = VcMainColorType;
@@ -7457,6 +8768,8 @@ type VcChipVariantType =
     | "outline-dark";
 type VcChipSizeType = "sm" | "md" | "lg";
 type VcDialogSizeType = "xs" | "sm" | "md";
+type VcDropdownMenuPlacementType = Placement;
+type VcDropdownMenuOffsetOptionsType = OffsetOptions;
 type VcEmptyViewVariantType = "empty" | "search" | "error";
 type VcInputSizeType = "xs" | "sm" | "md" | "auto";
 type VcMenuItemColorType = VcMainColorType;
@@ -7468,6 +8781,12 @@ type VcPopoverShiftOptionsType = ShiftOptions;
 type VcPopoverRoleType = "dialog" | "menu" | "listbox" | "tree" | "grid" | "tooltip";
 type VcProductActionsButtonColorType = VcMainColorType;
 type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
+type VcVariantPickerType = "color" | "image" | "text";
+type VcVariantPickerSizeType = "xxs" | "xs" | "sm" | "md" | "lg";
+type VcVariantPickerIconPositionType = "start" | "end";
+type VcVariantPickerBadgePositionType = "end" | "top";
+type VcVariantPickerGroupColumnsType = "auto" | 1 | 2 | 3 | 4;
+type VcVariantPickerGroupSurfaceType = "base" | "tinted" | "dark";
 type VcDateRangePickerLayoutType = "combined" | "split";
 type VcStatWidgetColorType = VcMainColorType;
 type VcTableAlignType = "center" | "right" | "left";
@@ -7529,55 +8848,85 @@ type VcMoneyType = {
     formattedAmountWithoutCurrency?: string;
     currency?: { symbol?: string };
   };
+type VcLineItemType = {
+    id: string;
+    name: string;
+    sku?: string;
+    imageUrl?: string;
+    route?: RouteLocationRaw;
+    properties?: VcPropertyType[];
+    listPrice?: VcMoneyType;
+    actualPrice?: VcMoneyType;
+    extendedPrice?: VcMoneyType;
+    listTotal?: VcMoneyType;
+    showPlacedPrice?: boolean;
+    deleted?: boolean;
+  };
 type VcTableSortDirectionType = "asc" | "desc";
 type FileSizeUnitsType = "byte" | "kilobyte" | "megabyte" | "gigabyte" | "terabyte" | "petabyte";
+type VcPropertyType = {
+    name: string;
+    label: string;
+    value?: string | number | boolean | null;
+  };
 
 // ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──
 declare module "vue" {
   export interface GlobalComponents {
-    VcAlert: typeof _default$I;
-    VcBadge: typeof _default$U;
-    VcBreadcrumbs: typeof _default$T;
-    VcButton: typeof _default$H;
-    VcCalendar: typeof _default$G;
-    VcCheckbox: typeof _default$S;
-    VcCheckboxGroup: typeof _default$R;
-    VcChip: typeof _default$F;
-    VcContainer: typeof _default$Q;
-    VcDatePicker: typeof _default$m;
-    VcDateRangePicker: typeof _default$l;
-    VcDialog: typeof _default$E;
-    VcDialogContent: typeof _default$D;
-    VcDialogFooter: typeof _default$C;
-    VcDialogHeader: typeof _default$B;
-    VcEmptyView: typeof _default$A;
-    VcIcon: typeof _default$P;
-    VcImage: typeof _default$O;
-    VcInput: typeof _default$z;
-    VcInputDetails: typeof _default$N;
-    VcLabel: typeof _default$M;
-    VcLayout: typeof _default$e;
-    VcLink: typeof _default$L;
-    VcLoaderOverlay: typeof _default$y;
-    VcMarkdownRender: typeof _default$K;
-    VcMenuItem: typeof _default$x;
-    VcModal: typeof _default$k;
-    VcPagination: typeof _default$j;
-    VcPopover: typeof _default$w;
-    VcProductActions: typeof _default$v;
-    VcProductActionsButton: typeof _default$u;
-    VcProductPrice: typeof _default$t;
-    VcProductTitle: typeof _default$s;
-    VcRating: typeof _default$r;
-    VcSelect: typeof _default$q;
-    VcTabSwitch: typeof _default$p;
-    VcTable: typeof _default$i;
-    VcTableColumn: typeof _default$h;
-    VcTextarea: typeof _default$o;
-    VcTooltip: typeof _default$J;
-    VcTypography: typeof _default$n;
-    VcWidget: typeof _default$g;
-    VcWidgetSkeleton: typeof _default$f;
+    VcAddToCart: typeof _default$q;
+    VcAlert: typeof _default$T;
+    VcBadge: typeof _default$16;
+    VcBreadcrumbs: typeof _default$15;
+    VcButton: typeof _default$S;
+    VcCalendar: typeof _default$R;
+    VcCheckbox: typeof _default$14;
+    VcCheckboxGroup: typeof _default$13;
+    VcChip: typeof _default$Q;
+    VcContainer: typeof _default$12;
+    VcDatePicker: typeof _default$p;
+    VcDateRangePicker: typeof _default$o;
+    VcDialog: typeof _default$P;
+    VcDialogContent: typeof _default$O;
+    VcDialogFooter: typeof _default$N;
+    VcDialogHeader: typeof _default$M;
+    VcDropdownMenu: typeof _default$L;
+    VcEmptyView: typeof _default$K;
+    VcIcon: typeof _default$11;
+    VcImage: typeof _default$10;
+    VcInput: typeof _default$J;
+    VcInputDetails: typeof _default$$;
+    VcLabel: typeof _default$_;
+    VcLayout: typeof _default$h;
+    VcLineItems: typeof _default$I;
+    VcLink: typeof _default$Z;
+    VcList: typeof _default$H;
+    VcListItem: typeof _default$G;
+    VcLoader: typeof _default$Y;
+    VcLoaderOverlay: typeof _default$F;
+    VcMarkdownRender: typeof _default$X;
+    VcMenuItem: typeof _default$E;
+    VcModal: typeof _default$n;
+    VcPagination: typeof _default$m;
+    VcPopover: typeof _default$D;
+    VcPriceDisplay: typeof _default$W;
+    VcProductActions: typeof _default$C;
+    VcProductActionsButton: typeof _default$B;
+    VcProductPrice: typeof _default$A;
+    VcProductTitle: typeof _default$z;
+    VcRadioButton: typeof _default$V;
+    VcRating: typeof _default$y;
+    VcSelect: typeof _default$x;
+    VcShape: typeof _default$w;
+    VcTabSwitch: typeof _default$v;
+    VcTable: typeof _default$l;
+    VcTableColumn: typeof _default$k;
+    VcTextarea: typeof _default$u;
+    VcTooltip: typeof _default$U;
+    VcTypography: typeof _default$t;
+    VcVariantPicker: typeof _default$s;
+    VcVariantPickerGroup: typeof _default$r;
+    VcWidget: typeof _default$j;
+    VcWidgetSkeleton: typeof _default$i;
   }
 }
 
