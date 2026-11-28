@@ -1,4 +1,5 @@
 import { defineAsyncComponent } from "vue";
+import AllControls from "./all-controls.vue";
 import CallToActionWithImage from "./call-to-action-with-image.vue";
 import CallToAction from "./call-to-action.vue";
 import DemoProductList from "./demo-product-list.vue";
@@ -34,6 +35,7 @@ export const productTemplateSections: { [key: string]: Component } = {
   "related-products": RelatedProductsSection,
 };
 export const templateBlocks: { [key: string]: Component } = {
+  "all-controls": AllControls,
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,
   "demo-product-list": DemoProductList,
